@@ -452,13 +452,15 @@ https://github.com/ari-zah/gaiasandbox
 The author would like to acknowledge the following people, or the
 people behind the following technologies/resources:
 
-- The DLR (http://www.dlr.de/) for financing this project.
+- The [DLR](http://www.dlr.de/) for financing this project.
+- The [BWT](http://www.bmwi.de/), Bundesministerium für Wirtschaft und Technologie, also supporting this project.
+- My institution, [ARI](http://www.ari.uni-heidelberg.de)/[ZAH](http://www.zah.uni-heidelberg.de/)
 - Dr. Martin Altmann for providing the Gaia orbit data.
-- Libgdx - http://libgdx.badlogicgames.com
-- libgdx-contribs-postprocessing - https://github.com/manuelbua/libgdx-contribs/tree/master/postprocessing
-- HYG catalog - http://www.astronexus.com/hyg
-- Several online resources without which this would have not been possible. 
-- WebLaF - http://weblookandfeel.com/
+- [Libgdx](http://libgdx.badlogicgames.com)
+- [libgdx-contribs-postprocessing](https://github.com/manuelbua/libgdx-contribs/tree/master/postprocessing)
+- [HYG catalog](http://www.astronexus.com/hyg)
+- [WebLaF](http://weblookandfeel.com/)
+- And several online resources without which this would have not been possible
 
 If you think I missed someone, please let me know.
 
