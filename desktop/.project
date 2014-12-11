@@ -20,10 +20,5 @@
 			<type>2</type>
 			<location>/home/tsagrista/Workspaces/workspace-luna/GaiaSandbox-android/assets</location>
 		</link>
-		<link>
-			<name>resources</name>
-			<type>2</type>
-			<location>/home/tsagrista/git/libgdx-contribs/postprocessing/src/main/resources</location>
-		</link>
 	</linkedResources>
 </projectDescription>
