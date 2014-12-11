@@ -50,12 +50,29 @@ machines, but it runs well on dated graphic cards
 (~GeForce 210) and average CPUs (i5). Specific 
 system requirements are yet to be determined.
 
-###1.2 Installation
+###1.2 Installation (package)
 
 The Gaia Sandbox application does not require a 'formal'
 installation, as it is ready to be executed out of the
 box. Just uncompress the package anywhere in your drive
 and you are good to go.
+
+###1.3 Run from code
+
+If you want to compile the code, you will need the
+JDK7+ installed. Just clone this repository and my fork
+of [libgdx-contribs-postprocessing](https://github.com/langurmonkey/libgdx-contribs).
+Then, assuming you cloned both repos in the same folder
+(`~/git`), you just need to compile to build the app and get the
+full package.
+
+```
+cd ~/git/gaiasandbox
+ant -Dversion=[version]
+```
+
+This will create a `releases` folder in `~/git/gaiasandbox` with 
+your package and the compiled application.
 
 
 
@@ -225,34 +242,44 @@ system.
 ####3.1.1 Linux
 In order to run the application on Linux, open the terminal, give execution
 permissions to the run.sh file and then run it.
-
-	> cd path_to_gaiasandbox_folder/
-	> chmod +x run.sh
-	> run.sh
+	
+```
+cd path_to_gaiasandbox_folder/
+chmod +x run.sh
+run.sh
+```
 	
 Alternatively you can run the jar file directly, specifying the configuration
 file.
 
-	> java -Dproperties.file=conf/global.properties -jar gaiasandbox.jar
+```
+java -Dproperties.file=conf/global.properties -jar gaiasandbox.jar
+```
 
 ####3.1.2 Windows
 In order to run the application on Windows, open a terminal window (write
 'cmd' in the start menu search box) and run the run.bat file.
-
-	> cd path_to_gaiasandbox_folder\
-	> run.bat
+	
+```
+cd path_to_gaiasandbox_folder\
+run.bat
+```
 	
 Alternatively you can run the jar file directly, specifying the configuration
 file.
 
-	> java -Dproperties.file=conf/global.properties -jar gaiasandbox.jar
+```
+java -Dproperties.file=conf/global.properties -jar gaiasandbox.jar
+```
 
 ####3.1.3 MacOS
 To run the application on MacOS systems, run the jar file specifying the
 configuration file.
-
-	> java -Dproperties.file=conf/global.properties -jar gaiasandbox.jar
-
+	
+```
+java -Dproperties.file=conf/global.properties -jar gaiasandbox.jar
+```
+	
 ###3.2 Operating instructions
 
 ####3.2.1 User interface
