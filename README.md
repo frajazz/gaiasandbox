@@ -261,7 +261,7 @@ In order to run the application on Windows, open a terminal window (write
 'cmd' in the start menu search box) and run the run.bat file.
 	
 ```
-cd path_to_gaiasandbox_folder\
+cd path_to_gaiasandbox_folder
 run.bat
 ```
 	
