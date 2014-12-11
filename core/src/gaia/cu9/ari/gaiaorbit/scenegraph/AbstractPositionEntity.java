@@ -1,0 +1,214 @@
+package gaia.cu9.ari.gaiaorbit.scenegraph;
+
+import gaia.cu9.ari.gaiaorbit.event.EventManager;
+import gaia.cu9.ari.gaiaorbit.event.Events;
+import gaia.cu9.ari.gaiaorbit.render.ILabelRenderable;
+import gaia.cu9.ari.gaiaorbit.util.DecalUtils;
+import gaia.cu9.ari.gaiaorbit.util.math.Vector2d;
+import gaia.cu9.ari.gaiaorbit.util.math.Vector3d;
+
+import com.badlogic.gdx.assets.loaders.TextureLoader.TextureParameter;
+import com.badlogic.gdx.graphics.Texture.TextureFilter;
+import com.badlogic.gdx.graphics.g2d.BitmapFont;
+import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.graphics.glutils.ShaderProgram;
+import com.badlogic.gdx.utils.Pool;
+import com.badlogic.gdx.utils.Pools;
+
+/**
+ * A base abstract graphical entity with the basics.
+ * @author Toni Sagrista
+ *
+ */
+public abstract class AbstractPositionEntity extends SceneGraphNode {
+    /**
+     * Overlap factor applied to angle to get the upper boundary when rendering with shader and model. 
+     */
+    public static final float SHADER_MODEL_OVERLAP_FACTOR = 5;
+    /**
+     * Position of this entity in the local reference system.
+     * The units are {@link gaia.cu9.ari.gaiaorbit.util.Constants#U_TO_KM} by default. 
+     */
+    public Vector3d pos;
+
+    /**
+     * Position in the equatorial system; ra, dec.
+     */
+    public Vector2d posSph;
+
+    /**
+     * Size factor in units
+     * of {@link gaia.cu9.ari.gaiaorbit.util.Constants#U_TO_KM}.
+     */
+    public float size;
+
+    /**
+     * The distance to the camera from the focus center.
+     */
+    public float distToCamera;
+
+    /**
+     * The viewing angle in radians.
+     */
+    public float viewAngle, viewAngleApparent;
+
+    /**
+     * Base color
+     */
+    public float[] cc;
+
+    /**
+     * Is this just a copy?
+     */
+    protected boolean copy = false;
+
+    /** Texture parameters **/
+    protected static final TextureParameter textureParams;
+    static {
+	textureParams = new TextureParameter();
+	textureParams.magFilter = TextureFilter.Linear;
+	textureParams.minFilter = TextureFilter.Linear;
+    }
+
+    protected AbstractPositionEntity() {
+	super();
+	// Positions
+	pos = new Vector3d();
+	posSph = new Vector2d();
+    }
+
+    public AbstractPositionEntity(SceneGraphNode parent) {
+	super(parent);
+	// Positions
+	pos = new Vector3d();
+	posSph = new Vector2d();
+    }
+
+    public AbstractPositionEntity(String name) {
+	super(name);
+    }
+
+    public Vector3d getPosition(Vector3d aux) {
+	return transform.getTranslation(aux);
+    }
+
+    /**
+     * Updates the local transform matrix.
+     * @param time
+     */
+    @Override
+    public void updateLocal(ITimeFrameProvider time, ICamera camera) {
+	updateLocalValues(time);
+
+	this.transform.translate(pos);
+
+	this.distToCamera = (float) transform.getTranslation(auxVector3d.get()).len();
+	this.viewAngle = (float) Math.atan(size / distToCamera);
+	this.viewAngleApparent = this.viewAngle;
+	if (!copy) {
+	    addToRenderLists(camera);
+	}
+    }
+
+    /**
+     * Adds this entity to the necessary render lists after the
+     * distance to the camera and the view angle have been determined.
+     */
+    protected abstract void addToRenderLists(ICamera camera);
+
+    /**
+     * This function updates all the local values before the localTransform is
+     * updated. Position, rotations and scale must be updated in here.
+     * @param dt
+     * @param time
+     */
+    public abstract void updateLocalValues(ITimeFrameProvider time);
+
+    public float getRadius() {
+	return size / 2;
+    }
+
+    /**
+     * Sets the absolute size of this entity
+     * @param size
+     */
+    public void setSize(Float size) {
+	this.size = size;
+    }
+
+    public void setColor(String color) {
+	this.cc = parseColour(color);
+    }
+
+    public Vector3d computeFuturePosition() {
+	return null;
+    }
+
+    /**
+     * Gets a copy of this object but does not copy its parent or children.
+     * @return
+     */
+    @Override
+    public <T extends SceneGraphNode> T getSimpleCopy() {
+	Class<? extends AbstractPositionEntity> clazz = this.getClass();
+	Pool<? extends AbstractPositionEntity> pool = Pools.get(clazz);
+	try {
+	    AbstractPositionEntity instance = pool.obtain();
+	    instance.copy = true;
+	    instance.name = this.name;
+	    instance.pos.set(this.pos);
+	    instance.size = this.size;
+	    instance.distToCamera = this.distToCamera;
+	    instance.viewAngle = this.viewAngle;
+	    instance.transform.set(this.transform);
+	    instance.ct = this.ct;
+	    if (this.localTransform != null)
+		instance.localTransform.set(this.localTransform);
+
+	    return (T) instance;
+	} catch (Exception e) {
+	    EventManager.getInstance().post(Events.JAVA_EXCEPTION, e);
+	}
+	return null;
+    }
+
+    protected float[] parseColour(String colour) {
+	String[] rgbs = colour.split("\\s+");
+	if (rgbs.length == 3) {
+	    return new float[] { Float.parseFloat(rgbs[0]), Float.parseFloat(rgbs[1]), Float.parseFloat(rgbs[2]), 1f };
+	} else if (rgbs.length == 4) {
+	    return new float[] { Float.parseFloat(rgbs[0]), Float.parseFloat(rgbs[1]), Float.parseFloat(rgbs[2]), Float.parseFloat(rgbs[3]) };
+	}
+	return null;
+    }
+
+    protected AbstractPositionEntity getComputedAncestor() {
+	if (!this.computed) {
+	    return this.parent != null && this.parent instanceof AbstractPositionEntity ? ((AbstractPositionEntity) this.parent).getComputedAncestor() : null;
+	} else {
+	    return this;
+	}
+    }
+
+    public float getDistToCamera() {
+	return distToCamera;
+    }
+
+    protected void renderLabel(SpriteBatch batch, ShaderProgram shader, BitmapFont font, ICamera camera, float alpha, String label, Vector3d pos, float scale, float size, float[] colour) {
+	// The smoothing scale must be set according to the distance
+	shader.setUniformf("scale", scale / camera.getFovFactor());
+
+	// Linear interpolation of angle [0, 1]
+	shader.setUniformf("avalue", alpha);
+
+	double len = pos.len();
+	Vector3d p = pos.clamp(0, len - size);
+
+	// Enable or disable blending
+	((ILabelRenderable) this).labelDepthBuffer();
+
+	font.setColor(colour[0], colour[1], colour[2], colour[3]);
+	DecalUtils.drawFont3D(font, batch, label, (float) p.x, (float) p.y, (float) p.z, size, camera.getCamera(), true);
+    }
+
+}

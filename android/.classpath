@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<classpath>
+	<classpathentry kind="src" path="src"/>
+	<classpathentry kind="src" path="gen"/>
+	<classpathentry kind="con" path="com.android.ide.eclipse.adt.ANDROID_FRAMEWORK"/>
+	<classpathentry exported="true" kind="con" path="com.android.ide.eclipse.adt.DEPENDENCIES"/>
+	<classpathentry combineaccessrules="false" kind="src" path="/GaiaSandbox"/>
+	<classpathentry exported="true" kind="con" path="com.android.ide.eclipse.adt.LIBRARIES"/>
+	<classpathentry kind="lib" path="libs/gdx-backend-android.jar" sourcepath="libs/gdx-backend-android-sources.jar"/>
+	<classpathentry kind="lib" path="/GaiaSandbox/libs/gdx.jar" sourcepath="/home/tsagrista/Programs/Libraries/libgdx-1.2.0/sources/gdx-sources.jar"/>
+	<classpathentry kind="lib" path="libs/gaiasandbox-lib.jar" sourcepath="/GaiaSandbox"/>
+	<classpathentry kind="lib" path="libs/GaiaParameters-15.0.0.jar"/>
+	<classpathentry kind="lib" path="libs/postprocessing.jar"/>
+	<classpathentry kind="output" path="bin/classes"/>
+</classpath>

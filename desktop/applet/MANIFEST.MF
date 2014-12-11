@@ -1,0 +1,9 @@
+Manifest-Version: 1.0
+Trusted-Library: true
+Application-Library-Allowable-Codebase: *
+Trusted-Only: false
+Application-Name: Gaia Orbit
+Permissions: all-permissions
+Created-By: 1.6.0_16 (Sun Microsystems Inc.)
+Caller-Allowable-Codebase: *
+Codebase: *

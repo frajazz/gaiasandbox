@@ -1,0 +1,340 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<project default="build" basedir="."
+	name="Build and package the GaiaSandbox with libraries in sub-folder">
+
+	<!-- PROPERTIES -->
+	<property environment="env"/>
+	<property name="git.folder" location="/home/tsagrista/git/" />
+	<property name="lib.name" value="lib" />
+	<property name="lib.dir" location="${output.dir}/${lib.name}" />
+	<property name="gs.dir" value="../GaiaSandbox" />
+	<property name="gs-android.dir" value="../GaiaSandbox-android" />
+	<property name="gs-desktop.dir" value="." />
+	<property name="output.dir" location="${gs-desktop.dir}/releases/gaiasandbox-${version}" />
+	<property name="assets.link" value="${gs-android.dir}/assets"/>
+	<property name="gdx-postproc.dir" value="${user.home}/git/libgdx-contribs/postprocessing" />
+	<property name="gdx-postproc-utils.dir" value="${user.home}/git/libgdx-contribs/utils" />
+	<property name="gdx.dir" value="${user.home}/git/libgdx/gdx"/>
+	<property name="gdx-jnigen.dir" value="${user.home}/git/libgdx/extensions/gdx-jnigen"/>
+    <property name="debuglevel" value="source,lines,vars"/>
+    <property name="target" value="1.7"/>
+    <property name="source" value="1.7"/>
+    
+    <!-- CLASSPATHS -->
+    <path id="gdx-jnigen.classpath">
+        <pathelement location="${gdx-jnigen.dir}/bin"/>
+        <pathelement location="${gdx-jnigen.dir}/libs/javaparser-1.0.8.jar"/>
+    </path>
+    <path id="gdx.classpath">
+        <pathelement location="${gdx.dir}/bin"/>
+        <path refid="gdx-jnigen.classpath"/>
+    </path>
+    <path id="libgdx-contribs-utils.classpath">
+        <pathelement location="${gdx-postproc-utils.dir}/bin"/>
+        <path refid="gdx.classpath"/>
+    </path>
+    <path id="libgdx-contribs-postprocessing.classpath">
+        <pathelement location="${gdx-postproc.dir}/bin"/>
+        <path refid="gdx.classpath"/>
+        <path refid="libgdx-contribs-utils.classpath"/>
+    </path>
+    <path id="gs.classpath">
+        <pathelement location="${gs.dir}/libs/gdx.jar"/>
+        <pathelement location="${gs.dir}/libs/jython-standalone-2.5.4-rc1.jar"/>
+        <pathelement location="${gdx-postproc.dir}/release/postprocessing.jar"/>
+    </path>
+    <path id="gs-desktop.classpath">
+        <pathelement location="${gs-desktop.dir}/libs/gdx-backend-lwjgl-natives.jar"/>
+        <pathelement location="${gs-desktop.dir}/libs/gdx-backend-lwjgl.jar"/>
+        <pathelement location="${gs-desktop.dir}/libs/gdx-natives.jar"/>
+        <pathelement location="${gs-desktop.dir}/libs/lwjgl_util_applet.jar"/>
+        <pathelement location="${gs-desktop.dir}/libs/weblaf-complete-1.28.jar"/>
+        <pathelement location="${gs-desktop.dir}/libs/miglayout-4.0-swing.jar"/>
+        <pathelement location="${gs-desktop.dir}/libs/jython-standalone-2.5.4-rc1.jar"/>
+        <pathelement location="${gs.dir}/bin"/>
+        <path refid="gs.classpath"/>
+    </path>
+	
+	<!-- MAIN TARGET -->
+	<target name="build" depends="build-desktop,package-app" />
+
+	<!-- packages the app into a tgz file -->
+	<target name="package-app">
+	    <delete file="${output.dir}.tgz" />
+	    <tar destfile="${output.dir}.tgz" basedir="${output.dir}" compression="gzip" />
+	</target>
+	
+	<!-- builds and packages the desktop app -->
+	<target name="build-desktop" depends="build_info, compile">
+		<!-- Prepare output directory -->
+		<mkdir dir="${gs-desktop.dir}/releases" />
+		<delete dir="${output.dir}" />
+		<mkdir dir="${output.dir}" />
+
+		<jar destfile="${output.dir}/gaiasandbox.jar">
+			<manifest>
+				<attribute name="Main-Class"
+					value="gaia.cu9.ari.gaiaorbit.GaiaSandboxDesktop" />
+				<attribute name="Class-Path"
+					value=". ${lib.name}/gdx.jar ${lib.name}/gwt-user.jar ${lib.name}/gdx-backend-lwjgl-natives.jar ${lib.name}/gdx-backend-lwjgl.jar ${lib.name}/gdx-natives.jar ${lib.name}/GaiaParameters-15.0.0.jar ${lib.name}/miglayout-4.0-swing.jar ${lib.name}/weblaf-complete-1.28.jar ${lib.name}/jython-standalone-2.5.4-rc1.jar ${lib.name}/postprocessing.jar" />
+				<attribute name="Built-By" value="${user.name}" />
+				<attribute name="Application-Name" value="Gaia Sandbox" />
+				<attribute name="Application-Version" value="${version} ${TODAY}" />
+				<attribute name="Application-Vendor" value="ARI - ZAH - Heidelberg Universität" />
+			</manifest>
+			<fileset dir="${gs-desktop.dir}/bin">
+				<!-- Code -->
+				<include name="gaia/**" />
+				<include name="com/**" />
+
+				<!-- conf folder -->
+				<exclude name="conf/" />
+				
+				<!-- data folder -->
+				<exclude name="data/" />
+
+
+				<!-- font folder -->
+				<include name="font/**" />
+
+				<!-- icon folder -->
+				<include name="icon/**" />
+
+				<!-- img folder -->
+				<include name="img/**" />
+				
+				<!-- shader folder -->
+				<include name="shader/**" />
+
+				<!-- shaders folder -->
+				<include name="shaders/**" />
+
+				<!-- skins folder -->
+				<include name="skins/**" />
+
+			</fileset>
+			<fileset dir="${gs.dir}/bin" />
+		</jar>
+
+		<!-- Copy conf files -->
+		<mkdir dir="${output.dir}/conf" />
+		<copy todir="${output.dir}/conf">
+			<fileset dir="${gs-desktop.dir}/bin/conf">
+			    <exclude name="android/" />
+			</fileset>
+		</copy>
+		
+		<!-- Copy data files -->
+		<mkdir dir="${output.dir}/data" />
+		<copy todir="${output.dir}/data">
+			<fileset dir="bin/data">
+			    <exclude name="android/" />
+			</fileset>
+		</copy>
+
+		<!-- Copy scripts files -->
+		<mkdir dir="${output.dir}/scripts" />
+		<copy todir="${output.dir}/scripts">
+			<fileset dir="bin/scripts">
+			</fileset>
+		</copy>
+
+		<!-- Copy script, README and LICENSE -->
+		<copy todir="${output.dir}">
+			<fileset dir="${gs-desktop.dir}/exe" />
+		</copy>
+		<!-- Make run.sh executable -->
+		<chmod file="${output.dir}/run.sh" perm="+x" />
+		<!-- Replace version in readme file -->
+		<loadfile property="version.contents" srcFile="${gs.dir}/src/version"/>
+		<replace file="${output.dir}/README.txt" token="@@@[VERSION-PLACEHOLDER]@@@" value="${version.contents}"/>
+		
+		<!-- Copy jar libraries -->
+		<mkdir dir="${lib.dir}" />
+		<copy file="${gs.dir}/libs/gdx.jar" todir="${lib.dir}" />
+		<copy file="${gs.dir}/libs/jython-standalone-2.5.4-rc1.jar" todir="${lib.dir}" />
+		<copy file="${gs-desktop.dir}/libs/gdx-backend-lwjgl-natives.jar" todir="${lib.dir}" />
+		<copy file="${gs-desktop.dir}/libs/gdx-backend-lwjgl.jar" todir="${lib.dir}" />
+		<copy file="${gs-desktop.dir}/libs/gdx-natives.jar" todir="${lib.dir}" />
+		<copy file="${gs-desktop.dir}/libs/miglayout-4.0-swing.jar" todir="${lib.dir}" />
+		<copy file="${gs-desktop.dir}/libs/weblaf-complete-1.28.jar" todir="${lib.dir}" />
+		<!-- Copy libgdx-contrib postprocessing -->
+		<copy file="${git.folder}/libgdx-contribs/postprocessing/release/postprocessing.jar" todir="${lib.dir}" />
+	</target>
+
+	<!-- MAIN COMPILE -->
+	<target depends="clean-compile,build-gs,build-gs-desktop,build_postprocessing" name="compile"/>
+	
+	<!-- BUILD GaiaSandbox -->
+    <target depends="init-gs" name="build-gs">
+        <echo message="${ant.project.name}: ${ant.file}"/>
+        <javac debug="true" debuglevel="${debuglevel}" destdir="${gs.dir}/bin" includeantruntime="false" source="${source}" target="${target}">
+            <src path="${gs.dir}/src"/>
+            <classpath refid="gs.classpath"/>
+        </javac>
+        <copy file="${gs.dir}/src/version" todir="${gs.dir}/bin" />
+    </target>
+    
+    <!-- BUILD GaiaSandbox-desktop -->
+    <target depends="build-gs,init-gs-desktop" name="build-gs-desktop">
+        <echo message="${ant.project.name}: ${ant.file}"/>
+        <javac debug="true" debuglevel="${debuglevel}" destdir="${gs-desktop.dir}/bin" includeantruntime="false" source="${source}" target="${target}">
+            <src path="${gs-desktop.dir}/src"/>
+            <src path="${assets.link}"/>
+            <classpath refid="gs-desktop.classpath"/>
+        </javac>
+    </target>
+	
+	<!-- Builds the postprocessing project -->
+	<target name="build_postprocessing">
+		<ant antfile="package-release.xml" dir="${git.folder}/libgdx-contribs/postprocessing/"
+			inheritAll="false" target="all">
+			<property name="package.version"
+				value="'$(git describe|sed 's/-\([0-9]\)\+-g/.\1-/g')'" />
+		</ant>
+	</target>
+	
+	<!-- Init GS -->
+	<target name="init-gs">
+        <mkdir dir="${gs.dir}/bin"/>
+    </target>
+    
+	<!-- Init GS-desktop -->
+    <target name="init-gs-desktop">
+        <mkdir dir="${gs-desktop.dir}/bin"/>
+        <copy includeemptydirs="false" todir="bin">
+            <fileset dir="${gs-desktop.dir}/src">
+                <exclude name="**/*.launch"/>
+                <exclude name="**/*.java"/>
+            </fileset>
+        </copy>
+        <copy includeemptydirs="false" todir="${gs-desktop.dir}/bin">
+            <fileset dir="${assets.link}">
+                <exclude name="**/*.launch"/>
+                <exclude name="**/*.java"/>
+            </fileset>
+        </copy>
+    </target>
+    
+    <!-- CLEANS THE BIN FOLDERS -->
+    <target name="clean-compile">
+        <delete dir="${gs-desktop.dir}/bin"/>
+        <delete dir="${gs.dir}/bin"/>
+	</target>
+
+	<!-- BUILDS THE VERSION FILE WITH THE BUILD INFO -->
+	<target name="build_info">
+		<tstamp>
+			<format property="builtat" pattern="dd/MM/yyyy hh:mm aa"
+				timezone="CET" />
+		</tstamp>
+		<exec executable="svnversion" dir="${gs.dir}"
+			outputproperty="svnversion-main" />
+		<exec executable="svnversion" dir="${gs-android.dir}"
+			outputproperty="svnversion-android" />
+		<exec executable="svnversion" dir="." outputproperty="svnversion-desktop" />
+		<exec executable="whoami" outputproperty="whoami" />
+		<exec executable="uname" outputproperty="buildsystem">
+			<arg value="-a" />
+		</exec>
+
+		<delete file="${gs.dir}/src/version" />
+		<propertyfile file="${gs.dir}/src/versionaux">
+			<entry key="buildtime" value="${builtat}" />
+			<entry key="build"
+				value="${svnversion-main}/${svnversion-android}/${svnversion-desktop}" />
+			<entry key="builder" value="${whoami}" />
+			<entry key="version" value="${version}" />
+			<entry key="system" value="${buildsystem}" />
+		</propertyfile>
+		<copy file="${gs.dir}/src/versionaux" tofile="${gs.dir}/src/version">
+  			<filterchain>
+      			<headfilter skip="1"/>
+  			</filterchain>
+		</copy>
+		<delete file="${gs.dir}/src/versionaux" />
+		<replace file="${gs.dir}/src/version" token="\" value=""/>
+		<copy file="${gs.dir}/src/version" todir="${gs.dir}/bin/" />
+	</target>
+	
+	
+	<!-- APPLET - NOT USED ANYMORE -->
+	<target name="build_applet"
+		depends="build_info, build_postprocessing, copy_jars, create_gaiasandbox_jar, create_gaiasandbox_data_jar, sign_jars" />
+
+	<target name="create_gaiasandbox_jar">
+		<delete file="${gs-desktop.dir}/applet/gaiasandbox.jar" />
+		<jar destfile="${gs-desktop.dir}/applet/gaiasandbox.jar">
+			<fileset dir="${gs-desktop.dir}/bin">
+				<!-- code -->
+				<include name="gaia/**" />
+			</fileset>
+			<fileset dir="${gs.dir}/bin" />
+		</jar>
+	</target>
+
+	<target name="create_gaiasandbox_data_jar">
+		<delete file="${gs-desktop.dir}/applet/gaiasandbox-data.jar" />
+		<jar destfile="${gs-desktop.dir}/applet/gaiasandbox-data.jar">
+			<fileset dir="${gs-desktop.dir}/bin">
+				<!-- Code -->
+				<include name="gaia/**" />
+
+				<!-- conf and scripts folder -->
+				<exclude name="conf" />
+				<exclude name="scripts" />
+
+				<!-- data folder -->
+				<include name="data/**" />
+
+				<!-- font folder -->
+				<include name="font/**" />
+
+				<!-- icon folder -->
+				<include name="icon/**" />
+
+				<!-- img folder -->
+				<include name="img/**" />
+				
+				<!-- models folder -->
+				<include name="models/**" />
+
+				<!-- shader folder -->
+				<include name="shader/**" />
+
+				<!-- shaders folder -->
+				<include name="shaders/**" />
+
+				<!-- skins folder -->
+				<include name="skins/**" />
+			</fileset>
+		</jar>
+	</target>
+
+	<target name="copy_jars">
+		<delete>
+			<fileset dir="applet">
+				<exclude name="**/lwjgl_util_applet.jar" />
+				<include name="*.jar" />
+			</fileset>
+		</delete>
+		<copy file="${gs.dir}/libs/gdx.jar" todir="applet" />
+		<copy file="${gs.dir}/libs/jython-standalone-2.5.4-rc1.jar"
+			todir="${gs-desktop.dir}/applet" />
+		<copy file="${git.folder}/libgdx-contribs/postprocessing/release/postprocessing.jar" todir="applet" />
+		<copy file="${gs-desktop.dir}/libs/gdx-backend-lwjgl-natives.jar" todir="${gs-desktop.dir}/applet" />
+		<copy file="${gs-desktop.dir}/libs/gdx-backend-lwjgl.jar" todir="${gs-desktop.dir}/applet" />
+		<copy file="${gs-desktop.dir}/libs/gdx-natives.jar" todir="${gs-desktop.dir}/applet" />
+		<copy file="${gs-desktop.dir}/libs/miglayout-4.0-swing.jar" todir="${gs-desktop.dir}/applet" />
+		<copy file="${gs-desktop.dir}/libs/weblaf-complete-1.28.jar" todir="${gs-desktop.dir}/applet" />
+	</target>
+
+	<target name="sign_jars">
+		<exec executable="${gs-desktop.dir}/bin/bash">
+			<arg line="${gs-desktop.dir}/applet/sign.sh" />
+			<arg line="${gs-desktop.dir}/applet/MANIFEST.MF" />
+			<arg line="${gs-desktop.dir}/applet/.keystore" />
+			<arg line="${gs-desktop.dir}/applet/" />
+		</exec>
+	</target>
+</project>

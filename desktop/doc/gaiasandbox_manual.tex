@@ -1,0 +1,486 @@
+%%% DOCUMENTCLASS 
+%%%-------------------------------------------------------------------------------
+
+\documentclass[
+a4paper, % Stock and paper size.
+11pt, % Type size.
+% article,
+% oneside, 
+onecolumn, % Only one column of text on a page.
+% openright, % Each chapter will start on a recto page.
+% openleft, % Each chapter will start on a verso page.
+openany, % A chapter may start on either a recto or verso page.
+]{memoir}
+
+%%% PACKAGES 
+%%%------------------------------------------------------------------------------
+
+\usepackage[utf8]{inputenc} % If utf8 encoding
+\usepackage[T1]{fontenc}    %
+\usepackage[english]{babel} % English please
+\usepackage[final]{microtype} % Less badboxes
+\usepackage{amsmath,amssymb,mathtools} % Math
+\usepackage{graphicx} % Include figures
+\usepackage{hyperref}
+\usepackage{listings}
+\usepackage{color}
+\usepackage{titlesec}
+\usepackage{etoolbox}
+\usepackage{url}
+
+\definecolor{dkgreen}{rgb}{0,0.6,0}
+\definecolor{gray}{rgb}{0.5,0.5,0.5}
+\definecolor{mauve}{rgb}{0.58,0,0.82}
+
+\lstset{frame=tb,
+  aboveskip=5mm,
+  belowskip=5mm,
+  showstringspaces=false,
+  columns=flexible,
+  basicstyle={\small\ttfamily},
+  numbers=none,
+  numberstyle=\tiny\color{gray},
+  keywordstyle=\color{blue},
+  commentstyle=\color{dkgreen},
+  stringstyle=\color{mauve},
+  breaklines=true,
+  breakatwhitespace=true
+  tabsize=3
+}
+
+\hypersetup{
+  colorlinks,
+  citecolor=violet,
+  linkcolor=blue,
+  urlcolor=blue}
+
+%%% PAGE LAYOUT 
+%%%------------------------------------------------------------------------------
+
+\setlrmarginsandblock{0.15\paperwidth}{*}{1} % Left and right margin
+\setulmarginsandblock{0.2\paperwidth}{*}{1}  % Upper and lower margin
+\checkandfixthelayout
+
+
+%%% FONTS
+%%%------------------------------------------------------------------------------
+
+\fontencoding{T1}
+\fontfamily{pandora}
+\fontseries{m}
+\fontshape{it}
+\fontsize{11}{13}
+\selectfont
+
+
+%%% HEADING STYLES
+%%%------------------------------------------------------------------------------
+
+\makeatother
+\titleformat{\chapter}
+  {\normalfont\LARGE\bfseries\color{black}}{\thechapter.}{.8em}{}
+
+%%% NO INDENT
+%%%------------------------------------------------------------------------------
+
+\newlength\tindent
+\setlength{\tindent}{\parindent}
+\setlength{\parindent}{0pt}
+\renewcommand{\indent}{\hspace*{\tindent}}
+
+
+%%% DOCUMENT
+%%%------------------------------------------------------------------------------
+
+\title{Gaia Sandbox user manual \\
+\small
+\url{http://www.zah.uni-heidelberg.de/gaia2/outreach/gaiasandbox}}
+\author{
+        Toni Sagrist\`a Sell\'es \\
+        Astronomisches Rechen-Institut\\
+	Zentrum f\"ur Astronomie Heidelberg \\
+	UNIVERSIT\"AT HEIDELBERG \\
+        Heidelberg, Baden-W\"urttemberg, Deutschland
+}
+\date{\today}
+
+
+\begin{document}
+\maketitle
+\small
+
+\tableofcontents
+\newpage
+
+\chapter{Introduction}
+The Gaia Sandbox is a visualisation application developed in the Gaia group of Astronomisches Rechen-Institut 
+with the purpose of serving as outreach software so that the general public can inspect various aspects of the
+Gaia mission in an interactive manner. With this software one can discover where Gaia is in its orbit at any time,
+inspect its movement and attitude patterns and behold the satellite model and its parts. Additionally, the HYG
+catalog loaded into the application allows for the real time visualisation and exploration of more than 100.000 stars
+in the vicinity of the Sun. The application is packed with features and details, some of which are covered in
+this user manual document. 
+
+
+\chapter{System requirements and installation}\label{sec:installationrequirements}
+
+\section{System requirements}
+
+This section describes the system requirements you have to meet in order to run the Gaia Sandbox.
+
+\subsection{Operating systems}
+The Gaia Sandbox application runs on Windows, MacOS and
+Linux. So far it has only been tested to work 
+on Ubuntu 13.4, Ubuntu 13.10, Linux Mint 16 and Windows 7 Ultimate.
+
+\subsection{Java}
+In order to run this software you will need the Java
+Runtime Environment (JRE) 7+ installed in your system.
+We recommend using the Oracle HotSpot JVM
+(\href{http://www.oracle.com/technetwork/java/javase/downloads/index.html}{http://www.oracle.com/java}),
+as it is the only one we test, but it may also run
+in IBM's JVM or in the OpenJDK JVM.
+It may also run in Java 6, but it has not been 
+tested.
+
+\subsection{OpenGL}
+You will need an operating system that supports at least OpenGL 2.0.
+
+\subsection{Hardware requirements}
+We have not tested the application on many different
+machines, but for sure you weed a decent GPU
+and an average CPU to get good frame rates. Specific 
+system requirements are yet to be determined.
+
+\section{Installation}
+The Gaia Sandbox application does not require a 'formal'
+installation, as it is ready to be executed out of the
+box. Just unzip it anywhere in your desired drive and
+that's about it.
+
+\chapter{Configuration options}\label{sec:config}
+The configuration file is \texttt{conf/global.properties}. 
+This file contains some useful configuration parameters 
+to tweak the application:
+
+\section{Resolution}
+You may change the resolution of the application. By default it 
+is configured to execute at 1280x720 (16:9 aspect ratio). To change
+the running resolution you need to modify the following properties
+in the configuration file.
+
+\begin{lstlisting}[language=Java]
+graphics.screen.width=1280
+graphics.screen.height=720
+\end{lstlisting}
+
+\section{Mode}
+By default the application will execute in windowed mode. You can
+switch it to full screen by setting the following property to true:
+
+\begin{lstlisting}[language=Java]
+graphics.screen.fullscreen=false
+\end{lstlisting}
+
+However, not all resolutions can be used with the full-screen mode.
+The list of native resolutions is outputted in the console when
+the application is started, just under the "Available full screen
+display modes" text. The output is something like this:
+
+\begin{lstlisting}[language=Java]
+1600x1200, bpp: -1, hz: 50
+1280x1024, bpp: -1, hz: 51
+1024x768, bpp: -1, hz: 53
+800x600, bpp: -1, hz: 55
+\end{lstlisting}
+
+These are the resolutions you can use in full-screen. If you use any other
+resolution the program will crash.
+
+\section{Anti-aliasing}
+MSAA (multi-sample anti-aliasing) is deactivated by default. However, if you
+have a fast enough graphics card you can activate it by specifying the
+number of samples to 2, 4, 8 or 16. The more samples the better the quality of 
+MSAA.
+\begin{lstlisting}[language=Java]
+graphics.screen.antialiasing=0
+\end{lstlisting}
+
+\section{Rendering to images}
+The application can also render to image files. In order to configure the 
+rendering to images one must modify the properties that start with \texttt{graphics.render}.
+One may modify the resolution, the target FPS, the output folder, the 
+image name prefix and the anti-aliasing.
+
+\begin{lstlisting}[language=Java]
+graphics.render.renderoutput=false
+graphics.render.width=1600
+graphics.render.height=900
+graphics.render.targetfps=24
+graphics.render.folder=/home/tsagrista/tmp/OrbitVideo/5/
+graphics.render.filename=OrbitVideo
+graphics.render.antialiasing=false
+\end{lstlisting}
+
+\section{Orbit data configuration}
+The orbit data file can be configured as well. Usually you'll never need 
+to touch this as we will bundle newer data with subsequent versions of 
+this application. One can also deactivate the heliotropic correction.
+
+\begin{lstlisting}[language=Java]
+data.orbit.file=data/ORB1_20131127_000001.topcat
+data.orbit.referenceframe=RF_HELIOTROPIC
+\end{lstlisting}
+
+The data orbit file is an ASCII file with the following columns:\\
+
+\texttt{DATE X Y Z X\_dot Y\_dot Z\_dot X\_dotdot Y\_dotdot Z\_dotdot}\\
+
+Where the date is in the format \texttt{yyyy-MM-ddThh:mm:ss.ss}, the positions
+\texttt{X}, \texttt{Y} and \texttt{Z} are in $km$, the velocities \texttt{X\_dot}, \texttt{Y\_dot}, \texttt{Z\_dot}
+are in $km/s$ and the accelerations are in $km/s^2$.
+
+\section{Catalog file}
+The application is shipped with the HYG catalog (\href{http://www.astronexus.com/hyg}{http://www.astronexus.com/hyg})
+in an own binary form. However, it is possible to use other catalogs by either
+using the provided loaders (described in the config file) or by adding your
+own. You just need to implement the ICatalogLoader interface with its
+\texttt{loadStars()} method that returns a list of Star objects.
+Then, you need to point the program to the file you want to load.
+
+\begin{lstlisting}[language=Java]
+data.catalog.loader=gaia.cu9.ari.gaiaorbit.catalog.HYGBinaryLoader
+data.catalog.file=data/hygxyz.bin
+\end{lstlisting}
+
+\section{Scene properties}
+You can change some properties of the scene itself such as the camera field
+of view, the velocity in focus mode and the entities to be loaded
+at boot.
+
+This property sets the field of view angle of the camera. The bigger the
+angle the wider the camera view.
+
+\begin{lstlisting}[language=Java]
+scene.camera.fov=60
+\end{lstlisting}
+
+This property is a multiplier for the velocity of the camera in \texttt{FOCUS} mode.
+
+\begin{lstlisting}[language=Java]
+scene.camera.focus.vel=1
+\end{lstlisting}
+
+This is a list of entities to be loaded at startup. If you remove any of these
+you won't have the option to toggle its visibility from the application GUI.
+
+\begin{lstlisting}[language=Java]
+scene.entities=earth gaia moon mw
+\end{lstlisting}
+
+\section{Program options}
+Finally, you can disable the tutorial windows being shown every time the
+application is started with the following property.
+
+\begin{lstlisting}[language=Java]
+program.tutorial=true
+\end{lstlisting}
+
+\chapter{Running and operating instructions}
+
+\section{Running the program}
+In order to run the program follow the instructions of your operating
+system.
+
+\subsection{Linux}
+In order to run the application on Linux, open the terminal, give execution
+permissions to the run.sh file and then run it.
+
+\begin{lstlisting}[language=bash,basicstyle={\tiny\ttfamily}]
+> cd path_to_gaiasandbox_folder/
+> chmod +x run.sh
+> run.sh
+\end{lstlisting}
+
+Alternatively you can run the jar file directly, specifying the configuration
+file.
+
+\begin{lstlisting}[language=bash,basicstyle={\tiny\ttfamily}]
+> java -Dproperties.file=conf/global.properties -jar gaiasandbox.jar
+\end{lstlisting}
+
+\subsection{Windows}
+In order to run the application on Windows, open a terminal window (write
+'cmd' in the start menu search box) and run the run.bat file.
+
+\begin{lstlisting}[language=bash,basicstyle={\tiny\ttfamily}]
+> cd path_to_gaiasandbox_folder\
+> run.bat
+\end{lstlisting}
+	
+Alternatively you can run the jar file directly, specifying the configuration
+file.
+
+\begin{lstlisting}[language=bash,basicstyle={\tiny\ttfamily}]
+> java -Dproperties.file=conf/global.properties -jar gaiasandbox.jar
+\end{lstlisting}
+
+\subsection{MacOS}
+To run the application on MacOS systems, run the jar file specifying the
+configuration file.
+
+\begin{lstlisting}[language=bash,basicstyle={\tiny\ttfamily}]
+> java -Dproperties.file=conf/global.properties -jar gaiasandbox.jar
+\end{lstlisting}
+
+\section{Operating instructions}
+
+\subsection{User interface}
+The Gaia Sandbox application has an on-screen user interface designed to be
+easy to use. It is divided into three sections, Time, Camera and Object
+visibility.
+
+\subsubsection{Time}
+You can play and pause the simulation using the \texttt{PLAY/PAUSE} button in the
+\texttt{OPTIONS} window to the left. You can also change the pace, which is the 
+simulation time to real time ratio, expressed in $h/sec$. If the pace is 2.1, then
+one second of real time translates to two hours of simulation time.
+Finally, the current simulation date is given in the bottom box of
+the Time group.
+
+\subsubsection{Camera}
+In the camera options pane on the left you can select the type of camera. 
+This can also be done by using the Numpad 0-8 keys.
+There is also a list of focus objects that can be selected from
+the interface. When an object is selected the camera automatically centers
+it in the view and you can rotate around it or zoom in and out.
+Objects can also be selected by clicking on them directly in the view. \\
+** Hint: Try focusing on Gaia and zoom in to inspect its movement and orbit.
+
+\subsubsection{Object visibility}
+Most graphical elements can be turned off and on using the visibility
+toggles at the bottom of the \texttt{OPTIONS} window. For example you can remove
+the stars from the display by clicking on the 'stars' toggle. Some 
+graphical elements are a bit costly to display, such as the 'star names'
+or the 'Milky Way'. If you experience poor frame rates (below 30 FPS), try
+disabling some of the graphical elements and see if this fixes the issue.
+
+\subsection{Controls}
+This section describes the controls of the Gaia Sandbox.
+
+\subsubsection{Keyboard controls}
+
+\begin{center}
+    \begin{tabular}{ | r | p {11 cm} |}
+	\hline
+	\textbf{Control} & \textbf{Action} \\ \hline
+	Numpad 0-8 & Change camera mode \\
+	Numpad 0 & Sets camera mode to \texttt{FREE} \\
+	Numpad 1 & Sets camera mode to \texttt{FOLLOW\_ORBIT} \\
+	Numpad 2 & Sets camera mode to \texttt{FOLLOW\_GAIA} \\
+	Numpad 3 & Sets camera mode to \texttt{GAIA\_INTERTIAL\_RF}, where 
+			the camera is fixed with respect to Gaia \\
+	Numpad 4 & Sets camera mode to \texttt{ROTATE\_GAIA}, where the camera rotates with Gaia \\
+	Numpad 5 & Sets camera mode to \texttt{ROTATE\_PRECESS\_GAIA}, where the camera rotates and precesses with Gaia \\
+	Numpad 6 & Sets camera mode to \texttt{INSIDE\_GAIA} \\
+	Numpad 7 & Sets camera mode to \texttt{SCENE}, where the camera tries to get Gaia and the Earth in its field of view \\
+	Numpad 8 & Sets camera mode to \texttt{FOCUS}, where the camera focuses the selected object \\
+	P & Toggle simulation play/pause \\
+	I & Toggle reference axes visibility \\
+	\hline
+    \end{tabular}
+\end{center}
+
+\subsubsection{Mouse controls}
+
+\begin{center}
+    \begin{tabular}{ | r | p {9 cm} |}
+	\hline
+	\textbf{Control} & \textbf{Action} \\ \hline
+	Left click on object & Select object as focus \\
+	Left click + drag & Pitch and yaw (\texttt{FREE} mode) or rotate around foucs (\texttt{FOCUS} mode) \\
+	Middle click + drag or wheel & Forward/backward movement \\
+	Right click + drag & Move sideways (only in \texttt{FREE} mode) \\
+	Shift + left click + drag & Camera roll \\
+	\hline
+    \end{tabular}
+\end{center}
+
+\chapter{Copyright and licensing information}
+This software is published and distributed under the \texttt{LGPL}
+(Lesser General Public License) license. You can find the full license
+text in the \texttt{LICENSE.txt} file or visiting 
+\href{https://www.gnu.org/licenses/lgpl-3.0-standalone.html}{www.gnu.org/licenses/lgpl-3.0-standalone.html}.
+
+\chapter{Contact information}
+The main webpage of the project is \href{http://www.zah.uni-heidelberg.de/gaia2/outreach/gaiasandbox}{www.zah.uni-heidelberg.de/gaia2/outreach/gaiasandbox}.
+There you can find the latest versions and the latest information on the Gaia Sandbox.
+\section{Main designer and developer}
+Toni Sagrist\`a Sell\'es
+\begin{itemize}
+\item E-mail: \href{mailto:tsagrista@ari.uni-heidelberg.de}{tsagrista@ari.uni-heidelberg.de}
+\item Personal webpage: \href{http://www.tonisagrista.com}{www.tonisagrista.com}
+\end{itemize}
+
+\section{Contributors}
+Dr. Stefan Jordan
+\begin{itemize}
+\item E-mail: \href{mailto:jordan@ari.uni-heidelberg.de}{jordan@ari.uni-heidelberg.de}
+\item Personal webpage: \href{http://www.stefan-jordan.de}{www.stefan-jordan.de}
+\end{itemize}
+
+
+\chapter{Known bugs, issues and TODOs}
+\begin{itemize}
+\item Distances are not unified amongst all the entities.
+\item The program crashes if Gaia reaches the end or the beginning
+of the orbit line.
+\item Clipping problems when rendering to files in models with very near 
+surfaces (i.e. bottom of Gaia). Possible depth buffer problem.
+\item If the camera is far from the orbit line and FOLLOW\_ORBIT or 
+FOLLOW\_GAIA camera modes are selected, the camera should quickly
+move to the orbit position.
+\item Possible problems with the Mac and Windows versions.
+\item OwnTextButton cursor image (pointing hand) disappears when button is
+pressed.
+\item Accented and greek letters must be added to the character set.
+\item Some missing symbols (such as the degree symbol) must be added
+to the character set.
+\end{itemize}
+
+\chapter{Credits and acknowledgements}
+The author would like to acknowledge the following people, or the
+people behind the following technologies/resources:
+
+\begin{itemize}
+\item The DLR (\href{http://www.dlr.de/}{http://www.dlr.de/}) for financing this project.
+\item Dr. Martin Altmann for providing the orbit data.
+\item Libgdx - \href{http://libgdx.badlogicgames.com}{http://libgdx.badlogicgames.com}
+\item HYG catalog - \href{http://www.astronexus.com/hyg}{http://www.astronexus.com/hyg}
+\end{itemize}
+
+\chapter{Change log}
+
+\textbf{[version 0.504b] - 16/04/2014}
+\begin{itemize}
+\item Fixed Sun distance in FOCUS mode.
+\item Log messages hidden by default.
+\item Smooth shading for all models except mw.
+\item Normals removed from mw model. Transparency tweaked.
+\item Initial camera position moved to Gaia.
+\end{itemize}
+
+\textbf{[version 0.503b] - 15/04/2014}
+\begin{itemize}
+\item Added distance to focus.
+\item Fixed Java8 library issue.
+\item Fixed font shader for MacOS.
+\end{itemize}
+
+\textbf{[version 0.502b] - 14/04/2014}
+\begin{itemize}
+\item First public version.
+\end{itemize}
+
+
+\end{document}

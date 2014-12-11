@@ -1,0 +1,20 @@
+font.name=DejaVu Sans Condensed
+font.size=11
+font.bold=true
+font.italic=false
+
+pad.top=0
+pad.right=0
+pad.bottom=0
+pad.left=0
+pad.advance.x=0
+pad.advance.y=0
+
+glyph.native.rendering=false
+glyph.page.width=512
+glyph.page.height=64
+glyph.text=AÀÁÄBCDEÈÉËFGHIÌÍÏJKLMNOÒÓÔPQRSTUÙÚÜVWXYZ\naàáäbcdeèéêëfghiìíîïjklmnoòóôöpqrstuùúûüvwxyz\n1234567890\n"!`?'.,;:()[]{}<>|/@\^$-%+=#_&~*\nθωερτψυιοπασδφγηςκλζχξωβνμ\nΘΩΕΡΤΨΥΙΟΠΑΣΔΦΓΗςΚΛΖΧΞΩΒΝΜ\n±∓×·÷√∑∫∮¬∝∞≠≈⇔↔≪≫≤≥\n°ℏÅ⊙ ☉ ☼ ☀¶ß©®£€¼½¾²³
+
+effect.class=com.badlogic.gdx.tools.hiero.unicodefont.effects.ColorEffect
+effect.Color=ffffff
+

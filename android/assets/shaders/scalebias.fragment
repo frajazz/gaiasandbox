@@ -1,0 +1,18 @@
+// Simple lens flare implementation by Toni Sagrista
+
+#ifdef GL_ES
+precision mediump float;
+precision mediump int;
+#endif
+
+uniform sampler2D u_texture0;
+
+uniform vec3 u_scale = vec3(1.0);
+uniform vec3 u_bias = vec3(0.0);
+
+varying vec2 v_texCoords;
+
+void main() {
+    gl_FragColor = max(vec4(0.0), texture2D(u_texture0, v_texCoords) + vec4(uBias, 0.0)) * vec4(uScale, 1.0);
+}
+

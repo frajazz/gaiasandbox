@@ -1,0 +1,13 @@
+# Blender MTL File: 'soyuz.blend'
+# Material Count: 1
+
+newmtl Texture
+Ns 0.000000
+Ka 0.000000 0.000000 0.000000
+Kd 0.561589 0.561589 0.561589
+Ks 0.589404 0.589404 0.589404
+Ni 1.000000
+d 1.000000
+illum 2
+map_Kd /home/tsagrista/Workspaces/workspace/GaiaOrbit-android/assets/models/soyuz/img/soyuzSkin.png
+map_d /home/tsagrista/Workspaces/workspace/GaiaOrbit-android/assets/models/soyuz/img/soyuzSkin.png

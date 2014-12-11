@@ -1,0 +1,26 @@
+# This file contains the description of the data providers and their
+# parameters
+
+data.providers=gaia.cu9.ari.gaiaorbit.data.StarLoader gaia.cu9.ari.gaiaorbit.data.NodeLoader gaia.cu9.ari.gaiaorbit.data.ConstellationsLoader gaia.cu9.ari.gaiaorbit.data.ConstelBoundariesLoader
+
+# STAR LOADER - loads a catalog of stars
+
+# Catalog loader class to use: HYGCSVLoader or HYGBinLoader
+gaia.cu9.ari.gaiaorbit.data.StarLoader.loader=gaia.cu9.ari.gaiaorbit.data.stars.HYGBinaryLoader
+# Catalog data file
+gaia.cu9.ari.gaiaorbit.data.StarLoader.file=data/hygxyz.bin
+
+# NON-STAR LOADER - loads non-star entities (planets, satellites, moons, orbits...)
+
+# Configuration file with the entities
+gaia.cu9.ari.gaiaorbit.data.NodeLoader.files=conf/bodies.properties conf/satellites.properties conf/orbits.properties conf/extra.properties
+
+
+# CONSTELLATION LINE LOADER
+# Data file
+gaia.cu9.ari.gaiaorbit.data.ConstellationsLoader.file=data/constel.csv
+
+
+# CONSTELLATION BOUNDARIES LOADER
+# Data file
+gaia.cu9.ari.gaiaorbit.data.ConstelBoundariesLoader.file=data/boundaries.csv
