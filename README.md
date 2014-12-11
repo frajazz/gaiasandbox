@@ -1,5 +1,7 @@
 
-#Gaia Sandbox
+#Gaia Sandbox readme file
+-------------------------
+--------------------------
 
 
 This is the README file for the Gaia Sandbox
