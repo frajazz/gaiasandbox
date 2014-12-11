@@ -18,7 +18,7 @@
 		<link>
 			<name>assets</name>
 			<type>2</type>
-			<location>/home/tsagrista/Workspaces/workspace-luna/GaiaSandbox-android/assets</location>
+			<location>/home/tsagrista/git/gaiasandbox/android/assets</location>
 		</link>
 	</linkedResources>
 </projectDescription>

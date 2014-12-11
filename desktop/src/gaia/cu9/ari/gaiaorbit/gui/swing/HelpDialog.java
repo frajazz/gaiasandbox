@@ -255,9 +255,26 @@ public class HelpDialog extends JFrame {
 
 	license.add(new LinkLabel("https://www.gnu.org/licenses/lgpl.html"), "skip,wrap");
 
+	JPanel supporting = new JPanel(new MigLayout("fillx", "[grow,fill][grow,fill][grow,fill]", ""));
+	supporting.setBorder(new LineBorder(Color.LIGHT_GRAY));
+
+	icon = createImageIcon("/img/bwt.png",
+		"BWT");
+	label1 = new JLabel(icon, JLabel.CENTER);
+	supporting.add(label1);
+	icon = createImageIcon("/img/dlr.png",
+		"DLR");
+	label1 = new JLabel(icon, JLabel.CENTER);
+	supporting.add(label1);
+	icon = createImageIcon("/img/zah.png",
+		"ZAH");
+	label1 = new JLabel(icon, JLabel.CENTER);
+	supporting.add(label1);
+
 	about.add(author, "span,wrap");
 	about.add(contrib, "span,wrap");
 	about.add(license, "span,wrap");
+	about.add(supporting, "span,wrap");
 
 	JPanel aboutPanel = new JPanel(new MigLayout("", "[grow,fill][]", ""));
 	aboutPanel.add(about);
