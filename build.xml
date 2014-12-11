@@ -4,21 +4,22 @@
 
 	<!-- PROPERTIES -->
 	<property environment="env"/>
-	<property name="git.folder" location="/home/tsagrista/git/" />
+	<property name="git.folder" location="../" />
 	<property name="lib.name" value="lib" />
-	<property name="lib.dir" location="${output.dir}/${lib.name}" />
-	<property name="gs.dir" value="../GaiaSandbox" />
-	<property name="gs-android.dir" value="../GaiaSandbox-android" />
-	<property name="gs-desktop.dir" value="." />
-	<property name="output.dir" location="${gs-desktop.dir}/releases/gaiasandbox-${version}" />
+	<property name="base.dir" value="./" />
+	<property name="gs.dir" value="core" />
+	<property name="gs-android.dir" value="android" />
+	<property name="gs-desktop.dir" value="desktop" />
+	<property name="output.dir" location="${base.dir}/releases/gaiasandbox-${version}" />
 	<property name="assets.link" value="${gs-android.dir}/assets"/>
+	<property name="lib.dir" location="${output.dir}/${lib.name}" />
 	<property name="gdx-postproc.dir" value="${user.home}/git/libgdx-contribs/postprocessing" />
 	<property name="gdx-postproc-utils.dir" value="${user.home}/git/libgdx-contribs/utils" />
 	<property name="gdx.dir" value="${user.home}/git/libgdx/gdx"/>
 	<property name="gdx-jnigen.dir" value="${user.home}/git/libgdx/extensions/gdx-jnigen"/>
-    <property name="debuglevel" value="source,lines,vars"/>
-    <property name="target" value="1.7"/>
-    <property name="source" value="1.7"/>
+    	<property name="debuglevel" value="source,lines,vars"/>
+    	<property name="target" value="1.7"/>
+    	<property name="source" value="1.7"/>
     
     <!-- CLASSPATHS -->
     <path id="gdx-jnigen.classpath">
@@ -127,7 +128,7 @@
 		<!-- Copy data files -->
 		<mkdir dir="${output.dir}/data" />
 		<copy todir="${output.dir}/data">
-			<fileset dir="bin/data">
+			<fileset dir="${gs-desktop.dir}/bin/data">
 			    <exclude name="android/" />
 			</fileset>
 		</copy>
@@ -135,19 +136,20 @@
 		<!-- Copy scripts files -->
 		<mkdir dir="${output.dir}/scripts" />
 		<copy todir="${output.dir}/scripts">
-			<fileset dir="bin/scripts">
+			<fileset dir="${gs-desktop.dir}/bin/scripts">
 			</fileset>
 		</copy>
 
 		<!-- Copy script, README and LICENSE -->
 		<copy todir="${output.dir}">
 			<fileset dir="${gs-desktop.dir}/exe" />
+			<file file="${base.dir}/README.md" />
 		</copy>
 		<!-- Make run.sh executable -->
 		<chmod file="${output.dir}/run.sh" perm="+x" />
 		<!-- Replace version in readme file -->
 		<loadfile property="version.contents" srcFile="${gs.dir}/src/version"/>
-		<replace file="${output.dir}/README.txt" token="@@@[VERSION-PLACEHOLDER]@@@" value="${version.contents}"/>
+		<replace file="${output.dir}/README.md" token="--------------------------" value="${version.contents}"/>
 		
 		<!-- Copy jar libraries -->
 		<mkdir dir="${lib.dir}" />
