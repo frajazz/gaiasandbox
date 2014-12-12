@@ -179,7 +179,7 @@ the properties explained in the previous section and some
 more. This section is devoted to these properties
 that are not represented in the GUI but are still
 configurable.
-The configuration file is located in conf/global.properties. Here
+The configuration file is located in `conf/global.properties`. Here
 are some of the properties found in this file that are not
 represented in the GUI.
 
@@ -196,7 +196,7 @@ This contains the magnitude limit above which stars will
 not be loaded.
 
 - **program.tutorial** - 
-This gets a boolean (true|false) indicating whether the tutorial
+This gets a boolean (`true`|`false`) indicating whether the tutorial
 script should be automatically run at startup.
 
 - **program.tutorial.script** - 
@@ -209,7 +209,7 @@ such as the number of stars rendered as a quad, the number of stars
 rendered as a point or the frames per second.
 
 - **program.ui.theme** - 
-Specifies the GUI theme. Two themes are available: birght and dark.
+Specifies the GUI theme. Two themes are available: `birght` and `dark`.
 	
 	
 
@@ -241,6 +241,14 @@ ant -Dversion=[version]
 
 This will create a `releases` folder in `~/git/gaiasandbox` with 
 your package and the compiled application.
+
+To run the application just go to the newly created folder and run
+the `run.sh` file.
+
+```
+cd releases/gaiasandbox-[version]
+run.sh
+```
 
 ###3.2 Running the packaged program
 
@@ -327,7 +335,7 @@ Finally, you can lock the camera to the focus when in focus mode. Doing so
 links the reference system of the camera to that of the object and thus
 it moves with it.
 
-#####3.3.1.3 Object
+#####3.3.1.3 Objects
 There is a list of focus objects that can be selected from
 the interface. When an object is selected the camera automatically centers
 it in the view and you can rotate around it or zoom in and out.
@@ -404,6 +412,7 @@ configuration options refer to chapter 2 - Configuration Instructions.
 This section describes the controls of the Gaia Sandbox.
 
 #####3.3.2.1 Keyboard controls
+Here are the default keyboard controls.
 
 Key(s)                   | Action
 :----------------------- | :----------------------------------------------------
@@ -436,6 +445,7 @@ T			 | Toggle satellites
 
 
 #####3.3.2.2 Mouse controls
+Here are the default mouse controls.
 
 Mouse + keys             | Action
 :----------------------- | :----------------------------------------------------
@@ -444,6 +454,12 @@ L-MOUSE + DRAG		 | Pitch and yaw (FREE mode) or rotate around foucs (FOCUS mode)
 L-SHIFT + L-MOUSE + DRAG | Camera roll
 L-CTRL + L-MOUSE + DRAG	 | Deviate camera line of sight from focus
 M-MOUSE + DRAG or WHEEL	 | Forward/backward movement
+
+## Touch controls
+Not yet implemented.
+
+## Controller controls
+Not yet implemented.
 
 ######################################################
 ##  4. Copyright and licensing information          #
