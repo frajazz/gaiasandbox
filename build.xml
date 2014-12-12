@@ -66,7 +66,7 @@
 	</target>
 	
 	<!-- builds and packages the desktop app -->
-	<target name="build-desktop" depends="build_info, compile">
+	<target name="build-desktop" depends="compile, build_info">
 		<!-- Prepare output directory -->
 		<mkdir dir="${gs-desktop.dir}/releases" />
 		<delete dir="${output.dir}" />
@@ -148,7 +148,7 @@
 		<!-- Make run.sh executable -->
 		<chmod file="${output.dir}/run.sh" perm="+x" />
 		<!-- Replace version in readme file -->
-		<loadfile property="version.contents" srcFile="${gs.dir}/src/version"/>
+		<loadfile property="version.contents" srcFile="${gs.dir}/bin/version"/>
 		<replace file="${output.dir}/README.md" token="--------------------------" value="${version.contents}"/>
 		
 		<!-- Copy jar libraries -->
@@ -174,7 +174,6 @@
             <src path="${gs.dir}/src"/>
             <classpath refid="gs.classpath"/>
         </javac>
-        <copy file="${gs.dir}/src/version" todir="${gs.dir}/bin" />
     </target>
     
     <!-- BUILD GaiaSandbox-desktop -->
@@ -225,40 +224,50 @@
 	</target>
 
 	<!-- BUILDS THE VERSION FILE WITH THE BUILD INFO -->
-	<target name="build_info">
+	<target name="build_info" depends="git.revision">
 		<tstamp>
 			<format property="builtat" pattern="dd/MM/yyyy hh:mm aa"
 				timezone="CET" />
 		</tstamp>
-		<exec executable="svnversion" dir="${gs.dir}"
-			outputproperty="svnversion-main" />
-		<exec executable="svnversion" dir="${gs-android.dir}"
-			outputproperty="svnversion-android" />
-		<exec executable="svnversion" dir="." outputproperty="svnversion-desktop" />
 		<exec executable="whoami" outputproperty="whoami" />
 		<exec executable="uname" outputproperty="buildsystem">
 			<arg value="-a" />
 		</exec>
 
-		<delete file="${gs.dir}/src/version" />
-		<propertyfile file="${gs.dir}/src/versionaux">
+		<delete file="${gs.dir}/bin/version" />
+		<propertyfile file="${gs.dir}/bin/versionaux">
 			<entry key="buildtime" value="${builtat}" />
 			<entry key="build"
-				value="${svnversion-main}/${svnversion-android}/${svnversion-desktop}" />
+				value="${repository.version}" />
 			<entry key="builder" value="${whoami}" />
 			<entry key="version" value="${version}" />
 			<entry key="system" value="${buildsystem}" />
 		</propertyfile>
-		<copy file="${gs.dir}/src/versionaux" tofile="${gs.dir}/src/version">
+		<copy file="${gs.dir}/bin/versionaux" tofile="${gs.dir}/bin/version">
   			<filterchain>
       			<headfilter skip="1"/>
   			</filterchain>
 		</copy>
-		<delete file="${gs.dir}/src/versionaux" />
-		<replace file="${gs.dir}/src/version" token="\" value=""/>
-		<copy file="${gs.dir}/src/version" todir="${gs.dir}/bin/" />
+		<delete file="${gs.dir}/bin/versionaux" />
+		<replace file="${gs.dir}/bin/version" token="\" value=""/>
 	</target>
-	
+
+	<available file=".git" type="dir" property="git.present"/>
+
+	<target name="git.revision" description="Store git revision in ${repository.version}" if="git.present">
+    		<exec executable="git" outputproperty="git.revision" failifexecutionfails="false" errorproperty="">
+			<arg value="describe"/>
+			<arg value="--tags"/>
+			<arg value="--always"/>
+			<arg value="HEAD"/>
+		</exec>
+		<condition property="repository.version" value="${git.revision}" else="unknown">
+			<and>
+				<isset property="git.revision"/>
+				<length string="${git.revision}" trim="yes" length="0" when="greater"/>
+		       </and>
+		</condition>
+	</target>
 	
 	<!-- APPLET - NOT USED ANYMORE -->
 	<target name="build_applet"
