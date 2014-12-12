@@ -21,6 +21,7 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTabbedPane;
 import javax.swing.JTextArea;
+import javax.swing.ScrollPaneConstants;
 import javax.swing.border.EmptyBorder;
 import javax.swing.border.LineBorder;
 import javax.swing.border.TitledBorder;
@@ -28,6 +29,7 @@ import javax.swing.border.TitledBorder;
 import net.miginfocom.swing.MigLayout;
 
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.files.FileHandle;
 import com.badlogic.gdx.graphics.GL20;
 
 public class HelpDialog extends JFrame {
@@ -110,7 +112,24 @@ public class HelpDialog extends JFrame {
 	help.add(help2, "wrap");
 
 	LinkLabel wikiWebsite = new LinkLabel("https://github.com/ari-zah/gaiasandbox/wiki");
+
 	help.add(wikiWebsite, "span,wrap");
+
+	JPanel readmepanel = new JPanel(new MigLayout("fillx", "[grow,fill]", ""));
+	readmepanel.setBorder(new TitledBorder("Readme file"));
+	FileHandle readmefile = Gdx.files.internal("README.md");
+	if (!readmefile.exists()) {
+	    readmefile = Gdx.files.internal("../README.md");
+	}
+	JTextArea readme = new JTextArea(readmefile.readString(), 15, 35);
+	readme.setEditable(false);
+	readme.setLineWrap(true);
+	readme.setWrapStyleWord(true);
+	JScrollPane readmescroll = new JScrollPane(readme);
+	readmescroll.setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS);
+	readmepanel.add(readmescroll, "span");
+
+	help.add(readmepanel, "span, wrap");
 
 	JPanel helpPanel = new JPanel(new MigLayout("", "[grow,fill][grow,fill]", ""));
 	helpPanel.add(help);

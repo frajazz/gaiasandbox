@@ -54,6 +54,7 @@ import com.badlogic.gdx.InputMultiplexer;
 import com.badlogic.gdx.assets.AssetManager;
 import com.badlogic.gdx.assets.loaders.FileHandleResolver;
 import com.badlogic.gdx.assets.loaders.resolvers.InternalFileHandleResolver;
+import com.badlogic.gdx.files.FileHandle;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.Pixmap.Format;
 import com.badlogic.gdx.graphics.glutils.FrameBuffer;
@@ -159,7 +160,11 @@ public class GaiaSandbox implements ApplicationListener, IObserver {
 		} else {
 		    File confFile = new File(System.getProperty("properties.file"));
 		    FileInputStream fis = new FileInputStream(confFile);
-		    GlobalConf.initialize(fis, Gdx.files.internal("version").read());
+		    FileHandle versionfile = Gdx.files.internal("version");
+		    if (!versionfile.exists()) {
+			versionfile = Gdx.files.internal("data/dummyversion");
+		    }
+		    GlobalConf.initialize(fis, versionfile.read());
 		    fis.close();
 		}
 	    } catch (Exception e) {
