@@ -13,6 +13,7 @@ import gaia.cu9.ari.gaiaorbit.util.math.MathUtilsd;
 import java.awt.Font;
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.InputStream;
 
 import javax.swing.JFrame;
 import javax.swing.UIManager;
@@ -45,7 +46,13 @@ public class GaiaSandboxDesktop implements IObserver {
 
 	    File confFile = new File(System.getProperty("properties.file"));
 	    FileInputStream fis = new FileInputStream(confFile);
-	    GlobalConf.initialize(fis, GaiaSandboxDesktop.class.getResourceAsStream("/version"));
+	    // This should work for the normal execution
+	    InputStream version = GaiaSandboxDesktop.class.getResourceAsStream("/version");
+	    if (version == null) {
+	    	// In case of running in 'developer' mode
+	    	version= new FileInputStream(new File("../android/assets/data/dummyversion"));
+	    }
+	    GlobalConf.initialize(fis, version);
 	    fis.close();
 
 	    KeyMappings.initialize();
