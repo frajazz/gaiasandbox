@@ -125,15 +125,25 @@ public class GSPostProcessor implements IPostProcessor, IObserver {
 
     @Override
     public void notify(Events event, final Object... data) {
-	GlobalConf conf = GlobalConf.instance;
+	final GlobalConf conf = GlobalConf.instance;
 	switch (event) {
 	case PROPERTIES_WRITTEN:
 	    if (changed(pps[RenderType.screenshot.index].pp, conf.SCREENSHOT_WIDTH, conf.SCREENSHOT_HEIGHT)) {
-		replace(RenderType.screenshot.index, conf.SCREENSHOT_WIDTH, conf.SCREENSHOT_HEIGHT);
+		Gdx.app.postRunnable(new Runnable() {
+		    @Override
+		    public void run() {
+			replace(RenderType.screenshot.index, conf.SCREENSHOT_WIDTH, conf.SCREENSHOT_HEIGHT);
+		    }
+		});
 	    }
 
 	    if (changed(pps[RenderType.frame.index].pp, conf.RENDER_WIDTH, conf.RENDER_HEIGHT)) {
-		replace(RenderType.frame.index, conf.RENDER_WIDTH, conf.RENDER_HEIGHT);
+		Gdx.app.postRunnable(new Runnable() {
+		    @Override
+		    public void run() {
+			replace(RenderType.frame.index, conf.RENDER_WIDTH, conf.RENDER_HEIGHT);
+		    }
+		});
 	    }
 	    break;
 	case BLOOM_CMD:
