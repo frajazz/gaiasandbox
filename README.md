@@ -57,23 +57,6 @@ installation, as it is ready to be executed out of the
 box. Just uncompress the package anywhere in your drive
 and you are good to go.
 
-###1.3 Run from code
-
-If you want to compile the code, you will need the
-JDK7+ installed. Just clone this repository and my fork
-of [libgdx-contribs-postprocessing](https://github.com/langurmonkey/libgdx-contribs).
-Then, assuming you cloned both repos in the same folder
-(`~/git`), you just need to compile to build the app and get the
-full package.
-
-```
-cd ~/git/gaiasandbox
-ant -Dversion=[version]
-```
-
-This will create a `releases` folder in `~/git/gaiasandbox` with 
-your package and the compiled application.
-
 
 
 ######################################################
@@ -234,12 +217,37 @@ Specifies the GUI theme. Two themes are available: birght and dark.
 ##  3. Running and operating instructions           #
 ######################################################
 
-###3.1 Running the program
+###3.1 Running from code
+
+If you want to compile the code, you will need the
+JDK7+ installed. Just clone this repository and my fork
+of [libgdx-contribs-postprocessing](https://github.com/langurmonkey/libgdx-contribs).
+
+```
+cd $GIT_FOLDER
+git clone https://github.com/ari-zah/gaiasandbox.git
+git clone https://github.com/langurmonkey/libgdx-contribs.git
+
+```
+
+Then, assuming you cloned both repos in the same folder
+(`~/git` or `$GIT_FOLDER` or whatever), you just need to compile 
+to build the app and get the full package.
+
+```
+cd ~/git/gaiasandbox
+ant -Dversion=[version]
+```
+
+This will create a `releases` folder in `~/git/gaiasandbox` with 
+your package and the compiled application.
+
+###3.2 Running the packaged program
 
 In order to run the program follow the instructions of your operating
 system.
 
-####3.1.1 Linux
+####3.2.1 Linux
 In order to run the application on Linux, open the terminal, give execution
 permissions to the run.sh file and then run it.
 	
@@ -256,7 +264,7 @@ file.
 java -Dproperties.file=conf/global.properties -jar gaiasandbox.jar
 ```
 
-####3.1.2 Windows
+####3.2.2 Windows
 In order to run the application on Windows, open a terminal window (write
 'cmd' in the start menu search box) and run the run.bat file.
 	
@@ -272,7 +280,7 @@ file.
 java -Dproperties.file=conf/global.properties -jar gaiasandbox.jar
 ```
 
-####3.1.3 MacOS
+####3.2.3 MacOS
 To run the application on MacOS systems, run the jar file specifying the
 configuration file.
 	
@@ -280,14 +288,14 @@ configuration file.
 java -Dproperties.file=conf/global.properties -jar gaiasandbox.jar
 ```
 	
-###3.2 Operating instructions
+###3.3 Operating instructions
 
-####3.2.1 User interface
+####3.3.1 User interface
 The Gaia Sandbox application has an on-screen user interface designed to be
 easy to use. It is divided into five sections, Time, Camera, Objects, Type
 visibility, Lighting and Gaia scan.
 
-#####3.2.1.1 Time
+#####3.3.1.1 Time
 You can play and pause the simulation using the PLAY/PAUSE button in the
 OPTIONS window to the left. You can also use **SPACE** to play and pause the time.
 You can also change the pace, which is the simulation time to real time ratio, expressed in [h/sec].
@@ -297,7 +305,7 @@ the value of the time pace.
 Finally, the current simulation date is given in the bottom box of
 the Time group.
 
-#####3.2.1.2 Camera
+#####3.3.1.2 Camera
 In the camera options pane on the left you can select the type of camera. 
 This can also be done by using the **NUMPAD 0-4** keys.
 There are three camera modes: Free mode, where the camera is not linked
@@ -319,7 +327,7 @@ Finally, you can lock the camera to the focus when in focus mode. Doing so
 links the reference system of the camera to that of the object and thus
 it moves with it.
 
-#####3.2.1.3 Object
+#####3.3.1.3 Object
 There is a list of focus objects that can be selected from
 the interface. When an object is selected the camera automatically centers
 it in the view and you can rotate around it or zoom in and out.
@@ -327,7 +335,7 @@ Objects can also be selected by double-clicking on them directly in the view or
 by using the search box provided above the list. You can also invoke a search dialog
 by pressing **CTRL+F**.
 
-#####3.2.1.4 Type visibility
+#####3.3.1.4 Type visibility
 Most graphical elements can be turned off and on using these
 toggles. For example you can remove the stars from the display by
 clicking on the 'stars' toggle. The object types available are 
@@ -349,7 +357,7 @@ the following:
 - Milky way
 - Others
 
-#####3.2.1.5 Lighting
+#####3.3.1.5 Lighting
 Here are a few options to control the lighting of the scene:
 
 - **Star brightness**: Controls the brightness of stars.
@@ -362,7 +370,7 @@ user's consideration.
 has some impact on the performance, specially if you have a 
 below-the-average graphics card.
 
-#####3.2.1.6 Gaia scan
+#####3.3.1.6 Gaia scan
 You can also enable the real time computation of Gaia observation. To
 do so, tick the 'Enable Gaia scan' checkbox. Keep in mind that this computation 
 is done by interpolating the scan path and calculating what stars fall
@@ -375,7 +383,7 @@ Finally, you can decide to only display the stars that have been observed
 by Gaia at least once. To do so, tick the 'Show only observed stars'
 checkbox.
 
-####3.2.2 Running scripts
+####3.3.2 Running scripts
 In order to run python scripts, click on the 'Run script...' button at the
 bottom of the GUI window. A new window will pop up allowing you to select
 the script you want to run. Once you have selected it, the script will be
@@ -385,17 +393,17 @@ the 'Run' button. If the script contains errors, you will be notified
 in the box below and you will not be able to run the script until these
 errors are dealt with.
 
-####3.2.3 Configuration window
+####3.3.3 Configuration window
 You can launch the preferences window any time during the execution
 of the program. To do so, click on the 'Preferences' button at
 the bottom of the GUI window. For a detailed description of the
 configuration options refer to chapter 2 - Configuration Instructions.
 
 
-####3.2.4 Controls
+####3.3.4 Controls
 This section describes the controls of the Gaia Sandbox.
 
-#####3.2.2.1 Keyboard controls
+#####3.3.2.1 Keyboard controls
 
 Key(s)                   | Action
 :----------------------- | :----------------------------------------------------
@@ -427,7 +435,7 @@ S			 | Toggle stars
 T			 | Toggle satellites
 
 
-#####3.2.2.2 Mouse controls
+#####3.3.2.2 Mouse controls
 
 Mouse + keys             | Action
 :----------------------- | :----------------------------------------------------
