@@ -256,7 +256,7 @@ public class HelpDialog extends JFrame {
 	aux = new JLabel("Contributors");
 	aux.setFont(boldFont);
 	contrib.add(aux);
-	contrib.add(new JLabel("Dr. Stefan Jordan"));
+	contrib.add(new JLabel("Apl. Prof. Dr. Stefan Jordan"));
 	contrib.add(new LinkLabel("jordan@ari.uni-heidelberg.de", "mailto:jordan@ari.uni-heidelberg.de"), "wrap");
 
 	JPanel license = new JPanel(new MigLayout("fillx", "[grow,fill][grow,fill][]", ""));
@@ -277,16 +277,16 @@ public class HelpDialog extends JFrame {
 	JPanel supporting = new JPanel(new MigLayout("fillx", "[grow,fill][grow,fill][grow,fill]", ""));
 	supporting.setBorder(new LineBorder(Color.LIGHT_GRAY));
 
-	icon = createImageIcon("/img/bwt.png",
-		"BWT");
+	icon = createImageIcon("/img/zah.png",
+		"ZAH");
 	label1 = new JLabel(icon, JLabel.CENTER);
 	supporting.add(label1);
 	icon = createImageIcon("/img/dlr.png",
 		"DLR");
 	label1 = new JLabel(icon, JLabel.CENTER);
 	supporting.add(label1);
-	icon = createImageIcon("/img/zah.png",
-		"ZAH");
+	icon = createImageIcon("/img/bwt.png",
+		"BWT");
 	label1 = new JLabel(icon, JLabel.CENTER);
 	supporting.add(label1);
 
