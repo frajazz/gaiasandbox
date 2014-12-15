@@ -231,7 +231,7 @@ git clone https://github.com/langurmonkey/libgdx-contribs.git
 
 ```
 Also, this guide is for Unix-like systems. If you are working 
-on Windows, it may also work on Cygwin or the like, even though it
+on Windows, it may also work on Cygwin and the like, even though it
 has not been tested.
 
 #### Compile and run
