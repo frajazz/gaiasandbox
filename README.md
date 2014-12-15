@@ -1,6 +1,4 @@
-![Gaia Sandbox logo](http://www.zah.uni-heidelberg.de/fileadmin/user_upload/gaia/gaiasandbox/img/banner-gs.jpg)
-
-##Gaia Sandbox
+![Gaia Sandbox](http://www.zah.uni-heidelberg.de/fileadmin/user_upload/gaia/gaiasandbox/img/banner-gs.jpg)
 -------------------------
 --------------------------
 
