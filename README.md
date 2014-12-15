@@ -20,7 +20,7 @@ This file contains the following sections:
 
 
 ######################################################
-##  1. Installation instructions and requirements   #
+##  1. Installation instructions and requirements    #
 ######################################################
 
 ###1.1 Requirements
@@ -52,7 +52,7 @@ and you are good to go.
 
 
 ######################################################
-##  2. Configuration instructions                   #
+##  2. Configuration instructions                    #
 ######################################################
 
 ###2.1 Configuration interface
@@ -146,7 +146,7 @@ Specifies the GUI theme. Two themes are available: `bright` and `dark`.
 	
 
 ######################################################
-##  3. Running instructions           #
+##  3. Running instructions                          #
 ######################################################
 
 ###3.1 Running the Gaia Sandbox
@@ -180,7 +180,7 @@ described in section *3.1.1 - Linux* section.
 	
 
 ######################################################
-##  4. Copyright and licensing information          #
+##  4. Copyright and licensing information           #
 ######################################################
 
 This software is published and distributed under the LGPL
@@ -191,7 +191,7 @@ or visiting https://www.gnu.org/licenses/lgpl-3.0-standalone.html
 
 
 ######################################################
-##  5. Contact information                          #
+##  5. Contact information                           #
 ######################################################
 
 The main webpage of the project is 
@@ -215,7 +215,7 @@ https://github.com/ari-zah/gaiasandbox
 
 
 ######################################################
-##  6. Credits and acknowledgements                 #
+##  6. Credits and acknowledgements                  #
 ######################################################
 
 The author would like to acknowledge the following people, or the
