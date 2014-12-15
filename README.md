@@ -219,6 +219,7 @@ Specifies the GUI theme. Two themes are available: `birght` and `dark`.
 
 ###3.1 Running from code
 
+#### Requirements
 If you want to compile the code, you will need the
 JDK7+ installed. Just clone this repository and my fork
 of [libgdx-contribs-postprocessing](https://github.com/langurmonkey/libgdx-contribs).
@@ -229,20 +230,35 @@ git clone https://github.com/ari-zah/gaiasandbox.git
 git clone https://github.com/langurmonkey/libgdx-contribs.git
 
 ```
+Also, this guide is for Unix-like systems. If you are working 
+on Windows, it may also work on Cygwin or the like, even though it
+has not been tested.
 
-Then, assuming you cloned both repos in the same folder
-(`~/git` or `$GIT_FOLDER` or whatever), you just need to compile 
-to build the app and get the full package.
+#### Compile and run
+If you want to compile and run the application, you 
+just need to do the following.
+```
+ant compile
+ant run
+```
+Note that run does not depend on compile, so you need
+to have compiled the Gaia Sandbox at least once to
+be able to run it.
+
+#### Package the Gaia Sandbox
+To package the application yourself, you just need to run
+the default ant target, giving it a version number.
 
 ```
-cd ~/git/gaiasandbox
+cd $GIT_FOLDER/gaiasandbox
 ant -Dversion=[version]
 ```
 
-This will create a `releases` folder in `~/git/gaiasandbox` with 
-your package and the compiled application.
+This target will compile and package the application into a `.tgz` file
+under the `releases` folder in your `gaiasandbox/` folder. It will
+also maintain the untared, uncompressed folder.
 
-To run the application just go to the newly created folder and run
+To run the application from this package just go to this newly created folder and run
 the `run.sh` file.
 
 ```
