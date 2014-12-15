@@ -141,7 +141,7 @@ rendered as a quad, the number of stars rendered as a point and
 the frames per second will be shown at the top-right.
 
 - **program.ui.theme** - 
-Specifies the GUI theme. Two themes are available: `birght` and `dark`.
+Specifies the GUI theme. Two themes are available: `bright` and `dark`.
 	
 	
 
