@@ -235,18 +235,18 @@ on Windows, it may also work on Cygwin and the like, even though it
 has not been tested.
 
 #### Compile and run
-If you want to compile and run the application, you 
-just need to do the following.
+To compile the code and run the application run
+the following commands.
 ```
 ant compile
 ant run
 ```
-Note that run does not depend on compile, so you need
+Note that `run` does not depend on `compile`, so you need
 to have compiled the Gaia Sandbox at least once to
 be able to run it.
 
 #### Package the Gaia Sandbox
-To package the application yourself, you just need to run
+To package the application yourself just run
 the default ant target, giving it a version number.
 
 ```
@@ -269,7 +269,7 @@ run.sh
 ###3.2 Running the packaged program
 
 In order to run the program follow the instructions of your operating
-system.
+system below.
 
 ####3.2.1 Linux
 In order to run the application on Linux, open the terminal, give execution
