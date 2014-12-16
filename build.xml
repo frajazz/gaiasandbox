@@ -3,7 +3,7 @@
   <!-- PROPERTIES -->
   <property environment="env"/>
 
-  <property name="version" value="dev"/>
+  <property name="version" value="0.703b"/>
   <property name="lib" value="lib"/>
   <property name="base.dir" value="./"/>
   <property name="gs.dir" value="core"/>
@@ -13,18 +13,20 @@
   <property name="debuglevel" value="source,lines,vars"/>
   <property name="target" value="1.7"/>
   <property name="source" value="1.7"/>
-  <property name="dist" location="${base.dir}/releases/gaiasandbox-${version}"/>
-
-  <!-- MAIN TARGET -->
-  <target name="package" depends="build,package_app"/>
   
+
+
   <!-- packages the app into a tgz file -->
-  <target name="package_app">
+  <target name="package" depends="build">
     <delete file="${dist}.tgz"/>
     <tar destfile="${dist}.tgz" basedir="${dist}" compression="gzip"/>
   </target>
+ 
+  
+
   <!-- builds and packages the desktop app -->
   <target name="build" depends="compile, build_info">
+    <property name="dist" location="${base.dir}/releases/gaiasandbox-${version}.${repository.version}"/>
     <!-- Prepare output directory -->
     <delete dir="${dist}"/>
     <mkdir dir="${dist}"/>
@@ -59,6 +61,7 @@
         <attribute name="Built-By" value="${user.name}"/>
         <attribute name="Application-Name" value="Gaia Sandbox"/>
         <attribute name="Application-Version" value="${version} ${TODAY}"/>
+	<attribute name="Application-Revision" value="${git.revision}"/>
         <attribute name="Application-Vendor" value="ARI - ZAH - Heidelberg Universität"/>
       </manifest>
       
@@ -153,7 +156,7 @@
   </target>
   
   <!-- BUILDS THE VERSION FILE WITH THE BUILD INFO -->
-  <target name="build_info" depends="git.revision">
+  <target name="build_info" depends="git-revision">
     <tstamp>
       <format property="builtat" pattern="dd/MM/yyyy hh:mm aa" timezone="CET"/>
     </tstamp>
@@ -178,7 +181,9 @@
     <replace file="${gs.dir}/bin/version" token="\" value=""/>
   </target>
   <available file=".git" type="dir" property="git.present"/>
-  <target name="git.revision" description="Store git revision in ${repository.version}" if="git.present">
+  
+  <!-- Gets the git revision into a git.revision property -->
+  <target name="git-revision" description="Store git revision in ${repository.version}" if="git.present">
     <exec executable="git" outputproperty="git.revision" failifexecutionfails="false" errorproperty="">
       <arg value="describe"/>
       <arg value="--tags"/>
