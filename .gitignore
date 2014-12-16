@@ -1,4 +1,4 @@
-# Compiled source #
+#Compiled source #
 ###################
 *.com
 *.class
@@ -39,5 +39,4 @@
    Thumbs.db
 
 releases/
-lib/
-
+**.jar

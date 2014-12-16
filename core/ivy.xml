@@ -6,5 +6,6 @@
   <info organisation="gaia.cu9.ari.gaiaorbit" module="gaiasandbox"/>
   <dependencies>
     <dependency org="com.badlogicgames.gdx" name="gdx" rev="&gdx.version;" conf="default"/>
+    <dependency org="org.python" name="jython-standalone" rev="2.5.4-rc1" conf="default"/>
   </dependencies>
 </ivy-module>
