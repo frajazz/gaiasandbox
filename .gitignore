@@ -1,4 +1,4 @@
-#Compiled source #
+# Compiled source #
 ###################
 *.com
 *.class
@@ -38,5 +38,14 @@
    ehthumbs.db
    Thumbs.db
 
+# Output folder #
+#################
 releases/
+
+# All jar files #
+#################
 **.jar
+
+# Python pickled_dict #
+#######################
+pickled_dict

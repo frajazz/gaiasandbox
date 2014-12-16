@@ -44,8 +44,7 @@ Specific system requirements are yet to be determined.
 ###1.2 Installation (package)
 
 The Gaia Sandbox application does not require a 'formal'
-installation, as it is ready to be executed out of the
-box. Just uncompress the package anywhere in your drive
+installation, as it is ready to be executed out of the box. Just uncompress the package anywhere in your drive
 and you are good to go.
 
 
@@ -155,7 +154,7 @@ system below.
 
 ####3.1.1 Linux
 Open the terminal, untar and uncompress the downloaded archive,
-give execution permissions to the run.sh file and then run it.
+give execution permissions to the run.sh file if necessary and then run it.
 	
 ```
 tar zxvf gaiasandbox-[version].tgz
@@ -176,6 +175,21 @@ run.bat
 ####3.1.3 MacOS
 To run the application on MacOS systems, follow the same procedure
 described in section *3.1.1 - Linux* section.
+
+###3.2 Running from code
+
+In order to run from code, clone the [GitHub](https://github.com/ari-zah/gaiasandbox) repository:
+```
+cd $GIT_FOLDER
+git clone https://github.com/ari-zah/gaiasandbox.git
+```
+Then, run the following commands to compile and run:
+```
+cd $GIT_FOLDER/gaiasandbox
+ant compile
+ant run
+```
+Et voilà! The Gaia Sandbox is running in your machine.
 	
 
 ######################################################
