@@ -108,15 +108,14 @@
     <!-- Copy scripts files -->
     <mkdir dir="${dist}/scripts"/>
     <copy todir="${dist}/scripts">
-      <fileset dir="${gs-android.dir}/assets/scripts">
-			</fileset>
+      <fileset dir="${gs-android.dir}/assets/scripts"/>
     </copy>
     
     <!-- Copy script, README and LICENSE -->
     <copy todir="${dist}">
       <fileset dir="${gs-desktop.dir}/exe"/>
-      <file file="${base.dir}/README.md"/>
     </copy>
+    <copy file="${base.dir}/README.md" todir="${dist}"/>
     
     <!-- Make run.sh executable -->
     <chmod file="${dist}/run.sh" perm="+x"/>
