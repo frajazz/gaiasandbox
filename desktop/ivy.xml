@@ -1,0 +1,12 @@
+<?xml version="1.0"?>
+<!DOCTYPE ivy-module [
+    <!ENTITY gdx.version "1.5.0">
+]>
+<ivy-module version="2.0">
+  <info organisation="gaia.cu9.ari.gaiaorbit" module="gaiasandbox"/>
+  <dependencies>
+    <dependency org="com.badlogicgames.gdx" name="gdx" rev="&gdx.version;" conf="default"/>
+    <dependency org="com.badlogicgames.gdx" name="gdx-backend-lwjgl" rev="&gdx.version;" conf="default" transitive="false"/>
+    <dependency org="org.lwjgl.lwjgl" name="lwjgl" rev="2.9.1" conf="default->compile"/>
+  </dependencies>
+</ivy-module>
