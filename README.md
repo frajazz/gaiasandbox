@@ -2,6 +2,7 @@
 -------------------------
 --------------------------
 
+[![Build Status](https://drone.io/github.com/ari-zah/gaiasandbox/status.png)](https://drone.io/github.com/ari-zah/gaiasandbox/latest)
 
 This is the README file for the Gaia Sandbox. 
 To get the latest up-to-date and most complete information,
