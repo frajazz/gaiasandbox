@@ -1,0 +1,11 @@
+<?xml version="1.0"?>
+<!DOCTYPE ivy-module [
+    <!ENTITY gdx.version "1.5.0">
+]>
+<ivy-module version="2.0">
+  <info organisation="gaia.cu9.ari.gaiaorbit" module="gaiasandbox"/>
+  <dependencies>
+    <dependency org="com.badlogicgames.gdx" name="gdx" rev="&gdx.version;" conf="default"/>
+    <dependency org="com.badlogicgames.gdx" name="gdx-backend-android" rev="&gdx.version;" conf="default" transitive="false"/>
+</dependencies>
+</ivy-module>
