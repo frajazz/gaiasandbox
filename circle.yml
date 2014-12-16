@@ -1,9 +1,12 @@
-language: java
-before_install: 
-  - ant init-ivy
-  - "export DISPLAY=:99.0"
-  - "sh -e /etc/init.d/xvfb start"
-install: ant package
-jdk:
-  - oraclejdk7
-  - oraclejdk8
+machine:
+  java:
+      version: openjdk7
+deployment:
+  production:
+      branch: master
+      commands:
+        - ant init-ivy
+	- ant package
+general:
+  artifacts:
+    - "releases/*.tgz"
