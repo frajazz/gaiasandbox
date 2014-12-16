@@ -1,5 +1,5 @@
 *.jar
-!amerabi/
-!amerabi-v7a/
+!armeabi/
+!armeabi-v7a/
 !x86/
 
