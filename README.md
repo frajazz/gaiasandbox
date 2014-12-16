@@ -2,7 +2,7 @@
 -------------------------
 --------------------------
 
-[![Build Status](https://drone.io/github.com/ari-zah/gaiasandbox/status.png)](https://drone.io/github.com/ari-zah/gaiasandbox/latest)
+[![Circle CI](https://circleci.com/gh/ari-zah/gaiasandbox/tree/master.svg?style=svg)](https://circleci.com/gh/ari-zah/gaiasandbox/tree/master)
 
 This is the README file for the Gaia Sandbox. 
 To get the latest up-to-date and most complete information,
