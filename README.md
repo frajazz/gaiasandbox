@@ -179,7 +179,14 @@ described in section *3.1.1 - Linux* section.
 
 ###3.2 Running from code
 
-In order to run from code, clone the [GitHub](https://github.com/ari-zah/gaiasandbox) repository:
+In order to run from code you will need [ant}(http://ant.apache.org/)
+and [ivy](http://ant.apache.org/ivy/). You can probably get
+ant and ivy from your Linux distribution package manager. For example, in Ubuntu 
+press `Ctrl+Alt+T` and type in:
+```
+sudo apt-get install ant ivy
+```
+First, clone the [GitHub](https://github.com/ari-zah/gaiasandbox) repository:
 ```
 cd $GIT_FOLDER
 git clone https://github.com/ari-zah/gaiasandbox.git
