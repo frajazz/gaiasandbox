@@ -2,7 +2,7 @@
 <project default="compile" basedir="." name="Build the GaiaSandbox-android" xmlns:ivy="antlib:org.apache.ivy.ant">
   <!-- PROPERTIES -->
   <property environment="env"/>
-  <property name="lib" value="lib"/>
+  <property name="lib" value="libs"/>
   <property name="base.dir" value="./"/>
   <property name="gs.dir" value="../core"/>
   <property name="debuglevel" value="source,lines,vars"/>
