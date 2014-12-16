@@ -1,0 +1,12 @@
+machine:
+  java:
+      version: openjdk7
+deployment:
+  production:
+      branch: master
+      commands:
+        - ant init-ivy
+        - ant package
+general:
+  artifacts:
+    - "releases/*.tgz"
