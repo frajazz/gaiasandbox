@@ -110,6 +110,8 @@ public enum Events {
     FOV_CHANGE_NOTIFICATION,
     /** Contains a Vector3d with the position and a double with the velocity [km/h] **/
     CAMERA_MOTION_UPDATED,
+    /** Contains an optional boolean indicating whether debug info should be shown or not. Otherwise, it toggles its state **/
+    SHOW_DEBUG_CMD,
     SHOW_ABOUT_ACTION,
     SHOW_TUTORIAL_ACTION,
     SHOW_PREFERENCES_ACTION,

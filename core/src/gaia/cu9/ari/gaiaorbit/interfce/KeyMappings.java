@@ -216,6 +216,14 @@ public class KeyMappings {
 	    }
 	}), Keys.F5);
 
+	// U -> toggle UI collapse/expand
+	addMapping(new ProgramAction("UI toggle", new Runnable() {
+	    @Override
+	    public void run() {
+		EventManager.getInstance().post(Events.GUI_FOLD_CMD);
+	    }
+	}), Keys.U);
+
 	// Camera modes (NUMERIC KEYPAD)
 	for (int i = 144; i <= 153; i++) {
 	    // Camera mode
@@ -230,6 +238,14 @@ public class KeyMappings {
 		}), i);
 	    }
 	}
+
+	// CTRL + D -> Toggle debug information
+	addMapping(new ProgramAction("Toggle debug information", new Runnable() {
+	    @Override
+	    public void run() {
+		EventManager.getInstance().post(Events.SHOW_DEBUG_CMD);
+	    }
+	}), Keys.CONTROL_LEFT, Keys.D);
 
 	// CTRL + F -> Search dialog
 	addMapping(new ProgramAction("Search dialogue", new Runnable() {

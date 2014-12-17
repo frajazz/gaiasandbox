@@ -3,6 +3,7 @@ package gaia.cu9.ari.gaiaorbit.interfce;
 import gaia.cu9.ari.gaiaorbit.event.EventManager;
 import gaia.cu9.ari.gaiaorbit.event.Events;
 import gaia.cu9.ari.gaiaorbit.event.IObserver;
+import gaia.cu9.ari.gaiaorbit.util.GlobalConf;
 
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
@@ -29,9 +30,9 @@ public class DebugInterface extends Table implements IObserver {
 	fps = new OwnLabel("", skin, "hud");
 	add(fps).right();
 	row();
-
+	this.setVisible(GlobalConf.instance.SHOW_DEBUG_INFO);
 	this.lock = lock;
-	EventManager.getInstance().subscribe(this, Events.DEBUG1, Events.DEBUG2, Events.DEBUG3, Events.FPS_INFO);
+	EventManager.getInstance().subscribe(this, Events.DEBUG1, Events.DEBUG2, Events.DEBUG3, Events.FPS_INFO, Events.SHOW_DEBUG_CMD);
     }
 
     @Override
@@ -55,6 +56,16 @@ public class DebugInterface extends Table implements IObserver {
 	    case FPS_INFO:
 		if (data.length > 0 && data[0] != null)
 		    fps.setText((Integer) data[0] + " FPS");
+		break;
+	    case SHOW_DEBUG_CMD:
+		boolean shw;
+		if (data.length >= 1) {
+		    shw = (boolean) data[0];
+		} else {
+		    shw = !this.isVisible();
+		}
+		GlobalConf.instance.SHOW_DEBUG_INFO = shw;
+		this.setVisible(GlobalConf.instance.SHOW_DEBUG_INFO);
 		break;
 	    }
 	}

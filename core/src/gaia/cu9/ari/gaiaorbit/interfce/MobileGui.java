@@ -2,7 +2,6 @@ package gaia.cu9.ari.gaiaorbit.interfce;
 
 import gaia.cu9.ari.gaiaorbit.render.SceneGraphRenderer.ComponentType;
 import gaia.cu9.ari.gaiaorbit.scenegraph.ISceneGraph;
-import gaia.cu9.ari.gaiaorbit.util.GlobalConf;
 import gaia.cu9.ari.gaiaorbit.util.GlobalResources;
 
 import java.text.DecimalFormat;
@@ -99,7 +98,7 @@ public class MobileGui implements IGui {
 	if (ui != null) {
 	    ui.clear();
 
-	    if (debugInterface != null && GlobalConf.instance.SHOW_DEBUG_INFO) {
+	    if (debugInterface != null) {
 		ui.addActor(debugInterface);
 	    }
 	    if (notificationsInterface != null) {

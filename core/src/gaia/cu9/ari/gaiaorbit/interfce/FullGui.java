@@ -903,7 +903,7 @@ public class FullGui implements IGui, IObserver {
 		options.setPosition(0, Gdx.graphics.getHeight() - options.getHeight());
 		ui.addActor(options);
 	    }
-	    if (debugInterface != null && GlobalConf.instance.SHOW_DEBUG_INFO)
+	    if (debugInterface != null)
 		ui.addActor(debugInterface);
 	    if (notificationsInterface != null)
 		ui.addActor(notificationsInterface);
@@ -1106,7 +1106,14 @@ public class FullGui implements IGui, IObserver {
 	    this.windowScroll.setScrollY((float) data[0]);
 	    break;
 	case GUI_FOLD_CMD:
-	    if ((boolean) data[0]) {
+	    boolean collapse;
+	    if (data.length >= 1) {
+		collapse = (boolean) data[0];
+	    } else {
+		// Toggle
+		collapse = !options.isCollapsed();
+	    }
+	    if (collapse) {
 		options.collapse();
 	    } else {
 		options.expand();
