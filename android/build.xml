@@ -24,9 +24,9 @@
     </javac>
   </target>
   <!-- RESOLVE -->
-  <target name="resolve" description="--> retrieve dependencies with ivy" depends="gaiasandbox-lib">
-    <ivy:retrieve/>
-  </target>
+  <target name="resolve" description="--> retrieve dependencies with ivy" depends="">
+    <ivy:retrieve conf="libs" pattern="[conf]/[artifact](-[classifier]).[ext]"/>
+ </target>
   <!-- INIT -->
   <target name="init">
     <mkdir dir="${base.dir}/bin"/>

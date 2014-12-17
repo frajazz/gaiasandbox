@@ -6,6 +6,7 @@ import gaia.cu9.ari.gaiaorbit.event.IObserver;
 import gaia.cu9.ari.gaiaorbit.render.IRenderable;
 import gaia.cu9.ari.gaiaorbit.scenegraph.ICamera;
 import gaia.cu9.ari.gaiaorbit.scenegraph.SceneGraphNode.RenderGroup;
+import gaia.cu9.ari.gaiaorbit.util.Constants;
 import gaia.cu9.ari.gaiaorbit.util.GlobalConf;
 import gaia.cu9.ari.gaiaorbit.util.comp.QuadComparator;
 import gaia.cu9.ari.gaiaorbit.util.time.TimeUtils;
@@ -126,12 +127,13 @@ public class ShaderQuadRenderSystem extends AbstractRenderSystem implements IObs
     public void renderStud(List<IRenderable> renderables, ICamera camera) {
 	Collections.sort(renderables, comp);
 	shaderProgram.begin();
-	// Global uniforms
-	shaderProgram.setUniformf("u_time", TimeUtils.getRunningTimeSecs());
-	// Bind
-	noise.bind(0);
-
-	shaderProgram.setUniformi("u_noiseTexture", 0);
+	if (!Constants.mobile) {
+	    // Global uniforms
+	    shaderProgram.setUniformf("u_time", TimeUtils.getRunningTimeSecs());
+	    // Bind
+	    noise.bind(0);
+	    shaderProgram.setUniformi("u_noiseTexture", 0);
+	}
 	for (IRenderable s : renderables) {
 	    s.render(shaderProgram, alphas[s.getComponentType().ordinal()], starColorTransit, mesh, camera);
 	}

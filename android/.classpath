@@ -4,10 +4,10 @@
 	<classpathentry kind="src" path="gen"/>
 	<classpathentry kind="con" path="com.android.ide.eclipse.adt.ANDROID_FRAMEWORK"/>
 	<classpathentry exported="true" kind="con" path="com.android.ide.eclipse.adt.DEPENDENCIES"/>
-	<classpathentry combineaccessrules="false" kind="src" path="/GaiaSandbox"/>
+	<classpathentry combineaccessrules="false" exported="true" kind="src" path="/GaiaSandbox"/>
 	<classpathentry exported="true" kind="con" path="com.android.ide.eclipse.adt.LIBRARIES"/>
-	<classpathentry kind="lib" path="libs/gaiasandbox.jar"/>
-	<classpathentry kind="lib" path="libs/gdx-1.5.0.jar"/>
-	<classpathentry kind="lib" path="libs/gdx-backend-android-1.5.0.jar" sourcepath="libs/gdx-backend-android-1.5.0-sources.jar"/>
+	<classpathentry exported="true" kind="lib" path="/GaiaSandbox/lib/gdx-1.5.0.jar"/>
+	<classpathentry exported="true" kind="lib" path="/GaiaSandbox/lib/postprocessing.jar"/>
+	<classpathentry kind="lib" path="libs/gdx-backend-android.jar"/>
 	<classpathentry kind="output" path="bin/classes"/>
 </classpath>

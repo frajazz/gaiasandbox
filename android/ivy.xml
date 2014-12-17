@@ -4,8 +4,10 @@
 ]>
 <ivy-module version="2.0">
   <info organisation="gaia.cu9.ari.gaiaorbit" module="gaiasandbox"/>
+  <configurations>
+	<conf name="libs" description="Android libs"/>
+  </configurations>
   <dependencies>
-    <dependency org="com.badlogicgames.gdx" name="gdx" rev="&gdx.version;" conf="default"/>
     <dependency org="com.badlogicgames.gdx" name="gdx-backend-android" rev="&gdx.version;" transitive="false"/>
 </dependencies>
 </ivy-module>

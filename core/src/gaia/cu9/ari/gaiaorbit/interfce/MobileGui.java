@@ -86,10 +86,10 @@ public class MobileGui implements IGui {
 	messagesInterface.pad(0, 300, 150, 0);
 
 	// INPUT STATE
-	inputInterface = new ScriptStateInterface(skin);
-	inputInterface.setFillParent(true);
-	inputInterface.right().top();
-	inputInterface.pad(50, 0, 0, 5);
+	//	inputInterface = new ScriptStateInterface(skin);
+	//	inputInterface.setFillParent(true);
+	//	inputInterface.right().top();
+	//	inputInterface.pad(50, 0, 0, 5);
 
 	// Add to GUI
 	rebuildGui();

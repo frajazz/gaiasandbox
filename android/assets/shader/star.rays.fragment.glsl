@@ -6,10 +6,7 @@ varying vec2 v_texCoords;
 
 uniform sampler2D u_noiseTexture;
 uniform vec4 u_color;
-uniform float u_inner_rad;
-uniform float u_time;
-// Distance in km to the star
-uniform float u_distance;
+
 
 #ifdef GL_ES
     vec4 draw_star() {
@@ -21,6 +18,10 @@ uniform float u_distance;
 #else
     uniform float u_th_dist_up;
     uniform float u_apparent_angle;
+    uniform float u_inner_rad;
+    uniform float u_time;
+    // Distance in km to the star
+    uniform float u_distance;
     
     #define time u_time * 0.01
     // Angle threshold. If angle is smaller, we dont draw core. To avoid flickering

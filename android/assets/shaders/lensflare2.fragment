@@ -1,6 +1,6 @@
 // Lens flare implementation by Toni Sagrista
 // From John Chapman's article http://john-chapman-graphics.blogspot.co.uk/2013/02/pseudo-lens-flare.html
-#version 120
+
 #ifdef GL_ES
 precision mediump float;
 precision mediump int;
@@ -13,9 +13,9 @@ varying vec2 v_texCoords;
 
 uniform vec2 u_viewportInverse;
 uniform int u_ghosts; // number of ghost samples
-uniform float u_ghostDispersal = 0.25; // dispersion factor
 uniform float u_haloWidth;
-uniform float u_distortion = 1.0;
+float u_ghostDispersal = 0.25;
+float u_distortion = 1.0;
 
 /*----------------------------------------------------------------------------*/
 vec4 textureDistorted(

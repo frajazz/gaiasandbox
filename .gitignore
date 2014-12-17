@@ -42,6 +42,11 @@
 #################
 releases/
 
+# All gen and bin  folders #
+############################
+**/gen/
+**/bin/
+
 # All jar files #
 #################
 **.jar

@@ -153,14 +153,16 @@ public abstract class CelestialBody extends AbstractPositionEntity implements IL
 	if (colorTransit)
 	    col = ccTransit;
 	shader.setUniformf("u_color", col[0], col[1], col[2], alpha * opacity);
-	shader.setUniformf("u_inner_rad", getInnerRad());
-	shader.setUniformf("u_distance", (float) (distToCamera * Constants.U_TO_KM));
-	shader.setUniformf("u_apparent_angle", viewAngleApparent);
+	if (!Constants.mobile) {
+	    shader.setUniformf("u_inner_rad", getInnerRad());
+	    shader.setUniformf("u_distance", (float) (distToCamera * Constants.U_TO_KM));
+	    shader.setUniformf("u_apparent_angle", viewAngleApparent);
 
-	if (precomp < 0) {
-	    precomp = (float) (getRadius() * Constants.U_TO_KM * 172.4643429);
+	    if (precomp < 0) {
+		precomp = (float) (getRadius() * Constants.U_TO_KM * 172.4643429);
+	    }
+	    shader.setUniformf("u_th_dist_up", precomp);
 	}
-	shader.setUniformf("u_th_dist_up", precomp);
 
 	// Sprite.render
 	mesh.render(shader, GL20.GL_TRIANGLES, 0, 6);
