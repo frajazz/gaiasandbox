@@ -24,7 +24,7 @@ OPTS="$OPTS -Dproperties.file=$DIR/conf/global.properties"
 
 # Memory
 OPTS="$OPTS -Xmx512m"
-# GC info
+# Parallel GC 
 OPTS="$OPTS -XX:+UseParallelGC"
 # GC debug only
 #OPTS="$OPTS -verbose:gc -XX:+PrintGCDetails"

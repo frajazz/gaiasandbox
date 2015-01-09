@@ -49,8 +49,8 @@ public class GaiaSandboxDesktop implements IObserver {
 	    // This should work for the normal execution
 	    InputStream version = GaiaSandboxDesktop.class.getResourceAsStream("/version");
 	    if (version == null) {
-	    	// In case of running in 'developer' mode
-	    	version= new FileInputStream(new File("../android/assets/data/dummyversion"));
+		// In case of running in 'developer' mode
+		version = new FileInputStream(new File("../android/assets/data/dummyversion"));
 	    }
 	    GlobalConf.initialize(fis, version);
 	    fis.close();
@@ -91,6 +91,7 @@ public class GaiaSandboxDesktop implements IObserver {
 
     public void launchMainApp() {
 	LwjglApplicationConfiguration cfg = new LwjglApplicationConfiguration();
+	LwjglApplicationConfiguration.disableAudio = true;
 	cfg.title = GlobalConf.instance.getFullApplicationName();
 	cfg.fullscreen = GlobalConf.instance.FULLSCREEN;
 	cfg.resizable = GlobalConf.instance.RESIZABLE;
