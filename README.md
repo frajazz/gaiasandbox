@@ -160,8 +160,9 @@ Open the terminal, untar and uncompress the downloaded archive,
 give execution permissions to the run.sh file if necessary and then run it.
 	
 ```
-tar zxvf gaiasandbox-[version].tgz
-cd gaiasandbox-[version]/
+mkdir gaiasandbox/
+tar zxvf gaiasandbox-[version].tgz gaiasandbox/ -C gaiasandbox/
+cd gaiasandbox/
 chmod +x run.sh
 run.sh
 ```
