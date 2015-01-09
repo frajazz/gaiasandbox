@@ -14,5 +14,6 @@
 	<classpathentry kind="lib" path="lib/weblaf-ui-1.28.jar"/>
 	<classpathentry kind="lib" path="lib/xstream-1.4.7.jar"/>
 	<classpathentry kind="lib" path="lib/lwjgl-2.9.1.jar"/>
+	<classpathentry kind="lib" path="lib/gdx-backend-lwjgl-1.5.0.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
