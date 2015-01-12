@@ -33,7 +33,7 @@ import com.alee.laf.filechooser.WebFileChooserPanel;
 import com.alee.laf.scroll.WebScrollPane;
 import com.alee.laf.splitpane.WebSplitPane;
 
-public class ScriptDialog extends JFrame {
+public class ScriptDialog extends I18nJFrame {
 
     JFrame frame;
     PyCode code;
@@ -41,7 +41,7 @@ public class ScriptDialog extends JFrame {
     JButton okButton, cancelButton;
 
     public ScriptDialog() {
-	super("Run Python script");
+	super(txt("gui.script.title"));
 	initialize();
 	frame.setPreferredSize(new Dimension(300, 200));
 	frame.pack();
@@ -62,10 +62,10 @@ public class ScriptDialog extends JFrame {
 
 	/** BODY **/
 	JPanel body = new JPanel(new MigLayout("", "[grow,fill][]", ""));
-	body.setToolTipText("Choose a python script file");
+	body.setToolTipText(txt("gui.script.choose"));
 
 	final JTextArea outConsole = new JTextArea(
-		"Output console"
+		txt("gui.script.console")
 		);
 	outConsole.setLineWrap(true);
 	outConsole.setWrapStyleWord(true);
@@ -110,15 +110,15 @@ public class ScriptDialog extends JFrame {
 		    GlobalConf.instance.SCRIPT_LOCATION = file.getParent();
 		    try {
 			code = JythonFactory.getInstance().compileJythonScript(file);
-			outConsole.setText("The script compiled correctly and is ready to run.");
+			outConsole.setText(txt("gui.script.ready"));
 			outConsole.setForeground(darkgreen);
 			okButton.setEnabled(true);
 		    } catch (PySyntaxError e) {
-			outConsole.setText("The script has errors: \n" + e.type + "\n" + e.value);
+			outConsole.setText(txt("gui.script.error", e.type, e.value));
 			outConsole.setForeground(darkred);
 			okButton.setEnabled(false);
 		    } catch (Exception e) {
-			outConsole.setText("The script has errors: \n" + e.getMessage());
+			outConsole.setText(txt("gui.script.error2", e.getMessage()));
 			outConsole.setForeground(darkred);
 			okButton.setEnabled(false);
 		    }
@@ -127,10 +127,10 @@ public class ScriptDialog extends JFrame {
 	    }
 	});
 
-	final JCheckBox asyncCheckbox = new JCheckBox("Run script asynchronously", true);
+	final JCheckBox asyncCheckbox = new JCheckBox(txt("gui.script.runasync"), true);
 	asyncCheckbox.setEnabled(false);
 
-	body.add(new JLabel("Choose a script"));
+	body.add(new JLabel(txt("gui.script.choose")));
 	body.add(scriptChooser, "wrap");
 	body.add(outConsole, "span, wrap");
 	body.add(asyncCheckbox, "span");
@@ -138,7 +138,7 @@ public class ScriptDialog extends JFrame {
 	/** BUTTONS **/
 	JPanel buttons = new JPanel(new MigLayout("", "push[][]", ""));
 
-	okButton = new JButton("Run");
+	okButton = new JButton(txt("gui.script.run"));
 	okButton.addActionListener(new ActionListener() {
 	    @Override
 	    public void actionPerformed(ActionEvent e) {
@@ -153,7 +153,7 @@ public class ScriptDialog extends JFrame {
 	});
 	okButton.setMinimumSize(new Dimension(100, 20));
 	okButton.setEnabled(false);
-	cancelButton = new JButton("Cancel");
+	cancelButton = new JButton(txt("gui.cancel"));
 	cancelButton.addActionListener(new ActionListener() {
 	    public void actionPerformed(ActionEvent e) {
 		if (frame.isDisplayable()) {

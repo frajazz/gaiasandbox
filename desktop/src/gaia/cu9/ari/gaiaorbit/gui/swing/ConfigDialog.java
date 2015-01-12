@@ -86,7 +86,7 @@ public class ConfigDialog extends I18nJFrame {
 	if (startup) {
 	    /** SPLASH IMAGE **/
 	    URL url = this.getClass().getResource("/img/splash/splash1-s.png");
-	    JSplashLabel label = new JSplashLabel(url, "build " + GlobalConf.instance.VERSION.build + " - version " + GlobalConf.instance.VERSION.version, null, Color.lightGray);
+	    JSplashLabel label = new JSplashLabel(url, txt("gui.build", GlobalConf.instance.VERSION.build) + " - " + txt("gui.version", GlobalConf.instance.VERSION.version), null, Color.lightGray);
 	    JPanel imagePanel = new JPanel(new GridLayout(1, 1, 0, 0));
 	    imagePanel.add(label);
 	    imagePanel.setBackground(Color.black);
@@ -252,7 +252,7 @@ public class ConfigDialog extends I18nJFrame {
 	    graphicsPanel.add(notice, "wrap");
 	}
 
-	tabbedPane.addTab("Graphics", graphicsPanel);
+	tabbedPane.addTab(txt("gui.graphics"), graphicsPanel);
 
 	/**
 	 * ====== PERFORMANCE TAB =======
@@ -322,7 +322,7 @@ public class ConfigDialog extends I18nJFrame {
 	controls.add(lab, "span");
 	controls.add(controlsScrollPane, "span");
 
-	tabbedPane.addTab("Controls", controls);
+	tabbedPane.addTab(txt("gui.controls"), controls);
 
 	/**
 	 * ====== SCREENSHOTS TAB =======
@@ -482,9 +482,9 @@ public class ConfigDialog extends I18nJFrame {
 	final JSpinner frameHeightField = new JSpinner(new SpinnerNumberModel(GlobalConf.instance.RENDER_HEIGHT, 100, 5000, 1));
 
 	JPanel renderSize = new JPanel(new MigLayout("", "[][grow,fill][][grow,fill]", "[][]4[][]"));
-	renderSize.add(new JLabel("Width:"));
+	renderSize.add(new JLabel(txt("gui.width") + ":"));
 	renderSize.add(frameWidthField);
-	renderSize.add(new JLabel("Height:"));
+	renderSize.add(new JLabel(txt("gui.height") + ":"));
 	renderSize.add(frameHeightField);
 
 	// TARGET FPS
@@ -513,7 +513,7 @@ public class ConfigDialog extends I18nJFrame {
 	imageOutput.add(new JLabel(txt("gui.frameoutput.fps") + ":"));
 	imageOutput.add(targetFPS);
 
-	tabbedPane.addTab("Frame output", imageOutput);
+	tabbedPane.addTab(txt("gui.frameoutput.title"), imageOutput);
 
 	// Do not show again
 	final JCheckBox showAgain = new JCheckBox(txt("gui.notagain"));

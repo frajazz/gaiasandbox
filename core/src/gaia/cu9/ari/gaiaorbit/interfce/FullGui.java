@@ -660,7 +660,7 @@ public class FullGui implements IGui, IObserver {
 	// Play/stop
 	playstop = new OwnTextButton(txt("gui.play.upper"), skin);
 	playstop.setName("play stop");
-	playstop.setSize(60, 20);
+	playstop.setSize(90, 20);
 	playstop.addListener(new EventListener() {
 	    @Override
 	    public boolean handle(Event event) {
