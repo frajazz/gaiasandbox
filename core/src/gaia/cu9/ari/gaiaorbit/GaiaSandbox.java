@@ -33,6 +33,7 @@ import gaia.cu9.ari.gaiaorbit.scenegraph.component.ModelComponent;
 import gaia.cu9.ari.gaiaorbit.util.Constants;
 import gaia.cu9.ari.gaiaorbit.util.GlobalConf;
 import gaia.cu9.ari.gaiaorbit.util.GlobalResources;
+import gaia.cu9.ari.gaiaorbit.util.I18n;
 import gaia.cu9.ari.gaiaorbit.util.ImageRenderer;
 import gaia.cu9.ari.gaiaorbit.util.ModelCache;
 import gaia.cu9.ari.gaiaorbit.util.math.MathUtilsd;
@@ -176,6 +177,9 @@ public class GaiaSandbox implements ApplicationListener, IObserver {
 	// Precompute some math functions
 	MathUtilsd.initialize();
 
+	// Initialize i18n
+	I18n.initialize();
+
 	// Initialize asset manager
 	FileHandleResolver resolver = new InternalFileHandleResolver();
 	manager = new AssetManager(resolver);
@@ -225,7 +229,7 @@ public class GaiaSandbox implements ApplicationListener, IObserver {
 	loadingGui = new LoadingGui(GlobalConf.OPENGL_GUI, desktop ? 23 : 20);
 	loadingGui.initialize(manager);
 
-	EventManager.getInstance().post(Events.POST_NOTIFICATION, this.getClass().getSimpleName(), "GLSL shading version: " + Gdx.gl.glGetString(GL20.GL_SHADING_LANGUAGE_VERSION));
+	EventManager.getInstance().post(Events.POST_NOTIFICATION, this.getClass().getSimpleName(), I18n.bundle.format("notif.glslversion", Gdx.gl.glGetString(GL20.GL_SHADING_LANGUAGE_VERSION)));
     }
 
     /**

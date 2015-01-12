@@ -11,6 +11,7 @@ import gaia.cu9.ari.gaiaorbit.scenegraph.SceneGraphNode;
 import gaia.cu9.ari.gaiaorbit.util.Constants;
 import gaia.cu9.ari.gaiaorbit.util.GlobalConf;
 import gaia.cu9.ari.gaiaorbit.util.GlobalResources;
+import gaia.cu9.ari.gaiaorbit.util.I18n;
 import gaia.cu9.ari.gaiaorbit.util.TwoWayHashmap;
 import gaia.cu9.ari.gaiaorbit.util.math.MathUtilsd;
 import gaia.cu9.ari.gaiaorbit.util.scene2d.CollapsableWindow;
@@ -92,7 +93,6 @@ public class FullGui implements IGui, IObserver {
     protected OwnScrollPane windowScroll;
 
     protected SearchDialog searchDialog;
-    protected GaiaSandboxTutorial tutorialDialog;
 
     protected FocusInfoInterface focusInterface;
     protected CameraInfoInterface cameraInterface;
@@ -150,7 +150,7 @@ public class FullGui implements IGui, IObserver {
      * Constructs the interface
      */
     public void doneLoading(AssetManager assetManager) {
-	EventManager.getInstance().post(Events.POST_NOTIFICATION, "Initializing GUI");
+	EventManager.getInstance().post(Events.POST_NOTIFICATION, txt("notif.gui.init"));
 
 	skin = GlobalResources.skin;
 	format = new DecimalFormat("0.0###");
@@ -164,7 +164,7 @@ public class FullGui implements IGui, IObserver {
 
     private void buildGui() {
 	/** The Options window **/
-	options = new CollapsableWindow("Controls", skin);
+	options = new CollapsableWindow(txt("gui.controls"), skin);
 	options.left();
 	options.setTitleAlignment(Align.left);
 	options.setFillParent(false);
@@ -181,8 +181,8 @@ public class FullGui implements IGui, IObserver {
 	/** ----CAMERA MODE---- **/
 	VerticalGroup cameraGroup = new VerticalGroup().align(Align.left);
 
-	Label cameraLabel = new Label("Camera", skin, "header");
-	Label modeLabel = new Label("Mode:", skin, "default");
+	Label cameraLabel = new Label(txt("gui.camera"), skin, "header");
+	Label modeLabel = new Label(txt("gui.camera.mode"), skin, "default");
 
 	int cameraModes = CameraMode.values().length;
 	String[] cameraOptions = new String[cameraModes];
@@ -213,7 +213,7 @@ public class FullGui implements IGui, IObserver {
 	    }
 	});
 
-	Label fovLabel = new Label("Field of view", skin, "default");
+	Label fovLabel = new Label(txt("gui.camera.fov"), skin, "default");
 	fieldOfView = new Slider(Constants.MIN_FOV, Constants.MAX_FOV, 1, false, skin);
 	fieldOfView.setName("field of view");
 	fieldOfView.setValue(GlobalConf.instance.CAMERA_FOV);
@@ -233,7 +233,7 @@ public class FullGui implements IGui, IObserver {
 	fov = new OwnLabel(Integer.toString((int) GlobalConf.instance.CAMERA_FOV) + "°", skin, "default");
 
 	/** CAMERA SPEED **/
-	Label camSpeedLabel = new Label("Camera speed", skin, "default");
+	Label camSpeedLabel = new Label(txt("gui.camera.speed"), skin, "default");
 	cameraSpeed = new Slider(Constants.MIN_SLIDER, Constants.MAX_SLIDER, 1, false, skin);
 	cameraSpeed.setName("camera speed");
 	cameraSpeed.setValue(GlobalConf.instance.CAMERA_SPEED * 10);
@@ -252,7 +252,7 @@ public class FullGui implements IGui, IObserver {
 	speed = new OwnLabel(Integer.toString((int) (GlobalConf.instance.CAMERA_SPEED * 10)), skin, "default");
 
 	/** ROTATION SPEED **/
-	Label rotateLabel = new Label("Rotation speed", skin, "default");
+	Label rotateLabel = new Label(txt("gui.rotation.speed"), skin, "default");
 	rotateSpeed = new Slider(Constants.MIN_SLIDER, Constants.MAX_SLIDER, 1, false, skin);
 	rotateSpeed.setName("rotate speed");
 	rotateSpeed.setValue(MathUtilsd.lint(GlobalConf.instance.ROTATION_SPEED, Constants.MIN_ROT_SPEED, Constants.MAX_ROT_SPEED, Constants.MIN_SLIDER, Constants.MAX_SLIDER));
@@ -271,7 +271,7 @@ public class FullGui implements IGui, IObserver {
 	rotate = new OwnLabel(Integer.toString((int) MathUtilsd.lint(GlobalConf.instance.ROTATION_SPEED, Constants.MIN_ROT_SPEED, Constants.MAX_ROT_SPEED, Constants.MIN_SLIDER, Constants.MAX_SLIDER)), skin, "default");
 
 	/** TURNING SPEED **/
-	Label turnLabel = new Label("Turn speed", skin, "default");
+	Label turnLabel = new Label(txt("gui.turn.speed"), skin, "default");
 	turnSpeed = new Slider(Constants.MIN_SLIDER, Constants.MAX_SLIDER, 1, false, skin);
 	turnSpeed.setName("turn speed");
 	turnSpeed.setValue(MathUtilsd.lint(GlobalConf.instance.TURNING_SPEED, Constants.MIN_TURN_SPEED, Constants.MAX_TURN_SPEED, Constants.MIN_SLIDER, Constants.MAX_SLIDER));
@@ -290,7 +290,7 @@ public class FullGui implements IGui, IObserver {
 	turn = new OwnLabel(Integer.toString((int) MathUtilsd.lint(GlobalConf.instance.TURNING_SPEED, Constants.MIN_TURN_SPEED, Constants.MAX_TURN_SPEED, Constants.MIN_SLIDER, Constants.MAX_SLIDER)), skin, "default");
 
 	/** Focus lock **/
-	focusLock = new CheckBox("Lock camera to focus", skin);
+	focusLock = new CheckBox(txt("gui.camera.lock"), skin);
 	focusLock.setName("focus lock");
 	focusLock.setChecked(GlobalConf.instance.FOCUS_LOCK);
 	focusLock.addListener(new EventListener() {
@@ -340,11 +340,11 @@ public class FullGui implements IGui, IObserver {
 
 	/** ----OBJECTS TREE---- **/
 	VerticalGroup objectsGroup = new VerticalGroup().align(Align.left);
-	Label objectsLabel = new Label("Objects", skin, "header");
+	Label objectsLabel = new Label(txt("gui.objects"), skin, "header");
 
 	searchBox = new TextField("", skin);
 	searchBox.setName("search box");
-	searchBox.setMessageText("Search...");
+	searchBox.setMessageText(txt("gui.objects.search"));
 	searchBox.addListener(new EventListener() {
 	    @Override
 	    public boolean handle(Event event) {
@@ -367,7 +367,7 @@ public class FullGui implements IGui, IObserver {
 
 	treeToModel = new TwoWayHashmap<SceneGraphNode, Node>();
 
-	EventManager.getInstance().post(Events.POST_NOTIFICATION, "Initializing SG tree");
+	EventManager.getInstance().post(Events.POST_NOTIFICATION, txt("notif.sgtree.init"));
 
 	if (tree) {
 	    final Tree objectsTree = new Tree(skin, "bright");
@@ -433,7 +433,7 @@ public class FullGui implements IGui, IObserver {
 	    });
 	    objectsList = focusList;
 	}
-	EventManager.getInstance().post(Events.POST_NOTIFICATION, "SG tree initialized");
+	EventManager.getInstance().post(Events.POST_NOTIFICATION, txt("notif.sgtree.initialised"));
 
 	if (tree || list) {
 	    focusListScrollPane = new OwnScrollPane(objectsList, skin, "minimalist");
@@ -454,7 +454,7 @@ public class FullGui implements IGui, IObserver {
 	/** ----OBJECT TOGGLES GROUP---- **/
 	VerticalGroup visibilityGroup = new VerticalGroup().align(Align.left);
 
-	Label visibilityLabel = new Label("Type visibility", skin, "header");
+	Label visibilityLabel = new Label(txt("gui.visibility"), skin, "header");
 
 	Table visibilityTable = new Table(skin);
 	visibilityTable.setName("visibility table");
@@ -508,8 +508,8 @@ public class FullGui implements IGui, IObserver {
 
 	/** ----LIGHTING GROUP---- **/
 	VerticalGroup lightingGroup = new VerticalGroup().align(Align.left);
-	Label lightingLabel = new Label("Lighting", skin, "header");
-	Label brightnessLabel = new Label("Star brightness", skin, "default");
+	Label lightingLabel = new Label(txt("gui.lighting"), skin, "header");
+	Label brightnessLabel = new Label(txt("gui.starbrightness"), skin, "default");
 	brightness = new OwnLabel(Integer.toString((int) (MathUtilsd.lint(GlobalConf.instance.STAR_BRIGHTNESS, Constants.MIN_STAR_BRIGHT, Constants.MAX_STAR_BRIGHT, Constants.MIN_SLIDER, Constants.MAX_SLIDER))), skin);
 	starBrightness = new Slider(Constants.MIN_SLIDER, Constants.MAX_SLIDER, 1, false, skin);
 	starBrightness.setName("star brightness");
@@ -530,7 +530,7 @@ public class FullGui implements IGui, IObserver {
 	brightnessGroup.addActor(starBrightness);
 	brightnessGroup.addActor(brightness);
 
-	Label ambientLightLabel = new Label("Ambient light", skin, "default");
+	Label ambientLightLabel = new Label(txt("gui.light.ambient"), skin, "default");
 	ambient = new OwnLabel(Integer.toString((int) (GlobalConf.instance.AMBIENT_LIGHT * 100)), skin);
 	ambientLight = new Slider(Constants.MIN_SLIDER, Constants.MAX_SLIDER, 1, false, skin);
 	ambientLight.setName("ambient light");
@@ -551,7 +551,7 @@ public class FullGui implements IGui, IObserver {
 	ambientGroup.addActor(ambientLight);
 	ambientGroup.addActor(ambient);
 
-	Label bloomLabel = new Label("Bloom effect", skin, "default");
+	Label bloomLabel = new Label(txt("gui.bloom"), skin, "default");
 	bloom = new OwnLabel(Integer.toString((int) (GlobalConf.instance.POSTPROCESS_BLOOM_INTENSITY * 10)), skin);
 	bloomEffect = new Slider(Constants.MIN_SLIDER, Constants.MAX_SLIDER, 1, false, skin);
 	bloomEffect.setName("bloom effect");
@@ -573,7 +573,7 @@ public class FullGui implements IGui, IObserver {
 	bloomGroup.addActor(bloomEffect);
 	bloomGroup.addActor(bloom);
 
-	lensFlare = new CheckBox("Lens flare", skin);
+	lensFlare = new CheckBox(txt("gui.lensflare"), skin);
 	lensFlare.setName("lens flare");
 	lensFlare.addListener(new EventListener() {
 	    @Override
@@ -598,15 +598,15 @@ public class FullGui implements IGui, IObserver {
 
 	/** ----GAIA SCAN GROUP---- **/
 	VerticalGroup optionsGroup = new VerticalGroup().align(Align.left);
-	Label togglesLabel = new Label("Gaia scan", skin, "header");
+	Label togglesLabel = new Label(txt("gui.gaiascan"), skin, "header");
 
-	computeGaiaScan = new CheckBox("Enable Gaia scan", skin);
+	computeGaiaScan = new CheckBox(txt("gui.gaiascan.enable"), skin);
 	computeGaiaScan.setName("compute gaia scan");
 	computeGaiaScan.addListener(new EventListener() {
 	    @Override
 	    public boolean handle(Event event) {
 		if (event instanceof ChangeEvent) {
-		    EventManager.getInstance().post(Events.COMPUTE_GAIA_SCAN_CMD, "Compute Gaia scan", computeGaiaScan.isChecked());
+		    EventManager.getInstance().post(Events.COMPUTE_GAIA_SCAN_CMD, txt("gui.gaiascan.compute"), computeGaiaScan.isChecked());
 		    return true;
 		}
 		return false;
@@ -614,13 +614,13 @@ public class FullGui implements IGui, IObserver {
 	});
 	computeGaiaScan.setChecked(GlobalConf.instance.COMPUTE_GAIA_SCAN);
 
-	transitColor = new CheckBox("Colour observed stars", skin);
+	transitColor = new CheckBox(txt("gui.gaiascan.colour"), skin);
 	transitColor.setName("transit color");
 	transitColor.addListener(new EventListener() {
 	    @Override
 	    public boolean handle(Event event) {
 		if (event instanceof ChangeEvent) {
-		    EventManager.getInstance().post(Events.TRANSIT_COLOUR_CMD, "Transit density colour", transitColor.isChecked());
+		    EventManager.getInstance().post(Events.TRANSIT_COLOUR_CMD, txt("gui.gaiascan.transit"), transitColor.isChecked());
 		    return true;
 		}
 		return false;
@@ -628,13 +628,13 @@ public class FullGui implements IGui, IObserver {
 	});
 	transitColor.setChecked(GlobalConf.instance.STAR_COLOR_TRANSIT);
 
-	onlyObservedStars = new CheckBox("Show only observed stars", skin);
+	onlyObservedStars = new CheckBox(txt("gui.gaiascan.onlyobserved"), skin);
 	onlyObservedStars.setName("only observed stars");
 	onlyObservedStars.addListener(new EventListener() {
 	    @Override
 	    public boolean handle(Event event) {
 		if (event instanceof ChangeEvent) {
-		    EventManager.getInstance().post(Events.ONLY_OBSERVED_STARS_CMD, "Only observed stars", onlyObservedStars.isChecked());
+		    EventManager.getInstance().post(Events.ONLY_OBSERVED_STARS_CMD, txt("gui.gaiascan.only"), onlyObservedStars.isChecked());
 		    return true;
 		}
 		return false;
@@ -650,7 +650,7 @@ public class FullGui implements IGui, IObserver {
 	/** ----TIME GROUP---- **/
 	VerticalGroup timeGroup = new VerticalGroup().align(Align.left);
 
-	Label timeLabel = new Label("Time", skin, "header");
+	Label timeLabel = new Label(txt("gui.time"), skin, "header");
 
 	// Time
 	inputTime = new OwnTextField("", skin);
@@ -658,7 +658,7 @@ public class FullGui implements IGui, IObserver {
 	inputTime.setDisabled(true);
 
 	// Play/stop
-	playstop = new OwnTextButton("PLAY", skin);
+	playstop = new OwnTextButton(txt("gui.play.upper"), skin);
 	playstop.setName("play stop");
 	playstop.setSize(60, 20);
 	playstop.addListener(new EventListener() {
@@ -673,7 +673,7 @@ public class FullGui implements IGui, IObserver {
 	});
 
 	// Pace
-	Label paceLabel = new Label("Pace [h/sec] ", skin);
+	Label paceLabel = new Label(txt("gui.pace"), skin);
 	plus = new ImageButton(skin.getDrawable("tree-plus"));
 	plus.setName("plus");
 	plus.addListener(new EventListener() {
@@ -742,7 +742,7 @@ public class FullGui implements IGui, IObserver {
 	timeGroup.pack();
 
 	/** BUTTONS **/
-	Button preferences = new OwnTextButton("Preferences", skin);
+	Button preferences = new OwnTextButton(txt("gui.preferences"), skin);
 	preferences.setName("preferences");
 	preferences.addListener(new EventListener() {
 	    @Override
@@ -753,7 +753,7 @@ public class FullGui implements IGui, IObserver {
 		return false;
 	    }
 	});
-	Button tutorial = new OwnTextButton("Run tutorial", skin);
+	Button tutorial = new OwnTextButton(txt("gui.tutorial"), skin);
 	tutorial.setName("tutorial");
 	tutorial.addListener(new EventListener() {
 	    @Override
@@ -764,7 +764,7 @@ public class FullGui implements IGui, IObserver {
 		return false;
 	    }
 	});
-	Button about = new OwnTextButton("Help", skin);
+	Button about = new OwnTextButton(txt("gui.help"), skin);
 	about.setName("about");
 	about.addListener(new EventListener() {
 	    @Override
@@ -775,7 +775,7 @@ public class FullGui implements IGui, IObserver {
 		return false;
 	    }
 	});
-	Button runScript = new OwnTextButton("Run script...", skin);
+	Button runScript = new OwnTextButton(txt("gui.script.runscript"), skin);
 	runScript.setName("run script");
 	runScript.addListener(new EventListener() {
 	    @Override
@@ -1062,9 +1062,9 @@ public class FullGui implements IGui, IObserver {
 	    // Pause has been toggled, update playstop button
 	    boolean timeOn = (Boolean) data[0];
 	    if (timeOn) {
-		playstop.setText("PAUSE");
+		playstop.setText(txt("gui.pause.upper"));
 	    } else {
-		playstop.setText("PLAY");
+		playstop.setText(txt("gui.play.upper"));
 	    }
 	    break;
 	case SHOW_ABOUT_ACTION:
@@ -1210,5 +1210,9 @@ public class FullGui implements IGui, IObserver {
     @Override
     public Actor findActor(String name) {
 	return ui.getRoot().findActor(name);
+    }
+
+    private String txt(String key) {
+	return I18n.bundle.get(key);
     }
 }

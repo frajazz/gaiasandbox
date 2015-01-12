@@ -7,7 +7,7 @@ import gaia.cu9.ari.gaiaorbit.event.Events;
 import gaia.cu9.ari.gaiaorbit.event.IObserver;
 import gaia.cu9.ari.gaiaorbit.scenegraph.CameraManager.CameraMode;
 import gaia.cu9.ari.gaiaorbit.scenegraph.SceneGraphNode;
-import gaia.cu9.ari.gaiaorbit.util.GlobalResources;
+import gaia.cu9.ari.gaiaorbit.util.I18n;
 
 import java.text.DateFormat;
 import java.util.Date;
@@ -91,17 +91,17 @@ public class NotificationsInterface extends Table implements IObserver {
 		    } else {
 			sgn = (SceneGraphNode) data[0];
 		    }
-		    addMessage("Camera focus changed to " + sgn.name);
+		    addMessage(I18n.bundle.format("notif.camerafocus", sgn.name));
 		}
 		break;
 	    case SIMU_TIME_TOGGLED_INFO:
-		addMessage("Simulation " + ((Boolean) data[0] ? "resumed" : "paused"));
+		addMessage(I18n.bundle.format("notif.simulation.pause", ((Boolean) data[0]) ? 0 : 1));
 		break;
 	    case TOGGLE_VISIBILITY_CMD:
 		if (data.length == 2)
-		    addMessage("Visibility of " + (String) data[0] + " changed to " + (((Boolean) data[1]) ? "on" : "off"));
+		    addMessage(I18n.bundle.format("notif.visibility.onoff", (String) data[0], ((Boolean) data[1]) ? 1 : 0));
 		else
-		    addMessage("Visibility of " + (String) data[0] + " toggled");
+		    addMessage(I18n.bundle.format("notif.visibility.toggle", (String) data[0]));
 		break;
 	    case FOCUS_LOCK_CMD:
 	    case TOGGLE_AMBIENT_LIGHT:
@@ -113,25 +113,25 @@ public class NotificationsInterface extends Table implements IObserver {
 	    case CAMERA_MODE_CMD:
 		CameraMode cm = (CameraMode) data[0];
 		if (cm != CameraMode.Focus)
-		    addMessage("Camera mode changed to " + (CameraMode) data[0]);
+		    addMessage(I18n.bundle.format("notif.cameramode.change", (CameraMode) data[0]));
 		break;
 	    case PACE_CHANGED_INFO:
-		addMessage("Time pace changed to " + data[0] + " simulation hours/second");
+		addMessage(I18n.bundle.format("notif.timepace.change", data[0]));
 		break;
 	    case LIMIT_MAG_CMD:
-		addMessage("Limit magnitude set to " + GlobalResources.oneDecimalFormat.format((float) data[0]));
+		addMessage(I18n.bundle.format("notif.limitmag", data[0]));
 		break;
 	    case FOV_CHANGE_NOTIFICATION:
 		//addMessage("Field of view changed to " + (float) data[0]);
 		break;
 	    case JAVA_EXCEPTION:
-		addMessage("Error: " + ((Exception) data[0]));
+		addMessage(I18n.bundle.format("notif.error", data[0]));
 		break;
 	    case ORBIT_DATA_LOADED:
-		addMessage("Orbit data loaded: " + (String) data[1] + "(" + ((OrbitData) data[0]).getNumPoints() + " points)");
+		addMessage(I18n.bundle.format("notif.orbitdata.loaded", data[1], ((OrbitData) data[0]).getNumPoints()));
 		break;
 	    case SCREENSHOT_INFO:
-		addMessage("Screenshot saved to " + data[0]);
+		addMessage(I18n.bundle.format("notif.screenshot", data[0]));
 		break;
 
 	    }

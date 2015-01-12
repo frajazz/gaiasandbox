@@ -4,6 +4,7 @@ import gaia.cu9.ari.gaiaorbit.event.EventManager;
 import gaia.cu9.ari.gaiaorbit.event.Events;
 import gaia.cu9.ari.gaiaorbit.scenegraph.CameraManager.CameraMode;
 import gaia.cu9.ari.gaiaorbit.util.GlobalConf;
+import gaia.cu9.ari.gaiaorbit.util.I18n;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -53,7 +54,7 @@ public class KeyMappings {
     public void initDefault() {
 
 	// ESCAPE -> Exit
-	addMapping(new ProgramAction("Exit app", new Runnable() {
+	addMapping(new ProgramAction(txt("action.exit"), new Runnable() {
 	    @Override
 	    public void run() {
 		if (GlobalConf.OPENGL_GUI) {
@@ -65,7 +66,7 @@ public class KeyMappings {
 	}), Keys.ESCAPE);
 
 	// O -> Toggle orbits
-	addMapping(new ProgramAction("Toggle orbits", new Runnable() {
+	addMapping(new ProgramAction(txt("action.toggle", txt("element.orbits")), new Runnable() {
 	    @Override
 	    public void run() {
 		EventManager.getInstance().post(Events.TOGGLE_VISIBILITY_CMD, "Orbits", false);
@@ -73,7 +74,7 @@ public class KeyMappings {
 	}), Keys.O);
 
 	// P -> Toggle orbits
-	addMapping(new ProgramAction("Toggle planets", new Runnable() {
+	addMapping(new ProgramAction(txt("action.toggle", txt("element.planets")), new Runnable() {
 	    @Override
 	    public void run() {
 		EventManager.getInstance().post(Events.TOGGLE_VISIBILITY_CMD, "Planets", false);
@@ -81,7 +82,7 @@ public class KeyMappings {
 	}), Keys.P);
 
 	// M -> Toggle moons
-	addMapping(new ProgramAction("Toggle moons", new Runnable() {
+	addMapping(new ProgramAction(txt("action.toggle", txt("element.moons")), new Runnable() {
 	    @Override
 	    public void run() {
 		EventManager.getInstance().post(Events.TOGGLE_VISIBILITY_CMD, "Moons", false);
@@ -89,7 +90,7 @@ public class KeyMappings {
 	}), Keys.M);
 
 	// S -> Toggle stars
-	addMapping(new ProgramAction("Toggle stars", new Runnable() {
+	addMapping(new ProgramAction(txt("action.toggle", txt("element.stars")), new Runnable() {
 	    @Override
 	    public void run() {
 		EventManager.getInstance().post(Events.TOGGLE_VISIBILITY_CMD, "Stars", false);
@@ -97,7 +98,7 @@ public class KeyMappings {
 	}), Keys.S);
 
 	// T -> Toggle satellites
-	addMapping(new ProgramAction("Toggle satellites", new Runnable() {
+	addMapping(new ProgramAction(txt("action.toggle", txt("element.satellites")), new Runnable() {
 	    @Override
 	    public void run() {
 		EventManager.getInstance().post(Events.TOGGLE_VISIBILITY_CMD, "Satellites", false);
@@ -105,7 +106,7 @@ public class KeyMappings {
 	}), Keys.T);
 
 	// L -> Toggle labels
-	addMapping(new ProgramAction("Toggle labels", new Runnable() {
+	addMapping(new ProgramAction(txt("action.toggle", txt("element.labels")), new Runnable() {
 	    @Override
 	    public void run() {
 		EventManager.getInstance().post(Events.TOGGLE_VISIBILITY_CMD, "Labels", false);
@@ -113,7 +114,7 @@ public class KeyMappings {
 	}), Keys.L);
 
 	// C -> Toggle constellations
-	addMapping(new ProgramAction("Toggle constellations", new Runnable() {
+	addMapping(new ProgramAction(txt("action.toggle", txt("element.constellations")), new Runnable() {
 	    @Override
 	    public void run() {
 		EventManager.getInstance().post(Events.TOGGLE_VISIBILITY_CMD, "Constellations", false);
@@ -121,7 +122,7 @@ public class KeyMappings {
 	}), Keys.C);
 
 	// B -> Toggle boundaries
-	addMapping(new ProgramAction("Toggle constellation boundaries", new Runnable() {
+	addMapping(new ProgramAction(txt("action.toggle", txt("element.boundaries")), new Runnable() {
 	    @Override
 	    public void run() {
 		EventManager.getInstance().post(Events.TOGGLE_VISIBILITY_CMD, "Boundaries", false);
@@ -129,7 +130,7 @@ public class KeyMappings {
 	}), Keys.B);
 
 	// Q -> Toggle equatorial
-	addMapping(new ProgramAction("Toggle equatorial grid", new Runnable() {
+	addMapping(new ProgramAction(txt("action.toggle", txt("element.eqgrid")), new Runnable() {
 	    @Override
 	    public void run() {
 		EventManager.getInstance().post(Events.TOGGLE_VISIBILITY_CMD, "Equatorial grid", false);
@@ -137,7 +138,7 @@ public class KeyMappings {
 	}), Keys.Q);
 
 	// E -> Toggle ecliptic
-	addMapping(new ProgramAction("Toggle ecliptic grid", new Runnable() {
+	addMapping(new ProgramAction(txt("action.toggle", txt("element.ecgrid")), new Runnable() {
 	    @Override
 	    public void run() {
 		EventManager.getInstance().post(Events.TOGGLE_VISIBILITY_CMD, "Ecliptic grid", false);
@@ -145,7 +146,7 @@ public class KeyMappings {
 	}), Keys.E);
 
 	// G -> Toggle galactic
-	addMapping(new ProgramAction("Toggle galactic grid", new Runnable() {
+	addMapping(new ProgramAction(txt("action.toggle", txt("element.galgrid")), new Runnable() {
 	    @Override
 	    public void run() {
 		EventManager.getInstance().post(Events.TOGGLE_VISIBILITY_CMD, "Galactic grid", false);
@@ -153,7 +154,7 @@ public class KeyMappings {
 	}), Keys.G);
 
 	// Left bracket -> divide speed
-	addMapping(new ProgramAction("Divide time pace", new Runnable() {
+	addMapping(new ProgramAction(txt("action.dividetime"), new Runnable() {
 	    @Override
 	    public void run() {
 		EventManager.getInstance().post(Events.PACE_DIVIDE_CMD);
@@ -161,7 +162,7 @@ public class KeyMappings {
 	}), Keys.LEFT_BRACKET);
 
 	// Right bracket -> double speed
-	addMapping(new ProgramAction("Double time pace", new Runnable() {
+	addMapping(new ProgramAction(txt("action.doubletime"), new Runnable() {
 	    @Override
 	    public void run() {
 		EventManager.getInstance().post(Events.PACE_DOUBLE_CMD);
@@ -169,7 +170,7 @@ public class KeyMappings {
 	}), Keys.RIGHT_BRACKET);
 
 	// SPACE -> toggle time
-	addMapping(new ProgramAction("Pause/resume time", new Runnable() {
+	addMapping(new ProgramAction(txt("action.pauseresume"), new Runnable() {
 	    @Override
 	    public void run() {
 		EventManager.getInstance().post(Events.SIMU_TIME_TOGGLED, (Object) null);
@@ -177,7 +178,7 @@ public class KeyMappings {
 	}), Keys.SPACE);
 
 	// Plus -> increase limit magnitude
-	addMapping(new ProgramAction("Increase limit mag", new Runnable() {
+	addMapping(new ProgramAction(txt("action.incmag"), new Runnable() {
 	    @Override
 	    public void run() {
 		EventManager.getInstance().post(Events.LIMIT_MAG_CMD, GlobalConf.instance.LIMIT_MAG_RUNTIME + 0.1f);
@@ -185,7 +186,7 @@ public class KeyMappings {
 	}), Keys.PLUS);
 
 	// Minus -> decrease limit magnitude
-	addMapping(new ProgramAction("Decrease limit mag", new Runnable() {
+	addMapping(new ProgramAction(txt("action.decmag"), new Runnable() {
 	    @Override
 	    public void run() {
 		EventManager.getInstance().post(Events.LIMIT_MAG_CMD, GlobalConf.instance.LIMIT_MAG_RUNTIME - 0.1f);
@@ -193,7 +194,7 @@ public class KeyMappings {
 	}), Keys.MINUS);
 
 	// Star -> reset limit mag
-	addMapping(new ProgramAction("Reset limit mag", new Runnable() {
+	addMapping(new ProgramAction(txt("action.resetmag"), new Runnable() {
 	    @Override
 	    public void run() {
 		EventManager.getInstance().post(Events.LIMIT_MAG_CMD, GlobalConf.instance.LIMIT_MAG_LOAD);
@@ -201,7 +202,7 @@ public class KeyMappings {
 	}), Keys.STAR);
 
 	// F11 -> fullscreen
-	addMapping(new ProgramAction("Toggle fullscreen", new Runnable() {
+	addMapping(new ProgramAction(txt("action.togglefs"), new Runnable() {
 	    @Override
 	    public void run() {
 		EventManager.getInstance().post(Events.FULLSCREEN_CMD);
@@ -209,7 +210,7 @@ public class KeyMappings {
 	}), Keys.F11);
 
 	// F5 -> take screenshot
-	addMapping(new ProgramAction("Take screenshot", new Runnable() {
+	addMapping(new ProgramAction(txt("action.screenshot"), new Runnable() {
 	    @Override
 	    public void run() {
 		EventManager.getInstance().post(Events.SCREENSHOT_CMD, GlobalConf.instance.SCREENSHOT_WIDTH, GlobalConf.instance.SCREENSHOT_HEIGHT, GlobalConf.instance.SCREENSHOT_FOLDER);
@@ -217,7 +218,7 @@ public class KeyMappings {
 	}), Keys.F5);
 
 	// U -> toggle UI collapse/expand
-	addMapping(new ProgramAction("UI toggle", new Runnable() {
+	addMapping(new ProgramAction(txt("action.uitoggle"), new Runnable() {
 	    @Override
 	    public void run() {
 		EventManager.getInstance().post(Events.GUI_FOLD_CMD);
@@ -240,7 +241,7 @@ public class KeyMappings {
 	}
 
 	// CTRL + D -> Toggle debug information
-	addMapping(new ProgramAction("Toggle debug information", new Runnable() {
+	addMapping(new ProgramAction(txt("action.debugtoggle"), new Runnable() {
 	    @Override
 	    public void run() {
 		EventManager.getInstance().post(Events.SHOW_DEBUG_CMD);
@@ -248,7 +249,7 @@ public class KeyMappings {
 	}), Keys.CONTROL_LEFT, Keys.D);
 
 	// CTRL + F -> Search dialog
-	addMapping(new ProgramAction("Search dialogue", new Runnable() {
+	addMapping(new ProgramAction(txt("action.search"), new Runnable() {
 	    @Override
 	    public void run() {
 		EventManager.getInstance().post(Events.SHOW_SEARCH_ACTION);
@@ -262,7 +263,7 @@ public class KeyMappings {
      * @author Toni Sagrista
      *
      */
-    public class ProgramAction implements Runnable {
+    public class ProgramAction implements Runnable, Comparable<ProgramAction> {
 	public final String actionName;
 	private final Runnable action;
 
@@ -276,5 +277,18 @@ public class KeyMappings {
 	    action.run();
 	}
 
+	@Override
+	public int compareTo(ProgramAction other) {
+	    return actionName.toLowerCase().compareTo(other.actionName.toLowerCase());
+	}
+
+    }
+
+    protected static String txt(String key) {
+	return I18n.bundle.get(key);
+    }
+
+    protected static String txt(String key, Object... args) {
+	return I18n.bundle.format(key, args);
     }
 }

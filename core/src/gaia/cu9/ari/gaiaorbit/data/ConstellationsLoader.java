@@ -5,6 +5,7 @@ import gaia.cu9.ari.gaiaorbit.event.Events;
 import gaia.cu9.ari.gaiaorbit.render.SceneGraphRenderer.ComponentType;
 import gaia.cu9.ari.gaiaorbit.scenegraph.Constellation;
 import gaia.cu9.ari.gaiaorbit.scenegraph.SceneGraphNode;
+import gaia.cu9.ari.gaiaorbit.util.I18n;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -91,7 +92,7 @@ public class ConstellationsLoader<T extends SceneGraphNode> implements ISceneGra
 		Gdx.app.error(this.getClass().getSimpleName(), e.getLocalizedMessage());
 	    }
 
-	    EventManager.getInstance().post(Events.POST_NOTIFICATION, this.getClass().getSimpleName(), constellations.size() + " constellations initialized");
+	    EventManager.getInstance().post(Events.POST_NOTIFICATION, this.getClass().getSimpleName(), I18n.bundle.format("notif.constellations.init", constellations.size()));
 
 	} catch (Exception e) {
 	    Gdx.app.error(this.getClass().getSimpleName(), e.getLocalizedMessage());

@@ -3,6 +3,7 @@ package gaia.cu9.ari.gaiaorbit.scenegraph;
 import gaia.cu9.ari.gaiaorbit.concurrent.UpdaterTask;
 import gaia.cu9.ari.gaiaorbit.event.EventManager;
 import gaia.cu9.ari.gaiaorbit.event.Events;
+import gaia.cu9.ari.gaiaorbit.util.I18n;
 
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -60,7 +61,7 @@ public class SceneGraphConcurrent extends AbstractSceneGraph {
 
 	    tasks.add(new UpdaterTask(partialList, time));
 	}
-	EventManager.getInstance().post(Events.POST_NOTIFICATION, this.getClass().getSimpleName(), "Thread pool created with " + threads + " threads");
+	EventManager.getInstance().post(Events.POST_NOTIFICATION, this.getClass().getSimpleName(), I18n.bundle.format("notif.threadpool.init", threads));
     }
 
     public void update(ITimeFrameProvider time, ICamera camera) {

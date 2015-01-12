@@ -71,7 +71,7 @@ import com.badlogic.gdx.backends.lwjgl.LwjglApplicationConfiguration;
  * @author Toni Sagrista
  *
  */
-public class ConfigDialog extends JFrame {
+public class ConfigDialog extends I18nJFrame {
     private static long fiveDaysMs = 5 * 24 * 60 * 60 * 1000;
 
     JFrame frame;
@@ -80,7 +80,7 @@ public class ConfigDialog extends JFrame {
     Color darkgreen, darkred;
 
     public ConfigDialog(final GaiaSandboxDesktop gsd, boolean startup) {
-	super(startup ? GlobalConf.instance.getFullApplicationName() : "Preferences");
+	super(startup ? GlobalConf.instance.getFullApplicationName() : txt("gui.settings"));
 	initialize(gsd, startup);
 
 	if (startup) {
@@ -120,7 +120,7 @@ public class ConfigDialog extends JFrame {
 	checkPanel.add(checkLabel);
 	if (GlobalConf.instance.LAST_CHECKED == null || GlobalConf.instance.LAST_VERSION.isEmpty() || new Date().getTime() - GlobalConf.instance.LAST_CHECKED.getTime() > fiveDaysMs) {
 	    // Check!
-	    checkLabel.setText("Checking for new version...");
+	    checkLabel.setText(txt("gui.newversion.checking"));
 	    getCheckVersionThread().start();
 	} else {
 	    // Inform latest
@@ -138,7 +138,7 @@ public class ConfigDialog extends JFrame {
 
 	/** RESOLUTION **/
 	JPanel mode = new JPanel(new MigLayout("fillx", "[grow,fill][grow,fill]", ""));
-	mode.setBorder(new TitledBorder("Resolution and mode"));
+	mode.setBorder(new TitledBorder(txt("gui.resolutionmode")));
 
 	// Full screen mode resolutions
 	DisplayMode[] modes = LwjglApplicationConfiguration.getDisplayModes();
@@ -174,14 +174,14 @@ public class ConfigDialog extends JFrame {
 	final JSpinner heightField = new JSpinner(new SpinnerNumberModel(GlobalConf.instance.SCREEN_HEIGHT, 100, nativeMode.height, 1));
 	final JCheckBox resizable = new JCheckBox("Resizable", GlobalConf.instance.RESIZABLE);
 
-	windowedResolutions.add(new JLabel("Width:"));
+	windowedResolutions.add(new JLabel(txt("gui.width") + ":"));
 	windowedResolutions.add(widthField);
-	windowedResolutions.add(new JLabel("Heigth:"));
+	windowedResolutions.add(new JLabel(txt("gui.height") + ":"));
 	windowedResolutions.add(heightField, "wrap");
 	windowedResolutions.add(resizable, "span");
 
 	// Radio buttons 
-	final JRadioButton fullscreen = new JRadioButton("Fullscreen mode");
+	final JRadioButton fullscreen = new JRadioButton(txt("gui.fullscreen"));
 	fullscreen.addActionListener(new ActionListener() {
 	    @Override
 	    public void actionPerformed(ActionEvent e) {
@@ -191,7 +191,7 @@ public class ConfigDialog extends JFrame {
 	});
 	fullscreen.setSelected(GlobalConf.instance.FULLSCREEN);
 
-	final JRadioButton windowed = new JRadioButton("Windowed mode");
+	final JRadioButton windowed = new JRadioButton(txt("gui.windowed"));
 	windowed.addActionListener(new ActionListener() {
 	    @Override
 	    public void actionPerformed(ActionEvent e) {
@@ -213,11 +213,10 @@ public class ConfigDialog extends JFrame {
 
 	/** GRAPHICS **/
 	JPanel graphics = new JPanel(new MigLayout("", "[][]", ""));
-	graphics.setBorder(new TitledBorder("Graphics settings"));
+	graphics.setBorder(new TitledBorder(txt("gui.graphicssettings")));
 
 	// MSAA
-	JTextArea msaaInfo = new JTextArea("- FXAA and NFAA: faster, work with other effects, lower quality\n"
-		+ "- MSAA: slower, does not work with other effects, higher quality") {
+	JTextArea msaaInfo = new JTextArea(txt("gui.aa.info")) {
 	    @Override
 	    public void setBorder(Border border) {
 		// No!
@@ -227,13 +226,13 @@ public class ConfigDialog extends JFrame {
 	msaaInfo.setForeground(darkgreen);
 	msaaInfo.setEditable(false);
 
-	JLabel msaaLabel = new JLabel("Anti-aliasing");
-	ComboBoxBean[] msaas = new ComboBoxBean[] { new ComboBoxBean("No anti-aliasing", 0), new ComboBoxBean("FXAA", -1), new ComboBoxBean("NFAA", -2), new ComboBoxBean("MSAA x2", 2), new ComboBoxBean("MSAA x4", 4), new ComboBoxBean("MSAA x8", 8), new ComboBoxBean("MSAA x16", 16) };
+	JLabel msaaLabel = new JLabel(txt("gui.aa"));
+	ComboBoxBean[] msaas = new ComboBoxBean[] { new ComboBoxBean(txt("gui.aa.no"), 0), new ComboBoxBean(txt("gui.aa.fxaa"), -1), new ComboBoxBean(txt("gui.aa.nfaa"), -2), new ComboBoxBean(txt("gui.aa.msaa", 2), 2), new ComboBoxBean(txt("gui.aa.msaa", 4), 4), new ComboBoxBean(txt("gui.aa.msaa", 8), 8), new ComboBoxBean(txt("gui.aa.msaa", 16), 16) };
 	final JComboBox<ComboBoxBean> msaa = new JComboBox<ComboBoxBean>(msaas);
 	msaa.setSelectedItem(msaas[idx(2, GlobalConf.instance.POSTPROCESS_ANTIALIAS)]);
 
 	// Vsync
-	final JCheckBox vsync = new JCheckBox("V-sync", GlobalConf.instance.VSYNC);
+	final JCheckBox vsync = new JCheckBox(txt("gui.vsync"), GlobalConf.instance.VSYNC);
 
 	graphics.add(msaaInfo, "span,wrap");
 	graphics.add(msaaLabel);
@@ -242,7 +241,7 @@ public class ConfigDialog extends JFrame {
 
 	/** NOTICE **/
 	JPanel notice = new JPanel(new MigLayout("", "[]", ""));
-	JLabel noticeText = new JLabel("Changes in graphics properties will take effect the next time you start the application");
+	JLabel noticeText = new JLabel(txt("gui.graphics.info"));
 	noticeText.setForeground(darkgreen);
 	notice.add(noticeText);
 
@@ -261,17 +260,17 @@ public class ConfigDialog extends JFrame {
 
 	/** MULTITHREAD **/
 	JPanel multithread = new JPanel(new MigLayout("", "[grow,fill][grow,fill]", ""));
-	multithread.setBorder(new TitledBorder("Multithreading"));
+	multithread.setBorder(new TitledBorder(txt("gui.multithreading")));
 
 	int maxthreads = Runtime.getRuntime().availableProcessors();
 	ComboBoxBean[] cbs = new ComboBoxBean[maxthreads + 1];
-	cbs[0] = new ComboBoxBean("Let the program decide", 0);
+	cbs[0] = new ComboBoxBean(txt("gui.letdecide"), 0);
 	for (int i = 1; i <= maxthreads; i++) {
-	    cbs[i] = new ComboBoxBean(i + (i == 1 ? " thread" : " threads"), i);
+	    cbs[i] = new ComboBoxBean(txt("gui.thread", i), i);
 	}
 	final JComboBox<ComboBoxBean> numThreads = new JComboBox<ComboBoxBean>(cbs);
 
-	final JCheckBox multithreadCb = new JCheckBox("Enable multithreading");
+	final JCheckBox multithreadCb = new JCheckBox(txt("gui.thread.enable"));
 	multithreadCb.addChangeListener(new ChangeListener() {
 	    @Override
 	    public void stateChanged(ChangeEvent e) {
@@ -282,24 +281,24 @@ public class ConfigDialog extends JFrame {
 	numThreads.setEnabled(multithreadCb.isSelected());
 
 	multithread.add(multithreadCb, "span");
-	multithread.add(new JLabel("Number of threads:"));
+	multithread.add(new JLabel(txt("gui.thread.number") + ":"));
 	multithread.add(numThreads);
 
 	JPanel performancePanel = new JPanel(new MigLayout("", "[grow,fill]", ""));
 	performancePanel.add(multithread, "wrap");
 
-	tabbedPane.addTab("Performance", performancePanel);
+	tabbedPane.addTab(txt("gui.performance"), performancePanel);
 
 	/**
 	 * ====== CONTROLS TAB =======
 	 */
 	JPanel controls = new JPanel(new MigLayout("", "[grow,fill][]", ""));
-	controls.setBorder(new TitledBorder("Key mappings"));
+	controls.setBorder(new TitledBorder(txt("gui.keymappings")));
 
 	Map<TreeSet<Integer>, ProgramAction> maps = KeyMappings.instance.mappings;
 	Set<TreeSet<Integer>> keymaps = maps.keySet();
 
-	String[] headers = new String[] { "Action", "Keys" };
+	String[] headers = new String[] { txt("gui.keymappings.action"), txt("gui.keymappings.keys") };
 	String[][] data = new String[maps.size()][2];
 	int i = 0;
 	for (TreeSet<Integer> keys : keymaps) {
@@ -318,7 +317,7 @@ public class ConfigDialog extends JFrame {
 	JScrollPane controlsScrollPane = new JScrollPane(table);
 	controlsScrollPane.setPreferredSize(new Dimension(0, 180));
 
-	JLabel lab = new JLabel("Not yet editable");
+	JLabel lab = new JLabel(txt("gui.noteditable"));
 	lab.setForeground(darkred);
 	controls.add(lab, "span");
 	controls.add(controlsScrollPane, "span");
@@ -331,10 +330,9 @@ public class ConfigDialog extends JFrame {
 
 	/** SCREENSHOTS CONFIG **/
 	JPanel screenshots = new JPanel(new MigLayout("", "[grow,fill][grow,fill]", ""));
-	screenshots.setBorder(new TitledBorder("Screen capture configuration"));
+	screenshots.setBorder(new TitledBorder(txt("gui.screencapture")));
 
-	JTextArea screenshotsInfo = new JTextArea("- Capture screenshots pressing F5.\n"
-		+ "- Choose below the size and save folder of the screenshots.") {
+	JTextArea screenshotsInfo = new JTextArea(txt("gui.screencapture.info")) {
 	    @Override
 	    public void setBorder(Border border) {
 		// No!
@@ -345,9 +343,9 @@ public class ConfigDialog extends JFrame {
 	screenshotsInfo.setForeground(darkgreen);
 
 	// SCREENSHOTS LOCATION
-	JLabel screenshotsLocationLabel = new JLabel("Screenshots save location:");
+	JLabel screenshotsLocationLabel = new JLabel(txt("gui.screenshots.save") + ":");
 	File currentLocation = new File(GlobalConf.instance.SCREENSHOT_FOLDER);
-	String dirText = "Choose the directory to save the screenshots...";
+	String dirText = txt("gui.screenshots.directory.choose");
 	if (currentLocation.exists() && currentLocation.isDirectory()) {
 	    dirText = GlobalConf.instance.SCREENSHOT_FOLDER;
 	}
@@ -361,7 +359,7 @@ public class ConfigDialog extends JFrame {
 	    {
 		if (directoryChooser == null)
 		{
-		    directoryChooser = new WebDirectoryChooser(frame, "Choose any directory");
+		    directoryChooser = new WebDirectoryChooser(frame, txt("gui.directory.chooseany"));
 		    // Increase scrollbar speed
 		    WebScrollPane wsp = (WebScrollPane) ((Container) ((Container) ((Container) ((Container) ((Container) directoryChooser.getComponents()[0]).getComponents()[1]).getComponents()[0]).getComponents()[0]).getComponents()[1]).getComponents()[1];
 		    wsp.getVerticalScrollBar().setUnitIncrement(50);
@@ -386,9 +384,9 @@ public class ConfigDialog extends JFrame {
 	final JSpinner ssheightField = new JSpinner(new SpinnerNumberModel(GlobalConf.instance.SCREENSHOT_HEIGHT, 100, 5000, 1));
 
 	JPanel screenshotSize = new JPanel(new MigLayout("", "[][grow,fill][][grow,fill]", "[][]4[][]"));
-	screenshotSize.add(new JLabel("Width:"));
+	screenshotSize.add(new JLabel(txt("gui.width") + ":"));
 	screenshotSize.add(sswidthField);
-	screenshotSize.add(new JLabel("Height:"));
+	screenshotSize.add(new JLabel(txt("gui.height") + ":"));
 	screenshotSize.add(ssheightField);
 
 	screenshots.add(screenshotsInfo, "span,wrap");
@@ -396,7 +394,7 @@ public class ConfigDialog extends JFrame {
 	screenshots.add(screenshotsLocation, "wrap");
 	screenshots.add(screenshotSize, "span");
 
-	tabbedPane.addTab("Screenshots", screenshots);
+	tabbedPane.addTab(txt("gui.screenshots"), screenshots);
 
 	/**
 	 * ====== FRAME OUTPUT TAB =======
@@ -404,10 +402,9 @@ public class ConfigDialog extends JFrame {
 
 	/** IMAGE OUTPUT CONFIG **/
 	JPanel imageOutput = new JPanel(new MigLayout("", "[grow,fill][grow,fill]", ""));
-	imageOutput.setBorder(new TitledBorder("Frame output configuration"));
+	imageOutput.setBorder(new TitledBorder(txt("gui.frameoutput")));
 
-	JTextArea frameInfo = new JTextArea("- Use frame output to output each frame as an image.\n"
-		+ "- Warning: It may be very slow!") {
+	JTextArea frameInfo = new JTextArea(txt("gui.frameoutput.info")) {
 	    @Override
 	    public void setBorder(Border border) {
 		// No!
@@ -419,7 +416,7 @@ public class ConfigDialog extends JFrame {
 
 	// SAVE LOCATION
 	File currentFrameLocation = new File(GlobalConf.instance.SCREENSHOT_FOLDER);
-	String dirFrameText = "Choose the directory to output the frames...";
+	String dirFrameText = txt("gui.frameoutput.directory.choose");
 	if (currentFrameLocation.exists() && currentFrameLocation.isDirectory()) {
 	    dirFrameText = GlobalConf.instance.RENDER_FOLDER;
 	}
@@ -433,7 +430,7 @@ public class ConfigDialog extends JFrame {
 	    {
 		if (directoryChooser == null)
 		{
-		    directoryChooser = new WebDirectoryChooser(frame, "Choose any directory");
+		    directoryChooser = new WebDirectoryChooser(frame, txt("gui.directory.chooseany"));
 		    // Increase scrollbar speed
 		    WebScrollPane wsp = (WebScrollPane) ((Container) ((Container) ((Container) ((Container) ((Container) directoryChooser.getComponents()[0]).getComponents()[1]).getComponents()[0]).getComponents()[0]).getComponents()[1]).getComponents()[1];
 		    wsp.getVerticalScrollBar().setUnitIncrement(50);
@@ -494,7 +491,7 @@ public class ConfigDialog extends JFrame {
 	final JSpinner targetFPS = new JSpinner(new SpinnerNumberModel(GlobalConf.instance.RENDER_TARGET_FPS, 1, 60, 1));
 
 	// FRAME OUTPUT CHECKBOX
-	final JCheckBox frameCb = new JCheckBox("Enable frame output");
+	final JCheckBox frameCb = new JCheckBox(txt("gui.frameoutput.enable"));
 	frameCb.addChangeListener(new ChangeListener() {
 	    @Override
 	    public void stateChanged(ChangeEvent e) {
@@ -508,18 +505,18 @@ public class ConfigDialog extends JFrame {
 
 	imageOutput.add(frameInfo, "span");
 	imageOutput.add(frameCb, "span");
-	imageOutput.add(new JLabel("Frame save location:"));
+	imageOutput.add(new JLabel(txt("gui.frameoutput.location") + ":"));
 	imageOutput.add(frameLocation, "wrap");
-	imageOutput.add(new JLabel("File name prefix:"));
+	imageOutput.add(new JLabel(txt("gui.frameoutput.prefix") + ":"));
 	imageOutput.add(frameFileName, "wrap");
 	imageOutput.add(renderSize, "span");
-	imageOutput.add(new JLabel("Target FPS"));
+	imageOutput.add(new JLabel(txt("gui.frameoutput.fps") + ":"));
 	imageOutput.add(targetFPS);
 
 	tabbedPane.addTab("Frame output", imageOutput);
 
 	// Do not show again
-	final JCheckBox showAgain = new JCheckBox("Do not show this dialog again");
+	final JCheckBox showAgain = new JCheckBox(txt("gui.notagain"));
 	showAgain.addChangeListener(new ChangeListener() {
 	    @Override
 	    public void stateChanged(ChangeEvent e) {
@@ -536,7 +533,7 @@ public class ConfigDialog extends JFrame {
 	/** BUTTONS **/
 	JPanel buttons = new JPanel(new MigLayout("", "push[][]", ""));
 
-	JButton okButton = new JButton(startup ? "Launch application" : "Save preferences");
+	JButton okButton = new JButton(startup ? txt("gui.launchapp") : txt("gui.saveprefs"));
 	okButton.addActionListener(new ActionListener() {
 
 	    @Override
@@ -601,7 +598,7 @@ public class ConfigDialog extends JFrame {
 	});
 	okButton.setMinimumSize(new Dimension(100, 20));
 
-	JButton cancelButton = new JButton("Cancel");
+	JButton cancelButton = new JButton(txt("gui.cancel"));
 	cancelButton.addActionListener(new ActionListener() {
 	    public void actionPerformed(ActionEvent e) {
 		if (frame.isDisplayable()) {
@@ -702,12 +699,12 @@ public class ConfigDialog extends JFrame {
 
 	if (majmin[0] > GlobalConf.instance.VERSION.major || (majmin[0] == GlobalConf.instance.VERSION.major && majmin[1] > GlobalConf.instance.VERSION.minor)) {
 	    // There's a new version!
-	    checkLabel.setText("New version available! You have " + GlobalConf.instance.VERSION + ", new version is " + version);
+	    checkLabel.setText(txt("gui.newversion.available", GlobalConf.instance.VERSION, version));
 	    try {
 		final URI uri = new URI(GlobalConf.instance.WEBPAGE);
 
 		JButton button = new JButton();
-		button.setText("Get it!");
+		button.setText(txt("gui.newversion.getit"));
 		button.setHorizontalAlignment(SwingConstants.LEFT);
 		button.setBorderPainted(false);
 		button.setOpaque(false);
@@ -731,15 +728,15 @@ public class ConfigDialog extends JFrame {
 	    } catch (URISyntaxException e1) {
 	    }
 	} else {
-	    checkLabel.setText("No newer version found (checked on " + GlobalConf.instance.getLastCheckedString() + ")");
+	    checkLabel.setText(txt("gui.newversion.nonew", GlobalConf.instance.getLastCheckedString()));
 	    // Add check now button
 	    JButton button = new JButton();
-	    button.setText("Check now");
+	    button.setText(txt("gui.newversion.checknow"));
 	    button.setHorizontalAlignment(SwingConstants.LEFT);
 	    button.setBorderPainted(false);
 	    button.setOpaque(false);
 	    button.setBackground(Color.WHITE);
-	    button.setToolTipText("Check for a new version now");
+	    button.setToolTipText(txt("gui.newversion.checknow.tooltip"));
 	    button.addActionListener(new ActionListener() {
 
 		@Override

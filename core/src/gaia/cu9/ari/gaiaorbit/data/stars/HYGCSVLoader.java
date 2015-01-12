@@ -6,6 +6,7 @@ import gaia.cu9.ari.gaiaorbit.scenegraph.CelestialBody;
 import gaia.cu9.ari.gaiaorbit.scenegraph.Star;
 import gaia.cu9.ari.gaiaorbit.util.Constants;
 import gaia.cu9.ari.gaiaorbit.util.GlobalConf;
+import gaia.cu9.ari.gaiaorbit.util.I18n;
 import gaia.cu9.ari.gaiaorbit.util.coord.Coordinates;
 import gaia.cu9.ari.gaiaorbit.util.math.MathUtilsd;
 import gaia.cu9.ari.gaiaorbit.util.math.Vector3d;
@@ -30,7 +31,7 @@ public class HYGCSVLoader extends AbstractCatalogLoader implements ICatalogLoade
     public List<CelestialBody> loadStars(InputStream data) throws FileNotFoundException {
 	List<CelestialBody> stars = new ArrayList<CelestialBody>();
 	BufferedReader br = new BufferedReader(new InputStreamReader(data));
-	EventManager.getInstance().post(Events.POST_NOTIFICATION, this.getClass().getSimpleName(), "Limit magnitude set to " + GlobalConf.instance.LIMIT_MAG_LOAD);
+	EventManager.getInstance().post(Events.POST_NOTIFICATION, this.getClass().getSimpleName(), I18n.bundle.format("notif.limitmag", GlobalConf.instance.LIMIT_MAG_LOAD));
 
 	try {
 	    //Skip first line
@@ -48,7 +49,7 @@ public class HYGCSVLoader extends AbstractCatalogLoader implements ICatalogLoade
 	    e.printStackTrace();
 	}
 
-	EventManager.getInstance().post(Events.POST_NOTIFICATION, this.getClass().getSimpleName(), "Catalog initialized, " + stars.size() + " stars");
+	EventManager.getInstance().post(Events.POST_NOTIFICATION, this.getClass().getSimpleName(), I18n.bundle.format("notif.catalog.init", stars.size()));
 	return stars;
     }
 

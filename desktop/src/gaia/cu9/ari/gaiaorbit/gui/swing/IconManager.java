@@ -3,6 +3,7 @@ package gaia.cu9.ari.gaiaorbit.gui.swing;
 import gaia.cu9.ari.gaiaorbit.event.EventManager;
 import gaia.cu9.ari.gaiaorbit.event.Events;
 import gaia.cu9.ari.gaiaorbit.render.SceneGraphRenderer.ComponentType;
+import gaia.cu9.ari.gaiaorbit.util.I18n;
 
 import java.io.File;
 import java.net.URL;
@@ -18,7 +19,7 @@ public class IconManager {
 
     public static void initialize(File folder) {
 	icons = new HashMap<String, Icon>();
-	EventManager.getInstance().post(Events.POST_NOTIFICATION, "Initialising icons...");
+	EventManager.getInstance().post(Events.POST_NOTIFICATION, I18n.bundle.get("notif.icon.initialising"));
 	if (folder.exists() && folder.isDirectory() && folder.canRead()) {
 	    String[] iconNames = folder.list();
 	    for (String iconName : iconNames) {
@@ -28,13 +29,13 @@ public class IconManager {
 
 			icons.put(iconName.substring(0, iconName.lastIndexOf('.')), new ImageIcon(iconURL));
 		    } catch (Exception e) {
-			EventManager.getInstance().post(Events.JAVA_EXCEPTION, new RuntimeException("Problem loading icon: " + iconName, e));
+			EventManager.getInstance().post(Events.JAVA_EXCEPTION, new RuntimeException(I18n.bundle.format("error.icon.loading", iconName), e));
 		    }
 		}
 	    }
-	    EventManager.getInstance().post(Events.POST_NOTIFICATION, "Initialised " + icons.size() + " icons");
+	    EventManager.getInstance().post(Events.POST_NOTIFICATION, I18n.bundle.format("notif.icon.init", icons.size()));
 	} else {
-	    EventManager.getInstance().post(Events.JAVA_EXCEPTION, new RuntimeException("There was a problem with the icons folder: " + folder.getPath()));
+	    EventManager.getInstance().post(Events.JAVA_EXCEPTION, new RuntimeException(I18n.bundle.format("error.icon.folder", folder.getPath())));
 	}
     }
 

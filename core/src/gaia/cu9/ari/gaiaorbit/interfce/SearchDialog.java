@@ -5,6 +5,7 @@ import gaia.cu9.ari.gaiaorbit.event.Events;
 import gaia.cu9.ari.gaiaorbit.scenegraph.CelestialBody;
 import gaia.cu9.ari.gaiaorbit.scenegraph.ISceneGraph;
 import gaia.cu9.ari.gaiaorbit.scenegraph.SceneGraphNode;
+import gaia.cu9.ari.gaiaorbit.util.I18n;
 
 import com.badlogic.gdx.Input.Keys;
 import com.badlogic.gdx.scenes.scene2d.Event;
@@ -29,7 +30,7 @@ public class SearchDialog extends Window {
 	this.me = this;
 	this.gui = gui;
 	searchInput = new TextField("", skin);
-	searchInput.setMessageText("Search...");
+	searchInput.setMessageText(I18n.bundle.get("gui.objects.search"));
 	searchInput.addListener(new EventListener() {
 	    @Override
 	    public boolean handle(Event event) {
@@ -56,7 +57,7 @@ public class SearchDialog extends Window {
 	});
 
 	HorizontalGroup buttonGroup = new HorizontalGroup();
-	TextButton cls = new OwnTextButton("Close", skin, "default");
+	TextButton cls = new OwnTextButton(I18n.bundle.get("gui.close"), skin, "default");
 	cls.setName("close");
 	cls.addListener(new EventListener() {
 	    @Override

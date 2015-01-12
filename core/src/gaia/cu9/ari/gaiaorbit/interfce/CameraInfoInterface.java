@@ -4,6 +4,7 @@ import gaia.cu9.ari.gaiaorbit.event.EventManager;
 import gaia.cu9.ari.gaiaorbit.event.Events;
 import gaia.cu9.ari.gaiaorbit.event.IObserver;
 import gaia.cu9.ari.gaiaorbit.util.Constants;
+import gaia.cu9.ari.gaiaorbit.util.I18n;
 import gaia.cu9.ari.gaiaorbit.util.math.Vector3d;
 
 import java.text.DecimalFormat;
@@ -24,7 +25,7 @@ public class CameraInfoInterface extends Table implements IObserver {
 	camVel = new OwnLabel("", skin, "hud");
 	camVel.setWidth(100);
 	camPos = new OwnLabel("", skin, "hud");
-	add(new OwnLabel("Camera vel", skin, "hud")).left();
+	add(new OwnLabel(I18n.bundle.get("gui.cam.cameravel"), skin, "hud")).left();
 	add(camVel).left().padLeft(10);
 	row();
 	add(camPos).left().colspan(2);

@@ -7,6 +7,7 @@ import gaia.cu9.ari.gaiaorbit.scenegraph.CameraManager.CameraMode;
 import gaia.cu9.ari.gaiaorbit.util.Constants;
 import gaia.cu9.ari.gaiaorbit.util.GlobalConf;
 import gaia.cu9.ari.gaiaorbit.util.GlobalResources;
+import gaia.cu9.ari.gaiaorbit.util.I18n;
 import gaia.cu9.ari.gaiaorbit.util.gaia.Nsl37AttitudeServer;
 import gaia.cu9.ari.gaiaorbit.util.gaia.Satellite;
 import gaia.cu9.ari.gaiaorbit.util.math.Matrix4d;
@@ -193,7 +194,7 @@ public class FovCamera extends AbstractCamera implements IObserver {
 	    if (lastTime != 0 && currentTime - lastTime > MAX_OVERLAP_TIME) {
 		if (((GlobalClock) time).fps < 0) {
 		    ((GlobalClock) time).fps = 10;
-		    EventManager.getInstance().post(Events.POST_NOTIFICATION, this.getClass().getSimpleName(), "Time provider switched to fixed frame rate mode");
+		    EventManager.getInstance().post(Events.POST_NOTIFICATION, this.getClass().getSimpleName(), I18n.bundle.get("notif.timeprovider.fixed"));
 		}
 		for (long t = lastTime + MAX_OVERLAP_TIME; t < currentTime; t += MAX_OVERLAP_TIME) {
 		    interpolatedDirections.add(getDirections(new Date(t)));
@@ -201,7 +202,7 @@ public class FovCamera extends AbstractCamera implements IObserver {
 	    } else {
 		if (((GlobalClock) time).fps > 0) {
 		    ((GlobalClock) time).fps = -1;
-		    EventManager.getInstance().post(Events.POST_NOTIFICATION, this.getClass().getSimpleName(), "Time provider switched to real time mode");
+		    EventManager.getInstance().post(Events.POST_NOTIFICATION, this.getClass().getSimpleName(), I18n.bundle.get("notif.timeprovider.real"));
 		}
 	    }
 	}

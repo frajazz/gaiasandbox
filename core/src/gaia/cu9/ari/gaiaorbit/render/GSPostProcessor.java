@@ -4,6 +4,7 @@ import gaia.cu9.ari.gaiaorbit.event.EventManager;
 import gaia.cu9.ari.gaiaorbit.event.Events;
 import gaia.cu9.ari.gaiaorbit.event.IObserver;
 import gaia.cu9.ari.gaiaorbit.util.GlobalConf;
+import gaia.cu9.ari.gaiaorbit.util.I18n;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Texture;
@@ -33,9 +34,9 @@ public class GSPostProcessor implements IPostProcessor, IObserver {
 
 	// Output AA info.
 	if (conf.POSTPROCESS_ANTIALIAS == -1) {
-	    EventManager.getInstance().post(Events.POST_NOTIFICATION, this.getClass().getSimpleName(), "FXAA selected");
+	    EventManager.getInstance().post(Events.POST_NOTIFICATION, this.getClass().getSimpleName(), I18n.bundle.format("notif.selected", "FXAA"));
 	} else if (conf.POSTPROCESS_ANTIALIAS == -2) {
-	    EventManager.getInstance().post(Events.POST_NOTIFICATION, this.getClass().getSimpleName(), "NFAA selected");
+	    EventManager.getInstance().post(Events.POST_NOTIFICATION, this.getClass().getSimpleName(), I18n.bundle.format("notif.selected", "NFAA"));
 	}
 
 	EventManager.getInstance().subscribe(this, Events.PROPERTIES_WRITTEN, Events.BLOOM_CMD, Events.LENS_FLARE_CMD);

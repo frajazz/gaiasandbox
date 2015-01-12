@@ -4,6 +4,7 @@ import gaia.cu9.ari.gaiaorbit.event.EventManager;
 import gaia.cu9.ari.gaiaorbit.event.Events;
 import gaia.cu9.ari.gaiaorbit.scenegraph.SceneGraphNode;
 import gaia.cu9.ari.gaiaorbit.util.GlobalResources;
+import gaia.cu9.ari.gaiaorbit.util.I18n;
 import gaia.cu9.ari.gaiaorbit.util.PrefixedProperties;
 
 import java.lang.reflect.InvocationTargetException;
@@ -99,7 +100,7 @@ public class NodeLoader<T extends SceneGraphNode> implements ISceneGraphNodeProv
 
 		}
 
-		EventManager.getInstance().post(Events.POST_NOTIFICATION, this.getClass().getSimpleName(), pnames.length + " objects loaded from file " + filePath);
+		EventManager.getInstance().post(Events.POST_NOTIFICATION, this.getClass().getSimpleName(), I18n.bundle.format("notif.nodeloader", pnames.length, filePath));
 
 	    }
 	} catch (InvocationTargetException e) {

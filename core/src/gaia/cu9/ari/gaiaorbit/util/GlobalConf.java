@@ -21,6 +21,9 @@ import java.util.Properties;
  */
 public class GlobalConf implements IObserver {
     public static final String APPLICATION_NAME = "Gaia Sandbox";
+    public static final String WEBPAGE = "http://www.zah.uni-heidelberg.de/gaia2/outreach/gaiasandbox/";
+    public static final String WIKI = "https://github.com/ari-zah/gaiasandbox/wiki";
+
     public static boolean OPENGL_GUI;
     private static DateFormat df = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss");
 
@@ -41,14 +44,13 @@ public class GlobalConf implements IObserver {
     public boolean FULLSCREEN, RESIZABLE, SHOW_CONFIG_DIALOG, FOCUS_LOCK, RENDER_SCREENSHOT_TIME, INPUT_ENABLED;
     public String RENDER_FOLDER, RENDER_FILE_NAME, SG_FILE, TUTORIAL_SCRIPT_LOCATION;
     public String SCREENSHOT_FOLDER, VERSION_CHECK_URL, LAST_VERSION, UI_THEME, SCRIPT_LOCATION;
+    public String LOCALE;
     public int SCREENSHOT_WIDTH, SCREENSHOT_HEIGHT;
     public Date LAST_CHECKED;
     /** Visibility of components **/
     public boolean[] VISIBILITY;
 
     public VersionInfo VERSION;
-
-    public String WEBPAGE = "http://www.zah.uni-heidelberg.de/gaia2/outreach/gaiasandbox/";
 
     public static GlobalConf instance;
     static boolean initialized = false;
@@ -123,6 +125,7 @@ public class GlobalConf implements IObserver {
 	    VERSION_CHECK_URL = p.getProperty("program.versioncheckurl");
 	    UI_THEME = p.getProperty("program.ui.theme");
 	    SCRIPT_LOCATION = p.getProperty("program.scriptlocation").isEmpty() ? System.getProperty("user.dir") : p.getProperty("program.scriptlocation");
+	    LOCALE = p.getProperty("program.locale");
 
 	    /** POSTPROCESS **/
 	    /**
@@ -229,6 +232,7 @@ public class GlobalConf implements IObserver {
 	    p.setProperty("program.versioncheckurl", VERSION_CHECK_URL);
 	    p.setProperty("program.ui.theme", UI_THEME);
 	    p.setProperty("program.scriptlocation", SCRIPT_LOCATION);
+	    p.setProperty("program.locale", LOCALE);
 
 	    /** POSTPROCESS **/
 	    p.setProperty("postprocess.antialiasing", Integer.toString(POSTPROCESS_ANTIALIAS));
@@ -286,7 +290,7 @@ public class GlobalConf implements IObserver {
     }
 
     public String getFullApplicationName() {
-	return APPLICATION_NAME + " - v" + VERSION.version;
+	return APPLICATION_NAME + " - " + VERSION.version;
     }
 
     public static class VersionInfo {

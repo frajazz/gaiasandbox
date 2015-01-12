@@ -5,6 +5,7 @@ import gaia.cu9.ari.gaiaorbit.event.Events;
 import gaia.cu9.ari.gaiaorbit.scenegraph.ISceneGraph;
 import gaia.cu9.ari.gaiaorbit.scenegraph.ITimeFrameProvider;
 import gaia.cu9.ari.gaiaorbit.scenegraph.SceneGraphNode;
+import gaia.cu9.ari.gaiaorbit.util.I18n;
 
 import com.badlogic.gdx.assets.AssetDescriptor;
 import com.badlogic.gdx.assets.AssetLoaderParameters;
@@ -36,7 +37,7 @@ public class SGLoader extends AsynchronousAssetLoader<ISceneGraph, SGLoader.SGLo
     @Override
     public void loadAsync(AssetManager manager, String fileName, FileHandle file, SGLoaderParameter parameter) {
 	sg = SceneGraphLoader.loadSceneGraph(file.read(), parameter.time, parameter.multithreading, parameter.maxThreads);
-	EventManager.getInstance().post(Events.POST_NOTIFICATION, "Initializing renderer and GUI...");
+	EventManager.getInstance().post(Events.POST_NOTIFICATION, I18n.bundle.get("notif.render.init"));
     }
 
     /**

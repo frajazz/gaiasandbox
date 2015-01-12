@@ -5,6 +5,7 @@ import gaia.cu9.ari.gaiaorbit.event.EventManager;
 import gaia.cu9.ari.gaiaorbit.event.Events;
 import gaia.cu9.ari.gaiaorbit.event.IObserver;
 import gaia.cu9.ari.gaiaorbit.gui.swing.jsplash.JSplash;
+import gaia.cu9.ari.gaiaorbit.util.I18n;
 
 public class Observer implements IObserver {
     JSplash splash;
@@ -38,7 +39,7 @@ public class Observer implements IObserver {
 
 	    break;
 	case ORBIT_DATA_LOADED:
-	    message = "Orbit data loaded: " + (String) data[1] + "(" + ((OrbitData) data[0]).getNumPoints() + " points)";
+	    message = I18n.bundle.format("notif.orbitdata.loaded", data[1], ((OrbitData) data[0]).getNumPoints());
 	    splash.setProgress(progress, message);
 	    break;
 	}

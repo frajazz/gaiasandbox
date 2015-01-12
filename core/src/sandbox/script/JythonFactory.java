@@ -3,6 +3,7 @@ package sandbox.script;
 import gaia.cu9.ari.gaiaorbit.event.EventManager;
 import gaia.cu9.ari.gaiaorbit.event.Events;
 import gaia.cu9.ari.gaiaorbit.event.IObserver;
+import gaia.cu9.ari.gaiaorbit.util.I18n;
 
 import java.io.File;
 import java.io.FileReader;
@@ -108,7 +109,7 @@ public class JythonFactory implements IObserver {
 		run.run();
 	    }
 	} else {
-	    EventManager.getInstance().post(Events.POST_NOTIFICATION, "Can not run more than " + maxScripts + " scripts simultaneously!");
+	    EventManager.getInstance().post(Events.POST_NOTIFICATION, I18n.bundle.format("notif.script.max", maxScripts));
 	}
     }
 
@@ -225,7 +226,7 @@ public class JythonFactory implements IObserver {
 	public void run() {
 	    if (currentScripts.size() < maxScripts) {
 		if (currentScripts.containsKey(path)) {
-		    EventManager.getInstance().post(Events.POST_NOTIFICATION, "The script " + path + " is already executing!");
+		    EventManager.getInstance().post(Events.POST_NOTIFICATION, I18n.bundle.format("notif.script.already", path));
 		    return;
 		}
 		currentScripts.put(path, this);

@@ -4,6 +4,7 @@ import gaia.cu9.ari.gaiaorbit.event.EventManager;
 import gaia.cu9.ari.gaiaorbit.event.Events;
 import gaia.cu9.ari.gaiaorbit.event.IObserver;
 import gaia.cu9.ari.gaiaorbit.util.GlobalConf;
+import gaia.cu9.ari.gaiaorbit.util.I18n;
 import sandbox.script.JythonFactory;
 
 import com.badlogic.gdx.Gdx;
@@ -28,7 +29,7 @@ public class ScriptStateInterface extends Table implements IObserver {
 	img.setVisible(!GlobalConf.instance.INPUT_ENABLED);
 
 	int num = JythonFactory.getInstance().getNumRunningScripts();
-	cancelScript = new OwnTextButton("Stop script (" + num + ")", skin);
+	cancelScript = new OwnTextButton(I18n.bundle.format("gui.script.stop", num), skin);
 	this.add(cancelScript).left();
 	cancelScript.setVisible(num > 0);
 	cancelScript.addListener(new EventListener() {
@@ -54,7 +55,7 @@ public class ScriptStateInterface extends Table implements IObserver {
 	case NUM_RUNNING_SCRIPTS:
 	    int num = (Integer) data[0];
 	    cancelScript.setVisible(num > 0);
-	    cancelScript.setText("Stop script (" + num + ")");
+	    cancelScript.setText(I18n.bundle.format("gui.script.stop", num));
 	    break;
 	default:
 	    break;

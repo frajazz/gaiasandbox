@@ -5,6 +5,7 @@ import gaia.cu9.ari.gaiaorbit.event.Events;
 import gaia.cu9.ari.gaiaorbit.scenegraph.CelestialBody;
 import gaia.cu9.ari.gaiaorbit.scenegraph.Star;
 import gaia.cu9.ari.gaiaorbit.util.GlobalConf;
+import gaia.cu9.ari.gaiaorbit.util.I18n;
 import gaia.cu9.ari.gaiaorbit.util.coord.Coordinates;
 import gaia.cu9.ari.gaiaorbit.util.math.Vector3d;
 
@@ -42,7 +43,7 @@ public class HYGBinaryLoader extends AbstractCatalogLoader implements ICatalogLo
 	List<CelestialBody> stars = new ArrayList<CelestialBody>();
 	DataInputStream data_in = new DataInputStream(data);
 
-	EventManager.getInstance().post(Events.POST_NOTIFICATION, this.getClass().getSimpleName(), "Limit magnitude set to " + GlobalConf.instance.LIMIT_MAG_LOAD);
+	EventManager.getInstance().post(Events.POST_NOTIFICATION, this.getClass().getSimpleName(), I18n.bundle.format("notif.limitmag", GlobalConf.instance.LIMIT_MAG_LOAD));
 
 	try {
 	    // Read size of stars
@@ -77,7 +78,7 @@ public class HYGBinaryLoader extends AbstractCatalogLoader implements ICatalogLo
 	    Gdx.app.log(HYGBinaryLoader.class.getSimpleName(), e.getLocalizedMessage());
 	}
 
-	EventManager.getInstance().post(Events.POST_NOTIFICATION, this.getClass().getSimpleName(), "Catalog initialized, " + stars.size() + " stars");
+	EventManager.getInstance().post(Events.POST_NOTIFICATION, this.getClass().getSimpleName(), I18n.bundle.format("notif.catalog.init", stars.size()));
 	return stars;
     }
 

@@ -37,9 +37,9 @@ public class PixelRenderSystem extends AbstractRenderSystem implements IObserver
 	pp = new PostProcessor(true, true, true);
 	Bloom bloom = new Bloom(Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
 	bloom.setThreshold(0.0f);
-	bloom.setBaseIntesity(0.9f);
-	bloom.setBaseSaturation(1);
-	bloom.setBloomIntesity(8f);
+	bloom.setBaseIntesity(1f);
+	bloom.setBaseSaturation(1f);
+	bloom.setBloomIntesity(6f);
 	bloom.setBloomSaturation(0.5f);
 	bloom.setBlurPasses(1);
 	bloom.setBlurAmount(0.0f);

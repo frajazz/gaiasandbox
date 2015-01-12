@@ -7,6 +7,7 @@ import gaia.cu9.ari.gaiaorbit.event.IObserver;
 import gaia.cu9.ari.gaiaorbit.scenegraph.CelestialBody;
 import gaia.cu9.ari.gaiaorbit.util.Constants;
 import gaia.cu9.ari.gaiaorbit.util.GlobalResources;
+import gaia.cu9.ari.gaiaorbit.util.I18n;
 import gaia.cu9.ari.gaiaorbit.util.math.Vector3d;
 
 import java.text.DecimalFormat;
@@ -43,25 +44,25 @@ public class FocusInfoInterface extends Table implements IObserver {
 
 	add(focusName).left().colspan(2);
 	row();
-	add(new OwnLabel("α", skin, "hud-big")).left();
+	add(new OwnLabel(txt("gui.focusinfo.alpha"), skin, "hud-big")).left();
 	add(focusRA).left().padLeft(10);
 	row();
-	add(new OwnLabel("δ", skin, "hud-big")).left();
+	add(new OwnLabel(txt("gui.focusinfo.delta"), skin, "hud-big")).left();
 	add(focusDEC).left().padLeft(10);
 	row();
-	add(new OwnLabel("App mag", skin, "hud-big")).left();
+	add(new OwnLabel(txt("gui.focusinfo.appmag"), skin, "hud-big")).left();
 	add(focusAppMag).left().padLeft(10);
 	row();
-	add(new OwnLabel("Abs mag", skin, "hud-big")).left();
+	add(new OwnLabel(txt("gui.focusinfo.absmag"), skin, "hud-big")).left();
 	add(focusAbsMag).left().padLeft(10);
 	row();
-	add(new OwnLabel("Angle", skin, "hud-big")).left();
+	add(new OwnLabel(txt("gui.focusinfo.angle"), skin, "hud-big")).left();
 	add(focusAngle).left().padLeft(10);
 	row();
-	add(new OwnLabel("Dist", skin, "hud-big")).left();
+	add(new OwnLabel(txt("gui.focusinfo.distance"), skin, "hud-big")).left();
 	add(focusDist).left().padLeft(10);
 	row();
-	add(new OwnLabel("Radius", skin, "hud-big")).left();
+	add(new OwnLabel(txt("gui.focusinfo.radius"), skin, "hud-big")).left();
 	add(focusRadius).left().padLeft(10);
 	pack();
 
@@ -106,7 +107,7 @@ public class FocusInfoInterface extends Table implements IObserver {
 	    } else {
 		focusAbsMag.setText("-");
 	    }
-	    focusRadius.setText(sformat.format(cb.getRadius() * Constants.U_TO_KM) + " Km");
+	    focusRadius.setText(sformat.format(cb.getRadius() * Constants.U_TO_KM) + " km");
 
 	    break;
 	case FOCUS_INFO_UPDATED:
@@ -117,4 +118,7 @@ public class FocusInfoInterface extends Table implements IObserver {
 	}
     }
 
+    private String txt(String key) {
+	return I18n.bundle.get(key);
+    }
 }

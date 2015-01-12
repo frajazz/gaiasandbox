@@ -8,6 +8,7 @@ import gaia.cu9.ari.gaiaorbit.gui.swing.HelpDialog;
 import gaia.cu9.ari.gaiaorbit.gui.swing.ScriptDialog;
 import gaia.cu9.ari.gaiaorbit.interfce.KeyMappings;
 import gaia.cu9.ari.gaiaorbit.util.GlobalConf;
+import gaia.cu9.ari.gaiaorbit.util.I18n;
 import gaia.cu9.ari.gaiaorbit.util.math.MathUtilsd;
 
 import java.awt.Font;
@@ -55,7 +56,14 @@ public class GaiaSandboxDesktop implements IObserver {
 	    GlobalConf.initialize(fis, version);
 	    fis.close();
 
+	    // Initialize i18n
+	    I18n.initialize("./data/i18n/gsbundle");
+	    // Dev mode
+	    I18n.initialize("../android/assets/i18n/gsbundle");
+
+	    // Initialize key mappings
 	    KeyMappings.initialize();
+
 	    gsd = new GaiaSandboxDesktop();
 	    gsd.init();
 	} catch (Exception e) {

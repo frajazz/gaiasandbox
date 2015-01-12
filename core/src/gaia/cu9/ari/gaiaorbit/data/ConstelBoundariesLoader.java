@@ -6,6 +6,7 @@ import gaia.cu9.ari.gaiaorbit.render.SceneGraphRenderer.ComponentType;
 import gaia.cu9.ari.gaiaorbit.scenegraph.ConstellationBoundaries;
 import gaia.cu9.ari.gaiaorbit.scenegraph.SceneGraphNode;
 import gaia.cu9.ari.gaiaorbit.util.Constants;
+import gaia.cu9.ari.gaiaorbit.util.I18n;
 import gaia.cu9.ari.gaiaorbit.util.coord.Coordinates;
 import gaia.cu9.ari.gaiaorbit.util.math.Vector3d;
 
@@ -89,7 +90,7 @@ public class ConstelBoundariesLoader<T extends SceneGraphNode> implements IScene
 		Gdx.app.error(this.getClass().getSimpleName(), e.getLocalizedMessage());
 	    }
 
-	    EventManager.getInstance().post(Events.POST_NOTIFICATION, this.getClass().getSimpleName(), "Constellations boundaries initialized with " + n + " points");
+	    EventManager.getInstance().post(Events.POST_NOTIFICATION, this.getClass().getSimpleName(), I18n.bundle.format("notif.boundaries.init", n));
 
 	} catch (Exception e) {
 	    Gdx.app.error(this.getClass().getSimpleName(), e.getLocalizedMessage());

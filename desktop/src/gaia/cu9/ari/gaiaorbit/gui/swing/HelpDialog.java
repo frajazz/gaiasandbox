@@ -32,12 +32,12 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.files.FileHandle;
 import com.badlogic.gdx.graphics.GL20;
 
-public class HelpDialog extends JFrame {
+public class HelpDialog extends I18nJFrame {
 
     JFrame frame;
 
     public HelpDialog() {
-	super("Help - Gaia Sandbox v" + GlobalConf.instance.VERSION.version);
+	super(txt("gui.help.help") + " - " + GlobalConf.APPLICATION_NAME + " v" + GlobalConf.instance.VERSION.version);
 	initialize();
 	frame.pack();
 	frame.setResizable(false);
@@ -52,7 +52,7 @@ public class HelpDialog extends JFrame {
 	if (imgURL != null) {
 	    return new ImageIcon(imgURL, description);
 	} else {
-	    System.err.println("Couldn't find file: " + path);
+	    System.err.println(txt("gui.help.nofile", path));
 	    return null;
 	}
     }
@@ -80,43 +80,43 @@ public class HelpDialog extends JFrame {
 	help.setBorder(new EmptyBorder(10, 10, 10, 10));
 
 	ImageIcon icon = createImageIcon("/img/gaiasandboxlogo.png",
-		"Gaia Sandbox logo");
+		txt("gui.help.logo", GlobalConf.APPLICATION_NAME));
 	JLabel label1 = new JLabel(icon, JLabel.CENTER);
 
 	help.add(label1, "span,wrap");
 
-	JLabel aux = new JLabel("User manual");
+	JLabel aux = new JLabel(txt("gui.help.usermanual"));
 	Font boldFont = new Font(aux.getFont().getFontName(), Font.BOLD, aux.getFont().getSize());
 	aux.setFont(boldFont);
 	help.add(aux);
 
-	JTextArea help1 = new JTextArea("If you need help please visit the help section in our website where you can get the user manual");
+	JTextArea help1 = new JTextArea(txt("gui.help.help1"));
 	help1.setEditable(false);
 	help1.setBackground(null);
 	help1.setLineWrap(true);
 	help1.setWrapStyleWord(true);
 	help.add(help1, "wrap");
 
-	LinkLabel helpWebsite = new LinkLabel("http://www.zah.uni-heidelberg.de/gaia2/outreach/gaiasandbox");
+	LinkLabel helpWebsite = new LinkLabel(GlobalConf.WEBPAGE);
 	help.add(helpWebsite, "span,wrap");
 
 	aux = new JLabel("Wiki");
 	aux.setFont(boldFont);
 	help.add(aux);
 
-	JTextArea help2 = new JTextArea("You can also visit our wiki, which contains the most up to date information");
+	JTextArea help2 = new JTextArea(txt("gui.help.help2"));
 	help2.setEditable(false);
 	help2.setBackground(null);
 	help2.setLineWrap(true);
 	help2.setWrapStyleWord(true);
 	help.add(help2, "wrap");
 
-	LinkLabel wikiWebsite = new LinkLabel("https://github.com/ari-zah/gaiasandbox/wiki");
+	LinkLabel wikiWebsite = new LinkLabel(GlobalConf.WIKI);
 
 	help.add(wikiWebsite, "span,wrap");
 
 	JPanel readmepanel = new JPanel(new MigLayout("fillx", "[grow,fill]", ""));
-	readmepanel.setBorder(new TitledBorder("Readme file"));
+	readmepanel.setBorder(new TitledBorder(txt("gui.help.readme")));
 	FileHandle readmefile = Gdx.files.internal("README.md");
 	if (!readmefile.exists()) {
 	    readmefile = Gdx.files.internal("../README.md");
@@ -136,20 +136,20 @@ public class HelpDialog extends JFrame {
 
 	/** SYSTEM **/
 	JPanel build = new JPanel(new MigLayout("fillx", "[grow,fill][grow,fill]", ""));
-	build.setBorder(new TitledBorder("Build information"));
-	aux = new JLabel("Gaia Sandbox version");
+	build.setBorder(new TitledBorder(txt("gui.help.buildinfo")));
+	aux = new JLabel(txt("gui.help.version", GlobalConf.APPLICATION_NAME));
 	aux.setFont(boldFont);
 	build.add(aux);
 	build.add(new JLabel(GlobalConf.instance.VERSION.version), "wrap");
-	aux = new JLabel("Build number");
+	aux = new JLabel(txt("gui.help.buildnumber"));
 	aux.setFont(boldFont);
 	build.add(aux);
 	build.add(new JLabel(GlobalConf.instance.VERSION.build), "wrap");
-	aux = new JLabel("Build time");
+	aux = new JLabel(txt("gui.help.buildtime"));
 	aux.setFont(boldFont);
 	build.add(aux);
 	build.add(new JLabel(GlobalConf.instance.VERSION.buildtime), "wrap");
-	aux = new JLabel("Build system");
+	aux = new JLabel(txt("gui.help.buildsys"));
 	aux.setFont(boldFont);
 	build.add(aux);
 
@@ -159,56 +159,56 @@ public class HelpDialog extends JFrame {
 	versionsystem.setLineWrap(true);
 	versionsystem.setWrapStyleWord(true);
 	build.add(versionsystem, "wrap");
-	aux = new JLabel("Builder");
+	aux = new JLabel(txt("gui.help.builder"));
 	aux.setFont(boldFont);
 	build.add(aux);
 	build.add(new JLabel(GlobalConf.instance.VERSION.builder), "wrap");
 
 	JPanel java = new JPanel(new MigLayout("fillx", "[grow,fill][grow,fill]", ""));
-	java.setBorder(new TitledBorder("Java information"));
-	aux = new JLabel("Java version");
+	java.setBorder(new TitledBorder(txt("gui.help.javainfo")));
+	aux = new JLabel(txt("gui.help.javaversion"));
 	aux.setFont(boldFont);
 	java.add(aux);
 	java.add(new JLabel(System.getProperty("java.version")), "wrap");
-	aux = new JLabel("Java runtime name");
+	aux = new JLabel(txt("gui.help.javaname"));
 	aux.setFont(boldFont);
 	java.add(aux);
 	java.add(new JLabel(System.getProperty("java.runtime.name")), "wrap");
-	aux = new JLabel("Java VM name");
+	aux = new JLabel(txt("gui.help.javavmname"));
 	aux.setFont(boldFont);
 	java.add(aux);
 	java.add(new JLabel(System.getProperty("java.vm.name")), "wrap");
-	aux = new JLabel("Java VM version");
+	aux = new JLabel(txt("gui.help.javavmversion"));
 	aux.setFont(boldFont);
 	java.add(aux);
 	java.add(new JLabel(System.getProperty("java.vm.version")), "wrap");
-	aux = new JLabel("Java VM vendor");
+	aux = new JLabel(txt("gui.help.javavmvendor"));
 	aux.setFont(boldFont);
 	java.add(aux);
 	java.add(new JLabel(System.getProperty("java.vm.vendor")), "wrap");
 
 	String meminfostr = "";
 	for (MemoryPoolMXBean mpBean : ManagementFactory.getMemoryPoolMXBeans()) {
-	    meminfostr += "Name: " + mpBean.getName() + ": " + mpBean.getUsage() + "\n";
+	    meminfostr += txt("gui.help.name") + ": " + mpBean.getName() + ": " + mpBean.getUsage() + "\n";
 	}
 	JTextArea meminfo = new JTextArea(meminfostr);
 	meminfo.setEditable(false);
 	JScrollPane memscroll = new JScrollPane(meminfo);
 	memscroll.setPreferredSize(new Dimension(300, 80));
 
-	aux = new JLabel("Memory info");
+	aux = new JLabel(txt("gui.help.meminfo"));
 	aux.setFont(boldFont);
 	java.add(aux);
 	java.add(memscroll, "wrap");
 
 	JPanel opengl = new JPanel(new MigLayout("fillx", "[grow,fill][grow,fill]", ""));
-	opengl.setBorder(new TitledBorder("OpenGL information"));
+	opengl.setBorder(new TitledBorder(txt("gui.help.openglinfo")));
 
-	aux = new JLabel("OpenGL version");
+	aux = new JLabel(txt("gui.help.openglversion"));
 	aux.setFont(boldFont);
 	opengl.add(aux);
 	opengl.add(new JLabel(Gdx.gl.glGetString(GL20.GL_VERSION)), "wrap");
-	aux = new JLabel("GLSL version");
+	aux = new JLabel(txt("gui.help.glslversion"));
 	aux.setFont(boldFont);
 	opengl.add(aux);
 	opengl.add(new JLabel(Gdx.gl.glGetString(GL20.GL_SHADING_LANGUAGE_VERSION)), "wrap");
@@ -223,37 +223,35 @@ public class HelpDialog extends JFrame {
 	JPanel about = new JPanel(new MigLayout("fillx", "[grow,fill][grow,fill][]", ""));
 	about.setBorder(new EmptyBorder(10, 10, 10, 10));
 
-	JTextArea intro = new JTextArea("The Gaia Sandbox (" + GlobalConf.instance.VERSION.version + ") has"
-		+ " been developed in the Astronomisches Rechen-Institut"
-		+ " - ZAH - Heidelberg Universität.");
+	JTextArea intro = new JTextArea(txt("gui.help.gscredits", GlobalConf.instance.VERSION.version));
 	intro.setEditable(false);
 	intro.setBackground(null);
 	intro.setLineWrap(true);
 	intro.setWrapStyleWord(true);
 	about.add(intro, "span,wrap");
 
-	aux = new JLabel("Home page");
+	aux = new JLabel(txt("gui.help.homepage"));
 	aux.setFont(boldFont);
 	about.add(aux);
-	about.add(new LinkLabel("http://www.zah.uni-heidelberg.de/gaia2/outreach/gaiasandbox/"), "span,wrap");
+	about.add(new LinkLabel(GlobalConf.WEBPAGE), "span,wrap");
 	about.add(new JLabel(" "), "span,wrap");
 
 	JPanel author = new JPanel(new MigLayout("fillx", "[grow,fill][grow,fill][]", ""));
 	author.setBorder(new LineBorder(Color.LIGHT_GRAY));
 
-	aux = new JLabel("Author");
+	aux = new JLabel(txt("gui.help.author"));
 	aux.setFont(boldFont);
 	author.add(aux);
 	author.add(new JLabel("Toni Sagristà Sellés"));
 	author.add(new LinkLabel("tsagrista@ari.uni-heidelberg.de", "mailto:tsagrista@ari.uni-heidelberg.de"), "wrap");
 
-	author.add(new JLabel("Personal webpage"));
+	author.add(new JLabel(txt("gui.help.personalweb")));
 	author.add(new LinkLabel("www.tonisagrista.com", "http://tonisagrista.com"), "span,wrap");
 
 	JPanel contrib = new JPanel(new MigLayout("fillx", "[grow,fill][grow,fill][]", ""));
 	contrib.setBorder(new LineBorder(Color.LIGHT_GRAY));
 
-	aux = new JLabel("Contributors");
+	aux = new JLabel(txt("gui.help.contributors"));
 	aux.setFont(boldFont);
 	contrib.add(aux);
 	contrib.add(new JLabel("Apl. Prof. Dr. Stefan Jordan"));
@@ -262,10 +260,10 @@ public class HelpDialog extends JFrame {
 	JPanel license = new JPanel(new MigLayout("fillx", "[grow,fill][grow,fill][]", ""));
 	license.setBorder(new LineBorder(Color.LIGHT_GRAY));
 	ImageIcon lgpl = createImageIcon("/img/license.png",
-		"Gaia Sandbox logo");
+		txt("gui.help.logo", GlobalConf.APPLICATION_NAME));
 	license.add(new JLabel(lgpl, JLabel.CENTER));
 
-	JTextArea licensetext = new JTextArea("This software is published under the LGPL (Lesser General Public License) license.");
+	JTextArea licensetext = new JTextArea(txt("gui.help.license"));
 	licensetext.setEditable(false);
 	licensetext.setBackground(null);
 	licensetext.setLineWrap(true);
@@ -301,9 +299,9 @@ public class HelpDialog extends JFrame {
 	/**
 	 * ADD PANELS
 	 */
-	tabbedPane.addTab("Help", helpPanel);
-	tabbedPane.addTab("About", aboutPanel);
-	tabbedPane.addTab("System", systemPanel);
+	tabbedPane.addTab(txt("gui.help.help"), helpPanel);
+	tabbedPane.addTab(txt("gui.help.about"), aboutPanel);
+	tabbedPane.addTab(txt("gui.help.system"), systemPanel);
 
 	body.add(tabbedPane);
 
@@ -329,4 +327,5 @@ public class HelpDialog extends JFrame {
 	frame.add(buttons, BorderLayout.SOUTH);
 
     }
+
 }
