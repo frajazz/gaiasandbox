@@ -7,6 +7,8 @@ import java.io.InputStream;
 import java.net.MalformedURLException;
 import java.net.URL;
 
+import com.badlogic.gdx.utils.JsonReader;
+
 public class VersionChecker implements Runnable {
     private String stringUrl;
 
@@ -16,12 +18,13 @@ public class VersionChecker implements Runnable {
 
     @Override
     public Object run() {
-	String result = null;
+	Object result = null;
 	try {
 	    URL url = new URL(stringUrl);
 	    InputStream is = url.openStream();
 	    /* Now read the retrieved document from the stream. */
-	    result = convertStreamToString(is);
+	    JsonReader reader = new JsonReader();
+	    result = reader.parse(is);
 	    is.close();
 
 	} catch (MalformedURLException e) {

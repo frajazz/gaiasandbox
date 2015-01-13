@@ -65,6 +65,7 @@ import com.alee.utils.swing.DialogOptions;
 import com.badlogic.gdx.Graphics.DisplayMode;
 import com.badlogic.gdx.Input.Keys;
 import com.badlogic.gdx.backends.lwjgl.LwjglApplicationConfiguration;
+import com.badlogic.gdx.utils.JsonValue;
 
 /**
  * The configuration dialog to set the resolution, the screen mode, etc.
@@ -667,20 +668,26 @@ public class ConfigDialog extends I18nJFrame {
 	return new Thread(new CallbackTask(new VersionChecker(GlobalConf.instance.VERSION_CHECK_URL), new Callback() {
 	    @Override
 	    public void complete(Object result) {
-		String res = ((String) result).trim();
 		checkPanel.removeAll();
 		checkPanel.add(checkLabel);
-		if (res.matches("^\\d+.\\d+\\D{1}$")) {
-		    String version = res;
-		    GlobalConf.instance.LAST_VERSION = new String(version);
-		    GlobalConf.instance.LAST_CHECKED = new Date();
-		    newVersionCheck(version);
-		} else {
-		    // Error!
-		    checkLabel.setText("Error checking version :(");
+		if (result instanceof String) {
+		    // Error
+		    checkLabel.setText("Error checking version: " + (String) result);
 		    checkLabel.setForeground(Color.RED);
+		} else if (result instanceof JsonValue) {
+		    // Ok!
+		    JsonValue json = (JsonValue) result;
+
+		    JsonValue last = json.get(json.size - 1);
+		    String version = last.getString("name");
+		    if (version.matches("^(\\D{1})?\\d+.\\d+(\\D{1})?$")) {
+			GlobalConf.instance.LAST_VERSION = new String(version);
+			GlobalConf.instance.LAST_CHECKED = new Date();
+			newVersionCheck(version);
+		    }
+		    checkPanel.validate();
 		}
-		checkPanel.validate();
+
 	    }
 	}));
     }

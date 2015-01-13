@@ -306,6 +306,9 @@ public class GlobalConf implements IObserver {
 	public static int[] getMajorMinorFromString(String version) {
 	    String majorS = version.substring(0, version.indexOf("."));
 	    String minorS = version.substring(version.indexOf(".") + 1, version.length());
+	    if (majorS.matches("^\\D{1}\\d+$")) {
+		majorS = majorS.substring(1, majorS.length());
+	    }
 	    if (minorS.matches("^\\d+\\D{1}$")) {
 		minorS = minorS.substring(0, minorS.length() - 1);
 	    }
