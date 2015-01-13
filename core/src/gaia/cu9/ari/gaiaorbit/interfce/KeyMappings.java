@@ -256,6 +256,22 @@ public class KeyMappings {
 	    }
 	}), Keys.CONTROL_LEFT, Keys.F);
 
+	// CTRL + S -> Toggle stereoscopic mode
+	addMapping(new ProgramAction(txt("action.stereotoggle"), new Runnable() {
+	    @Override
+	    public void run() {
+		EventManager.getInstance().post(Events.TOGGLE_STEREOSCOPIC, txt("notif.stereoscopic"));
+	    }
+	}), Keys.CONTROL_LEFT, Keys.S);
+
+	// CTRL + U -> Toggle clean (no GUI) mode
+	addMapping(new ProgramAction(txt("action.cleanmodetoggle"), new Runnable() {
+	    @Override
+	    public void run() {
+		EventManager.getInstance().post(Events.TOGGLE_CLEANMODE, txt("notif.cleanmode"));
+	    }
+	}), Keys.CONTROL_LEFT, Keys.U);
+
     }
 
     /**

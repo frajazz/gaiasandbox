@@ -47,6 +47,9 @@ public class GlobalConf implements IObserver {
     public String LOCALE;
     public int SCREENSHOT_WIDTH, SCREENSHOT_HEIGHT;
     public Date LAST_CHECKED;
+    public boolean STEREOSCOPIC_MODE, CLEAN_MODE;
+    /** Eye separation in stereoscopic mode in meters **/
+    public float STEREOSCOPIC_EYE_SEPARATION_M = 2;
     /** Visibility of components **/
     public boolean[] VISIBILITY;
 
@@ -180,7 +183,7 @@ public class GlobalConf implements IObserver {
 	    EventManager.getInstance().post(Events.JAVA_EXCEPTION, e);
 	}
 
-	EventManager.getInstance().subscribe(this, Events.TRANSIT_COLOUR_CMD, Events.ONLY_OBSERVED_STARS_CMD, Events.COMPUTE_GAIA_SCAN_CMD, Events.STAR_BRIGHTNESS_CMD, Events.BLOOM_CMD, Events.FOV_CHANGED_CMD, Events.FOCUS_LOCK_CMD, Events.CAMERA_SPEED_CMD, Events.ROTATION_SPEED_CMD, Events.TURNING_SPEED_CMD, Events.INPUT_ENABLED_CMD, Events.CONFIG_RENDER_SYSTEM, Events.RENDER_SYSTEM_CMD, Events.LENS_FLARE_CMD, Events.LIMIT_MAG_CMD);
+	EventManager.getInstance().subscribe(this, Events.TRANSIT_COLOUR_CMD, Events.ONLY_OBSERVED_STARS_CMD, Events.COMPUTE_GAIA_SCAN_CMD, Events.STAR_BRIGHTNESS_CMD, Events.BLOOM_CMD, Events.FOV_CHANGED_CMD, Events.FOCUS_LOCK_CMD, Events.CAMERA_SPEED_CMD, Events.ROTATION_SPEED_CMD, Events.TURNING_SPEED_CMD, Events.INPUT_ENABLED_CMD, Events.CONFIG_RENDER_SYSTEM, Events.RENDER_SYSTEM_CMD, Events.LENS_FLARE_CMD, Events.LIMIT_MAG_CMD, Events.TOGGLE_STEREOSCOPIC, Events.TOGGLE_CLEANMODE);
     }
 
     /**
@@ -372,6 +375,12 @@ public class GlobalConf implements IObserver {
 	    break;
 	case LENS_FLARE_CMD:
 	    POSTPROCESS_LENS_FLARE = (Boolean) data[0];
+	    break;
+	case TOGGLE_STEREOSCOPIC:
+	    STEREOSCOPIC_MODE = !STEREOSCOPIC_MODE;
+	    break;
+	case TOGGLE_CLEANMODE:
+	    CLEAN_MODE = !CLEAN_MODE;
 	    break;
 	default:
 	    break;

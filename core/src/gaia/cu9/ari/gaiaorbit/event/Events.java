@@ -121,6 +121,11 @@ public enum Events {
     /** Cancels the next script **/
     CANCEL_SCRIPT_CMD,
     SHOW_SEARCH_ACTION,
+
+    /** Stereoscopic vision, side by side rendering **/
+    TOGGLE_STEREOSCOPIC,
+    /** Toggles no GUI mode **/
+    TOGGLE_CLEANMODE,
     /** Sets the vertical scroll position. Contains the scroll position in pixels **/
     GUI_SCROLL_POSITION_CMD,
     /** Maximizes or minimizes the GUI window. Contains a boolean with the fold state (true - minimize, false - maximize) **/
