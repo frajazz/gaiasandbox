@@ -361,9 +361,24 @@ public class GaiaSandbox implements ApplicationListener, IObserver {
 	     * RENDER
 	     */
 
+	    /* SCREEN OUTPUT */
+	    if (GlobalConf.instance.SCREEN_OUTPUT) {
+		/** RENDER THE SCENE **/
+		// Set viewport
+		setViewportSize(Gdx.graphics.getWidth(), Gdx.graphics.getHeight(), cam);
+		preRenderScene();
+		sgr.render(cam, null, pp.getPostProcessBean(RenderType.screen));
+
+		if (!GlobalConf.instance.CLEAN_MODE) {
+		    // Render the GUI, setting the viewport
+		    gui.getGuiStage().getViewport().apply();
+		    gui.render();
+		}
+	    }
+
 	    /* FRAME OUTPUT */
 	    if (GlobalConf.instance.RENDER_OUTPUT) {
-		renderToImage(cam, pp.getPostProcessBean(RenderType.frame));
+		renderToImage(cam, pp.getPostProcessBean(RenderType.frame), GlobalConf.instance.RENDER_WIDTH, GlobalConf.instance.RENDER_HEIGHT, GlobalConf.instance.RENDER_FOLDER, GlobalConf.instance.RENDER_FILE_NAME);
 	    }
 
 	    /* SCREENSHOT OUTPUT */
@@ -373,20 +388,7 @@ public class GaiaSandbox implements ApplicationListener, IObserver {
 		EventManager.getInstance().post(Events.SCREENSHOT_INFO, file);
 	    }
 
-	    /* SCREEN OUTPUT */
-	    if (GlobalConf.instance.SCREEN_OUTPUT) {
-		/** RENDER THE SCENE **/
-		// Set viewport
-		setViewportSize(Gdx.graphics.getWidth(), Gdx.graphics.getHeight(), cam);
-		preRenderScene();
-		renderScene(cam, pp.getPostProcessBean(RenderType.screen), null);
-
-		if (!GlobalConf.instance.CLEAN_MODE) {
-		    // Render the GUI, setting the viewport
-		    gui.getGuiStage().getViewport().apply();
-		    gui.render();
-		}
-	    }
+	    sgr.clearLists();
 	}
 
 	EventManager.getInstance().post(Events.FPS_INFO, Gdx.graphics.getFramesPerSecond());
@@ -432,48 +434,6 @@ public class GaiaSandbox implements ApplicationListener, IObserver {
     }
 
     /**
-     * Renders the scene
-     * @param camera The camera.
-     * @param ppb The post processing bean.
-     */
-    public void renderScene(ICamera camera, PostProcessBean ppb, FrameBuffer fb) {
-	if (camera.getNCameras() > 1) {
-	    CameraMode aux = camera.getMode();
-
-	    ppb.capture();
-
-	    camera.updateMode(CameraMode.Gaia_FOV2, false);
-
-	    sgr.render(camera, fb, false);
-
-	    camera.updateMode(CameraMode.Gaia_FOV1, false);
-
-	    sgr.render(camera, fb, false);
-
-	    camera.updateMode(aux, false);
-
-	    // Clear render lists
-	    sgr.clearLists();
-
-	    ppb.render(fb);
-
-	} else {
-	    ppb.capture();
-	    sgr.render(camera, fb);
-	    ppb.render(fb);
-	}
-
-	// Render camera
-	if (fb != null) {
-	    fb.begin();
-	}
-	camera.render();
-	if (fb != null) {
-	    fb.end();
-	}
-    }
-
-    /**
      * Renders the current scene to an image and returns the file name where it has been written to
      * @param camera
      * @param width The width of the image.
@@ -496,7 +456,7 @@ public class GaiaSandbox implements ApplicationListener, IObserver {
 
 	// this is the main render function
 	preRenderScene();
-	renderScene(camera, ppb, postprocessing ? m_fbo : null);
+	sgr.render(camera, postprocessing ? m_fbo : null, ppb);
 
 	if (postprocessing) {
 	    // If post processing is active, we have to start now again because
@@ -514,15 +474,6 @@ public class GaiaSandbox implements ApplicationListener, IObserver {
 	m_fbo.end();
 	m_fbo.dispose();
 	return file;
-    }
-
-    /**
-     * This method renders the current scene to a frame buffer and saves it to an image according to the global configuration 
-     * @param g
-     */
-    public String renderToImage(ICamera camera, PostProcessBean ppb)
-    {
-	return renderToImage(camera, ppb, GlobalConf.instance.RENDER_WIDTH, GlobalConf.instance.RENDER_HEIGHT, GlobalConf.instance.RENDER_FOLDER, GlobalConf.instance.RENDER_FILE_NAME);
     }
 
     /**

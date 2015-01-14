@@ -3,6 +3,7 @@ package gaia.cu9.ari.gaiaorbit.render;
 import gaia.cu9.ari.gaiaorbit.event.EventManager;
 import gaia.cu9.ari.gaiaorbit.event.Events;
 import gaia.cu9.ari.gaiaorbit.event.IObserver;
+import gaia.cu9.ari.gaiaorbit.render.IPostProcessor.PostProcessBean;
 import gaia.cu9.ari.gaiaorbit.render.system.AbstractRenderSystem;
 import gaia.cu9.ari.gaiaorbit.render.system.IRenderSystem;
 import gaia.cu9.ari.gaiaorbit.render.system.LineRenderSystem;
@@ -10,6 +11,7 @@ import gaia.cu9.ari.gaiaorbit.render.system.ModelBatchRenderSystem;
 import gaia.cu9.ari.gaiaorbit.render.system.PixelRenderSystem;
 import gaia.cu9.ari.gaiaorbit.render.system.ShaderQuadRenderSystem;
 import gaia.cu9.ari.gaiaorbit.render.system.SpriteBatchRenderSystem;
+import gaia.cu9.ari.gaiaorbit.scenegraph.CameraManager.CameraMode;
 import gaia.cu9.ari.gaiaorbit.scenegraph.ICamera;
 import gaia.cu9.ari.gaiaorbit.scenegraph.SceneGraphNode.RenderGroup;
 import gaia.cu9.ari.gaiaorbit.util.Constants;
@@ -297,60 +299,92 @@ public class SceneGraphRenderer extends AbstractRenderer implements IProcessRend
     }
 
     @Override
-    public void render(ICamera camera, FrameBuffer fb, float alpha) {
-	render(camera, fb);
+    public void render(ICamera camera, FrameBuffer fb, PostProcessBean ppb, float alpha) {
+	render(camera, fb, ppb);
     }
 
-    @Override
-    public void render(ICamera camera, FrameBuffer fb) {
-	render(camera, fb, true);
-    }
+    public void render(ICamera camera, FrameBuffer fb, PostProcessBean ppb) {
 
-    public void render(ICamera camera, FrameBuffer fb, boolean clearlists) {
-	if (GlobalConf.instance.STEREOSCOPIC_MODE) {
-	    // Side by side rendering
-	    Viewport vp = camera.getViewport();
-	    int w = fb != null ? fb.getWidth() : vp.getScreenWidth();
-	    int h = fb != null ? fb.getHeight() : vp.getScreenHeight();
+	if (camera.getNCameras() > 1) {
 
-	    PerspectiveCamera cam = camera.getCamera();
-	    Pool<Vector3> vectorPool = Pools.get(Vector3.class);
-	    // Vector of 1 meter length pointing to the side of the camera
-	    Vector3 side = vectorPool.obtain().set(cam.direction);
-	    side.crs(cam.up).nor().scl((float) Constants.M_TO_U * GlobalConf.instance.STEREOSCOPIC_EYE_SEPARATION_M / 2f);
-	    Vector3 backup = vectorPool.obtain().set(cam.position);
+	    /** FIELD OF VIEW CAMERA **/
 
-	    /** LEFT IMAGE **/
-	    vp.setScreenBounds(0, 0, w / 2, h);
-	    vp.setWorldSize(w / 2, h);
-	    vp.apply(false);
-	    // Camera to left
-	    cam.position.sub(side);
-	    cam.update();
+	    CameraMode aux = camera.getMode();
+
+	    ppb.capture();
+
+	    camera.updateMode(CameraMode.Gaia_FOV2, false);
+
 	    renderScene(camera, fb);
 
-	    /** RIGHT IMAGE **/
-	    vp.setScreenBounds(w / 2, 0, w / 2, h);
-	    vp.setWorldSize(w / 2, h);
-	    vp.apply(false);
-	    // Camera to right
-	    cam.position.set(backup).add(side);
-	    cam.update();
+	    camera.updateMode(CameraMode.Gaia_FOV1, false);
+
 	    renderScene(camera, fb);
 
-	    // Restore cam.position and viewport size
-	    cam.position.set(backup);
-	    vp.setScreenBounds(0, 0, w, h);
+	    camera.updateMode(aux, false);
 
-	    vectorPool.free(side);
-	    vectorPool.free(backup);
+	    ppb.render(fb);
 
-	    if (clearlists)
-		clearLists();
 	} else {
-	    renderScene(camera, fb);
-	    if (clearlists)
-		clearLists();
+	    /** NORMAL MODE **/
+
+	    ppb.capture();
+	    if (GlobalConf.instance.STEREOSCOPIC_MODE) {
+		boolean movecam = camera.getMode() == CameraMode.Free_Camera || camera.getMode() == CameraMode.Focus;
+		// Side by side rendering
+		Viewport vp = camera.getViewport();
+		int w = fb != null ? fb.getWidth() : vp.getScreenWidth();
+		int h = fb != null ? fb.getHeight() : vp.getScreenHeight();
+
+		PerspectiveCamera cam = camera.getCamera();
+		Pool<Vector3> vectorPool = Pools.get(Vector3.class);
+		// Vector of 1 meter length pointing to the side of the camera
+		Vector3 side = vectorPool.obtain().set(cam.direction);
+		side.crs(cam.up).nor().scl((float) Constants.M_TO_U * GlobalConf.instance.STEREOSCOPIC_EYE_SEPARATION_M / 2f);
+		Vector3 backup = vectorPool.obtain().set(cam.position);
+
+		/** LEFT IMAGE **/
+		vp.setScreenBounds(0, 0, w / 2, h);
+		vp.setWorldSize(w / 2, h);
+		vp.apply(false);
+		// Camera to left
+		if (movecam) {
+		    cam.position.sub(side);
+		    cam.update();
+		}
+		renderScene(camera, fb);
+
+		/** RIGHT IMAGE **/
+		vp.setScreenBounds(w / 2, 0, w / 2, h);
+		vp.setWorldSize(w / 2, h);
+		vp.apply(false);
+		// Camera to right
+		if (movecam) {
+		    cam.position.set(backup).add(side);
+		    cam.update();
+		}
+		renderScene(camera, fb);
+
+		// Restore cam.position and viewport size
+		cam.position.set(backup);
+		vp.setScreenBounds(0, 0, w, h);
+
+		vectorPool.free(side);
+		vectorPool.free(backup);
+
+	    } else {
+		renderScene(camera, fb);
+	    }
+	    ppb.render(fb);
+	}
+
+	// Render camera
+	if (fb != null) {
+	    fb.begin();
+	}
+	camera.render();
+	if (fb != null) {
+	    fb.end();
 	}
     }
 
@@ -372,6 +406,9 @@ public class SceneGraphRenderer extends AbstractRenderer implements IProcessRend
 
     }
 
+    /**
+     * This must be called when all the rendering for the current frame has finished.
+     */
     public void clearLists() {
 	for (RenderGroup rg : RenderGroup.values()) {
 	    render_lists.get(rg).clear();
