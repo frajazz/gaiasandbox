@@ -75,12 +75,12 @@ public class GSPostProcessor implements IPostProcessor, IObserver {
 	// LENS FLARE
 	ppb.lens = new LensFlare2((int) (width * lensFboScale), (int) (height * lensFboScale));
 	ppb.lens.setGhosts(8);
-	ppb.lens.setHaloWidth(0.5f);
+	ppb.lens.setHaloWidth(0.55f);
 	ppb.lens.setLensColorTexture(new Texture(Gdx.files.internal("img/lenscolor.png")));
-	ppb.lens.setFlareIntesity(.17f);
-	ppb.lens.setFlareSaturation(0.6f);
+	ppb.lens.setFlareIntesity(.39f);
+	ppb.lens.setFlareSaturation(0.7f);
 	ppb.lens.setBaseIntesity(1f);
-	ppb.lens.setBias(-0.98f);
+	ppb.lens.setBias(-0.99f);
 	ppb.lens.setBlurAmount(0.0f);
 	ppb.lens.setBlurPasses(2);
 	ppb.lens.setEnabled(conf.POSTPROCESS_LENS_FLARE);

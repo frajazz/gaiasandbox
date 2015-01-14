@@ -14,7 +14,7 @@ varying vec2 v_texCoords;
 uniform vec2 u_viewportInverse;
 uniform int u_ghosts; // number of ghost samples
 uniform float u_haloWidth;
-float u_ghostDispersal = 0.25;
+float u_ghostDispersal = 0.4;
 float u_distortion = 1.0;
 
 /*----------------------------------------------------------------------------*/
