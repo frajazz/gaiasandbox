@@ -57,13 +57,8 @@ import com.badlogic.gdx.assets.loaders.FileHandleResolver;
 import com.badlogic.gdx.assets.loaders.resolvers.InternalFileHandleResolver;
 import com.badlogic.gdx.files.FileHandle;
 import com.badlogic.gdx.graphics.GL20;
-import com.badlogic.gdx.graphics.PerspectiveCamera;
 import com.badlogic.gdx.graphics.Pixmap.Format;
 import com.badlogic.gdx.graphics.glutils.FrameBuffer;
-import com.badlogic.gdx.math.Vector3;
-import com.badlogic.gdx.utils.Pool;
-import com.badlogic.gdx.utils.Pools;
-import com.badlogic.gdx.utils.viewport.Viewport;
 
 /**
  * The main class. Holds all the entities manages the update/draw cycle as well as the image rendering.
@@ -464,48 +459,7 @@ public class GaiaSandbox implements ApplicationListener, IObserver {
 
 	} else {
 	    ppb.capture();
-	    if (GlobalConf.instance.STEREOSCOPIC_MODE) {
-		// Side by side rendering
-		Viewport vp = camera.getViewport();
-		int w = vp.getScreenWidth();
-		int h = vp.getScreenHeight();
-
-		PerspectiveCamera cam = camera.getCamera();
-		Pool<Vector3> vectorPool = Pools.get(Vector3.class);
-		// Vector of 1 meter length pointing to the side of the camera
-		Vector3 side = vectorPool.obtain().set(cam.direction);
-		side.crs(cam.up).nor().scl((float) Constants.M_TO_U * GlobalConf.instance.STEREOSCOPIC_EYE_SEPARATION_M / 2f);
-		Vector3 backup = vectorPool.obtain().set(cam.position);
-
-		/** LEFT IMAGE **/
-		vp.setScreenBounds(0, 0, w / 2, h);
-		vp.setWorldSize(w / 2, h);
-		vp.apply(false);
-		// Camera to left
-		cam.position.sub(side);
-		cam.update();
-		sgr.render(camera, fb, false);
-
-		/** RIGHT IMAGE **/
-		vp.setScreenBounds(w / 2, 0, w / 2, h);
-		vp.setWorldSize(w / 2, h);
-		vp.apply(false);
-		// Camera to right
-		cam.position.set(backup).add(side);
-		cam.update();
-		sgr.render(camera, fb, false);
-
-		// Restore cam.position
-		cam.position.set(backup);
-
-		vectorPool.free(side);
-		vectorPool.free(backup);
-	    } else {
-		sgr.render(camera, fb);
-	    }
-
-	    sgr.clearLists();
-
+	    sgr.render(camera, fb);
 	    ppb.render(fb);
 	}
 
@@ -526,7 +480,6 @@ public class GaiaSandbox implements ApplicationListener, IObserver {
      * @param height The height of the image.
      * @param folder The folder to save the image to.
      * @param filename The file name prefix.
-     * @param fbo Whether to create a fbo or not.
      * @return
      */
     public String renderToImage(ICamera camera, PostProcessBean ppb, int width, int height, String folder, String filename) {

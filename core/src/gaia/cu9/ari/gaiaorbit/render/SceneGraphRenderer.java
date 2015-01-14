@@ -12,6 +12,7 @@ import gaia.cu9.ari.gaiaorbit.render.system.ShaderQuadRenderSystem;
 import gaia.cu9.ari.gaiaorbit.render.system.SpriteBatchRenderSystem;
 import gaia.cu9.ari.gaiaorbit.scenegraph.ICamera;
 import gaia.cu9.ari.gaiaorbit.scenegraph.SceneGraphNode.RenderGroup;
+import gaia.cu9.ari.gaiaorbit.util.Constants;
 import gaia.cu9.ari.gaiaorbit.util.GlobalConf;
 import gaia.cu9.ari.gaiaorbit.util.GlobalResources;
 import gaia.cu9.ari.gaiaorbit.util.math.MathUtilsd;
@@ -32,6 +33,7 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.assets.AssetManager;
 import com.badlogic.gdx.graphics.Camera;
 import com.badlogic.gdx.graphics.GL20;
+import com.badlogic.gdx.graphics.PerspectiveCamera;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g3d.ModelBatch;
 import com.badlogic.gdx.graphics.g3d.Renderable;
@@ -41,7 +43,11 @@ import com.badlogic.gdx.graphics.g3d.utils.ShaderProvider;
 import com.badlogic.gdx.graphics.glutils.FrameBuffer;
 import com.badlogic.gdx.graphics.glutils.ShaderProgram;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
+import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.utils.Array;
+import com.badlogic.gdx.utils.Pool;
+import com.badlogic.gdx.utils.Pools;
+import com.badlogic.gdx.utils.viewport.Viewport;
 
 /**
  * Renders a scenegraph.
@@ -301,6 +307,54 @@ public class SceneGraphRenderer extends AbstractRenderer implements IProcessRend
     }
 
     public void render(ICamera camera, FrameBuffer fb, boolean clearlists) {
+	if (GlobalConf.instance.STEREOSCOPIC_MODE) {
+	    // Side by side rendering
+	    Viewport vp = camera.getViewport();
+	    int w = fb != null ? fb.getWidth() : vp.getScreenWidth();
+	    int h = fb != null ? fb.getHeight() : vp.getScreenHeight();
+
+	    PerspectiveCamera cam = camera.getCamera();
+	    Pool<Vector3> vectorPool = Pools.get(Vector3.class);
+	    // Vector of 1 meter length pointing to the side of the camera
+	    Vector3 side = vectorPool.obtain().set(cam.direction);
+	    side.crs(cam.up).nor().scl((float) Constants.M_TO_U * GlobalConf.instance.STEREOSCOPIC_EYE_SEPARATION_M / 2f);
+	    Vector3 backup = vectorPool.obtain().set(cam.position);
+
+	    /** LEFT IMAGE **/
+	    vp.setScreenBounds(0, 0, w / 2, h);
+	    vp.setWorldSize(w / 2, h);
+	    vp.apply(false);
+	    // Camera to left
+	    cam.position.sub(side);
+	    cam.update();
+	    renderScene(camera, fb);
+
+	    /** RIGHT IMAGE **/
+	    vp.setScreenBounds(w / 2, 0, w / 2, h);
+	    vp.setWorldSize(w / 2, h);
+	    vp.apply(false);
+	    // Camera to right
+	    cam.position.set(backup).add(side);
+	    cam.update();
+	    renderScene(camera, fb);
+
+	    // Restore cam.position and viewport size
+	    cam.position.set(backup);
+	    vp.setScreenBounds(0, 0, w, h);
+
+	    vectorPool.free(side);
+	    vectorPool.free(backup);
+
+	    if (clearlists)
+		clearLists();
+	} else {
+	    renderScene(camera, fb);
+	    if (clearlists)
+		clearLists();
+	}
+    }
+
+    public void renderScene(ICamera camera, FrameBuffer fb) {
 	// Update time difference since last update
 	long now = new Date().getTime();
 	for (ComponentType ct : ComponentType.values()) {
@@ -315,8 +369,7 @@ public class SceneGraphRenderer extends AbstractRenderer implements IProcessRend
 
 	    process.render(render_lists.get(process.getRenderGroup()), camera, fb);
 	}
-	if (clearlists)
-	    clearLists();
+
     }
 
     public void clearLists() {
