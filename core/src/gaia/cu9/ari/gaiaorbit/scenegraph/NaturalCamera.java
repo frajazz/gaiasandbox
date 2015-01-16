@@ -82,7 +82,7 @@ public class NaturalCamera extends AbstractCamera implements IObserver {
 
     boolean accelerometer = false;
     Matrix4 rotationMatrix, calibrationMatrix;
-    Matrix4d rotationMatrix4d;
+    Matrix4d rotationMatrix4d, calibrationMatrix4d;
 
     public NaturalCamera(AssetManager assetManager, CameraManager parent) {
 	super(parent);
@@ -124,7 +124,16 @@ public class NaturalCamera extends AbstractCamera implements IObserver {
 	if (accelerometer) {
 	    rotationMatrix = new Matrix4();
 	    calibrationMatrix = new Matrix4();
+
 	    rotationMatrix4d = new Matrix4d();
+	    calibrationMatrix4d = new Matrix4d();
+
+	    Vector3 tiltCalibration = new Vector3(
+		    Gdx.input.getAccelerometerX(),
+		    Gdx.input.getAccelerometerY(),
+		    Gdx.input.getAccelerometerZ());
+	    initTiltControls(tiltCalibration);
+	    calibrationMatrix4d.set(calibrationMatrix.val);
 	}
 
 	// Focus is changed from GUI
@@ -216,7 +225,20 @@ public class NaturalCamera extends AbstractCamera implements IObserver {
 	direction.set(0, 0, 1);
 	up.set(0, 1, 0);
 
-	rotationMatrix4d.idt().rotate(Vector3d.Y, -Gdx.input.getPitch()).rotate(Vector3d.X, Gdx.input.getRoll()).rotate(Vector3d.Z, Gdx.input.getAzimuth());
+	float x = Gdx.input.getAccelerometerX();
+	float y = Gdx.input.getAccelerometerY();
+	float z = Gdx.input.getAccelerometerZ();
+
+	Vector3d accel = Pools.obtain(Vector3d.class).set(x, y, z).mul(calibrationMatrix4d);
+	/** Get transformation Device -> RealWorld transformation in rotationMatrix
+	 * See {@link android.hardware.SensorManager#getRotationMatrix(float[], float[], float[], float[]) }
+	 * and {@link http://developer.android.com/reference/android/hardware/SensorEvent.html}
+	 */
+
+	Gdx.input.getRotationMatrix(rotationMatrix.val);
+	// Put result in rotationMatrix4d and convert RealWorld -> GSWorld
+	rotationMatrix4d.set(rotationMatrix.val).rotate(Vector3d.X, 90);
+	// Here we have Device -> GSWorld
 
 	direction.mul(rotationMatrix4d);
 	up.mul(rotationMatrix4d);
