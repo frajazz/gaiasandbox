@@ -8,11 +8,17 @@ import gaia.cu9.ari.gaiaorbit.scenegraph.CameraManager.CameraMode;
 import gaia.cu9.ari.gaiaorbit.util.Constants;
 import gaia.cu9.ari.gaiaorbit.util.GlobalConf;
 import gaia.cu9.ari.gaiaorbit.util.math.MathUtilsd;
+import gaia.cu9.ari.gaiaorbit.util.math.Matrix4d;
 import gaia.cu9.ari.gaiaorbit.util.math.Vector3d;
 
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.Input.Peripheral;
 import com.badlogic.gdx.assets.AssetManager;
 import com.badlogic.gdx.graphics.PerspectiveCamera;
+import com.badlogic.gdx.math.Matrix4;
+import com.badlogic.gdx.math.Quaternion;
+import com.badlogic.gdx.math.Vector3;
+import com.badlogic.gdx.utils.Pools;
 import com.badlogic.gdx.utils.viewport.ExtendViewport;
 import com.badlogic.gdx.utils.viewport.Viewport;
 
@@ -74,6 +80,10 @@ public class NaturalCamera extends AbstractCamera implements IObserver {
     Viewport viewport;
     boolean diverted = false;
 
+    boolean accelerometer = false;
+    Matrix4 rotationMatrix, calibrationMatrix;
+    Matrix4d rotationMatrix4d;
+
     public NaturalCamera(AssetManager assetManager, CameraManager parent) {
 	super(parent);
 	vel = new Vector3d();
@@ -109,6 +119,13 @@ public class NaturalCamera extends AbstractCamera implements IObserver {
 	state = new Vector3d();
 
 	viewport = new ExtendViewport(200, 200, camera);
+
+	accelerometer = Gdx.input.isPeripheralAvailable(Peripheral.Accelerometer);
+	if (accelerometer) {
+	    rotationMatrix = new Matrix4();
+	    calibrationMatrix = new Matrix4();
+	    rotationMatrix4d = new Matrix4d();
+	}
 
 	// Focus is changed from GUI
 	EventManager.getInstance().subscribe(this, Events.FOCUS_CHANGE_CMD, Events.FOV_CHANGED_CMD, Events.FOCUS_LOCK_CMD, Events.CAMERA_POS_CMD, Events.CAMERA_DIR_CMD, Events.CAMERA_UP_CMD, Events.CAMERA_FWD, Events.CAMERA_ROTATE, Events.CAMERA_PAN, Events.CAMERA_ROLL, Events.CAMERA_TURN, Events.CAMERA_STOP, Events.CAMERA_CENTER);
@@ -148,12 +165,16 @@ public class NaturalCamera extends AbstractCamera implements IObserver {
 		updateRotation(dt, focusPos);
 
 		// Update direction to follow focus and activate custom input listener
-		if (!diverted) {
-		    directionToTarget(dt, focusPos, GlobalConf.instance.TURNING_SPEED / 1e3f);
+		if (accelerometer) {
+		    updateAccelerometer();
 		} else {
-		    updateRotationFree(dt, GlobalConf.instance.TURNING_SPEED);
+		    if (!diverted) {
+			directionToTarget(dt, focusPos, GlobalConf.instance.TURNING_SPEED / 1e3f);
+		    } else {
+			updateRotationFree(dt, GlobalConf.instance.TURNING_SPEED);
+		    }
+		    updateRoll(dt, GlobalConf.instance.TURNING_SPEED);
 		}
-		updateRoll(dt, GlobalConf.instance.TURNING_SPEED);
 
 		// Update focus direction
 		focus.transform.getTranslation(focusDirection);
@@ -165,13 +186,18 @@ public class NaturalCamera extends AbstractCamera implements IObserver {
 	    break;
 	case Free_Camera:
 	    updatePosition(dt, translateUnits);
-	    // Update direction with pitch, yaw, roll
-	    updateRotationFree(dt, GlobalConf.instance.TURNING_SPEED);
-	    updateRoll(dt, GlobalConf.instance.TURNING_SPEED);
+	    if (accelerometer) {
+		updateAccelerometer();
+	    } else {
+		// Update direction with pitch, yaw, roll
+		updateRotationFree(dt, GlobalConf.instance.TURNING_SPEED);
+		updateRoll(dt, GlobalConf.instance.TURNING_SPEED);
+	    }
 	    break;
 	default:
 	    break;
 	}
+
 	lastFwdTime += dt;
 	lastMode = m;
 
@@ -183,6 +209,32 @@ public class NaturalCamera extends AbstractCamera implements IObserver {
 
 	posinv.set(pos).scl(-1);
 
+    }
+
+    public void updateAccelerometer() {
+	diverted = true;
+	direction.set(0, 0, 1);
+	up.set(0, 1, 0);
+
+	rotationMatrix4d.idt().rotate(Vector3d.Y, -Gdx.input.getPitch()).rotate(Vector3d.X, Gdx.input.getRoll()).rotate(Vector3d.Z, Gdx.input.getAzimuth());
+
+	direction.mul(rotationMatrix4d);
+	up.mul(rotationMatrix4d);
+
+    }
+
+    public void initTiltControls(Vector3 tiltCalibration) {
+	Vector3 tmp = Pools.obtain(Vector3.class);
+	Vector3 tmp2 = Pools.obtain(Vector3.class);
+	tmp.set(0, 0, 1);
+	tmp2.set(tiltCalibration).nor();
+	Quaternion rotateQuaternion = new Quaternion().setFromCross(tmp, tmp2);
+
+	Matrix4 m = new Matrix4(Vector3.Zero, rotateQuaternion, new Vector3(1f, 1f, 1f));
+	this.calibrationMatrix = m.inv();
+
+	Pools.free(tmp);
+	Pools.free(tmp2);
     }
 
     /**

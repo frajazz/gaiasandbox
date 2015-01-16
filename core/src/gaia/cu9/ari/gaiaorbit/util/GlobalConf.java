@@ -49,7 +49,8 @@ public class GlobalConf implements IObserver {
     public Date LAST_CHECKED;
     public boolean STEREOSCOPIC_MODE, CLEAN_MODE;
     /** Eye separation in stereoscopic mode in meters **/
-    public float STEREOSCOPIC_EYE_SEPARATION_M = 2;
+    public float STEREOSCOPIC_EYE_SEPARATION_M = 1;
+
     /** Visibility of components **/
     public boolean[] VISIBILITY;
 
@@ -129,6 +130,7 @@ public class GlobalConf implements IObserver {
 	    UI_THEME = p.getProperty("program.ui.theme");
 	    SCRIPT_LOCATION = p.getProperty("program.scriptlocation").isEmpty() ? System.getProperty("user.dir") : p.getProperty("program.scriptlocation");
 	    LOCALE = p.getProperty("program.locale");
+	    STEREOSCOPIC_MODE = Boolean.parseBoolean(p.getProperty("program.stereoscopic"));
 
 	    /** POSTPROCESS **/
 	    /**
@@ -236,6 +238,7 @@ public class GlobalConf implements IObserver {
 	    p.setProperty("program.ui.theme", UI_THEME);
 	    p.setProperty("program.scriptlocation", SCRIPT_LOCATION);
 	    p.setProperty("program.locale", LOCALE);
+	    p.setProperty("program.stereoscopic", Boolean.toString(STEREOSCOPIC_MODE));
 
 	    /** POSTPROCESS **/
 	    p.setProperty("postprocess.antialiasing", Integer.toString(POSTPROCESS_ANTIALIAS));
