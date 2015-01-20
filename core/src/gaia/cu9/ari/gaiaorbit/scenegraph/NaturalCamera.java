@@ -8,19 +8,12 @@ import gaia.cu9.ari.gaiaorbit.scenegraph.CameraManager.CameraMode;
 import gaia.cu9.ari.gaiaorbit.util.Constants;
 import gaia.cu9.ari.gaiaorbit.util.GlobalConf;
 import gaia.cu9.ari.gaiaorbit.util.math.MathUtilsd;
-import gaia.cu9.ari.gaiaorbit.util.math.Matrix4d;
-import gaia.cu9.ari.gaiaorbit.util.math.Quaterniond;
 import gaia.cu9.ari.gaiaorbit.util.math.Vector3d;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input.Peripheral;
 import com.badlogic.gdx.assets.AssetManager;
 import com.badlogic.gdx.graphics.PerspectiveCamera;
-import com.badlogic.gdx.math.MathUtils;
-import com.badlogic.gdx.math.Matrix4;
-import com.badlogic.gdx.math.Quaternion;
-import com.badlogic.gdx.math.Vector3;
-import com.badlogic.gdx.utils.Pools;
 import com.badlogic.gdx.utils.viewport.ExtendViewport;
 import com.badlogic.gdx.utils.viewport.Viewport;
 
@@ -83,15 +76,8 @@ public class NaturalCamera extends AbstractCamera implements IObserver {
     boolean diverted = false;
 
     boolean accelerometer = false;
-    Matrix4 rotationMatrix, calibrationMatrix;
-    Matrix4d rotationMatrix4d, calibrationMatrix4d;
-    Quaterniond q;
 
-    float[] readings;
-    float[] anglevals;
-
-    int readingsi = 0;
-    private static int NUM_READINGS = 5;
+    public static float[] upSensor, lookAtSensor;
 
     public NaturalCamera(AssetManager assetManager, CameraManager parent) {
 	super(parent);
@@ -130,30 +116,13 @@ public class NaturalCamera extends AbstractCamera implements IObserver {
 	viewport = new ExtendViewport(200, 200, camera);
 
 	accelerometer = Gdx.input.isPeripheralAvailable(Peripheral.Accelerometer);
-	if (accelerometer) {
-	    rotationMatrix = new Matrix4();
-	    calibrationMatrix = new Matrix4();
-
-	    rotationMatrix4d = new Matrix4d();
-	    calibrationMatrix4d = new Matrix4d();
-	    q = new Quaterniond();
-
-	    Vector3 tiltCalibration = new Vector3(
-		    Gdx.input.getAccelerometerX(),
-		    Gdx.input.getAccelerometerY(),
-		    Gdx.input.getAccelerometerZ());
-	    initTiltControls(tiltCalibration);
-	    calibrationMatrix4d.set(calibrationMatrix.val);
-
-	    readings = new float[3];
-
-	}
 
 	// Focus is changed from GUI
 	EventManager.getInstance().subscribe(this, Events.FOCUS_CHANGE_CMD, Events.FOV_CHANGED_CMD, Events.FOCUS_LOCK_CMD, Events.CAMERA_POS_CMD, Events.CAMERA_DIR_CMD, Events.CAMERA_UP_CMD, Events.CAMERA_FWD, Events.CAMERA_ROTATE, Events.CAMERA_PAN, Events.CAMERA_ROLL, Events.CAMERA_TURN, Events.CAMERA_STOP, Events.CAMERA_CENTER);
     }
 
     public void update(float dt, ITimeFrameProvider time) {
+	// The whole update thread must lock the value of direction and up
 	distance = pos.len();
 	CameraMode m = (parent.current == this ? parent.mode : lastMode);
 	double translateUnits = Math.max(10d * Constants.M_TO_U, getTranslateUnits());
@@ -187,15 +156,16 @@ public class NaturalCamera extends AbstractCamera implements IObserver {
 		updateRotation(dt, focusPos);
 
 		// Update direction to follow focus and activate custom input listener
-		if (accelerometer) {
-		    updateAccelerometer();
-		} else {
+		if (!accelerometer) {
 		    if (!diverted) {
 			directionToTarget(dt, focusPos, GlobalConf.instance.TURNING_SPEED / 1e3f);
 		    } else {
 			updateRotationFree(dt, GlobalConf.instance.TURNING_SPEED);
 		    }
 		    updateRoll(dt, GlobalConf.instance.TURNING_SPEED);
+		} else {
+		    direction.set(lookAtSensor);
+		    up.set(upSensor);
 		}
 
 		// Update focus direction
@@ -208,12 +178,13 @@ public class NaturalCamera extends AbstractCamera implements IObserver {
 	    break;
 	case Free_Camera:
 	    updatePosition(dt, translateUnits);
-	    if (accelerometer) {
-		updateAccelerometer();
-	    } else {
+	    if (!accelerometer) {
 		// Update direction with pitch, yaw, roll
 		updateRotationFree(dt, GlobalConf.instance.TURNING_SPEED);
 		updateRoll(dt, GlobalConf.instance.TURNING_SPEED);
+	    } else {
+		direction.set(lookAtSensor);
+		up.set(upSensor);
 	    }
 	    break;
 	default:
@@ -230,72 +201,6 @@ public class NaturalCamera extends AbstractCamera implements IObserver {
 	camera.update();
 
 	posinv.set(pos).scl(-1);
-
-    }
-
-    public void updateAccelerometer() {
-	diverted = true;
-	direction.set(0, 0, 1);
-	up.set(0, 1, 0);
-
-	/** Get transformation Device -> RealWorld transformation in rotationMatrix
-	 * See {@link android.hardware.SensorManager#getRotationMatrix(float[], float[], float[], float[]) }
-	 * and {@link http://developer.android.com/reference/android/hardware/SensorEvent.html}
-	 */
-
-	//	Gdx.input.getRotationMatrix(rotationMatrix.val);
-	//	// Put result in rotationMatrix4d and convert RealWorld -> GSWorld by switching Y <-> Z and inverting X
-	//	rotationMatrix4d.set(rotationMatrix.val);
-	// Here we have Device -> GSWorld
-
-	float p = MathUtils.round(Gdx.input.getPitch());
-	float a = MathUtils.round(Gdx.input.getAzimuth());
-	float r = MathUtils.round(Gdx.input.getRoll());
-
-	readings[0] = p;
-	readings[1] = a;
-	readings[2] = r;
-
-	anglevals = lowPass(readings, anglevals);
-
-	System.out.println("a:" + anglevals[1] + ", p:" + anglevals[0] + "r: " + anglevals[2]);
-
-	q.setEulerAngles(-anglevals[1], anglevals[2], 0);
-	rotationMatrix4d.idt().rotate(q);
-
-	direction.mul(rotationMatrix4d);
-	up.mul(rotationMatrix4d);
-
-    }
-
-    /**
-     * Fast implementation of low-pass filter to smooth angle values coming from noisy sensor readings
-     * @see http://en.wikipedia.org/wiki/Low-pass_filter#Algorithmic_implementation
-     * @see http://en.wikipedia.org/wiki/Low-pass_filter#Simple_infinite_impulse_response_filter
-     */
-    protected float[] lowPass(float[] input, float[] output) {
-	float ALPHA = 0.4f;
-	if (output == null)
-	    return input.clone();
-
-	for (int i = 0; i < input.length; i++) {
-	    output[i] = output[i] + ALPHA * (input[i] - output[i]);
-	}
-	return output;
-    }
-
-    public void initTiltControls(Vector3 tiltCalibration) {
-	Vector3 tmp = Pools.obtain(Vector3.class);
-	Vector3 tmp2 = Pools.obtain(Vector3.class);
-	tmp.set(0, 0, 1);
-	tmp2.set(tiltCalibration).nor();
-	Quaternion rotateQuaternion = new Quaternion().setFromCross(tmp, tmp2);
-
-	Matrix4 m = new Matrix4(Vector3.Zero, rotateQuaternion, new Vector3(1f, 1f, 1f));
-	this.calibrationMatrix = m.inv();
-
-	Pools.free(tmp);
-	Pools.free(tmp2);
     }
 
     /**

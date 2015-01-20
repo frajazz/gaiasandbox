@@ -92,6 +92,14 @@ public class Vector3d implements Serializable {
 	return this.set(values[0], values[1], values[2]);
     }
 
+    /** Sets the components from the array. The array must have at least 3 elements
+     * 
+     * @param values The array
+     * @return this vector for chaining */
+    public Vector3d set(final float[] values) {
+	return this.set(values[0], values[1], values[2]);
+    }
+
     public Vector3d cpy() {
 	return new Vector3d(this);
     }
