@@ -11,7 +11,7 @@ from sandbox.script import EventScriptingInterface
 
 headerSize = 25
 textSize = 13
-twdelay = 0.02
+twdelay = 0.007
 arrowH = 7
 
 gs = EventScriptingInterface()
