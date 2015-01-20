@@ -55,20 +55,16 @@ public class GaiaSandboxActivity extends AndroidApplication {
 	SensorManager sensorMan = (SensorManager) getContext().getSystemService(Context.SENSOR_SERVICE);
 	Sensor sensorAcce = sensorMan.getSensorList(Sensor.TYPE_ACCELEROMETER).get(0);
 	Sensor sensorMagn = sensorMan.getSensorList(Sensor.TYPE_MAGNETIC_FIELD).get(0);
-	Sensor sensorOrien = sensorMan.getSensorList(Sensor.TYPE_ORIENTATION).get(0);
 	sensorMan.registerListener(lis, sensorAcce, SensorManager.SENSOR_DELAY_FASTEST);
 	sensorMan.registerListener(lis, sensorMagn, SensorManager.SENSOR_DELAY_FASTEST);
-	sensorMan.registerListener(lis, sensorOrien, SensorManager.SENSOR_DELAY_NORMAL);
     }
 
     private void unregisterSensorListeners() {
 	SensorManager sensorMan = (SensorManager) getContext().getSystemService(Context.SENSOR_SERVICE);
 	Sensor sensorAcce = sensorMan.getSensorList(Sensor.TYPE_ACCELEROMETER).get(0);
 	Sensor sensorMagn = sensorMan.getSensorList(Sensor.TYPE_MAGNETIC_FIELD).get(0);
-	Sensor sensorOrien = sensorMan.getSensorList(Sensor.TYPE_ORIENTATION).get(0);
 	sensorMan.unregisterListener(lis, sensorAcce);
 	sensorMan.unregisterListener(lis, sensorMagn);
-	sensorMan.unregisterListener(lis, sensorOrien);
     }
 
     private class GSSensorListener implements SensorEventListener {
@@ -77,46 +73,58 @@ public class GaiaSandboxActivity extends AndroidApplication {
 
 	float[] newLookAt, newUp;
 
-	public float[] lookAt, up;
+	public float[] lookAtSensor, upSensor;
 
 	public GSSensorListener() {
 	    orientation = new float[3];
 	    acceleration = new float[3];
 
-	    lookAt = new float[4];
-	    up = new float[4];
+	    lookAtSensor = new float[4];
+	    upSensor = new float[4];
 
 	    newLookAt = new float[] { 0, 0, -1, 1 };
 	    newUp = new float[] { 0, 1, 0, 1 };
 
 	    // Link to natural camera
-	    NaturalCamera.upSensor = up;
-	    NaturalCamera.lookAtSensor = lookAt;
+	    NaturalCamera.upSensor = upSensor;
+	    NaturalCamera.lookAtSensor = lookAtSensor;
+
 	}
 
 	public void onAccuracyChanged(Sensor arg0, int arg1) {
 	}
+
+	// Track which sensors have been updated
+	boolean m = true, a = true;
 
 	public void onSensorChanged(SensorEvent evt) {
 	    int type = evt.sensor.getType();
 	    //Smoothing the sensor.
 	    if (type == Sensor.TYPE_MAGNETIC_FIELD) {
 		orientation = lowPass(evt.values, orientation, 0.1f);
+		m = true;
 	    } else if (type == Sensor.TYPE_ACCELEROMETER) {
 		acceleration = lowPass(evt.values, acceleration, 0.05f);
+		a = true;
 	    }
 
-	    if ((type == Sensor.TYPE_MAGNETIC_FIELD) || (type == Sensor.TYPE_ACCELEROMETER)) {
+	    if (m && a) {
 		float newMat[] = new float[16];
 		SensorManager.getRotationMatrix(newMat, null, acceleration, orientation);
 		SensorManager.remapCoordinateSystem(newMat,
 			SensorManager.AXIS_Y, SensorManager.AXIS_MINUS_X,
 			newMat);
 		Matrix4 matT = new Matrix4(newMat).tra();
-		System.arraycopy(newLookAt, 0, lookAt, 0, 4);
-		System.arraycopy(newUp, 0, up, 0, 4);
-		Matrix4.mulVec(matT.val, lookAt);
-		Matrix4.mulVec(matT.val, up);
+
+		// Synchronize
+		synchronized (lookAtSensor) {
+		    System.arraycopy(newLookAt, 0, lookAtSensor, 0, 4);
+		    Matrix4.mulVec(matT.val, lookAtSensor);
+		    System.arraycopy(newUp, 0, upSensor, 0, 4);
+		    Matrix4.mulVec(matT.val, upSensor);
+		}
+		m = false;
+		a = false;
 	    }
 	}
 

@@ -122,6 +122,14 @@ public class NaturalCamera extends AbstractCamera implements IObserver {
     }
 
     public void update(float dt, ITimeFrameProvider time) {
+	// Set up direction and lookAtSensor if accelerometer is enabled
+	if (accelerometer) {
+	    synchronized (lookAtSensor) {
+		direction.set(lookAtSensor);
+		up.set(upSensor);
+	    }
+	}
+
 	// The whole update thread must lock the value of direction and up
 	distance = pos.len();
 	CameraMode m = (parent.current == this ? parent.mode : lastMode);
@@ -163,9 +171,6 @@ public class NaturalCamera extends AbstractCamera implements IObserver {
 			updateRotationFree(dt, GlobalConf.instance.TURNING_SPEED);
 		    }
 		    updateRoll(dt, GlobalConf.instance.TURNING_SPEED);
-		} else {
-		    direction.set(lookAtSensor);
-		    up.set(upSensor);
 		}
 
 		// Update focus direction
@@ -182,9 +187,6 @@ public class NaturalCamera extends AbstractCamera implements IObserver {
 		// Update direction with pitch, yaw, roll
 		updateRotationFree(dt, GlobalConf.instance.TURNING_SPEED);
 		updateRoll(dt, GlobalConf.instance.TURNING_SPEED);
-	    } else {
-		direction.set(lookAtSensor);
-		up.set(upSensor);
 	    }
 	    break;
 	default:
