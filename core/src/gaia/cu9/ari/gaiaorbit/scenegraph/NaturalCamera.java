@@ -160,11 +160,11 @@ public class NaturalCamera extends AbstractCamera implements IObserver {
 		    } while (ape != null);
 		}
 
-		updatePosition(dt, translateUnits);
-		updateRotation(dt, focusPos);
-
 		// Update direction to follow focus and activate custom input listener
 		if (!accelerometer) {
+		    updatePosition(dt, translateUnits);
+		    updateRotation(dt, focusPos);
+
 		    if (!diverted) {
 			directionToTarget(dt, focusPos, GlobalConf.instance.TURNING_SPEED / 1e3f);
 		    } else {
@@ -182,8 +182,9 @@ public class NaturalCamera extends AbstractCamera implements IObserver {
 	    }
 	    break;
 	case Free_Camera:
-	    updatePosition(dt, translateUnits);
 	    if (!accelerometer) {
+		updatePosition(dt, translateUnits);
+
 		// Update direction with pitch, yaw, roll
 		updateRotationFree(dt, GlobalConf.instance.TURNING_SPEED);
 		updateRoll(dt, GlobalConf.instance.TURNING_SPEED);

@@ -5,6 +5,7 @@ import gaia.cu9.ari.gaiaorbit.util.GlobalConf;
 import gaia.cu9.ari.gaiaorbit.util.math.MathUtilsd;
 
 import java.io.IOException;
+import java.lang.reflect.Method;
 
 import android.content.Context;
 import android.hardware.Sensor;
@@ -15,6 +16,7 @@ import android.os.Bundle;
 import android.os.PowerManager;
 import android.os.PowerManager.WakeLock;
 import android.util.Log;
+import android.view.Display;
 
 import com.badlogic.gdx.backends.android.AndroidApplication;
 import com.badlogic.gdx.backends.android.AndroidApplicationConfiguration;
@@ -22,6 +24,8 @@ import com.badlogic.gdx.math.Matrix4;
 
 public class GaiaSandboxActivity extends AndroidApplication {
     WakeLock mWakeLock;
+    GSSensorListener lis;
+    private static Method mDefaultDisplay_getRotation;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -38,16 +42,32 @@ public class GaiaSandboxActivity extends AndroidApplication {
 	    this.finish();
 	}
 
+	try {
+	    mDefaultDisplay_getRotation = Display.class.getMethod("getRotation", new Class[] {});
+	} catch (NoSuchMethodException e) {
+	}
+
 	AndroidApplicationConfiguration cfg = new AndroidApplicationConfiguration();
 	cfg.numSamples = MathUtilsd.clamp(GlobalConf.instance.POSTPROCESS_ANTIALIAS, 0, 16);
 	cfg.depth = 8;
 	cfg.stencil = 8;
 
 	initialize(new GaiaSandbox(true), cfg);
+    }
+
+    @Override
+    protected void onResume() {
+	super.onResume();
+	this.mWakeLock.acquire();
 	registerSensorListener();
     }
 
-    GSSensorListener lis;
+    @Override
+    protected void onPause() {
+	super.onPause();
+	this.mWakeLock.release();
+	unregisterSensorListeners();
+    }
 
     private void registerSensorListener() {
 	lis = new GSSensorListener();
@@ -55,8 +75,8 @@ public class GaiaSandboxActivity extends AndroidApplication {
 	SensorManager sensorMan = (SensorManager) getContext().getSystemService(Context.SENSOR_SERVICE);
 	Sensor sensorAcce = sensorMan.getSensorList(Sensor.TYPE_ACCELEROMETER).get(0);
 	Sensor sensorMagn = sensorMan.getSensorList(Sensor.TYPE_MAGNETIC_FIELD).get(0);
-	sensorMan.registerListener(lis, sensorAcce, SensorManager.SENSOR_DELAY_FASTEST);
-	sensorMan.registerListener(lis, sensorMagn, SensorManager.SENSOR_DELAY_FASTEST);
+	sensorMan.registerListener(lis, sensorAcce, SensorManager.SENSOR_DELAY_GAME);
+	sensorMan.registerListener(lis, sensorMagn, SensorManager.SENSOR_DELAY_GAME);
     }
 
     private void unregisterSensorListeners() {
@@ -65,6 +85,7 @@ public class GaiaSandboxActivity extends AndroidApplication {
 	Sensor sensorMagn = sensorMan.getSensorList(Sensor.TYPE_MAGNETIC_FIELD).get(0);
 	sensorMan.unregisterListener(lis, sensorAcce);
 	sensorMan.unregisterListener(lis, sensorMagn);
+	lis = null;
     }
 
     private class GSSensorListener implements SensorEventListener {
@@ -74,6 +95,10 @@ public class GaiaSandboxActivity extends AndroidApplication {
 	float[] newLookAt, newUp;
 
 	public float[] lookAtSensor, upSensor;
+
+	Matrix4 matT;
+
+	private float Rtmp[] = new float[16];
 
 	public GSSensorListener() {
 	    orientation = new float[3];
@@ -85,6 +110,8 @@ public class GaiaSandboxActivity extends AndroidApplication {
 	    newLookAt = new float[] { 0, 0, -1, 1 };
 	    newUp = new float[] { 0, 1, 0, 1 };
 
+	    matT = new Matrix4();
+
 	    // Link to natural camera
 	    NaturalCamera.upSensor = upSensor;
 	    NaturalCamera.lookAtSensor = lookAtSensor;
@@ -94,37 +121,30 @@ public class GaiaSandboxActivity extends AndroidApplication {
 	public void onAccuracyChanged(Sensor arg0, int arg1) {
 	}
 
-	// Track which sensors have been updated
-	boolean m = true, a = true;
-
 	public void onSensorChanged(SensorEvent evt) {
 	    int type = evt.sensor.getType();
 	    //Smoothing the sensor.
 	    if (type == Sensor.TYPE_MAGNETIC_FIELD) {
-		orientation = lowPass(evt.values, orientation, 0.1f);
-		m = true;
+		orientation = lowPass(evt.values, orientation, 0.04f);
 	    } else if (type == Sensor.TYPE_ACCELEROMETER) {
-		acceleration = lowPass(evt.values, acceleration, 0.05f);
-		a = true;
+		acceleration = lowPass(evt.values, acceleration, 0.04f);
 	    }
 
-	    if (m && a) {
-		float newMat[] = new float[16];
-		SensorManager.getRotationMatrix(newMat, null, acceleration, orientation);
-		SensorManager.remapCoordinateSystem(newMat,
-			SensorManager.AXIS_Y, SensorManager.AXIS_MINUS_X,
-			newMat);
-		Matrix4 matT = new Matrix4(newMat).tra();
+	    if (acceleration != null && orientation != null) {
+		boolean success = SensorManager.getRotationMatrix(Rtmp, null, acceleration, orientation);
 
-		// Synchronize
-		synchronized (lookAtSensor) {
-		    System.arraycopy(newLookAt, 0, lookAtSensor, 0, 4);
-		    Matrix4.mulVec(matT.val, lookAtSensor);
-		    System.arraycopy(newUp, 0, upSensor, 0, 4);
-		    Matrix4.mulVec(matT.val, upSensor);
+		if (success) {
+		    SensorManager.remapCoordinateSystem(Rtmp, SensorManager.AXIS_Y, SensorManager.AXIS_MINUS_X, Rtmp);
+		    matT.set(Rtmp).tra();
+
+		    // Synchronize
+		    synchronized (lookAtSensor) {
+			System.arraycopy(newLookAt, 0, lookAtSensor, 0, 4);
+			Matrix4.mulVec(matT.val, lookAtSensor);
+			System.arraycopy(newUp, 0, upSensor, 0, 4);
+			Matrix4.mulVec(matT.val, upSensor);
+		    }
 		}
-		m = false;
-		a = false;
 	    }
 	}
 
@@ -133,13 +153,12 @@ public class GaiaSandboxActivity extends AndroidApplication {
 	 * @see http://en.wikipedia.org/wiki/Low-pass_filter#Algorithmic_implementation
 	 * @see http://en.wikipedia.org/wiki/Low-pass_filter#Simple_infinite_impulse_response_filter
 	 */
-	protected float[] lowPass(float[] input, float[] output, float ALPHA) {
-	    //float ALPHA = 0.4f;
+	protected float[] lowPass(float[] input, float[] output, float alpha) {
 	    if (output == null)
 		return input.clone();
 
 	    for (int i = 0; i < input.length; i++) {
-		output[i] = output[i] + ALPHA * (input[i] - output[i]);
+		output[i] = output[i] + alpha * (input[i] - output[i]);
 	    }
 	    return output;
 	}

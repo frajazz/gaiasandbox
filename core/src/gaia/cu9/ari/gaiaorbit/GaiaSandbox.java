@@ -148,9 +148,8 @@ public class GaiaSandbox implements ApplicationListener, IObserver {
 	    c.set(Calendar.DAY_OF_MONTH, 19);
 	    c.set(Calendar.HOUR_OF_DAY, 9);
 	    c.set(Calendar.MINUTE, 56);
-	    c.getTime();
 	    // Initialize clock with a pace of 2 simulation hours/second
-	    GlobalClock.initialize(0.01);
+	    GlobalClock.initialize(0.01, c.getTime());
 	}
 
 	if (!GlobalConf.initialized()) {
