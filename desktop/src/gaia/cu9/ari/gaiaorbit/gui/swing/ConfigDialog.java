@@ -65,6 +65,7 @@ import com.alee.utils.swing.DialogOptions;
 import com.badlogic.gdx.Graphics.DisplayMode;
 import com.badlogic.gdx.Input.Keys;
 import com.badlogic.gdx.backends.lwjgl.LwjglApplicationConfiguration;
+import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.utils.JsonValue;
 
 /**
@@ -171,8 +172,8 @@ public class ConfigDialog extends I18nJFrame {
 
 	// Windowed mode resolutions
 	JPanel windowedResolutions = new JPanel(new MigLayout("", "[][grow,fill][][grow,fill]", "[][]4[][]"));
-	final JSpinner widthField = new JSpinner(new SpinnerNumberModel(GlobalConf.instance.SCREEN_WIDTH, 100, nativeMode.width, 1));
-	final JSpinner heightField = new JSpinner(new SpinnerNumberModel(GlobalConf.instance.SCREEN_HEIGHT, 100, nativeMode.height, 1));
+	final JSpinner widthField = new JSpinner(new SpinnerNumberModel(MathUtils.clamp(GlobalConf.instance.SCREEN_WIDTH, 100, nativeMode.width), 100, nativeMode.width, 1));
+	final JSpinner heightField = new JSpinner(new SpinnerNumberModel(MathUtils.clamp(GlobalConf.instance.SCREEN_HEIGHT, 100, nativeMode.height), 100, nativeMode.height, 1));
 	final JCheckBox resizable = new JCheckBox("Resizable", GlobalConf.instance.RESIZABLE);
 
 	windowedResolutions.add(new JLabel(txt("gui.width") + ":"));
