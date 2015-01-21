@@ -76,7 +76,7 @@ import com.badlogic.gdx.utils.JsonValue;
 public class ConfigDialog extends I18nJFrame {
     private static long fiveDaysMs = 5 * 24 * 60 * 60 * 1000;
 
-    JFrame frame;
+    JFrame frame; 
     JLabel checkLabel;
     JPanel checkPanel;
     Color darkgreen, darkred;
