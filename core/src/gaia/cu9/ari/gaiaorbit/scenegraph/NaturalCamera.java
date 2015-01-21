@@ -697,7 +697,7 @@ public class NaturalCamera extends AbstractCamera implements IObserver {
 	if (closest == null) {
 	    closest = cb;
 	} else {
-	    if (closest.distToCamera > cb.distToCamera) {
+	    if (closest.distToCamera - closest.getRadius() > cb.distToCamera - cb.getRadius()) {
 		closest = cb;
 	    }
 	}
