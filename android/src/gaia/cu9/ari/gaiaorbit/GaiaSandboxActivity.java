@@ -123,11 +123,11 @@ public class GaiaSandboxActivity extends AndroidApplication {
 
 	public void onSensorChanged(SensorEvent evt) {
 	    int type = evt.sensor.getType();
-	    //Smoothing the sensor.
+	    //Smoothing the sensor
 	    if (type == Sensor.TYPE_MAGNETIC_FIELD) {
-		orientation = lowPass(evt.values, orientation, 0.04f);
+		orientation = lowPass(evt.values, orientation, 0.05f);
 	    } else if (type == Sensor.TYPE_ACCELEROMETER) {
-		acceleration = lowPass(evt.values, acceleration, 0.04f);
+		acceleration = lowPass(evt.values, acceleration, 0.05f);
 	    }
 
 	    if (acceleration != null && orientation != null) {
