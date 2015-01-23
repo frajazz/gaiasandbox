@@ -13,6 +13,7 @@ import gaia.cu9.ari.gaiaorbit.render.system.ShaderQuadRenderSystem;
 import gaia.cu9.ari.gaiaorbit.render.system.SpriteBatchRenderSystem;
 import gaia.cu9.ari.gaiaorbit.scenegraph.CameraManager.CameraMode;
 import gaia.cu9.ari.gaiaorbit.scenegraph.ICamera;
+import gaia.cu9.ari.gaiaorbit.scenegraph.NaturalCamera;
 import gaia.cu9.ari.gaiaorbit.scenegraph.SceneGraphNode.RenderGroup;
 import gaia.cu9.ari.gaiaorbit.util.Constants;
 import gaia.cu9.ari.gaiaorbit.util.GlobalConf;
@@ -340,11 +341,25 @@ public class SceneGraphRenderer extends AbstractRenderer implements IProcessRend
 		Pool<Vector3> vectorPool = Pools.get(Vector3.class);
 		// Vector of 1 meter length pointing to the side of the camera
 		Vector3 side = vectorPool.obtain().set(cam.direction);
-		side.crs(cam.up).nor().scl((float) Constants.M_TO_U * GlobalConf.instance.STEREOSCOPIC_EYE_SEPARATION_M / 2f);
+		float separation = (float) Constants.M_TO_U * GlobalConf.instance.STEREOSCOPIC_EYE_SEPARATION_M;
+		if (camera.getMode() == CameraMode.Focus) {
+		    // In focus mode we keep the separation dependant on the distance with a fixed angle
+		    float distToFocus = ((NaturalCamera) camera.getCurrent()).focus.distToCamera - ((NaturalCamera) camera.getCurrent()).focus.getRadius();
+		    separation = (float) (Math.tan(Math.toRadians(1.5)) * distToFocus);
+		}
+
+		side.crs(cam.up).nor().scl(separation);
 		Vector3 backup = vectorPool.obtain().set(cam.position);
 
-		/** LEFT IMAGE **/
-		vp.setScreenBounds(0, 0, w / 2, h);
+		/** LEFT EYE **/
+		if (Constants.mobile) {
+		    // Mobile, left eye goes to left image
+		    vp.setScreenBounds(0, 0, w / 2, h);
+		} else {
+		    // Desktop, left eye goes to right image
+		    vp.setScreenBounds(w / 2, 0, w / 2, h);
+		}
+
 		vp.setWorldSize(w / 2, h);
 		vp.apply(false);
 		// Camera to left
@@ -354,8 +369,15 @@ public class SceneGraphRenderer extends AbstractRenderer implements IProcessRend
 		}
 		renderScene(camera, fb);
 
-		/** RIGHT IMAGE **/
-		vp.setScreenBounds(w / 2, 0, w / 2, h);
+		/** RIGHT EYE **/
+		if (Constants.mobile) {
+		    // Mobile, right eye goes to right image
+		    vp.setScreenBounds(w / 2, 0, w / 2, h);
+		} else {
+		    // Desktop, right eye goes to left image
+		    vp.setScreenBounds(0, 0, w / 2, h);
+		}
+
 		vp.setWorldSize(w / 2, h);
 		vp.apply(false);
 		// Camera to right
