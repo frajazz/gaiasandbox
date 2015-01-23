@@ -15,12 +15,12 @@ public interface IPostProcessor {
 	public LensFlare2 lens;
 	public Zoomer zoomer;
 
-	public void capture() {
-	    pp.capture();
+	public boolean capture() {
+	    return pp.capture();
 	}
 
-	public void captureNoClear() {
-	    pp.captureNoClear();
+	public boolean captureNoClear() {
+	    return pp.captureNoClear();
 	}
 
 	public void render() {

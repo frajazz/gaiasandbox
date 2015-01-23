@@ -123,7 +123,7 @@ public class Constants {
     /** Minimum star brightness **/
     public static final float MIN_STAR_BRIGHT = 0f;
     /** Maximum star brightness **/
-    public static final float MAX_STAR_BRIGHT = 6f;
+    public static final float MAX_STAR_BRIGHT = 12f;
 
     /**
      * 

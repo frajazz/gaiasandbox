@@ -119,6 +119,8 @@ public class SceneGraphRenderer extends AbstractRenderer implements IProcessRend
 
     private ShaderProgram starShader, fontShader;
 
+    private RenderContext rc;
+
     /** Render lists for all render groups **/
     public static Map<RenderGroup, List<IRenderable>> render_lists;
 
@@ -180,6 +182,9 @@ public class SceneGraphRenderer extends AbstractRenderer implements IProcessRend
 	// Font batch
 	fontBatch = new SpriteBatch(1000, fontShader);
 	fontBatch.enableBlending();
+
+	// Render context
+	rc = new RenderContext();
 
 	ComponentType[] comps = ComponentType.values();
 
@@ -284,16 +289,16 @@ public class SceneGraphRenderer extends AbstractRenderer implements IProcessRend
 	shaderFrontProc.setPreRunnable(blendDepthRunnable);
 
 	// Add components to set
-	renderProcesses.add(modelBackProc);
-	renderProcesses.add(annotationsProc);
+	//	renderProcesses.add(modelBackProc);
+	//	renderProcesses.add(annotationsProc);
 	renderProcesses.add(pixelProc);
 	renderProcesses.add(shaderBackProc);
-	renderProcesses.add(modelAtmProc);
-	renderProcesses.add(modelFrontProc);
+	//	renderProcesses.add(modelAtmProc);
+	//	renderProcesses.add(modelFrontProc);
 	renderProcesses.add(modelStarsProc);
-	renderProcesses.add(lineProc);
-	renderProcesses.add(labelsProc);
-	renderProcesses.add(shaderFrontProc);
+	//	renderProcesses.add(lineProc);
+	//	renderProcesses.add(labelsProc);
+	//	renderProcesses.add(shaderFrontProc);
 
 	EventManager.getInstance().subscribe(this, Events.TOGGLE_VISIBILITY_CMD);
 
@@ -306,30 +311,32 @@ public class SceneGraphRenderer extends AbstractRenderer implements IProcessRend
 
     public void render(ICamera camera, FrameBuffer fb, PostProcessBean ppb) {
 
+	boolean postproc = ppb.capture();
+	if (postproc) {
+	    rc.ppb = ppb;
+	} else {
+	    rc.ppb = null;
+	}
+
 	if (camera.getNCameras() > 1) {
 
 	    /** FIELD OF VIEW CAMERA **/
 
 	    CameraMode aux = camera.getMode();
 
-	    ppb.capture();
-
 	    camera.updateMode(CameraMode.Gaia_FOV2, false);
 
-	    renderScene(camera, fb);
+	    renderScene(camera, rc);
 
 	    camera.updateMode(CameraMode.Gaia_FOV1, false);
 
-	    renderScene(camera, fb);
+	    renderScene(camera, rc);
 
 	    camera.updateMode(aux, false);
-
-	    ppb.render(fb);
 
 	} else {
 	    /** NORMAL MODE **/
 
-	    ppb.capture();
 	    if (GlobalConf.instance.STEREOSCOPIC_MODE) {
 		boolean movecam = camera.getMode() == CameraMode.Free_Camera || camera.getMode() == CameraMode.Focus;
 		// Side by side rendering
@@ -367,7 +374,7 @@ public class SceneGraphRenderer extends AbstractRenderer implements IProcessRend
 		    cam.position.sub(side);
 		    cam.update();
 		}
-		renderScene(camera, fb);
+		renderScene(camera, rc);
 
 		/** RIGHT EYE **/
 		if (Constants.mobile) {
@@ -385,7 +392,7 @@ public class SceneGraphRenderer extends AbstractRenderer implements IProcessRend
 		    cam.position.set(backup).add(side);
 		    cam.update();
 		}
-		renderScene(camera, fb);
+		renderScene(camera, rc);
 
 		// Restore cam.position and viewport size
 		cam.position.set(backup);
@@ -395,10 +402,10 @@ public class SceneGraphRenderer extends AbstractRenderer implements IProcessRend
 		vectorPool.free(backup);
 
 	    } else {
-		renderScene(camera, fb);
+		renderScene(camera, rc);
 	    }
-	    ppb.render(fb);
 	}
+	ppb.render(fb);
 
 	// Render camera
 	if (fb != null) {
@@ -410,7 +417,7 @@ public class SceneGraphRenderer extends AbstractRenderer implements IProcessRend
 	}
     }
 
-    public void renderScene(ICamera camera, FrameBuffer fb) {
+    public void renderScene(ICamera camera, RenderContext rc) {
 	// Update time difference since last update
 	long now = new Date().getTime();
 	for (ComponentType ct : ComponentType.values()) {
@@ -423,7 +430,7 @@ public class SceneGraphRenderer extends AbstractRenderer implements IProcessRend
 	while (it.hasNext()) {
 	    IRenderSystem process = it.next();
 
-	    process.render(render_lists.get(process.getRenderGroup()), camera, fb);
+	    process.render(render_lists.get(process.getRenderGroup()), camera, rc);
 	}
 
     }

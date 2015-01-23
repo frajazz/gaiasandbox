@@ -10,6 +10,7 @@ import gaia.cu9.ari.gaiaorbit.scenegraph.SceneGraphNode.RenderGroup;
 import java.util.List;
 
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.graphics.glutils.FrameBuffer;
 import com.badlogic.gdx.graphics.glutils.ImmediateModeRenderer20;
 import com.badlogic.gdx.graphics.glutils.ShaderProgram;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer.ShapeType;
@@ -45,13 +46,17 @@ public class PixelRenderSystem extends AbstractRenderSystem implements IObserver
 	bloom.setBlurAmount(0.0f);
 	bloom.setBlurType(BlurType.Gaussian5x5b);
 	pp.addEffect(bloom);
-	pp.setEnabled(false);
+	pp.setEnabled(true);
 
 	EventManager.getInstance().subscribe(this, Events.TRANSIT_COLOUR_CMD);
     }
 
     @Override
     public void renderStud(List<IRenderable> renderables, ICamera camera) {
+	FrameBuffer fb = null;
+	//	if (rc.ppb != null) {
+	//	    fb = rc.ppb.captureEnd();
+	//	}
 	pp.capture();
 	renderer.begin(camera.getCamera().combined, ShapeType.Point.getGlType());
 	for (int i = 0; i < renderables.size(); i++) {
