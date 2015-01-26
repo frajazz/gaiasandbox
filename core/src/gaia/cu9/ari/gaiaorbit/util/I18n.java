@@ -1,13 +1,14 @@
 package gaia.cu9.ari.gaiaorbit.util;
 
 import java.util.Locale;
+import java.util.MissingResourceException;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.files.FileHandle;
 import com.badlogic.gdx.utils.I18NBundle;
 
 /**
- * Manages the internationalisation system.
+ * Manages the i18n system.
  * @author Toni Sagrista
  *
  */
@@ -20,14 +21,7 @@ public class I18n {
      */
     public static void initialize() {
 	if (bundle == null) {
-	    FileHandle baseFileHandle = Gdx.files.internal("i18n/gsbundle");
-	    Locale locale = null;
-	    if (GlobalConf.instance.LOCALE.equals("default")) {
-		locale = Locale.getDefault();
-	    } else {
-		locale = Locale.forLanguageTag(GlobalConf.instance.LOCALE);
-	    }
-	    bundle = I18NBundle.createBundle(baseFileHandle, locale);
+	    forceinit(Gdx.files.internal("i18n/gsbundle"));
 	}
     }
 
@@ -38,16 +32,36 @@ public class I18n {
     public static void initialize(String fileName) {
 	try {
 	    if (bundle == null) {
-		FileHandle baseFileHandle = new FileHandle(fileName);
-		Locale locale = null;
-		if (GlobalConf.instance.LOCALE.equals("default")) {
-		    locale = Locale.getDefault();
-		} else {
-		    locale = Locale.forLanguageTag(GlobalConf.instance.LOCALE);
-		}
-		bundle = I18NBundle.createBundle(baseFileHandle, locale);
+		forceinit(fileName);
 	    }
 	} catch (Exception e) {
+	}
+
+    }
+
+    public static boolean forceinit(String fileName) {
+	return forceinit(new FileHandle(fileName));
+    }
+
+    public static boolean forceinit(FileHandle baseFileHandle) {
+	Locale locale = null;
+	if (GlobalConf.instance.LOCALE.isEmpty()) {
+	    // Use system default
+	    locale = Locale.getDefault();
+	} else {
+	    locale = Locale.forLanguageTag(GlobalConf.instance.LOCALE);
+	}
+	try {
+	    bundle = I18NBundle.createBundle(baseFileHandle, locale);
+	    return true;
+	} catch (MissingResourceException e) {
+	    // Use default locale - en_GB
+	    locale = Locale.forLanguageTag("en-GB");
+	    try {
+		bundle = I18NBundle.createBundle(baseFileHandle, locale);
+	    } catch (Exception e2) {
+	    }
+	    return false;
 	}
 
     }

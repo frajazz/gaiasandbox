@@ -121,6 +121,10 @@ public enum Events {
     /** Cancels the next script **/
     CANCEL_SCRIPT_CMD,
     SHOW_SEARCH_ACTION,
+    /** This event is issued when the screen has been resized. It contains the new width and height **/
+    SCREEN_RESIZE,
+    /** Issued when the viewport size changed. Contains the new width and height **/
+    VIEWPORT_RESIZE,
 
     /** Stereoscopic vision, side by side rendering **/
     TOGGLE_STEREOSCOPIC,

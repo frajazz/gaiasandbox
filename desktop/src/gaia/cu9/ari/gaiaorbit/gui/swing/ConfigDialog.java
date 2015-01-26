@@ -11,6 +11,8 @@ import gaia.cu9.ari.gaiaorbit.gui.swing.version.VersionChecker;
 import gaia.cu9.ari.gaiaorbit.interfce.KeyMappings;
 import gaia.cu9.ari.gaiaorbit.interfce.KeyMappings.ProgramAction;
 import gaia.cu9.ari.gaiaorbit.util.GlobalConf;
+import gaia.cu9.ari.gaiaorbit.util.GlobalResources;
+import gaia.cu9.ari.gaiaorbit.util.I18n;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
@@ -26,7 +28,9 @@ import java.net.MalformedURLException;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URL;
+import java.util.Arrays;
 import java.util.Date;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
 import java.util.TreeSet;
@@ -228,16 +232,15 @@ public class ConfigDialog extends I18nJFrame {
 	msaaInfo.setForeground(darkgreen);
 	msaaInfo.setEditable(false);
 
-	JLabel msaaLabel = new JLabel(txt("gui.aa"));
-	ComboBoxBean[] msaas = new ComboBoxBean[] { new ComboBoxBean(txt("gui.aa.no"), 0), new ComboBoxBean(txt("gui.aa.fxaa"), -1), new ComboBoxBean(txt("gui.aa.nfaa"), -2), new ComboBoxBean(txt("gui.aa.msaa", 2), 2), new ComboBoxBean(txt("gui.aa.msaa", 4), 4), new ComboBoxBean(txt("gui.aa.msaa", 8), 8), new ComboBoxBean(txt("gui.aa.msaa", 16), 16) };
-	final JComboBox<ComboBoxBean> msaa = new JComboBox<ComboBoxBean>(msaas);
-	msaa.setSelectedItem(msaas[idx(2, GlobalConf.instance.POSTPROCESS_ANTIALIAS)]);
+	ThreadComboBoxBean[] msaas = new ThreadComboBoxBean[] { new ThreadComboBoxBean(txt("gui.aa.no"), 0), new ThreadComboBoxBean(txt("gui.aa.fxaa"), -1), new ThreadComboBoxBean(txt("gui.aa.nfaa"), -2), new ThreadComboBoxBean(txt("gui.aa.msaa", 2), 2), new ThreadComboBoxBean(txt("gui.aa.msaa", 4), 4), new ThreadComboBoxBean(txt("gui.aa.msaa", 8), 8), new ThreadComboBoxBean(txt("gui.aa.msaa", 16), 16) };
+	final JComboBox<ThreadComboBoxBean> msaa = new JComboBox<ThreadComboBoxBean>(msaas);
+	msaa.setSelectedItem(msaas[idxAa(2, GlobalConf.instance.POSTPROCESS_ANTIALIAS)]);
 
 	// Vsync
 	final JCheckBox vsync = new JCheckBox(txt("gui.vsync"), GlobalConf.instance.VSYNC);
 
 	graphics.add(msaaInfo, "span,wrap");
-	graphics.add(msaaLabel);
+	graphics.add(new JLabel(txt("gui.aa")));
 	graphics.add(msaa);
 	graphics.add(vsync, "span");
 
@@ -257,6 +260,59 @@ public class ConfigDialog extends I18nJFrame {
 	tabbedPane.addTab(txt("gui.graphics"), graphicsPanel);
 
 	/**
+	 * ====== USER INTERFACE TAB =======
+	 */
+	JPanel ui = new JPanel(new MigLayout("", "[grow,fill][grow,fill]", ""));
+	ui.setBorder(new TitledBorder(txt("gui.ui.interfacesettings")));
+
+	File i18nfolder = new File("./data/i18n/");
+	if (!i18nfolder.exists()) {
+	    i18nfolder = new File("../android/assets/i18n/");
+	}
+	String i18nname = "gsbundle";
+	String[] files = i18nfolder.list();
+	LangComboBoxBean[] langs = new LangComboBoxBean[files.length];
+	int i = 0;
+	for (String file : files) {
+	    String locale = file.substring(i18nname.length(), file.length() - ".properties".length());
+	    if (locale.length() != 0) {
+		// Remove underscore _
+		locale = locale.substring(1).replace("_", "-");
+		Locale loc = Locale.forLanguageTag(locale);
+		langs[i] = new LangComboBoxBean(loc);
+	    } else {
+		langs[i] = new LangComboBoxBean(I18n.bundle.getLocale());
+	    }
+	    i++;
+	}
+	Arrays.sort(langs);
+	final JComboBox<LangComboBoxBean> lang = new JComboBox<LangComboBoxBean>(langs);
+	lang.setSelectedItem(langs[idxLang(GlobalConf.instance.LOCALE, langs)]);
+
+	String[] themes = new String[] { "dark", "bright" };
+	final JComboBox<String> theme = new JComboBox<String>(themes);
+	theme.setSelectedItem(GlobalConf.instance.UI_THEME);
+
+	ui.add(new JLabel(txt("gui.ui.language")));
+	ui.add(lang, "wrap");
+	ui.add(new JLabel(txt("gui.ui.theme")));
+	ui.add(theme);
+
+	/** NOTICE **/
+	JPanel uiNotice = new JPanel(new MigLayout("", "[]", ""));
+	JLabel uinoticeText = new JLabel(txt("gui.ui.info"));
+	uinoticeText.setForeground(darkgreen);
+	uiNotice.add(uinoticeText);
+
+	JPanel uiPanel = new JPanel(new MigLayout("", "[grow,fill][]", ""));
+	uiPanel.add(ui, "wrap");
+	if (!startup) {
+	    uiPanel.add(uiNotice, "wrap");
+	}
+
+	tabbedPane.addTab(txt("gui.ui.interface"), uiPanel);
+
+	/**
 	 * ====== PERFORMANCE TAB =======
 	 */
 
@@ -265,12 +321,12 @@ public class ConfigDialog extends I18nJFrame {
 	multithread.setBorder(new TitledBorder(txt("gui.multithreading")));
 
 	int maxthreads = Runtime.getRuntime().availableProcessors();
-	ComboBoxBean[] cbs = new ComboBoxBean[maxthreads + 1];
-	cbs[0] = new ComboBoxBean(txt("gui.letdecide"), 0);
-	for (int i = 1; i <= maxthreads; i++) {
-	    cbs[i] = new ComboBoxBean(txt("gui.thread", i), i);
+	ThreadComboBoxBean[] cbs = new ThreadComboBoxBean[maxthreads + 1];
+	cbs[0] = new ThreadComboBoxBean(txt("gui.letdecide"), 0);
+	for (i = 1; i <= maxthreads; i++) {
+	    cbs[i] = new ThreadComboBoxBean(txt("gui.thread", i), i);
 	}
-	final JComboBox<ComboBoxBean> numThreads = new JComboBox<ComboBoxBean>(cbs);
+	final JComboBox<ThreadComboBoxBean> numThreads = new JComboBox<ThreadComboBoxBean>(cbs);
 
 	final JCheckBox multithreadCb = new JCheckBox(txt("gui.thread.enable"));
 	multithreadCb.addChangeListener(new ChangeListener() {
@@ -302,7 +358,7 @@ public class ConfigDialog extends I18nJFrame {
 
 	String[] headers = new String[] { txt("gui.keymappings.action"), txt("gui.keymappings.keys") };
 	String[][] data = new String[maps.size()][2];
-	int i = 0;
+	i = 0;
 	for (TreeSet<Integer> keys : keymaps) {
 	    ProgramAction action = maps.get(keys);
 	    data[i][0] = action.actionName;
@@ -553,12 +609,19 @@ public class ConfigDialog extends I18nJFrame {
 		GlobalConf.instance.RESIZABLE = resizable.isSelected();
 
 		// Graphics
-		ComboBoxBean bean = (ComboBoxBean) msaa.getSelectedItem();
+		ThreadComboBoxBean bean = (ThreadComboBoxBean) msaa.getSelectedItem();
 		GlobalConf.instance.POSTPROCESS_ANTIALIAS = bean.value;
 		GlobalConf.instance.VSYNC = vsync.isSelected();
 
+		// Interface
+		LangComboBoxBean lbean = (LangComboBoxBean) lang.getSelectedItem();
+		GlobalConf.instance.LOCALE = lbean.locale.toLanguageTag();
+		if (!I18n.forceinit("./data/i18n/gsbundle"))
+		    I18n.forceinit("../android/assets/i18n/gsbundle");
+		GlobalConf.instance.UI_THEME = (String) theme.getSelectedItem();
+
 		// Performance
-		bean = (ComboBoxBean) numThreads.getSelectedItem();
+		bean = (ThreadComboBoxBean) numThreads.getSelectedItem();
 		GlobalConf.instance.NUMBER_THREADS = bean.value;
 		GlobalConf.instance.MULTITHREADING = multithreadCb.isSelected();
 
@@ -638,7 +701,7 @@ public class ConfigDialog extends I18nJFrame {
 
     }
 
-    private int idx(int base, int x) {
+    private int idxAa(int base, int x) {
 	if (x == -1)
 	    return 1;
 	if (x == -2)
@@ -648,11 +711,23 @@ public class ConfigDialog extends I18nJFrame {
 	return (int) (Math.log(x) / Math.log(2) + 1e-10) + 2;
     }
 
-    private class ComboBoxBean {
+    private int idxLang(String code, LangComboBoxBean[] langs) {
+	if (code.isEmpty()) {
+	    code = I18n.bundle.getLocale().toLanguageTag();
+	}
+	for (int i = 0; i < langs.length; i++) {
+	    if (langs[i].locale.toLanguageTag().equals(code)) {
+		return i;
+	    }
+	}
+	return -1;
+    }
+
+    private class ThreadComboBoxBean {
 	public String name;
 	public int value;
 
-	public ComboBoxBean(String name, int samples) {
+	public ThreadComboBoxBean(String name, int samples) {
 	    super();
 	    this.name = name;
 	    this.value = samples;
@@ -661,6 +736,28 @@ public class ConfigDialog extends I18nJFrame {
 	@Override
 	public String toString() {
 	    return name;
+	}
+
+    }
+
+    private class LangComboBoxBean implements Comparable<LangComboBoxBean> {
+	public Locale locale;
+	public String name;
+
+	public LangComboBoxBean(Locale locale) {
+	    super();
+	    this.locale = locale;
+	    this.name = GlobalResources.capitalise(locale.getDisplayName(locale));
+	}
+
+	@Override
+	public String toString() {
+	    return name;
+	}
+
+	@Override
+	public int compareTo(LangComboBoxBean o) {
+	    return this.name.compareTo(o.name);
 	}
 
     }

@@ -496,6 +496,8 @@ public class GaiaSandbox implements ApplicationListener, IObserver {
 	cam.updateAngleEdge(width, height);
 	cam.getViewport().update(width, height, false);
 
+	EventManager.getInstance().post(Events.SCREEN_RESIZE, width, height);
+
 	Gdx.app.debug("Resize", width + "x" + height + ", new Viewport: " + cam.getViewport().getScreenX() + "," + cam.getViewport().getScreenY() + "|" + cam.getViewport().getScreenWidth() + "," + cam.getViewport().getScreenHeight());
     }
 

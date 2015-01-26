@@ -8,7 +8,7 @@ import gaia.cu9.ari.gaiaorbit.render.system.AbstractRenderSystem;
 import gaia.cu9.ari.gaiaorbit.render.system.IRenderSystem;
 import gaia.cu9.ari.gaiaorbit.render.system.LineRenderSystem;
 import gaia.cu9.ari.gaiaorbit.render.system.ModelBatchRenderSystem;
-import gaia.cu9.ari.gaiaorbit.render.system.PixelRenderSystem;
+import gaia.cu9.ari.gaiaorbit.render.system.PixelBloomRenderSystem;
 import gaia.cu9.ari.gaiaorbit.render.system.ShaderQuadRenderSystem;
 import gaia.cu9.ari.gaiaorbit.render.system.SpriteBatchRenderSystem;
 import gaia.cu9.ari.gaiaorbit.scenegraph.CameraManager.CameraMode;
@@ -225,7 +225,7 @@ public class SceneGraphRenderer extends AbstractRenderer implements IProcessRend
 	int i = 1;
 
 	// POINTS
-	AbstractRenderSystem pixelProc = new PixelRenderSystem(RenderGroup.POINT, i++, alphas);
+	AbstractRenderSystem pixelProc = new PixelBloomRenderSystem(RenderGroup.POINT, i++, alphas);
 	pixelProc.setPreRunnable(blendNoDepthRunnable);
 
 	// MODEL BACK
@@ -289,16 +289,16 @@ public class SceneGraphRenderer extends AbstractRenderer implements IProcessRend
 	shaderFrontProc.setPreRunnable(blendDepthRunnable);
 
 	// Add components to set
-	//	renderProcesses.add(modelBackProc);
-	//	renderProcesses.add(annotationsProc);
+	renderProcesses.add(modelBackProc);
+	renderProcesses.add(annotationsProc);
 	renderProcesses.add(pixelProc);
 	renderProcesses.add(shaderBackProc);
-	//	renderProcesses.add(modelAtmProc);
-	//	renderProcesses.add(modelFrontProc);
+	renderProcesses.add(modelAtmProc);
+	renderProcesses.add(modelFrontProc);
 	renderProcesses.add(modelStarsProc);
-	//	renderProcesses.add(lineProc);
-	//	renderProcesses.add(labelsProc);
-	//	renderProcesses.add(shaderFrontProc);
+	renderProcesses.add(lineProc);
+	renderProcesses.add(labelsProc);
+	renderProcesses.add(shaderFrontProc);
 
 	EventManager.getInstance().subscribe(this, Events.TOGGLE_VISIBILITY_CMD);
 
@@ -473,6 +473,7 @@ public class SceneGraphRenderer extends AbstractRenderer implements IProcessRend
 		times[idx] = new Date().getTime();
 	    }
 	    break;
+
 	}
     }
 
