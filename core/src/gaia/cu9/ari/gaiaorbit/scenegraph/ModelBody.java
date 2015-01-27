@@ -1,7 +1,5 @@
 package gaia.cu9.ari.gaiaorbit.scenegraph;
 
-import gaia.cu9.ari.gaiaorbit.data.AssetBean;
-import gaia.cu9.ari.gaiaorbit.data.FileLocator;
 import gaia.cu9.ari.gaiaorbit.scenegraph.component.ModelComponent;
 import gaia.cu9.ari.gaiaorbit.scenegraph.component.RotationComponent;
 import gaia.cu9.ari.gaiaorbit.util.GlobalConf;
@@ -11,9 +9,7 @@ import gaia.cu9.ari.gaiaorbit.util.math.Matrix4d;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.assets.AssetManager;
-import com.badlogic.gdx.graphics.g3d.Model;
 import com.badlogic.gdx.graphics.g3d.ModelBatch;
-import com.badlogic.gdx.graphics.g3d.ModelInstance;
 import com.badlogic.gdx.math.Matrix4;
 
 public abstract class ModelBody extends CelestialBody {
@@ -33,7 +29,7 @@ public abstract class ModelBody extends CelestialBody {
 	return TH_ANGLE_POINT;
     }
 
-    public String model;
+    /** MODEL **/
     public ModelComponent mc;
 
     public ModelBody() {
@@ -44,18 +40,18 @@ public abstract class ModelBody extends CelestialBody {
     }
 
     public void initialize() {
-	if (FileLocator.exists(model)) {
-	    AssetBean.addAsset(model, Model.class);
+	if (mc != null) {
+	    mc.initialize();
 	}
-	mc = new ModelComponent(true);
 	setColor2Data();
 	setDerivedAttributes();
     }
 
     @Override
     public void doneLoading(AssetManager manager) {
-	Model mod = manager.get(model, Model.class);
-	mc.instance = new ModelInstance(mod, this.localTransform);
+	if (mc != null) {
+	    mc.doneLoading(manager, localTransform, cc);
+	}
     }
 
     @Override
@@ -113,10 +109,6 @@ public abstract class ModelBody extends CelestialBody {
 	this.flux = (float) Math.pow(10, -absmag / 2.5f);
     }
 
-    public void setModel(String model) {
-	this.model = model;
-    }
-
     public void dispose() {
 	mc.dispose();
     }
@@ -134,6 +126,10 @@ public abstract class ModelBody extends CelestialBody {
     @Override
     protected float labelMax() {
 	return 2.5e-4f;
+    }
+
+    public void setCoord(String coordinatesClass) {
+	setCoordinates(coordinatesClass);
     }
 
     public void setCoordinates(String coordinatesClass) {
@@ -161,6 +157,10 @@ public abstract class ModelBody extends CelestialBody {
 	ModelBody mb = (ModelBody) super.getSimpleCopy();
 	mb.coordinates = this.coordinates;
 	return (T) mb;
+    }
+
+    public void setModel(ModelComponent mc) {
+	this.mc = mc;
     }
 
 }

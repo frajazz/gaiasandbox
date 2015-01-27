@@ -1,0 +1,47 @@
+{"objects" : [
+
+
+	{
+	"name" : "Earth",
+	"color" : [.23, .36, .89],
+	"size" : 6371.1,
+	"ct" : Planets,
+
+	"absmag" : -2.78,
+	"appmag" : -3.1,
+	
+	"parent" : "Sol", 
+	"impl" : "gaia.cu9.ari.gaiaorbit.scenegraph.Planet",
+	"coord" : "vsop87.EarthVSOP87",
+		
+	"rotation" 		: {
+						"period" : 23.93447117,
+						"axialtilt" : -23.4392911,
+						"inclination" : 0,
+						"meridianangle" : 180.147
+						},
+						
+	"model"			: {
+						"type" : "sphere",
+						"quality" : 180,
+						"texture" : {
+									"base" : "data/tex/earth.jpg",
+									"hires" : "data/tex/earth-8k.jpg",
+									"specular" : "data/tex/earth-specular.jpg",
+									"normal" : "data/tex/earth-normal-4k.jpg",
+									"night" : "data/tex/earth-night-2k.jpg"
+									}
+						},
+									
+	"atmosphere" 	: {
+						"quality" : 180,
+						"size" : 6600.0,
+						"wavelengths" : [0.650, 0.570, 0.475],
+						"m_Kr" : 0.0025,
+						"m_Km" : 0.001
+						}
+	}
+
+
+
+]}

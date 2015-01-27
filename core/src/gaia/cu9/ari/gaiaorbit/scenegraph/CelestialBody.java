@@ -261,24 +261,8 @@ public abstract class CelestialBody extends AbstractPositionEntity implements IL
     /**
      * Sets the rotation period in hours
      */
-    public void setRotationPeriod(Float rotationPeriod) {
-	rc.setRotationPeriod(rotationPeriod);
-    }
-
-    public void setRotationInclination(Float i) {
-	rc.setInclination(i);
-    }
-
-    public void setRotationAxialtilt(Float at) {
-	rc.setAxialTilt(at);
-    }
-
-    public void setRotationMeridianangle(Float ma) {
-	rc.setMeridianAngle(ma);
-    }
-
-    public void setRotationAscendingnode(Float an) {
-	rc.setAscendingNode(an);
+    public void setRotation(RotationComponent rc) {
+	this.rc = rc;
     }
 
     public boolean withinMagLimit() {

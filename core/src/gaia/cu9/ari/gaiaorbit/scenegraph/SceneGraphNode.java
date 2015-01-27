@@ -386,7 +386,7 @@ public class SceneGraphNode {
 	return name;
     }
 
-    public void setParentName(String parentName) {
+    public void setParent(String parentName) {
 	this.parentName = parentName;
     }
 
@@ -532,5 +532,8 @@ public class SceneGraphNode {
 
     protected boolean isInRender(IRenderable renderable, RenderGroup rg) {
 	return SceneGraphRenderer.render_lists.get(rg).contains(renderable);
+    }
+
+    public void setImpl(String impl) {
     }
 }

@@ -7,8 +7,6 @@ import gaia.cu9.ari.gaiaorbit.util.DecalUtils;
 import gaia.cu9.ari.gaiaorbit.util.math.Vector2d;
 import gaia.cu9.ari.gaiaorbit.util.math.Vector3d;
 
-import com.badlogic.gdx.assets.loaders.TextureLoader.TextureParameter;
-import com.badlogic.gdx.graphics.Texture.TextureFilter;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.glutils.ShaderProgram;
@@ -61,14 +59,6 @@ public abstract class AbstractPositionEntity extends SceneGraphNode {
      * Is this just a copy?
      */
     protected boolean copy = false;
-
-    /** Texture parameters **/
-    protected static final TextureParameter textureParams;
-    static {
-	textureParams = new TextureParameter();
-	textureParams.magFilter = TextureFilter.Linear;
-	textureParams.minFilter = TextureFilter.Linear;
-    }
 
     protected AbstractPositionEntity() {
 	super();
@@ -138,6 +128,10 @@ public abstract class AbstractPositionEntity extends SceneGraphNode {
 
     public void setColor(String color) {
 	this.cc = parseColour(color);
+    }
+
+    public void setColor(float[] color) {
+	this.cc = color;
     }
 
     public Vector3d computeFuturePosition() {

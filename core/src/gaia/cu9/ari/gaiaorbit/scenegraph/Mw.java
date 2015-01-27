@@ -1,6 +1,5 @@
 package gaia.cu9.ari.gaiaorbit.scenegraph;
 
-import gaia.cu9.ari.gaiaorbit.data.AssetBean;
 import gaia.cu9.ari.gaiaorbit.render.IModelRenderable;
 import gaia.cu9.ari.gaiaorbit.scenegraph.component.ModelComponent;
 import gaia.cu9.ari.gaiaorbit.util.ModelCache;
@@ -36,13 +35,8 @@ public class Mw extends AbstractPositionEntity implements IModelRenderable {
 
     @Override
     public void initialize() {
-	if (model != null) {
-	    AssetBean.addAsset(model, Model.class);
-	} else if (texture != null) {
-	    AssetBean.addAsset(texture, Texture.class, textureParams);
-	}
-	mc = new ModelComponent(true);
-	mc.env.set(new ColorAttribute(ColorAttribute.AmbientLight, cc[0], cc[1], cc[2], 0f));
+	mc.initialize();
+	mc.env.set(new ColorAttribute(ColorAttribute.AmbientLight, cc[0], cc[1], cc[2], 1));
     }
 
     @Override

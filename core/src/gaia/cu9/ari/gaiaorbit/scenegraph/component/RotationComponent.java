@@ -33,7 +33,7 @@ public class RotationComponent {
      * Sets the rotation period.
      * @param rotationPeriod The period in hours.
      */
-    public void setRotationPeriod(Float rotationPeriod) {
+    public void setRotationperiod(Float rotationPeriod) {
 	this.period = rotationPeriod;
 	if (rotationPeriod != null) {
 	    angularVelocity = 360 / rotationPeriod;
@@ -44,8 +44,16 @@ public class RotationComponent {
      * Sets the axial tilt, the angle between the equatorial plane and the orbital plane.
      * @param f Angle in deg.
      */
-    public void setAxialTilt(Float f) {
+    public void setAxialtilt(Float f) {
 	this.axialTilt = f;
+    }
+
+    public void setAngle(Float angle) {
+	this.angle = angle;
+    }
+
+    public void setPeriod(Float period) {
+	this.period = period;
     }
 
     /**
@@ -57,10 +65,18 @@ public class RotationComponent {
     }
 
     /**
+     * Sets the inclination, the angle between the orbital plane and the ecliptic
+     * @param i Inclination in deg.
+     */
+    public void setInclination(Long i) {
+	inclination = i + Coordinates.OBLIQUITY_DEG_J2000;
+    }
+
+    /**
      * Sets the ascending node.
      * @param an Angle in deg.
      */
-    public void setAscendingNode(Float an) {
+    public void setAscendingnode(Float an) {
 	this.ascendingNode = an;
     }
 
@@ -68,7 +84,7 @@ public class RotationComponent {
      *  Sets the meridian angle.
      * @param ma Angle in deg.
      */
-    public void setMeridianAngle(Float ma) {
+    public void setMeridianangle(Float ma) {
 	this.meridianAngle = ma;
     }
 
