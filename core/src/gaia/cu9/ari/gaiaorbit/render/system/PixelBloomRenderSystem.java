@@ -18,6 +18,7 @@ import com.badlogic.gdx.graphics.glutils.FrameBuffer;
 import com.badlogic.gdx.graphics.glutils.ImmediateModeRenderer20;
 import com.badlogic.gdx.graphics.glutils.ShaderProgram;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer.ShapeType;
+import com.badlogic.gdx.utils.viewport.Viewport;
 import com.bitfire.postprocessing.PostProcessor;
 import com.bitfire.postprocessing.effects.Bloom;
 import com.bitfire.postprocessing.filters.Blur.BlurType;
@@ -27,7 +28,8 @@ public class PixelBloomRenderSystem extends AbstractRenderSystem implements IObs
     ImmediateModeRenderer20 renderer;
     boolean starColorTransit = false;
     PostProcessor pp;
-    FrameBuffer myfb;
+    FrameBuffer screen_fb;
+    FrameBuffer frame_fb;
 
     public PixelBloomRenderSystem(RenderGroup rg, int priority, float[] alphas) {
 	super(rg, priority, alphas);
@@ -54,7 +56,8 @@ public class PixelBloomRenderSystem extends AbstractRenderSystem implements IObs
 	pp.setEnabled(true);
 
 	// Own frame buffer
-	myfb = new FrameBuffer(Format.RGB888, Gdx.graphics.getWidth(), Gdx.graphics.getHeight(), true);
+	screen_fb = new FrameBuffer(Format.RGB888, Gdx.graphics.getWidth(), Gdx.graphics.getHeight(), true);
+	frame_fb = new FrameBuffer(Format.RGB888, GlobalConf.instance.SCREENSHOT_WIDTH, GlobalConf.instance.SCREEN_HEIGHT, true);
 
 	EventManager.getInstance().subscribe(this, Events.TRANSIT_COLOUR_CMD, Events.SCREEN_RESIZE, Events.TOGGLE_STEREOSCOPIC);
     }
@@ -64,6 +67,13 @@ public class PixelBloomRenderSystem extends AbstractRenderSystem implements IObs
 	if (rc.ppb != null) {
 	    rc.ppb.captureEnd();
 	}
+	FrameBuffer our_fb = screen_fb;
+	if (rc.fb != null) {
+	    if (rc.fb.getWidth() != frame_fb.getWidth() || rc.fb.getHeight() != frame_fb.getHeight()) {
+		frame_fb = new FrameBuffer(Format.RGB888, rc.fb.getWidth(), rc.fb.getHeight(), true);
+	    }
+	    our_fb = frame_fb;
+	}
 
 	pp.capture();
 	renderer.begin(camera.getCamera().combined, ShapeType.Point.getGlType());
@@ -72,16 +82,18 @@ public class PixelBloomRenderSystem extends AbstractRenderSystem implements IObs
 	    s.render(renderer, alphas[s.getComponentType().ordinal()], starColorTransit);
 	}
 	renderer.end();
-	pp.render(myfb);
+	pp.render(our_fb);
 
-	Texture tex = myfb.getColorBufferTexture();
+	Texture tex = our_fb.getColorBufferTexture();
 
 	if (rc.ppb != null) {
 	    rc.ppb.capture();
 	}
 
+	Viewport vp = camera.getCurrent().getViewport();
+
 	GlobalResources.spriteBatch.begin();
-	GlobalResources.spriteBatch.draw(tex, 0, 0, 0, 0, myfb.getWidth(), myfb.getHeight(), 1, 1, 0, 0, 0, myfb.getWidth(), myfb.getHeight(), false, true);
+	GlobalResources.spriteBatch.draw(tex, vp.getScreenX(), vp.getScreenY(), 0, 0, our_fb.getWidth(), our_fb.getHeight(), 1, 1, 0, 0, 0, our_fb.getWidth(), our_fb.getHeight(), false, true);
 	GlobalResources.spriteBatch.end();
 
     }
@@ -93,14 +105,14 @@ public class PixelBloomRenderSystem extends AbstractRenderSystem implements IObs
 	    starColorTransit = (boolean) data[1];
 	    break;
 	case SCREEN_RESIZE:
-	    myfb = new FrameBuffer(Format.RGB888, (Integer) data[0], (Integer) data[1], true);
+	    screen_fb = new FrameBuffer(Format.RGB888, (Integer) data[0], (Integer) data[1], true);
 	    break;
 	case TOGGLE_STEREOSCOPIC:
 	    // Update size
 	    if (GlobalConf.instance.STEREOSCOPIC_MODE) {
-		myfb = new FrameBuffer(Format.RGB888, Gdx.graphics.getWidth() / 2, Gdx.graphics.getHeight(), true);
+		screen_fb = new FrameBuffer(Format.RGB888, Gdx.graphics.getWidth() / 2, Gdx.graphics.getHeight(), true);
 	    } else {
-		myfb = new FrameBuffer(Format.RGB888, Gdx.graphics.getWidth(), Gdx.graphics.getHeight(), true);
+		screen_fb = new FrameBuffer(Format.RGB888, Gdx.graphics.getWidth(), Gdx.graphics.getHeight(), true);
 	    }
 	    break;
 	}
