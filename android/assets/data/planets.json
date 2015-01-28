@@ -171,6 +171,106 @@
 									"hires" : "data/tex/jupiter-4k.jpg"
 									}
 						}
-	}
+	},
+	
+	
+	{
+	"name" : "Saturn",
+	"color" : [.87, .73, .59, 1.0],
+	"size" : 58232.0,
+	"ct" : Planets,
 
+	"absmag" : -4.12,
+	"appmag" : -2.49,
+	
+	"parent" : "Sol", 
+	"impl" : "gaia.cu9.ari.gaiaorbit.scenegraph.Planet",
+	"coord" : "vsop87.SaturnVSOP87",
+		
+	"rotation" 		: {
+						"period" : 10.65622222,
+						"axialtilt" : -26.73,
+						"inclination" : 2.485240,
+						"meridianangle" : 358.93
+						},
+						
+	"model"			: {
+						"args" : [true],
+						"type" : "sphere",
+						"quality" : 150,
+						"texture" : {
+									"base" : "data/tex/saturn.jpg",
+									"hires" : "data/tex/jupiter-4k.jpg",
+									"ring" : "data/tex/saturn-ring.png"
+									},
+						"ring" : 	{
+									"divisions" : 90,
+									"innerradius" : 0.6396826,
+									"outerradius" : 1.20397719
+									}
+						}
+	},
+
+	
+	{
+		"name" : "Uranus",
+		"color" : [.40, .76, .92, 1.0],
+		"size" : 25362.0,
+		"ct" : Planets,
+
+		"absmag" : -8.21,
+		"appmag" : 5.32,
+		
+		"parent" : "Sol", 
+		"impl" : "gaia.cu9.ari.gaiaorbit.scenegraph.Planet",
+		"coord" : "vsop87.UranusVSOP87",
+			
+		"rotation" 		: {
+							"period" : 17.24,
+							"axialtilt" : -97.77,
+							"inclination" : 0.772556,
+							"meridianangle" : 331.13
+							},
+							
+		"model"			: {
+							"args" : [true],
+							"type" : "sphere",
+							"quality" : 150,
+							"texture" : {
+										"base" : "data/tex/uranus.jpg",
+										}
+							}
+	},
+	
+	
+	{
+		"name" : "Neptune",
+		"color" : [.23, .36, .89, 1.0],
+		"size" : 24622.0,
+		"ct" : Planets,
+
+		"absmag" : -7.56,
+		"appmag" : 7.78,
+		
+		"parent" : "Sol", 
+		"impl" : "gaia.cu9.ari.gaiaorbit.scenegraph.Planet",
+		"coord" : "vsop87.NeptuneVSOP87",
+			
+		"rotation" 		: {
+							"period" : 16.11,
+							"axialtilt" : 28.32,
+							"inclination" : 1.767975,
+							"ascendingnode" : 49.24,
+							"meridianangle" : 228.66
+							},
+							
+		"model"			: {
+							"args" : [true],
+							"type" : "sphere",
+							"quality" : 150,
+							"texture" : {
+										"base" : "data/tex/neptune.jpg",
+										}
+							}
+	}
 ]}
