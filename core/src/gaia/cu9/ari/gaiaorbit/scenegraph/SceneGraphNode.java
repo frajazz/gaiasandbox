@@ -533,7 +533,4 @@ public class SceneGraphNode {
     protected boolean isInRender(IRenderable renderable, RenderGroup rg) {
 	return SceneGraphRenderer.render_lists.get(rg).contains(renderable);
     }
-
-    public void setImpl(String impl) {
-    }
 }

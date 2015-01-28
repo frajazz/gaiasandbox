@@ -126,10 +126,6 @@ public abstract class AbstractPositionEntity extends SceneGraphNode {
 	this.size = size;
     }
 
-    public void setColor(String color) {
-	this.cc = parseColour(color);
-    }
-
     public void setColor(float[] color) {
 	this.cc = color;
     }
@@ -162,16 +158,6 @@ public abstract class AbstractPositionEntity extends SceneGraphNode {
 	    return (T) instance;
 	} catch (Exception e) {
 	    EventManager.getInstance().post(Events.JAVA_EXCEPTION, e);
-	}
-	return null;
-    }
-
-    protected float[] parseColour(String colour) {
-	String[] rgbs = colour.split("\\s+");
-	if (rgbs.length == 3) {
-	    return new float[] { Float.parseFloat(rgbs[0]), Float.parseFloat(rgbs[1]), Float.parseFloat(rgbs[2]), 1f };
-	} else if (rgbs.length == 4) {
-	    return new float[] { Float.parseFloat(rgbs[0]), Float.parseFloat(rgbs[1]), Float.parseFloat(rgbs[2]), Float.parseFloat(rgbs[3]) };
 	}
 	return null;
     }

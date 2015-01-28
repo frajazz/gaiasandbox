@@ -58,9 +58,10 @@ public class ModelComponent {
     public RingComponent rc;
 
     public ModelComponent() {
+	this(true);
     }
 
-    public ModelComponent(boolean initEnvironment) {
+    public ModelComponent(Boolean initEnvironment) {
 	if (initEnvironment) {
 	    env = new Environment();
 	    env.set(ambient);
@@ -72,7 +73,7 @@ public class ModelComponent {
     }
 
     public void initialize() {
-	if (FileLocator.exists(model)) {
+	if (model != null && FileLocator.exists(model)) {
 	    AssetBean.addAsset(model, Model.class);
 	}
 
