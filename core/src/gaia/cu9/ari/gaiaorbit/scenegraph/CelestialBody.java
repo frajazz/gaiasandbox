@@ -215,17 +215,17 @@ public abstract class CelestialBody extends AbstractPositionEntity implements IL
 
     public abstract float getInnerRad();
 
-    public void setMag(Float mag) {
-	this.absmag = mag;
-	this.appmag = mag;
+    public void setMag(Double mag) {
+	this.absmag = mag.floatValue();
+	this.appmag = mag.floatValue();
     }
 
-    public void setAbsmag(Float absmag) {
-	this.absmag = absmag;
+    public void setAbsmag(Double absmag) {
+	this.absmag = absmag.floatValue();
     }
 
-    public void setAppmag(Float appmag) {
-	this.appmag = appmag;
+    public void setAppmag(Double appmag) {
+	this.appmag = appmag.floatValue();
     }
 
     public Vector2d getPositionSph() {
@@ -249,7 +249,7 @@ public abstract class CelestialBody extends AbstractPositionEntity implements IL
      * Sets the size of this entity in kilometers
      * @param size
      */
-    public void setSize(Float size) {
+    public void setSize(Double size) {
 	// Size gives us the radius, and we want the diameter
 	this.size = (float) (size * 2 * Constants.KM_TO_U);
     }

@@ -1,0 +1,30 @@
+{"objects" : [
+
+	{
+	"name" : "Gaia",
+	"color" : [.7, .8, .1, 1.0],
+	// 5m of radius, 0.005 Km
+	"size" : 0.005,
+	"ct" : Planets,
+
+	"mag" : 3.78,
+	
+	"parent" : "Earth", 
+	"impl" : "gaia.cu9.ari.gaiaorbit.scenegraph.Gaia",
+	"coord" : "GaiaCoordinates",
+	"coordinatesorbit" : "Gaia orbit",
+		
+	"rotation" 		: {
+						"period" : 1407.509405,
+						"axialtilt" : 2.1833,
+						"inclination" : 7.005,
+						"ascendingnode" : 11.01,
+						"meridianangle" : 329.548
+						},
+						
+	"model"			: {
+						"args" : [true],
+						"model" : "data/models/gaia/gaia.g3db"
+						}
+	}
+]}

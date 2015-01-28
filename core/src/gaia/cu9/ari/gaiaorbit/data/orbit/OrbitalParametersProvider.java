@@ -3,7 +3,7 @@ package gaia.cu9.ari.gaiaorbit.data.orbit;
 import gaia.cu9.ari.gaiaorbit.data.orbit.OrbitDataLoader.OrbitDataLoaderParameter;
 import gaia.cu9.ari.gaiaorbit.event.EventManager;
 import gaia.cu9.ari.gaiaorbit.event.Events;
-import gaia.cu9.ari.gaiaorbit.scenegraph.Orbit.OrbitalParameters;
+import gaia.cu9.ari.gaiaorbit.scenegraph.component.OrbitComponent;
 import gaia.cu9.ari.gaiaorbit.util.Constants;
 import gaia.cu9.ari.gaiaorbit.util.math.Matrix4d;
 import gaia.cu9.ari.gaiaorbit.util.math.Vector3d;
@@ -20,11 +20,11 @@ public class OrbitalParametersProvider implements IOrbitDataProvider {
 
     @Override
     public void load(String file, OrbitDataLoaderParameter parameter) {
-	OrbitalParameters params = parameter.orbitalParamaters;
+	OrbitComponent params = parameter.orbitalParamaters;
 	try {
 	    // Parameters of the ellipse
-	    double a = params.semiMajorAxis;
-	    double f = params.e * params.semiMajorAxis;
+	    double a = params.semimajoraxis;
+	    double f = params.e * params.semimajoraxis;
 	    double b = Math.sqrt(Math.pow(a, 2) - Math.pow(f, 2));
 
 	    int nsamples = 180;

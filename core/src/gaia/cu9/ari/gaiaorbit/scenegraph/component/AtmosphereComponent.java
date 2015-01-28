@@ -23,7 +23,7 @@ public class AtmosphereComponent {
     public float size;
     public ModelComponent mc;
     public Matrix4 localTransform;
-    public float[] wavelengths;
+    public double[] wavelengths;
     public float m_fInnerRadius;
     public float m_fOuterRadius;
     public float m_fAtmosphereHeight;
@@ -72,7 +72,7 @@ public class AtmosphereComponent {
 	float m_fScaleOverScaleDepth = m_fScale / m_fScaleDepth;
 	int m_nSamples = 7;
 
-	float[] m_fWavelength = wavelengths;
+	double[] m_fWavelength = wavelengths;
 	float[] m_fWavelength4 = new float[3];
 	m_fWavelength4[0] = (float) Math.pow(m_fWavelength[0], 4.0);
 	m_fWavelength4[1] = (float) Math.pow(m_fWavelength[1], 4.0);
@@ -181,10 +181,6 @@ public class AtmosphereComponent {
 	this.quality = quality.intValue();
     }
 
-    public void setSize(Float size) {
-	this.size = (float) (size * Constants.KM_TO_U);
-    }
-
     public void setSize(Double size) {
 	this.size = (float) (size * Constants.KM_TO_U);
     }
@@ -197,16 +193,16 @@ public class AtmosphereComponent {
 	this.localTransform = localTransform;
     }
 
-    public void setWavelengths(float[] wavelengths) {
+    public void setWavelengths(double[] wavelengths) {
 	this.wavelengths = wavelengths;
     }
 
-    public void setM_Kr(Float m_Kr) {
-	this.m_Kr = m_Kr;
+    public void setM_Kr(Double m_Kr) {
+	this.m_Kr = m_Kr.floatValue();
     }
 
-    public void setM_Km(Float m_Km) {
-	this.m_Km = m_Km;
+    public void setM_Km(Double m_Km) {
+	this.m_Km = m_Km.floatValue();
     }
 
 }

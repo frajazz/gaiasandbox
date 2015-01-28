@@ -1,6 +1,6 @@
 package gaia.cu9.ari.gaiaorbit.data.orbit;
 
-import gaia.cu9.ari.gaiaorbit.scenegraph.Orbit.OrbitalParameters;
+import gaia.cu9.ari.gaiaorbit.scenegraph.component.OrbitComponent;
 
 import java.util.Date;
 
@@ -59,13 +59,13 @@ public class OrbitDataLoader extends AsynchronousAssetLoader<OrbitData, OrbitDat
 	float orbitalPeriod;
 	int numSamples;
 	String name;
-	OrbitalParameters orbitalParamaters;
+	OrbitComponent orbitalParamaters;
 
 	public OrbitDataLoaderParameter(Class<? extends IOrbitDataProvider> providerClass) {
 	    this.providerClass = providerClass;
 	}
 
-	public OrbitDataLoaderParameter(Class<? extends IOrbitDataProvider> providerClass, OrbitalParameters orbitalParameters) {
+	public OrbitDataLoaderParameter(Class<? extends IOrbitDataProvider> providerClass, OrbitComponent orbitalParameters) {
 	    this(providerClass);
 	    this.orbitalParamaters = orbitalParameters;
 

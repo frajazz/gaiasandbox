@@ -106,4 +106,17 @@ public class GlobalResources {
 	}
     }
 
+    /**
+     * Transforms the given double array into a float array by casting
+     * each of its numbers.
+     * @param array
+     * @return
+     */
+    public static float[] toFloatArray(double[] array) {
+	float[] res = new float[array.length];
+	for (int i = 0; i < array.length; i++)
+	    res[i] = (float) array[i];
+	return res;
+    }
+
 }

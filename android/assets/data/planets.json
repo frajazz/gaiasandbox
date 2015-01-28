@@ -14,8 +14,11 @@
 	"coord" : "vsop87.MercuryVSOP87",
 		
 	"rotation" 		: {
+						// In hours
 						"period" : 1407.509405,
+						// Angle between equatorial plane and orbital plane
 						"axialtilt" : 2.1833,
+						// Inclination of orbit plane with respect to ecliptic
 						"inclination" : 7.005,
 						"ascendingnode" : 11.01,
 						"meridianangle" : 329.548
@@ -46,8 +49,11 @@
 	"coord" : "vsop87.VenusVSOP87",
 		
 	"rotation" 		: {
+						// In hours
 						"period" : 5832.443616,
+						// Angle between equatorial plane and orbital plane
 						"axialtilt" : 177.36,
+						// Inclination of orbit plane with respect to ecliptic
 						"inclination" : 3.39458,
 						"meridianangle" : 19.80
 						},
@@ -78,8 +84,11 @@
 	"coord" : "vsop87.EarthVSOP87",
 		
 	"rotation" 		: {
+						// In hours
 						"period" : 23.93447117,
+						// Angle between equatorial plane and orbital plane
 						"axialtilt" : -23.4392911,
+						// Inclination of orbit plane with respect to ecliptic
 						"inclination" : 0,
 						"meridianangle" : 180.147
 						},
@@ -114,15 +123,18 @@
 	"ct" : Planets,
 
 	"absmag" : -3.12,
-	"appmag" : -2.91,
+	"appmag" : -3.91,
 	
 	"parent" : "Sol", 
 	"impl" : "gaia.cu9.ari.gaiaorbit.scenegraph.Planet",
 	"coord" : "vsop87.MarsVSOP87",
 		
 	"rotation" 		: {
+						// In hours			
 						"period" : 24.622962156,
+						// Angle between equatorial plane and orbital plane
 						"axialtilt" : 25.19,
+						// Inclination of orbit plane with respect to ecliptic
 						"inclination" : 1.850,
 						"ascendingnode" : 47.68143,
 						"meridianangle" : 176.630
@@ -155,8 +167,11 @@
 	"coord" : "vsop87.JupiterVSOP87",
 		
 	"rotation" 		: {
+						// In hours
 						"period" : 9.927953,
+						// Angle between equatorial plane and orbital plane
 						"axialtilt" : 3.13,
+						// Inclination of orbit plane with respect to ecliptic
 						"inclination" : 1.305,
 						"ascendingnode" : 337.80,
 						"meridianangle" : 334.0
@@ -188,8 +203,11 @@
 	"coord" : "vsop87.SaturnVSOP87",
 		
 	"rotation" 		: {
+						// In hours
 						"period" : 10.65622222,
+						// Angle between equatorial plane and orbital plane
 						"axialtilt" : -26.73,
+						// Inclination of orbit plane with respect to ecliptic
 						"inclination" : 2.485240,
 						"meridianangle" : 358.93
 						},
@@ -200,7 +218,6 @@
 						"quality" : 150,
 						"texture" : {
 									"base" : "data/tex/saturn.jpg",
-									"hires" : "data/tex/jupiter-4k.jpg",
 									"ring" : "data/tex/saturn-ring.png"
 									},
 						"ring" : 	{
@@ -226,8 +243,11 @@
 		"coord" : "vsop87.UranusVSOP87",
 			
 		"rotation" 		: {
+							// In hours
 							"period" : 17.24,
+							// Angle between equatorial plane and orbital plane
 							"axialtilt" : -97.77,
+							// Inclination of orbit plane with respect to ecliptic
 							"inclination" : 0.772556,
 							"meridianangle" : 331.13
 							},
@@ -257,8 +277,11 @@
 		"coord" : "vsop87.NeptuneVSOP87",
 			
 		"rotation" 		: {
+							// In hours
 							"period" : 16.11,
+							// Angle between equatorial plane and orbital plane
 							"axialtilt" : 28.32,
+							// Inclination of orbit plane with respect to ecliptic
 							"inclination" : 1.767975,
 							"ascendingnode" : 49.24,
 							"meridianangle" : 228.66

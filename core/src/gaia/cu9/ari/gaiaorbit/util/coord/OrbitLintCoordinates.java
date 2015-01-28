@@ -5,8 +5,8 @@ import gaia.cu9.ari.gaiaorbit.event.EventManager;
 import gaia.cu9.ari.gaiaorbit.event.Events;
 import gaia.cu9.ari.gaiaorbit.scenegraph.CelestialBody;
 import gaia.cu9.ari.gaiaorbit.scenegraph.Orbit;
-import gaia.cu9.ari.gaiaorbit.scenegraph.Orbit.OrbitalParameters;
 import gaia.cu9.ari.gaiaorbit.scenegraph.SceneGraphNode;
+import gaia.cu9.ari.gaiaorbit.scenegraph.component.OrbitComponent;
 import gaia.cu9.ari.gaiaorbit.util.math.Matrix4d;
 import gaia.cu9.ari.gaiaorbit.util.math.Vector3d;
 
@@ -14,7 +14,7 @@ import java.util.Date;
 
 public class OrbitLintCoordinates implements IBodyCoordinates {
     Orbit orbit;
-    OrbitalParameters orbitalParams;
+    OrbitComponent orbitalParams;
     OrbitData data;
     Matrix4d transf;
     Vector3d aux = new Vector3d();
@@ -27,7 +27,7 @@ public class OrbitLintCoordinates implements IBodyCoordinates {
 	    transf = new Matrix4d();
 	    SceneGraphNode sgn = (SceneGraphNode) params[0];
 	    orbit = (Orbit) sgn;
-	    orbitalParams = orbit.params;
+	    orbitalParams = orbit.oc;
 	    data = orbit.orbitData;
 	}
     }
@@ -49,7 +49,7 @@ public class OrbitLintCoordinates implements IBodyCoordinates {
 	// Number of periods occurred
 	double numPeriods = (AstroUtils.getJulianDateCache(date) - orbitalParams.epoch) / orbitalParams.period;
 	// Current angle in degrees
-	double angle = (orbitalParams.meanAnomaly + (numPeriods - Math.floor(numPeriods)) * 360d) % 360d;
+	double angle = (orbitalParams.meananomaly + (numPeriods - Math.floor(numPeriods)) * 360d) % 360d;
 	// Fraction in [0..numPoints]
 	double fraction = (angle / 360d) * data.getNumPoints();
 
@@ -65,9 +65,9 @@ public class OrbitLintCoordinates implements IBodyCoordinates {
 	out.add(aux);
 
 	transf.set(((CelestialBody) orbit.parent).orientation);
-	transf.rotate(0, 1, 0, orbitalParams.argOfPericenter);
+	transf.rotate(0, 1, 0, orbitalParams.argofpericenter);
 	transf.rotate(0, 0, 1, orbitalParams.i);
-	transf.rotate(0, 1, 0, orbitalParams.ascendingNode);
+	transf.rotate(0, 1, 0, orbitalParams.ascendingnode);
 
 	out.mul(transf);
 	return out;

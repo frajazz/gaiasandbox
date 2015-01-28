@@ -16,7 +16,6 @@ import java.lang.reflect.Method;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.assets.AssetManager;
 import com.badlogic.gdx.graphics.GL20;
-import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.VertexAttributes.Usage;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
@@ -31,8 +30,6 @@ import com.badlogic.gdx.math.Matrix4;
 
 public class MilkyWay extends Blob implements IModelRenderable, ILabelRenderable {
     static float[] labelColour = new float[] { 1f, .4f, .7f, 1f };
-    String texture;
-    Texture tex;
     double[] position;
     ModelComponent mc;
     String model, transformName;
@@ -75,8 +72,8 @@ public class MilkyWay extends Blob implements IModelRenderable, ILabelRenderable
 	} else {
 	    // Prepare model
 	    Material mat = new Material();
-	    tex = manager.get(texture);
-	    mat.set(new TextureAttribute(TextureAttribute.Diffuse, tex));
+	    mc.tc.lo_resTex = manager.get(mc.tc.base);
+	    mat.set(new TextureAttribute(TextureAttribute.Diffuse, mc.tc.lo_resTex));
 	    ModelBuilder2 mb = ModelCache.cache.mb;
 	    // Initialize milky way model
 	    mb.begin();
@@ -129,12 +126,11 @@ public class MilkyWay extends Blob implements IModelRenderable, ILabelRenderable
 	localTransform.idt().translate(trans[0], trans[1], trans[2]).scl(size).mul(coordinateSystem);
     }
 
-    public void setPosition(String position) {
-	String[] p = position.split("\\s+");
-	this.position = new double[3];
-	this.position[0] = Double.parseDouble(p[0]) * Constants.KM_TO_U;
-	this.position[1] = Double.parseDouble(p[1]) * Constants.KM_TO_U;
-	this.position[2] = Double.parseDouble(p[2]) * Constants.KM_TO_U;
+    public void setPosition(double[] position) {
+	this.position = position;
+	this.position[0] *= Constants.KM_TO_U;
+	this.position[1] *= Constants.KM_TO_U;
+	this.position[2] *= Constants.KM_TO_U;
     }
 
     @Override
@@ -219,8 +215,8 @@ public class MilkyWay extends Blob implements IModelRenderable, ILabelRenderable
 	Gdx.gl.glDepthMask(false);
     }
 
-    public void setTexture(String texture) {
-	this.texture = texture;
+    public void setModel(ModelComponent mc) {
+	this.mc = mc;
     }
 
 }

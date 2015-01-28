@@ -1,0 +1,56 @@
+{"objects" : [
+
+	{
+	"name" : "Equatorial grid",
+	"color" : [1.0, 0.0, 0.0, 0.5],
+	"size" : 0.1,
+	"ct" : Equatorial,
+
+	"parent" : "Universe", 
+	"impl" : "gaia.cu9.ari.gaiaorbit.scenegraph.Grid"
+	},
+	
+	
+	{
+	"name" : "Ecliptic grid",
+	"color" : [0.0, 1.0, 0.0, 0.5],
+	"size" : 0.12,
+	"ct" : Ecliptic,
+	"transformName" : equatorialToEcliptic,
+
+	"parent" : "Universe", 
+	"impl" : "gaia.cu9.ari.gaiaorbit.scenegraph.Grid"
+	},
+	
+	
+	{
+	"name" : "Galactic grid",
+	"color" : [0.3, 0.5, 1.0, 0.5],
+	"size" : 0.14,
+	"ct" : Galactic,
+	"transformName" : equatorialToGalactic,
+
+	"parent" : "Universe", 
+	"impl" : "gaia.cu9.ari.gaiaorbit.scenegraph.Grid"
+	},
+	
+	
+	{
+	"name" : "Milky Way",
+	"color" : [1.0, 1.0, 1.0, 1.0],
+	"size" : 1.04913038e+18,
+	"position" : [-2.1696166830918058e+17, -1.2574136144478805e+17, -1.8981686396725044e+16],
+	"ct" : MilkyWay,
+	"transformName" : equatorialToGalactic,
+
+	"parent" : "Universe", 
+	"impl" : "gaia.cu9.ari.gaiaorbit.scenegraph.MilkyWay",
+	
+	"model" : {
+				"args" : [true],					
+				"texture" : {
+							"base" : "data/tex/milky_way.png"
+							}
+				}
+	},
+]}

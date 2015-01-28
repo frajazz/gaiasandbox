@@ -8,12 +8,12 @@ public class RingComponent {
 
     }
 
-    public void setInnerradius(Float innerRadius) {
-	this.innerRadius = innerRadius;
+    public void setInnerradius(Double innerRadius) {
+	this.innerRadius = innerRadius.floatValue();
     }
 
-    public void setOuterradius(Float outerRadius) {
-	this.outerRadius = outerRadius;
+    public void setOuterradius(Double outerRadius) {
+	this.outerRadius = outerRadius.floatValue();
     }
 
     public void setDivisions(Long divisions) {

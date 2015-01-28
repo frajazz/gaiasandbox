@@ -4,6 +4,7 @@ import gaia.cu9.ari.gaiaorbit.event.EventManager;
 import gaia.cu9.ari.gaiaorbit.event.Events;
 import gaia.cu9.ari.gaiaorbit.render.ILabelRenderable;
 import gaia.cu9.ari.gaiaorbit.util.DecalUtils;
+import gaia.cu9.ari.gaiaorbit.util.GlobalResources;
 import gaia.cu9.ari.gaiaorbit.util.math.Vector2d;
 import gaia.cu9.ari.gaiaorbit.util.math.Vector3d;
 
@@ -122,16 +123,16 @@ public abstract class AbstractPositionEntity extends SceneGraphNode {
      * Sets the absolute size of this entity
      * @param size
      */
-    public void setSize(Float size) {
-	this.size = size;
+    public void setSize(Double size) {
+	this.size = size.floatValue();
     }
 
     public void setSize(Long size) {
 	this.size = (float) size;
     }
 
-    public void setColor(float[] color) {
-	this.cc = color;
+    public void setColor(double[] color) {
+	this.cc = GlobalResources.toFloatArray(color);
     }
 
     public Vector3d computeFuturePosition() {

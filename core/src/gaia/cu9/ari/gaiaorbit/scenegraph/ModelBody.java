@@ -146,7 +146,7 @@ public abstract class ModelBody extends CelestialBody {
 
     }
 
-    public void setCoordinatesOrbit(String coordinatesOrbit) {
+    public void setCoordinatesorbit(String coordinatesOrbit) {
 	this.orbitName = coordinatesOrbit;
     }
 

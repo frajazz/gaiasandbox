@@ -28,7 +28,7 @@ import com.badlogic.gdx.utils.JsonValue.ValueType;
 public class JsonLoader<T extends SceneGraphNode> implements ISceneGraphNodeProvider {
     private static final String COMPONENTS_PACKAGE = "gaia.cu9.ari.gaiaorbit.scenegraph.component.";
     /** Params to skip in the normal processing **/
-    private static final List<String> PARAM_SKIP = Arrays.asList("args", "impl");
+    private static final List<String> PARAM_SKIP = Arrays.asList("args", "impl", "comment", "comments");
 
     /** Contains all the files to be loaded by this loader **/
     private String[] filePaths;
@@ -126,8 +126,8 @@ public class JsonLoader<T extends SceneGraphNode> implements ISceneGraphNodeProv
 			value = attribute.asStringArray();
 			break;
 		    case doubleValue:
-			valueClass = float[].class;
-			value = attribute.asFloatArray();
+			valueClass = double[].class;
+			value = attribute.asDoubleArray();
 			break;
 		    case booleanValue:
 			valueClass = boolean[].class;
@@ -162,7 +162,7 @@ public class JsonLoader<T extends SceneGraphNode> implements ISceneGraphNodeProv
 	    value = val.asString();
 	    break;
 	case doubleValue:
-	    value = val.asFloat();
+	    value = val.asDouble();
 	    break;
 	case booleanValue:
 	    value = val.asBoolean();
@@ -181,7 +181,7 @@ public class JsonLoader<T extends SceneGraphNode> implements ISceneGraphNodeProv
 	    valueClass = String.class;
 	    break;
 	case doubleValue:
-	    valueClass = Float.class;
+	    valueClass = Double.class;
 	    break;
 	case booleanValue:
 	    valueClass = Boolean.class;

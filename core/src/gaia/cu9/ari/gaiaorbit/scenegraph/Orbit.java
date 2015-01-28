@@ -3,6 +3,7 @@ package gaia.cu9.ari.gaiaorbit.scenegraph;
 import gaia.cu9.ari.gaiaorbit.data.orbit.IOrbitDataProvider;
 import gaia.cu9.ari.gaiaorbit.data.orbit.OrbitData;
 import gaia.cu9.ari.gaiaorbit.data.orbit.OrbitDataLoader;
+import gaia.cu9.ari.gaiaorbit.scenegraph.component.OrbitComponent;
 import gaia.cu9.ari.gaiaorbit.util.Constants;
 import gaia.cu9.ari.gaiaorbit.util.math.MathUtilsd;
 import gaia.cu9.ari.gaiaorbit.util.math.Matrix4d;
@@ -15,24 +16,6 @@ import com.badlogic.gdx.assets.AssetManager;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 
 public class Orbit extends LineObject {
-    public class OrbitalParameters {
-	/** Orbital period in days **/
-	public double period;
-	/** Base epoch **/
-	public long epoch;
-	/** Semi major axis of the ellipse, a.**/
-	public double semiMajorAxis;
-	/** Eccentricity of the ellipse. **/
-	public double e;
-	/** Inclination, angle between the reference plane (ecliptic) and the orbital plane. **/
-	public double i;
-	/** Longitude of the ascending node in degrees. **/
-	public double ascendingNode;
-	/** Argument of perihelion in degrees. **/
-	public double argOfPericenter;
-	/** Mean anomaly at epoch, in degrees. **/
-	public double meanAnomaly;
-    }
 
     /** Threshold angle **/
     protected static final float ANGLE_LIMIT = (float) Math.toRadians(.3);
@@ -41,14 +24,13 @@ public class Orbit extends LineObject {
      */
     protected static final float SHADER_MODEL_OVERLAP_FACTOR = 50f;
 
-    protected String source;
     public OrbitData orbitData;
     protected Vector3d prev, curr;
     protected float alpha;
     public Matrix4d localTransformD;
     protected String provider;
     protected Class<? extends IOrbitDataProvider> providerClass;
-    public OrbitalParameters params;
+    public OrbitComponent oc;
 
     public Orbit() {
 	super();
@@ -66,7 +48,7 @@ public class Orbit extends LineObject {
 	    IOrbitDataProvider provider;
 	    try {
 		provider = providerClass.newInstance();
-		provider.load(source, new OrbitDataLoader.OrbitDataLoaderParameter(providerClass, params));
+		provider.load(oc.source, new OrbitDataLoader.OrbitDataLoaderParameter(providerClass, oc));
 		orbitData = provider.getData();
 	    } catch (Exception e) {
 		Gdx.app.error(getClass().getSimpleName(), e.getMessage());
@@ -74,7 +56,6 @@ public class Orbit extends LineObject {
 	} catch (ClassNotFoundException e) {
 	    Gdx.app.error(getClass().getSimpleName(), e.getMessage());
 	}
-
     }
 
     @Override
@@ -93,7 +74,7 @@ public class Orbit extends LineObject {
     }
 
     protected void updateLocalTransform(Date date) {
-	if (params == null) {
+	if (oc.source != null) {
 	    // Orbit is sampled, only get position
 	    localTransformD.set(transform.getMatrix());
 	} else {
@@ -101,12 +82,10 @@ public class Orbit extends LineObject {
 	    // Set to parent orientation
 	    localTransformD.set(transform.getMatrix()).mul(parent.orientation);
 
-	    localTransformD.rotate(0, 1, 0, params.argOfPericenter);
-	    localTransformD.rotate(0, 0, 1, params.i);
-	    localTransformD.rotate(0, 1, 0, params.ascendingNode);
-
+	    localTransformD.rotate(0, 1, 0, oc.argofpericenter);
+	    localTransformD.rotate(0, 0, 1, oc.i);
+	    localTransformD.rotate(0, 1, 0, oc.ascendingnode);
 	}
-
     }
 
     @Override
@@ -127,10 +106,6 @@ public class Orbit extends LineObject {
 	    addToRender(this, RenderGroup.LINE);
 	}
 
-    }
-
-    public void setSource(String source) {
-	this.source = source;
     }
 
     @Override
@@ -177,54 +152,8 @@ public class Orbit extends LineObject {
 	this.provider = provider;
     }
 
-    private void initParams() {
-	if (params == null) {
-	    params = new OrbitalParameters();
-	}
-    }
-
-    /**
-     * Sets the orbital period in days.
-     * @param orbitalperiod In days
-     */
-    public void setOrbitPeriod(Float orbitalperiod) {
-	initParams();
-	params.period = orbitalperiod;
-    }
-
-    public void setOrbitEpoch(Float epoch) {
-	initParams();
-	params.epoch = epoch.longValue();
-    }
-
-    public void setOrbitSemimajoraxis(Float sma) {
-	initParams();
-	params.semiMajorAxis = sma;
-    }
-
-    public void setOrbitEccentricity(Float e) {
-	initParams();
-	params.e = e;
-    }
-
-    public void setOrbitInclination(Float i) {
-	initParams();
-	params.i = i;
-    }
-
-    public void setOrbitAscendingnode(Float ascendingNode) {
-	initParams();
-	params.ascendingNode = ascendingNode;
-    }
-
-    public void setOrbitArgofpericenter(Float aop) {
-	initParams();
-	params.argOfPericenter = aop;
-    }
-
-    public void setOrbitMeananomaly(Float meanAnomaly) {
-	initParams();
-	params.meanAnomaly = meanAnomaly;
+    public void setOrbit(OrbitComponent oc) {
+	this.oc = oc;
     }
 
 }
