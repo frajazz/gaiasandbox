@@ -1,7 +1,6 @@
 package gaia.cu9.ari.gaiaorbit.scenegraph;
 
 import gaia.cu9.ari.gaiaorbit.scenegraph.component.ModelComponent;
-import gaia.cu9.ari.gaiaorbit.scenegraph.component.RotationComponent;
 import gaia.cu9.ari.gaiaorbit.util.GlobalConf;
 import gaia.cu9.ari.gaiaorbit.util.coord.IBodyCoordinates;
 import gaia.cu9.ari.gaiaorbit.util.coord.vsop87.DummyVSOP87;
@@ -36,7 +35,6 @@ public abstract class ModelBody extends CelestialBody {
 	super();
 	localTransform = new Matrix4();
 	orientation = new Matrix4d();
-	rc = new RotationComponent();
     }
 
     public void initialize() {

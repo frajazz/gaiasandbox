@@ -1,5 +1,8 @@
 package gaia.cu9.ari.gaiaorbit.scenegraph.component;
 
+import gaia.cu9.ari.gaiaorbit.scenegraph.ITimeFrameProvider;
+import gaia.cu9.ari.gaiaorbit.util.Constants;
+import gaia.cu9.ari.gaiaorbit.util.coord.AstroUtils;
 import gaia.cu9.ari.gaiaorbit.util.coord.Coordinates;
 
 /**
@@ -33,11 +36,16 @@ public class RotationComponent {
      * Sets the rotation period.
      * @param rotationPeriod The period in hours.
      */
-    public void setRotationperiod(Float rotationPeriod) {
+    public void setPeriod(Float rotationPeriod) {
 	this.period = rotationPeriod;
 	if (rotationPeriod != null) {
 	    angularVelocity = 360 / rotationPeriod;
 	}
+    }
+
+    public void update(ITimeFrameProvider time) {
+	double t = time.getTime().getTime() - AstroUtils.J2000_MS;
+	angle = (meridianAngle + angularVelocity * t * Constants.MS_TO_H) % 360d;
     }
 
     /**
@@ -50,10 +58,6 @@ public class RotationComponent {
 
     public void setAngle(Float angle) {
 	this.angle = angle;
-    }
-
-    public void setPeriod(Float period) {
-	this.period = period;
     }
 
     /**

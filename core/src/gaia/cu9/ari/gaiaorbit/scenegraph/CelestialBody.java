@@ -276,6 +276,7 @@ public abstract class CelestialBody extends AbstractPositionEntity implements IL
 	copy.appmag = this.appmag;
 	copy.colorbv = this.colorbv;
 	copy.flux = this.flux;
+	copy.rc = this.rc;
 	return (T) copy;
     }
 

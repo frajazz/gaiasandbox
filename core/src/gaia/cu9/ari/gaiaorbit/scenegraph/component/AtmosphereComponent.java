@@ -2,6 +2,7 @@ package gaia.cu9.ari.gaiaorbit.scenegraph.component;
 
 import gaia.cu9.ari.gaiaorbit.scenegraph.SceneGraphNode;
 import gaia.cu9.ari.gaiaorbit.scenegraph.Transform;
+import gaia.cu9.ari.gaiaorbit.util.Constants;
 import gaia.cu9.ari.gaiaorbit.util.ModelCache;
 import gaia.cu9.ari.gaiaorbit.util.math.Vector3d;
 import gaia.cu9.ari.gaiaorbit.util.override.AtmosphereAttribute;
@@ -36,11 +37,13 @@ public class AtmosphereComponent {
 	aux3 = new Vector3d();
     }
 
-    public void initialize() {
+    public void doneLoading(Material planetMat, float planetSize) {
+	setUpAtmosphericScatteringMaterial(planetMat, planetSize);
+
 	Model atmosphereModel = ModelCache.cache.getModel("sphere", quality, 2, true, Usage.Position | Usage.Normal);
 	Material atmMat = atmosphereModel.materials.first();
 	atmMat.clear();
-	setUpAtmosphericScatteringMaterial(atmMat, size);
+	setUpAtmosphericScatteringMaterial(atmMat, planetSize);
 	atmMat.set(new BlendingAttribute(GL20.GL_SRC_ALPHA, GL20.GL_ONE_MINUS_SRC_ALPHA));
 
 	// CREATE ATMOSPHERE MODEL
@@ -55,13 +58,13 @@ public class AtmosphereComponent {
      * Sets up the atmospheric scattering parameters to the given material
      * @param mat The material to set up.
      */
-    public void setUpAtmosphericScatteringMaterial(Material mat, float size) {
+    public void setUpAtmosphericScatteringMaterial(Material mat, float planetSize) {
 	float camHeight = 1f;
 	float m_Kr4PI = m_Kr * 4.0f * (float) Math.PI;
 	float m_Km4PI = m_Km * 4.0f * (float) Math.PI;
 	float m_ESun = 15.0f; // Sun brightness (almost) constant
 	float m_g = -0.95f; // The Mie phase asymmetry factor
-	m_fInnerRadius = size / 2f;
+	m_fInnerRadius = planetSize / 2f;
 	m_fOuterRadius = this.size;
 	m_fAtmosphereHeight = m_fOuterRadius - m_fInnerRadius;
 	float m_fScaleDepth = .25f;
@@ -78,6 +81,7 @@ public class AtmosphereComponent {
 	mat.set(new AtmosphereAttribute(AtmosphereAttribute.Alpha, 1));
 	mat.set(new AtmosphereAttribute(AtmosphereAttribute.ColorOpacity, 0));
 
+	mat.set(new AtmosphereAttribute(AtmosphereAttribute.CameraHeight, camHeight));
 	mat.set(new AtmosphereAttribute(AtmosphereAttribute.CameraHeight2, camHeight * camHeight));
 
 	mat.set(new AtmosphereAttribute(AtmosphereAttribute.OuterRadius, m_fOuterRadius));
@@ -121,7 +125,7 @@ public class AtmosphereComponent {
      */
     public void updateAtmosphericScatteringParams(Material mat, float alpha, boolean ground, Transform transform, SceneGraphNode parent, RotationComponent rc) {
 	transform.getTranslation(aux3);
-	// Dist to planet
+	// Distance to planet
 	float camHeight = (float) (aux3.len());
 	float m_ESun = 15f;
 	float camHeightGr = camHeight - m_fInnerRadius;
@@ -147,9 +151,10 @@ public class AtmosphereComponent {
 	else
 	    mat.set(new AtmosphereAttribute(AtmosphereAttribute.CameraHeight, camHeight));
 
+	// Camera height **2
 	((AtmosphereAttribute) mat.get(AtmosphereAttribute.CameraHeight2)).value = camHeight * camHeight;
 
-	// Earth pos
+	// Earth position
 	if (ground) {
 	    // Camera position must be corrected using the rotation angle of the planet
 	    aux3.rotate(rc.inclination + rc.axialTilt, 0, 0, 1).rotate(-rc.angle, 0, 1, 0);
@@ -177,11 +182,11 @@ public class AtmosphereComponent {
     }
 
     public void setSize(Float size) {
-	this.size = size;
+	this.size = (float) (size * Constants.KM_TO_U);
     }
 
     public void setSize(Double size) {
-	this.size = size.floatValue();
+	this.size = (float) (size * Constants.KM_TO_U);
     }
 
     public void setMc(ModelComponent mc) {

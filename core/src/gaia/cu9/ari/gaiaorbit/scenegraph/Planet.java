@@ -3,7 +3,6 @@ package gaia.cu9.ari.gaiaorbit.scenegraph;
 import gaia.cu9.ari.gaiaorbit.render.IAtmosphereRenderable;
 import gaia.cu9.ari.gaiaorbit.render.SceneGraphRenderer.ComponentType;
 import gaia.cu9.ari.gaiaorbit.scenegraph.component.AtmosphereComponent;
-import gaia.cu9.ari.gaiaorbit.util.Constants;
 import gaia.cu9.ari.gaiaorbit.util.GlobalConf;
 import gaia.cu9.ari.gaiaorbit.util.coord.AstroUtils;
 import gaia.cu9.ari.gaiaorbit.util.coord.Coordinates;
@@ -61,7 +60,7 @@ public class Planet extends ModelBody implements IAtmosphereRenderable {
 	// INITIALIZE ATMOSPHERE
 	if (ac != null) {
 	    // Initialize atmosphere model
-	    ac.initialize();
+	    ac.doneLoading(mc.instance.materials.first(), this.size);
 	}
 
 	// INITIALIZE COORDINATES
@@ -76,7 +75,7 @@ public class Planet extends ModelBody implements IAtmosphereRenderable {
 	super.updateLocal(time, camera);
 	// Check texture
 	if (mc != null && mc.tc != null) {
-	    mc.tc.updateTexture(manager, mc.instance, TH_ANGLE_NONE, camera);
+	    mc.tc.updateTexture(manager, mc.instance, this.viewAngle, camera);
 	}
 	this.camera = camera;
     }
@@ -104,10 +103,8 @@ public class Planet extends ModelBody implements IAtmosphereRenderable {
 	    Coordinates.cartesianToSpherical(pos, aux3);
 	    posSph.set(AstroUtils.TO_DEG * aux3.x, AstroUtils.TO_DEG * aux3.y);
 
-	    // Angle
-	    // Angle at J2000 = rc.meridianAngle
-	    long t = time.getTime().getTime() - AstroUtils.J2000_MS;
-	    rc.angle = (rc.meridianAngle + rc.angularVelocity * t * Constants.MS_TO_H) % 360d;
+	    // Update angle
+	    rc.update(time);
 	}
     }
 
@@ -129,12 +126,10 @@ public class Planet extends ModelBody implements IAtmosphereRenderable {
      */
     @Override
     public void render(ModelBatch modelBatch, float alpha) {
-	if (ac != null) {
-	    if (GlobalConf.instance.VISIBILITY[ComponentType.Atmospheres.ordinal()]) {
-		ac.updateAtmosphericScatteringParams(mc.instance.materials.first(), alpha, true, transform, parent, rc);
-	    } else {
-		ac.removeAtmosphericScattering(mc.instance.materials.first());
-	    }
+	if (ac != null && GlobalConf.instance.VISIBILITY[ComponentType.Atmospheres.ordinal()]) {
+	    ac.updateAtmosphericScatteringParams(mc.instance.materials.first(), alpha, true, transform, parent, rc);
+	} else {
+	    ac.removeAtmosphericScattering(mc.instance.materials.first());
 	}
 	mc.setTransparency(alpha * opacity);
 	modelBatch.render(mc.instance, mc.env);
@@ -145,7 +140,7 @@ public class Planet extends ModelBody implements IAtmosphereRenderable {
      */
     @Override
     public void render(ModelBatch modelBatch, float alpha, byte b) {
-	ac.updateAtmosphericScatteringParams(mc.instance.materials.first(), alpha, true, transform, parent, rc);
+	ac.updateAtmosphericScatteringParams(ac.mc.instance.materials.first(), alpha, false, transform, parent, rc);
 	// Render atmosphere?
 	modelBatch.render(ac.mc.instance, mc.env);
     }
