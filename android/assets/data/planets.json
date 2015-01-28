@@ -1,5 +1,68 @@
 {"objects" : [
 
+	{
+	"name" : "Mercury",
+	"color" : [.51, .32, .08, 1.0],
+	"size" : 2439.7,
+	"ct" : Planets,
+
+	"absmag" : -2.67,
+	"appmag" : 5.73,
+	
+	"parent" : "Sol", 
+	"impl" : "gaia.cu9.ari.gaiaorbit.scenegraph.Planet",
+	"coord" : "vsop87.MercuryVSOP87",
+		
+	"rotation" 		: {
+						"period" : 1407.509405,
+						"axialtilt" : 2.1833,
+						"inclination" : 7.005,
+						"ascendingnode" : 11.01,
+						"meridianangle" : 329.548
+						},
+						
+	"model"			: {
+						"args" : [true],
+						"type" : "sphere",
+						"quality" : 130,
+						"texture" : {
+									"base" : "data/tex/mercury.jpg"
+									}
+						}
+	},
+	
+	
+	{
+	"name" : "Venus",
+	"color" : [.56, .29, .04, 1.0],
+	"size" : 6052.0,
+	"ct" : Planets,
+
+	"absmag" : -3.37,
+	"appmag" : -3.82,
+	
+	"parent" : "Sol", 
+	"impl" : "gaia.cu9.ari.gaiaorbit.scenegraph.Planet",
+	"coord" : "vsop87.VenusVSOP87",
+		
+	"rotation" 		: {
+						"period" : 5832.443616,
+						"axialtilt" : 177.36,
+						"inclination" : 3.39458,
+						"meridianangle" : 19.80
+						},
+						
+	"model"			: {
+						"args" : [true],
+						"type" : "sphere",
+						"quality" : 150,
+						"texture" : {
+									"base" : "data/tex/venus.jpg",
+									"hires" : "data/tex/venus-1k.jpg"
+									}
+						}
+	},
+
 
 	{
 	"name" : "Earth",
@@ -41,8 +104,73 @@
 						"m_Kr" : 0.0025,
 						"m_Km" : 0.001
 						}
+	},
+
+
+	{
+	"name" : "Mars",
+	"color" : [.36, .18, .08, 1.0],
+	"size" : 3389.5,
+	"ct" : Planets,
+
+	"absmag" : -3.12,
+	"appmag" : -2.91,
+	
+	"parent" : "Sol", 
+	"impl" : "gaia.cu9.ari.gaiaorbit.scenegraph.Planet",
+	"coord" : "vsop87.MarsVSOP87",
+		
+	"rotation" 		: {
+						"period" : 24.622962156,
+						"axialtilt" : 25.19,
+						"inclination" : 1.850,
+						"ascendingnode" : 47.68143,
+						"meridianangle" : 176.630
+						},
+						
+	"model"			: {
+						"args" : [true],
+						"type" : "sphere",
+						"quality" : 150,
+						"texture" : {
+									"base" : "data/tex/mars.jpg",
+									"hires" : "data/tex/mars-2k.jpg",
+									"normal" : "data/tex/mars-normal.jpg"
+									}
+						}
+	},
+
+
+	{
+	"name" : "Jupiter",
+	"color" : [.87, .62, .40, 1.0],
+	"size" : 69911.0,
+	"ct" : Planets,
+
+	"absmag" : -4.32,
+	"appmag" : -2.94,
+	
+	"parent" : "Sol", 
+	"impl" : "gaia.cu9.ari.gaiaorbit.scenegraph.Planet",
+	"coord" : "vsop87.JupiterVSOP87",
+		
+	"rotation" 		: {
+						"period" : 9.927953,
+						"axialtilt" : 3.13,
+						"inclination" : 1.305,
+						"ascendingnode" : 337.80,
+						"meridianangle" : 334.0
+						},
+						
+	"model"			: {
+						"args" : [true],
+						"type" : "sphere",
+						"quality" : 150,
+						"texture" : {
+									"base" : "data/tex/jupiter.jpg",
+									"hires" : "data/tex/jupiter-4k.jpg"
+									}
+						}
 	}
-
-
 
 ]}

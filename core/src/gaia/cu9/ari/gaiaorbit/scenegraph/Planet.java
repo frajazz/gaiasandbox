@@ -126,10 +126,12 @@ public class Planet extends ModelBody implements IAtmosphereRenderable {
      */
     @Override
     public void render(ModelBatch modelBatch, float alpha) {
-	if (ac != null && GlobalConf.instance.VISIBILITY[ComponentType.Atmospheres.ordinal()]) {
-	    ac.updateAtmosphericScatteringParams(mc.instance.materials.first(), alpha, true, transform, parent, rc);
-	} else {
-	    ac.removeAtmosphericScattering(mc.instance.materials.first());
+	if (ac != null) {
+	    if (GlobalConf.instance.VISIBILITY[ComponentType.Atmospheres.ordinal()]) {
+		ac.updateAtmosphericScatteringParams(mc.instance.materials.first(), alpha, true, transform, parent, rc);
+	    } else {
+		ac.removeAtmosphericScattering(mc.instance.materials.first());
+	    }
 	}
 	mc.setTransparency(alpha * opacity);
 	modelBatch.render(mc.instance, mc.env);

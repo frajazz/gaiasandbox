@@ -126,6 +126,10 @@ public abstract class AbstractPositionEntity extends SceneGraphNode {
 	this.size = size;
     }
 
+    public void setSize(Long size) {
+	this.size = (float) size;
+    }
+
     public void setColor(float[] color) {
 	this.cc = color;
     }
