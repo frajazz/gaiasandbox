@@ -44,7 +44,6 @@ public class Orbit extends LineObject {
 	try {
 	    providerClass = (Class<? extends IOrbitDataProvider>) Class.forName(provider);
 	    // Orbit data
-	    //AssetBean.addAsset(source, OrbitData.class, new OrbitDataLoader.OrbitDataLoaderParameter(providerClass));
 	    IOrbitDataProvider provider;
 	    try {
 		provider = providerClass.newInstance();
@@ -60,7 +59,6 @@ public class Orbit extends LineObject {
 
     @Override
     public void doneLoading(AssetManager manager) {
-	//orbitData = manager.get(source, OrbitData.class);
 	alpha = cc[3];
 	int last = orbitData.getNumPoints() - 1;
 	Vector3d v = new Vector3d(orbitData.x.get(last), orbitData.y.get(last), orbitData.z.get(last));

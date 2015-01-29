@@ -11,7 +11,7 @@ import java.util.Date;
 public abstract class AbstractVSOP87 implements iVSOP87, IBodyCoordinates {
 
     @Override
-    public void initialize(Object... params) {
+    public void doneLoading(Object... params) {
     }
 
     @Override

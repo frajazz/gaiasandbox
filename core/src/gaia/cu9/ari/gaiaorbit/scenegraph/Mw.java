@@ -2,9 +2,7 @@ package gaia.cu9.ari.gaiaorbit.scenegraph;
 
 import gaia.cu9.ari.gaiaorbit.render.IModelRenderable;
 import gaia.cu9.ari.gaiaorbit.scenegraph.component.ModelComponent;
-import gaia.cu9.ari.gaiaorbit.util.ModelCache;
 import gaia.cu9.ari.gaiaorbit.util.coord.Coordinates;
-import gaia.cu9.ari.gaiaorbit.util.g3d.ModelBuilder2;
 import gaia.cu9.ari.gaiaorbit.util.math.Matrix4d;
 
 import java.lang.reflect.InvocationTargetException;
@@ -12,21 +10,14 @@ import java.lang.reflect.Method;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.assets.AssetManager;
-import com.badlogic.gdx.graphics.Texture;
-import com.badlogic.gdx.graphics.VertexAttributes.Usage;
-import com.badlogic.gdx.graphics.g3d.Material;
-import com.badlogic.gdx.graphics.g3d.Model;
 import com.badlogic.gdx.graphics.g3d.ModelBatch;
-import com.badlogic.gdx.graphics.g3d.ModelInstance;
 import com.badlogic.gdx.graphics.g3d.attributes.ColorAttribute;
-import com.badlogic.gdx.graphics.g3d.attributes.TextureAttribute;
 import com.badlogic.gdx.math.Matrix4;
 
 public class Mw extends AbstractPositionEntity implements IModelRenderable {
 
-    private String model, transformName, texture;
+    private String transformName;
     public ModelComponent mc;
-    private Texture tex;
 
     public Mw() {
 	super();
@@ -41,9 +32,11 @@ public class Mw extends AbstractPositionEntity implements IModelRenderable {
 
     @Override
     public void doneLoading(AssetManager manager) {
+	super.doneLoading(manager);
 
-	// Initialize transform
+	// Initialize transform.
 	localTransform.scl(size);
+
 	if (transformName != null) {
 	    Class<Coordinates> c = Coordinates.class;
 	    try {
@@ -57,23 +50,13 @@ public class Mw extends AbstractPositionEntity implements IModelRenderable {
 	} else {
 	    // Equatorial, nothing
 	}
-
-	Model mwModel = null;
-	if (manager.isLoaded(model)) {
-	    // Use model file
-	    mwModel = manager.get(model, Model.class);
-	} else {
-	    // Use builder
-	    Material mat = new Material();
-	    tex = manager.get(texture);
-	    mat.set(new TextureAttribute(TextureAttribute.Diffuse, tex));
-	    ModelBuilder2 mb = ModelCache.cache.mb;
-	    mwModel = mb.createCylinder(1, 2, 1, 15, true, mat, Usage.Position | Usage.Normal | Usage.TextureCoordinates);
-	    // Must rotate due to orientation of createCylinder
+	
+	// Must rotate due to orientation of createCylinder
 	    localTransform.rotate(0, 1, 0, 90);
-	}
 
-	mc.instance = new ModelInstance(mwModel, this.localTransform);
+	// Model
+	mc.doneLoading(manager, localTransform, null);
+
     }
 
     @Override
@@ -102,17 +85,13 @@ public class Mw extends AbstractPositionEntity implements IModelRenderable {
 	this.transformName = transformName;
     }
 
-    public void setModel(String model) {
-	this.model = model;
-    }
-
     @Override
     public boolean hasAtmosphere() {
 	return false;
     }
 
-    public void setTexture(String texture) {
-	this.texture = texture;
+    public void setModel(ModelComponent mc) {
+	this.mc = mc;
     }
 
 }

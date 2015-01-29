@@ -1,7 +1,6 @@
 # This file contains the description of the data providers and their
 # parameters
 
-#data.providers=gaia.cu9.ari.gaiaorbit.data.StarLoader gaia.cu9.ari.gaiaorbit.data.NodeLoader gaia.cu9.ari.gaiaorbit.data.JsonLoader gaia.cu9.ari.gaiaorbit.data.ConstellationsLoader gaia.cu9.ari.gaiaorbit.data.ConstelBoundariesLoader
 data.providers=gaia.cu9.ari.gaiaorbit.data.StarLoader gaia.cu9.ari.gaiaorbit.data.JsonLoader gaia.cu9.ari.gaiaorbit.data.ConstellationsLoader gaia.cu9.ari.gaiaorbit.data.ConstelBoundariesLoader
 
 # STAR LOADERS - loads a catalog of stars
@@ -14,9 +13,7 @@ gaia.cu9.ari.gaiaorbit.data.StarLoader.file=data/hygxyz.bin
 # NON-STAR LOADERS - loads non-star entities (planets, satellites, moons, orbits...)
 
 # Configuration file with the entities
-gaia.cu9.ari.gaiaorbit.data.NodeLoader.files=conf/bodies.properties conf/satellites.properties conf/orbits.properties conf/extra.properties
-
-gaia.cu9.ari.gaiaorbit.data.JsonLoader.files=data/planets.json
+gaia.cu9.ari.gaiaorbit.data.JsonLoader.files=data/planets.json data/moons.json data/satellites.json data/orbits.json data/extra.json
 
 
 # CONSTELLATION LINE LOADER

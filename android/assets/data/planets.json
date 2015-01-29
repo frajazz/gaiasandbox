@@ -11,7 +11,11 @@
 	
 	"parent" : "Sol", 
 	"impl" : "gaia.cu9.ari.gaiaorbit.scenegraph.Planet",
-	"coord" : "vsop87.MercuryVSOP87",
+	
+	"coordinates" : {
+					// This must implement gaia.cu9.ari.gaiaorbit.util.coord.IBodyCoordinates				
+					"impl" : "gaia.cu9.ari.gaiaorbit.util.coord.vsop87.MercuryVSOP87"
+					},	
 		
 	"rotation" 		: {
 						// In hours
@@ -27,7 +31,11 @@
 	"model"			: {
 						"args" : [true],
 						"type" : "sphere",
-						"quality" : 130,
+						"params" : {
+									"quality" : 130,
+									"diameter" : 1.0,
+									"flip" : false
+									},
 						"texture" : {
 									"base" : "data/tex/mercury.jpg"
 									}
@@ -46,7 +54,11 @@
 	
 	"parent" : "Sol", 
 	"impl" : "gaia.cu9.ari.gaiaorbit.scenegraph.Planet",
-	"coord" : "vsop87.VenusVSOP87",
+
+	"coordinates" : {
+					// This must implement gaia.cu9.ari.gaiaorbit.util.coord.IBodyCoordinates				
+					"impl" : "gaia.cu9.ari.gaiaorbit.util.coord.vsop87.VenusVSOP87"
+					},	
 		
 	"rotation" 		: {
 						// In hours
@@ -61,7 +73,11 @@
 	"model"			: {
 						"args" : [true],
 						"type" : "sphere",
-						"quality" : 150,
+						"params" : {
+									"quality" : 150,
+									"diameter" : 1.0,
+									"flip" : false
+									},
 						"texture" : {
 									"base" : "data/tex/venus.jpg",
 									"hires" : "data/tex/venus-1k.jpg"
@@ -81,7 +97,11 @@
 	
 	"parent" : "Sol", 
 	"impl" : "gaia.cu9.ari.gaiaorbit.scenegraph.Planet",
-	"coord" : "vsop87.EarthVSOP87",
+	
+	"coordinates" : {
+					// This must implement gaia.cu9.ari.gaiaorbit.util.coord.IBodyCoordinates				
+					"impl" : "gaia.cu9.ari.gaiaorbit.util.coord.vsop87.EarthVSOP87"
+					},	
 		
 	"rotation" 		: {
 						// In hours
@@ -96,7 +116,11 @@
 	"model"			: {
 						"args" : [true],
 						"type" : "sphere",
-						"quality" : 180,
+						"params" : {
+									"quality" : 180,
+									"diameter" : 1.0,
+									"flip" : false
+									},
 						"texture" : {
 									"base" : "data/tex/earth.jpg",
 									"hires" : "data/tex/earth-8k.jpg",
@@ -107,11 +131,17 @@
 						},
 									
 	"atmosphere" 	: {
-						"quality" : 180,
 						"size" : 6600.0,
 						"wavelengths" : [0.650, 0.570, 0.475],
 						"m_Kr" : 0.0025,
-						"m_Km" : 0.001
+						"m_Km" : 0.001,
+						
+						"params" : {
+									"quality" : 180,
+									// Atmosphere diameters are always 2
+									"diameter" : 2.0,
+									"flip" : true
+									}
 						}
 	},
 
@@ -127,7 +157,11 @@
 	
 	"parent" : "Sol", 
 	"impl" : "gaia.cu9.ari.gaiaorbit.scenegraph.Planet",
-	"coord" : "vsop87.MarsVSOP87",
+	
+	"coordinates" : {
+					// This must implement gaia.cu9.ari.gaiaorbit.util.coord.IBodyCoordinates				
+					"impl" : "gaia.cu9.ari.gaiaorbit.util.coord.vsop87.MarsVSOP87"
+					},	
 		
 	"rotation" 		: {
 						// In hours			
@@ -143,7 +177,11 @@
 	"model"			: {
 						"args" : [true],
 						"type" : "sphere",
-						"quality" : 150,
+						"params" : {
+									"quality" : 150,
+									"diameter" : 1.0,
+									"flip" : false
+									},
 						"texture" : {
 									"base" : "data/tex/mars.jpg",
 									"hires" : "data/tex/mars-2k.jpg",
@@ -164,7 +202,11 @@
 	
 	"parent" : "Sol", 
 	"impl" : "gaia.cu9.ari.gaiaorbit.scenegraph.Planet",
-	"coord" : "vsop87.JupiterVSOP87",
+	
+	"coordinates" : {
+					// This must implement gaia.cu9.ari.gaiaorbit.util.coord.IBodyCoordinates				
+					"impl" : "gaia.cu9.ari.gaiaorbit.util.coord.vsop87.JupiterVSOP87"
+					},	
 		
 	"rotation" 		: {
 						// In hours
@@ -180,7 +222,11 @@
 	"model"			: {
 						"args" : [true],
 						"type" : "sphere",
-						"quality" : 150,
+						"params" : {
+									"quality" : 150,
+									"diameter" : 1.0,
+									"flip" : false
+									},
 						"texture" : {
 									"base" : "data/tex/jupiter.jpg",
 									"hires" : "data/tex/jupiter-4k.jpg"
@@ -200,7 +246,11 @@
 	
 	"parent" : "Sol", 
 	"impl" : "gaia.cu9.ari.gaiaorbit.scenegraph.Planet",
-	"coord" : "vsop87.SaturnVSOP87",
+	
+	"coordinates" : {
+					// This must implement gaia.cu9.ari.gaiaorbit.util.coord.IBodyCoordinates				
+					"impl" : "gaia.cu9.ari.gaiaorbit.util.coord.vsop87.SaturnVSOP87"
+					},	
 		
 	"rotation" 		: {
 						// In hours
@@ -215,7 +265,11 @@
 	"model"			: {
 						"args" : [true],
 						"type" : "sphere",
-						"quality" : 150,
+						"params" : {
+									"quality" : 150,
+									"diameter" : 1.0,
+									"flip" : false
+									},
 						"texture" : {
 									"base" : "data/tex/saturn.jpg",
 									"ring" : "data/tex/saturn-ring.png"
@@ -230,70 +284,86 @@
 
 	
 	{
-		"name" : "Uranus",
-		"color" : [.40, .76, .92, 1.0],
-		"size" : 25362.0,
-		"ct" : Planets,
+	"name" : "Uranus",
+	"color" : [.40, .76, .92, 1.0],
+	"size" : 25362.0,
+	"ct" : Planets,
 
-		"absmag" : -8.21,
-		"appmag" : 5.32,
+	"absmag" : -8.21,
+	"appmag" : 5.32,
+	
+	"parent" : "Sol", 
+	"impl" : "gaia.cu9.ari.gaiaorbit.scenegraph.Planet",
+	
+	"coordinates" : {
+					// This must implement gaia.cu9.ari.gaiaorbit.util.coord.IBodyCoordinates				
+					"impl" : "gaia.cu9.ari.gaiaorbit.util.coord.vsop87.UranusVSOP87"
+					},	
 		
-		"parent" : "Sol", 
-		"impl" : "gaia.cu9.ari.gaiaorbit.scenegraph.Planet",
-		"coord" : "vsop87.UranusVSOP87",
-			
-		"rotation" 		: {
-							// In hours
-							"period" : 17.24,
-							// Angle between equatorial plane and orbital plane
-							"axialtilt" : -97.77,
-							// Inclination of orbit plane with respect to ecliptic
-							"inclination" : 0.772556,
-							"meridianangle" : 331.13
-							},
-							
-		"model"			: {
-							"args" : [true],
-							"type" : "sphere",
-							"quality" : 150,
-							"texture" : {
-										"base" : "data/tex/uranus.jpg",
-										}
-							}
+	"rotation" 		: {
+						// In hours
+						"period" : 17.24,
+						// Angle between equatorial plane and orbital plane
+						"axialtilt" : -97.77,
+						// Inclination of orbit plane with respect to ecliptic
+						"inclination" : 0.772556,
+						"meridianangle" : 331.13
+						},
+						
+	"model"			: {
+						"args" : [true],
+						"type" : "sphere",
+						"params" : {
+									"quality" : 150,
+									"diameter" : 1.0,
+									"flip" : false
+									},
+						"texture" : {
+									"base" : "data/tex/uranus.jpg",
+									}
+						}
 	},
 	
 	
 	{
-		"name" : "Neptune",
-		"color" : [.23, .36, .89, 1.0],
-		"size" : 24622.0,
-		"ct" : Planets,
+	"name" : "Neptune",
+	"color" : [.23, .36, .89, 1.0],
+	"size" : 24622.0,
+	"ct" : Planets,
 
-		"absmag" : -7.56,
-		"appmag" : 7.78,
+	"absmag" : -7.56,
+	"appmag" : 7.78,
+	
+	"parent" : "Sol", 
+	"impl" : "gaia.cu9.ari.gaiaorbit.scenegraph.Planet",
+
+	"coordinates" : {
+					// This must implement gaia.cu9.ari.gaiaorbit.util.coord.IBodyCoordinates				
+					"impl" : "gaia.cu9.ari.gaiaorbit.util.coord.vsop87.NeptuneVSOP87"
+					},	
 		
-		"parent" : "Sol", 
-		"impl" : "gaia.cu9.ari.gaiaorbit.scenegraph.Planet",
-		"coord" : "vsop87.NeptuneVSOP87",
-			
-		"rotation" 		: {
-							// In hours
-							"period" : 16.11,
-							// Angle between equatorial plane and orbital plane
-							"axialtilt" : 28.32,
-							// Inclination of orbit plane with respect to ecliptic
-							"inclination" : 1.767975,
-							"ascendingnode" : 49.24,
-							"meridianangle" : 228.66
-							},
-							
-		"model"			: {
-							"args" : [true],
-							"type" : "sphere",
-							"quality" : 150,
-							"texture" : {
-										"base" : "data/tex/neptune.jpg",
-										}
-							}
+	"rotation" 		: {
+						// In hours
+						"period" : 16.11,
+						// Angle between equatorial plane and orbital plane
+						"axialtilt" : 28.32,
+						// Inclination of orbit plane with respect to ecliptic
+						"inclination" : 1.767975,
+						"ascendingnode" : 49.24,
+						"meridianangle" : 228.66
+						},
+						
+	"model"			: {
+						"args" : [true],
+						"type" : "sphere",
+						"params" : {
+									"quality" : 150,
+									"diameter" : 1.0,
+									"flip" : false
+									},
+						"texture" : {
+									"base" : "data/tex/neptune.jpg",
+									}
+						}
 	}
 ]}

@@ -63,11 +63,6 @@ public class Planet extends ModelBody implements IAtmosphereRenderable {
 	    ac.doneLoading(mc.instance.materials.first(), this.size);
 	}
 
-	// INITIALIZE COORDINATES
-	if (coordinates != null) {
-	    coordinates.initialize(sg.getNode(orbitName));
-	}
-
     }
 
     @Override

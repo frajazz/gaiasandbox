@@ -12,7 +12,9 @@ import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Map;
 import java.util.Properties;
+import java.util.TreeMap;
 import java.util.zip.DataFormatException;
 
 import com.badlogic.gdx.utils.JsonReader;
@@ -138,21 +140,84 @@ public class JsonLoader<T extends SceneGraphNode> implements ISceneGraphNodeProv
 			value = attribute.asIntArray();
 			break;
 		    }
-		    Method m = clazz.getMethod("set" + GlobalResources.propertyToMethodName(attribute.name), valueClass);
-		    m.invoke(instance, value);
 
 		} else if (attribute.isObject()) {
 		    String clazzName = attribute.has("impl") ? attribute.getString("impl") : GlobalResources.capitalise(attribute.name) + "Component";
-		    valueClass = Class.forName(COMPONENTS_PACKAGE + clazzName);
-		    value = convertJsonToObject(attribute, valueClass);
+		    try {
+			valueClass = Class.forName(clazzName);
+			value = convertJsonToObject(attribute, valueClass);
+		    } catch (ClassNotFoundException e1) {
+			// Class not found, probably a component
+			try {
+			    valueClass = Class.forName(COMPONENTS_PACKAGE + clazzName);
+			    value = convertJsonToObject(attribute, valueClass);
+			} catch (ClassNotFoundException e2) {
+			    // We use a map
+			    valueClass = Map.class;
+			    value = convertJsonToMap(attribute);
+			}
+		    }
 
 		}
-		Method m = clazz.getMethod("set" + GlobalResources.propertyToMethodName(attribute.name), valueClass);
-		m.invoke(instance, value);
+		String methodName = "set" + GlobalResources.propertyToMethodName(attribute.name);
+		Method m = searchMethod(methodName, valueClass, clazz);
+		if (m != null)
+		    m.invoke(instance, value);
+		else
+		    throw new NoSuchMethodException("No method " + methodName + " in class " + valueClass.toString() + " or its interfaces or superclass.");
 	    }
 	    attribute = attribute.next;
 	}
 	return instance;
+    }
+
+    public Map<String, Object> convertJsonToMap(JsonValue json) {
+	Map<String, Object> map = new TreeMap<String, Object>();
+
+	JsonValue child = json.child;
+	while (child != null) {
+	    Object val = getValue(child);
+	    if (val != null) {
+		map.put(child.name, val);
+	    }
+	    child = child.next;
+	}
+
+	return map;
+    }
+
+    /**
+     * Searches for the given method with the given class. If none is found, it looks for fitting methods
+     * with the classe's interfaces and superclasses recursively.
+     * @param methodName
+     * @param clazz
+     * @return
+     */
+    private Method searchMethod(String methodName, Class<?> clazz, Class<?> source) {
+	Method m = null;
+	try {
+	    m = source.getMethod(methodName, clazz);
+	} catch (NoSuchMethodException e) {
+	    // Let's see if we find a method that fits one of the implementing interfaces
+	    Class<?>[] interfaces = clazz.getInterfaces();
+	    boolean found = false;
+	    int i = 0;
+	    while (!found && i < interfaces.length) {
+		Class<?> current = interfaces[i];
+		try {
+		    m = source.getMethod(methodName, current);
+		    found = true;
+		} catch (NoSuchMethodException e1) {
+		    // Not lucky
+		}
+		i++;
+	    }
+	    // Let's try recursively with the superclass
+	    if (!found) {
+		return searchMethod(methodName, clazz.getSuperclass(), source);
+	    }
+	}
+	return m;
     }
 
     private Object getValue(JsonValue val) {

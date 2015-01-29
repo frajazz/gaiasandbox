@@ -53,10 +53,6 @@ public class Gaia extends ModelBody {
 	super.doneLoading(manager);
 	EventManager.getInstance().post(Events.GAIA_LOADED, this);
 
-	// INITIALIZE COORDINATES
-	if (coordinates != null) {
-	    coordinates.initialize(sg.getNode(orbitName));
-	}
     }
 
     @Override

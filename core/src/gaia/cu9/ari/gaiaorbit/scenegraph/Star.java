@@ -11,7 +11,9 @@ import gaia.cu9.ari.gaiaorbit.util.math.Vector2d;
 import gaia.cu9.ari.gaiaorbit.util.math.Vector3d;
 import gaia.cu9.ari.gaiaorbit.util.time.TimeUtils;
 
+import java.util.Map;
 import java.util.Random;
+import java.util.TreeMap;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.assets.AssetManager;
@@ -70,7 +72,12 @@ public class Star extends CelestialBody {
 	    Texture lut = new Texture(Gdx.files.internal(GlobalConf.TEX_FOLDER + "lut.jpg"));
 	    tex.setFilter(TextureFilter.Linear, TextureFilter.Linear);
 
-	    Model model = ModelCache.cache.getModel("sphere", 100, 1, false, Usage.Position | Usage.Normal | Usage.TextureCoordinates);
+	    Map<String, Object> params = new TreeMap<String, Object>();
+	    params.put("quality", 100l);
+	    params.put("diameter", 1d);
+	    params.put("flip", false);
+
+	    Model model = ModelCache.cache.getModel("sphere", params, Usage.Position | Usage.Normal | Usage.TextureCoordinates);
 	    Material mat = model.materials.first();
 	    mat.clear();
 	    mat.set(new TextureAttribute(TextureAttribute.Diffuse, tex));

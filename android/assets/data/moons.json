@@ -11,7 +11,11 @@
 	
 	"parent" : "Earth", 
 	"impl" : "gaia.cu9.ari.gaiaorbit.scenegraph.Planet",
-	"coord" : "MoonAACoordinates",
+
+	"coordinates" : {
+				// This must implement gaia.cu9.ari.gaiaorbit.util.coord.IBodyCoordinates				
+				"impl" : "gaia.cu9.ari.gaiaorbit.util.coord.MoonAACoordinates"
+				},	
 		
 	"rotation" 		: {
 						// In hours
@@ -27,7 +31,11 @@
 	"model"			: {
 						"args" : [true],
 						"type" : "sphere",
-						"quality" : 130,
+						"params" : {
+									"quality" : 130,
+									"diameter" : 1.0,
+									"flip" : false
+									},
 						"texture" : {
 									"base" : "data/tex/moon.jpg",
 									"hires" : "data/tex/moon-4k.jpg",
@@ -48,8 +56,12 @@
 		
 		"parent" : "Mars", 
 		"impl" : "gaia.cu9.ari.gaiaorbit.scenegraph.Planet",
-		"coord" : "OrbitLintCoordinates",
-		"coordinatesorbit" : "Phobos orbit",
+		
+		"coordinates" : {
+						// This must implement gaia.cu9.ari.gaiaorbit.util.coord.IBodyCoordinates				
+						"impl" : "gaia.cu9.ari.gaiaorbit.util.coord.OrbitLintCoordinates",
+						"orbitname" : "Phobos orbit"
+						},
 			
 		"rotation" 		: {
 							// In hours
@@ -84,8 +96,12 @@
 		
 		"parent" : "Mars", 
 		"impl" : "gaia.cu9.ari.gaiaorbit.scenegraph.Planet",
-		"coord" : "OrbitLintCoordinates",
-		"coordinatesorbit" : "Deimos orbit",
+		
+		"coordinates" : {
+						// This must implement gaia.cu9.ari.gaiaorbit.util.coord.IBodyCoordinates				
+						"impl" : "gaia.cu9.ari.gaiaorbit.util.coord.OrbitLintCoordinates",
+						"orbitname" : "Deimos orbit"
+						},
 			
 		"rotation" 		: {
 							// In hours
@@ -120,8 +136,12 @@
 		
 		"parent" : "Jupiter", 
 		"impl" : "gaia.cu9.ari.gaiaorbit.scenegraph.Planet",
-		"coord" : "OrbitLintCoordinates",
-		"coordinatesorbit" : "Amalthea orbit",
+		
+		"coordinates" : {
+						// This must implement gaia.cu9.ari.gaiaorbit.util.coord.IBodyCoordinates				
+						"impl" : "gaia.cu9.ari.gaiaorbit.util.coord.OrbitLintCoordinates",
+						"orbitname" : "Amalthea orbit"
+						},
 			
 		"rotation" 		: {
 							// In hours
@@ -153,8 +173,12 @@
 		
 		"parent" : "Jupiter", 
 		"impl" : "gaia.cu9.ari.gaiaorbit.scenegraph.Planet",
-		"coord" : "OrbitLintCoordinates",
-		"coordinatesorbit" : "Io orbit",
+		
+		"coordinates" : {
+						// This must implement gaia.cu9.ari.gaiaorbit.util.coord.IBodyCoordinates				
+						"impl" : "gaia.cu9.ari.gaiaorbit.util.coord.OrbitLintCoordinates",
+						"orbitname" : "Io orbit"
+						},
 			
 		"rotation" 		: {
 							// In hours
@@ -170,7 +194,11 @@
 		"model"			: {
 							"args" : [true],
 							"type" : "sphere",
-							"quality" : 130,
+							"params" : {
+									"quality" : 130,
+									"diameter" : 1.0,
+									"flip" : false
+									},
 							"texture" : {
 										"base" : "data/tex/io.jpg"
 										}
@@ -189,8 +217,12 @@
 		
 		"parent" : "Jupiter", 
 		"impl" : "gaia.cu9.ari.gaiaorbit.scenegraph.Planet",
-		"coord" : "OrbitLintCoordinates",
-		"coordinatesorbit" : "Europa orbit",
+		
+		"coordinates" : {
+						// This must implement gaia.cu9.ari.gaiaorbit.util.coord.IBodyCoordinates				
+						"impl" : "gaia.cu9.ari.gaiaorbit.util.coord.OrbitLintCoordinates",
+						"orbitname" : "Europa orbit"
+						},
 			
 		"rotation" 		: {
 							// In hours
@@ -206,7 +238,11 @@
 		"model"			: {
 							"args" : [true],
 							"type" : "sphere",
-							"quality" : 130,
+							"params" : {
+									"quality" : 130,
+									"diameter" : 1.0,
+									"flip" : false
+									},
 							"texture" : {
 										"base" : "data/tex/europa.jpg"
 										}
@@ -225,8 +261,12 @@
 		
 		"parent" : "Jupiter", 
 		"impl" : "gaia.cu9.ari.gaiaorbit.scenegraph.Planet",
-		"coord" : "OrbitLintCoordinates",
-		"coordinatesorbit" : "Ganymede orbit",
+		
+		"coordinates" : {
+						// This must implement gaia.cu9.ari.gaiaorbit.util.coord.IBodyCoordinates				
+						"impl" : "gaia.cu9.ari.gaiaorbit.util.coord.OrbitLintCoordinates",
+						"orbitname" : "Ganymede orbit"
+						},
 			
 		"rotation" 		: {
 							// In hours
@@ -242,7 +282,11 @@
 		"model"			: {
 							"args" : [true],
 							"type" : "sphere",
-							"quality" : 130,
+							"params" : {
+									"quality" : 130,
+									"diameter" : 1.0,
+									"flip" : false
+									},
 							"texture" : {
 										"base" : "data/tex/ganymede.jpg"
 										}
@@ -261,8 +305,12 @@
 		
 		"parent" : "Jupiter", 
 		"impl" : "gaia.cu9.ari.gaiaorbit.scenegraph.Planet",
-		"coord" : "OrbitLintCoordinates",
-		"coordinatesorbit" : "Callisto orbit",
+		
+		"coordinates" : {
+						// This must implement gaia.cu9.ari.gaiaorbit.util.coord.IBodyCoordinates				
+						"impl" : "gaia.cu9.ari.gaiaorbit.util.coord.OrbitLintCoordinates",
+						"orbitname" : "Callisto orbit"
+						},
 			
 		"rotation" 		: {
 							// In hours
@@ -278,7 +326,11 @@
 		"model"			: {
 							"args" : [true],
 							"type" : "sphere",
-							"quality" : 130,
+							"params" : {
+									"quality" : 130,
+									"diameter" : 1.0,
+									"flip" : false
+									},
 							"texture" : {
 										"base" : "data/tex/callisto.jpg"
 										}
@@ -297,8 +349,12 @@
 		
 		"parent" : "Saturn", 
 		"impl" : "gaia.cu9.ari.gaiaorbit.scenegraph.Planet",
-		"coord" : "OrbitLintCoordinates",
-		"coordinatesorbit" : "Prometheus orbit",
+		
+		"coordinates" : {
+						// This must implement gaia.cu9.ari.gaiaorbit.util.coord.IBodyCoordinates				
+						"impl" : "gaia.cu9.ari.gaiaorbit.util.coord.OrbitLintCoordinates",
+						"orbitname" : "Prometheus orbit"
+						},
 			
 		"rotation" 		: {
 							// In hours

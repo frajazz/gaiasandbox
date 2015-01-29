@@ -5,9 +5,11 @@ import gaia.cu9.ari.gaiaorbit.event.Events;
 import gaia.cu9.ari.gaiaorbit.render.ILabelRenderable;
 import gaia.cu9.ari.gaiaorbit.util.DecalUtils;
 import gaia.cu9.ari.gaiaorbit.util.GlobalResources;
+import gaia.cu9.ari.gaiaorbit.util.coord.IBodyCoordinates;
 import gaia.cu9.ari.gaiaorbit.util.math.Vector2d;
 import gaia.cu9.ari.gaiaorbit.util.math.Vector3d;
 
+import com.badlogic.gdx.assets.AssetManager;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.glutils.ShaderProgram;
@@ -29,6 +31,11 @@ public abstract class AbstractPositionEntity extends SceneGraphNode {
      * The units are {@link gaia.cu9.ari.gaiaorbit.util.Constants#U_TO_KM} by default. 
      */
     public Vector3d pos;
+
+    /** 
+     * Coordinates provider. Helps updating the position at each time step. 
+     **/
+    protected IBodyCoordinates coordinates;
 
     /**
      * Position in the equatorial system; ra, dec.
@@ -77,6 +84,14 @@ public abstract class AbstractPositionEntity extends SceneGraphNode {
 
     public AbstractPositionEntity(String name) {
 	super(name);
+    }
+
+    @Override
+    public void doneLoading(AssetManager manager) {
+	super.doneLoading(manager);
+
+	if (coordinates != null)
+	    coordinates.doneLoading(sg);
     }
 
     public Vector3d getPosition(Vector3d aux) {
@@ -157,6 +172,7 @@ public abstract class AbstractPositionEntity extends SceneGraphNode {
 	    instance.viewAngle = this.viewAngle;
 	    instance.transform.set(this.transform);
 	    instance.ct = this.ct;
+	    instance.coordinates = this.coordinates;
 	    if (this.localTransform != null)
 		instance.localTransform.set(this.localTransform);
 
@@ -194,6 +210,10 @@ public abstract class AbstractPositionEntity extends SceneGraphNode {
 
 	font.setColor(colour[0], colour[1], colour[2], colour[3]);
 	DecalUtils.drawFont3D(font, batch, label, (float) p.x, (float) p.y, (float) p.z, size, camera.getCamera(), true);
+    }
+
+    public void setCoordinates(IBodyCoordinates coord) {
+	coordinates = coord;
     }
 
 }

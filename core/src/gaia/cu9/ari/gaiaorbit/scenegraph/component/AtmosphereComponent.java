@@ -8,6 +8,8 @@ import gaia.cu9.ari.gaiaorbit.util.math.Vector3d;
 import gaia.cu9.ari.gaiaorbit.util.override.AtmosphereAttribute;
 import gaia.cu9.ari.gaiaorbit.util.override.Vector3Attribute;
 
+import java.util.Map;
+
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.VertexAttributes.Usage;
 import com.badlogic.gdx.graphics.g3d.Material;
@@ -29,6 +31,9 @@ public class AtmosphereComponent {
     public float m_fAtmosphereHeight;
     public float m_Kr, m_Km;
 
+    // Model parameters
+    public Map<String, Object> params;
+
     Vector3d aux3;
 
     public AtmosphereComponent() {
@@ -40,7 +45,7 @@ public class AtmosphereComponent {
     public void doneLoading(Material planetMat, float planetSize) {
 	setUpAtmosphericScatteringMaterial(planetMat, planetSize);
 
-	Model atmosphereModel = ModelCache.cache.getModel("sphere", quality, 2, true, Usage.Position | Usage.Normal);
+	Model atmosphereModel = ModelCache.cache.getModel("sphere", params, Usage.Position | Usage.Normal);
 	Material atmMat = atmosphereModel.materials.first();
 	atmMat.clear();
 	setUpAtmosphericScatteringMaterial(atmMat, planetSize);
@@ -203,6 +208,10 @@ public class AtmosphereComponent {
 
     public void setM_Km(Double m_Km) {
 	this.m_Km = m_Km.floatValue();
+    }
+
+    public void setParams(Map<String, Object> params) {
+	this.params = params;
     }
 
 }

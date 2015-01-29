@@ -4,6 +4,7 @@ import gaia.cu9.ari.gaiaorbit.data.orbit.OrbitData;
 import gaia.cu9.ari.gaiaorbit.event.EventManager;
 import gaia.cu9.ari.gaiaorbit.event.Events;
 import gaia.cu9.ari.gaiaorbit.scenegraph.CelestialBody;
+import gaia.cu9.ari.gaiaorbit.scenegraph.ISceneGraph;
 import gaia.cu9.ari.gaiaorbit.scenegraph.Orbit;
 import gaia.cu9.ari.gaiaorbit.scenegraph.SceneGraphNode;
 import gaia.cu9.ari.gaiaorbit.scenegraph.component.OrbitComponent;
@@ -13,6 +14,7 @@ import gaia.cu9.ari.gaiaorbit.util.math.Vector3d;
 import java.util.Date;
 
 public class OrbitLintCoordinates implements IBodyCoordinates {
+    String orbitname;
     Orbit orbit;
     OrbitComponent orbitalParams;
     OrbitData data;
@@ -20,12 +22,12 @@ public class OrbitLintCoordinates implements IBodyCoordinates {
     Vector3d aux = new Vector3d();
 
     @Override
-    public void initialize(Object... params) {
+    public void doneLoading(Object... params) {
 	if (params.length == 0) {
-	    EventManager.getInstance().post(Events.JAVA_EXCEPTION, new RuntimeException("OrbitLintCoordinates need the orbit name"));
+	    EventManager.getInstance().post(Events.JAVA_EXCEPTION, new RuntimeException("OrbitLintCoordinates need the scene graph"));
 	} else {
 	    transf = new Matrix4d();
-	    SceneGraphNode sgn = (SceneGraphNode) params[0];
+	    SceneGraphNode sgn = ((ISceneGraph) params[0]).getNode(orbitname);
 	    orbit = (Orbit) sgn;
 	    orbitalParams = orbit.oc;
 	    data = orbit.orbitData;
@@ -71,6 +73,10 @@ public class OrbitLintCoordinates implements IBodyCoordinates {
 
 	out.mul(transf);
 	return out;
+    }
+
+    public void setOrbitname(String orbitname) {
+	this.orbitname = orbitname;
     }
 
 }

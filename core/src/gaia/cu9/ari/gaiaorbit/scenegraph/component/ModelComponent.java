@@ -4,6 +4,8 @@ import gaia.cu9.ari.gaiaorbit.data.AssetBean;
 import gaia.cu9.ari.gaiaorbit.data.FileLocator;
 import gaia.cu9.ari.gaiaorbit.util.ModelCache;
 
+import java.util.Map;
+
 import com.badlogic.gdx.assets.AssetManager;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.Texture;
@@ -46,8 +48,9 @@ public class ModelComponent {
     /** Directional light **/
     public DirectionalLight dlight;
 
+    public Map<String, Object> params;
+
     public String type, model;
-    public Integer quality;
 
     /**
      * COMPONENTS
@@ -84,16 +87,16 @@ public class ModelComponent {
 
     public void doneLoading(AssetManager manager, Matrix4 localTransform, float[] cc) {
 
-	Model planetModel = null;
+	Model finalModel = null;
 	Material material = null;
 	if (manager.isLoaded(model)) {
 	    // Model comes from file (probably .obj or .g3db)
-	    planetModel = manager.get(model, Model.class);
-	    if (planetModel.materials.size == 0) {
+	    finalModel = manager.get(model, Model.class);
+	    if (finalModel.materials.size == 0) {
 		material = new Material();
-		planetModel.materials.add(material);
+		finalModel.materials.add(material);
 	    } else {
-		material = planetModel.materials.first();
+		material = finalModel.materials.first();
 	    }
 	} else {
 	    // We create the model
@@ -105,12 +108,13 @@ public class ModelComponent {
 		ringMat.set(new BlendingAttribute(GL20.GL_SRC_ALPHA, GL20.GL_ONE_MINUS_SRC_ALPHA));
 
 		material = new Material();
-		planetModel = ModelCache.cache.mb.createSphereRing(1, quality, quality, rc.innerRadius, rc.outerRadius, rc.divisions,
+		int quality = ((Long) params.get("quality")).intValue();
+		finalModel = ModelCache.cache.mb.createSphereRing(1, quality, quality, rc.innerRadius, rc.outerRadius, rc.divisions,
 			material, ringMat, Usage.Position | Usage.Normal | Usage.TextureCoordinates);
 	    } else {
-		// Regular sphere
-		planetModel = ModelCache.cache.getModel(type, quality, 1, false, Usage.Position | Usage.Normal | Usage.TextureCoordinates);
-		material = planetModel.materials.first();
+		// Regular type
+		finalModel = ModelCache.cache.getModel(type, params, Usage.Position | Usage.Normal | Usage.TextureCoordinates);
+		material = finalModel.materials.first();
 	    }
 	}
 	material.clear();
@@ -121,7 +125,7 @@ public class ModelComponent {
 	}
 
 	// CREATE MAIN MODEL INSTANCE
-	instance = new ModelInstance(planetModel, localTransform);
+	instance = new ModelInstance(finalModel, localTransform);
     }
 
     public void addDirectionalLight(float r, float g, float b, float x, float y, float z) {
@@ -161,14 +165,6 @@ public class ModelComponent {
 	this.type = type;
     }
 
-    public void setQuality(Integer quality) {
-	this.quality = quality;
-    }
-
-    public void setQuality(Long quality) {
-	this.quality = quality.intValue();
-    }
-
     public void setTexture(TextureComponent tc) {
 	this.tc = tc;
     }
@@ -179,6 +175,10 @@ public class ModelComponent {
 
     public void setModel(String model) {
 	this.model = model;
+    }
+
+    public void setParams(Map<String, Object> params) {
+	this.params = params;
     }
 
 }

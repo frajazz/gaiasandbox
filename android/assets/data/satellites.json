@@ -11,8 +11,11 @@
 	
 	"parent" : "Earth", 
 	"impl" : "gaia.cu9.ari.gaiaorbit.scenegraph.Gaia",
-	"coord" : "GaiaCoordinates",
-	"coordinatesorbit" : "Gaia orbit",
+
+	"coordinates" : {
+				// This must implement gaia.cu9.ari.gaiaorbit.util.coord.IBodyCoordinates				
+				"impl" : "gaia.cu9.ari.gaiaorbit.util.coord.GaiaCoordinates"
+				},
 		
 	"rotation" 		: {
 						"period" : 1407.509405,

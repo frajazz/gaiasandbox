@@ -15,7 +15,7 @@ public interface IBodyCoordinates {
      * Initializes the coordinates object
      * @param params
      */
-    public void initialize(Object... params);
+    public void doneLoading(Object... params);
 
     /**
      * Returns the ecliptic coordinates of the body in the out vector for the given date.

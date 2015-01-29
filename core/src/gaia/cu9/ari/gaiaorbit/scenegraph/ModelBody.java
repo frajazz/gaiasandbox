@@ -2,23 +2,14 @@ package gaia.cu9.ari.gaiaorbit.scenegraph;
 
 import gaia.cu9.ari.gaiaorbit.scenegraph.component.ModelComponent;
 import gaia.cu9.ari.gaiaorbit.util.GlobalConf;
-import gaia.cu9.ari.gaiaorbit.util.coord.IBodyCoordinates;
-import gaia.cu9.ari.gaiaorbit.util.coord.vsop87.DummyVSOP87;
 import gaia.cu9.ari.gaiaorbit.util.math.Matrix4d;
 
-import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.assets.AssetManager;
 import com.badlogic.gdx.graphics.g3d.ModelBatch;
 import com.badlogic.gdx.math.Matrix4;
 
 public abstract class ModelBody extends CelestialBody {
     protected static final float TH_ANGLE_POINT = (float) Math.toRadians(0.35);
-
-    /** Coordinates provider **/
-    protected IBodyCoordinates coordinates;
-
-    /** Name of orbit object, if any **/
-    protected String orbitName;
 
     /**
      * Angle limit for rendering as point. If angle is any bigger, we render with shader.
@@ -47,6 +38,7 @@ public abstract class ModelBody extends CelestialBody {
 
     @Override
     public void doneLoading(AssetManager manager) {
+	super.doneLoading(manager);
 	if (mc != null) {
 	    mc.doneLoading(manager, localTransform, cc);
 	}
@@ -124,37 +116,6 @@ public abstract class ModelBody extends CelestialBody {
     @Override
     protected float labelMax() {
 	return 2.5e-4f;
-    }
-
-    public void setCoord(String coordinatesClass) {
-	setCoordinates(coordinatesClass);
-    }
-
-    public void setCoordinates(String coordinatesClass) {
-	String className = "gaia.cu9.ari.gaiaorbit.util.coord." + coordinatesClass;
-	Class<?> clazz = null;
-	try {
-	    clazz = Class.forName(className);
-	} catch (ClassNotFoundException e) {
-	    clazz = DummyVSOP87.class;
-	}
-	try {
-	    coordinates = (IBodyCoordinates) clazz.newInstance();
-	} catch (InstantiationException | IllegalAccessException e) {
-	    Gdx.app.error(this.getClass().getSimpleName(), e.getLocalizedMessage());
-	}
-
-    }
-
-    public void setCoordinatesorbit(String coordinatesOrbit) {
-	this.orbitName = coordinatesOrbit;
-    }
-
-    @Override
-    public <T extends SceneGraphNode> T getSimpleCopy() {
-	ModelBody mb = (ModelBody) super.getSimpleCopy();
-	mb.coordinates = this.coordinates;
-	return (T) mb;
     }
 
     public void setModel(ModelComponent mc) {

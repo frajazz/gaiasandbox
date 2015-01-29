@@ -89,6 +89,12 @@ public class TextureComponent {
 	}
     }
 
+    /**
+     * 
+     * @param manager
+     * @param material
+     * @param cc Plain color used if there is no texture.
+     */
     public void initMaterial(AssetManager manager, Material material, float[] cc) {
 	if (base != null) {
 	    lo_resTex = manager.get(base, Texture.class);

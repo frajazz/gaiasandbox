@@ -4,9 +4,7 @@ import gaia.cu9.ari.gaiaorbit.render.ILabelRenderable;
 import gaia.cu9.ari.gaiaorbit.render.IModelRenderable;
 import gaia.cu9.ari.gaiaorbit.scenegraph.component.ModelComponent;
 import gaia.cu9.ari.gaiaorbit.util.Constants;
-import gaia.cu9.ari.gaiaorbit.util.ModelCache;
 import gaia.cu9.ari.gaiaorbit.util.coord.Coordinates;
-import gaia.cu9.ari.gaiaorbit.util.g3d.ModelBuilder2;
 import gaia.cu9.ari.gaiaorbit.util.math.Matrix4d;
 import gaia.cu9.ari.gaiaorbit.util.math.Vector3d;
 
@@ -16,21 +14,15 @@ import java.lang.reflect.Method;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.assets.AssetManager;
 import com.badlogic.gdx.graphics.GL20;
-import com.badlogic.gdx.graphics.VertexAttributes.Usage;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
-import com.badlogic.gdx.graphics.g3d.Material;
-import com.badlogic.gdx.graphics.g3d.Model;
 import com.badlogic.gdx.graphics.g3d.ModelBatch;
-import com.badlogic.gdx.graphics.g3d.ModelInstance;
 import com.badlogic.gdx.graphics.g3d.attributes.ColorAttribute;
-import com.badlogic.gdx.graphics.g3d.attributes.TextureAttribute;
 import com.badlogic.gdx.graphics.glutils.ShaderProgram;
 import com.badlogic.gdx.math.Matrix4;
 
 public class MilkyWay extends Blob implements IModelRenderable, ILabelRenderable {
     static float[] labelColour = new float[] { 1f, .4f, .7f, 1f };
-    double[] position;
     ModelComponent mc;
     String model, transformName;
     Matrix4 coordinateSystem;
@@ -45,12 +37,16 @@ public class MilkyWay extends Blob implements IModelRenderable, ILabelRenderable
 
     public void initialize() {
 	mc.initialize();
-	pos.set(position);
 	mc.env.set(new ColorAttribute(ColorAttribute.AmbientLight, cc[0], cc[1], cc[2], 1));
     }
 
     @Override
     public void doneLoading(AssetManager manager) {
+	super.doneLoading(manager);
+
+	// Set static coordinates to position
+	coordinates.getEquatorialCartesianCoordinates(null, pos);
+
 	// Initialize transform
 	if (transformName != null) {
 	    Class<Coordinates> c = Coordinates.class;
@@ -65,34 +61,7 @@ public class MilkyWay extends Blob implements IModelRenderable, ILabelRenderable
 	    // Equatorial, nothing
 	}
 	// Model
-	Model mwModel = null;
-	if (manager.isLoaded(model)) {
-	    // Get model from file
-	    mwModel = manager.get(this.model, Model.class);
-	} else {
-	    // Prepare model
-	    Material mat = new Material();
-	    mc.tc.lo_resTex = manager.get(mc.tc.base);
-	    mat.set(new TextureAttribute(TextureAttribute.Diffuse, mc.tc.lo_resTex));
-	    ModelBuilder2 mb = ModelCache.cache.mb;
-	    // Initialize milky way model
-	    mb.begin();
-	    mb.part("mw-up", GL20.GL_TRIANGLES, Usage.Position | Usage.Normal | Usage.TextureCoordinates, mat).
-		    rect(0.5f, 0, -0.5f,
-			    0.5f, 0, 0.5f,
-			    -0.5f, 0, 0.5f,
-			    -0.5f, 0, -0.5f,
-			    0, 1, 0);
-	    mb.part("mw-down", GL20.GL_TRIANGLES, Usage.Position | Usage.Normal | Usage.TextureCoordinates, mat).
-		    rect(-0.5f, -0.001f, 0.5f,
-			    0.5f, -0.001f, 0.5f,
-			    0.5f, -0.001f, -0.5f,
-			    -0.5f, -0.001f, -0.5f,
-			    0, 1, 0);
-	    mwModel = mb.end();
-	}
-	mc.instance = new ModelInstance(mwModel, this.localTransform);
-
+	mc.doneLoading(manager, localTransform, null);
     }
 
     @Override
@@ -123,20 +92,16 @@ public class MilkyWay extends Blob implements IModelRenderable, ILabelRenderable
     protected void updateLocalTransform() {
 	// Scale + Rotate + Tilt + Translate 
 	float[] trans = transform.getMatrix().getTranslationf();
-	localTransform.idt().translate(trans[0], trans[1], trans[2]).scl(size).mul(coordinateSystem);
-    }
-
-    public void setPosition(double[] position) {
-	this.position = position;
-	this.position[0] *= Constants.KM_TO_U;
-	this.position[1] *= Constants.KM_TO_U;
-	this.position[2] *= Constants.KM_TO_U;
+	localTransform.idt().translate(trans[0], trans[1], trans[2]).scl(size);
+	localTransform.mul(coordinateSystem);
     }
 
     @Override
     public void render(Object... params) {
 	if (params[0] instanceof ModelBatch) {
+	    // Render model
 	    render((ModelBatch) params[0], (Float) params[1]);
+	    // Render label?
 	} else if (params[0] instanceof SpriteBatch) {
 	    render((SpriteBatch) params[0], (ShaderProgram) params[1], (BitmapFont) params[2], (ICamera) params[3], (Float) params[4]);
 	}
@@ -177,6 +142,14 @@ public class MilkyWay extends Blob implements IModelRenderable, ILabelRenderable
     @Override
     public boolean renderLabel() {
 	return true;
+    }
+
+    /**
+     * Sets the absolute size of this entity
+     * @param size
+     */
+    public void setSize(Double size) {
+	this.size = (float) (size * Constants.KM_TO_U);
     }
 
     @Override
