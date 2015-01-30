@@ -3,13 +3,17 @@ package gaia.cu9.ari.gaiaorbit.scenegraph.component;
 import gaia.cu9.ari.gaiaorbit.data.AssetBean;
 import gaia.cu9.ari.gaiaorbit.scenegraph.ICamera;
 
+import java.util.Map;
+
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.assets.AssetManager;
 import com.badlogic.gdx.assets.loaders.TextureLoader.TextureParameter;
+import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.Texture.TextureFilter;
 import com.badlogic.gdx.graphics.g3d.Material;
 import com.badlogic.gdx.graphics.g3d.ModelInstance;
+import com.badlogic.gdx.graphics.g3d.attributes.BlendingAttribute;
 import com.badlogic.gdx.graphics.g3d.attributes.ColorAttribute;
 import com.badlogic.gdx.graphics.g3d.attributes.TextureAttribute;
 
@@ -90,12 +94,13 @@ public class TextureComponent {
     }
 
     /**
-     * 
-     * @param manager
-     * @param material
+     * Initializes the materials by binding the necessary textures to them.
+     * @param manager The asset manager.
+     * @param materials A map with at least one material under the key "base".
      * @param cc Plain color used if there is no texture.
      */
-    public void initMaterial(AssetManager manager, Material material, float[] cc) {
+    public void initMaterial(AssetManager manager, Map<String, Material> materials, float[] cc) {
+	Material material = materials.get("base");
 	if (base != null) {
 	    lo_resTex = manager.get(base, Texture.class);
 	    material.set(new TextureAttribute(TextureAttribute.Diffuse, lo_resTex));
@@ -114,6 +119,13 @@ public class TextureComponent {
 	if (night != null) {
 	    Texture tex = manager.get(night, Texture.class);
 	    material.set(new TextureAttribute(TextureAttribute.Emissive, tex));
+	}
+	if (materials.containsKey("ring")) {
+	    // Ring material
+	    Material ringMat = materials.get("ring");
+	    Texture tex = manager.get(ring, Texture.class);
+	    ringMat.set(new TextureAttribute(TextureAttribute.Diffuse, tex));
+	    ringMat.set(new BlendingAttribute(GL20.GL_SRC_ALPHA, GL20.GL_ONE_MINUS_SRC_ALPHA));
 	}
     }
 

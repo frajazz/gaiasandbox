@@ -264,21 +264,19 @@
 						
 	"model"			: {
 						"args" : [true],
-						"type" : "sphere",
+						"type" : "ring",
 						"params" : {
 									"quality" : 150,
 									"diameter" : 1.0,
-									"flip" : false
+									"flip" : false,
+									"divisions" : 90,
+									"innerradius" : 0.6396826,
+									"outerradius" : 1.20397719
 									},
 						"texture" : {
 									"base" : "data/tex/saturn.jpg",
 									"ring" : "data/tex/saturn-ring.png"
 									},
-						"ring" : 	{
-									"divisions" : 90,
-									"innerradius" : 0.6396826,
-									"outerradius" : 1.20397719
-									}
 						}
 	},
 

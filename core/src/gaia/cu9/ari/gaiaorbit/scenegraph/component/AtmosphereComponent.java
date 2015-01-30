@@ -4,6 +4,7 @@ import gaia.cu9.ari.gaiaorbit.scenegraph.SceneGraphNode;
 import gaia.cu9.ari.gaiaorbit.scenegraph.Transform;
 import gaia.cu9.ari.gaiaorbit.util.Constants;
 import gaia.cu9.ari.gaiaorbit.util.ModelCache;
+import gaia.cu9.ari.gaiaorbit.util.Pair;
 import gaia.cu9.ari.gaiaorbit.util.math.Vector3d;
 import gaia.cu9.ari.gaiaorbit.util.override.AtmosphereAttribute;
 import gaia.cu9.ari.gaiaorbit.util.override.Vector3Attribute;
@@ -45,8 +46,9 @@ public class AtmosphereComponent {
     public void doneLoading(Material planetMat, float planetSize) {
 	setUpAtmosphericScatteringMaterial(planetMat, planetSize);
 
-	Model atmosphereModel = ModelCache.cache.getModel("sphere", params, Usage.Position | Usage.Normal);
-	Material atmMat = atmosphereModel.materials.first();
+	Pair<Model, Map<String, Material>> pair = ModelCache.cache.getModel("sphere", params, Usage.Position | Usage.Normal);
+	Model atmosphereModel = pair.getFirst();
+	Material atmMat = pair.getSecond().get("base");
 	atmMat.clear();
 	setUpAtmosphericScatteringMaterial(atmMat, planetSize);
 	atmMat.set(new BlendingAttribute(GL20.GL_SRC_ALPHA, GL20.GL_ONE_MINUS_SRC_ALPHA));

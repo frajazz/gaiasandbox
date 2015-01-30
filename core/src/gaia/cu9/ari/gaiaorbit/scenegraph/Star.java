@@ -5,6 +5,7 @@ import gaia.cu9.ari.gaiaorbit.scenegraph.component.ModelComponent;
 import gaia.cu9.ari.gaiaorbit.util.Constants;
 import gaia.cu9.ari.gaiaorbit.util.GlobalConf;
 import gaia.cu9.ari.gaiaorbit.util.ModelCache;
+import gaia.cu9.ari.gaiaorbit.util.Pair;
 import gaia.cu9.ari.gaiaorbit.util.color.ColourUtils;
 import gaia.cu9.ari.gaiaorbit.util.math.MathUtilsd;
 import gaia.cu9.ari.gaiaorbit.util.math.Vector2d;
@@ -73,12 +74,13 @@ public class Star extends CelestialBody {
 	    tex.setFilter(TextureFilter.Linear, TextureFilter.Linear);
 
 	    Map<String, Object> params = new TreeMap<String, Object>();
-	    params.put("quality", 150l);
+	    params.put("quality", 120l);
 	    params.put("diameter", 1d);
 	    params.put("flip", false);
 
-	    Model model = ModelCache.cache.getModel("sphere", params, Usage.Position | Usage.Normal | Usage.TextureCoordinates);
-	    Material mat = model.materials.first();
+	    Pair<Model, Map<String, Material>> pair = ModelCache.cache.getModel("sphere", params, Usage.Position | Usage.Normal | Usage.TextureCoordinates);
+	    Model model = pair.getFirst();
+	    Material mat = pair.getSecond().get("base");
 	    mat.clear();
 	    mat.set(new TextureAttribute(TextureAttribute.Diffuse, tex));
 	    mat.set(new TextureAttribute(TextureAttribute.Normal, lut));

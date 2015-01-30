@@ -2,13 +2,17 @@ package gaia.cu9.ari.gaiaorbit.scenegraph.component;
 
 import gaia.cu9.ari.gaiaorbit.data.AssetBean;
 import gaia.cu9.ari.gaiaorbit.data.FileLocator;
+import gaia.cu9.ari.gaiaorbit.event.EventManager;
+import gaia.cu9.ari.gaiaorbit.event.Events;
 import gaia.cu9.ari.gaiaorbit.util.ModelCache;
+import gaia.cu9.ari.gaiaorbit.util.Pair;
 
+import java.util.HashMap;
 import java.util.Map;
+import java.util.zip.DataFormatException;
 
 import com.badlogic.gdx.assets.AssetManager;
 import com.badlogic.gdx.graphics.GL20;
-import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.VertexAttributes.Usage;
 import com.badlogic.gdx.graphics.g3d.Environment;
 import com.badlogic.gdx.graphics.g3d.Material;
@@ -16,7 +20,6 @@ import com.badlogic.gdx.graphics.g3d.Model;
 import com.badlogic.gdx.graphics.g3d.ModelInstance;
 import com.badlogic.gdx.graphics.g3d.attributes.BlendingAttribute;
 import com.badlogic.gdx.graphics.g3d.attributes.ColorAttribute;
-import com.badlogic.gdx.graphics.g3d.attributes.TextureAttribute;
 import com.badlogic.gdx.graphics.g3d.environment.DirectionalLight;
 import com.badlogic.gdx.math.Matrix4;
 
@@ -50,15 +53,13 @@ public class ModelComponent {
 
     public Map<String, Object> params;
 
-    public String type, model;
+    public String type, modelFile;
 
     /**
      * COMPONENTS
      */
     // Texture
     public TextureComponent tc;
-    // Ring
-    public RingComponent rc;
 
     public ModelComponent() {
 	this(true);
@@ -76,8 +77,8 @@ public class ModelComponent {
     }
 
     public void initialize() {
-	if (model != null && FileLocator.exists(model)) {
-	    AssetBean.addAsset(model, Model.class);
+	if (modelFile != null && FileLocator.exists(modelFile)) {
+	    AssetBean.addAsset(modelFile, Model.class);
 	}
 
 	if (tc != null) {
@@ -86,46 +87,39 @@ public class ModelComponent {
     }
 
     public void doneLoading(AssetManager manager, Matrix4 localTransform, float[] cc) {
+	Model model = null;
+	Map<String, Material> materials = null;
 
-	Model finalModel = null;
-	Material material = null;
-	if (manager.isLoaded(model)) {
+	if (modelFile != null && manager.isLoaded(modelFile)) {
 	    // Model comes from file (probably .obj or .g3db)
-	    finalModel = manager.get(model, Model.class);
-	    if (finalModel.materials.size == 0) {
-		material = new Material();
-		finalModel.materials.add(material);
+	    model = manager.get(modelFile, Model.class);
+	    materials = new HashMap<String, Material>();
+	    if (model.materials.size == 0) {
+		Material material = new Material();
+		model.materials.add(material);
+		materials.put("base", material);
 	    } else {
-		material = finalModel.materials.first();
+		materials.put("base", model.materials.first());
 	    }
-	} else {
+	} else if (type != null) {
 	    // We create the model
-	    if (rc != null) {
-		// Model with ring
-		Material ringMat = new Material();
-		Texture tex = manager.get(tc.ring, Texture.class);
-		ringMat.set(new TextureAttribute(TextureAttribute.Diffuse, tex));
-		ringMat.set(new BlendingAttribute(GL20.GL_SRC_ALPHA, GL20.GL_ONE_MINUS_SRC_ALPHA));
-
-		material = new Material();
-		int quality = ((Long) params.get("quality")).intValue();
-		finalModel = ModelCache.cache.mb.createSphereRing(1, quality, quality, rc.innerRadius, rc.outerRadius, rc.divisions,
-			material, ringMat, Usage.Position | Usage.Normal | Usage.TextureCoordinates);
-	    } else {
-		// Regular type
-		finalModel = ModelCache.cache.getModel(type, params, Usage.Position | Usage.Normal | Usage.TextureCoordinates);
-		material = finalModel.materials.first();
-	    }
+	    Pair<Model, Map<String, Material>> pair = ModelCache.cache.getModel(type, params, Usage.Position | Usage.Normal | Usage.TextureCoordinates);
+	    model = pair.getFirst();
+	    materials = pair.getSecond();
+	} else {
+	    // Data error!
+	    EventManager.getInstance().post(Events.JAVA_EXCEPTION, new DataFormatException("The 'model' element must contain either a 'type' or a 'model' attribute"));
 	}
-	material.clear();
+	// Clear base material
+	materials.get("base").clear();
 
 	// INITIALIZE MATERIAL
 	if (tc != null) {
-	    tc.initMaterial(manager, material, cc);
+	    tc.initMaterial(manager, materials, cc);
 	}
 
 	// CREATE MAIN MODEL INSTANCE
-	instance = new ModelInstance(finalModel, localTransform);
+	instance = new ModelInstance(model, localTransform);
     }
 
     public void addDirectionalLight(float r, float g, float b, float x, float y, float z) {
@@ -161,6 +155,10 @@ public class ModelComponent {
 	}
     }
 
+    /**
+     * Sets the type of the model to construct.
+     * @param type The type. Currently supported types are sphere|cylinder|ring|disc.
+     */
     public void setType(String type) {
 	this.type = type;
     }
@@ -169,12 +167,12 @@ public class ModelComponent {
 	this.tc = tc;
     }
 
-    public void setRing(RingComponent rc) {
-	this.rc = rc;
-    }
-
+    /**
+     * Sets the model file path (this must be a .g3db, .g3dj or .obj).
+     * @param model
+     */
     public void setModel(String model) {
-	this.model = model;
+	this.modelFile = model;
     }
 
     public void setParams(Map<String, Object> params) {
