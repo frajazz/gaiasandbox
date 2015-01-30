@@ -42,17 +42,16 @@ public class Mw extends AbstractPositionEntity implements IModelRenderable {
 	    try {
 		Method m = c.getMethod(transformName);
 		Matrix4d trf = (Matrix4d) m.invoke(null);
-		Matrix4 aux = new Matrix4(trf.valuesf());
-		localTransform.mul(aux);
+		localTransform.set(trf.valuesf());
 	    } catch (NoSuchMethodException | SecurityException | IllegalAccessException | IllegalArgumentException | InvocationTargetException e) {
 		Gdx.app.error(Mw.class.getName(), "Error getting/invoking method Coordinates." + transformName + "()");
 	    }
 	} else {
 	    // Equatorial, nothing
 	}
-	
+
 	// Must rotate due to orientation of createCylinder
-	    localTransform.rotate(0, 1, 0, 90);
+	localTransform.rotate(0, 1, 0, 90);
 
 	// Model
 	mc.doneLoading(manager, localTransform, null);

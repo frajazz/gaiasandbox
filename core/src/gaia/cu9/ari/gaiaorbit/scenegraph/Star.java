@@ -73,7 +73,7 @@ public class Star extends CelestialBody {
 	    tex.setFilter(TextureFilter.Linear, TextureFilter.Linear);
 
 	    Map<String, Object> params = new TreeMap<String, Object>();
-	    params.put("quality", 100l);
+	    params.put("quality", 150l);
 	    params.put("diameter", 1d);
 	    params.put("flip", false);
 

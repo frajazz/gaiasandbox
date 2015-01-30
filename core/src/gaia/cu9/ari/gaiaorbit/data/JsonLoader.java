@@ -198,6 +198,9 @@ public class JsonLoader<T extends SceneGraphNode> implements ISceneGraphNodeProv
 	try {
 	    m = source.getMethod(methodName, clazz);
 	} catch (NoSuchMethodException e) {
+	    if (clazz == null) {
+		return null;
+	    }
 	    // Let's see if we find a method that fits one of the implementing interfaces
 	    Class<?>[] interfaces = clazz.getInterfaces();
 	    boolean found = false;

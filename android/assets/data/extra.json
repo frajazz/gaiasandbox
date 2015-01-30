@@ -38,9 +38,11 @@
 	{
 	"name" : "Milky Way",
 	"color" : [1.0, 1.0, 1.0, 1.0],
+	"labelcolor" : [1.0, 0.4, 0.7, 1.0],
 	"size" : 1.04913038e+18,
 	"ct" : MilkyWay,
 	"transformName" : equatorialToGalactic,
+
 
 	"parent" : "Universe", 
 	"impl" : "gaia.cu9.ari.gaiaorbit.scenegraph.MilkyWay",

@@ -4,6 +4,7 @@ import gaia.cu9.ari.gaiaorbit.render.ILabelRenderable;
 import gaia.cu9.ari.gaiaorbit.render.IModelRenderable;
 import gaia.cu9.ari.gaiaorbit.scenegraph.component.ModelComponent;
 import gaia.cu9.ari.gaiaorbit.util.Constants;
+import gaia.cu9.ari.gaiaorbit.util.GlobalResources;
 import gaia.cu9.ari.gaiaorbit.util.coord.Coordinates;
 import gaia.cu9.ari.gaiaorbit.util.math.Matrix4d;
 import gaia.cu9.ari.gaiaorbit.util.math.Vector3d;
@@ -22,7 +23,7 @@ import com.badlogic.gdx.graphics.glutils.ShaderProgram;
 import com.badlogic.gdx.math.Matrix4;
 
 public class MilkyWay extends Blob implements IModelRenderable, ILabelRenderable {
-    static float[] labelColour = new float[] { 1f, .4f, .7f, 1f };
+    float[] labelColour = new float[] { 1f, 1f, 1f, 1f };
     ModelComponent mc;
     String model, transformName;
     Matrix4 coordinateSystem;
@@ -30,7 +31,7 @@ public class MilkyWay extends Blob implements IModelRenderable, ILabelRenderable
     public MilkyWay() {
 	super();
 	localTransform = new Matrix4();
-	coordinateSystem = new Matrix4();
+
 	lowAngle = (float) Math.toRadians(60);
 	highAngle = (float) Math.toRadians(75.51);
     }
@@ -49,6 +50,7 @@ public class MilkyWay extends Blob implements IModelRenderable, ILabelRenderable
 
 	// Initialize transform
 	if (transformName != null) {
+	    coordinateSystem = new Matrix4();
 	    Class<Coordinates> c = Coordinates.class;
 	    try {
 		Method m = c.getMethod(transformName);
@@ -190,6 +192,11 @@ public class MilkyWay extends Blob implements IModelRenderable, ILabelRenderable
 
     public void setModel(ModelComponent mc) {
 	this.mc = mc;
+    }
+
+    public void setLabelcolor(double[] labelcolor) {
+	this.labelColour = GlobalResources.toFloatArray(labelcolor);
+
     }
 
 }
