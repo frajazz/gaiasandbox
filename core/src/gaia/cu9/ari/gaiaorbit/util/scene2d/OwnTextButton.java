@@ -1,4 +1,4 @@
-package gaia.cu9.ari.gaiaorbit.interfce;
+package gaia.cu9.ari.gaiaorbit.util.scene2d;
 
 import gaia.cu9.ari.gaiaorbit.util.GlobalResources;
 

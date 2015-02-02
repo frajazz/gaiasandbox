@@ -40,6 +40,8 @@ public class GlobalConf implements IObserver {
     public long OBJECT_FADE_MS;
     public float LIMIT_MAG_LOAD, LIMIT_MAG_RUNTIME, POSTPROCESS_BLOOM_INTENSITY, STAR_BRIGHTNESS, AMBIENT_LIGHT;
     public float CAMERA_SPEED, TURNING_SPEED, ROTATION_SPEED;
+    /** This should be no smaller than 1 and no bigger than 5. The bigger the more stars with labels **/
+    public float LABEL_NUMBER_FACTOR;
     public boolean SCREEN_OUTPUT, RENDER_OUTPUT, DISPLAY_TUTORIAL, MULTITHREADING, STAR_COLOR_TRANSIT, ONLY_OBSERVED_STARS, COMPUTE_GAIA_SCAN, SHOW_DEBUG_INFO, VSYNC, POSTPROCESS_LENS_FLARE;
     public boolean FULLSCREEN, RESIZABLE, SHOW_CONFIG_DIALOG, FOCUS_LOCK, RENDER_SCREENSHOT_TIME, INPUT_ENABLED;
     public String RENDER_FOLDER, RENDER_FILE_NAME, SG_FILE, TUTORIAL_SCRIPT_LOCATION;
@@ -171,6 +173,7 @@ public class GlobalConf implements IObserver {
 	    FOCUS_LOCK = Boolean.parseBoolean(p.getProperty("scene.focuslock"));
 	    TURNING_SPEED = Float.parseFloat(p.getProperty("scene.camera.turn.vel"));
 	    ROTATION_SPEED = Float.parseFloat(p.getProperty("scene.camera.rotate.vel"));
+	    LABEL_NUMBER_FACTOR = Float.parseFloat(p.getProperty("scene.labelfactor"));
 	    //Visibility of components
 	    ComponentType[] cts = ComponentType.values();
 	    VISIBILITY = new boolean[cts.length];
@@ -267,6 +270,7 @@ public class GlobalConf implements IObserver {
 	    p.setProperty("scene.camera.turn.vel", Float.toString(TURNING_SPEED));
 	    p.setProperty("scene.camera.rotate.vel", Float.toString(ROTATION_SPEED));
 	    p.setProperty("scene.focuslock", Boolean.toString(FOCUS_LOCK));
+	    p.setProperty("scene.labelfactor", Float.toString(LABEL_NUMBER_FACTOR));
 	    // Visibility of components
 	    int idx = 0;
 	    ComponentType[] cts = ComponentType.values();

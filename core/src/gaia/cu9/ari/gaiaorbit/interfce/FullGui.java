@@ -15,6 +15,9 @@ import gaia.cu9.ari.gaiaorbit.util.I18n;
 import gaia.cu9.ari.gaiaorbit.util.TwoWayHashmap;
 import gaia.cu9.ari.gaiaorbit.util.math.MathUtilsd;
 import gaia.cu9.ari.gaiaorbit.util.scene2d.CollapsableWindow;
+import gaia.cu9.ari.gaiaorbit.util.scene2d.OwnLabel;
+import gaia.cu9.ari.gaiaorbit.util.scene2d.OwnScrollPane;
+import gaia.cu9.ari.gaiaorbit.util.scene2d.OwnTextButton;
 import gaia.cu9.ari.gaiaorbit.util.time.GlobalClock;
 
 import java.text.DateFormat;
@@ -81,9 +84,9 @@ public class FullGui implements IGui, IObserver {
     protected OwnLabel fov, brightness, bloom, ambient, speed, turn, rotate;
     protected Actor objectsList;
     protected SelectBox<String> cameraMode;
-    protected TextField inputTime, inputPace, searchBox;
+    protected TextField inputPace, searchBox;
     protected Button plus, minus;
-    protected TextButton playstop;
+    protected TextButton playstop, date;
     protected OwnScrollPane focusListScrollPane;
     protected Slider fieldOfView, starBrightness, bloomEffect, ambientLight, cameraSpeed, turnSpeed, rotateSpeed;
     protected CheckBox focusLock, transitColor, onlyObservedStars, computeGaiaScan, lensFlare;
@@ -93,6 +96,7 @@ public class FullGui implements IGui, IObserver {
     protected OwnScrollPane windowScroll;
 
     protected SearchDialog searchDialog;
+    protected DateDialog dateDialog;
 
     protected FocusInfoInterface focusInterface;
     protected CameraInfoInterface cameraInterface;
@@ -159,10 +163,12 @@ public class FullGui implements IGui, IObserver {
 	buildGui();
 
 	// We must subscribe to the desired events
-	EventManager.getInstance().subscribe(this, Events.FOV_CHANGED_CMD, Events.CAMERA_MODE_CMD, Events.TIME_CHANGE_INFO, Events.SIMU_TIME_TOGGLED_INFO, Events.SHOW_ABOUT_ACTION, Events.SHOW_TUTORIAL_ACTION, Events.SHOW_SEARCH_ACTION, Events.FOCUS_CHANGED, Events.TOGGLE_VISIBILITY_CMD, Events.PACE_CHANGED_INFO, Events.GUI_SCROLL_POSITION_CMD, Events.GUI_FOLD_CMD, Events.GUI_MOVE_CMD, Events.ROTATION_SPEED_CMD, Events.CAMERA_SPEED_CMD, Events.TURNING_SPEED_CMD);
+	EventManager.getInstance().subscribe(this, Events.FOV_CHANGED_CMD, Events.CAMERA_MODE_CMD, Events.TIME_CHANGE_INFO, Events.SIMU_TIME_TOGGLED_INFO, Events.SHOW_ABOUT_ACTION, Events.SHOW_TUTORIAL_ACTION, Events.SHOW_SEARCH_ACTION, Events.FOCUS_CHANGED, Events.TOGGLE_VISIBILITY_CMD, Events.PACE_CHANGED_INFO, Events.GUI_SCROLL_POSITION_CMD, Events.GUI_FOLD_CMD, Events.GUI_MOVE_CMD, Events.ROTATION_SPEED_CMD, Events.CAMERA_SPEED_CMD, Events.TURNING_SPEED_CMD, Events.TIME_CHANGE_CMD);
     }
 
     private void buildGui() {
+	final IGui gui = this;
+
 	/** The Options window **/
 	options = new CollapsableWindow(txt("gui.controls"), skin);
 	options.left();
@@ -653,9 +659,24 @@ public class FullGui implements IGui, IObserver {
 	Label timeLabel = new Label(txt("gui.time"), skin, "header");
 
 	// Time
-	inputTime = new OwnTextField("", skin);
-	inputTime.setName("input time");
-	inputTime.setDisabled(true);
+	date = new OwnTextButton("", skin);
+	date.setName("input time");
+	date.addListener(new EventListener() {
+
+	    @Override
+	    public boolean handle(Event event) {
+		if (event instanceof ChangeEvent) {
+		    // Left button click
+		    if (dateDialog == null) {
+			dateDialog = new DateDialog(gui, skin);
+		    }
+		    dateDialog.updateTime(GlobalClock.clock.time);
+		    dateDialog.display();
+		}
+		return false;
+	    }
+
+	});
 
 	// Play/stop
 	playstop = new OwnTextButton(txt("gui.play.upper"), skin);
@@ -730,15 +751,21 @@ public class FullGui implements IGui, IObserver {
 
 	timeGroup.addActor(labelGroup);
 
+	HorizontalGroup dateGroup = new HorizontalGroup();
+	dateGroup.space(HPADDING);
+	dateGroup.addActor(new Label(txt("gui.time"), skin));
+	dateGroup.addActor(date);
+	timeGroup.addActor(dateGroup);
+
 	HorizontalGroup paceGroup = new HorizontalGroup();
 	paceGroup.space(1);
 	paceGroup.addActor(paceLabel);
 	paceGroup.addActor(minus);
 	paceGroup.addActor(inputPace);
 	paceGroup.addActor(plus);
+
 	timeGroup.addActor(paceGroup);
 
-	timeGroup.addActor(inputTime);
 	timeGroup.pack();
 
 	/** BUTTONS **/
@@ -1008,9 +1035,10 @@ public class FullGui implements IGui, IObserver {
     public void notify(Events event, Object... data) {
 	switch (event) {
 	case TIME_CHANGE_INFO:
+	case TIME_CHANGE_CMD:
 	    // Update input time
 	    Date time = (Date) data[0];
-	    inputTime.setText(df.format(time));
+	    date.setText(df.format(time));
 	    break;
 	case CAMERA_MODE_CMD:
 	    // Update camera mode selection

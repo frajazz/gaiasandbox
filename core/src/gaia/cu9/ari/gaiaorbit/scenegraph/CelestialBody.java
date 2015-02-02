@@ -62,6 +62,8 @@ public abstract class CelestialBody extends AbstractPositionEntity implements IL
      */
     public abstract float THRESHOLD_ANGLE_POINT();
 
+    private float TH_OVER_FACTOR;
+
     /** Absolute magnitude, m = -2.5 log10(flux), with the flux at 10 pc **/
     public float absmag;
     /** Apparent magnitude, m = -2.5 log10(flux) **/
@@ -84,10 +86,7 @@ public abstract class CelestialBody extends AbstractPositionEntity implements IL
 
     public CelestialBody() {
 	super();
-    }
-
-    public CelestialBody(SceneGraphNode parent) {
-	super(parent);
+	TH_OVER_FACTOR = THRESHOLD_ANGLE_POINT() / GlobalConf.instance.LABEL_NUMBER_FACTOR;
     }
 
     /**
@@ -384,7 +383,7 @@ public abstract class CelestialBody extends AbstractPositionEntity implements IL
 
     @Override
     public boolean renderLabel() {
-	return viewAngle > THRESHOLD_ANGLE_POINT();
+	return viewAngle > TH_OVER_FACTOR;
     }
 
     @Override
@@ -394,12 +393,13 @@ public abstract class CelestialBody extends AbstractPositionEntity implements IL
 
     @Override
     public float labelAlpha() {
-	return Math.max(0, Math.min(.95f, (viewAngle - THRESHOLD_ANGLE_POINT()) / (THRESHOLD_ANGLE_POINT() * 2)));
+	// Increase the 2.5f to increase the range where the label is kind of transparent. 
+	return Math.max(0, Math.min(.95f, (viewAngle - TH_OVER_FACTOR) / (TH_OVER_FACTOR * 2.5f)));
     }
 
     @Override
     public float labelScale() {
-	return (float) Math.atan(labelMax()) * labelFactor() * 5e2f;
+	return (float) Math.atan(labelMax()) * labelFactor() * 4e2f;
     }
 
     @Override

@@ -115,7 +115,7 @@ public abstract class ModelBody extends CelestialBody {
 
     @Override
     protected float labelMax() {
-	return 2.5e-4f;
+	return 5e-4f;
     }
 
     public void setModel(ModelComponent mc) {

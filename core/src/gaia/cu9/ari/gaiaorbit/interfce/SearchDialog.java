@@ -6,6 +6,7 @@ import gaia.cu9.ari.gaiaorbit.scenegraph.CelestialBody;
 import gaia.cu9.ari.gaiaorbit.scenegraph.ISceneGraph;
 import gaia.cu9.ari.gaiaorbit.scenegraph.SceneGraphNode;
 import gaia.cu9.ari.gaiaorbit.util.I18n;
+import gaia.cu9.ari.gaiaorbit.util.scene2d.OwnTextButton;
 
 import com.badlogic.gdx.Input.Keys;
 import com.badlogic.gdx.scenes.scene2d.Event;
@@ -21,7 +22,7 @@ import com.badlogic.gdx.scenes.scene2d.utils.Align;
 import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener.ChangeEvent;
 
 public class SearchDialog extends Window {
-    private final SearchDialog me;
+    private final Window me;
     private final IGui gui;
     private final TextField searchInput;
 
@@ -72,7 +73,7 @@ public class SearchDialog extends Window {
 
 	});
 	buttonGroup.addActor(cls);
-	cls.setHeight(20);
+	cls.setSize(70, 20);
 	buttonGroup.align(Align.right).space(10);
 
 	add(searchInput).top().left().expand().row();

@@ -257,7 +257,7 @@ public class Star extends CelestialBody {
 
     @Override
     protected float labelMax() {
-	return 0.01f;
+	return 0.02f;
     }
 
     public float getFuzzyRenderSize(ICamera camera) {

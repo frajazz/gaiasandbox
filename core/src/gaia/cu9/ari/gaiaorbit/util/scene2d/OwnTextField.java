@@ -1,30 +1,28 @@
 package gaia.cu9.ari.gaiaorbit.util.scene2d;
 
-import com.badlogic.gdx.graphics.Color;
-import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
+import com.badlogic.gdx.scenes.scene2d.ui.TextField;
 
-public class OwnLabel extends Label {
+/**
+ * TextButton in which the cursor changes when the mouse rolls over.
+ * It also fixes the size issue.
+ * @author Toni Sagrista
+ *
+ */
+public class OwnTextField extends TextField {
+
     private float ownwidth = 0f, ownheight = 0f;
 
-    public OwnLabel(CharSequence text, Skin skin) {
+    public OwnTextField(String text, Skin skin) {
 	super(text, skin);
     }
 
-    public OwnLabel(CharSequence text, LabelStyle style) {
-	super(text, style);
-    }
-
-    public OwnLabel(CharSequence text, Skin skin, String fontName, Color color) {
-	super(text, skin, fontName, color);
-    }
-
-    public OwnLabel(CharSequence text, Skin skin, String fontName, String colorName) {
-	super(text, skin, fontName, colorName);
-    }
-
-    public OwnLabel(CharSequence text, Skin skin, String styleName) {
+    public OwnTextField(String text, Skin skin, String styleName) {
 	super(text, skin, styleName);
+    }
+
+    public OwnTextField(String text, TextFieldStyle style) {
+	super(text, style);
     }
 
     @Override
