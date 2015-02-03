@@ -1,4 +1,5 @@
 {
+com.badlogic.gdx.graphics.g2d.BitmapFont: { ui-9: { file: fonts/ui-9.fnt } },
 com.badlogic.gdx.graphics.g2d.BitmapFont: { ui-10: { file: fonts/ui-10.fnt } },
 com.badlogic.gdx.graphics.g2d.BitmapFont: { ui-11: { file: fonts/ui-11.fnt } },
 com.badlogic.gdx.graphics.g2d.BitmapFont: { ui-12: { file: fonts/ui-12.fnt } },

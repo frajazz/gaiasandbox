@@ -1,7 +1,10 @@
-font.name=DejaVu Sans Condensed
+font.name=SansSerif
 font.size=15
-font.bold=true
+font.bold=false
 font.italic=false
+
+font2.file=/home/tsagrista/.fonts/Tahoma.ttf
+font2.use=false
 
 pad.top=0
 pad.right=0

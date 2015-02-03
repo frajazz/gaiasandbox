@@ -330,7 +330,7 @@ public class ConfigDialog extends I18nJFrame {
 	final JComboBox<LangComboBoxBean> lang = new JComboBox<LangComboBoxBean>(langs);
 	lang.setSelectedItem(langs[idxLang(GlobalConf.instance.LOCALE, langs)]);
 
-	String[] themes = new String[] { "dark", "bright" };
+	String[] themes = new String[] { "dark", "bright", "dark-big" };
 	final JComboBox<String> theme = new JComboBox<String>(themes);
 	theme.setSelectedItem(GlobalConf.instance.UI_THEME);
 

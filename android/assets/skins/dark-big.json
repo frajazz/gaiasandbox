@@ -16,8 +16,9 @@ com.badlogic.gdx.graphics.Color: {
 	white: { a: 1, b: 1, g: 1, r: 1 },
 	red: { a: 1, b: 0, g: 0, r: 1 },
 	black: { a: 1, b: 0, g: 0, r: 0 },
-	blue: { a: 1, b: 0.9, g: 0.4, r: 0.2 },
-	orange: { a: 1, b: 0, g: 0.7, r: 1 }
+	blue: { a: 1, b: 1, g: 0.6, r: 0.3 },
+	orange: { a: 1, b: 0, g: 0.7, r: 1 },
+	dark-gray: { a: 1, b: 0.4, g: 0.4, r: 0.4 }
 },
 com.badlogic.gdx.scenes.scene2d.ui.Skin$TintedDrawable: {
 	dialogDim: { name: white, color: { r: 0, g: 0, b: 0, a: 0.45 } }
@@ -27,8 +28,8 @@ com.badlogic.gdx.scenes.scene2d.ui.Button$ButtonStyle: {
 	toggle: { down: default-round-down, checked: default-round-down, up: default-round }
 },
 com.badlogic.gdx.scenes.scene2d.ui.TextButton$TextButtonStyle: {
-	default: { down: default-round-down, up: default-round, font: ui-11, fontColor: white },
-	toggle: { down: default-round-down, up: default-round, checked: default-round-down, font: ui-11, fontColor: white, downFontColor: orange }
+	default: { down: default-round-down, up: default-round, font: ui-12, fontColor: white },
+	toggle: { down: default-round-down, up: default-round, checked: default-round-down, font: ui-12, fontColor: white, downFontColor: orange }
 },
 com.badlogic.gdx.scenes.scene2d.ui.ImageButton$ImageButtonStyle: {
 	edit: { imageUp: edit-icon }
@@ -41,9 +42,9 @@ com.badlogic.gdx.scenes.scene2d.ui.ScrollPane$ScrollPaneStyle: {
 },
 com.badlogic.gdx.scenes.scene2d.ui.SelectBox$SelectBoxStyle: {
 	default: {
-		font: ui-11, fontColor: black, background: default-select,
+		font: ui-12, fontColor: black, background: default-select,
 		scrollStyle: default,
-		listStyle: { font: ui-11, selection: default-select-selection }
+		listStyle: { font: ui-12, fontColorSelected: white, fontColorUnselected: black, selection: default-select-selection }
 	}
 },
 com.badlogic.gdx.scenes.scene2d.ui.SplitPane$SplitPaneStyle: {
@@ -51,23 +52,22 @@ com.badlogic.gdx.scenes.scene2d.ui.SplitPane$SplitPaneStyle: {
 	default-horizontal: { handle: default-splitpane }
 },
 com.badlogic.gdx.scenes.scene2d.ui.Window$WindowStyle: {
-	default: { titleFont: ui-11, background: default-window, titleFontColor: black },
-	dialog: { titleFont: ui-11, background: default-window, titleFontColor: black, stageBackground: dialogDim }
+	default: { titleFont: ui-12, background: default-window, titleFontColor: white },
+	dialog: { titleFont: ui-12, background: default-window, titleFontColor: white, stageBackground: dialogDim }
 },
 com.badlogic.gdx.scenes.scene2d.ui.Slider$SliderStyle: {
 	default-horizontal: { background: default-slider, knob: default-slider-knob }
 },
 com.badlogic.gdx.scenes.scene2d.ui.Label$LabelStyle: {
-	header:  { font: ui-12, fontColor: blue },
-	default: { font: ui-11, fontColor: black },
-	default-blue: { font: ui-11, fontColor: blue },
-	ui-10:   { font: ui-10, fontColor: black},
-	ui-11:   { font: ui-11, fontColor: black},
-	ui-12:   { font: ui-12, fontColor: black},
-	ui-13:   { font: ui-13, fontColor: black},
-	ui-14:   { font: ui-14, fontColor: black},
-	ui-15:   { font: ui-15, fontColor: black},
-	ui-23:   { font: ui-23, fontColor: black},
+	header:  { font: ui-14, fontColor: orange },
+	default: { font: ui-13, fontColor: white },
+	default-blue: { font: ui-12, fontColor: blue },
+	ui-10:   { font: ui-10, fontColor: white},
+	ui-11:   { font: ui-11, fontColor: white},
+	ui-12:   { font: ui-12, fontColor: white},
+	ui-13:   { font: ui-13, fontColor: white},
+	ui-15:   { font: ui-15, fontColor: white},
+	ui-23:   { font: ui-23, fontColor: white},
 	msg-10:   { font: ui-10, fontColor: white},
 	msg-11:   { font: ui-11, fontColor: white},
 	msg-12:   { font: ui-12, fontColor: white},
@@ -82,12 +82,12 @@ com.badlogic.gdx.scenes.scene2d.ui.Label$LabelStyle: {
 	headline:   { font: ui-25-shadow, fontColor: white},
 	subhead:   { font: ui-15, fontColor: white},
 	
-	hud:	 { font: ui-11, fontColor: white },
-	hud-med:	 { font: ui-11, fontColor: white },
-	hud-big:	 { font: ui-13, fontColor: white }
+	hud:	 { font: ui-12, fontColor: white },
+	hud-med:	 { font: ui-13, fontColor: white },
+	hud-big:	 { font: ui-15, fontColor: white }
 },
 com.badlogic.gdx.scenes.scene2d.ui.TextField$TextFieldStyle: {
-	default: { selection: selection, background: textfield, font: ui-11, fontColor: black, cursor: cursor },
+	default: { selection: selection, background: textfield, font: ui-12, fontColor: black, messageFontColor: dark-gray, cursor: cursor },
 	msg-10:   { font: ui-10, fontColor: white, background: null},
 	msg-11:   { font: ui-11, fontColor: white, background: null},
 	msg-12:   { font: ui-12, fontColor: white, background: null},
@@ -100,11 +100,11 @@ com.badlogic.gdx.scenes.scene2d.ui.TextField$TextFieldStyle: {
 	msg-23:   { font: ui-23, fontColor: white, background: null}
 },
 com.badlogic.gdx.scenes.scene2d.ui.CheckBox$CheckBoxStyle: {
-	default: { checkboxOn: check-on, checkboxOff: check-off, font: ui-11, fontColor: black }
+	default: { checkboxOn: check-on, checkboxOff: check-off, font: ui-12, fontColor: white }
 },
 com.badlogic.gdx.scenes.scene2d.ui.List$ListStyle: {
-	default: { fontColorUnselected: white, selection: selection, fontColorSelected: black, font: ui-11 },
-	light: { fontColorUnselected: black, selection: selection, fontColorSelected: white, font: ui-10, background: light-grey }
+	default: { fontColorUnselected: white, selection: selection, fontColorSelected: white, font: ui-12 },
+	light: { fontColorUnselected: black, selection: selection, fontColorSelected: black, font: ui-12, background: light-grey }
 },
 com.badlogic.gdx.scenes.scene2d.ui.Touchpad$TouchpadStyle: {
 	default: { background: default-pane, knob: default-round-large }
@@ -117,6 +117,6 @@ com.badlogic.gdx.scenes.scene2d.ui.ProgressBar$ProgressBarStyle: {
 	default-horizontal: { background: progress-bg, knob: progress-knob, knobBefore: progress-knob-before }
 },
 gaia.cu9.ari.gaiaorbit.util.scene2d.CollapsiblePanel$CollapsiblePanelStyle: {
-	default: { titleFont: ui-12, titleFontColor: blue, imageUp: tree-plus, imageDown: tree-minus }
+	default: { titleFont: ui-13, titleFontColor: orange, imageUp: tree-plus, imageDown: tree-minus  }
 }
 }

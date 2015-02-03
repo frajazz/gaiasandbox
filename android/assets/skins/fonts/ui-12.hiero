@@ -1,10 +1,10 @@
-font.name=Lucida Sans
+font.name=SansSerif
 font.size=12
 font.bold=false
 font.italic=false
 
 font2.file=/home/tsagrista/.fonts/Tahoma.ttf
-font2.use=true
+font2.use=false
 
 pad.top=0
 pad.right=0
