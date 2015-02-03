@@ -15,6 +15,7 @@ import gaia.cu9.ari.gaiaorbit.util.I18n;
 import gaia.cu9.ari.gaiaorbit.util.TwoWayHashmap;
 import gaia.cu9.ari.gaiaorbit.util.math.MathUtilsd;
 import gaia.cu9.ari.gaiaorbit.util.scene2d.CollapsableWindow;
+import gaia.cu9.ari.gaiaorbit.util.scene2d.OwnImageButton;
 import gaia.cu9.ari.gaiaorbit.util.scene2d.OwnLabel;
 import gaia.cu9.ari.gaiaorbit.util.scene2d.OwnScrollPane;
 import gaia.cu9.ari.gaiaorbit.util.scene2d.OwnTextButton;
@@ -22,7 +23,6 @@ import gaia.cu9.ari.gaiaorbit.util.time.GlobalClock;
 
 import java.text.DateFormat;
 import java.text.DecimalFormat;
-import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -81,12 +81,13 @@ public class FullGui implements IGui, IObserver {
     /**
      * The gaia text field
      */
-    protected OwnLabel fov, brightness, bloom, ambient, speed, turn, rotate;
+    protected OwnLabel fov, brightness, bloom, ambient, speed, turn, rotate, date;
     protected Actor objectsList;
     protected SelectBox<String> cameraMode;
     protected TextField inputPace, searchBox;
     protected Button plus, minus;
-    protected TextButton playstop, date;
+    protected TextButton playstop;
+    protected ImageButton dateEdit;
     protected OwnScrollPane focusListScrollPane;
     protected Slider fieldOfView, starBrightness, bloomEffect, ambientLight, cameraSpeed, turnSpeed, rotateSpeed;
     protected CheckBox focusLock, transitColor, onlyObservedStars, computeGaiaScan, lensFlare;
@@ -130,7 +131,8 @@ public class FullGui implements IGui, IObserver {
     private boolean[] visible;
 
     /** Date format **/
-    private DateFormat df = new SimpleDateFormat("dd-MM-yyyy HH:mm:ss");
+    private DateFormat df/** = new SimpleDateFormat("dd-MM-yyyy HH:mm:ss")**/
+    ;
 
     /** Lock object for synchronization **/
     private Object lock;
@@ -148,6 +150,7 @@ public class FullGui implements IGui, IObserver {
 	// User interface
 	ui = new Stage(new ScreenViewport(), GlobalResources.spriteBatch);
 	lock = new Object();
+	df = DateFormat.getDateTimeInstance(DateFormat.MEDIUM, DateFormat.MEDIUM, I18n.locale);
     }
 
     /**
@@ -659,9 +662,11 @@ public class FullGui implements IGui, IObserver {
 	Label timeLabel = new Label(txt("gui.time"), skin, "header");
 
 	// Time
-	date = new OwnTextButton("", skin);
+	date = new OwnLabel("", skin);
 	date.setName("input time");
-	date.addListener(new EventListener() {
+
+	dateEdit = new OwnImageButton(skin, "edit");
+	dateEdit.addListener(new EventListener() {
 
 	    @Override
 	    public boolean handle(Event event) {
@@ -752,9 +757,9 @@ public class FullGui implements IGui, IObserver {
 	timeGroup.addActor(labelGroup);
 
 	HorizontalGroup dateGroup = new HorizontalGroup();
-	dateGroup.space(HPADDING);
-	dateGroup.addActor(new Label(txt("gui.time"), skin));
+	dateGroup.space(2);
 	dateGroup.addActor(date);
+	dateGroup.addActor(dateEdit);
 	timeGroup.addActor(dateGroup);
 
 	HorizontalGroup paceGroup = new HorizontalGroup();

@@ -30,6 +30,9 @@ com.badlogic.gdx.scenes.scene2d.ui.TextButton$TextButtonStyle: {
 	default: { down: default-round-down, up: default-round, font: ui-11, fontColor: white },
 	toggle: { down: default-round-down, up: default-round, checked: default-round-down, font: ui-11, fontColor: white, downFontColor: orange }
 },
+com.badlogic.gdx.scenes.scene2d.ui.ImageButton$ImageButtonStyle: {
+	edit: { imageUp: edit-icon }
+},
 com.badlogic.gdx.scenes.scene2d.ui.ScrollPane$ScrollPaneStyle: {
 	default: { vScroll: default-round-down, hScrollKnob: default-round, background: default-rect, hScroll: default-round-down, vScrollKnob: default-round },
 	default-nobg: { vScroll: default-round-down, hScrollKnob: default-round, hScroll: default-round-down, vScrollKnob: default-round },

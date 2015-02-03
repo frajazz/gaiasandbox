@@ -264,3 +264,10 @@ progress-knob-before
   orig: 0, 0
   offset: 0, 0
   index: -1
+edit-icon
+  rotate: false
+  xy: 85, 3
+  size: 16, 16
+  orig: 16, 16
+  offset: 0, 0
+  index: -1

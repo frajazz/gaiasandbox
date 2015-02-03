@@ -12,9 +12,13 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.GregorianCalendar;
 
+import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.scenes.scene2d.Event;
 import com.badlogic.gdx.scenes.scene2d.EventListener;
+import com.badlogic.gdx.scenes.scene2d.InputEvent;
+import com.badlogic.gdx.scenes.scene2d.InputEvent.Type;
 import com.badlogic.gdx.scenes.scene2d.ui.HorizontalGroup;
+import com.badlogic.gdx.scenes.scene2d.ui.SelectBox;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
 import com.badlogic.gdx.scenes.scene2d.ui.TextField;
@@ -26,8 +30,10 @@ public class DateDialog extends CollapsableWindow {
     private final Window me;
     private final IGui gui;
 
-    private final TextField day, month, year, hour, min, sec;
+    private final TextField day, year, hour, min, sec;
+    private final SelectBox<String> month;
     private final TextButton setNow;
+    private final Color defaultColor;
 
     public DateDialog(IGui gui, Skin skin) {
 	super("Pick a date", skin);
@@ -54,12 +60,42 @@ public class DateDialog extends CollapsableWindow {
 	day = new OwnTextField("", skin);
 	day.setMaxLength(2);
 	day.setWidth(40);
-	month = new OwnTextField("", skin);
-	month.setMaxLength(2);
+	day.addListener(new EventListener() {
+	    @Override
+	    public boolean handle(Event event) {
+		if (event instanceof InputEvent) {
+		    InputEvent ie = (InputEvent) event;
+		    if (ie.getType() == Type.keyTyped) {
+			checkField(day, 1, 31);
+			return true;
+		    }
+		}
+		return false;
+	    }
+
+	});
+
+	month = new SelectBox<String>(skin);
+	month.setItems("Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec");
 	month.setWidth(40);
+
 	year = new OwnTextField("", skin);
-	year.setMaxLength(4);
+	year.setMaxLength(5);
 	year.setWidth(40);
+	year.addListener(new EventListener() {
+	    @Override
+	    public boolean handle(Event event) {
+		if (event instanceof InputEvent) {
+		    InputEvent ie = (InputEvent) event;
+		    if (ie.getType() == Type.keyTyped) {
+			checkField(year, -20000, 20000);
+			return true;
+		    }
+		}
+		return false;
+	    }
+
+	});
 
 	dayGroup.addActor(day);
 	dayGroup.addActor(new OwnLabel("/", skin));
@@ -76,12 +112,56 @@ public class DateDialog extends CollapsableWindow {
 	hour = new OwnTextField("", skin);
 	hour.setMaxLength(2);
 	hour.setWidth(40);
+	hour.addListener(new EventListener() {
+	    @Override
+	    public boolean handle(Event event) {
+		if (event instanceof InputEvent) {
+		    InputEvent ie = (InputEvent) event;
+		    if (ie.getType() == Type.keyTyped) {
+			checkField(hour, 0, 23);
+			return true;
+		    }
+		}
+		return false;
+	    }
+
+	});
+
 	min = new OwnTextField("", skin);
 	min.setMaxLength(2);
 	min.setWidth(40);
+	min.addListener(new EventListener() {
+	    @Override
+	    public boolean handle(Event event) {
+		if (event instanceof InputEvent) {
+		    InputEvent ie = (InputEvent) event;
+		    if (ie.getType() == Type.keyTyped) {
+			checkField(min, 0, 59);
+			return true;
+		    }
+		}
+		return false;
+	    }
+
+	});
+
 	sec = new OwnTextField("", skin);
 	sec.setMaxLength(2);
 	sec.setWidth(40);
+	sec.addListener(new EventListener() {
+	    @Override
+	    public boolean handle(Event event) {
+		if (event instanceof InputEvent) {
+		    InputEvent ie = (InputEvent) event;
+		    if (ie.getType() == Type.keyTyped) {
+			checkField(sec, 0, 59);
+			return true;
+		    }
+		}
+		return false;
+	    }
+
+	});
 
 	hourGroup.addActor(hour);
 	hourGroup.addActor(new OwnLabel(":", skin));
@@ -102,23 +182,29 @@ public class DateDialog extends CollapsableWindow {
 	    public boolean handle(Event event) {
 		if (event instanceof ChangeEvent) {
 
-		    boolean cool = checkField(day, 1, 31) &&
-			    checkField(month, 1, 12) &&
-			    checkField(year, -20000, 20000) &&
-			    checkField(hour, 0, 23) &&
-			    checkField(min, 0, 59) &&
-			    checkField(sec, 0, 59);
+		    boolean cool = checkField(day, 1, 31);
+		    cool = checkField(year, -20000, 20000) && cool;
+		    cool = checkField(hour, 0, 23) && cool;
+		    cool = checkField(min, 0, 59) && cool;
+		    cool = checkField(sec, 0, 59) && cool;
 
 		    if (cool) {
 			// Set the date
 			GregorianCalendar cal = new GregorianCalendar();
 			cal.set(Calendar.DAY_OF_MONTH, Integer.parseInt(day.getText()));
-			cal.set(Calendar.MONTH, Integer.parseInt(month.getText()) - 1);
-			cal.set(Calendar.YEAR, Integer.parseInt(year.getText()));
+			cal.set(Calendar.MONTH, month.getSelectedIndex());
 
 			cal.set(Calendar.HOUR_OF_DAY, Integer.parseInt(hour.getText()));
 			cal.set(Calendar.MINUTE, Integer.parseInt(min.getText()));
 			cal.set(Calendar.SECOND, Integer.parseInt(sec.getText()));
+
+			// Set the year
+			int y = Integer.parseInt(year.getText());
+			if (y < 0) {
+			    cal.set(Calendar.ERA, GregorianCalendar.BC);
+			    y = -y;
+			}
+			cal.set(Calendar.YEAR, y);
 
 			// Send time change command
 			EventManager.getInstance().post(Events.TIME_CHANGE_CMD, cal.getTime());
@@ -158,6 +244,8 @@ public class DateDialog extends CollapsableWindow {
 
 	pack();
 
+	defaultColor = day.getColor().cpy();
+
 	this.setPosition(gui.getGuiStage().getWidth() / 2f - this.getWidth() / 2f, gui.getGuiStage().getHeight() / 2f - this.getHeight() / 2f);
     }
 
@@ -179,6 +267,7 @@ public class DateDialog extends CollapsableWindow {
 	    f.setColor(1, 0, 0, 1);
 	    return false;
 	}
+	f.setColor(defaultColor);
 	return true;
     }
 
@@ -188,7 +277,7 @@ public class DateDialog extends CollapsableWindow {
 	cal.setTime(date);
 
 	int day = cal.get(Calendar.DAY_OF_MONTH);
-	int month = cal.get(Calendar.MONTH) + 1;
+	int month = cal.get(Calendar.MONTH);
 	int year = cal.get(Calendar.YEAR);
 
 	int hour = cal.get(Calendar.HOUR_OF_DAY);
@@ -196,7 +285,7 @@ public class DateDialog extends CollapsableWindow {
 	int sec = cal.get(Calendar.SECOND);
 
 	this.day.setText(String.valueOf(day));
-	this.month.setText(String.valueOf(month));
+	this.month.setSelectedIndex(month);
 	this.year.setText(String.valueOf(year));
 	this.hour.setText(String.valueOf(hour));
 	this.min.setText(String.valueOf(min));

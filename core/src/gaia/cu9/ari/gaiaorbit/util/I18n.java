@@ -15,6 +15,7 @@ import com.badlogic.gdx.utils.I18NBundle;
 public class I18n {
 
     public static I18NBundle bundle;
+    public static Locale locale;
 
     /**
      * Initialises the i18n system.
@@ -44,7 +45,6 @@ public class I18n {
     }
 
     public static boolean forceinit(FileHandle baseFileHandle) {
-	Locale locale = null;
 	if (GlobalConf.instance.LOCALE.isEmpty()) {
 	    // Use system default
 	    locale = Locale.getDefault();
