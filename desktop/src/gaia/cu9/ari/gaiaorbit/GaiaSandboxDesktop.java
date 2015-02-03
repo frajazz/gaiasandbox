@@ -5,6 +5,7 @@ import gaia.cu9.ari.gaiaorbit.event.Events;
 import gaia.cu9.ari.gaiaorbit.event.IObserver;
 import gaia.cu9.ari.gaiaorbit.gui.swing.ConfigDialog;
 import gaia.cu9.ari.gaiaorbit.gui.swing.HelpDialog;
+import gaia.cu9.ari.gaiaorbit.gui.swing.IconManager;
 import gaia.cu9.ari.gaiaorbit.gui.swing.ScriptDialog;
 import gaia.cu9.ari.gaiaorbit.interfce.KeyMappings;
 import gaia.cu9.ari.gaiaorbit.util.GlobalConf;
@@ -60,6 +61,9 @@ public class GaiaSandboxDesktop implements IObserver {
 	    I18n.initialize("./data/i18n/gsbundle");
 	    // Dev mode
 	    I18n.initialize("../android/assets/i18n/gsbundle");
+
+	    // Initialize icons
+	    IconManager.initialise(new File("data/ui/"));
 
 	    // Initialize key mappings
 	    KeyMappings.initialize();

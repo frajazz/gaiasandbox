@@ -16,12 +16,20 @@ import gaia.cu9.ari.gaiaorbit.util.I18n;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
+import java.awt.Component;
 import java.awt.Container;
 import java.awt.Desktop;
 import java.awt.Dimension;
+import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
 import java.awt.GridLayout;
+import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.KeyEvent;
+import java.beans.PropertyChangeEvent;
+import java.beans.PropertyChangeListener;
+import java.beans.PropertyChangeSupport;
 import java.io.File;
 import java.io.IOException;
 import java.net.MalformedURLException;
@@ -35,7 +43,9 @@ import java.util.Map;
 import java.util.Set;
 import java.util.TreeSet;
 
+import javax.swing.AbstractAction;
 import javax.swing.ButtonGroup;
+import javax.swing.Icon;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
@@ -49,8 +59,10 @@ import javax.swing.JSpinner;
 import javax.swing.JTabbedPane;
 import javax.swing.JTextArea;
 import javax.swing.JTextField;
+import javax.swing.KeyStroke;
 import javax.swing.SpinnerNumberModel;
 import javax.swing.SwingConstants;
+import javax.swing.UIManager;
 import javax.swing.border.Border;
 import javax.swing.border.TitledBorder;
 import javax.swing.event.ChangeEvent;
@@ -84,6 +96,7 @@ public class ConfigDialog extends I18nJFrame {
     JLabel checkLabel;
     JPanel checkPanel;
     Color darkgreen, darkred;
+    JButton cancelButton, okButton;
 
     public ConfigDialog(final GaiaSandboxDesktop gsd, boolean startup) {
 	super(startup ? GlobalConf.instance.getFullApplicationName() : txt("gui.settings"));
@@ -91,7 +104,7 @@ public class ConfigDialog extends I18nJFrame {
 
 	if (startup) {
 	    /** SPLASH IMAGE **/
-	    URL url = this.getClass().getResource("/img/splash/splash1-s.png");
+	    URL url = this.getClass().getResource("/img/splash/splash-s.jpg");
 	    JSplashLabel label = new JSplashLabel(url, txt("gui.build", GlobalConf.instance.VERSION.build) + " - " + txt("gui.version", GlobalConf.instance.VERSION.version), null, Color.lightGray);
 	    JPanel imagePanel = new JPanel(new GridLayout(1, 1, 0, 0));
 	    imagePanel.add(label);
@@ -104,6 +117,25 @@ public class ConfigDialog extends I18nJFrame {
 	frame.setVisible(true);
 	frame.setEnabled(true);
 	frame.setAutoRequestFocus(true);
+
+	// ESC closes the frame
+	getRootPane().getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(
+		KeyStroke.getKeyStroke("ESCAPE"), "closeTheDialog");
+	getRootPane().getActionMap().put("closeTheDialog",
+		new AbstractAction() {
+
+		    private static final long serialVersionUID = 8360999630557775801L;
+
+		    @Override
+		    public void actionPerformed(ActionEvent e) {
+			//This should be replaced by the action you want to perform
+			cancelButton.doClick();
+		    }
+		});
+
+	// Request focus
+	frame.getRootPane().setDefaultButton(okButton);
+	okButton.requestFocus();
     }
 
     private void initialize(final GaiaSandboxDesktop gsd, final boolean startup) {
@@ -136,7 +168,13 @@ public class ConfigDialog extends I18nJFrame {
 
 	/** TABBED PANEL **/
 
-	JTabbedPane tabbedPane = new JTabbedPane();
+	//	JTabbedPane tabbedPane = new JTabbedPane();
+	//	tabbedPane.setTabPlacement(WebTabbedPane.LEFT);
+
+	JXTabbedPane tabbedPane = new JXTabbedPane(JTabbedPane.LEFT);
+	AbstractTabRenderer renderer = (AbstractTabRenderer) tabbedPane.getTabRenderer();
+	renderer.setPrototypeText("123456789012345678");
+	renderer.setHorizontalTextAlignment(SwingConstants.LEADING);
 
 	/**
 	 * ====== GRAPHICS TAB =======
@@ -257,7 +295,8 @@ public class ConfigDialog extends I18nJFrame {
 	    graphicsPanel.add(notice, "wrap");
 	}
 
-	tabbedPane.addTab(txt("gui.graphics"), graphicsPanel);
+	tabbedPane.addTab(txt("gui.graphics"), IconManager.get("config/graphics"), graphicsPanel);
+	tabbedPane.setMnemonicAt(0, KeyEvent.VK_1);
 
 	/**
 	 * ====== USER INTERFACE TAB =======
@@ -310,7 +349,8 @@ public class ConfigDialog extends I18nJFrame {
 	    uiPanel.add(uiNotice, "wrap");
 	}
 
-	tabbedPane.addTab(txt("gui.ui.interface"), uiPanel);
+	tabbedPane.addTab(txt("gui.ui.interface"), IconManager.get("config/interface"), uiPanel);
+	tabbedPane.setMnemonicAt(1, KeyEvent.VK_2);
 
 	/**
 	 * ====== PERFORMANCE TAB =======
@@ -345,7 +385,8 @@ public class ConfigDialog extends I18nJFrame {
 	JPanel performancePanel = new JPanel(new MigLayout("", "[grow,fill]", ""));
 	performancePanel.add(multithread, "wrap");
 
-	tabbedPane.addTab(txt("gui.performance"), performancePanel);
+	tabbedPane.addTab(txt("gui.performance"), IconManager.get("config/performance"), performancePanel);
+	tabbedPane.setMnemonicAt(2, KeyEvent.VK_3);
 
 	/**
 	 * ====== CONTROLS TAB =======
@@ -380,7 +421,8 @@ public class ConfigDialog extends I18nJFrame {
 	controls.add(lab, "span");
 	controls.add(controlsScrollPane, "span");
 
-	tabbedPane.addTab(txt("gui.controls"), controls);
+	tabbedPane.addTab(txt("gui.controls"), IconManager.get("config/controls"), controls);
+	tabbedPane.setMnemonicAt(3, KeyEvent.VK_4);
 
 	/**
 	 * ====== SCREENSHOTS TAB =======
@@ -452,7 +494,8 @@ public class ConfigDialog extends I18nJFrame {
 	screenshots.add(screenshotsLocation, "wrap");
 	screenshots.add(screenshotSize, "span");
 
-	tabbedPane.addTab(txt("gui.screenshots"), screenshots);
+	tabbedPane.addTab(txt("gui.screenshots"), IconManager.get("config/screenshots"), screenshots);
+	tabbedPane.setMnemonicAt(4, KeyEvent.VK_5);
 
 	/**
 	 * ====== FRAME OUTPUT TAB =======
@@ -571,7 +614,8 @@ public class ConfigDialog extends I18nJFrame {
 	imageOutput.add(new JLabel(txt("gui.frameoutput.fps") + ":"));
 	imageOutput.add(targetFPS);
 
-	tabbedPane.addTab(txt("gui.frameoutput.title"), imageOutput);
+	tabbedPane.addTab(txt("gui.frameoutput.title"), IconManager.get("config/frameoutput"), imageOutput);
+	tabbedPane.setMnemonicAt(5, KeyEvent.VK_6);
 
 	// Do not show again
 	final JCheckBox showAgain = new JCheckBox(txt("gui.notagain"));
@@ -591,7 +635,7 @@ public class ConfigDialog extends I18nJFrame {
 	/** BUTTONS **/
 	JPanel buttons = new JPanel(new MigLayout("", "push[][]", ""));
 
-	JButton okButton = new JButton(startup ? txt("gui.launchapp") : txt("gui.saveprefs"));
+	okButton = new JButton(startup ? txt("gui.launchapp") : txt("gui.saveprefs"));
 	okButton.addActionListener(new ActionListener() {
 
 	    @Override
@@ -663,7 +707,7 @@ public class ConfigDialog extends I18nJFrame {
 	});
 	okButton.setMinimumSize(new Dimension(100, 20));
 
-	JButton cancelButton = new JButton(txt("gui.cancel"));
+	cancelButton = new JButton(txt("gui.cancel"));
 	cancelButton.addActionListener(new ActionListener() {
 	    public void actionPerformed(ActionEvent e) {
 		if (frame.isDisplayable()) {
@@ -870,6 +914,162 @@ public class ConfigDialog extends I18nJFrame {
 	}
 
 	return s;
+    }
+
+    class JXTabbedPane extends JTabbedPane {
+
+	private ITabRenderer tabRenderer = new DefaultTabRenderer();
+
+	public JXTabbedPane() {
+	    super();
+	}
+
+	public JXTabbedPane(int tabPlacement) {
+	    super(tabPlacement);
+	}
+
+	public JXTabbedPane(int tabPlacement, int tabLayoutPolicy) {
+	    super(tabPlacement, tabLayoutPolicy);
+	}
+
+	public ITabRenderer getTabRenderer() {
+	    return tabRenderer;
+	}
+
+	public void setTabRenderer(ITabRenderer tabRenderer) {
+	    this.tabRenderer = tabRenderer;
+	}
+
+	@Override
+	public void addTab(String title, Component component) {
+	    this.addTab(title, null, component, null);
+	}
+
+	@Override
+	public void addTab(String title, Icon icon, Component component) {
+	    this.addTab(title, icon, component, null);
+	}
+
+	@Override
+	public void addTab(String title, Icon icon, Component component, String tip) {
+	    super.addTab(title, icon, component, tip);
+	    int tabIndex = getTabCount() - 1;
+	    Component tab = tabRenderer.getTabRendererComponent(this, title, icon, tabIndex);
+	    super.setTabComponentAt(tabIndex, tab);
+	}
+    }
+
+    interface ITabRenderer {
+
+	public Component getTabRendererComponent(JTabbedPane tabbedPane, String text, Icon icon, int tabIndex);
+
+    }
+
+    abstract class AbstractTabRenderer implements ITabRenderer {
+
+	private String prototypeText = "";
+	private Icon prototypeIcon = UIManager.getIcon("OptionPane.informationIcon");
+	private int horizontalTextAlignment = SwingConstants.CENTER;
+	private final PropertyChangeSupport propertyChangeSupport = new PropertyChangeSupport(this);
+
+	public AbstractTabRenderer() {
+	    super();
+	}
+
+	public void setPrototypeText(String text) {
+	    String oldText = this.prototypeText;
+	    this.prototypeText = text;
+	    firePropertyChange("prototypeText", oldText, text);
+	}
+
+	public String getPrototypeText() {
+	    return prototypeText;
+	}
+
+	public Icon getPrototypeIcon() {
+	    return prototypeIcon;
+	}
+
+	public void setPrototypeIcon(Icon icon) {
+	    Icon oldIcon = this.prototypeIcon;
+	    this.prototypeIcon = icon;
+	    firePropertyChange("prototypeIcon", oldIcon, icon);
+	}
+
+	public int getHorizontalTextAlignment() {
+	    return horizontalTextAlignment;
+	}
+
+	public void setHorizontalTextAlignment(int horizontalTextAlignment) {
+	    this.horizontalTextAlignment = horizontalTextAlignment;
+	}
+
+	public PropertyChangeListener[] getPropertyChangeListeners() {
+	    return propertyChangeSupport.getPropertyChangeListeners();
+	}
+
+	public PropertyChangeListener[] getPropertyChangeListeners(String propertyName) {
+	    return propertyChangeSupport.getPropertyChangeListeners(propertyName);
+	}
+
+	public void addPropertyChangeListener(PropertyChangeListener listener) {
+	    propertyChangeSupport.addPropertyChangeListener(listener);
+	}
+
+	public void addPropertyChangeListener(String propertyName, PropertyChangeListener listener) {
+	    propertyChangeSupport.addPropertyChangeListener(propertyName, listener);
+	}
+
+	protected void firePropertyChange(String propertyName, Object oldValue, Object newValue) {
+	    PropertyChangeListener[] listeners = getPropertyChangeListeners();
+	    for (int i = listeners.length - 1; i >= 0; i--) {
+		listeners[i].propertyChange(new PropertyChangeEvent(this, propertyName, oldValue, newValue));
+	    }
+	}
+    }
+
+    class DefaultTabRenderer extends AbstractTabRenderer implements PropertyChangeListener {
+
+	private Component prototypeComponent;
+
+	public DefaultTabRenderer() {
+	    super();
+	    prototypeComponent = generateRendererComponent(getPrototypeText(), getPrototypeIcon(), getHorizontalTextAlignment());
+	    addPropertyChangeListener(this);
+	}
+
+	private Component generateRendererComponent(String text, Icon icon, int horizontalTabTextAlignmen) {
+	    JPanel rendererComponent = new JPanel(new GridBagLayout());
+	    rendererComponent.setOpaque(false);
+
+	    GridBagConstraints c = new GridBagConstraints();
+	    c.insets = new Insets(2, 4, 2, 4);
+	    c.fill = GridBagConstraints.HORIZONTAL;
+	    rendererComponent.add(new JLabel(icon), c);
+
+	    c.gridx = 1;
+	    c.weightx = 1;
+	    rendererComponent.add(new JLabel(text, horizontalTabTextAlignmen), c);
+
+	    return rendererComponent;
+	}
+
+	@Override
+	public Component getTabRendererComponent(JTabbedPane tabbedPane, String text, Icon icon, int tabIndex) {
+	    Component rendererComponent = generateRendererComponent(text, icon, getHorizontalTextAlignment());
+	    int prototypeWidth = prototypeComponent.getPreferredSize().width;
+	    int prototypeHeight = prototypeComponent.getPreferredSize().height;
+	    rendererComponent.setPreferredSize(new Dimension(prototypeWidth, prototypeHeight));
+	    return rendererComponent;
+	}
+
+	@Override
+	public void propertyChange(PropertyChangeEvent evt) {
+	    String propertyName = evt.getPropertyName();
+	    if ("prototypeText".equals(propertyName) || "prototypeIcon".equals(propertyName)) {
+		this.prototypeComponent = generateRendererComponent(getPrototypeText(), getPrototypeIcon(), getHorizontalTextAlignment());
+	    }
+	}
     }
 
 }

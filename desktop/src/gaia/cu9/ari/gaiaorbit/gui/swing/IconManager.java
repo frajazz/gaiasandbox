@@ -17,25 +17,34 @@ public class IconManager {
 
     public static Map<String, Icon> icons;
 
-    public static void initialize(File folder) {
-	icons = new HashMap<String, Icon>();
-	EventManager.getInstance().post(Events.POST_NOTIFICATION, I18n.bundle.get("notif.icon.initialising"));
+    public static void initialise(File folder) {
 	if (folder.exists() && folder.isDirectory() && folder.canRead()) {
-	    String[] iconNames = folder.list();
-	    for (String iconName : iconNames) {
-		if (iconName.endsWith(".png")) {
-		    try {
-			URL iconURL = new File(folder, iconName).toURI().toURL();
+	    icons = new HashMap<String, Icon>();
+	    EventManager.getInstance().post(Events.POST_NOTIFICATION, I18n.bundle.get("notif.icon.initialising"));
 
-			icons.put(iconName.substring(0, iconName.lastIndexOf('.')), new ImageIcon(iconURL));
+	    initialiseDirectory(folder, "");
+
+	    EventManager.getInstance().post(Events.POST_NOTIFICATION, I18n.bundle.format("notif.icon.init", icons.size()));
+	}
+    }
+
+    private static void initialiseDirectory(File dir, String prefix) {
+	String[] names = dir.list();
+	for (String name : names) {
+	    File f = new File(dir, name);
+	    if (f.isDirectory()) {
+		initialiseDirectory(f, prefix + f.getName() + "/");
+	    } else {
+		if (name.endsWith(".png")) {
+		    try {
+			URL iconURL = new File(dir, name).toURI().toURL();
+
+			icons.put(prefix + name.substring(0, name.lastIndexOf('.')), new ImageIcon(iconURL));
 		    } catch (Exception e) {
-			EventManager.getInstance().post(Events.JAVA_EXCEPTION, new RuntimeException(I18n.bundle.format("error.icon.loading", iconName), e));
+			EventManager.getInstance().post(Events.JAVA_EXCEPTION, new RuntimeException(I18n.bundle.format("error.icon.loading", name), e));
 		    }
 		}
 	    }
-	    EventManager.getInstance().post(Events.POST_NOTIFICATION, I18n.bundle.format("notif.icon.init", icons.size()));
-	} else {
-	    EventManager.getInstance().post(Events.JAVA_EXCEPTION, new RuntimeException(I18n.bundle.format("error.icon.folder", folder.getPath())));
 	}
     }
 

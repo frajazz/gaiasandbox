@@ -73,8 +73,8 @@
       <fileset dir="${gs-android.dir}/assets">
         <!-- conf folder -->
         <exclude name="conf/"/>
-	<!-- i18n folder -->
-	<exclude name="i18n/**"/>
+		<!-- i18n folder -->
+		<exclude name="i18n/**"/>
         <!-- data folder -->
         <exclude name="data/"/>
         <!-- font folder -->
@@ -107,6 +107,10 @@
       <fileset dir="${gs-android.dir}/assets/data">
         <exclude name="android/"/>
       </fileset>
+    </copy>
+    <!-- Add icons -->
+    <copy todir="${dist}/data">
+      <fileset dir="${gs-desktop.dir}/data" includes="**" />
     </copy>
 
     <!-- Copy i18n files -->

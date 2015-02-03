@@ -118,7 +118,7 @@ public class GaiaSandboxGuiSwing extends JFrame {
 	    GlobalClock.initialize(0.01f);
 	    FileLocator.initialize(assetsLocation);
 	    sg = SceneGraphLoader.loadSceneGraph(new FileInputStream(new File(assetsLocation + GlobalConf.instance.SG_FILE)), GlobalClock.clock, GlobalConf.instance.MULTITHREADING, GlobalConf.instance.NUMBER_THREADS);
-	    IconManager.initialize(new File("img/gui/"));
+	    IconManager.initialise(new File("data/ui/"));
 	    splash.splashOff();
 	    splash.dispose();
 
