@@ -3,8 +3,8 @@ font.size=12
 font.bold=false
 font.italic=false
 
-font2.file=/home/tsagrista/ws/GaiaOrbit-android/assets/skins/default/jgfont.fnt
-font2.use=false
+font2.file=/home/tsagrista/.fonts/Tahoma.ttf
+font2.use=true
 
 pad.top=0
 pad.right=0
