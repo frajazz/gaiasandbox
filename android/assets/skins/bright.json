@@ -57,8 +57,7 @@ com.badlogic.gdx.scenes.scene2d.ui.Slider$SliderStyle: {
 	default-horizontal: { background: default-slider, knob: default-slider-knob }
 },
 com.badlogic.gdx.scenes.scene2d.ui.Label$LabelStyle: {
-	header:  { font: ui-15, fontColor: blue },
-	header2: { font: ui-12, fontColor: blue },
+	header:  { font: ui-12, fontColor: blue },
 	default: { font: ui-11, fontColor: black },
 	default-blue: { font: ui-11, fontColor: blue },
 	ui-10:   { font: ui-10, fontColor: black},
@@ -115,7 +114,7 @@ com.badlogic.gdx.scenes.scene2d.ui.Tree$TreeStyle: {
 },
 com.badlogic.gdx.scenes.scene2d.ui.ProgressBar$ProgressBarStyle: {
 	default-horizontal: { background: progress-bg, knob: progress-knob, knobBefore: progress-knob-before }
-}
+},
 gaia.cu9.ari.gaiaorbit.util.scene2d.CollapsiblePanel$CollapsiblePanelStyle: {
 	default: { titleFont: ui-12, titleFontColor: blue, imageUp: tree-plus, imageDown: tree-minus }
 }

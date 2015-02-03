@@ -1,7 +1,10 @@
-font.name=DejaVu Sans Condensed
+font.name=Lucida Sans
 font.size=13
-font.bold=true
+font.bold=false
 font.italic=false
+
+font2.file=/home/tsagrista/ws/GaiaOrbit-android/assets/skins/default/jgfont.fnt
+font2.use=false
 
 pad.top=0
 pad.right=0

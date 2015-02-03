@@ -844,7 +844,7 @@ public class FullGui implements IGui, IObserver {
 	buttonsTable.add(tutorial).pad(1).top().left();
 	buttonsTable.add(about).pad(1).top().left();
 
-	int buttonwidth = 92;
+	int buttonwidth = 85;
 	int buttonheight = 20;
 	runScript.setSize(buttonwidth, buttonheight);
 	preferences.setSize(buttonwidth, buttonheight);

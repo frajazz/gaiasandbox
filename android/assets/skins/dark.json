@@ -58,8 +58,7 @@ com.badlogic.gdx.scenes.scene2d.ui.Slider$SliderStyle: {
 	default-horizontal: { background: default-slider, knob: default-slider-knob }
 },
 com.badlogic.gdx.scenes.scene2d.ui.Label$LabelStyle: {
-	header:  { font: ui-15, fontColor: orange },
-	header2: { font: ui-12, fontColor: blue },
+	header:  { font: ui-12, fontColor: orange },
 	default: { font: ui-11, fontColor: white },
 	default-blue: { font: ui-11, fontColor: blue },
 	ui-10:   { font: ui-10, fontColor: white},
