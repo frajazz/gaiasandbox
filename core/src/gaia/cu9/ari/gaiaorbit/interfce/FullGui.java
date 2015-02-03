@@ -14,7 +14,7 @@ import gaia.cu9.ari.gaiaorbit.util.GlobalResources;
 import gaia.cu9.ari.gaiaorbit.util.I18n;
 import gaia.cu9.ari.gaiaorbit.util.TwoWayHashmap;
 import gaia.cu9.ari.gaiaorbit.util.math.MathUtilsd;
-import gaia.cu9.ari.gaiaorbit.util.scene2d.CollapsableWindow;
+import gaia.cu9.ari.gaiaorbit.util.scene2d.CollapsibleWindow;
 import gaia.cu9.ari.gaiaorbit.util.scene2d.OwnImageButton;
 import gaia.cu9.ari.gaiaorbit.util.scene2d.OwnLabel;
 import gaia.cu9.ari.gaiaorbit.util.scene2d.OwnScrollPane;
@@ -92,7 +92,7 @@ public class FullGui implements IGui, IObserver {
     protected Slider fieldOfView, starBrightness, bloomEffect, ambientLight, cameraSpeed, turnSpeed, rotateSpeed;
     protected CheckBox focusLock, transitColor, onlyObservedStars, computeGaiaScan, lensFlare;
 
-    protected CollapsableWindow options;
+    protected CollapsibleWindow options;
     protected VerticalGroup mainVertical, guiLayout;
     protected OwnScrollPane windowScroll;
 
@@ -173,7 +173,7 @@ public class FullGui implements IGui, IObserver {
 	final IGui gui = this;
 
 	/** The Options window **/
-	options = new CollapsableWindow(txt("gui.controls"), skin);
+	options = new CollapsibleWindow(txt("gui.controls"), skin);
 	options.left();
 	options.setTitleAlignment(Align.left);
 	options.setFillParent(false);
@@ -844,7 +844,7 @@ public class FullGui implements IGui, IObserver {
 	buttonsTable.add(tutorial).pad(1).top().left();
 	buttonsTable.add(about).pad(1).top().left();
 
-	int buttonwidth = 70;
+	int buttonwidth = 92;
 	int buttonheight = 20;
 	runScript.setSize(buttonwidth, buttonheight);
 	preferences.setSize(buttonwidth, buttonheight);
@@ -910,7 +910,7 @@ public class FullGui implements IGui, IObserver {
 
     }
 
-    private void recalculateOptionsSize() {
+    public void recalculateOptionsSize() {
 	windowScroll.setHeight(Math.min(guiLayout.getHeight(), Gdx.graphics.getHeight() - 100));
 	windowScroll.pack();
 

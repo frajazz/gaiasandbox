@@ -3,7 +3,7 @@ package gaia.cu9.ari.gaiaorbit.interfce;
 import gaia.cu9.ari.gaiaorbit.event.EventManager;
 import gaia.cu9.ari.gaiaorbit.event.Events;
 import gaia.cu9.ari.gaiaorbit.util.I18n;
-import gaia.cu9.ari.gaiaorbit.util.scene2d.CollapsableWindow;
+import gaia.cu9.ari.gaiaorbit.util.scene2d.CollapsibleWindow;
 import gaia.cu9.ari.gaiaorbit.util.scene2d.OwnLabel;
 import gaia.cu9.ari.gaiaorbit.util.scene2d.OwnTextButton;
 import gaia.cu9.ari.gaiaorbit.util.scene2d.OwnTextField;
@@ -26,7 +26,7 @@ import com.badlogic.gdx.scenes.scene2d.ui.Window;
 import com.badlogic.gdx.scenes.scene2d.utils.Align;
 import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener.ChangeEvent;
 
-public class DateDialog extends CollapsableWindow {
+public class DateDialog extends CollapsibleWindow {
     private final Window me;
     private final IGui gui;
 

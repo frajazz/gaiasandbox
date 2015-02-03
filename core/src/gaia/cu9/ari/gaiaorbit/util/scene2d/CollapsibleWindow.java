@@ -16,6 +16,8 @@
 
 package gaia.cu9.ari.gaiaorbit.util.scene2d;
 
+import com.badlogic.gdx.math.Vector2;
+import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.scenes.scene2d.ui.Window;
@@ -24,29 +26,36 @@ import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 /** A {@code CollapsableWindow} can be expanded/collapsed with a single click on the title bar.
  * 
  * @author Xoppa */
-public class CollapsableWindow extends Window {
+public class CollapsibleWindow extends Window {
     private boolean collapsed;
     private float collapseHeight = 20f;
     private float expandHeight;
+    private Vector2 vec2;
+    Actor me;
 
-    public CollapsableWindow(String title, Skin skin) {
+    public CollapsibleWindow(String title, Skin skin) {
 	super(title, skin);
+	this.me = this;
+	vec2 = new Vector2();
 	addListener(new ClickListener() {
-	    private boolean dragged = false;
+	    private float startx, starty;
 
 	    @Override
-	    public void touchDragged(InputEvent event, float x, float y, int pointer) {
-		dragged = true;
-		super.touchDragged(event, x, y, pointer);
+	    public boolean touchDown(InputEvent event, float x, float y, int pointer, int button) {
+		startx = x + getX();
+		starty = y + getY();
+		return super.touchDown(event, x, y, pointer, button);
 	    }
 
 	    @Override
 	    public void touchUp(InputEvent event, float x, float y, int pointer, int button) {
-		if (!dragged) {
-		    if (getTapCount() == 1 && getHeight() - y <= getPadTop() && y < getHeight() && x > 0 && x < getWidth())
+		float endx = x + getX();
+		float endy = y + getY();
+		vec2.set(endx - startx, endy - starty);
+		// pixels of margin
+		if (vec2.len() < 3) {
+		    if (getHeight() - y <= getPadTop() && y < getHeight() && x > 0 && x < getWidth())
 			toggleCollapsed();
-		} else {
-		    dragged = false;
 		}
 		super.touchUp(event, x, y, pointer, button);
 	    }

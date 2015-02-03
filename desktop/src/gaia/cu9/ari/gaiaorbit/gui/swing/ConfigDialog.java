@@ -313,14 +313,16 @@ public class ConfigDialog extends I18nJFrame {
 	LangComboBoxBean[] langs = new LangComboBoxBean[files.length];
 	int i = 0;
 	for (String file : files) {
-	    String locale = file.substring(i18nname.length(), file.length() - ".properties".length());
-	    if (locale.length() != 0) {
-		// Remove underscore _
-		locale = locale.substring(1).replace("_", "-");
-		Locale loc = Locale.forLanguageTag(locale);
-		langs[i] = new LangComboBoxBean(loc);
-	    } else {
-		langs[i] = new LangComboBoxBean(I18n.bundle.getLocale());
+	    if (file.startsWith("gsbundle") && file.endsWith(".properties")) {
+		String locale = file.substring(i18nname.length(), file.length() - ".properties".length());
+		if (locale.length() != 0) {
+		    // Remove underscore _
+		    locale = locale.substring(1).replace("_", "-");
+		    Locale loc = Locale.forLanguageTag(locale);
+		    langs[i] = new LangComboBoxBean(loc);
+		} else {
+		    langs[i] = new LangComboBoxBean(I18n.bundle.getLocale());
+		}
 	    }
 	    i++;
 	}

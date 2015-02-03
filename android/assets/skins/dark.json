@@ -115,5 +115,8 @@ com.badlogic.gdx.scenes.scene2d.ui.Tree$TreeStyle: {
 },
 com.badlogic.gdx.scenes.scene2d.ui.ProgressBar$ProgressBarStyle: {
 	default-horizontal: { background: progress-bg, knob: progress-knob, knobBefore: progress-knob-before }
+},
+gaia.cu9.ari.gaiaorbit.util.scene2d.CollapsiblePanel$CollapsiblePanelStyle: {
+	default: { titleFont: ui-12, titleFontColor: orange, imageUp: tree-plus, imageDown: tree-minus  }
 }
 }
