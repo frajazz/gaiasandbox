@@ -271,3 +271,17 @@ edit-icon
   orig: 16, 16
   offset: 0, 0
   index: -1
+separator
+  rotate: false
+  xy: 105, 7
+  size: 8, 3
+  orig: 8, 3
+  offset: 0, 0
+  index: -1
+table-bg
+  rotate: false
+  xy: 1, 13
+  size: 1, 1
+  orig: 1, 1
+  offset: 0, 0
+  index: -1

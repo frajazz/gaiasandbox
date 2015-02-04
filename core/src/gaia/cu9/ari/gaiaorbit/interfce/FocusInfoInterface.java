@@ -19,6 +19,7 @@ import com.badlogic.gdx.scenes.scene2d.ui.Table;
 public class FocusInfoInterface extends Table implements IObserver {
 
     protected OwnLabel focusName, focusRA, focusDEC, focusAngle, focusDist, focusAppMag, focusAbsMag, focusRadius;
+    protected OwnLabel camName, camVel, camPos;
     DecimalFormat format, sformat, format8;
 
     Vector3d pos;
@@ -28,7 +29,10 @@ public class FocusInfoInterface extends Table implements IObserver {
 	this.format = format;
 	this.sformat = sformat;
 	this.format8 = new DecimalFormat("#####0.0#######");
-	focusName = new OwnLabel("", skin, "header");
+	this.setBackground("table-bg");
+	this.pad(5);
+
+	focusName = new OwnLabel("", skin, "hud-header");
 	focusRA = new OwnLabel("", skin, "hud");
 	focusDEC = new OwnLabel("", skin, "hud");
 	focusAppMag = new OwnLabel("", skin, "hud");
@@ -37,11 +41,16 @@ public class FocusInfoInterface extends Table implements IObserver {
 	focusDist = new OwnLabel("", skin, "hud");
 	focusRadius = new OwnLabel("", skin, "hud");
 
+	camName = new OwnLabel(I18n.bundle.get("gui.camera"), skin, "hud-header");
+	camVel = new OwnLabel("", skin, "hud");
+	camPos = new OwnLabel("", skin, "hud");
+
 	float w = 100;
 	focusRA.setWidth(w);
 	focusDEC.setWidth(w);
 	focusAngle.setWidth(w);
 	focusDist.setWidth(w);
+	camVel.setWidth(w);
 
 	add(focusName).left().colspan(2);
 	row();
@@ -64,11 +73,18 @@ public class FocusInfoInterface extends Table implements IObserver {
 	add(focusDist).left().padLeft(10);
 	row();
 	add(new OwnLabel(txt("gui.focusinfo.radius"), skin, "hud-big")).left();
-	add(focusRadius).left().padLeft(10);
+	add(focusRadius).left().padLeft(10).padBottom(5);
+	row();
+	add(camName).left().colspan(2);
+	row();
+	add(new OwnLabel(txt("gui.camera.vel"), skin, "hud-big")).left();
+	add(camVel).left().padLeft(10);
+	row();
+	add(camPos).left().colspan(2);
 	pack();
 
 	pos = new Vector3d();
-	EventManager.getInstance().subscribe(this, Events.FOCUS_CHANGED, Events.FOCUS_INFO_UPDATED);
+	EventManager.getInstance().subscribe(this, Events.FOCUS_CHANGED, Events.FOCUS_INFO_UPDATED, Events.CAMERA_MOTION_UPDATED);
     }
 
     @Override
@@ -116,6 +132,12 @@ public class FocusInfoInterface extends Table implements IObserver {
 	    Object[] dist = GlobalResources.floatToDistanceString((float) data[0]);
 	    focusDist.setText(sformat.format((float) Math.max(0d, (float) dist[0])) + " " + dist[1]);
 	    break;
+	case CAMERA_MOTION_UPDATED:
+	    Vector3d campos = (Vector3d) data[0];
+	    camPos.setText("X: " + sformat.format(campos.x * Constants.U_TO_KM) + "\nY: " + sformat.format(campos.y * Constants.U_TO_KM) + "\nZ: " + sformat.format(campos.z * Constants.U_TO_KM));
+	    camVel.setText(sformat.format((double) data[1]) + " km/h");
+	    break;
+
 	}
     }
 

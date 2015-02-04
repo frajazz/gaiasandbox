@@ -16,7 +16,7 @@ com.badlogic.gdx.graphics.Color: {
 	white: { a: 1, b: 1, g: 1, r: 1 },
 	red: { a: 1, b: 0, g: 0, r: 1 },
 	black: { a: 1, b: 0, g: 0, r: 0 },
-	blue: { a: 1, b: 0.9, g: 0.4, r: 0.2 },
+	blue: { a: 1, b: 0.7, g: 0.25, r: 0.1 },
 	orange: { a: 1, b: 0, g: 0.7, r: 1 }
 },
 com.badlogic.gdx.scenes.scene2d.ui.Skin$TintedDrawable: {
@@ -82,9 +82,10 @@ com.badlogic.gdx.scenes.scene2d.ui.Label$LabelStyle: {
 	headline:   { font: ui-25-shadow, fontColor: white},
 	subhead:   { font: ui-15, fontColor: white},
 	
-	hud:	 { font: ui-11, fontColor: white },
-	hud-med:	 { font: ui-11, fontColor: white },
-	hud-big:	 { font: ui-13, fontColor: white }
+	hud:	 { font: ui-11, fontColor: black },
+	hud-med:	 { font: ui-11, fontColor: black },
+	hud-big:	 { font: ui-13, fontColor: black },
+	hud-header:	 { font: ui-15, fontColor: blue }
 },
 com.badlogic.gdx.scenes.scene2d.ui.TextField$TextFieldStyle: {
 	default: { selection: selection, background: textfield, font: ui-11, fontColor: black, cursor: cursor },

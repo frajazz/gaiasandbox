@@ -84,7 +84,8 @@ com.badlogic.gdx.scenes.scene2d.ui.Label$LabelStyle: {
 	
 	hud:	 { font: ui-12, fontColor: white },
 	hud-med:	 { font: ui-13, fontColor: white },
-	hud-big:	 { font: ui-15, fontColor: white }
+	hud-big:	 { font: ui-15, fontColor: white },
+	hud-header:	 { font: ui-19, fontColor: orange }
 },
 com.badlogic.gdx.scenes.scene2d.ui.TextField$TextFieldStyle: {
 	default: { selection: selection, background: textfield, font: ui-12, fontColor: black, messageFontColor: dark-gray, cursor: cursor },

@@ -33,6 +33,8 @@ import java.util.Set;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.assets.AssetManager;
 import com.badlogic.gdx.graphics.Color;
+import com.badlogic.gdx.graphics.Texture.TextureWrap;
+import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.Event;
 import com.badlogic.gdx.scenes.scene2d.EventListener;
@@ -41,7 +43,9 @@ import com.badlogic.gdx.scenes.scene2d.InputEvent.Type;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.Button;
 import com.badlogic.gdx.scenes.scene2d.ui.CheckBox;
+import com.badlogic.gdx.scenes.scene2d.ui.Container;
 import com.badlogic.gdx.scenes.scene2d.ui.HorizontalGroup;
+import com.badlogic.gdx.scenes.scene2d.ui.Image;
 import com.badlogic.gdx.scenes.scene2d.ui.ImageButton;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.scenes.scene2d.ui.ScrollPane;
@@ -56,6 +60,8 @@ import com.badlogic.gdx.scenes.scene2d.ui.Tree.Node;
 import com.badlogic.gdx.scenes.scene2d.ui.VerticalGroup;
 import com.badlogic.gdx.scenes.scene2d.utils.Align;
 import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener.ChangeEvent;
+import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
+import com.badlogic.gdx.scenes.scene2d.utils.TiledDrawable;
 import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.viewport.ScreenViewport;
 
@@ -93,14 +99,15 @@ public class FullGui implements IGui, IObserver {
     protected CheckBox focusLock, transitColor, onlyObservedStars, computeGaiaScan, lensFlare;
 
     protected CollapsibleWindow options;
-    protected VerticalGroup mainVertical, guiLayout;
+    protected VerticalGroup mainVertical;
     protected OwnScrollPane windowScroll;
+    protected Table guiLayout;
 
     protected SearchDialog searchDialog;
     protected DateDialog dateDialog;
 
+    protected Container<FocusInfoInterface> fi;
     protected FocusInfoInterface focusInterface;
-    protected CameraInfoInterface cameraInterface;
     protected NotificationsInterface notificationsInterface;
     protected MessagesInterface messagesInterface;
     protected DebugInterface debugInterface;
@@ -172,6 +179,11 @@ public class FullGui implements IGui, IObserver {
     private void buildGui() {
 	final IGui gui = this;
 
+	/** Global resources **/
+	TextureRegion septexreg = ((TextureRegionDrawable) skin.newDrawable("separator")).getRegion();
+	septexreg.getTexture().setWrap(TextureWrap.Repeat, TextureWrap.ClampToEdge);
+	TiledDrawable separator = new TiledDrawable(septexreg);
+
 	/** The Options window **/
 	options = new CollapsibleWindow(txt("gui.controls"), skin);
 	options.left();
@@ -183,9 +195,9 @@ public class FullGui implements IGui, IObserver {
 	options.padBottom(5);
 
 	/** Global layout **/
-	guiLayout = new VerticalGroup();
+	guiLayout = new Table();
 	guiLayout.align(Align.left);
-	guiLayout.space(VPADDING);
+	//	guiLayout.space(VPADDING);
 
 	/** ----CAMERA MODE---- **/
 	VerticalGroup cameraGroup = new VerticalGroup().align(Align.left);
@@ -348,7 +360,7 @@ public class FullGui implements IGui, IObserver {
 	cameraGroup.addActor(focusLock);
 
 	/** ----OBJECTS TREE---- **/
-	VerticalGroup objectsGroup = new VerticalGroup().align(Align.left);
+	VerticalGroup objectsGroup = new VerticalGroup().align(Align.left).space(3);
 	Label objectsLabel = new Label(txt("gui.objects"), skin, "header");
 
 	searchBox = new TextField("", skin);
@@ -657,7 +669,8 @@ public class FullGui implements IGui, IObserver {
 	optionsGroup.addActor(onlyObservedStars);
 
 	/** ----TIME GROUP---- **/
-	VerticalGroup timeGroup = new VerticalGroup().align(Align.left);
+	VerticalGroup timeGroup = new VerticalGroup().align(Align.left).space(3).padTop(3);
+	;
 
 	Label timeLabel = new Label(txt("gui.time"), skin, "header");
 
@@ -753,11 +766,10 @@ public class FullGui implements IGui, IObserver {
 	labelGroup.space(HPADDING);
 	labelGroup.addActor(timeLabel);
 	labelGroup.addActor(playstop);
-
 	timeGroup.addActor(labelGroup);
 
 	HorizontalGroup dateGroup = new HorizontalGroup();
-	dateGroup.space(2);
+	dateGroup.space(4);
 	dateGroup.addActor(date);
 	dateGroup.addActor(dateEdit);
 	timeGroup.addActor(dateGroup);
@@ -820,12 +832,28 @@ public class FullGui implements IGui, IObserver {
 	});
 
 	/** ADD GROUPS TO VERTICAL LAYOUT **/
-	guiLayout.addActor(timeGroup);
-	guiLayout.addActor(cameraGroup);
-	guiLayout.addActor(objectsGroup);
-	guiLayout.addActor(visibilityGroup);
-	guiLayout.addActor(lightingGroup);
-	guiLayout.addActor(optionsGroup);
+	int pad = 10;
+	guiLayout.add(timeGroup).left().padBottom(pad);
+	guiLayout.row();
+	guiLayout.add(new Image(separator)).left().fill(true, false);
+	guiLayout.row();
+	guiLayout.add(cameraGroup).left().padBottom(pad);
+	guiLayout.row();
+	guiLayout.add(new Image(separator)).left().fill(true, false);
+	guiLayout.row();
+	guiLayout.add(objectsGroup).left().padBottom(pad);
+	guiLayout.row();
+	guiLayout.add(new Image(separator)).left().fill(true, false);
+	guiLayout.row();
+	guiLayout.add(visibilityGroup).left().padBottom(pad);
+	guiLayout.row();
+	guiLayout.add(new Image(separator)).left().fill(true, false);
+	guiLayout.row();
+	guiLayout.add(lightingGroup).left().padBottom(pad);
+	guiLayout.row();
+	guiLayout.add(new Image(separator)).left().fill(true, false);
+	guiLayout.row();
+	guiLayout.add(optionsGroup).left().padBottom(pad);
 	guiLayout.layout();
 	guiLayout.pack();
 
@@ -868,14 +896,12 @@ public class FullGui implements IGui, IObserver {
 
 	// FOCUS INFORMATION - BOTTOM RIGHT
 	focusInterface = new FocusInfoInterface(skin, format, sformat);
-	focusInterface.setFillParent(true);
-	focusInterface.right().bottom();
-	focusInterface.pad(0, 0, 5, 5);
-
-	// CAMERA INFORMATION - BOTTOM CENTER
-	cameraInterface = new CameraInfoInterface(skin, sformat, lock);
-	cameraInterface.setFillParent(true);
-	cameraInterface.center().bottom();
+	//focusInterface.setFillParent(true);
+	focusInterface.left().top();
+	fi = new Container(focusInterface);
+	fi.setFillParent(true);
+	fi.bottom().right();
+	fi.padBottom(10).padRight(10);
 
 	// DEBUG INFO - TOP RIGHT
 	debugInterface = new DebugInterface(skin, lock);
@@ -942,10 +968,7 @@ public class FullGui implements IGui, IObserver {
 	    if (messagesInterface != null)
 		ui.addActor(messagesInterface);
 	    if (focusInterface != null)
-		ui.addActor(focusInterface);
-	    if (cameraInterface != null) {
-		ui.addActor(cameraInterface);
-	    }
+		ui.addActor(fi);
 	    if (inputInterface != null) {
 		ui.addActor(inputInterface);
 	    }

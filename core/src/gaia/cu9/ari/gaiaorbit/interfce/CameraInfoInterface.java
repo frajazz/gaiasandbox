@@ -13,6 +13,11 @@ import java.text.DecimalFormat;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
 
+/**
+ * 
+ * @author Toni Sagrista
+ * @deprecated The camera info is now included in the {@lin FocusInfoInterface}
+ */
 public class CameraInfoInterface extends Table implements IObserver {
 
     protected OwnLabel camVel, camPos;

@@ -35,6 +35,7 @@ import com.badlogic.gdx.graphics.GL20;
 public class HelpDialog extends I18nJFrame {
 
     JFrame frame;
+    JButton okButton;
 
     public HelpDialog() {
 	super(txt("gui.help.help") + " - " + GlobalConf.APPLICATION_NAME + " v" + GlobalConf.instance.VERSION.version);
@@ -43,6 +44,10 @@ public class HelpDialog extends I18nJFrame {
 	frame.setResizable(false);
 	GuiUtility.centerOnScreen(frame);
 	frame.setVisible(true);
+
+	// Request focus
+	frame.getRootPane().setDefaultButton(okButton);
+	okButton.requestFocus();
     }
 
     /** Returns an ImageIcon, or null if the path was invalid. */
@@ -308,7 +313,7 @@ public class HelpDialog extends I18nJFrame {
 	/** BUTTONS **/
 	JPanel buttons = new JPanel(new MigLayout("", "push[][]", ""));
 
-	JButton okButton = new JButton("Ok");
+	okButton = new JButton("Ok");
 	okButton.addActionListener(new ActionListener() {
 
 	    @Override
