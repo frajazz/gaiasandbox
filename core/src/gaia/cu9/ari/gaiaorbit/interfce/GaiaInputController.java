@@ -312,7 +312,7 @@ public class GaiaInputController extends GestureDetector {
 		action.run();
 	    }
 
-	    pressedKeys.clear();
+	    pressedKeys.remove(keycode);
 	    return true;
 	} else if (keycode == Keys.ESCAPE) {
 	    // If input is not enabled, only escape works
