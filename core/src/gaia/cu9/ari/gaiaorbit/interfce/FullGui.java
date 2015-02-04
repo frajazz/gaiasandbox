@@ -898,7 +898,7 @@ public class FullGui implements IGui, IObserver {
 	focusInterface = new FocusInfoInterface(skin, format, sformat);
 	//focusInterface.setFillParent(true);
 	focusInterface.left().top();
-	fi = new Container(focusInterface);
+	fi = new Container<FocusInfoInterface>(focusInterface);
 	fi.setFillParent(true);
 	fi.bottom().right();
 	fi.padBottom(10).padRight(10);
