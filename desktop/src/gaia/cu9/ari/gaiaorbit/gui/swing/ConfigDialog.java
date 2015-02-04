@@ -420,10 +420,13 @@ public class ConfigDialog extends I18nJFrame {
 
 	JLabel lab = new JLabel(txt("gui.noteditable"));
 	lab.setForeground(darkred);
-	controls.add(lab, "span");
-	controls.add(controlsScrollPane, "span");
+	controls.add(lab, "wrap");
+	controls.add(controlsScrollPane, "wrap");
 
-	tabbedPane.addTab(txt("gui.controls"), IconManager.get("config/controls"), controls);
+	JPanel controlsPanel = new JPanel(new MigLayout("", "[grow,fill]", ""));
+	controlsPanel.add(controls, "wrap");
+
+	tabbedPane.addTab(txt("gui.controls"), IconManager.get("config/controls"), controlsPanel);
 	tabbedPane.setMnemonicAt(3, KeyEvent.VK_4);
 
 	/**
@@ -496,7 +499,10 @@ public class ConfigDialog extends I18nJFrame {
 	screenshots.add(screenshotsLocation, "wrap");
 	screenshots.add(screenshotSize, "span");
 
-	tabbedPane.addTab(txt("gui.screenshots"), IconManager.get("config/screenshots"), screenshots);
+	JPanel screenshotsPanel = new JPanel(new MigLayout("", "[grow,fill]", ""));
+	screenshotsPanel.add(screenshots, "wrap");
+
+	tabbedPane.addTab(txt("gui.screenshots"), IconManager.get("config/screenshots"), screenshotsPanel);
 	tabbedPane.setMnemonicAt(4, KeyEvent.VK_5);
 
 	/**
@@ -616,7 +622,10 @@ public class ConfigDialog extends I18nJFrame {
 	imageOutput.add(new JLabel(txt("gui.frameoutput.fps") + ":"));
 	imageOutput.add(targetFPS);
 
-	tabbedPane.addTab(txt("gui.frameoutput.title"), IconManager.get("config/frameoutput"), imageOutput);
+	JPanel imageOutputPanel = new JPanel(new MigLayout("", "[grow,fill]", ""));
+	imageOutputPanel.add(imageOutput, "wrap");
+
+	tabbedPane.addTab(txt("gui.frameoutput.title"), IconManager.get("config/frameoutput"), imageOutputPanel);
 	tabbedPane.setMnemonicAt(5, KeyEvent.VK_6);
 
 	// Do not show again
