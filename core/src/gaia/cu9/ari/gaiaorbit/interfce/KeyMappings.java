@@ -272,6 +272,14 @@ public class KeyMappings {
 	    }
 	}), Keys.CONTROL_LEFT, Keys.U);
 
+	// CTRL + SHIFT + Z -> Toggle pause update and render threads (pause all)
+	addMapping(new ProgramAction(txt("action.globalpause"), new Runnable() {
+	    @Override
+	    public void run() {
+		EventManager.getInstance().post(Events.TOGGLE_GLOBALPAUSE, txt("notif.globalpause"));
+	    }
+	}), Keys.CONTROL_LEFT, Keys.SHIFT_LEFT, Keys.Z);
+
     }
 
     /**

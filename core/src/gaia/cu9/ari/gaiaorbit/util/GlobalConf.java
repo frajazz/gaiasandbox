@@ -49,7 +49,7 @@ public class GlobalConf implements IObserver {
     public String LOCALE;
     public int SCREENSHOT_WIDTH, SCREENSHOT_HEIGHT;
     public Date LAST_CHECKED;
-    public boolean STEREOSCOPIC_MODE, CLEAN_MODE;
+    public boolean STEREOSCOPIC_MODE, CLEAN_MODE, GLOBAL_PAUSE = false;
     /** Eye separation in stereoscopic mode in meters **/
     public float STEREOSCOPIC_EYE_SEPARATION_M = 1;
 
@@ -188,7 +188,7 @@ public class GlobalConf implements IObserver {
 	    EventManager.getInstance().post(Events.JAVA_EXCEPTION, e);
 	}
 
-	EventManager.getInstance().subscribe(this, Events.TRANSIT_COLOUR_CMD, Events.ONLY_OBSERVED_STARS_CMD, Events.COMPUTE_GAIA_SCAN_CMD, Events.STAR_BRIGHTNESS_CMD, Events.BLOOM_CMD, Events.FOV_CHANGED_CMD, Events.FOCUS_LOCK_CMD, Events.CAMERA_SPEED_CMD, Events.ROTATION_SPEED_CMD, Events.TURNING_SPEED_CMD, Events.INPUT_ENABLED_CMD, Events.CONFIG_RENDER_SYSTEM, Events.RENDER_SYSTEM_CMD, Events.LENS_FLARE_CMD, Events.LIMIT_MAG_CMD, Events.TOGGLE_STEREOSCOPIC, Events.TOGGLE_CLEANMODE);
+	EventManager.getInstance().subscribe(this, Events.TRANSIT_COLOUR_CMD, Events.ONLY_OBSERVED_STARS_CMD, Events.COMPUTE_GAIA_SCAN_CMD, Events.STAR_BRIGHTNESS_CMD, Events.BLOOM_CMD, Events.FOV_CHANGED_CMD, Events.FOCUS_LOCK_CMD, Events.CAMERA_SPEED_CMD, Events.ROTATION_SPEED_CMD, Events.TURNING_SPEED_CMD, Events.INPUT_ENABLED_CMD, Events.CONFIG_RENDER_SYSTEM, Events.RENDER_SYSTEM_CMD, Events.LENS_FLARE_CMD, Events.LIMIT_MAG_CMD, Events.TOGGLE_STEREOSCOPIC, Events.TOGGLE_CLEANMODE, Events.TOGGLE_GLOBALPAUSE);
     }
 
     /**
@@ -388,6 +388,9 @@ public class GlobalConf implements IObserver {
 	    break;
 	case TOGGLE_CLEANMODE:
 	    CLEAN_MODE = !CLEAN_MODE;
+	    break;
+	case TOGGLE_GLOBALPAUSE:
+	    GLOBAL_PAUSE = !GLOBAL_PAUSE;
 	    break;
 	default:
 	    break;

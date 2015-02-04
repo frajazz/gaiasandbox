@@ -130,6 +130,8 @@ public enum Events {
     TOGGLE_STEREOSCOPIC,
     /** Toggles no GUI mode **/
     TOGGLE_CLEANMODE,
+    /** Toggles the pause of the update and render threads **/
+    TOGGLE_GLOBALPAUSE,
     /** Sets the vertical scroll position. Contains the scroll position in pixels **/
     GUI_SCROLL_POSITION_CMD,
     /** Maximizes or minimizes the GUI window. Contains a boolean with the fold state (true - minimize, false - maximize) **/

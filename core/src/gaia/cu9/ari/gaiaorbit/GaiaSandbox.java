@@ -348,46 +348,55 @@ public class GaiaSandbox implements ApplicationListener, IObserver {
 		renderLoadingScreen();
 	    }
 	} else {
-	    // Asynchronous load of textures and resources
-	    manager.update();
-
-	    /**
-	     * UPDATE
-	     */
-	    update(Gdx.graphics.getDeltaTime());
-
-	    /**
-	     * RENDER
-	     */
-
-	    /* SCREEN OUTPUT */
-	    if (GlobalConf.instance.SCREEN_OUTPUT) {
-		/** RENDER THE SCENE **/
-		// Set viewport
-		setViewportSize(Gdx.graphics.getWidth(), Gdx.graphics.getHeight(), cam);
-		preRenderScene();
-		sgr.render(cam, null, pp.getPostProcessBean(RenderType.screen));
-
-		if (!GlobalConf.instance.CLEAN_MODE) {
-		    // Render the GUI, setting the viewport
-		    gui.getGuiStage().getViewport().apply();
-		    gui.render();
+	    if (GlobalConf.instance.GLOBAL_PAUSE) {
+		// We are in pause mode!
+		try {
+		    Thread.sleep(200);
+		} catch (InterruptedException e) {
+		    EventManager.getInstance().post(Events.JAVA_EXCEPTION, e);
 		}
-	    }
+	    } else {
+		// Asynchronous load of textures and resources
+		manager.update();
 
-	    /* FRAME OUTPUT */
-	    if (GlobalConf.instance.RENDER_OUTPUT) {
-		renderToImage(cam, pp.getPostProcessBean(RenderType.frame), GlobalConf.instance.RENDER_WIDTH, GlobalConf.instance.RENDER_HEIGHT, GlobalConf.instance.RENDER_FOLDER, GlobalConf.instance.RENDER_FILE_NAME);
-	    }
+		/**
+		 * UPDATE
+		 */
+		update(Gdx.graphics.getDeltaTime());
 
-	    /* SCREENSHOT OUTPUT */
-	    if (screenshot.active) {
-		String file = renderToImage(cam, pp.getPostProcessBean(RenderType.screenshot), screenshot.width, screenshot.height, screenshot.folder, ScreenshotCmd.FILENAME);
-		screenshot.active = false;
-		EventManager.getInstance().post(Events.SCREENSHOT_INFO, file);
-	    }
+		/**
+		 * RENDER
+		 */
 
-	    sgr.clearLists();
+		/* SCREEN OUTPUT */
+		if (GlobalConf.instance.SCREEN_OUTPUT) {
+		    /** RENDER THE SCENE **/
+		    // Set viewport
+		    setViewportSize(Gdx.graphics.getWidth(), Gdx.graphics.getHeight(), cam);
+		    preRenderScene();
+		    sgr.render(cam, null, pp.getPostProcessBean(RenderType.screen));
+
+		    if (!GlobalConf.instance.CLEAN_MODE) {
+			// Render the GUI, setting the viewport
+			gui.getGuiStage().getViewport().apply();
+			gui.render();
+		    }
+		}
+
+		/* FRAME OUTPUT */
+		if (GlobalConf.instance.RENDER_OUTPUT) {
+		    renderToImage(cam, pp.getPostProcessBean(RenderType.frame), GlobalConf.instance.RENDER_WIDTH, GlobalConf.instance.RENDER_HEIGHT, GlobalConf.instance.RENDER_FOLDER, GlobalConf.instance.RENDER_FILE_NAME);
+		}
+
+		/* SCREENSHOT OUTPUT */
+		if (screenshot.active) {
+		    String file = renderToImage(cam, pp.getPostProcessBean(RenderType.screenshot), screenshot.width, screenshot.height, screenshot.folder, ScreenshotCmd.FILENAME);
+		    screenshot.active = false;
+		    EventManager.getInstance().post(Events.SCREENSHOT_INFO, file);
+		}
+
+		sgr.clearLists();
+	    }
 	}
 
 	EventManager.getInstance().post(Events.FPS_INFO, Gdx.graphics.getFramesPerSecond());
