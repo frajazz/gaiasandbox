@@ -262,7 +262,7 @@ public class Gui implements IObserver {
 	playPause.addActionListener(new ActionListener() {
 	    @Override
 	    public void actionPerformed(ActionEvent e) {
-		EventManager.getInstance().post(Events.SIMU_TIME_TOGGLED, playPause.isSelected());
+		EventManager.getInstance().post(Events.TOGGLE_TIME_CMD, playPause.isSelected(), true);
 	    }
 	});
 
@@ -530,7 +530,7 @@ public class Gui implements IObserver {
 	frame.add(mainPanel, BorderLayout.CENTER);
 	frame.setMinimumSize(new Dimension(450, 300));
 
-	EventManager.getInstance().subscribe(this, Events.FPS_INFO, Events.SIMU_TIME_TOGGLED_INFO, Events.TIME_CHANGE_INFO, Events.CAMERA_MODE_CMD, Events.VISIBILITY_OF_COMPONENTS, Events.PACE_CHANGED_INFO, Events.FOCUS_LOCK_CMD, Events.FULLSCREEN_CMD, Events.FOCUS_CHANGED);
+	EventManager.getInstance().subscribe(this, Events.FPS_INFO, Events.TOGGLE_TIME_CMD, Events.TIME_CHANGE_INFO, Events.CAMERA_MODE_CMD, Events.VISIBILITY_OF_COMPONENTS, Events.PACE_CHANGED_INFO, Events.FOCUS_LOCK_CMD, Events.FULLSCREEN_CMD, Events.FOCUS_CHANGED);
     }
 
     private void mySingleClick(int row, TreePath path) {
@@ -592,10 +592,12 @@ public class Gui implements IObserver {
 	case FPS_INFO:
 	    fpsLabel.setText((Integer) data[0] + " FPS");
 	    break;
-	case SIMU_TIME_TOGGLED_INFO:
-	    boolean timeOn = (Boolean) data[0];
-	    if (playPause.isSelected() != timeOn)
-		playPause.setSelected(timeOn, true);
+	case TOGGLE_TIME_CMD:
+	    if (!(Boolean) data[1]) {
+		boolean timeOn = (Boolean) data[0];
+		if (playPause.isSelected() != timeOn)
+		    playPause.setSelected(timeOn, true);
+	    }
 	    break;
 	case TIME_CHANGE_INFO:
 	    // Set date to date and time

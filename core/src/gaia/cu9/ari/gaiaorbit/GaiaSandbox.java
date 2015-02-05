@@ -66,7 +66,6 @@ import com.badlogic.gdx.graphics.glutils.FrameBuffer;
  *
  */
 public class GaiaSandbox implements ApplicationListener, IObserver {
-    private static boolean TIME_ON = false;
     private static boolean LOADING = true;
 
     private static GaiaSandbox instance;
@@ -302,7 +301,7 @@ public class GaiaSandbox implements ApplicationListener, IObserver {
 	EventManager.getInstance().post(Events.TIME_CHANGE_INFO, GlobalClock.clock.time);
 
 	// Subscribe to events
-	EventManager.getInstance().subscribe(this, Events.SIMU_TIME_TOGGLED, Events.TOGGLE_AMBIENT_LIGHT, Events.AMBIENT_LIGHT_CMD, Events.SCREENSHOT_CMD, Events.FULLSCREEN_CMD);
+	EventManager.getInstance().subscribe(this, Events.TOGGLE_AMBIENT_LIGHT, Events.AMBIENT_LIGHT_CMD, Events.SCREENSHOT_CMD, Events.FULLSCREEN_CMD);
 
 	// Run garbage collector before starting
 	System.gc();
@@ -419,7 +418,7 @@ public class GaiaSandbox implements ApplicationListener, IObserver {
 	renderGui.update(dt);
 
 	float dtScene = dt;
-	if (!TIME_ON) {
+	if (!GlobalConf.instance.TIME_ON) {
 	    dtScene = 0;
 	}
 	// Update clock
@@ -529,18 +528,6 @@ public class GaiaSandbox implements ApplicationListener, IObserver {
     public void resume() {
     }
 
-    /**
-     * Toggles the time
-     */
-    public void toggleTimeOn(Boolean timeOn) {
-	if (timeOn != null) {
-	    TIME_ON = timeOn;
-	} else {
-	    TIME_ON = !TIME_ON;
-	}
-	EventManager.getInstance().post(Events.SIMU_TIME_TOGGLED_INFO, TIME_ON);
-    }
-
     public List<CelestialBody> getFocusableEntities() {
 
 	return sg.getFocusableObjects();
@@ -557,9 +544,6 @@ public class GaiaSandbox implements ApplicationListener, IObserver {
     @Override
     public void notify(Events event, Object... data) {
 	switch (event) {
-	case SIMU_TIME_TOGGLED:
-	    toggleTimeOn(data.length == 0 ? null : (Boolean) data[0]);
-	    break;
 	case TOGGLE_AMBIENT_LIGHT:
 	    // TODO No better place to put this??
 	    ModelComponent.toggleAmbientLight((Boolean) data[1]);

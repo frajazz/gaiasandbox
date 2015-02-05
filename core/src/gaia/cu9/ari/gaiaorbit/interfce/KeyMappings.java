@@ -173,7 +173,7 @@ public class KeyMappings {
 	addMapping(new ProgramAction(txt("action.pauseresume"), new Runnable() {
 	    @Override
 	    public void run() {
-		EventManager.getInstance().post(Events.SIMU_TIME_TOGGLED, (Object) null);
+		EventManager.getInstance().post(Events.TOGGLE_TIME_CMD, null, false);
 	    }
 	}), Keys.SPACE);
 

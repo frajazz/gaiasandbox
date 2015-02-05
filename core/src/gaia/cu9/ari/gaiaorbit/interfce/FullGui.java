@@ -54,7 +54,6 @@ import com.badlogic.gdx.scenes.scene2d.ui.SelectBox;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.scenes.scene2d.ui.Slider;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
-import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
 import com.badlogic.gdx.scenes.scene2d.ui.TextField;
 import com.badlogic.gdx.scenes.scene2d.ui.Tree;
 import com.badlogic.gdx.scenes.scene2d.ui.Tree.Node;
@@ -91,8 +90,8 @@ public class FullGui implements IGui, IObserver {
     protected SelectBox<String> cameraMode;
     protected TextField inputPace, searchBox;
     protected Button plus, minus;
-    protected TextButton playstop;
     protected ImageButton dateEdit;
+    protected OwnImageButton playstop;
     protected OwnScrollPane focusListScrollPane;
     protected Slider fieldOfView, starBrightness, bloomEffect, ambientLight, cameraSpeed, turnSpeed, rotateSpeed;
     protected CheckBox focusLock, transitColor, onlyObservedStars, computeGaiaScan, lensFlare;
@@ -172,7 +171,7 @@ public class FullGui implements IGui, IObserver {
 	buildGui();
 
 	// We must subscribe to the desired events
-	EventManager.getInstance().subscribe(this, Events.FOV_CHANGED_CMD, Events.CAMERA_MODE_CMD, Events.TIME_CHANGE_INFO, Events.SIMU_TIME_TOGGLED_INFO, Events.SHOW_ABOUT_ACTION, Events.SHOW_TUTORIAL_ACTION, Events.SHOW_SEARCH_ACTION, Events.FOCUS_CHANGED, Events.TOGGLE_VISIBILITY_CMD, Events.PACE_CHANGED_INFO, Events.GUI_SCROLL_POSITION_CMD, Events.GUI_FOLD_CMD, Events.GUI_MOVE_CMD, Events.ROTATION_SPEED_CMD, Events.CAMERA_SPEED_CMD, Events.TURNING_SPEED_CMD, Events.TIME_CHANGE_CMD);
+	EventManager.getInstance().subscribe(this, Events.FOV_CHANGED_CMD, Events.CAMERA_MODE_CMD, Events.TIME_CHANGE_INFO, Events.TOGGLE_TIME_CMD, Events.SHOW_TUTORIAL_ACTION, Events.SHOW_SEARCH_ACTION, Events.FOCUS_CHANGED, Events.TOGGLE_VISIBILITY_CMD, Events.PACE_CHANGED_INFO, Events.GUI_SCROLL_POSITION_CMD, Events.GUI_FOLD_CMD, Events.GUI_MOVE_CMD, Events.ROTATION_SPEED_CMD, Events.CAMERA_SPEED_CMD, Events.TURNING_SPEED_CMD, Events.TIME_CHANGE_CMD);
     }
 
     private void buildGui() {
@@ -703,14 +702,14 @@ public class FullGui implements IGui, IObserver {
 	});
 
 	// Play/stop
-	playstop = new OwnTextButton(txt("gui.play.upper"), skin);
+	playstop = new OwnImageButton(skin, "playstop");
 	playstop.setName("play stop");
-	playstop.setSize(90, 20);
+	playstop.setChecked(GlobalConf.instance.TIME_ON);
 	playstop.addListener(new EventListener() {
 	    @Override
 	    public boolean handle(Event event) {
 		if (event instanceof ChangeEvent) {
-		    EventManager.getInstance().post(Events.SIMU_TIME_TOGGLED);
+		    EventManager.getInstance().post(Events.TOGGLE_TIME_CMD, playstop.isChecked(), true);
 		    return true;
 		}
 		return false;
@@ -1120,20 +1119,17 @@ public class FullGui implements IGui, IObserver {
 		}
 	    }
 	    break;
-	case SIMU_TIME_TOGGLED_INFO:
-	    // Pause has been toggled, update playstop button
-	    boolean timeOn = (Boolean) data[0];
-	    if (timeOn) {
-		playstop.setText(txt("gui.pause.upper"));
-	    } else {
-		playstop.setText(txt("gui.play.upper"));
+	case TOGGLE_TIME_CMD:
+	    // Pause has been toggled, update playstop button only if this does not come from this interface
+	    if (!(Boolean) data[1]) {
+		Boolean timeOn = null;
+		if (data[0] != null) {
+		    timeOn = (Boolean) data[0];
+		} else {
+		    timeOn = !playstop.isChecked();
+		}
+		playstop.setCheckedNoFire(timeOn);
 	    }
-	    break;
-	case SHOW_ABOUT_ACTION:
-	    //	    if (aboutDialog == null) {
-	    //		aboutDialog = new AboutWindow(this, skin);
-	    //	    }
-	    //	    aboutDialog.display();
 	    break;
 	case SHOW_TUTORIAL_ACTION:
 	    EventManager.getInstance().post(Events.RUN_SCRIPT_PATH, GlobalConf.instance.TUTORIAL_SCRIPT_LOCATION);

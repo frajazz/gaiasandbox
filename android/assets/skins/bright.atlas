@@ -292,3 +292,17 @@ grid-icon
   orig: 15, 15
   offset: 0, 0
   index: -1  
+play-icon
+  rotate: false
+  xy: 134, 3
+  size: 16, 16
+  orig: 16, 16
+  offset: 0, 0
+  index: -1  
+pause-icon
+  rotate: false
+  xy: 151, 3
+  size: 16, 16
+  orig: 16, 16
+  offset: 0, 0
+  index: -1 

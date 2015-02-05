@@ -75,7 +75,7 @@ public class LoadingGui implements IGui, IObserver {
 
 	rebuildGui();
 	if (progress) {
-	    EventManager.getInstance().subscribe(this, Events.POST_NOTIFICATION, Events.SIMU_TIME_TOGGLED_INFO, Events.TOGGLE_VISIBILITY_CMD, Events.CAMERA_MODE_CMD, Events.PACE_CHANGE_CMD, Events.FOCUS_LOCK_CMD, Events.TOGGLE_AMBIENT_LIGHT, Events.FOV_CHANGE_NOTIFICATION, Events.JAVA_EXCEPTION, Events.ORBIT_DATA_LOADED, Events.SCREENSHOT_INFO);
+	    EventManager.getInstance().subscribe(this, Events.POST_NOTIFICATION, Events.TOGGLE_TIME_CMD, Events.TOGGLE_VISIBILITY_CMD, Events.CAMERA_MODE_CMD, Events.PACE_CHANGE_CMD, Events.FOCUS_LOCK_CMD, Events.TOGGLE_AMBIENT_LIGHT, Events.FOV_CHANGE_NOTIFICATION, Events.JAVA_EXCEPTION, Events.ORBIT_DATA_LOADED, Events.SCREENSHOT_INFO);
 	}
     }
 
@@ -147,7 +147,7 @@ public class LoadingGui implements IGui, IObserver {
 	synchronized (lock) {
 	    switch (event) {
 	    case POST_NOTIFICATION:
-	    case SIMU_TIME_TOGGLED_INFO:
+	    case TOGGLE_TIME_CMD:
 	    case TOGGLE_VISIBILITY_CMD:
 	    case FOCUS_LOCK_CMD:
 	    case TOGGLE_AMBIENT_LIGHT:

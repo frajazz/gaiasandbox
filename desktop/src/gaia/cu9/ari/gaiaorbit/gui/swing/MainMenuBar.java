@@ -103,7 +103,7 @@ public class MainMenuBar extends JMenuBar implements IObserver {
 	menuItem.addActionListener(new ActionListener() {
 	    @Override
 	    public void actionPerformed(ActionEvent e) {
-		EventManager.getInstance().post(Events.SIMU_TIME_TOGGLED);
+		EventManager.getInstance().post(Events.TOGGLE_TIME_CMD);
 	    }
 	});
 	menu.add(menuItem);

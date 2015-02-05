@@ -62,8 +62,8 @@ public enum Events {
     /** Contains the distance [0] and the viewing angle [1] **/
     FOCUS_INFO_UPDATED,
 
-    /** Issues the command to toggle the time. Contains boolean (optional) indicating whether the time is on or off (true/false). If no boolean, time is just toggled **/
-    SIMU_TIME_TOGGLED,
+    /** Issues the command to toggle the time. Contains the boolean indicating the state (may be null) and a boolean indicating whether this coems from the interface. **/
+    TOGGLE_TIME_CMD,
     /** Contains the name of the type, a boolean indicating if this comes from the interface and an optional boolean with the state **/
     TOGGLE_VISIBILITY_CMD,
     /** Contains the name, the boolean value, and a boolean indicating if this comes from the interface **/
@@ -90,8 +90,6 @@ public enum Events {
     PACE_DIVIDE_CMD,
     /** Contains the new pace **/
     PACE_CHANGED_INFO,
-    /** Informs of a time toggle. Contains a boolean indicating whether the time has been set to on or off (true/false) **/
-    SIMU_TIME_TOGGLED_INFO,
     /** Will be displayed in the notifications area (bottom left). Contains an array of strings with the messages **/
     POST_NOTIFICATION,
     /** Contains a string with the headline message, will be displayed in a big font in the center of the screen **/

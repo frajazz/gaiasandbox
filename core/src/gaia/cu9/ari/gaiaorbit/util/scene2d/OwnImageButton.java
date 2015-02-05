@@ -9,6 +9,8 @@ import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.InputEvent.Type;
 import com.badlogic.gdx.scenes.scene2d.ui.ImageButton;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
+import com.badlogic.gdx.utils.Array;
+import com.badlogic.gdx.utils.DelayedRemovalArray;
 
 /**
  * ImageButton in which the cursor changes when the mouse rolls over.
@@ -16,6 +18,7 @@ import com.badlogic.gdx.scenes.scene2d.ui.Skin;
  *
  */
 public class OwnImageButton extends ImageButton {
+    Array<EventListener> listeners;
 
     public OwnImageButton(Skin skin) {
 	super(skin);
@@ -32,7 +35,24 @@ public class OwnImageButton extends ImageButton {
 	initialize();
     }
 
+    public void setCheckedNoFire(boolean isChecked) {
+	// Remove listeners
+
+	for (EventListener listener : this.getListeners()) {
+	    listeners.add(listener);
+	}
+	this.clearListeners();
+	// Check
+	this.setChecked(isChecked);
+	// Add listeners
+	for (EventListener listener : listeners) {
+	    this.addListener(listener);
+	}
+	listeners.clear();
+    }
+
     private void initialize() {
+	listeners = new DelayedRemovalArray();
 	this.addListener(new EventListener() {
 	    @Override
 	    public boolean handle(Event event) {
