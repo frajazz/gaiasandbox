@@ -68,7 +68,7 @@ full screen mode and windowed mode.
 In order to switch from full screen mode to windowed
 mode during the execution, use the key `F11`.
 
-####2.1.2 Antialiasing
+#####2.1.1.1 Antialiasing
 
 In the `Graphics` tab you can also find the antialiasing 
 configuration. Applying antialiasing removes the
@@ -76,9 +76,14 @@ jagged edges of the scene and makes it look better.
 There are four main options, namely No-Antialiasing, FXAA,
 NFAA and MSAA.
 
-####2.1.3 VSYNC - Vertical synchronization
+#####2.1.1.2 VSYNC - Vertical synchronization
 This option limits the frames per second to match your monitor's
 refresh rate and prevent screen tearing.
+
+####2.1.2 Interface
+You can select your favourite langauge in the tab `Interface`.
+The list of available languages is expected to grow. Also, there
+are a number of visual themes available.
 
 ####2.1.3 Performance and multithreading
 In the `Performance` tab you can enable and disable multithreading.
