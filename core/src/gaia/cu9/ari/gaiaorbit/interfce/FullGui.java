@@ -19,6 +19,7 @@ import gaia.cu9.ari.gaiaorbit.util.scene2d.OwnImageButton;
 import gaia.cu9.ari.gaiaorbit.util.scene2d.OwnLabel;
 import gaia.cu9.ari.gaiaorbit.util.scene2d.OwnScrollPane;
 import gaia.cu9.ari.gaiaorbit.util.scene2d.OwnTextButton;
+import gaia.cu9.ari.gaiaorbit.util.scene2d.OwnTextIconButton;
 import gaia.cu9.ari.gaiaorbit.util.time.GlobalClock;
 
 import java.text.DateFormat;
@@ -71,8 +72,6 @@ import com.badlogic.gdx.utils.viewport.ScreenViewport;
  *
  */
 public class FullGui implements IGui, IObserver {
-    /** Vertical padding for groups **/
-    private static final int VPADDING = 15;
     /** Horizontal padding for groups **/
     private static final int HPADDING = 10;
 
@@ -484,8 +483,15 @@ public class FullGui implements IGui, IObserver {
 	if (visibilityEntities != null) {
 	    for (int i = 0; i < visibilityEntities.length; i++) {
 		final ComponentType ct = visibilityEntities[i];
-		final String name = ct.name;
-		Button button = new OwnTextButton(name, skin, "toggle");
+		final String name = ct.getName();
+
+		Button button = null;
+		if (ct.style != null) {
+		    Image icon = new Image(skin.getDrawable(ct.style));
+		    button = new OwnTextIconButton(name, icon, skin, "toggle");
+		} else {
+		    button = new OwnTextButton(name, skin, "toggle");
+		}
 		button.setName(name);
 
 		buttonMap.put(name, button);
@@ -858,7 +864,7 @@ public class FullGui implements IGui, IObserver {
 	guiLayout.pack();
 
 	windowScroll = new OwnScrollPane(guiLayout, skin, "minimalist-nobg");
-	windowScroll.setFadeScrollBars(false);
+	windowScroll.setFadeScrollBars(true);
 	windowScroll.setScrollingDisabled(true, false);
 	windowScroll.setOverscroll(false, false);
 	windowScroll.setSmoothScrolling(true);

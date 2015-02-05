@@ -69,7 +69,7 @@ public class KeyMappings {
 	addMapping(new ProgramAction(txt("action.toggle", txt("element.orbits")), new Runnable() {
 	    @Override
 	    public void run() {
-		EventManager.getInstance().post(Events.TOGGLE_VISIBILITY_CMD, "Orbits", false);
+		EventManager.getInstance().post(Events.TOGGLE_VISIBILITY_CMD, txt("element.orbits"), false);
 	    }
 	}), Keys.O);
 
@@ -77,7 +77,7 @@ public class KeyMappings {
 	addMapping(new ProgramAction(txt("action.toggle", txt("element.planets")), new Runnable() {
 	    @Override
 	    public void run() {
-		EventManager.getInstance().post(Events.TOGGLE_VISIBILITY_CMD, "Planets", false);
+		EventManager.getInstance().post(Events.TOGGLE_VISIBILITY_CMD, txt("element.planets"), false);
 	    }
 	}), Keys.P);
 
@@ -85,7 +85,7 @@ public class KeyMappings {
 	addMapping(new ProgramAction(txt("action.toggle", txt("element.moons")), new Runnable() {
 	    @Override
 	    public void run() {
-		EventManager.getInstance().post(Events.TOGGLE_VISIBILITY_CMD, "Moons", false);
+		EventManager.getInstance().post(Events.TOGGLE_VISIBILITY_CMD, txt("element.moons"), false);
 	    }
 	}), Keys.M);
 
@@ -93,7 +93,7 @@ public class KeyMappings {
 	addMapping(new ProgramAction(txt("action.toggle", txt("element.stars")), new Runnable() {
 	    @Override
 	    public void run() {
-		EventManager.getInstance().post(Events.TOGGLE_VISIBILITY_CMD, "Stars", false);
+		EventManager.getInstance().post(Events.TOGGLE_VISIBILITY_CMD, txt("element.stars"), false);
 	    }
 	}), Keys.S);
 
@@ -101,7 +101,7 @@ public class KeyMappings {
 	addMapping(new ProgramAction(txt("action.toggle", txt("element.satellites")), new Runnable() {
 	    @Override
 	    public void run() {
-		EventManager.getInstance().post(Events.TOGGLE_VISIBILITY_CMD, "Satellites", false);
+		EventManager.getInstance().post(Events.TOGGLE_VISIBILITY_CMD, txt("element.satellites"), false);
 	    }
 	}), Keys.T);
 
@@ -109,7 +109,7 @@ public class KeyMappings {
 	addMapping(new ProgramAction(txt("action.toggle", txt("element.labels")), new Runnable() {
 	    @Override
 	    public void run() {
-		EventManager.getInstance().post(Events.TOGGLE_VISIBILITY_CMD, "Labels", false);
+		EventManager.getInstance().post(Events.TOGGLE_VISIBILITY_CMD, txt("element.labels"), false);
 	    }
 	}), Keys.L);
 
@@ -117,7 +117,7 @@ public class KeyMappings {
 	addMapping(new ProgramAction(txt("action.toggle", txt("element.constellations")), new Runnable() {
 	    @Override
 	    public void run() {
-		EventManager.getInstance().post(Events.TOGGLE_VISIBILITY_CMD, "Constellations", false);
+		EventManager.getInstance().post(Events.TOGGLE_VISIBILITY_CMD, txt("element.constellations"), false);
 	    }
 	}), Keys.C);
 
@@ -125,31 +125,31 @@ public class KeyMappings {
 	addMapping(new ProgramAction(txt("action.toggle", txt("element.boundaries")), new Runnable() {
 	    @Override
 	    public void run() {
-		EventManager.getInstance().post(Events.TOGGLE_VISIBILITY_CMD, "Boundaries", false);
+		EventManager.getInstance().post(Events.TOGGLE_VISIBILITY_CMD, txt("element.boundaries"), false);
 	    }
 	}), Keys.B);
 
 	// Q -> Toggle equatorial
-	addMapping(new ProgramAction(txt("action.toggle", txt("element.eqgrid")), new Runnable() {
+	addMapping(new ProgramAction(txt("action.toggle", txt("element.equatorial")), new Runnable() {
 	    @Override
 	    public void run() {
-		EventManager.getInstance().post(Events.TOGGLE_VISIBILITY_CMD, "Equatorial grid", false);
+		EventManager.getInstance().post(Events.TOGGLE_VISIBILITY_CMD, txt("element.equatorial"), false);
 	    }
 	}), Keys.Q);
 
 	// E -> Toggle ecliptic
-	addMapping(new ProgramAction(txt("action.toggle", txt("element.ecgrid")), new Runnable() {
+	addMapping(new ProgramAction(txt("action.toggle", txt("element.ecliptic")), new Runnable() {
 	    @Override
 	    public void run() {
-		EventManager.getInstance().post(Events.TOGGLE_VISIBILITY_CMD, "Ecliptic grid", false);
+		EventManager.getInstance().post(Events.TOGGLE_VISIBILITY_CMD, txt("element.ecliptic"), false);
 	    }
 	}), Keys.E);
 
 	// G -> Toggle galactic
-	addMapping(new ProgramAction(txt("action.toggle", txt("element.galgrid")), new Runnable() {
+	addMapping(new ProgramAction(txt("action.toggle", txt("element.galactic")), new Runnable() {
 	    @Override
 	    public void run() {
-		EventManager.getInstance().post(Events.TOGGLE_VISIBILITY_CMD, "Galactic grid", false);
+		EventManager.getInstance().post(Events.TOGGLE_VISIBILITY_CMD, txt("element.galactic"), false);
 	    }
 	}), Keys.G);
 

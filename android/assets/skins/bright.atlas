@@ -285,3 +285,10 @@ table-bg
   orig: 1, 1
   offset: 0, 0
   index: -1
+grid-icon
+  rotate: false
+  xy: 118, 4
+  size: 15, 15
+  orig: 15, 15
+  offset: 0, 0
+  index: -1  

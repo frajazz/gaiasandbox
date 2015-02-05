@@ -18,6 +18,7 @@ import gaia.cu9.ari.gaiaorbit.scenegraph.SceneGraphNode.RenderGroup;
 import gaia.cu9.ari.gaiaorbit.util.Constants;
 import gaia.cu9.ari.gaiaorbit.util.GlobalConf;
 import gaia.cu9.ari.gaiaorbit.util.GlobalResources;
+import gaia.cu9.ari.gaiaorbit.util.I18n;
 import gaia.cu9.ari.gaiaorbit.util.math.MathUtilsd;
 import gaia.cu9.ari.gaiaorbit.util.override.AtmosphereGroundShaderProvider;
 import gaia.cu9.ari.gaiaorbit.util.override.AtmosphereShaderProvider;
@@ -66,9 +67,9 @@ public class SceneGraphRenderer extends AbstractRenderer implements IProcessRend
 	Satellites("Satellites"),
 	Asteroids("Asteroids"),
 	Labels("Labels"),
-	Equatorial("Equatorial grid"),
-	Ecliptic("Ecliptic grid"),
-	Galactic("Galactic grid"),
+	Equatorial("Equatorial grid", "grid-icon"),
+	Ecliptic("Ecliptic grid", "grid-icon"),
+	Galactic("Galactic grid", "grid-icon"),
 	Orbits("Orbits"),
 	Atmospheres("Atmospheres"),
 	Constellations("Constellations"),
@@ -79,23 +80,38 @@ public class SceneGraphRenderer extends AbstractRenderer implements IProcessRend
 	private static Map<String, ComponentType> namesMap = new HashMap<String, ComponentType>();
 	static {
 	    for (ComponentType ct : ComponentType.values()) {
-		namesMap.put(ct.name, ct);
+		namesMap.put(ct.id, ct);
 	    }
 	}
 
-	public String name;
+	public String id;
+	private String name;
+	public String style;
 
-	private ComponentType(String name) {
-	    this.name = name;
+	private ComponentType(String id) {
+	    this.id = id;
+	}
+
+	private ComponentType(String id, String icon) {
+	    this(id);
+	    this.style = icon;
+	}
+
+	public String getId() {
+	    return id;
 	}
 
 	public String getName() {
+	    if (name == null) {
+		name = I18n.bundle.get("element." + name().toLowerCase());
+		namesMap.put(name, this);
+	    }
 	    return name;
 	}
 
 	@Override
 	public String toString() {
-	    return name;
+	    return getName();
 	}
 
 	public static ComponentType getFromName(String name) {
