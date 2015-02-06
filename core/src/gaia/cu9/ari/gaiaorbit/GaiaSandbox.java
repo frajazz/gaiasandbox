@@ -43,8 +43,7 @@ import gaia.cu9.ari.gaiaorbit.util.time.GlobalClock;
 import java.io.File;
 import java.io.FileInputStream;
 import java.net.MalformedURLException;
-import java.util.Calendar;
-import java.util.GregorianCalendar;
+import java.util.Date;
 import java.util.List;
 import java.util.Set;
 
@@ -141,14 +140,14 @@ public class GaiaSandbox implements ApplicationListener, IObserver {
 	EventManager.getInstance().post(Events.INPUT_ENABLED_CMD, false);
 
 	if (!GlobalClock.initialized()) {
-	    Calendar c = new GregorianCalendar();
-	    c.set(Calendar.YEAR, 2013);
-	    c.set(Calendar.MONTH, Calendar.DECEMBER);
-	    c.set(Calendar.DAY_OF_MONTH, 19);
-	    c.set(Calendar.HOUR_OF_DAY, 10);
-	    c.set(Calendar.MINUTE, 56);
+	    //	    Calendar c = new GregorianCalendar();
+	    //	    c.set(Calendar.YEAR, 2013);
+	    //	    c.set(Calendar.MONTH, Calendar.DECEMBER);
+	    //	    c.set(Calendar.DAY_OF_MONTH, 19);
+	    //	    c.set(Calendar.HOUR_OF_DAY, 10);
+	    //	    c.set(Calendar.MINUTE, 56);
 	    // Initialize clock with a pace of 2 simulation hours/second
-	    GlobalClock.initialize(0.01, c.getTime());
+	    GlobalClock.initialize(0.01, new Date());
 	}
 
 	if (!GlobalConf.initialized()) {
