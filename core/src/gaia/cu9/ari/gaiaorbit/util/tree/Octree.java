@@ -4,6 +4,13 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.TreeSet;
 
+/**
+ * Static octree implementation with a predefined level. Depth is set at 
+ * creation and is never modified. Nodes are not divided upon insertion.
+ * @author Toni Sagrista
+ *
+ * @param <T> The type of object that the octree holds.
+ */
 public class Octree<T extends IPosition> implements Iterable<OctreeNode<T>> {
 
     public double size; //size of the galaxy/tree

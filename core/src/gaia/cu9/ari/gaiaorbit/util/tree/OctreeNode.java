@@ -6,6 +6,13 @@ import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.TreeSet;
 
+/**
+ * Octree node implementation which contains a list of {@link IPosition} objects
+ * and possibly 8 subnodes.
+ * @author Toni Sagrista
+ *
+ * @param <T> The type of object that the octree holds.
+ */
 public class OctreeNode<T extends IPosition> {
 
     private Octree<T> octree;
@@ -16,6 +23,7 @@ public class OctreeNode<T extends IPosition> {
     /** Contains the depth level **/
     final int depth;
     /** Children nodes **/
+    @SuppressWarnings("unchecked")
     OctreeNode<T>[] children = new OctreeNode[8];
     /** List of objects **/
     LinkedList<T> objects = new LinkedList<T>();
