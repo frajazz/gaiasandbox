@@ -23,6 +23,7 @@ public class GlobalConf implements IObserver {
     public static final String APPLICATION_NAME = "Gaia Sandbox";
     public static final String WEBPAGE = "http://www.zah.uni-heidelberg.de/gaia2/outreach/gaiasandbox/";
     public static final String WIKI = "https://github.com/ari-zah/gaiasandbox/wiki";
+    public static final String ICON_URL = "http://www.zah.uni-heidelberg.de/uploads/pics/gaiasandboxlogo_02.png";
 
     public static boolean OPENGL_GUI;
     private static DateFormat df = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss");
@@ -52,6 +53,15 @@ public class GlobalConf implements IObserver {
     public boolean STEREOSCOPIC_MODE, CLEAN_MODE, GLOBAL_PAUSE = false, TIME_ON = false;
     /** Eye separation in stereoscopic mode in meters **/
     public float STEREOSCOPIC_EYE_SEPARATION_M = 1;
+    
+    /** Object server IP address/hostname **/
+    public static String OBJECT_SERVER_HOSTNAME = "localhost";
+    /** Object server port **/
+    public static int OBJECT_SERVER_PORT = 5555;
+    /** Object server user name **/
+    public static String OBJECT_SERVER_USERNAME;
+    /** Object Server pass **/
+    public static String OBJECT_SERVER_PASSWORD;
 
     /** Visibility of components **/
     public boolean[] VISIBILITY;
