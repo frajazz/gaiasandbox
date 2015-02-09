@@ -283,7 +283,7 @@ public class GaiaSandbox implements ApplicationListener, IObserver {
 	EventManager.getInstance().post(Events.SCENE_GRAPH_LOADED, sg);
 	EventManager.getInstance().post(Events.CAMERA_MODE_CMD, CameraMode.Focus);
 
-	AbstractPositionEntity focus = (AbstractPositionEntity) sg.getNode("earth");
+	AbstractPositionEntity focus = (AbstractPositionEntity) sg.getNode("sol");
 	EventManager.getInstance().post(Events.FOCUS_CHANGE_CMD, focus, true);
 	float dst = focus.size * 3;
 	Vector3d newCameraPos = focus.pos.cpy().add(0, 0, -dst);

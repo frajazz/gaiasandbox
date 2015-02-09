@@ -197,7 +197,9 @@ public class NaturalCamera extends AbstractCamera implements IObserver {
 	lastFwdTime += dt;
 	lastMode = m;
 
-	camera.near = (float) Math.min(CAM_NEAR, (closest.distToCamera - closest.getRadius()) / 2);
+	if (closest != null) {
+	    camera.near = (float) Math.min(CAM_NEAR, (closest.distToCamera - closest.getRadius()) / 2);
+	}
 	camera.position.set(0f, 0f, 0f);
 	camera.direction.set(direction.valuesf());
 	camera.up.set(up.valuesf());

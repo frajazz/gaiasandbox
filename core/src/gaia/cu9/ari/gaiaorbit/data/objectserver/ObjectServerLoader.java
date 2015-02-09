@@ -6,6 +6,7 @@ import gaia.cu9.ari.gaiaorbit.event.Events;
 import gaia.cu9.ari.gaiaorbit.scenegraph.CelestialBody;
 import gaia.cu9.ari.gaiaorbit.scenegraph.SceneGraphNode;
 import gaia.cu9.ari.gaiaorbit.scenegraph.Star;
+import gaia.cu9.ari.gaiaorbit.util.Constants;
 import gaia.cu9.ari.gaiaorbit.util.GlobalConf;
 import gaia.cu9.ari.gaiaorbit.util.math.Vector3d;
 import gaia.cu9.object.server.ClientCore;
@@ -15,7 +16,6 @@ import gaia.cu9.object.server.commands.MessagePayloadBlock;
 
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.List;
 import java.util.Properties;
 
@@ -48,9 +48,8 @@ public class ObjectServerLoader implements ISceneGraphNodeProvider {
 	    cc.sendMessage(msg);
 
 	    // Get star data
-	    int page = -1;
-	    msg = new Message("visualization-page?vis-id=" + visid
-		    + "&page-id=" + page + "&include-headers=false");
+	    msg = new Message("visualization-particle-data?vis-id=" + visid
+		    + "&include-headers=false");
 	    msg.setMessageHandler(new MessageHandler() {
 
 		@Override
@@ -66,36 +65,47 @@ public class ObjectServerLoader implements ISceneGraphNodeProvider {
 	    cc.sendMessage(msg);
 
 	    // TODO Get this shit together
-	    while (rawdata == null) {
+	    do {
 		try {
-		    Thread.sleep(200);
+		    Thread.sleep(300);
 		} catch (InterruptedException e) {
 		    EventManager.getInstance().post(Events.JAVA_EXCEPTION, e);
 		}
-	    }
+	    } while (rawdata == null);
 
 	    // Get LoD data
-	    msg = new Message("visualization-metadata?vis-id=" + visid
-		    + "&lod-level=-1");
-	    cc.sendMessage(msg);
-	    Collection<MessagePayloadBlock> lod = msg.getPayload();
+	    //	    msg = new Message("visualization-metadata?vis-id=" + visid
+	    //		    + "&lod-level=-1");
+	    //	    cc.sendMessage(msg);
+	    //	    Collection<MessagePayloadBlock> lod = msg.getPayload();
 
 	    // Parse into list of stars
-	    String[] lines = rawdata.split("//n");
+	    String[] lines = rawdata.split("\n");
 	    long starid = 1;
 	    for (String line : lines) {
 		String[] tokens = line.split(";");
-		double x = Double.parseDouble(tokens[0]);
-		double y = Double.parseDouble(tokens[1]);
-		double z = Double.parseDouble(tokens[2]);
+		try {
+		    double x = Double.parseDouble(tokens[0]);
+		    double y = Double.parseDouble(tokens[1]);
+		    double z = Double.parseDouble(tokens[2]);
 
-		float mag = Float.parseFloat(tokens[3]);
-		float bv = Float.parseFloat(tokens[4]);
+		    float mag = Float.parseFloat(tokens[3]);
+		    float bv = Float.parseFloat(tokens[4]);
 
-		Star s = new Star(new Vector3d(x, y, z), mag, mag, bv, "dummy", starid++);
-		s.initialize();
-		result.add(s);
+		    String name = "dummy" + starid;
+
+		    Star s = new Star(new Vector3d(x * Constants.PC_TO_U, y * Constants.PC_TO_U, z * Constants.PC_TO_U), mag, mag, bv, name, starid++);
+		    s.initialize();
+		    result.add(s);
+
+		} catch (Exception e) {
+		    EventManager.getInstance().post(Events.JAVA_EXCEPTION, new RuntimeException("Error in star " + starid + ": Skipping it"));
+		}
 	    }
+	    // Manually add sun
+	    Star s = new Star(new Vector3d(0, 0, 0), 4.83f, 4.83f, 0.656f, "Sol", starid++);
+	    s.initialize();
+	    result.add(s);
 
 	    // Disconnect
 	    msg = new Message("client-disconnect");
