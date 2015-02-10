@@ -45,7 +45,7 @@ public class GlobalConf implements IObserver {
     public float LABEL_NUMBER_FACTOR;
     public boolean SCREEN_OUTPUT, RENDER_OUTPUT, DISPLAY_TUTORIAL, MULTITHREADING, STAR_COLOR_TRANSIT, ONLY_OBSERVED_STARS, COMPUTE_GAIA_SCAN, SHOW_DEBUG_INFO, VSYNC, POSTPROCESS_LENS_FLARE;
     public boolean FULLSCREEN, RESIZABLE, SHOW_CONFIG_DIALOG, FOCUS_LOCK, RENDER_SCREENSHOT_TIME, INPUT_ENABLED;
-    public String RENDER_FOLDER, RENDER_FILE_NAME, SG_FILE, TUTORIAL_SCRIPT_LOCATION;
+    public String RENDER_FOLDER, RENDER_FILE_NAME, TUTORIAL_SCRIPT_LOCATION;
     public String SCREENSHOT_FOLDER, VERSION_CHECK_URL, LAST_VERSION, UI_THEME, SCRIPT_LOCATION;
     public String LOCALE;
     public int SCREENSHOT_WIDTH, SCREENSHOT_HEIGHT;
@@ -53,15 +53,21 @@ public class GlobalConf implements IObserver {
     public boolean STEREOSCOPIC_MODE, CLEAN_MODE, GLOBAL_PAUSE = false, TIME_ON = false;
     /** Eye separation in stereoscopic mode in meters **/
     public float STEREOSCOPIC_EYE_SEPARATION_M = 1;
-    
+
+    /** Whether we use the local data source (HYG binary) or the object server **/
+    public boolean DATA_SOURCE_LOCAL = false;
+    /** The .sg file in case of local data source **/
+    public String DATA_SG_FILE;
+    /** If we use the ObjectServer, this contains the visualization id **/
+    public String VISUALIZATION_ID;
     /** Object server IP address/hostname **/
-    public static String OBJECT_SERVER_HOSTNAME = "localhost";
+    public String OBJECT_SERVER_HOSTNAME = "localhost";
     /** Object server port **/
-    public static int OBJECT_SERVER_PORT = 5555;
+    public int OBJECT_SERVER_PORT = 5555;
     /** Object server user name **/
-    public static String OBJECT_SERVER_USERNAME;
+    public String OBJECT_SERVER_USERNAME;
     /** Object Server pass **/
-    public static String OBJECT_SERVER_PASSWORD;
+    public String OBJECT_SERVER_PASSWORD;
 
     /** Visibility of components **/
     public boolean[] VISIBILITY;
@@ -161,7 +167,12 @@ public class GlobalConf implements IObserver {
 	    NUMBER_THREADS = Integer.parseInt((propNumthreads == null || propNumthreads.isEmpty()) ? "0" : propNumthreads);
 
 	    /** DATA **/
-	    SG_FILE = p.getProperty("data.sg.file");
+	    DATA_SOURCE_LOCAL = Boolean.parseBoolean(p.getProperty("data.source.local"));
+	    DATA_SG_FILE = p.getProperty("data.sg.file");
+	    OBJECT_SERVER_HOSTNAME = p.getProperty("data.source.hostname");
+	    OBJECT_SERVER_PORT = Integer.parseInt(p.getProperty("data.source.port"));
+	    VISUALIZATION_ID = p.getProperty("data.source.visid");
+
 	    if (p.getProperty("data.limit.mag") != null && !p.getProperty("data.limit.mag").isEmpty()) {
 		LIMIT_MAG_LOAD = Float.parseFloat(p.getProperty("data.limit.mag"));
 	    } else {
@@ -263,7 +274,11 @@ public class GlobalConf implements IObserver {
 	    p.setProperty("global.conf.numthreads", Integer.toString(NUMBER_THREADS));
 
 	    /** DATA **/
-	    p.setProperty("data.sg.file", SG_FILE);
+	    p.setProperty("data.source.local", Boolean.toString(DATA_SOURCE_LOCAL));
+	    p.setProperty("data.sg.file", DATA_SG_FILE);
+	    p.setProperty("data.source.hostname", OBJECT_SERVER_HOSTNAME);
+	    p.setProperty("data.source.port", Integer.toString(OBJECT_SERVER_PORT));
+	    p.setProperty("data.source.visid", VISUALIZATION_ID);
 	    p.setProperty("data.limit.mag", Float.toString(LIMIT_MAG_LOAD));
 
 	    /** SCREENSHOT **/

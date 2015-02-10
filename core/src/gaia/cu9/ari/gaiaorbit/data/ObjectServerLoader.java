@@ -37,11 +37,10 @@ public class ObjectServerLoader implements ISceneGraphNodeProvider {
 	try {
 	    EventManager.getInstance().post(Events.POST_NOTIFICATION, this.getClass().getSimpleName(), I18n.bundle.format("notif.limitmag", GlobalConf.instance.LIMIT_MAG_LOAD));
 
-	    final String visid_hip_xyz = "vis_1423524599770";
-	    final String visid_hip_radec = "vis_1423563853913";
-	    final String visid_tyc_radec = "vis_1423566056581";
-	    cc.connect(GlobalConf.OBJECT_SERVER_HOSTNAME,
-		    GlobalConf.OBJECT_SERVER_PORT);
+	    String visid = GlobalConf.instance.VISUALIZATION_ID;
+
+	    cc.connect(GlobalConf.instance.OBJECT_SERVER_HOSTNAME,
+		    GlobalConf.instance.OBJECT_SERVER_PORT);
 
 	    // Identify yourself!
 	    Message msg = new Message("client-ident?affiliation=ARI&name="
@@ -53,7 +52,7 @@ public class ObjectServerLoader implements ISceneGraphNodeProvider {
 	    cc.sendMessage(msg);
 
 	    // Get star data
-	    msg = new Message("visualization-particle-data?vis-id=" + visid_tyc_radec
+	    msg = new Message("visualization-particle-data?vis-id=" + visid
 		    + "&include-headers=false");
 	    msg.setMessageHandler(new MessageHandler() {
 
@@ -116,11 +115,10 @@ public class ObjectServerLoader implements ISceneGraphNodeProvider {
 	    result.add(s);
 
 	    // Disconnect
-	    msg = new Message("client-disconnect");
-	    cc.sendMessage(msg);
+	    cc.sendMessage("client-disconnect");
 
 	    if (errors > 0)
-		EventManager.getInstance().post(Events.JAVA_EXCEPTION, new RuntimeException("Found errors in " + errors + " objects"));
+		EventManager.getInstance().post(Events.JAVA_EXCEPTION, new RuntimeException(I18n.bundle.format("error.loading.objects", errors)));
 	    EventManager.getInstance().post(Events.POST_NOTIFICATION, this.getClass().getSimpleName(), I18n.bundle.format("notif.catalog.init", result.size()));
 
 	} catch (IOException e) {

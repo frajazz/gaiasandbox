@@ -193,7 +193,7 @@ public class GaiaSandbox implements ApplicationListener, IObserver {
 	if (sg == null) {
 	    // Set asset manager to asset bean
 	    AssetBean.setAssetManager(manager);
-	    manager.load(GlobalConf.instance.SG_FILE, ISceneGraph.class, new SGLoaderParameter(GlobalClock.clock, GlobalConf.instance.MULTITHREADING, GlobalConf.instance.NUMBER_THREADS));
+	    manager.load(GlobalConf.instance.DATA_SG_FILE, ISceneGraph.class, new SGLoaderParameter(GlobalClock.clock, GlobalConf.instance.MULTITHREADING, GlobalConf.instance.NUMBER_THREADS));
 	}
 
 	// Initialize timestamp for screenshots
@@ -242,8 +242,8 @@ public class GaiaSandbox implements ApplicationListener, IObserver {
 
 	GlobalResources.doneLoading(manager);
 
-	if (manager.isLoaded(GlobalConf.instance.SG_FILE)) {
-	    sg = manager.get(GlobalConf.instance.SG_FILE);
+	if (manager.isLoaded(GlobalConf.instance.DATA_SG_FILE)) {
+	    sg = manager.get(GlobalConf.instance.DATA_SG_FILE);
 	}
 
 	AbstractRenderer.initialize(sg);

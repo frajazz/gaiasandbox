@@ -13,6 +13,10 @@ import gaia.cu9.ari.gaiaorbit.interfce.KeyMappings.ProgramAction;
 import gaia.cu9.ari.gaiaorbit.util.GlobalConf;
 import gaia.cu9.ari.gaiaorbit.util.GlobalResources;
 import gaia.cu9.ari.gaiaorbit.util.I18n;
+import gaia.cu9.object.server.ClientCore;
+import gaia.cu9.object.server.commands.Message;
+import gaia.cu9.object.server.commands.MessageHandler;
+import gaia.cu9.object.server.commands.MessagePayloadBlock;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
@@ -57,8 +61,10 @@ import javax.swing.JRadioButton;
 import javax.swing.JScrollPane;
 import javax.swing.JSpinner;
 import javax.swing.JTabbedPane;
+import javax.swing.JTable;
 import javax.swing.JTextArea;
 import javax.swing.JTextField;
+import javax.swing.JTree;
 import javax.swing.KeyStroke;
 import javax.swing.SpinnerNumberModel;
 import javax.swing.SwingConstants;
@@ -69,13 +75,17 @@ import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
+import javax.swing.event.TreeSelectionEvent;
+import javax.swing.event.TreeSelectionListener;
+import javax.swing.tree.DefaultMutableTreeNode;
+import javax.swing.tree.TreePath;
+import javax.swing.tree.TreeSelectionModel;
 
 import net.miginfocom.swing.MigLayout;
 
 import com.alee.extended.filechooser.WebDirectoryChooser;
 import com.alee.laf.button.WebButton;
 import com.alee.laf.scroll.WebScrollPane;
-import com.alee.laf.table.WebTable;
 import com.alee.utils.FileUtils;
 import com.alee.utils.swing.DialogOptions;
 import com.badlogic.gdx.Graphics.DisplayMode;
@@ -97,6 +107,8 @@ public class ConfigDialog extends I18nJFrame {
     JPanel checkPanel;
     Color darkgreen, darkred;
     JButton cancelButton, okButton;
+    String vislistdata;
+    JTree visualisationsTree;
 
     public ConfigDialog(final GaiaSandboxDesktop gsd, boolean startup) {
 	super(startup ? GlobalConf.instance.getFullApplicationName() : txt("gui.settings"));
@@ -409,9 +421,8 @@ public class ConfigDialog extends I18nJFrame {
 	    i++;
 	}
 
-	WebTable table = new WebTable(data, headers);
-	table.setEditable(false);
-	table.setAutoResizeMode(WebTable.AUTO_RESIZE_ALL_COLUMNS);
+	JTable table = new JTable(data, headers);
+	table.setAutoResizeMode(JTable.AUTO_RESIZE_ALL_COLUMNS);
 	table.setRowSelectionAllowed(true);
 	table.setColumnSelectionAllowed(false);
 
@@ -606,11 +617,11 @@ public class ConfigDialog extends I18nJFrame {
 	    public void stateChanged(ChangeEvent e) {
 		JCheckBox cb = (JCheckBox) e.getSource();
 		boolean selected = cb.isSelected();
-		setEnabledFrameOutput(selected, frameLocation, frameWidthField, frameHeightField, targetFPS, frameFileName);
+		enableComponents(selected, frameLocation, frameWidthField, frameHeightField, targetFPS, frameFileName);
 	    }
 	});
 	frameCb.setSelected(GlobalConf.instance.RENDER_OUTPUT);
-	setEnabledFrameOutput(frameCb.isSelected(), frameLocation, frameWidthField, frameHeightField, targetFPS, frameFileName);
+	enableComponents(frameCb.isSelected(), frameLocation, frameWidthField, frameHeightField, targetFPS, frameFileName);
 
 	imageOutput.add(frameInfo, "span");
 	imageOutput.add(frameCb, "span");
@@ -627,6 +638,171 @@ public class ConfigDialog extends I18nJFrame {
 
 	tabbedPane.addTab(txt("gui.frameoutput.title"), IconManager.get("config/frameoutput"), imageOutputPanel);
 	tabbedPane.setMnemonicAt(5, KeyEvent.VK_6);
+
+	/**
+	 * ====== DATA TAB =======
+	 */
+	JPanel datasource = new JPanel(new MigLayout("", "[][grow,fill][]", ""));
+	datasource.setBorder(new TitledBorder(txt("gui.data.source")));
+
+	// OBJECT SERVER CONFIGURATION PANEL
+
+	final JTextField hostname = new JTextField();
+	hostname.setText(GlobalConf.instance.OBJECT_SERVER_HOSTNAME);
+	final JTextField port = new JTextField();
+	port.setText(Integer.toString(GlobalConf.instance.OBJECT_SERVER_PORT));
+
+	// CONNECTION PANE
+	final JPanel connection = new JPanel(new MigLayout("", "[grow,fill]", ""));
+	final JScrollPane scrollConnection = new JScrollPane(connection);
+	scrollConnection.setVisible(false);
+
+	JButton testConnection = new JButton(txt("gui.data.testconnection"), IconManager.get("config/connection"));
+	testConnection.addActionListener(new ActionListener() {
+	    @Override
+	    public void actionPerformed(ActionEvent e) {
+		try {
+
+		    String host = hostname.getText();
+		    int prt = Integer.parseInt(port.getText());
+
+		    ClientCore cc = new ClientCore();
+		    cc.connect(host, prt);
+
+		    // Get visualizations list
+		    Message msg = new Message("visualizations-list");
+		    msg.setMessageHandler(new MessageHandler() {
+
+			@Override
+			public void receivedMessage(Message query, Message reply) {
+			    StringBuilder data = new StringBuilder();
+			    for (MessagePayloadBlock block : reply.getPayload()) {
+				data.append((String) block.getPayload());
+			    }
+			    vislistdata = data.toString();
+			}
+
+		    });
+		    cc.sendMessage(msg);
+
+		    do {
+			Thread.sleep(200);
+		    } while (vislistdata == null);
+
+		    String[] lines = vislistdata.split("\n");
+
+		    String[][] visualisations = new String[lines.length][];
+		    for (int i = 0; i < lines.length; i++) {
+			String[] tokens = lines[i].split(";");
+			visualisations[i] = new String[] { tokens[0], tokens[1], tokens[2], tokens[7], tokens[8], tokens[9], tokens[10], tokens[11], tokens[12] };
+		    }
+
+		    // Disconnect
+		    cc.sendMessage("client-disconnect");
+
+		    DefaultMutableTreeNode top =
+			    new DefaultMutableTreeNode(txt("gui.data.visualisations"));
+
+		    for (String[] visualisation : visualisations) {
+			DefaultMutableTreeNode vis = new DefaultMutableTreeNode(visualisation[1]);
+
+			// ID
+			DefaultMutableTreeNode idlabel = new DefaultMutableTreeNode(txt("gui.data.id") + ": " + visualisation[0]);
+			vis.add(idlabel);
+
+			// TABLE
+			DefaultMutableTreeNode tablelabel = new DefaultMutableTreeNode(txt("gui.data.table") + ": " + visualisation[2]);
+			vis.add(tablelabel);
+
+			// COLS
+			DefaultMutableTreeNode collabel = new DefaultMutableTreeNode(txt("gui.data.columns"));
+			for (int col = 3; col < visualisation.length; col++) {
+			    collabel.add(new DefaultMutableTreeNode(visualisation[col]));
+			}
+			vis.add(collabel);
+
+			top.add(vis);
+		    }
+		    visualisationsTree = new JTree(top);
+
+		    // Selection of nodes
+		    visualisationsTree.getSelectionModel().setSelectionMode(TreeSelectionModel.SINGLE_TREE_SELECTION);
+		    //Listen for when the selection changes.
+		    visualisationsTree.addTreeSelectionListener(new TreeSelectionListener() {
+
+			@Override
+			public void valueChanged(TreeSelectionEvent e) {
+			    TreePath path = e.getNewLeadSelectionPath();
+			    DefaultMutableTreeNode visNode = (DefaultMutableTreeNode) path.getPathComponent(1);
+			    DefaultMutableTreeNode idNode = (DefaultMutableTreeNode) visNode.getChildAt(0);
+
+			    String visId = ((String) idNode.getUserObject()).split(":")[1].trim();
+			    GlobalConf.instance.VISUALIZATION_ID = visId;
+
+			}
+
+		    });
+
+		    connection.removeAll();
+		    connection.add(new JLabel(txt("gui.data.selectvis")), "wrap");
+		    connection.add(visualisationsTree);
+		    scrollConnection.setVisible(true);
+		    // Repaint frame
+		    frame.repaint();
+
+		} catch (Exception e1) {
+		    connection.removeAll();
+		    JLabel nocon = new JLabel(txt("gui.data.connectionerror"));
+		    nocon.setForeground(darkred);
+		    connection.add(nocon);
+		    scrollConnection.setVisible(true);
+		    // Repaint frame
+		    frame.repaint();
+
+		}
+	    }
+	});
+
+	// LOCAL DATA OR OBJECT SERVER RADIO BUTTONS
+	final JRadioButton local = new JRadioButton(txt("gui.data.local"));
+	local.addActionListener(new ActionListener() {
+	    @Override
+	    public void actionPerformed(ActionEvent e) {
+		GlobalConf.instance.DATA_SOURCE_LOCAL = local.isSelected();
+		enableComponents(!local.isSelected(), hostname, port, testConnection, visualisationsTree);
+	    }
+	});
+	local.setSelected(GlobalConf.instance.DATA_SOURCE_LOCAL);
+
+	final JRadioButton objectserver = new JRadioButton(txt("gui.data.objectserver"));
+	objectserver.addActionListener(new ActionListener() {
+	    @Override
+	    public void actionPerformed(ActionEvent e) {
+		GlobalConf.instance.DATA_SOURCE_LOCAL = !objectserver.isSelected();
+		enableComponents(objectserver.isSelected(), hostname, port, testConnection, visualisationsTree);
+	    }
+	});
+	objectserver.setSelected(!GlobalConf.instance.DATA_SOURCE_LOCAL);
+	enableComponents(!GlobalConf.instance.DATA_SOURCE_LOCAL, hostname, port, testConnection, visualisationsTree);
+
+	ButtonGroup dataButtons = new ButtonGroup();
+	dataButtons.add(local);
+	dataButtons.add(objectserver);
+
+	datasource.add(local, "span,wrap");
+	datasource.add(objectserver, "span,wrap");
+	datasource.add(new JLabel(txt("gui.data.hostname")));
+	datasource.add(hostname, "span, wrap");
+	datasource.add(new JLabel(txt("gui.data.port")));
+	datasource.add(port);
+	datasource.add(testConnection, "wrap");
+
+	final JPanel dataPanel = new JPanel(new MigLayout("", "[grow,fill]", ""));
+	dataPanel.add(datasource, "wrap");
+	dataPanel.add(scrollConnection);
+
+	tabbedPane.addTab(txt("gui.data"), IconManager.get("config/data"), dataPanel);
+	tabbedPane.setMnemonicAt(6, KeyEvent.VK_7);
 
 	// Do not show again
 	final JCheckBox showAgain = new JCheckBox(txt("gui.notagain"));
@@ -736,9 +912,11 @@ public class ConfigDialog extends I18nJFrame {
 
     }
 
-    private void setEnabledFrameOutput(boolean enabled, JComponent... components) {
-	for (JComponent c : components)
-	    c.setEnabled(enabled);
+    private void enableComponents(boolean enabled, JComponent... components) {
+	for (JComponent c : components) {
+	    if (c != null)
+		c.setEnabled(enabled);
+	}
     }
 
     private void selectFullscreen(boolean fullscreen, JSpinner widthField, JSpinner heightField, JComboBox<DisplayMode> fullScreenResolutions, JCheckBox resizable) {
@@ -749,11 +927,9 @@ public class ConfigDialog extends I18nJFrame {
 	    GlobalConf.instance.SCREEN_WIDTH = (Integer) widthField.getValue();
 	    GlobalConf.instance.SCREEN_HEIGHT = (Integer) heightField.getValue();
 	}
-	widthField.setEnabled(!fullscreen);
-	heightField.setEnabled(!fullscreen);
-	resizable.setEnabled(!fullscreen);
-	fullScreenResolutions.setEnabled(fullscreen);
 
+	enableComponents(!fullscreen, widthField, heightField, resizable);
+	enableComponents(fullscreen, fullScreenResolutions);
     }
 
     private int idxAa(int base, int x) {
