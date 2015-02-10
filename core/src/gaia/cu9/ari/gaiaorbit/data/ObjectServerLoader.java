@@ -8,6 +8,7 @@ import gaia.cu9.ari.gaiaorbit.scenegraph.Star;
 import gaia.cu9.ari.gaiaorbit.util.Constants;
 import gaia.cu9.ari.gaiaorbit.util.GlobalConf;
 import gaia.cu9.ari.gaiaorbit.util.I18n;
+import gaia.cu9.ari.gaiaorbit.util.coord.Coordinates;
 import gaia.cu9.ari.gaiaorbit.util.math.Vector3d;
 import gaia.cu9.object.server.ClientCore;
 import gaia.cu9.object.server.commands.Message;
@@ -36,7 +37,8 @@ public class ObjectServerLoader implements ISceneGraphNodeProvider {
 	try {
 	    EventManager.getInstance().post(Events.POST_NOTIFICATION, this.getClass().getSimpleName(), I18n.bundle.format("notif.limitmag", GlobalConf.instance.LIMIT_MAG_LOAD));
 
-	    final String visid = "vis_1423524599770";
+	    final String visid_xyz = "vis_1423524599770";
+	    final String visid_radec = "vis_1423563853913";
 	    cc.connect(GlobalConf.OBJECT_SERVER_HOSTNAME,
 		    GlobalConf.OBJECT_SERVER_PORT);
 
@@ -50,7 +52,7 @@ public class ObjectServerLoader implements ISceneGraphNodeProvider {
 	    cc.sendMessage(msg);
 
 	    // Get star data
-	    msg = new Message("visualization-particle-data?vis-id=" + visid
+	    msg = new Message("visualization-particle-data?vis-id=" + visid_radec
 		    + "&include-headers=false");
 	    msg.setMessageHandler(new MessageHandler() {
 
@@ -88,16 +90,16 @@ public class ObjectServerLoader implements ISceneGraphNodeProvider {
 	    for (String line : lines) {
 		String[] tokens = line.split(";");
 		try {
-		    double x = Double.parseDouble(tokens[0]);
-		    double y = Double.parseDouble(tokens[1]);
-		    double z = Double.parseDouble(tokens[2]);
+		    double ra = Double.parseDouble(tokens[0]);
+		    double dec = Double.parseDouble(tokens[1]);
+		    double dist = Double.parseDouble(tokens[2]);
 
 		    float mag = tokens[3].isEmpty() ? 12f : Float.parseFloat(tokens[3]);
 		    float bv = Float.parseFloat(tokens[4]);
 
 		    String name = "dummy" + starid;
 
-		    Star s = new Star(new Vector3d(y * Constants.PC_TO_U, z * Constants.PC_TO_U, x * Constants.PC_TO_U), mag, mag, bv, name, starid++);
+		    Star s = new Star(Coordinates.sphericalToCartesian(ra, dec, dist * Constants.PC_TO_U, new Vector3d()), mag, mag, bv, name, starid++);
 		    s.initialize();
 		    result.add(s);
 

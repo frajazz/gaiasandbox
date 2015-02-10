@@ -8,7 +8,7 @@ import gaia.cu9.ari.gaiaorbit.render.system.AbstractRenderSystem;
 import gaia.cu9.ari.gaiaorbit.render.system.IRenderSystem;
 import gaia.cu9.ari.gaiaorbit.render.system.LineRenderSystem;
 import gaia.cu9.ari.gaiaorbit.render.system.ModelBatchRenderSystem;
-import gaia.cu9.ari.gaiaorbit.render.system.PixelRenderSystem;
+import gaia.cu9.ari.gaiaorbit.render.system.PixelBloomRenderSystem;
 import gaia.cu9.ari.gaiaorbit.render.system.ShaderQuadRenderSystem;
 import gaia.cu9.ari.gaiaorbit.render.system.SpriteBatchRenderSystem;
 import gaia.cu9.ari.gaiaorbit.scenegraph.CameraManager.CameraMode;
@@ -238,14 +238,14 @@ public class SceneGraphRenderer extends AbstractRenderer implements IProcessRend
 	    }
 	};
 
-	int i = 1;
+	int priority = 1;
 
 	// POINTS
-	AbstractRenderSystem pixelProc = new PixelRenderSystem(RenderGroup.POINT, i++, alphas);
+	AbstractRenderSystem pixelProc = new PixelBloomRenderSystem(RenderGroup.POINT, priority++, alphas);
 	pixelProc.setPreRunnable(blendNoDepthRunnable);
 
 	// MODEL BACK
-	AbstractRenderSystem modelBackProc = new ModelBatchRenderSystem(RenderGroup.MODEL_B, i++, alphas, modelBatchB, false);
+	AbstractRenderSystem modelBackProc = new ModelBatchRenderSystem(RenderGroup.MODEL_B, priority++, alphas, modelBatchB, false);
 	modelBackProc.setPreRunnable(blendNoDepthRunnable);
 	modelBackProc.setPostRunnable(new Runnable() {
 	    @Override
@@ -256,7 +256,7 @@ public class SceneGraphRenderer extends AbstractRenderer implements IProcessRend
 	});
 
 	// ANNOTATIONS
-	AbstractRenderSystem annotationsProc = new SpriteBatchRenderSystem(RenderGroup.MODEL_B_ANNOT, i++, alphas, spriteBatch);
+	AbstractRenderSystem annotationsProc = new SpriteBatchRenderSystem(RenderGroup.MODEL_B_ANNOT, priority++, alphas, spriteBatch);
 	annotationsProc.setPreRunnable(blendNoDepthRunnable);
 	annotationsProc.setPostRunnable(new Runnable() {
 	    @Override
@@ -267,27 +267,27 @@ public class SceneGraphRenderer extends AbstractRenderer implements IProcessRend
 	});
 
 	// SHADER BACK
-	AbstractRenderSystem shaderBackProc = new ShaderQuadRenderSystem(RenderGroup.SHADER, i++, alphas, starShader, true);
+	AbstractRenderSystem shaderBackProc = new ShaderQuadRenderSystem(RenderGroup.SHADER, priority++, alphas, starShader, true);
 	shaderBackProc.setPreRunnable(blendNoDepthRunnable);
 
 	// LINES
-	AbstractRenderSystem lineProc = new LineRenderSystem(RenderGroup.LINE, i++, alphas, shapeRenderer);
+	AbstractRenderSystem lineProc = new LineRenderSystem(RenderGroup.LINE, priority++, alphas, shapeRenderer);
 	lineProc.setPreRunnable(blendDepthRunnable);
 
 	// MODEL FRONT
-	AbstractRenderSystem modelFrontProc = new ModelBatchRenderSystem(RenderGroup.MODEL_F, i++, alphas, modelBatchF, false);
+	AbstractRenderSystem modelFrontProc = new ModelBatchRenderSystem(RenderGroup.MODEL_F, priority++, alphas, modelBatchF, false);
 	modelFrontProc.setPreRunnable(blendDepthRunnable);
 
 	// MODEL STARS
-	AbstractRenderSystem modelStarsProc = new ModelBatchRenderSystem(RenderGroup.MODEL_S, i++, alphas, modelBatchS, false);
+	AbstractRenderSystem modelStarsProc = new ModelBatchRenderSystem(RenderGroup.MODEL_S, priority++, alphas, modelBatchS, false);
 	modelStarsProc.setPreRunnable(blendDepthRunnable);
 
 	// LABELS
-	AbstractRenderSystem labelsProc = new SpriteBatchRenderSystem(RenderGroup.LABEL, i++, alphas, fontBatch, fontShader);
+	AbstractRenderSystem labelsProc = new SpriteBatchRenderSystem(RenderGroup.LABEL, priority++, alphas, fontBatch, fontShader);
 	labelsProc.setPreRunnable(blendDepthRunnable);
 
 	// MODEL ATMOSPHERE
-	AbstractRenderSystem modelAtmProc = new ModelBatchRenderSystem(RenderGroup.MODEL_F_ATM, i++, alphas, modelBatchAtm, true) {
+	AbstractRenderSystem modelAtmProc = new ModelBatchRenderSystem(RenderGroup.MODEL_F_ATM, priority++, alphas, modelBatchAtm, true) {
 	    @Override
 	    protected float getAlpha(IRenderable s) {
 		return alphas[ComponentType.Atmospheres.ordinal()] * (float) Math.pow(alphas[s.getComponentType().ordinal()], 2);
@@ -301,7 +301,7 @@ public class SceneGraphRenderer extends AbstractRenderer implements IProcessRend
 	modelAtmProc.setPreRunnable(blendDepthRunnable);
 
 	// SHADER FRONT
-	AbstractRenderSystem shaderFrontProc = new ShaderQuadRenderSystem(RenderGroup.SHADER_F, i++, alphas, starShader, false);
+	AbstractRenderSystem shaderFrontProc = new ShaderQuadRenderSystem(RenderGroup.SHADER_F, priority++, alphas, starShader, false);
 	shaderFrontProc.setPreRunnable(blendDepthRunnable);
 
 	// Add components to set
