@@ -266,7 +266,7 @@ public class SceneGraphRenderer extends AbstractRenderer implements IProcessRend
 	    }
 	});
 
-	// SHADER BACK
+	// SHADER STARS
 	AbstractRenderSystem shaderBackProc = new ShaderQuadRenderSystem(RenderGroup.SHADER, priority++, alphas, starShader, true);
 	shaderBackProc.setPreRunnable(blendNoDepthRunnable);
 
@@ -300,7 +300,7 @@ public class SceneGraphRenderer extends AbstractRenderer implements IProcessRend
 	};
 	modelAtmProc.setPreRunnable(blendDepthRunnable);
 
-	// SHADER FRONT
+	// SHADER SSO
 	AbstractRenderSystem shaderFrontProc = new ShaderQuadRenderSystem(RenderGroup.SHADER_F, priority++, alphas, starShader, false);
 	shaderFrontProc.setPreRunnable(blendDepthRunnable);
 
@@ -308,7 +308,7 @@ public class SceneGraphRenderer extends AbstractRenderer implements IProcessRend
 	renderProcesses.add(modelBackProc);
 	renderProcesses.add(annotationsProc);
 	renderProcesses.add(pixelProc);
-	renderProcesses.add(shaderBackProc);
+	//renderProcesses.add(shaderBackProc);
 	renderProcesses.add(modelAtmProc);
 	renderProcesses.add(modelFrontProc);
 	renderProcesses.add(modelStarsProc);

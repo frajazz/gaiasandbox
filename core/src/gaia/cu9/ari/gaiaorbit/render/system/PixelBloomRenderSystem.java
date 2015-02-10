@@ -39,7 +39,7 @@ public class PixelBloomRenderSystem extends AbstractRenderSystem implements IObs
 	if (!pointShader.isCompiled()) {
 	    Gdx.app.error(this.getClass().getName(), "Point shader compilation failed:\n" + pointShader.getLog());
 	}
-	this.renderer = new ImmediateModeRenderer20(120000, false, true, 0, pointShader);
+	this.renderer = new ImmediateModeRenderer20(2000000, false, true, 0, pointShader);
 
 	// Init bloom
 	pp = new PostProcessor(true, true, true);

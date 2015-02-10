@@ -2,7 +2,7 @@
 # parameters
 
 #data.providers=gaia.cu9.ari.gaiaorbit.data.StarLoader gaia.cu9.ari.gaiaorbit.data.ObjectServerLoader gaia.cu9.ari.gaiaorbit.data.JsonLoader gaia.cu9.ari.gaiaorbit.data.ConstellationsLoader gaia.cu9.ari.gaiaorbit.data.ConstelBoundariesLoader
-data.providers=gaia.cu9.ari.gaiaorbit.data.ObjectServerLoader  gaia.cu9.ari.gaiaorbit.data.JsonLoader gaia.cu9.ari.gaiaorbit.data.ConstellationsLoader gaia.cu9.ari.gaiaorbit.data.ConstelBoundariesLoader
+data.providers=gaia.cu9.ari.gaiaorbit.data.ObjectServerLoader  gaia.cu9.ari.gaiaorbit.data.JsonLoader
 
 # STAR LOADERS - loads a catalog of stars
 

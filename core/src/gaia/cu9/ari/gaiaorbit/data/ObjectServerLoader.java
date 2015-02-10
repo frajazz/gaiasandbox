@@ -37,8 +37,9 @@ public class ObjectServerLoader implements ISceneGraphNodeProvider {
 	try {
 	    EventManager.getInstance().post(Events.POST_NOTIFICATION, this.getClass().getSimpleName(), I18n.bundle.format("notif.limitmag", GlobalConf.instance.LIMIT_MAG_LOAD));
 
-	    final String visid_xyz = "vis_1423524599770";
-	    final String visid_radec = "vis_1423563853913";
+	    final String visid_hip_xyz = "vis_1423524599770";
+	    final String visid_hip_radec = "vis_1423563853913";
+	    final String visid_tyc_radec = "vis_1423566056581";
 	    cc.connect(GlobalConf.OBJECT_SERVER_HOSTNAME,
 		    GlobalConf.OBJECT_SERVER_PORT);
 
@@ -52,7 +53,7 @@ public class ObjectServerLoader implements ISceneGraphNodeProvider {
 	    cc.sendMessage(msg);
 
 	    // Get star data
-	    msg = new Message("visualization-particle-data?vis-id=" + visid_radec
+	    msg = new Message("visualization-particle-data?vis-id=" + visid_tyc_radec
 		    + "&include-headers=false");
 	    msg.setMessageHandler(new MessageHandler() {
 
@@ -97,11 +98,12 @@ public class ObjectServerLoader implements ISceneGraphNodeProvider {
 		    float mag = tokens[3].isEmpty() ? 12f : Float.parseFloat(tokens[3]);
 		    float bv = Float.parseFloat(tokens[4]);
 
-		    String name = "dummy" + starid;
-
-		    Star s = new Star(Coordinates.sphericalToCartesian(ra, dec, dist * Constants.PC_TO_U, new Vector3d()), mag, mag, bv, name, starid++);
-		    s.initialize();
-		    result.add(s);
+		    if (mag <= GlobalConf.instance.LIMIT_MAG_LOAD) {
+			String name = "dummy" + starid;
+			Star s = new Star(Coordinates.sphericalToCartesian(ra, dec, dist * Constants.PC_TO_U, new Vector3d()), mag, mag, bv, name, starid++);
+			s.initialize();
+			result.add(s);
+		    }
 
 		} catch (Exception e) {
 		    //EventManager.getInstance().post(Events.JAVA_EXCEPTION, new RuntimeException("Error in star " + starid + ": Skipping it"));
