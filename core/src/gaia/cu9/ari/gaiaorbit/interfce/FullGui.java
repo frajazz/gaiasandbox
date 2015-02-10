@@ -426,7 +426,7 @@ public class FullGui implements IGui, IObserver {
 	    Array<String> names = new Array<String>(focusableObjects.size());
 	    for (CelestialBody cb : focusableObjects) {
 		// Omit stars with no proper names
-		if (!cb.name.startsWith("star_") && !cb.name.startsWith("Hip ")) {
+		if (!cb.name.startsWith("star_") && !cb.name.startsWith("Hip ") && !cb.name.startsWith("dummy")) {
 		    names.add(cb.name);
 		}
 	    }
