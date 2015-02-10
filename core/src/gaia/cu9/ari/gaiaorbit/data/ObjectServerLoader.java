@@ -1,6 +1,5 @@
-package gaia.cu9.ari.gaiaorbit.data.objectserver;
+package gaia.cu9.ari.gaiaorbit.data;
 
-import gaia.cu9.ari.gaiaorbit.data.ISceneGraphNodeProvider;
 import gaia.cu9.ari.gaiaorbit.event.EventManager;
 import gaia.cu9.ari.gaiaorbit.event.Events;
 import gaia.cu9.ari.gaiaorbit.scenegraph.CelestialBody;
@@ -8,6 +7,7 @@ import gaia.cu9.ari.gaiaorbit.scenegraph.SceneGraphNode;
 import gaia.cu9.ari.gaiaorbit.scenegraph.Star;
 import gaia.cu9.ari.gaiaorbit.util.Constants;
 import gaia.cu9.ari.gaiaorbit.util.GlobalConf;
+import gaia.cu9.ari.gaiaorbit.util.I18n;
 import gaia.cu9.ari.gaiaorbit.util.math.Vector3d;
 import gaia.cu9.object.server.ClientCore;
 import gaia.cu9.object.server.commands.Message;
@@ -34,7 +34,9 @@ public class ObjectServerLoader implements ISceneGraphNodeProvider {
     @Override
     public List<? extends SceneGraphNode> loadObjects() {
 	try {
-	    final String visid = "vis_1423500602529";
+	    EventManager.getInstance().post(Events.POST_NOTIFICATION, this.getClass().getSimpleName(), I18n.bundle.format("notif.limitmag", GlobalConf.instance.LIMIT_MAG_LOAD));
+
+	    final String visid = "vis_1423524599770";
 	    cc.connect(GlobalConf.OBJECT_SERVER_HOSTNAME,
 		    GlobalConf.OBJECT_SERVER_PORT);
 
@@ -82,6 +84,7 @@ public class ObjectServerLoader implements ISceneGraphNodeProvider {
 	    // Parse into list of stars
 	    String[] lines = rawdata.split("\n");
 	    long starid = 1;
+	    long errors = 0;
 	    for (String line : lines) {
 		String[] tokens = line.split(";");
 		try {
@@ -89,17 +92,18 @@ public class ObjectServerLoader implements ISceneGraphNodeProvider {
 		    double y = Double.parseDouble(tokens[1]);
 		    double z = Double.parseDouble(tokens[2]);
 
-		    float mag = Float.parseFloat(tokens[3]);
+		    float mag = tokens[3].isEmpty() ? 12f : Float.parseFloat(tokens[3]);
 		    float bv = Float.parseFloat(tokens[4]);
 
 		    String name = "dummy" + starid;
 
-		    Star s = new Star(new Vector3d(x * Constants.PC_TO_U, y * Constants.PC_TO_U, z * Constants.PC_TO_U), mag, mag, bv, name, starid++);
+		    Star s = new Star(new Vector3d(y * Constants.PC_TO_U, z * Constants.PC_TO_U, x * Constants.PC_TO_U), mag, mag, bv, name, starid++);
 		    s.initialize();
 		    result.add(s);
 
 		} catch (Exception e) {
-		    EventManager.getInstance().post(Events.JAVA_EXCEPTION, new RuntimeException("Error in star " + starid + ": Skipping it"));
+		    //EventManager.getInstance().post(Events.JAVA_EXCEPTION, new RuntimeException("Error in star " + starid + ": Skipping it"));
+		    errors++;
 		}
 	    }
 	    // Manually add sun
@@ -110,6 +114,10 @@ public class ObjectServerLoader implements ISceneGraphNodeProvider {
 	    // Disconnect
 	    msg = new Message("client-disconnect");
 	    cc.sendMessage(msg);
+
+	    if (errors > 0)
+		EventManager.getInstance().post(Events.JAVA_EXCEPTION, new RuntimeException("Found errors in " + errors + " objects"));
+	    EventManager.getInstance().post(Events.POST_NOTIFICATION, this.getClass().getSimpleName(), I18n.bundle.format("notif.catalog.init", result.size()));
 
 	} catch (IOException e) {
 	    EventManager.getInstance().post(Events.JAVA_EXCEPTION, e);
