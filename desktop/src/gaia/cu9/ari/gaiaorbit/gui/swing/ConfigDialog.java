@@ -113,7 +113,7 @@ public class ConfigDialog extends I18nJFrame {
     JFrame frame;
     JLabel checkLabel;
     JPanel checkPanel;
-    Color darkgreen, darkred;
+    Color darkgreen, darkred, transparent;
     JButton cancelButton, okButton;
     String vislistdata;
     JTree visualisationsTree;
@@ -164,7 +164,8 @@ public class ConfigDialog extends I18nJFrame {
 	frame.setResizable(false);
 
 	darkgreen = new Color(0, .5f, 0);
-	darkred = new Color(.7f, 0, 0);
+	darkred = new Color(.8f, 0, 0);
+	transparent = new Color(0f, 0f, 0f, 0f);
 
 	// Build content
 	frame.setLayout(new BorderLayout(0, 0));
@@ -286,7 +287,7 @@ public class ConfigDialog extends I18nJFrame {
 		// No!
 	    }
 	};
-	msaaInfo.setBackground(new Color(1, 1, 1, 0));
+	msaaInfo.setBackground(transparent);
 	msaaInfo.setForeground(darkgreen);
 	msaaInfo.setEditable(false);
 
@@ -464,7 +465,7 @@ public class ConfigDialog extends I18nJFrame {
 	    }
 	};
 	screenshotsInfo.setEditable(false);
-	screenshotsInfo.setBackground(new Color(1, 1, 1, 0));
+	screenshotsInfo.setBackground(transparent);
 	screenshotsInfo.setForeground(darkgreen);
 
 	// SCREENSHOTS LOCATION
@@ -540,7 +541,7 @@ public class ConfigDialog extends I18nJFrame {
 	    }
 	};
 	frameInfo.setEditable(false);
-	frameInfo.setBackground(new Color(1, 1, 1, 0));
+	frameInfo.setBackground(transparent);
 	frameInfo.setForeground(darkgreen);
 
 	// SAVE LOCATION
@@ -838,68 +839,99 @@ public class ConfigDialog extends I18nJFrame {
 
 	    @Override
 	    public void actionPerformed(ActionEvent e) {
-		// Add all properties to GlobalConf.instance
-		GlobalConf.screen.FULLSCREEN = fullscreen.isSelected();
+		boolean goahead = true;
+		if (startup && objectserver.isSelected()) {
+		    try {
+			// Check object server connection
+			ClientCore cc = new ClientCore();
+			cc.connect(GlobalConf.data.OBJECT_SERVER_HOSTNAME, GlobalConf.data.OBJECT_SERVER_PORT);
+			cc.disconnect();
+		    } catch (IOException ex) {
+			goahead = false;
+			tabbedPane.setSelectedIndex(6);
+			connection.removeAll();
 
-		// Fullscreen options
-		GlobalConf.screen.FULLSCREEN_WIDTH = ((DisplayMode) fullScreenResolutions.getSelectedItem()).width;
-		GlobalConf.screen.FULLSCREEN_HEIGHT = ((DisplayMode) fullScreenResolutions.getSelectedItem()).height;
+			JTextArea noConnection = new JTextArea(txt("notif.objectserver.notconnect")) {
+			    @Override
+			    public void setBorder(Border border) {
+				// No!
+			    }
+			};
+			noConnection.setEditable(false);
+			noConnection.setBackground(transparent);
+			noConnection.setForeground(darkred);
 
-		// Windowed options
-		GlobalConf.screen.SCREEN_WIDTH = ((Integer) widthField.getValue());
-		GlobalConf.screen.SCREEN_HEIGHT = ((Integer) heightField.getValue());
-		GlobalConf.screen.RESIZABLE = resizable.isSelected();
-
-		// Graphics
-		ThreadComboBoxBean bean = (ThreadComboBoxBean) msaa.getSelectedItem();
-		GlobalConf.postprocess.POSTPROCESS_ANTIALIAS = bean.value;
-		GlobalConf.screen.VSYNC = vsync.isSelected();
-
-		// Interface
-		LangComboBoxBean lbean = (LangComboBoxBean) lang.getSelectedItem();
-		GlobalConf.program.LOCALE = lbean.locale.toLanguageTag();
-		if (!I18n.forceinit("./data/i18n/gsbundle"))
-		    I18n.forceinit("../android/assets/i18n/gsbundle");
-		GlobalConf.program.UI_THEME = (String) theme.getSelectedItem();
-
-		// Performance
-		bean = (ThreadComboBoxBean) numThreads.getSelectedItem();
-		GlobalConf.performance.NUMBER_THREADS = bean.value;
-		GlobalConf.performance.MULTITHREADING = multithreadCb.isSelected();
-
-		// Screenshots
-		File ssfile = new File(screenshotsLocation.getText());
-		if (ssfile.exists() && ssfile.isDirectory())
-		    GlobalConf.screenshot.SCREENSHOT_FOLDER = ssfile.getAbsolutePath();
-		GlobalConf.screenshot.SCREENSHOT_WIDTH = ((Integer) sswidthField.getValue());
-		GlobalConf.screenshot.SCREENSHOT_HEIGHT = ((Integer) ssheightField.getValue());
-
-		// Frame output
-		File fofile = new File(frameLocation.getText());
-		if (fofile.exists() && fofile.isDirectory())
-		    GlobalConf.frame.RENDER_FOLDER = fofile.getAbsolutePath();
-		String text = frameFileName.getText();
-		if (text.matches("^\\w+$")) {
-		    GlobalConf.frame.RENDER_FILE_NAME = text;
-		}
-		GlobalConf.frame.RENDER_WIDTH = ((Integer) frameWidthField.getValue());
-		GlobalConf.frame.RENDER_HEIGHT = ((Integer) frameHeightField.getValue());
-		GlobalConf.frame.RENDER_OUTPUT = frameCb.isSelected();
-		GlobalConf.frame.RENDER_TARGET_FPS = ((Integer) targetFPS.getValue());
-
-		// Save configuration
-		try {
-		    GlobalConf.saveProperties(new File(System.getProperty("properties.file")).toURI().toURL());
-		} catch (MalformedURLException e1) {
-		    EventManager.getInstance().post(Events.JAVA_EXCEPTION, e);
+			connection.add(noConnection);
+			scrollConnection.setVisible(true);
+			// Repaint frame
+			frame.repaint();
+		    }
 		}
 
-		EventManager.getInstance().post(Events.PROPERTIES_WRITTEN);
+		if (goahead) {
+		    // Add all properties to GlobalConf.instance
+		    GlobalConf.screen.FULLSCREEN = fullscreen.isSelected();
 
-		if (startup) {
-		    gsd.launchMainApp();
+		    // Fullscreen options
+		    GlobalConf.screen.FULLSCREEN_WIDTH = ((DisplayMode) fullScreenResolutions.getSelectedItem()).width;
+		    GlobalConf.screen.FULLSCREEN_HEIGHT = ((DisplayMode) fullScreenResolutions.getSelectedItem()).height;
+
+		    // Windowed options
+		    GlobalConf.screen.SCREEN_WIDTH = ((Integer) widthField.getValue());
+		    GlobalConf.screen.SCREEN_HEIGHT = ((Integer) heightField.getValue());
+		    GlobalConf.screen.RESIZABLE = resizable.isSelected();
+
+		    // Graphics
+		    ThreadComboBoxBean bean = (ThreadComboBoxBean) msaa.getSelectedItem();
+		    GlobalConf.postprocess.POSTPROCESS_ANTIALIAS = bean.value;
+		    GlobalConf.screen.VSYNC = vsync.isSelected();
+
+		    // Interface
+		    LangComboBoxBean lbean = (LangComboBoxBean) lang.getSelectedItem();
+		    GlobalConf.program.LOCALE = lbean.locale.toLanguageTag();
+		    if (!I18n.forceinit("./data/i18n/gsbundle"))
+			I18n.forceinit("../android/assets/i18n/gsbundle");
+		    GlobalConf.program.UI_THEME = (String) theme.getSelectedItem();
+
+		    // Performance
+		    bean = (ThreadComboBoxBean) numThreads.getSelectedItem();
+		    GlobalConf.performance.NUMBER_THREADS = bean.value;
+		    GlobalConf.performance.MULTITHREADING = multithreadCb.isSelected();
+
+		    // Screenshots
+		    File ssfile = new File(screenshotsLocation.getText());
+		    if (ssfile.exists() && ssfile.isDirectory())
+			GlobalConf.screenshot.SCREENSHOT_FOLDER = ssfile.getAbsolutePath();
+		    GlobalConf.screenshot.SCREENSHOT_WIDTH = ((Integer) sswidthField.getValue());
+		    GlobalConf.screenshot.SCREENSHOT_HEIGHT = ((Integer) ssheightField.getValue());
+
+		    // Frame output
+		    File fofile = new File(frameLocation.getText());
+		    if (fofile.exists() && fofile.isDirectory())
+			GlobalConf.frame.RENDER_FOLDER = fofile.getAbsolutePath();
+		    String text = frameFileName.getText();
+		    if (text.matches("^\\w+$")) {
+			GlobalConf.frame.RENDER_FILE_NAME = text;
+		    }
+		    GlobalConf.frame.RENDER_WIDTH = ((Integer) frameWidthField.getValue());
+		    GlobalConf.frame.RENDER_HEIGHT = ((Integer) frameHeightField.getValue());
+		    GlobalConf.frame.RENDER_OUTPUT = frameCb.isSelected();
+		    GlobalConf.frame.RENDER_TARGET_FPS = ((Integer) targetFPS.getValue());
+
+		    // Save configuration
+		    try {
+			GlobalConf.saveProperties(new File(System.getProperty("properties.file")).toURI().toURL());
+		    } catch (MalformedURLException e1) {
+			EventManager.getInstance().post(Events.JAVA_EXCEPTION, e);
+		    }
+
+		    EventManager.getInstance().post(Events.PROPERTIES_WRITTEN);
+
+		    if (startup) {
+			gsd.launchMainApp();
+		    }
+		    frame.setVisible(false);
 		}
-		frame.setVisible(false);
 	    }
 
 	});

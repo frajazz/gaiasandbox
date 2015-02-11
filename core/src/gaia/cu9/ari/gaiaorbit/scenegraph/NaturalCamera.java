@@ -23,16 +23,13 @@ import com.badlogic.gdx.utils.viewport.Viewport;
  *
  */
 public class NaturalCamera extends AbstractCamera implements IObserver {
-    // c is top speed
-    private static final double TOP_SPEED = 3e5 * Constants.KM_TO_U;
+    // Camera top speed
+    private static final double TOP_SPEED = 1e234 /* 3e5 * Constants.KM_TO_U */;
 
     /** Camera far value **/
     public static final double CAM_FAR = 1e15 * Constants.KM_TO_U;
     /** Camera near values **/
     public static final double CAM_NEAR = 1e4 * Constants.KM_TO_U;
-
-    /** Max turn velocity in deg/s **/
-    private static final double MAX_ANGLE_V = .01;
 
     /** Acceleration, velocity and position of the entity **/
     public Vector3d accel, vel;
@@ -440,7 +437,7 @@ public class NaturalCamera extends AbstractCamera implements IObserver {
 	    // Calculate velocity from acceleration
 	    angle.y += angle.x * dt;
 	    // Cap velocity
-	    angle.y = Math.signum(angle.y) * Math.min(MAX_ANGLE_V, Math.abs(angle.y));
+	    angle.y = Math.signum(angle.y) * Math.abs(angle.y);
 	    // Update position
 	    angle.z = (angle.y * dt) % 360f;
 	    return true;

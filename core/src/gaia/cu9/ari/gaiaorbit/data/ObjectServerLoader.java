@@ -16,6 +16,7 @@ import gaia.cu9.object.server.commands.MessageHandler;
 import gaia.cu9.object.server.commands.MessagePayloadBlock;
 
 import java.io.IOException;
+import java.net.ConnectException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Properties;
@@ -34,6 +35,8 @@ public class ObjectServerLoader implements ISceneGraphNodeProvider {
 
     @Override
     public List<? extends SceneGraphNode> loadObjects() {
+	long starid = 1;
+	long errors = 0;
 	try {
 	    EventManager.getInstance().post(Events.POST_NOTIFICATION, this.getClass().getSimpleName(), I18n.bundle.format("notif.objectserver.gettingdata"));
 
@@ -85,8 +88,6 @@ public class ObjectServerLoader implements ISceneGraphNodeProvider {
 
 	    // Parse into list of stars
 	    String[] lines = rawdata.split("\n");
-	    long starid = 1;
-	    long errors = 0;
 	    for (String line : lines) {
 		String[] tokens = line.split(";");
 		try {
@@ -109,21 +110,24 @@ public class ObjectServerLoader implements ISceneGraphNodeProvider {
 		    errors++;
 		}
 	    }
-	    // Manually add sun
-	    Star s = new Star(new Vector3d(0, 0, 0), 4.83f, 4.83f, 0.656f, "Sol", starid++);
-	    s.initialize();
-	    result.add(s);
 
 	    // Disconnect
 	    cc.sendMessage("client-disconnect");
-
-	    if (errors > 0)
-		EventManager.getInstance().post(Events.JAVA_EXCEPTION, new RuntimeException(I18n.bundle.format("error.loading.objects", errors)));
-	    EventManager.getInstance().post(Events.POST_NOTIFICATION, this.getClass().getSimpleName(), I18n.bundle.format("notif.catalog.init", result.size()));
-
+	} catch (ConnectException e) {
+	    EventManager.getInstance().post(Events.POST_NOTIFICATION, I18n.bundle.get("notif.objectserver.notconnect"));
+	    EventManager.getInstance().post(Events.JAVA_EXCEPTION, e);
 	} catch (IOException e) {
 	    EventManager.getInstance().post(Events.JAVA_EXCEPTION, e);
 	}
+
+	// Manually add sun
+	Star s = new Star(new Vector3d(0, 0, 0), 4.83f, 4.83f, 0.656f, "Sol", starid++);
+	s.initialize();
+	result.add(s);
+
+	if (errors > 0)
+	    EventManager.getInstance().post(Events.JAVA_EXCEPTION, new RuntimeException(I18n.bundle.format("error.loading.objects", errors)));
+	EventManager.getInstance().post(Events.POST_NOTIFICATION, this.getClass().getSimpleName(), I18n.bundle.format("notif.catalog.init", result.size()));
 
 	return result;
     }
