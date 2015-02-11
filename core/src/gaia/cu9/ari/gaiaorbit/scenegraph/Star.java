@@ -154,7 +154,7 @@ public class Star extends CelestialBody {
 	    transform.position.set(parentTransform.position).add(pos);
 
 	    distToCamera = (float) transform.position.len();
-	    boolean visible = computeVisible(time, camera, GlobalConf.inst.COMPUTE_GAIA_SCAN) || camera.isFocus(this);
+	    boolean visible = computeVisible(time, camera, GlobalConf.scene.COMPUTE_GAIA_SCAN) || camera.isFocus(this);
 
 	    if (visible && !copy) {
 		viewAngle = (float) Math.atan((getRadius()) / distToCamera) / camera.getFovFactor();

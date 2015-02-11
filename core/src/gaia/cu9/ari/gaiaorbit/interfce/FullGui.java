@@ -638,7 +638,7 @@ public class FullGui implements IGui, IObserver {
 		return false;
 	    }
 	});
-	computeGaiaScan.setChecked(GlobalConf.inst.COMPUTE_GAIA_SCAN);
+	computeGaiaScan.setChecked(GlobalConf.scene.COMPUTE_GAIA_SCAN);
 
 	transitColor = new CheckBox(txt("gui.gaiascan.colour"), skin);
 	transitColor.setName("transit color");
@@ -652,7 +652,7 @@ public class FullGui implements IGui, IObserver {
 		return false;
 	    }
 	});
-	transitColor.setChecked(GlobalConf.inst.STAR_COLOR_TRANSIT);
+	transitColor.setChecked(GlobalConf.scene.STAR_COLOR_TRANSIT);
 
 	onlyObservedStars = new CheckBox(txt("gui.gaiascan.onlyobserved"), skin);
 	onlyObservedStars.setName("only observed stars");
@@ -666,7 +666,7 @@ public class FullGui implements IGui, IObserver {
 		return false;
 	    }
 	});
-	onlyObservedStars.setChecked(GlobalConf.inst.ONLY_OBSERVED_STARS);
+	onlyObservedStars.setChecked(GlobalConf.scene.ONLY_OBSERVED_STARS);
 
 	optionsGroup.addActor(togglesLabel);
 	optionsGroup.addActor(computeGaiaScan);

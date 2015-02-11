@@ -41,7 +41,7 @@ public class GlobalConf implements IObserver {
     public int POSTPROCESS_ANTIALIAS, NUMBER_THREADS;
     public float LIMIT_MAG_RUNTIME, POSTPROCESS_BLOOM_INTENSITY;
     /** This should be no smaller than 1 and no bigger than 5. The bigger the more stars with labels **/
-    public boolean MULTITHREADING, STAR_COLOR_TRANSIT, ONLY_OBSERVED_STARS, COMPUTE_GAIA_SCAN, POSTPROCESS_LENS_FLARE;
+    public boolean MULTITHREADING, POSTPROCESS_LENS_FLARE;
     public boolean INPUT_ENABLED;
     public String SCREENSHOT_FOLDER;
     public int SCREENSHOT_WIDTH, SCREENSHOT_HEIGHT;
@@ -306,9 +306,12 @@ public class GlobalConf implements IObserver {
 	public boolean FOCUS_LOCK;
 	public float LABEL_NUMBER_FACTOR;
 	public boolean[] VISIBILITY;
+	public boolean STAR_COLOR_TRANSIT;
+	public boolean ONLY_OBSERVED_STARS;
+	public boolean COMPUTE_GAIA_SCAN;
 
 	public SceneConf() {
-	    EventManager.getInstance().subscribe(this, Events.FOCUS_LOCK_CMD, Events.STAR_BRIGHTNESS_CMD, Events.FOV_CHANGED_CMD, Events.CAMERA_SPEED_CMD, Events.ROTATION_SPEED_CMD, Events.TURNING_SPEED_CMD);
+	    EventManager.getInstance().subscribe(this, Events.FOCUS_LOCK_CMD, Events.STAR_BRIGHTNESS_CMD, Events.FOV_CHANGED_CMD, Events.CAMERA_SPEED_CMD, Events.ROTATION_SPEED_CMD, Events.TURNING_SPEED_CMD, Events.TRANSIT_COLOUR_CMD, Events.ONLY_OBSERVED_STARS_CMD, Events.COMPUTE_GAIA_SCAN_CMD);
 	}
 
 	@Override
@@ -357,6 +360,15 @@ public class GlobalConf implements IObserver {
 	@Override
 	public void notify(Events event, Object... data) {
 	    switch (event) {
+	    case TRANSIT_COLOUR_CMD:
+		STAR_COLOR_TRANSIT = (boolean) data[1];
+		break;
+	    case ONLY_OBSERVED_STARS_CMD:
+		ONLY_OBSERVED_STARS = (boolean) data[1];
+		break;
+	    case COMPUTE_GAIA_SCAN_CMD:
+		COMPUTE_GAIA_SCAN = (boolean) data[1];
+		break;
 	    case FOCUS_LOCK_CMD:
 		FOCUS_LOCK = (boolean) data[1];
 		break;
@@ -551,7 +563,7 @@ public class GlobalConf implements IObserver {
 	    EventManager.getInstance().post(Events.JAVA_EXCEPTION, e);
 	}
 
-	EventManager.getInstance().subscribe(this, Events.TRANSIT_COLOUR_CMD, Events.ONLY_OBSERVED_STARS_CMD, Events.COMPUTE_GAIA_SCAN_CMD, Events.STAR_BRIGHTNESS_CMD, Events.BLOOM_CMD, Events.FOV_CHANGED_CMD, Events.FOCUS_LOCK_CMD, Events.CAMERA_SPEED_CMD, Events.ROTATION_SPEED_CMD, Events.TURNING_SPEED_CMD, Events.INPUT_ENABLED_CMD, Events.CONFIG_RENDER_SYSTEM, Events.RENDER_SYSTEM_CMD, Events.LENS_FLARE_CMD, Events.LIMIT_MAG_CMD, Events.TOGGLE_STEREOSCOPIC, Events.TOGGLE_CLEANMODE, Events.TOGGLE_GLOBALPAUSE, Events.TOGGLE_TIME_CMD);
+	EventManager.getInstance().subscribe(this, Events.BLOOM_CMD, Events.INPUT_ENABLED_CMD, Events.LENS_FLARE_CMD, Events.LIMIT_MAG_CMD, Events.TOGGLE_CLEANMODE, Events.TOGGLE_GLOBALPAUSE, Events.TOGGLE_TIME_CMD);
     }
 
     /**
@@ -613,15 +625,6 @@ public class GlobalConf implements IObserver {
     @Override
     public void notify(Events event, Object... data) {
 	switch (event) {
-	case TRANSIT_COLOUR_CMD:
-	    STAR_COLOR_TRANSIT = (boolean) data[1];
-	    break;
-	case ONLY_OBSERVED_STARS_CMD:
-	    ONLY_OBSERVED_STARS = (boolean) data[1];
-	    break;
-	case COMPUTE_GAIA_SCAN_CMD:
-	    COMPUTE_GAIA_SCAN = (boolean) data[1];
-	    break;
 	case BLOOM_CMD:
 	    POSTPROCESS_BLOOM_INTENSITY = (float) data[0];
 	    break;

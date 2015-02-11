@@ -291,7 +291,7 @@ public abstract class CelestialBody extends AbstractPositionEntity implements IL
 	float coneAngle = fcamera.angleEdgeRad;
 	Vector3d[] dirs = null;
 	double poslen = pos.len();
-	if (GlobalConf.inst.COMPUTE_GAIA_SCAN && !fcamera.interpolatedDirections.isEmpty()) {
+	if (GlobalConf.scene.COMPUTE_GAIA_SCAN && !fcamera.interpolatedDirections.isEmpty()) {
 	    // We need to interpolate...
 	    for (Vector3d[] interpolatedDirection : fcamera.interpolatedDirections) {
 		visible = visible ||
@@ -348,7 +348,7 @@ public abstract class CelestialBody extends AbstractPositionEntity implements IL
 		updateTransitNumber(visibleByGaia, time, camera.getManager().fovCamera);
 	    }
 	}
-	return visible && !(GlobalConf.inst.ONLY_OBSERVED_STARS && transits == 0);
+	return visible && !(GlobalConf.scene.ONLY_OBSERVED_STARS && transits == 0);
     }
 
     /**
@@ -358,7 +358,7 @@ public abstract class CelestialBody extends AbstractPositionEntity implements IL
      * @param time
      */
     protected void updateTransitNumber(boolean visible, ITimeFrameProvider time, FovCamera fcamera) {
-	if (GlobalConf.inst.COMPUTE_GAIA_SCAN && visible && timeCondition(time)) {
+	if (GlobalConf.scene.COMPUTE_GAIA_SCAN && visible && timeCondition(time)) {
 	    // Update observations. Add if forward time, subtract if backward time
 	    transits = Math.max(0, transits + (int) Math.signum(time.getDt()));
 	    lastTransitIncrease = time.getTime().getTime();
