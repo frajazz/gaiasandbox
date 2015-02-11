@@ -70,6 +70,7 @@ import javax.swing.SpinnerNumberModel;
 import javax.swing.SwingConstants;
 import javax.swing.UIManager;
 import javax.swing.border.Border;
+import javax.swing.border.MatteBorder;
 import javax.swing.border.TitledBorder;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
@@ -101,6 +102,7 @@ import com.badlogic.gdx.utils.JsonValue;
  */
 public class ConfigDialog extends I18nJFrame {
     private static long fiveDaysMs = 5 * 24 * 60 * 60 * 1000;
+    private static final Color bcol = Color.gray;
 
     JFrame frame;
     JLabel checkLabel;
@@ -194,7 +196,7 @@ public class ConfigDialog extends I18nJFrame {
 
 	/** RESOLUTION **/
 	JPanel mode = new JPanel(new MigLayout("fillx", "[grow,fill][grow,fill]", ""));
-	mode.setBorder(new TitledBorder(txt("gui.resolutionmode")));
+	mode.setBorder(new TitledBorder(new MatteBorder(new Insets(1, 0, 0, 0), bcol), txt("gui.resolutionmode")));
 
 	// Full screen mode resolutions
 	DisplayMode[] modes = LwjglApplicationConfiguration.getDisplayModes();
@@ -269,7 +271,7 @@ public class ConfigDialog extends I18nJFrame {
 
 	/** GRAPHICS **/
 	JPanel graphics = new JPanel(new MigLayout("", "[][]", ""));
-	graphics.setBorder(new TitledBorder(txt("gui.graphicssettings")));
+	graphics.setBorder(new TitledBorder(new MatteBorder(new Insets(1, 0, 0, 0), bcol), txt("gui.graphicssettings")));
 
 	// MSAA
 	JTextArea msaaInfo = new JTextArea(txt("gui.aa.info")) {
@@ -314,7 +316,7 @@ public class ConfigDialog extends I18nJFrame {
 	 * ====== USER INTERFACE TAB =======
 	 */
 	JPanel ui = new JPanel(new MigLayout("", "[grow,fill][grow,fill]", ""));
-	ui.setBorder(new TitledBorder(txt("gui.ui.interfacesettings")));
+	ui.setBorder(new TitledBorder(new MatteBorder(new Insets(1, 0, 0, 0), bcol), txt("gui.ui.interfacesettings")));
 
 	File i18nfolder = new File("./data/i18n/");
 	if (!i18nfolder.exists()) {
@@ -372,7 +374,7 @@ public class ConfigDialog extends I18nJFrame {
 
 	/** MULTITHREAD **/
 	JPanel multithread = new JPanel(new MigLayout("", "[grow,fill][grow,fill]", ""));
-	multithread.setBorder(new TitledBorder(txt("gui.multithreading")));
+	multithread.setBorder(new TitledBorder(new MatteBorder(new Insets(1, 0, 0, 0), bcol), txt("gui.multithreading")));
 
 	int maxthreads = Runtime.getRuntime().availableProcessors();
 	ThreadComboBoxBean[] cbs = new ThreadComboBoxBean[maxthreads + 1];
@@ -407,7 +409,7 @@ public class ConfigDialog extends I18nJFrame {
 	 * ====== CONTROLS TAB =======
 	 */
 	JPanel controls = new JPanel(new MigLayout("", "[grow,fill][]", ""));
-	controls.setBorder(new TitledBorder(txt("gui.keymappings")));
+	controls.setBorder(new TitledBorder(new MatteBorder(new Insets(1, 0, 0, 0), bcol), txt("gui.keymappings")));
 
 	Map<TreeSet<Integer>, ProgramAction> maps = KeyMappings.instance.mappings;
 	Set<TreeSet<Integer>> keymaps = maps.keySet();
@@ -447,7 +449,7 @@ public class ConfigDialog extends I18nJFrame {
 
 	/** SCREENSHOTS CONFIG **/
 	JPanel screenshots = new JPanel(new MigLayout("", "[grow,fill][grow,fill]", ""));
-	screenshots.setBorder(new TitledBorder(txt("gui.screencapture")));
+	screenshots.setBorder(new TitledBorder(new MatteBorder(new Insets(1, 0, 0, 0), bcol), txt("gui.screencapture")));
 
 	JTextArea screenshotsInfo = new JTextArea(txt("gui.screencapture.info")) {
 	    @Override
@@ -523,7 +525,7 @@ public class ConfigDialog extends I18nJFrame {
 
 	/** IMAGE OUTPUT CONFIG **/
 	JPanel imageOutput = new JPanel(new MigLayout("", "[grow,fill][grow,fill]", ""));
-	imageOutput.setBorder(new TitledBorder(txt("gui.frameoutput")));
+	imageOutput.setBorder(new TitledBorder(new MatteBorder(new Insets(1, 0, 0, 0), bcol), txt("gui.frameoutput")));
 
 	JTextArea frameInfo = new JTextArea(txt("gui.frameoutput.info")) {
 	    @Override
@@ -644,7 +646,7 @@ public class ConfigDialog extends I18nJFrame {
 	 * ====== DATA TAB =======
 	 */
 	JPanel datasource = new JPanel(new MigLayout("", "[][grow,fill][]", ""));
-	datasource.setBorder(new TitledBorder(txt("gui.data.source")));
+	datasource.setBorder(new TitledBorder(new MatteBorder(new Insets(1, 0, 0, 0), bcol), txt("gui.data.source")));
 
 	// OBJECT SERVER CONFIGURATION PANEL
 
@@ -656,6 +658,7 @@ public class ConfigDialog extends I18nJFrame {
 	// CONNECTION PANE
 	final JPanel connection = new JPanel(new MigLayout("", "[grow,fill]", ""));
 	final JScrollPane scrollConnection = new JScrollPane(connection);
+	scrollConnection.setMinimumSize(new Dimension(0, 150));
 	scrollConnection.setVisible(false);
 
 	JButton testConnection = new JButton(txt("gui.data.testconnection"), IconManager.get("config/connection"));

@@ -35,7 +35,7 @@ public class ObjectServerLoader implements ISceneGraphNodeProvider {
     @Override
     public List<? extends SceneGraphNode> loadObjects() {
 	try {
-	    EventManager.getInstance().post(Events.POST_NOTIFICATION, this.getClass().getSimpleName(), I18n.bundle.format("notif.limitmag", GlobalConf.data.LIMIT_MAG_LOAD));
+	    EventManager.getInstance().post(Events.POST_NOTIFICATION, this.getClass().getSimpleName(), I18n.bundle.format("notif.objectserver.gettingdata"));
 
 	    String visid = GlobalConf.data.VISUALIZATION_ID;
 

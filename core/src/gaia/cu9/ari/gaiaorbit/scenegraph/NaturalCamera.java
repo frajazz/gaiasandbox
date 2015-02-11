@@ -23,6 +23,9 @@ import com.badlogic.gdx.utils.viewport.Viewport;
  *
  */
 public class NaturalCamera extends AbstractCamera implements IObserver {
+    // c is top speed
+    private static final double TOP_SPEED = 3e5 * Constants.KM_TO_U;
+
     /** Camera far value **/
     public static final double CAM_FAR = 1e15 * Constants.KM_TO_U;
     /** Camera near values **/
@@ -342,6 +345,11 @@ public class NaturalCamera extends AbstractCamera implements IObserver {
 
 	if (!(force.isZero() && velocity == 0 && accel.isZero())) {
 	    vel.add(accel.scl(dt));
+
+	    // Clamp to top speed
+	    if (vel.len() > TOP_SPEED) {
+		vel.clamp(0, TOP_SPEED);
+	    }
 
 	    // Velocity changed direction
 	    if (lastvel.dot(vel) < 0) {
