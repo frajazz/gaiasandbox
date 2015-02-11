@@ -280,7 +280,7 @@ public class MainMenuBar extends JMenuBar implements IObserver {
 	menuItem.addActionListener(new ActionListener() {
 	    @Override
 	    public void actionPerformed(ActionEvent e) {
-		EventManager.getInstance().post(Events.SCREENSHOT_CMD, GlobalConf.instance.SCREENSHOT_WIDTH, GlobalConf.instance.SCREENSHOT_HEIGHT, GlobalConf.instance.SCREENSHOT_FOLDER);
+		EventManager.getInstance().post(Events.SCREENSHOT_CMD, GlobalConf.inst.SCREENSHOT_WIDTH, GlobalConf.inst.SCREENSHOT_HEIGHT, GlobalConf.inst.SCREENSHOT_FOLDER);
 	    }
 	});
 	menu.add(menuItem);

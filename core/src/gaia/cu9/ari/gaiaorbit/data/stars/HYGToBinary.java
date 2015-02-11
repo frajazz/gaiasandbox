@@ -36,8 +36,8 @@ public class HYGToBinary implements IObserver {
 	EventManager.getInstance().subscribe(hyg, Events.POST_NOTIFICATION);
 
 	InputStream versionFile = HYGToBinary.class.getResourceAsStream("/version");
-	GlobalConf.instance = new GlobalConf();
-	GlobalConf.instance.initializeVersion(versionFile);
+	GlobalConf.inst = new GlobalConf();
+	GlobalConf.inst.initializeVersion(versionFile);
 
 	//hyg.compareCSVtoBinary("/home/tsagrista/Workspaces/workspace/GaiaOrbit-android/assets/data/hyg80.csv", "/home/tsagrista/Workspaces/workspace/GaiaOrbit-android/assets/data/hyg80.bin");
 
@@ -83,7 +83,7 @@ public class HYGToBinary implements IObserver {
     public void convertToBinary(String fileIn, String fileOut) {
 	HYGCSVLoader cat = new HYGCSVLoader();
 	try {
-	    GlobalConf.instance.LIMIT_MAG_LOAD = 6.3f;
+	    GlobalConf.data.LIMIT_MAG_LOAD = 6.3f;
 	    List<CelestialBody> stars = cat.loadStars(new FileInputStream(new File(fileIn)));
 
 	    // Write to binary

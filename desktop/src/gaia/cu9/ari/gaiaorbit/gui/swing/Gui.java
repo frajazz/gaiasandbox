@@ -365,7 +365,7 @@ public class Gui implements IObserver {
 	fovSlider.setMaximum(Constants.MAX_FOV);
 	fovSlider.setMinorTickSpacing(20);
 	fovSlider.setMajorTickSpacing(70);
-	fovSlider.setValue((int) GlobalConf.instance.CAMERA_FOV);
+	fovSlider.setValue((int) GlobalConf.inst.CAMERA_FOV);
 	fovSlider.setPaintTicks(true);
 	fovSlider.setPaintLabels(true);
 	fovSlider.addChangeListener(new ChangeListener() {

@@ -149,16 +149,16 @@ public class Star extends CelestialBody {
      */
     @Override
     public void update(ITimeFrameProvider time, final Transform parentTransform, ICamera camera, float opacity) {
-	if (appmag <= GlobalConf.instance.LIMIT_MAG_RUNTIME) {
+	if (appmag <= GlobalConf.inst.LIMIT_MAG_RUNTIME) {
 	    this.opacity = opacity;
 	    transform.position.set(parentTransform.position).add(pos);
 
 	    distToCamera = (float) transform.position.len();
-	    boolean visible = computeVisible(time, camera, GlobalConf.instance.COMPUTE_GAIA_SCAN) || camera.isFocus(this);
+	    boolean visible = computeVisible(time, camera, GlobalConf.inst.COMPUTE_GAIA_SCAN) || camera.isFocus(this);
 
 	    if (visible && !copy) {
 		viewAngle = (float) Math.atan((getRadius()) / distToCamera) / camera.getFovFactor();
-		viewAngleApparent = (float) Math.atan((getRadius() * GlobalConf.instance.STAR_BRIGHTNESS) / distToCamera) / camera.getFovFactor();
+		viewAngleApparent = (float) Math.atan((getRadius() * GlobalConf.inst.STAR_BRIGHTNESS) / distToCamera) / camera.getFovFactor();
 		addToRenderLists(camera);
 	    }
 
@@ -270,7 +270,7 @@ public class Star extends CelestialBody {
 	    computedSize = dist * Constants.TAN_TH_ANGLE_DOWN * Constants.STAR_SIZE_FACTOR_INV;
 
 	}
-	computedSize *= GlobalConf.instance.STAR_BRIGHTNESS;
+	computedSize *= GlobalConf.inst.STAR_BRIGHTNESS;
 	return (float) computedSize;
     }
 

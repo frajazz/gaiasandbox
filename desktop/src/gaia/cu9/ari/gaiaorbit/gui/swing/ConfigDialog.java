@@ -111,13 +111,13 @@ public class ConfigDialog extends I18nJFrame {
     JTree visualisationsTree;
 
     public ConfigDialog(final GaiaSandboxDesktop gsd, boolean startup) {
-	super(startup ? GlobalConf.instance.getFullApplicationName() : txt("gui.settings"));
+	super(startup ? GlobalConf.inst.getFullApplicationName() : txt("gui.settings"));
 	initialize(gsd, startup);
 
 	if (startup) {
 	    /** SPLASH IMAGE **/
 	    URL url = this.getClass().getResource("/img/splash/splash-s.jpg");
-	    JSplashLabel label = new JSplashLabel(url, txt("gui.build", GlobalConf.instance.VERSION.build) + " - " + txt("gui.version", GlobalConf.instance.VERSION.version), null, Color.lightGray);
+	    JSplashLabel label = new JSplashLabel(url, txt("gui.build", GlobalConf.inst.VERSION.build) + " - " + txt("gui.version", GlobalConf.inst.VERSION.version), null, Color.lightGray);
 	    JPanel imagePanel = new JPanel(new GridLayout(1, 1, 0, 0));
 	    imagePanel.add(label);
 	    imagePanel.setBackground(Color.black);
@@ -168,13 +168,13 @@ public class ConfigDialog extends I18nJFrame {
 	checkPanel = new JPanel(new MigLayout("", "[][]", "[]4[]"));
 	checkLabel = new JLabel("");
 	checkPanel.add(checkLabel);
-	if (GlobalConf.instance.LAST_CHECKED == null || GlobalConf.instance.LAST_VERSION.isEmpty() || new Date().getTime() - GlobalConf.instance.LAST_CHECKED.getTime() > fiveDaysMs) {
+	if (GlobalConf.inst.LAST_CHECKED == null || GlobalConf.inst.LAST_VERSION.isEmpty() || new Date().getTime() - GlobalConf.inst.LAST_CHECKED.getTime() > fiveDaysMs) {
 	    // Check!
 	    checkLabel.setText(txt("gui.newversion.checking"));
 	    getCheckVersionThread().start();
 	} else {
 	    // Inform latest
-	    newVersionCheck(GlobalConf.instance.LAST_VERSION);
+	    newVersionCheck(GlobalConf.inst.LAST_VERSION);
 
 	}
 
@@ -202,7 +202,7 @@ public class ConfigDialog extends I18nJFrame {
 
 	DisplayMode selectedMode = null;
 	for (DisplayMode dm : modes) {
-	    if (dm.width == GlobalConf.instance.FULLSCREEN_WIDTH && dm.height == GlobalConf.instance.FULLSCREEN_HEIGHT) {
+	    if (dm.width == GlobalConf.inst.FULLSCREEN_WIDTH && dm.height == GlobalConf.inst.FULLSCREEN_HEIGHT) {
 		selectedMode = dm;
 		break;
 	    }
@@ -226,9 +226,9 @@ public class ConfigDialog extends I18nJFrame {
 
 	// Windowed mode resolutions
 	JPanel windowedResolutions = new JPanel(new MigLayout("", "[][grow,fill][][grow,fill]", "[][]4[][]"));
-	final JSpinner widthField = new JSpinner(new SpinnerNumberModel(MathUtils.clamp(GlobalConf.instance.SCREEN_WIDTH, 100, nativeMode.width), 100, nativeMode.width, 1));
-	final JSpinner heightField = new JSpinner(new SpinnerNumberModel(MathUtils.clamp(GlobalConf.instance.SCREEN_HEIGHT, 100, nativeMode.height), 100, nativeMode.height, 1));
-	final JCheckBox resizable = new JCheckBox("Resizable", GlobalConf.instance.RESIZABLE);
+	final JSpinner widthField = new JSpinner(new SpinnerNumberModel(MathUtils.clamp(GlobalConf.inst.SCREEN_WIDTH, 100, nativeMode.width), 100, nativeMode.width, 1));
+	final JSpinner heightField = new JSpinner(new SpinnerNumberModel(MathUtils.clamp(GlobalConf.inst.SCREEN_HEIGHT, 100, nativeMode.height), 100, nativeMode.height, 1));
+	final JCheckBox resizable = new JCheckBox("Resizable", GlobalConf.inst.RESIZABLE);
 
 	windowedResolutions.add(new JLabel(txt("gui.width") + ":"));
 	windowedResolutions.add(widthField);
@@ -241,22 +241,22 @@ public class ConfigDialog extends I18nJFrame {
 	fullscreen.addActionListener(new ActionListener() {
 	    @Override
 	    public void actionPerformed(ActionEvent e) {
-		GlobalConf.instance.FULLSCREEN = fullscreen.isSelected();
+		GlobalConf.inst.FULLSCREEN = fullscreen.isSelected();
 		selectFullscreen(fullscreen.isSelected(), widthField, heightField, fullScreenResolutions, resizable);
 	    }
 	});
-	fullscreen.setSelected(GlobalConf.instance.FULLSCREEN);
+	fullscreen.setSelected(GlobalConf.inst.FULLSCREEN);
 
 	final JRadioButton windowed = new JRadioButton(txt("gui.windowed"));
 	windowed.addActionListener(new ActionListener() {
 	    @Override
 	    public void actionPerformed(ActionEvent e) {
-		GlobalConf.instance.FULLSCREEN = !windowed.isSelected();
+		GlobalConf.inst.FULLSCREEN = !windowed.isSelected();
 		selectFullscreen(!windowed.isSelected(), widthField, heightField, fullScreenResolutions, resizable);
 	    }
 	});
-	windowed.setSelected(!GlobalConf.instance.FULLSCREEN);
-	selectFullscreen(GlobalConf.instance.FULLSCREEN, widthField, heightField, fullScreenResolutions, resizable);
+	windowed.setSelected(!GlobalConf.inst.FULLSCREEN);
+	selectFullscreen(GlobalConf.inst.FULLSCREEN, widthField, heightField, fullScreenResolutions, resizable);
 
 	ButtonGroup modeButtons = new ButtonGroup();
 	modeButtons.add(fullscreen);
@@ -284,10 +284,10 @@ public class ConfigDialog extends I18nJFrame {
 
 	ThreadComboBoxBean[] msaas = new ThreadComboBoxBean[] { new ThreadComboBoxBean(txt("gui.aa.no"), 0), new ThreadComboBoxBean(txt("gui.aa.fxaa"), -1), new ThreadComboBoxBean(txt("gui.aa.nfaa"), -2), new ThreadComboBoxBean(txt("gui.aa.msaa", 2), 2), new ThreadComboBoxBean(txt("gui.aa.msaa", 4), 4), new ThreadComboBoxBean(txt("gui.aa.msaa", 8), 8), new ThreadComboBoxBean(txt("gui.aa.msaa", 16), 16) };
 	final JComboBox<ThreadComboBoxBean> msaa = new JComboBox<ThreadComboBoxBean>(msaas);
-	msaa.setSelectedItem(msaas[idxAa(2, GlobalConf.instance.POSTPROCESS_ANTIALIAS)]);
+	msaa.setSelectedItem(msaas[idxAa(2, GlobalConf.inst.POSTPROCESS_ANTIALIAS)]);
 
 	// Vsync
-	final JCheckBox vsync = new JCheckBox(txt("gui.vsync"), GlobalConf.instance.VSYNC);
+	final JCheckBox vsync = new JCheckBox(txt("gui.vsync"), GlobalConf.inst.VSYNC);
 
 	graphics.add(msaaInfo, "span,wrap");
 	graphics.add(new JLabel(txt("gui.aa")));
@@ -340,11 +340,11 @@ public class ConfigDialog extends I18nJFrame {
 	}
 	Arrays.sort(langs);
 	final JComboBox<LangComboBoxBean> lang = new JComboBox<LangComboBoxBean>(langs);
-	lang.setSelectedItem(langs[idxLang(GlobalConf.instance.LOCALE, langs)]);
+	lang.setSelectedItem(langs[idxLang(GlobalConf.inst.LOCALE, langs)]);
 
 	String[] themes = new String[] { "dark", "bright", "dark-big" };
 	final JComboBox<String> theme = new JComboBox<String>(themes);
-	theme.setSelectedItem(GlobalConf.instance.UI_THEME);
+	theme.setSelectedItem(GlobalConf.inst.UI_THEME);
 
 	ui.add(new JLabel(txt("gui.ui.language")));
 	ui.add(lang, "wrap");
@@ -389,7 +389,7 @@ public class ConfigDialog extends I18nJFrame {
 		numThreads.setEnabled(multithreadCb.isSelected());
 	    }
 	});
-	multithreadCb.setSelected(GlobalConf.instance.MULTITHREADING);
+	multithreadCb.setSelected(GlobalConf.inst.MULTITHREADING);
 	numThreads.setEnabled(multithreadCb.isSelected());
 
 	multithread.add(multithreadCb, "span");
@@ -460,10 +460,10 @@ public class ConfigDialog extends I18nJFrame {
 
 	// SCREENSHOTS LOCATION
 	JLabel screenshotsLocationLabel = new JLabel(txt("gui.screenshots.save") + ":");
-	File currentLocation = new File(GlobalConf.instance.SCREENSHOT_FOLDER);
+	File currentLocation = new File(GlobalConf.inst.SCREENSHOT_FOLDER);
 	String dirText = txt("gui.screenshots.directory.choose");
 	if (currentLocation.exists() && currentLocation.isDirectory()) {
-	    dirText = GlobalConf.instance.SCREENSHOT_FOLDER;
+	    dirText = GlobalConf.inst.SCREENSHOT_FOLDER;
 	}
 	final WebButton screenshotsLocation = new WebButton(dirText);
 	screenshotsLocation.addActionListener(new ActionListener()
@@ -479,9 +479,9 @@ public class ConfigDialog extends I18nJFrame {
 		    // Increase scrollbar speed
 		    WebScrollPane wsp = (WebScrollPane) ((Container) ((Container) ((Container) ((Container) ((Container) directoryChooser.getComponents()[0]).getComponents()[1]).getComponents()[0]).getComponents()[0]).getComponents()[1]).getComponents()[1];
 		    wsp.getVerticalScrollBar().setUnitIncrement(50);
-		    File currentLocation = new File(GlobalConf.instance.SCREENSHOT_FOLDER);
+		    File currentLocation = new File(GlobalConf.inst.SCREENSHOT_FOLDER);
 		    if (currentLocation.exists() && currentLocation.isDirectory()) {
-			directoryChooser.setSelectedDirectory(new File(GlobalConf.instance.SCREENSHOT_FOLDER));
+			directoryChooser.setSelectedDirectory(new File(GlobalConf.inst.SCREENSHOT_FOLDER));
 		    }
 		}
 		directoryChooser.setVisible(true);
@@ -496,8 +496,8 @@ public class ConfigDialog extends I18nJFrame {
 	});
 
 	// SCREENSHOT WIDTH AND HEIGHT
-	final JSpinner sswidthField = new JSpinner(new SpinnerNumberModel(GlobalConf.instance.SCREENSHOT_WIDTH, 100, 5000, 1));
-	final JSpinner ssheightField = new JSpinner(new SpinnerNumberModel(GlobalConf.instance.SCREENSHOT_HEIGHT, 100, 5000, 1));
+	final JSpinner sswidthField = new JSpinner(new SpinnerNumberModel(GlobalConf.inst.SCREENSHOT_WIDTH, 100, 5000, 1));
+	final JSpinner ssheightField = new JSpinner(new SpinnerNumberModel(GlobalConf.inst.SCREENSHOT_HEIGHT, 100, 5000, 1));
 
 	JPanel screenshotSize = new JPanel(new MigLayout("", "[][grow,fill][][grow,fill]", "[][]4[][]"));
 	screenshotSize.add(new JLabel(txt("gui.width") + ":"));
@@ -535,10 +535,10 @@ public class ConfigDialog extends I18nJFrame {
 	frameInfo.setForeground(darkgreen);
 
 	// SAVE LOCATION
-	File currentFrameLocation = new File(GlobalConf.instance.SCREENSHOT_FOLDER);
+	File currentFrameLocation = new File(GlobalConf.inst.SCREENSHOT_FOLDER);
 	String dirFrameText = txt("gui.frameoutput.directory.choose");
 	if (currentFrameLocation.exists() && currentFrameLocation.isDirectory()) {
-	    dirFrameText = GlobalConf.instance.RENDER_FOLDER;
+	    dirFrameText = GlobalConf.inst.RENDER_FOLDER;
 	}
 	final WebButton frameLocation = new WebButton(dirFrameText);
 	frameLocation.addActionListener(new ActionListener()
@@ -554,9 +554,9 @@ public class ConfigDialog extends I18nJFrame {
 		    // Increase scrollbar speed
 		    WebScrollPane wsp = (WebScrollPane) ((Container) ((Container) ((Container) ((Container) ((Container) directoryChooser.getComponents()[0]).getComponents()[1]).getComponents()[0]).getComponents()[0]).getComponents()[1]).getComponents()[1];
 		    wsp.getVerticalScrollBar().setUnitIncrement(50);
-		    File currentLocation = new File(GlobalConf.instance.RENDER_FOLDER);
+		    File currentLocation = new File(GlobalConf.inst.RENDER_FOLDER);
 		    if (currentLocation.exists() && currentLocation.isDirectory()) {
-			directoryChooser.setSelectedDirectory(new File(GlobalConf.instance.RENDER_FOLDER));
+			directoryChooser.setSelectedDirectory(new File(GlobalConf.inst.RENDER_FOLDER));
 		    }
 		}
 		directoryChooser.setVisible(true);
@@ -595,11 +595,11 @@ public class ConfigDialog extends I18nJFrame {
 		}
 	    }
 	});
-	frameFileName.setText(GlobalConf.instance.RENDER_FILE_NAME);
+	frameFileName.setText(GlobalConf.inst.RENDER_FILE_NAME);
 
 	// FRAME OUTPUT WIDTH AND HEIGHT
-	final JSpinner frameWidthField = new JSpinner(new SpinnerNumberModel(GlobalConf.instance.RENDER_WIDTH, 100, 5000, 1));
-	final JSpinner frameHeightField = new JSpinner(new SpinnerNumberModel(GlobalConf.instance.RENDER_HEIGHT, 100, 5000, 1));
+	final JSpinner frameWidthField = new JSpinner(new SpinnerNumberModel(GlobalConf.inst.RENDER_WIDTH, 100, 5000, 1));
+	final JSpinner frameHeightField = new JSpinner(new SpinnerNumberModel(GlobalConf.inst.RENDER_HEIGHT, 100, 5000, 1));
 
 	JPanel renderSize = new JPanel(new MigLayout("", "[][grow,fill][][grow,fill]", "[][]4[][]"));
 	renderSize.add(new JLabel(txt("gui.width") + ":"));
@@ -608,7 +608,7 @@ public class ConfigDialog extends I18nJFrame {
 	renderSize.add(frameHeightField);
 
 	// TARGET FPS
-	final JSpinner targetFPS = new JSpinner(new SpinnerNumberModel(GlobalConf.instance.RENDER_TARGET_FPS, 1, 60, 1));
+	final JSpinner targetFPS = new JSpinner(new SpinnerNumberModel(GlobalConf.inst.RENDER_TARGET_FPS, 1, 60, 1));
 
 	// FRAME OUTPUT CHECKBOX
 	final JCheckBox frameCb = new JCheckBox(txt("gui.frameoutput.enable"));
@@ -620,7 +620,7 @@ public class ConfigDialog extends I18nJFrame {
 		enableComponents(selected, frameLocation, frameWidthField, frameHeightField, targetFPS, frameFileName);
 	    }
 	});
-	frameCb.setSelected(GlobalConf.instance.RENDER_OUTPUT);
+	frameCb.setSelected(GlobalConf.inst.RENDER_OUTPUT);
 	enableComponents(frameCb.isSelected(), frameLocation, frameWidthField, frameHeightField, targetFPS, frameFileName);
 
 	imageOutput.add(frameInfo, "span");
@@ -648,9 +648,9 @@ public class ConfigDialog extends I18nJFrame {
 	// OBJECT SERVER CONFIGURATION PANEL
 
 	final JTextField hostname = new JTextField();
-	hostname.setText(GlobalConf.instance.OBJECT_SERVER_HOSTNAME);
+	hostname.setText(GlobalConf.data.OBJECT_SERVER_HOSTNAME);
 	final JTextField port = new JTextField();
-	port.setText(Integer.toString(GlobalConf.instance.OBJECT_SERVER_PORT));
+	port.setText(Integer.toString(GlobalConf.data.OBJECT_SERVER_PORT));
 
 	// CONNECTION PANE
 	final JPanel connection = new JPanel(new MigLayout("", "[grow,fill]", ""));
@@ -737,7 +737,7 @@ public class ConfigDialog extends I18nJFrame {
 			    DefaultMutableTreeNode idNode = (DefaultMutableTreeNode) visNode.getChildAt(0);
 
 			    String visId = ((String) idNode.getUserObject()).split(":")[1].trim();
-			    GlobalConf.instance.VISUALIZATION_ID = visId;
+			    GlobalConf.data.VISUALIZATION_ID = visId;
 
 			}
 
@@ -768,22 +768,22 @@ public class ConfigDialog extends I18nJFrame {
 	local.addActionListener(new ActionListener() {
 	    @Override
 	    public void actionPerformed(ActionEvent e) {
-		GlobalConf.instance.DATA_SOURCE_LOCAL = local.isSelected();
+		GlobalConf.data.DATA_SOURCE_LOCAL = local.isSelected();
 		enableComponents(!local.isSelected(), hostname, port, testConnection, visualisationsTree);
 	    }
 	});
-	local.setSelected(GlobalConf.instance.DATA_SOURCE_LOCAL);
+	local.setSelected(GlobalConf.data.DATA_SOURCE_LOCAL);
 
 	final JRadioButton objectserver = new JRadioButton(txt("gui.data.objectserver"));
 	objectserver.addActionListener(new ActionListener() {
 	    @Override
 	    public void actionPerformed(ActionEvent e) {
-		GlobalConf.instance.DATA_SOURCE_LOCAL = !objectserver.isSelected();
+		GlobalConf.data.DATA_SOURCE_LOCAL = !objectserver.isSelected();
 		enableComponents(objectserver.isSelected(), hostname, port, testConnection, visualisationsTree);
 	    }
 	});
-	objectserver.setSelected(!GlobalConf.instance.DATA_SOURCE_LOCAL);
-	enableComponents(!GlobalConf.instance.DATA_SOURCE_LOCAL, hostname, port, testConnection, visualisationsTree);
+	objectserver.setSelected(!GlobalConf.data.DATA_SOURCE_LOCAL);
+	enableComponents(!GlobalConf.data.DATA_SOURCE_LOCAL, hostname, port, testConnection, visualisationsTree);
 
 	ButtonGroup dataButtons = new ButtonGroup();
 	dataButtons.add(local);
@@ -809,7 +809,7 @@ public class ConfigDialog extends I18nJFrame {
 	showAgain.addChangeListener(new ChangeListener() {
 	    @Override
 	    public void stateChanged(ChangeEvent e) {
-		GlobalConf.instance.SHOW_CONFIG_DIALOG = !showAgain.isSelected();
+		GlobalConf.inst.SHOW_CONFIG_DIALOG = !showAgain.isSelected();
 	    }
 	});
 
@@ -828,57 +828,57 @@ public class ConfigDialog extends I18nJFrame {
 	    @Override
 	    public void actionPerformed(ActionEvent e) {
 		// Add all properties to GlobalConf.instance
-		GlobalConf.instance.FULLSCREEN = fullscreen.isSelected();
+		GlobalConf.inst.FULLSCREEN = fullscreen.isSelected();
 
 		// Fullscreen options
-		GlobalConf.instance.FULLSCREEN_WIDTH = ((DisplayMode) fullScreenResolutions.getSelectedItem()).width;
-		GlobalConf.instance.FULLSCREEN_HEIGHT = ((DisplayMode) fullScreenResolutions.getSelectedItem()).height;
+		GlobalConf.inst.FULLSCREEN_WIDTH = ((DisplayMode) fullScreenResolutions.getSelectedItem()).width;
+		GlobalConf.inst.FULLSCREEN_HEIGHT = ((DisplayMode) fullScreenResolutions.getSelectedItem()).height;
 
 		// Windowed options
-		GlobalConf.instance.SCREEN_WIDTH = ((Integer) widthField.getValue());
-		GlobalConf.instance.SCREEN_HEIGHT = ((Integer) heightField.getValue());
-		GlobalConf.instance.RESIZABLE = resizable.isSelected();
+		GlobalConf.inst.SCREEN_WIDTH = ((Integer) widthField.getValue());
+		GlobalConf.inst.SCREEN_HEIGHT = ((Integer) heightField.getValue());
+		GlobalConf.inst.RESIZABLE = resizable.isSelected();
 
 		// Graphics
 		ThreadComboBoxBean bean = (ThreadComboBoxBean) msaa.getSelectedItem();
-		GlobalConf.instance.POSTPROCESS_ANTIALIAS = bean.value;
-		GlobalConf.instance.VSYNC = vsync.isSelected();
+		GlobalConf.inst.POSTPROCESS_ANTIALIAS = bean.value;
+		GlobalConf.inst.VSYNC = vsync.isSelected();
 
 		// Interface
 		LangComboBoxBean lbean = (LangComboBoxBean) lang.getSelectedItem();
-		GlobalConf.instance.LOCALE = lbean.locale.toLanguageTag();
+		GlobalConf.inst.LOCALE = lbean.locale.toLanguageTag();
 		if (!I18n.forceinit("./data/i18n/gsbundle"))
 		    I18n.forceinit("../android/assets/i18n/gsbundle");
-		GlobalConf.instance.UI_THEME = (String) theme.getSelectedItem();
+		GlobalConf.inst.UI_THEME = (String) theme.getSelectedItem();
 
 		// Performance
 		bean = (ThreadComboBoxBean) numThreads.getSelectedItem();
-		GlobalConf.instance.NUMBER_THREADS = bean.value;
-		GlobalConf.instance.MULTITHREADING = multithreadCb.isSelected();
+		GlobalConf.inst.NUMBER_THREADS = bean.value;
+		GlobalConf.inst.MULTITHREADING = multithreadCb.isSelected();
 
 		// Screenshots
 		File ssfile = new File(screenshotsLocation.getText());
 		if (ssfile.exists() && ssfile.isDirectory())
-		    GlobalConf.instance.SCREENSHOT_FOLDER = ssfile.getAbsolutePath();
-		GlobalConf.instance.SCREENSHOT_WIDTH = ((Integer) sswidthField.getValue());
-		GlobalConf.instance.SCREENSHOT_HEIGHT = ((Integer) ssheightField.getValue());
+		    GlobalConf.inst.SCREENSHOT_FOLDER = ssfile.getAbsolutePath();
+		GlobalConf.inst.SCREENSHOT_WIDTH = ((Integer) sswidthField.getValue());
+		GlobalConf.inst.SCREENSHOT_HEIGHT = ((Integer) ssheightField.getValue());
 
 		// Frame output
 		File fofile = new File(frameLocation.getText());
 		if (fofile.exists() && fofile.isDirectory())
-		    GlobalConf.instance.RENDER_FOLDER = fofile.getAbsolutePath();
+		    GlobalConf.inst.RENDER_FOLDER = fofile.getAbsolutePath();
 		String text = frameFileName.getText();
 		if (text.matches("^\\w+$")) {
-		    GlobalConf.instance.RENDER_FILE_NAME = text;
+		    GlobalConf.inst.RENDER_FILE_NAME = text;
 		}
-		GlobalConf.instance.RENDER_WIDTH = ((Integer) frameWidthField.getValue());
-		GlobalConf.instance.RENDER_HEIGHT = ((Integer) frameHeightField.getValue());
-		GlobalConf.instance.RENDER_OUTPUT = frameCb.isSelected();
-		GlobalConf.instance.RENDER_TARGET_FPS = ((Integer) targetFPS.getValue());
+		GlobalConf.inst.RENDER_WIDTH = ((Integer) frameWidthField.getValue());
+		GlobalConf.inst.RENDER_HEIGHT = ((Integer) frameHeightField.getValue());
+		GlobalConf.inst.RENDER_OUTPUT = frameCb.isSelected();
+		GlobalConf.inst.RENDER_TARGET_FPS = ((Integer) targetFPS.getValue());
 
 		// Save configuration
 		try {
-		    GlobalConf.instance.saveProperties(new File(System.getProperty("properties.file")).toURI().toURL());
+		    GlobalConf.inst.saveProperties(new File(System.getProperty("properties.file")).toURI().toURL());
 		} catch (MalformedURLException e1) {
 		    EventManager.getInstance().post(Events.JAVA_EXCEPTION, e);
 		}
@@ -921,11 +921,11 @@ public class ConfigDialog extends I18nJFrame {
 
     private void selectFullscreen(boolean fullscreen, JSpinner widthField, JSpinner heightField, JComboBox<DisplayMode> fullScreenResolutions, JCheckBox resizable) {
 	if (fullscreen) {
-	    GlobalConf.instance.SCREEN_WIDTH = ((DisplayMode) fullScreenResolutions.getSelectedItem()).width;
-	    GlobalConf.instance.SCREEN_HEIGHT = ((DisplayMode) fullScreenResolutions.getSelectedItem()).height;
+	    GlobalConf.inst.SCREEN_WIDTH = ((DisplayMode) fullScreenResolutions.getSelectedItem()).width;
+	    GlobalConf.inst.SCREEN_HEIGHT = ((DisplayMode) fullScreenResolutions.getSelectedItem()).height;
 	} else {
-	    GlobalConf.instance.SCREEN_WIDTH = (Integer) widthField.getValue();
-	    GlobalConf.instance.SCREEN_HEIGHT = (Integer) heightField.getValue();
+	    GlobalConf.inst.SCREEN_WIDTH = (Integer) widthField.getValue();
+	    GlobalConf.inst.SCREEN_HEIGHT = (Integer) heightField.getValue();
 	}
 
 	enableComponents(!fullscreen, widthField, heightField, resizable);
@@ -994,7 +994,7 @@ public class ConfigDialog extends I18nJFrame {
     }
 
     private Thread getCheckVersionThread() {
-	return new Thread(new CallbackTask(new VersionChecker(GlobalConf.instance.VERSION_CHECK_URL), new Callback() {
+	return new Thread(new CallbackTask(new VersionChecker(GlobalConf.inst.VERSION_CHECK_URL), new Callback() {
 	    @Override
 	    public void complete(Object result) {
 		checkPanel.removeAll();
@@ -1010,8 +1010,8 @@ public class ConfigDialog extends I18nJFrame {
 		    JsonValue last = json.get(json.size - 1);
 		    String version = last.getString("name");
 		    if (version.matches("^(\\D{1})?\\d+.\\d+(\\D{1})?$")) {
-			GlobalConf.instance.LAST_VERSION = new String(version);
-			GlobalConf.instance.LAST_CHECKED = new Date();
+			GlobalConf.inst.LAST_VERSION = new String(version);
+			GlobalConf.inst.LAST_CHECKED = new Date();
 			newVersionCheck(version);
 		    }
 		    checkPanel.validate();
@@ -1033,11 +1033,11 @@ public class ConfigDialog extends I18nJFrame {
     private void newVersionCheck(String version) {
 	int[] majmin = GlobalConf.VersionInfo.getMajorMinorFromString(version);
 
-	if (majmin[0] > GlobalConf.instance.VERSION.major || (majmin[0] == GlobalConf.instance.VERSION.major && majmin[1] > GlobalConf.instance.VERSION.minor)) {
+	if (majmin[0] > GlobalConf.inst.VERSION.major || (majmin[0] == GlobalConf.inst.VERSION.major && majmin[1] > GlobalConf.inst.VERSION.minor)) {
 	    // There's a new version!
-	    checkLabel.setText(txt("gui.newversion.available", GlobalConf.instance.VERSION, version));
+	    checkLabel.setText(txt("gui.newversion.available", GlobalConf.inst.VERSION, version));
 	    try {
-		final URI uri = new URI(GlobalConf.instance.WEBPAGE);
+		final URI uri = new URI(GlobalConf.inst.WEBPAGE);
 
 		JButton button = new JButton();
 		button.setText(txt("gui.newversion.getit"));
@@ -1064,7 +1064,7 @@ public class ConfigDialog extends I18nJFrame {
 	    } catch (URISyntaxException e1) {
 	    }
 	} else {
-	    checkLabel.setText(txt("gui.newversion.nonew", GlobalConf.instance.getLastCheckedString()));
+	    checkLabel.setText(txt("gui.newversion.nonew", GlobalConf.inst.getLastCheckedString()));
 	    // Add check now button
 	    JButton button = new JButton();
 	    button.setText(txt("gui.newversion.checknow"));

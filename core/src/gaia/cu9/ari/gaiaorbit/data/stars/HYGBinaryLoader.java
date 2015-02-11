@@ -43,7 +43,7 @@ public class HYGBinaryLoader extends AbstractCatalogLoader implements ICatalogLo
 	List<CelestialBody> stars = new ArrayList<CelestialBody>();
 	DataInputStream data_in = new DataInputStream(data);
 
-	EventManager.getInstance().post(Events.POST_NOTIFICATION, this.getClass().getSimpleName(), I18n.bundle.format("notif.limitmag", GlobalConf.instance.LIMIT_MAG_LOAD));
+	EventManager.getInstance().post(Events.POST_NOTIFICATION, this.getClass().getSimpleName(), I18n.bundle.format("notif.limitmag", GlobalConf.data.LIMIT_MAG_LOAD));
 
 	try {
 	    // Read size of stars
@@ -65,7 +65,7 @@ public class HYGBinaryLoader extends AbstractCatalogLoader implements ICatalogLo
 		    double dec = data_in.readDouble();
 		    double dist = data_in.readDouble();
 		    long id = data_in.readLong();
-		    if (appmag < GlobalConf.instance.LIMIT_MAG_LOAD) {
+		    if (appmag < GlobalConf.data.LIMIT_MAG_LOAD) {
 			Vector3d pos = Coordinates.sphericalToCartesian(Math.toRadians(ra), Math.toRadians(dec), dist, new Vector3d());
 			stars.add(new Star(pos, appmag, absmag, colorbv, name, ra, dec, id));
 		    }

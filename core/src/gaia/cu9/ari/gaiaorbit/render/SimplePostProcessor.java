@@ -24,11 +24,11 @@ public class SimplePostProcessor implements IPostProcessor {
 
 	// BLOOM
 	bloom = new Bloom(Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
-	bloom.setBloomIntesity(GlobalConf.instance.POSTPROCESS_BLOOM_INTENSITY);
+	bloom.setBloomIntesity(GlobalConf.inst.POSTPROCESS_BLOOM_INTENSITY);
 	postProcessor.addEffect(bloom);
 
 	// ANTIALIAS
-	if (GlobalConf.instance.POSTPROCESS_ANTIALIAS < 0) {
+	if (GlobalConf.inst.POSTPROCESS_ANTIALIAS < 0) {
 	    fxaa = new Fxaa(Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
 	    postProcessor.addEffect(fxaa);
 	}

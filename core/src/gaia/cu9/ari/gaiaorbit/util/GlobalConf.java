@@ -39,7 +39,7 @@ public class GlobalConf implements IObserver {
     public int SCREEN_WIDTH, SCREEN_HEIGHT, FULLSCREEN_WIDTH, FULLSCREEN_HEIGHT, CAMERA_FOV;
     public int RENDER_WIDTH, RENDER_HEIGHT, RENDER_TARGET_FPS, POSTPROCESS_ANTIALIAS, NUMBER_THREADS;
     public long OBJECT_FADE_MS;
-    public float LIMIT_MAG_LOAD, LIMIT_MAG_RUNTIME, POSTPROCESS_BLOOM_INTENSITY, STAR_BRIGHTNESS, AMBIENT_LIGHT;
+    public float LIMIT_MAG_RUNTIME, POSTPROCESS_BLOOM_INTENSITY, STAR_BRIGHTNESS, AMBIENT_LIGHT;
     public float CAMERA_SPEED, TURNING_SPEED, ROTATION_SPEED;
     /** This should be no smaller than 1 and no bigger than 5. The bigger the more stars with labels **/
     public float LABEL_NUMBER_FACTOR;
@@ -54,27 +54,62 @@ public class GlobalConf implements IObserver {
     /** Eye separation in stereoscopic mode in meters **/
     public float STEREOSCOPIC_EYE_SEPARATION_M = 1;
 
-    /** Whether we use the local data source (HYG binary) or the object server **/
-    public boolean DATA_SOURCE_LOCAL = false;
-    /** The .sg file in case of local data source **/
-    public String DATA_SG_FILE;
-    /** If we use the ObjectServer, this contains the visualization id **/
-    public String VISUALIZATION_ID;
-    /** Object server IP address/hostname **/
-    public String OBJECT_SERVER_HOSTNAME = "localhost";
-    /** Object server port **/
-    public int OBJECT_SERVER_PORT = 5555;
-    /** Object server user name **/
-    public String OBJECT_SERVER_USERNAME;
-    /** Object Server pass **/
-    public String OBJECT_SERVER_PASSWORD;
+    /**
+     * Holds all configuration values related to data.
+     * @author tsagrista
+     *
+     */
+    public static class DataConf {
+	/** Whether we use the local data source (HYG binary) or the object server **/
+	public boolean DATA_SOURCE_LOCAL = false;
+	/** The .sg file in case of local data source **/
+	public String DATA_SG_FILE;
+	/** If we use the ObjectServer, this contains the visualization id **/
+	public String VISUALIZATION_ID;
+	/** Object server IP address/hostname **/
+	public String OBJECT_SERVER_HOSTNAME = "localhost";
+	/** Object server port **/
+	public int OBJECT_SERVER_PORT = 5555;
+	/** Object server user name **/
+	public String OBJECT_SERVER_USERNAME;
+	/** Object Server pass **/
+	public String OBJECT_SERVER_PASSWORD;
+	/** Limit magnitude used for loading stars. All stars above this magnitude will not even be loaded by the sandbox. **/
+	public float LIMIT_MAG_LOAD;
+
+	public void persist(Properties p) {
+	    p.setProperty("data.source.local", Boolean.toString(DATA_SOURCE_LOCAL));
+	    p.setProperty("data.sg.file", DATA_SG_FILE);
+	    p.setProperty("data.source.hostname", OBJECT_SERVER_HOSTNAME);
+	    p.setProperty("data.source.port", Integer.toString(OBJECT_SERVER_PORT));
+	    p.setProperty("data.source.visid", VISUALIZATION_ID);
+	    p.setProperty("data.limit.mag", Float.toString(LIMIT_MAG_LOAD));
+	}
+
+	public void initialize(Properties p) {
+	    /** DATA **/
+	    DATA_SOURCE_LOCAL = Boolean.parseBoolean(p.getProperty("data.source.local"));
+	    DATA_SG_FILE = p.getProperty("data.sg.file");
+	    OBJECT_SERVER_HOSTNAME = p.getProperty("data.source.hostname");
+	    OBJECT_SERVER_PORT = Integer.parseInt(p.getProperty("data.source.port"));
+	    VISUALIZATION_ID = p.getProperty("data.source.visid");
+
+	    if (p.getProperty("data.limit.mag") != null && !p.getProperty("data.limit.mag").isEmpty()) {
+		LIMIT_MAG_LOAD = Float.parseFloat(p.getProperty("data.limit.mag"));
+	    } else {
+		LIMIT_MAG_LOAD = Float.MAX_VALUE;
+	    }
+	}
+    }
+
+    public static DataConf data = new DataConf();
 
     /** Visibility of components **/
     public boolean[] VISIBILITY;
 
     public VersionInfo VERSION;
 
-    public static GlobalConf instance;
+    public static GlobalConf inst;
     static boolean initialized = false;
 
     public GlobalConf() {
@@ -89,9 +124,9 @@ public class GlobalConf implements IObserver {
      * Initializes the properties
      */
     public static void initialize(InputStream propsFile) {
-	if (instance == null)
-	    instance = new GlobalConf();
-	instance.init(propsFile);
+	if (inst == null)
+	    inst = new GlobalConf();
+	inst.init(propsFile);
 	initialized = true;
     }
 
@@ -99,13 +134,13 @@ public class GlobalConf implements IObserver {
      * Initializes the properties
      */
     public static void initialize(InputStream propsFile, InputStream versionFile) {
-	if (instance == null)
-	    instance = new GlobalConf();
-	if (instance.VERSION == null) {
-	    instance.initializeVersion(versionFile);
+	if (inst == null)
+	    inst = new GlobalConf();
+	if (inst.VERSION == null) {
+	    inst.initializeVersion(versionFile);
 	}
 
-	instance.init(propsFile);
+	inst.init(propsFile);
 	initialized = true;
 
     }
@@ -167,18 +202,8 @@ public class GlobalConf implements IObserver {
 	    NUMBER_THREADS = Integer.parseInt((propNumthreads == null || propNumthreads.isEmpty()) ? "0" : propNumthreads);
 
 	    /** DATA **/
-	    DATA_SOURCE_LOCAL = Boolean.parseBoolean(p.getProperty("data.source.local"));
-	    DATA_SG_FILE = p.getProperty("data.sg.file");
-	    OBJECT_SERVER_HOSTNAME = p.getProperty("data.source.hostname");
-	    OBJECT_SERVER_PORT = Integer.parseInt(p.getProperty("data.source.port"));
-	    VISUALIZATION_ID = p.getProperty("data.source.visid");
-
-	    if (p.getProperty("data.limit.mag") != null && !p.getProperty("data.limit.mag").isEmpty()) {
-		LIMIT_MAG_LOAD = Float.parseFloat(p.getProperty("data.limit.mag"));
-	    } else {
-		LIMIT_MAG_LOAD = Float.MAX_VALUE;
-	    }
-	    LIMIT_MAG_RUNTIME = LIMIT_MAG_LOAD;
+	    data.initialize(p);
+	    LIMIT_MAG_RUNTIME = data.LIMIT_MAG_LOAD;
 
 	    /** SCREENSHOT **/
 	    SCREENSHOT_FOLDER = p.getProperty("screenshot.folder").isEmpty() ? System.getProperty("java.io.tmpdir") : p.getProperty("screenshot.folder");
@@ -274,12 +299,7 @@ public class GlobalConf implements IObserver {
 	    p.setProperty("global.conf.numthreads", Integer.toString(NUMBER_THREADS));
 
 	    /** DATA **/
-	    p.setProperty("data.source.local", Boolean.toString(DATA_SOURCE_LOCAL));
-	    p.setProperty("data.sg.file", DATA_SG_FILE);
-	    p.setProperty("data.source.hostname", OBJECT_SERVER_HOSTNAME);
-	    p.setProperty("data.source.port", Integer.toString(OBJECT_SERVER_PORT));
-	    p.setProperty("data.source.visid", VISUALIZATION_ID);
-	    p.setProperty("data.limit.mag", Float.toString(LIMIT_MAG_LOAD));
+	    data.persist(p);
 
 	    /** SCREENSHOT **/
 	    p.setProperty("screenshot.folder", SCREENSHOT_FOLDER);

@@ -35,18 +35,18 @@ public class ObjectServerLoader implements ISceneGraphNodeProvider {
     @Override
     public List<? extends SceneGraphNode> loadObjects() {
 	try {
-	    EventManager.getInstance().post(Events.POST_NOTIFICATION, this.getClass().getSimpleName(), I18n.bundle.format("notif.limitmag", GlobalConf.instance.LIMIT_MAG_LOAD));
+	    EventManager.getInstance().post(Events.POST_NOTIFICATION, this.getClass().getSimpleName(), I18n.bundle.format("notif.limitmag", GlobalConf.data.LIMIT_MAG_LOAD));
 
-	    String visid = GlobalConf.instance.VISUALIZATION_ID;
+	    String visid = GlobalConf.data.VISUALIZATION_ID;
 
-	    cc.connect(GlobalConf.instance.OBJECT_SERVER_HOSTNAME,
-		    GlobalConf.instance.OBJECT_SERVER_PORT);
+	    cc.connect(GlobalConf.data.OBJECT_SERVER_HOSTNAME,
+		    GlobalConf.data.OBJECT_SERVER_PORT);
 
 	    // Identify yourself!
 	    Message msg = new Message("client-ident?affiliation=ARI&name="
 		    + GlobalConf.APPLICATION_NAME
 		    + "&description=Gaia Sandbox outreach software&version="
-		    + GlobalConf.instance.VERSION.version
+		    + GlobalConf.inst.VERSION.version
 		    + "&authors=tsagrista&homepage=" + GlobalConf.WEBPAGE
 		    + "&icon-url=" + GlobalConf.ICON_URL);
 	    cc.sendMessage(msg);
@@ -97,7 +97,7 @@ public class ObjectServerLoader implements ISceneGraphNodeProvider {
 		    float mag = tokens[3].isEmpty() ? 12f : Float.parseFloat(tokens[3]);
 		    float bv = Float.parseFloat(tokens[4]);
 
-		    if (mag <= GlobalConf.instance.LIMIT_MAG_LOAD) {
+		    if (mag <= GlobalConf.data.LIMIT_MAG_LOAD) {
 			String name = "dummy" + starid;
 			Star s = new Star(Coordinates.sphericalToCartesian(ra, dec, dist * Constants.PC_TO_U, new Vector3d()), mag, mag, bv, name, starid++);
 			s.initialize();

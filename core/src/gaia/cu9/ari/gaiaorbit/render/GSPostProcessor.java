@@ -24,7 +24,7 @@ public class GSPostProcessor implements IPostProcessor, IObserver {
 
     public GSPostProcessor() {
 	ShaderLoader.BasePath = "shaders/";
-	GlobalConf conf = GlobalConf.instance;
+	GlobalConf conf = GlobalConf.inst;
 
 	pps = new PostProcessBean[RenderType.values().length];
 
@@ -48,9 +48,9 @@ public class GSPostProcessor implements IPostProcessor, IObserver {
 	case screen:
 	    return Gdx.graphics.getWidth();
 	case screenshot:
-	    return GlobalConf.instance.SCREENSHOT_WIDTH;
+	    return GlobalConf.inst.SCREENSHOT_WIDTH;
 	case frame:
-	    return GlobalConf.instance.RENDER_WIDTH;
+	    return GlobalConf.inst.RENDER_WIDTH;
 	}
 	return 0;
     }
@@ -60,15 +60,15 @@ public class GSPostProcessor implements IPostProcessor, IObserver {
 	case screen:
 	    return Gdx.graphics.getHeight();
 	case screenshot:
-	    return GlobalConf.instance.SCREENSHOT_HEIGHT;
+	    return GlobalConf.inst.SCREENSHOT_HEIGHT;
 	case frame:
-	    return GlobalConf.instance.RENDER_HEIGHT;
+	    return GlobalConf.inst.RENDER_HEIGHT;
 	}
 	return 0;
     }
 
     private PostProcessBean newPostProcessor(int width, int height) {
-	GlobalConf conf = GlobalConf.instance;
+	GlobalConf conf = GlobalConf.inst;
 	PostProcessBean ppb = new PostProcessBean();
 	ppb.pp = new PostProcessor(width, height, true, false, true);
 
@@ -126,7 +126,7 @@ public class GSPostProcessor implements IPostProcessor, IObserver {
 
     @Override
     public void notify(Events event, final Object... data) {
-	final GlobalConf conf = GlobalConf.instance;
+	final GlobalConf conf = GlobalConf.inst;
 	switch (event) {
 	case PROPERTIES_WRITTEN:
 	    if (changed(pps[RenderType.screenshot.index].pp, conf.SCREENSHOT_WIDTH, conf.SCREENSHOT_HEIGHT)) {

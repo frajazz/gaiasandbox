@@ -86,7 +86,7 @@ public abstract class CelestialBody extends AbstractPositionEntity implements IL
 
     public CelestialBody() {
 	super();
-	TH_OVER_FACTOR = THRESHOLD_ANGLE_POINT() / GlobalConf.instance.LABEL_NUMBER_FACTOR;
+	TH_OVER_FACTOR = THRESHOLD_ANGLE_POINT() / GlobalConf.inst.LABEL_NUMBER_FACTOR;
     }
 
     /**
@@ -95,7 +95,7 @@ public abstract class CelestialBody extends AbstractPositionEntity implements IL
      */
     @Override
     public void update(ITimeFrameProvider time, final Transform parentTransform, ICamera camera) {
-	if (appmag <= GlobalConf.instance.LIMIT_MAG_RUNTIME) {
+	if (appmag <= GlobalConf.inst.LIMIT_MAG_RUNTIME) {
 	    super.update(time, parentTransform, camera);
 	}
     }
@@ -265,7 +265,7 @@ public abstract class CelestialBody extends AbstractPositionEntity implements IL
     }
 
     public boolean withinMagLimit() {
-	return this.appmag <= GlobalConf.instance.LIMIT_MAG_RUNTIME;
+	return this.appmag <= GlobalConf.inst.LIMIT_MAG_RUNTIME;
     }
 
     @Override
@@ -291,7 +291,7 @@ public abstract class CelestialBody extends AbstractPositionEntity implements IL
 	float coneAngle = fcamera.angleEdgeRad;
 	Vector3d[] dirs = null;
 	double poslen = pos.len();
-	if (GlobalConf.instance.COMPUTE_GAIA_SCAN && !fcamera.interpolatedDirections.isEmpty()) {
+	if (GlobalConf.inst.COMPUTE_GAIA_SCAN && !fcamera.interpolatedDirections.isEmpty()) {
 	    // We need to interpolate...
 	    for (Vector3d[] interpolatedDirection : fcamera.interpolatedDirections) {
 		visible = visible ||
@@ -348,7 +348,7 @@ public abstract class CelestialBody extends AbstractPositionEntity implements IL
 		updateTransitNumber(visibleByGaia, time, camera.getManager().fovCamera);
 	    }
 	}
-	return visible && !(GlobalConf.instance.ONLY_OBSERVED_STARS && transits == 0);
+	return visible && !(GlobalConf.inst.ONLY_OBSERVED_STARS && transits == 0);
     }
 
     /**
@@ -358,7 +358,7 @@ public abstract class CelestialBody extends AbstractPositionEntity implements IL
      * @param time
      */
     protected void updateTransitNumber(boolean visible, ITimeFrameProvider time, FovCamera fcamera) {
-	if (GlobalConf.instance.COMPUTE_GAIA_SCAN && visible && timeCondition(time)) {
+	if (GlobalConf.inst.COMPUTE_GAIA_SCAN && visible && timeCondition(time)) {
 	    // Update observations. Add if forward time, subtract if backward time
 	    transits = Math.max(0, transits + (int) Math.signum(time.getDt()));
 	    lastTransitIncrease = time.getTime().getTime();

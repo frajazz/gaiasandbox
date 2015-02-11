@@ -26,7 +26,7 @@ public class HubCatalogLoader implements ISceneGraphNodeProvider {
     @Override
     public List<? extends SceneGraphNode> loadObjects() {
 	ISceneGraphNodeProvider loader = null;
-	if (GlobalConf.instance.DATA_SOURCE_LOCAL) {
+	if (GlobalConf.data.DATA_SOURCE_LOCAL) {
 	    // Use local
 	    loader = new StarLoader();
 	} else {

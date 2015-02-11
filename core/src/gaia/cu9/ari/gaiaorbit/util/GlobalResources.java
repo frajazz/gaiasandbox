@@ -42,7 +42,7 @@ public class GlobalResources {
 	twoDecimalsFormat = new DecimalFormat("#######0.0#");
 
 	// Create skin right now, it is needed.
-	skin = new Skin(Gdx.files.internal("skins/" + GlobalConf.instance.UI_THEME + ".json"));
+	skin = new Skin(Gdx.files.internal("skins/" + GlobalConf.inst.UI_THEME + ".json"));
 
 	// Async load
 	manager.load("img/cursor-link.png", Pixmap.class);

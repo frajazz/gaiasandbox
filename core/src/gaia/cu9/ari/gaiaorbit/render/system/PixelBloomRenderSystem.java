@@ -57,7 +57,7 @@ public class PixelBloomRenderSystem extends AbstractRenderSystem implements IObs
 
 	// Own frame buffer
 	screen_fb = new FrameBuffer(Format.RGB888, Gdx.graphics.getWidth(), Gdx.graphics.getHeight(), true);
-	frame_fb = new FrameBuffer(Format.RGB888, GlobalConf.instance.SCREENSHOT_WIDTH, GlobalConf.instance.SCREEN_HEIGHT, true);
+	frame_fb = new FrameBuffer(Format.RGB888, GlobalConf.inst.SCREENSHOT_WIDTH, GlobalConf.inst.SCREEN_HEIGHT, true);
 
 	EventManager.getInstance().subscribe(this, Events.TRANSIT_COLOUR_CMD, Events.SCREEN_RESIZE, Events.TOGGLE_STEREOSCOPIC);
     }
@@ -109,7 +109,7 @@ public class PixelBloomRenderSystem extends AbstractRenderSystem implements IObs
 	    break;
 	case TOGGLE_STEREOSCOPIC:
 	    // Update size
-	    if (GlobalConf.instance.STEREOSCOPIC_MODE) {
+	    if (GlobalConf.inst.STEREOSCOPIC_MODE) {
 		screen_fb = new FrameBuffer(Format.RGB888, Gdx.graphics.getWidth() / 2, Gdx.graphics.getHeight(), true);
 	    } else {
 		screen_fb = new FrameBuffer(Format.RGB888, Gdx.graphics.getWidth(), Gdx.graphics.getHeight(), true);
