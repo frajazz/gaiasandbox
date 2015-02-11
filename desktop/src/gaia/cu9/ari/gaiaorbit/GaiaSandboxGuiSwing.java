@@ -49,7 +49,7 @@ public class GaiaSandboxGuiSwing extends JFrame {
 	cfg.title = appName;
 	cfg.resizable = true;
 	cfg.samples = GlobalConf.inst.POSTPROCESS_ANTIALIAS;
-	cfg.vSyncEnabled = GlobalConf.inst.VSYNC;
+	cfg.vSyncEnabled = GlobalConf.screen.VSYNC;
 	cfg.foregroundFPS = 400;
 	cfg.useGL30 = false;
 	cfg.addIcon("icon/ic_launcher.png", Files.FileType.Internal);

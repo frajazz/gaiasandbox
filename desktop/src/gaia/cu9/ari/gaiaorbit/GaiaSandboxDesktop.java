@@ -105,12 +105,12 @@ public class GaiaSandboxDesktop implements IObserver {
 	LwjglApplicationConfiguration cfg = new LwjglApplicationConfiguration();
 	LwjglApplicationConfiguration.disableAudio = true;
 	cfg.title = GlobalConf.inst.getFullApplicationName();
-	cfg.fullscreen = GlobalConf.inst.FULLSCREEN;
-	cfg.resizable = GlobalConf.inst.RESIZABLE;
-	cfg.width = GlobalConf.inst.getScreenWidth();
-	cfg.height = GlobalConf.inst.getScreenHeight();
+	cfg.fullscreen = GlobalConf.screen.FULLSCREEN;
+	cfg.resizable = GlobalConf.screen.RESIZABLE;
+	cfg.width = GlobalConf.screen.getScreenWidth();
+	cfg.height = GlobalConf.screen.getScreenHeight();
 	cfg.samples = MathUtilsd.clamp(GlobalConf.inst.POSTPROCESS_ANTIALIAS, 0, 16);
-	cfg.vSyncEnabled = GlobalConf.inst.VSYNC;
+	cfg.vSyncEnabled = GlobalConf.screen.VSYNC;
 	cfg.foregroundFPS = 0;
 	cfg.backgroundFPS = 30;
 	cfg.useGL30 = false;

@@ -202,7 +202,7 @@ public class ConfigDialog extends I18nJFrame {
 
 	DisplayMode selectedMode = null;
 	for (DisplayMode dm : modes) {
-	    if (dm.width == GlobalConf.inst.FULLSCREEN_WIDTH && dm.height == GlobalConf.inst.FULLSCREEN_HEIGHT) {
+	    if (dm.width == GlobalConf.screen.FULLSCREEN_WIDTH && dm.height == GlobalConf.screen.FULLSCREEN_HEIGHT) {
 		selectedMode = dm;
 		break;
 	    }
@@ -226,9 +226,9 @@ public class ConfigDialog extends I18nJFrame {
 
 	// Windowed mode resolutions
 	JPanel windowedResolutions = new JPanel(new MigLayout("", "[][grow,fill][][grow,fill]", "[][]4[][]"));
-	final JSpinner widthField = new JSpinner(new SpinnerNumberModel(MathUtils.clamp(GlobalConf.inst.SCREEN_WIDTH, 100, nativeMode.width), 100, nativeMode.width, 1));
-	final JSpinner heightField = new JSpinner(new SpinnerNumberModel(MathUtils.clamp(GlobalConf.inst.SCREEN_HEIGHT, 100, nativeMode.height), 100, nativeMode.height, 1));
-	final JCheckBox resizable = new JCheckBox("Resizable", GlobalConf.inst.RESIZABLE);
+	final JSpinner widthField = new JSpinner(new SpinnerNumberModel(MathUtils.clamp(GlobalConf.screen.SCREEN_WIDTH, 100, nativeMode.width), 100, nativeMode.width, 1));
+	final JSpinner heightField = new JSpinner(new SpinnerNumberModel(MathUtils.clamp(GlobalConf.screen.SCREEN_HEIGHT, 100, nativeMode.height), 100, nativeMode.height, 1));
+	final JCheckBox resizable = new JCheckBox("Resizable", GlobalConf.screen.RESIZABLE);
 
 	windowedResolutions.add(new JLabel(txt("gui.width") + ":"));
 	windowedResolutions.add(widthField);
@@ -241,22 +241,22 @@ public class ConfigDialog extends I18nJFrame {
 	fullscreen.addActionListener(new ActionListener() {
 	    @Override
 	    public void actionPerformed(ActionEvent e) {
-		GlobalConf.inst.FULLSCREEN = fullscreen.isSelected();
+		GlobalConf.screen.FULLSCREEN = fullscreen.isSelected();
 		selectFullscreen(fullscreen.isSelected(), widthField, heightField, fullScreenResolutions, resizable);
 	    }
 	});
-	fullscreen.setSelected(GlobalConf.inst.FULLSCREEN);
+	fullscreen.setSelected(GlobalConf.screen.FULLSCREEN);
 
 	final JRadioButton windowed = new JRadioButton(txt("gui.windowed"));
 	windowed.addActionListener(new ActionListener() {
 	    @Override
 	    public void actionPerformed(ActionEvent e) {
-		GlobalConf.inst.FULLSCREEN = !windowed.isSelected();
+		GlobalConf.screen.FULLSCREEN = !windowed.isSelected();
 		selectFullscreen(!windowed.isSelected(), widthField, heightField, fullScreenResolutions, resizable);
 	    }
 	});
-	windowed.setSelected(!GlobalConf.inst.FULLSCREEN);
-	selectFullscreen(GlobalConf.inst.FULLSCREEN, widthField, heightField, fullScreenResolutions, resizable);
+	windowed.setSelected(!GlobalConf.screen.FULLSCREEN);
+	selectFullscreen(GlobalConf.screen.FULLSCREEN, widthField, heightField, fullScreenResolutions, resizable);
 
 	ButtonGroup modeButtons = new ButtonGroup();
 	modeButtons.add(fullscreen);
@@ -287,7 +287,7 @@ public class ConfigDialog extends I18nJFrame {
 	msaa.setSelectedItem(msaas[idxAa(2, GlobalConf.inst.POSTPROCESS_ANTIALIAS)]);
 
 	// Vsync
-	final JCheckBox vsync = new JCheckBox(txt("gui.vsync"), GlobalConf.inst.VSYNC);
+	final JCheckBox vsync = new JCheckBox(txt("gui.vsync"), GlobalConf.screen.VSYNC);
 
 	graphics.add(msaaInfo, "span,wrap");
 	graphics.add(new JLabel(txt("gui.aa")));
@@ -828,21 +828,21 @@ public class ConfigDialog extends I18nJFrame {
 	    @Override
 	    public void actionPerformed(ActionEvent e) {
 		// Add all properties to GlobalConf.instance
-		GlobalConf.inst.FULLSCREEN = fullscreen.isSelected();
+		GlobalConf.screen.FULLSCREEN = fullscreen.isSelected();
 
 		// Fullscreen options
-		GlobalConf.inst.FULLSCREEN_WIDTH = ((DisplayMode) fullScreenResolutions.getSelectedItem()).width;
-		GlobalConf.inst.FULLSCREEN_HEIGHT = ((DisplayMode) fullScreenResolutions.getSelectedItem()).height;
+		GlobalConf.screen.FULLSCREEN_WIDTH = ((DisplayMode) fullScreenResolutions.getSelectedItem()).width;
+		GlobalConf.screen.FULLSCREEN_HEIGHT = ((DisplayMode) fullScreenResolutions.getSelectedItem()).height;
 
 		// Windowed options
-		GlobalConf.inst.SCREEN_WIDTH = ((Integer) widthField.getValue());
-		GlobalConf.inst.SCREEN_HEIGHT = ((Integer) heightField.getValue());
-		GlobalConf.inst.RESIZABLE = resizable.isSelected();
+		GlobalConf.screen.SCREEN_WIDTH = ((Integer) widthField.getValue());
+		GlobalConf.screen.SCREEN_HEIGHT = ((Integer) heightField.getValue());
+		GlobalConf.screen.RESIZABLE = resizable.isSelected();
 
 		// Graphics
 		ThreadComboBoxBean bean = (ThreadComboBoxBean) msaa.getSelectedItem();
 		GlobalConf.inst.POSTPROCESS_ANTIALIAS = bean.value;
-		GlobalConf.inst.VSYNC = vsync.isSelected();
+		GlobalConf.screen.VSYNC = vsync.isSelected();
 
 		// Interface
 		LangComboBoxBean lbean = (LangComboBoxBean) lang.getSelectedItem();
@@ -921,11 +921,11 @@ public class ConfigDialog extends I18nJFrame {
 
     private void selectFullscreen(boolean fullscreen, JSpinner widthField, JSpinner heightField, JComboBox<DisplayMode> fullScreenResolutions, JCheckBox resizable) {
 	if (fullscreen) {
-	    GlobalConf.inst.SCREEN_WIDTH = ((DisplayMode) fullScreenResolutions.getSelectedItem()).width;
-	    GlobalConf.inst.SCREEN_HEIGHT = ((DisplayMode) fullScreenResolutions.getSelectedItem()).height;
+	    GlobalConf.screen.SCREEN_WIDTH = ((DisplayMode) fullScreenResolutions.getSelectedItem()).width;
+	    GlobalConf.screen.SCREEN_HEIGHT = ((DisplayMode) fullScreenResolutions.getSelectedItem()).height;
 	} else {
-	    GlobalConf.inst.SCREEN_WIDTH = (Integer) widthField.getValue();
-	    GlobalConf.inst.SCREEN_HEIGHT = (Integer) heightField.getValue();
+	    GlobalConf.screen.SCREEN_WIDTH = (Integer) widthField.getValue();
+	    GlobalConf.screen.SCREEN_HEIGHT = (Integer) heightField.getValue();
 	}
 
 	enableComponents(!fullscreen, widthField, heightField, resizable);

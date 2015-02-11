@@ -57,7 +57,7 @@ public class PixelBloomRenderSystem extends AbstractRenderSystem implements IObs
 
 	// Own frame buffer
 	screen_fb = new FrameBuffer(Format.RGB888, Gdx.graphics.getWidth(), Gdx.graphics.getHeight(), true);
-	frame_fb = new FrameBuffer(Format.RGB888, GlobalConf.inst.SCREENSHOT_WIDTH, GlobalConf.inst.SCREEN_HEIGHT, true);
+	frame_fb = new FrameBuffer(Format.RGB888, GlobalConf.inst.SCREENSHOT_WIDTH, GlobalConf.screen.SCREEN_HEIGHT, true);
 
 	EventManager.getInstance().subscribe(this, Events.TRANSIT_COLOUR_CMD, Events.SCREEN_RESIZE, Events.TOGGLE_STEREOSCOPIC);
     }

@@ -36,15 +36,15 @@ public class GlobalConf implements IObserver {
     /**
      * Property values
      */
-    public int SCREEN_WIDTH, SCREEN_HEIGHT, FULLSCREEN_WIDTH, FULLSCREEN_HEIGHT, CAMERA_FOV;
+    public int CAMERA_FOV;
     public int POSTPROCESS_ANTIALIAS, NUMBER_THREADS;
     public long OBJECT_FADE_MS;
     public float LIMIT_MAG_RUNTIME, POSTPROCESS_BLOOM_INTENSITY, STAR_BRIGHTNESS, AMBIENT_LIGHT;
     public float CAMERA_SPEED, TURNING_SPEED, ROTATION_SPEED;
     /** This should be no smaller than 1 and no bigger than 5. The bigger the more stars with labels **/
     public float LABEL_NUMBER_FACTOR;
-    public boolean SCREEN_OUTPUT, DISPLAY_TUTORIAL, MULTITHREADING, STAR_COLOR_TRANSIT, ONLY_OBSERVED_STARS, COMPUTE_GAIA_SCAN, SHOW_DEBUG_INFO, VSYNC, POSTPROCESS_LENS_FLARE;
-    public boolean FULLSCREEN, RESIZABLE, SHOW_CONFIG_DIALOG, FOCUS_LOCK, INPUT_ENABLED;
+    public boolean DISPLAY_TUTORIAL, MULTITHREADING, STAR_COLOR_TRANSIT, ONLY_OBSERVED_STARS, COMPUTE_GAIA_SCAN, SHOW_DEBUG_INFO, POSTPROCESS_LENS_FLARE;
+    public boolean SHOW_CONFIG_DIALOG, FOCUS_LOCK, INPUT_ENABLED;
     public String TUTORIAL_SCRIPT_LOCATION;
     public String SCREENSHOT_FOLDER, VERSION_CHECK_URL, LAST_VERSION, UI_THEME, SCRIPT_LOCATION;
     public String LOCALE;
@@ -182,6 +182,51 @@ public class GlobalConf implements IObserver {
 	}
     }
 
+    public static class ScreenConf implements IConf {
+
+	public int SCREEN_WIDTH;
+	public int SCREEN_HEIGHT;
+	public int FULLSCREEN_WIDTH;
+	public int FULLSCREEN_HEIGHT;
+	public boolean FULLSCREEN;
+	public boolean RESIZABLE;
+	public boolean VSYNC;
+	public boolean SCREEN_OUTPUT;
+
+	@Override
+	public void persist(Properties p) {
+	    p.setProperty("graphics.screen.width", Integer.toString(SCREEN_WIDTH));
+	    p.setProperty("graphics.screen.height", Integer.toString(SCREEN_HEIGHT));
+	    p.setProperty("graphics.screen.fullscreen.width", Integer.toString(FULLSCREEN_WIDTH));
+	    p.setProperty("graphics.screen.fullscreen.height", Integer.toString(FULLSCREEN_HEIGHT));
+	    p.setProperty("graphics.screen.fullscreen", Boolean.toString(FULLSCREEN));
+	    p.setProperty("graphics.screen.resizable", Boolean.toString(RESIZABLE));
+	    p.setProperty("graphics.screen.vsync", Boolean.toString(VSYNC));
+	    p.setProperty("graphics.screen.screenoutput", Boolean.toString(SCREEN_OUTPUT));
+	}
+
+	@Override
+	public void initialize(Properties p) {
+	    SCREEN_WIDTH = Integer.parseInt(p.getProperty("graphics.screen.width"));
+	    SCREEN_HEIGHT = Integer.parseInt(p.getProperty("graphics.screen.height"));
+	    FULLSCREEN_WIDTH = Integer.parseInt(p.getProperty("graphics.screen.fullscreen.width"));
+	    FULLSCREEN_HEIGHT = Integer.parseInt(p.getProperty("graphics.screen.fullscreen.height"));
+	    FULLSCREEN = Boolean.parseBoolean(p.getProperty("graphics.screen.fullscreen"));
+	    RESIZABLE = Boolean.parseBoolean(p.getProperty("graphics.screen.resizable"));
+	    VSYNC = Boolean.parseBoolean(p.getProperty("graphics.screen.vsync"));
+	    SCREEN_OUTPUT = Boolean.parseBoolean(p.getProperty("graphics.screen.screenoutput"));
+	}
+
+	public int getScreenWidth() {
+	    return FULLSCREEN ? FULLSCREEN_WIDTH : SCREEN_WIDTH;
+	}
+
+	public int getScreenHeight() {
+	    return FULLSCREEN ? FULLSCREEN_HEIGHT : SCREEN_HEIGHT;
+	}
+
+    }
+
     public static class VersionConf implements IConf {
 	public String version;
 	public String buildtime;
@@ -190,23 +235,6 @@ public class GlobalConf implements IObserver {
 	public String build;
 	public int major;
 	public int minor;
-
-	public static int[] getMajorMinorFromString(String version) {
-	    String majorS = version.substring(0, version.indexOf("."));
-	    String minorS = version.substring(version.indexOf(".") + 1, version.length());
-	    if (majorS.matches("^\\D{1}\\d+$")) {
-		majorS = majorS.substring(1, majorS.length());
-	    }
-	    if (minorS.matches("^\\d+\\D{1}$")) {
-		minorS = minorS.substring(0, minorS.length() - 1);
-	    }
-	    return new int[] { Integer.parseInt(majorS), Integer.parseInt(minorS) };
-	}
-
-	@Override
-	public String toString() {
-	    return version;
-	}
 
 	@Override
 	public void persist(Properties p) {
@@ -226,11 +254,29 @@ public class GlobalConf implements IObserver {
 	    minor = majmin[1];
 
 	}
+
+	public static int[] getMajorMinorFromString(String version) {
+	    String majorS = version.substring(0, version.indexOf("."));
+	    String minorS = version.substring(version.indexOf(".") + 1, version.length());
+	    if (majorS.matches("^\\D{1}\\d+$")) {
+		majorS = majorS.substring(1, majorS.length());
+	    }
+	    if (minorS.matches("^\\d+\\D{1}$")) {
+		minorS = minorS.substring(0, minorS.length() - 1);
+	    }
+	    return new int[] { Integer.parseInt(majorS), Integer.parseInt(minorS) };
+	}
+
+	@Override
+	public String toString() {
+	    return version;
+	}
     }
 
     public static GlobalConf inst;
 
     public static FrameConf frame;
+    public static ScreenConf screen;
     public static DataConf data;
     public static VersionConf version;
 
@@ -261,11 +307,14 @@ public class GlobalConf implements IObserver {
 		version.initialize(versionProps);
 	    }
 
-	    if (data == null)
-		data = new DataConf();
-
 	    if (frame == null)
 		frame = new FrameConf();
+
+	    if (screen == null)
+		screen = new ScreenConf();
+
+	    if (data == null)
+		data = new DataConf();
 
 	    inst.init(propsFile);
 	    initialized = true;
@@ -283,18 +332,11 @@ public class GlobalConf implements IObserver {
 	    // Input always enabled by default
 	    INPUT_ENABLED = true;
 
-	    /** GRAPHICS.RENDER **/
+	    /** GRAPHICS.FRAME **/
 	    frame.initialize(p);
 
 	    /** GRAPHICS.SCREEN **/
-	    SCREEN_WIDTH = Integer.parseInt(p.getProperty("graphics.screen.width"));
-	    SCREEN_HEIGHT = Integer.parseInt(p.getProperty("graphics.screen.height"));
-	    FULLSCREEN_WIDTH = Integer.parseInt(p.getProperty("graphics.screen.fullscreen.width"));
-	    FULLSCREEN_HEIGHT = Integer.parseInt(p.getProperty("graphics.screen.fullscreen.height"));
-	    FULLSCREEN = Boolean.parseBoolean(p.getProperty("graphics.screen.fullscreen"));
-	    RESIZABLE = Boolean.parseBoolean(p.getProperty("graphics.screen.resizable"));
-	    VSYNC = Boolean.parseBoolean(p.getProperty("graphics.screen.vsync"));
-	    SCREEN_OUTPUT = Boolean.parseBoolean(p.getProperty("graphics.screen.screenoutput"));
+	    screen.initialize(p);
 
 	    /** PROGRAM **/
 	    DISPLAY_TUTORIAL = Boolean.parseBoolean(p.getProperty("program.tutorial"));
@@ -385,14 +427,7 @@ public class GlobalConf implements IObserver {
 	    frame.persist(p);
 
 	    /** GRAPHICS.SCREEN **/
-	    p.setProperty("graphics.screen.width", Integer.toString(SCREEN_WIDTH));
-	    p.setProperty("graphics.screen.height", Integer.toString(SCREEN_HEIGHT));
-	    p.setProperty("graphics.screen.fullscreen.width", Integer.toString(FULLSCREEN_WIDTH));
-	    p.setProperty("graphics.screen.fullscreen.height", Integer.toString(FULLSCREEN_HEIGHT));
-	    p.setProperty("graphics.screen.fullscreen", Boolean.toString(FULLSCREEN));
-	    p.setProperty("graphics.screen.resizable", Boolean.toString(RESIZABLE));
-	    p.setProperty("graphics.screen.vsync", Boolean.toString(VSYNC));
-	    p.setProperty("graphics.screen.screenoutput", Boolean.toString(SCREEN_OUTPUT));
+	    screen.persist(p);
 
 	    /** PROGRAM **/
 	    p.setProperty("program.tutorial", Boolean.toString(DISPLAY_TUTORIAL));
@@ -519,14 +554,6 @@ public class GlobalConf implements IObserver {
 	} else {
 	    TIME_ON = !TIME_ON;
 	}
-    }
-
-    public int getScreenWidth() {
-	return FULLSCREEN ? FULLSCREEN_WIDTH : SCREEN_WIDTH;
-    }
-
-    public int getScreenHeight() {
-	return FULLSCREEN ? FULLSCREEN_HEIGHT : SCREEN_HEIGHT;
     }
 
     public String getLastCheckedString() {

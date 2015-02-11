@@ -368,7 +368,7 @@ public class GaiaSandbox implements ApplicationListener, IObserver {
 		 */
 
 		/* SCREEN OUTPUT */
-		if (GlobalConf.inst.SCREEN_OUTPUT) {
+		if (GlobalConf.screen.SCREEN_OUTPUT) {
 		    /** RENDER THE SCENE **/
 		    // Set viewport
 		    setViewportSize(Gdx.graphics.getWidth(), Gdx.graphics.getHeight(), cam);
@@ -559,13 +559,13 @@ public class GaiaSandbox implements ApplicationListener, IObserver {
 	    int width;
 	    int height;
 	    if (toFullscreen) {
-		width = GlobalConf.inst.FULLSCREEN_WIDTH;
-		height = GlobalConf.inst.FULLSCREEN_HEIGHT;
-		GlobalConf.inst.SCREEN_WIDTH = Gdx.graphics.getWidth();
-		GlobalConf.inst.SCREEN_HEIGHT = Gdx.graphics.getHeight();
+		width = GlobalConf.screen.FULLSCREEN_WIDTH;
+		height = GlobalConf.screen.FULLSCREEN_HEIGHT;
+		GlobalConf.screen.SCREEN_WIDTH = Gdx.graphics.getWidth();
+		GlobalConf.screen.SCREEN_HEIGHT = Gdx.graphics.getHeight();
 	    } else {
-		width = GlobalConf.inst.SCREEN_WIDTH;
-		height = GlobalConf.inst.SCREEN_HEIGHT;
+		width = GlobalConf.screen.SCREEN_WIDTH;
+		height = GlobalConf.screen.SCREEN_HEIGHT;
 	    }
 	    // Only switch if needed
 	    if (Gdx.graphics.isFullscreen() != toFullscreen) {
