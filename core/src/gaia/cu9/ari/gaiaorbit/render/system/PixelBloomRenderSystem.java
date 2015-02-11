@@ -109,7 +109,7 @@ public class PixelBloomRenderSystem extends AbstractRenderSystem implements IObs
 	    break;
 	case TOGGLE_STEREOSCOPIC:
 	    // Update size
-	    if (GlobalConf.inst.STEREOSCOPIC_MODE) {
+	    if (GlobalConf.program.STEREOSCOPIC_MODE) {
 		screen_fb = new FrameBuffer(Format.RGB888, Gdx.graphics.getWidth() / 2, Gdx.graphics.getHeight(), true);
 	    } else {
 		screen_fb = new FrameBuffer(Format.RGB888, Gdx.graphics.getWidth(), Gdx.graphics.getHeight(), true);

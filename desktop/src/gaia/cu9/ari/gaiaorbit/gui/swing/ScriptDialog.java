@@ -99,7 +99,7 @@ public class ScriptDialog extends I18nJFrame {
 	((WebScrollPane) wsp.getComponent(2)).getVerticalScrollBar().setUnitIncrement(50);
 
 	//	scriptChooser.getWebFileChooser().setCurrentDirectory(new File(System.getProperty("user.dir")));
-	scriptChooser.getWebFileChooser().setCurrentDirectory(new File(GlobalConf.inst.SCRIPT_LOCATION));
+	scriptChooser.getWebFileChooser().setCurrentDirectory(new File(GlobalConf.program.SCRIPT_LOCATION));
 	scriptChooser.getWebFileChooser().addChoosableFileFilter(pyff);
 	scriptChooser.getWebFileChooser().setFileFilter(pyff);
 	scriptChooser.addSelectedFilesListener(new FilesSelectionListener() {
@@ -107,7 +107,7 @@ public class ScriptDialog extends I18nJFrame {
 	    public void selectionChanged(List<File> files) {
 		if (files.size() == 1) {
 		    File file = files.get(0);
-		    GlobalConf.inst.SCRIPT_LOCATION = file.getParent();
+		    GlobalConf.program.SCRIPT_LOCATION = file.getParent();
 		    try {
 			code = JythonFactory.getInstance().compileJythonScript(file);
 			outConsole.setText(txt("gui.script.ready"));
@@ -147,7 +147,7 @@ public class ScriptDialog extends I18nJFrame {
 		    frame.dispose();
 		}
 		if (code != null) {
-		    EventManager.getInstance().post(Events.RUN_SCRIPT_PYCODE, code, GlobalConf.inst.SCRIPT_LOCATION, async);
+		    EventManager.getInstance().post(Events.RUN_SCRIPT_PYCODE, code, GlobalConf.program.SCRIPT_LOCATION, async);
 		}
 	    }
 	});

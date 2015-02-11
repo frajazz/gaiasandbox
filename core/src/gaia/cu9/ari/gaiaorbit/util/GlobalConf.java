@@ -10,8 +10,11 @@ import java.io.FileOutputStream;
 import java.io.InputStream;
 import java.net.URL;
 import java.text.DateFormat;
-import java.text.SimpleDateFormat;
+import java.text.ParseException;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
+import java.util.Locale;
 import java.util.Properties;
 
 /**
@@ -26,7 +29,6 @@ public class GlobalConf implements IObserver {
     public static final String ICON_URL = "http://www.zah.uni-heidelberg.de/uploads/pics/gaiasandboxlogo_02.png";
 
     public static boolean OPENGL_GUI;
-    private static DateFormat df = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss");
 
     /** Properties object **/
     public CommentedProperties p;
@@ -43,14 +45,11 @@ public class GlobalConf implements IObserver {
     public float CAMERA_SPEED, TURNING_SPEED, ROTATION_SPEED;
     /** This should be no smaller than 1 and no bigger than 5. The bigger the more stars with labels **/
     public float LABEL_NUMBER_FACTOR;
-    public boolean DISPLAY_TUTORIAL, MULTITHREADING, STAR_COLOR_TRANSIT, ONLY_OBSERVED_STARS, COMPUTE_GAIA_SCAN, SHOW_DEBUG_INFO, POSTPROCESS_LENS_FLARE;
-    public boolean SHOW_CONFIG_DIALOG, FOCUS_LOCK, INPUT_ENABLED;
-    public String TUTORIAL_SCRIPT_LOCATION;
-    public String SCREENSHOT_FOLDER, VERSION_CHECK_URL, LAST_VERSION, UI_THEME, SCRIPT_LOCATION;
-    public String LOCALE;
+    public boolean MULTITHREADING, STAR_COLOR_TRANSIT, ONLY_OBSERVED_STARS, COMPUTE_GAIA_SCAN, POSTPROCESS_LENS_FLARE;
+    public boolean FOCUS_LOCK, INPUT_ENABLED;
+    public String SCREENSHOT_FOLDER;
     public int SCREENSHOT_WIDTH, SCREENSHOT_HEIGHT;
-    public Date LAST_CHECKED;
-    public boolean STEREOSCOPIC_MODE, CLEAN_MODE, GLOBAL_PAUSE = false, TIME_ON = false;
+    public boolean CLEAN_MODE, GLOBAL_PAUSE = false, TIME_ON = false;
     /** Eye separation in stereoscopic mode in meters **/
     public float STEREOSCOPIC_EYE_SEPARATION_M = 1;
 
@@ -78,13 +77,19 @@ public class GlobalConf implements IObserver {
      *
      */
     public static class FrameConf implements IConf, IObserver {
-
+	/** The width of the image frames **/
 	public int RENDER_WIDTH;
+	/** The height of the image frames **/
 	public int RENDER_HEIGHT;
+	/** The number of images per second to produce **/
 	public int RENDER_TARGET_FPS;
+	/** The output folder **/
 	public String RENDER_FOLDER;
+	/** The prefix for the image files **/
 	public String RENDER_FILE_NAME;
+	/** Should we write the simulation time to the images? **/
 	public boolean RENDER_SCREENSHOT_TIME;
+	/** Whether the frame system is activated or not **/
 	public boolean RENDER_OUTPUT;
 
 	public FrameConf() {
@@ -227,6 +232,77 @@ public class GlobalConf implements IObserver {
 
     }
 
+    public static class ProgramConf implements IConf, IObserver {
+	public boolean DISPLAY_TUTORIAL;
+	public String TUTORIAL_SCRIPT_LOCATION;
+	public boolean SHOW_CONFIG_DIALOG;
+	public boolean SHOW_DEBUG_INFO;
+	public Date LAST_CHECKED;
+	public String LAST_VERSION;
+	public String VERSION_CHECK_URL;
+	public String UI_THEME;
+	public String SCRIPT_LOCATION;
+	public String LOCALE;
+	public boolean STEREOSCOPIC_MODE;
+
+	private DateFormat df;
+
+	public ProgramConf() {
+	    EventManager.getInstance().subscribe(this, Events.TOGGLE_STEREOSCOPIC);
+	}
+
+	@Override
+	public void persist(Properties p) {
+	    p.setProperty("program.tutorial", Boolean.toString(DISPLAY_TUTORIAL));
+	    p.setProperty("program.tutorial.script", TUTORIAL_SCRIPT_LOCATION);
+	    p.setProperty("program.configdialog", Boolean.toString(SHOW_CONFIG_DIALOG));
+	    p.setProperty("program.debuginfo", Boolean.toString(SHOW_DEBUG_INFO));
+	    p.setProperty("program.lastchecked", df.format(LAST_CHECKED));
+	    p.setProperty("program.lastversion", LAST_VERSION);
+	    p.setProperty("program.versioncheckurl", VERSION_CHECK_URL);
+	    p.setProperty("program.ui.theme", UI_THEME);
+	    p.setProperty("program.scriptlocation", SCRIPT_LOCATION);
+	    p.setProperty("program.locale", LOCALE);
+	    p.setProperty("program.stereoscopic", Boolean.toString(STEREOSCOPIC_MODE));
+	}
+
+	@Override
+	public void initialize(Properties p) {
+	    LOCALE = p.getProperty("program.locale");
+	    df = DateFormat.getDateTimeInstance(DateFormat.MEDIUM, DateFormat.MEDIUM, Locale.forLanguageTag(LOCALE));
+
+	    DISPLAY_TUTORIAL = Boolean.parseBoolean(p.getProperty("program.tutorial"));
+	    TUTORIAL_SCRIPT_LOCATION = p.getProperty("program.tutorial.script");
+	    SHOW_CONFIG_DIALOG = Boolean.parseBoolean(p.getProperty("program.configdialog"));
+	    SHOW_DEBUG_INFO = Boolean.parseBoolean(p.getProperty("program.debuginfo"));
+	    try {
+		LAST_CHECKED = p.getProperty("program.lastchecked").isEmpty() ? null : df.parse(p.getProperty("program.lastchecked"));
+	    } catch (ParseException e) {
+		EventManager.getInstance().post(Events.JAVA_EXCEPTION, e);
+	    }
+	    LAST_VERSION = p.getProperty("program.lastversion");
+	    VERSION_CHECK_URL = p.getProperty("program.versioncheckurl");
+	    UI_THEME = p.getProperty("program.ui.theme");
+	    SCRIPT_LOCATION = p.getProperty("program.scriptlocation").isEmpty() ? System.getProperty("user.dir") : p.getProperty("program.scriptlocation");
+
+	    STEREOSCOPIC_MODE = Boolean.parseBoolean(p.getProperty("program.stereoscopic"));
+	}
+
+	public String getLastCheckedString() {
+	    return df.format(LAST_CHECKED);
+	}
+
+	@Override
+	public void notify(Events event, Object... data) {
+	    switch (event) {
+	    case TOGGLE_STEREOSCOPIC:
+		STEREOSCOPIC_MODE = !STEREOSCOPIC_MODE;
+		break;
+	    }
+	}
+
+    }
+
     public static class VersionConf implements IConf {
 	public String version;
 	public String buildtime;
@@ -275,8 +351,11 @@ public class GlobalConf implements IObserver {
 
     public static GlobalConf inst;
 
+    public static List<IConf> configurations;
+
     public static FrameConf frame;
     public static ScreenConf screen;
+    public static ProgramConf program;
     public static DataConf data;
     public static VersionConf version;
 
@@ -295,7 +374,9 @@ public class GlobalConf implements IObserver {
      */
     public static void initialize(InputStream propsFile, InputStream versionFile) {
 	try {
-
+	    if (configurations == null) {
+		configurations = new ArrayList<IConf>();
+	    }
 	    if (inst == null)
 		inst = new GlobalConf();
 
@@ -307,14 +388,25 @@ public class GlobalConf implements IObserver {
 		version.initialize(versionProps);
 	    }
 
-	    if (frame == null)
+	    if (frame == null) {
 		frame = new FrameConf();
+		configurations.add(frame);
+	    }
 
-	    if (screen == null)
+	    if (screen == null) {
 		screen = new ScreenConf();
+		configurations.add(screen);
+	    }
 
-	    if (data == null)
+	    if (program == null) {
+		program = new ProgramConf();
+		configurations.add(program);
+	    }
+
+	    if (data == null) {
 		data = new DataConf();
+		configurations.add(data);
+	    }
 
 	    inst.init(propsFile);
 	    initialized = true;
@@ -339,17 +431,7 @@ public class GlobalConf implements IObserver {
 	    screen.initialize(p);
 
 	    /** PROGRAM **/
-	    DISPLAY_TUTORIAL = Boolean.parseBoolean(p.getProperty("program.tutorial"));
-	    TUTORIAL_SCRIPT_LOCATION = p.getProperty("program.tutorial.script");
-	    SHOW_CONFIG_DIALOG = Boolean.parseBoolean(p.getProperty("program.configdialog"));
-	    SHOW_DEBUG_INFO = Boolean.parseBoolean(p.getProperty("program.debuginfo"));
-	    LAST_CHECKED = p.getProperty("program.lastchecked").isEmpty() ? null : df.parse(p.getProperty("program.lastchecked"));
-	    LAST_VERSION = p.getProperty("program.lastversion");
-	    VERSION_CHECK_URL = p.getProperty("program.versioncheckurl");
-	    UI_THEME = p.getProperty("program.ui.theme");
-	    SCRIPT_LOCATION = p.getProperty("program.scriptlocation").isEmpty() ? System.getProperty("user.dir") : p.getProperty("program.scriptlocation");
-	    LOCALE = p.getProperty("program.locale");
-	    STEREOSCOPIC_MODE = Boolean.parseBoolean(p.getProperty("program.stereoscopic"));
+	    program.initialize(p);
 
 	    /** POSTPROCESS **/
 	    /**
@@ -430,17 +512,7 @@ public class GlobalConf implements IObserver {
 	    screen.persist(p);
 
 	    /** PROGRAM **/
-	    p.setProperty("program.tutorial", Boolean.toString(DISPLAY_TUTORIAL));
-	    p.setProperty("program.tutorial.script", TUTORIAL_SCRIPT_LOCATION);
-	    p.setProperty("program.configdialog", Boolean.toString(SHOW_CONFIG_DIALOG));
-	    p.setProperty("program.debuginfo", Boolean.toString(SHOW_DEBUG_INFO));
-	    p.setProperty("program.lastchecked", df.format(LAST_CHECKED));
-	    p.setProperty("program.lastversion", LAST_VERSION);
-	    p.setProperty("program.versioncheckurl", VERSION_CHECK_URL);
-	    p.setProperty("program.ui.theme", UI_THEME);
-	    p.setProperty("program.scriptlocation", SCRIPT_LOCATION);
-	    p.setProperty("program.locale", LOCALE);
-	    p.setProperty("program.stereoscopic", Boolean.toString(STEREOSCOPIC_MODE));
+	    program.persist(p);
 
 	    /** POSTPROCESS **/
 	    p.setProperty("postprocess.antialiasing", Integer.toString(POSTPROCESS_ANTIALIAS));
@@ -528,9 +600,7 @@ public class GlobalConf implements IObserver {
 	case LENS_FLARE_CMD:
 	    POSTPROCESS_LENS_FLARE = (Boolean) data[0];
 	    break;
-	case TOGGLE_STEREOSCOPIC:
-	    STEREOSCOPIC_MODE = !STEREOSCOPIC_MODE;
-	    break;
+
 	case TOGGLE_CLEANMODE:
 	    CLEAN_MODE = !CLEAN_MODE;
 	    break;
@@ -554,10 +624,6 @@ public class GlobalConf implements IObserver {
 	} else {
 	    TIME_ON = !TIME_ON;
 	}
-    }
-
-    public String getLastCheckedString() {
-	return df.format(LAST_CHECKED);
     }
 
 }

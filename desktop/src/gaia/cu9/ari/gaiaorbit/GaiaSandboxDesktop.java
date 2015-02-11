@@ -94,7 +94,7 @@ public class GaiaSandboxDesktop implements IObserver {
 
     private void init() {
 	// Show configuration
-	if (GlobalConf.inst.SHOW_CONFIG_DIALOG) {
+	if (GlobalConf.program.SHOW_CONFIG_DIALOG) {
 	    new ConfigDialog(this, true);
 	} else {
 	    launchMainApp();

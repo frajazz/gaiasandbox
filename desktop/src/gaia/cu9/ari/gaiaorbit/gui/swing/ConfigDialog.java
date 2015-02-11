@@ -168,13 +168,13 @@ public class ConfigDialog extends I18nJFrame {
 	checkPanel = new JPanel(new MigLayout("", "[][]", "[]4[]"));
 	checkLabel = new JLabel("");
 	checkPanel.add(checkLabel);
-	if (GlobalConf.inst.LAST_CHECKED == null || GlobalConf.inst.LAST_VERSION.isEmpty() || new Date().getTime() - GlobalConf.inst.LAST_CHECKED.getTime() > fiveDaysMs) {
+	if (GlobalConf.program.LAST_CHECKED == null || GlobalConf.program.LAST_VERSION.isEmpty() || new Date().getTime() - GlobalConf.program.LAST_CHECKED.getTime() > fiveDaysMs) {
 	    // Check!
 	    checkLabel.setText(txt("gui.newversion.checking"));
 	    getCheckVersionThread().start();
 	} else {
 	    // Inform latest
-	    newVersionCheck(GlobalConf.inst.LAST_VERSION);
+	    newVersionCheck(GlobalConf.program.LAST_VERSION);
 
 	}
 
@@ -340,11 +340,11 @@ public class ConfigDialog extends I18nJFrame {
 	}
 	Arrays.sort(langs);
 	final JComboBox<LangComboBoxBean> lang = new JComboBox<LangComboBoxBean>(langs);
-	lang.setSelectedItem(langs[idxLang(GlobalConf.inst.LOCALE, langs)]);
+	lang.setSelectedItem(langs[idxLang(GlobalConf.program.LOCALE, langs)]);
 
 	String[] themes = new String[] { "dark", "bright", "dark-big" };
 	final JComboBox<String> theme = new JComboBox<String>(themes);
-	theme.setSelectedItem(GlobalConf.inst.UI_THEME);
+	theme.setSelectedItem(GlobalConf.program.UI_THEME);
 
 	ui.add(new JLabel(txt("gui.ui.language")));
 	ui.add(lang, "wrap");
@@ -809,7 +809,7 @@ public class ConfigDialog extends I18nJFrame {
 	showAgain.addChangeListener(new ChangeListener() {
 	    @Override
 	    public void stateChanged(ChangeEvent e) {
-		GlobalConf.inst.SHOW_CONFIG_DIALOG = !showAgain.isSelected();
+		GlobalConf.program.SHOW_CONFIG_DIALOG = !showAgain.isSelected();
 	    }
 	});
 
@@ -846,10 +846,10 @@ public class ConfigDialog extends I18nJFrame {
 
 		// Interface
 		LangComboBoxBean lbean = (LangComboBoxBean) lang.getSelectedItem();
-		GlobalConf.inst.LOCALE = lbean.locale.toLanguageTag();
+		GlobalConf.program.LOCALE = lbean.locale.toLanguageTag();
 		if (!I18n.forceinit("./data/i18n/gsbundle"))
 		    I18n.forceinit("../android/assets/i18n/gsbundle");
-		GlobalConf.inst.UI_THEME = (String) theme.getSelectedItem();
+		GlobalConf.program.UI_THEME = (String) theme.getSelectedItem();
 
 		// Performance
 		bean = (ThreadComboBoxBean) numThreads.getSelectedItem();
@@ -994,7 +994,7 @@ public class ConfigDialog extends I18nJFrame {
     }
 
     private Thread getCheckVersionThread() {
-	return new Thread(new CallbackTask(new VersionChecker(GlobalConf.inst.VERSION_CHECK_URL), new Callback() {
+	return new Thread(new CallbackTask(new VersionChecker(GlobalConf.program.VERSION_CHECK_URL), new Callback() {
 	    @Override
 	    public void complete(Object result) {
 		checkPanel.removeAll();
@@ -1010,8 +1010,8 @@ public class ConfigDialog extends I18nJFrame {
 		    JsonValue last = json.get(json.size - 1);
 		    String version = last.getString("name");
 		    if (version.matches("^(\\D{1})?\\d+.\\d+(\\D{1})?$")) {
-			GlobalConf.inst.LAST_VERSION = new String(version);
-			GlobalConf.inst.LAST_CHECKED = new Date();
+			GlobalConf.program.LAST_VERSION = new String(version);
+			GlobalConf.program.LAST_CHECKED = new Date();
 			newVersionCheck(version);
 		    }
 		    checkPanel.validate();
@@ -1064,7 +1064,7 @@ public class ConfigDialog extends I18nJFrame {
 	    } catch (URISyntaxException e1) {
 	    }
 	} else {
-	    checkLabel.setText(txt("gui.newversion.nonew", GlobalConf.inst.getLastCheckedString()));
+	    checkLabel.setText(txt("gui.newversion.nonew", GlobalConf.program.getLastCheckedString()));
 	    // Add check now button
 	    JButton button = new JButton();
 	    button.setText(txt("gui.newversion.checknow"));

@@ -312,9 +312,9 @@ public class GaiaSandbox implements ApplicationListener, IObserver {
 	initialized = true;
 
 	// Run tutorial
-	if (GlobalConf.inst.DISPLAY_TUTORIAL) {
+	if (GlobalConf.program.DISPLAY_TUTORIAL) {
 	    EventManager.getInstance().post(Events.SHOW_TUTORIAL_ACTION);
-	    GlobalConf.inst.DISPLAY_TUTORIAL = false;
+	    GlobalConf.program.DISPLAY_TUTORIAL = false;
 	}
 
     }

@@ -354,7 +354,7 @@ public class SceneGraphRenderer extends AbstractRenderer implements IProcessRend
 	} else {
 	    /** NORMAL MODE **/
 
-	    if (GlobalConf.inst.STEREOSCOPIC_MODE) {
+	    if (GlobalConf.program.STEREOSCOPIC_MODE) {
 		boolean movecam = camera.getMode() == CameraMode.Free_Camera || camera.getMode() == CameraMode.Focus;
 		// Side by side rendering
 		Viewport vp = camera.getViewport();

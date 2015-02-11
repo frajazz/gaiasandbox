@@ -45,11 +45,11 @@ public class I18n {
     }
 
     public static boolean forceinit(FileHandle baseFileHandle) {
-	if (GlobalConf.inst.LOCALE.isEmpty()) {
+	if (GlobalConf.program.LOCALE.isEmpty()) {
 	    // Use system default
 	    locale = Locale.getDefault();
 	} else {
-	    locale = Locale.forLanguageTag(GlobalConf.inst.LOCALE);
+	    locale = Locale.forLanguageTag(GlobalConf.program.LOCALE);
 	}
 	try {
 	    bundle = I18NBundle.createBundle(baseFileHandle, locale);

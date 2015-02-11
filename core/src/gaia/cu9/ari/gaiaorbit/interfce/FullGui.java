@@ -1132,7 +1132,7 @@ public class FullGui implements IGui, IObserver {
 	    }
 	    break;
 	case SHOW_TUTORIAL_ACTION:
-	    EventManager.getInstance().post(Events.RUN_SCRIPT_PATH, GlobalConf.inst.TUTORIAL_SCRIPT_LOCATION);
+	    EventManager.getInstance().post(Events.RUN_SCRIPT_PATH, GlobalConf.program.TUTORIAL_SCRIPT_LOCATION);
 	    break;
 	case SHOW_SEARCH_ACTION:
 	    if (searchDialog == null) {
