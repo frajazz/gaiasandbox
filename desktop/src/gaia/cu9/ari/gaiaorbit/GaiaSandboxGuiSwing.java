@@ -41,14 +41,14 @@ public class GaiaSandboxGuiSwing extends JFrame {
     public GaiaSandboxGuiSwing() {
 
 	setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
-	String appName = GlobalConf.inst.getFullApplicationName();
+	String appName = GlobalConf.getFullApplicationName();
 	this.setTitle(appName);
 
 	// Init configuration
 	LwjglApplicationConfiguration cfg = new LwjglApplicationConfiguration();
 	cfg.title = appName;
 	cfg.resizable = true;
-	cfg.samples = GlobalConf.inst.POSTPROCESS_ANTIALIAS;
+	cfg.samples = GlobalConf.postprocess.POSTPROCESS_ANTIALIAS;
 	cfg.vSyncEnabled = GlobalConf.screen.VSYNC;
 	cfg.foregroundFPS = 400;
 	cfg.useGL30 = false;
@@ -117,7 +117,7 @@ public class GaiaSandboxGuiSwing extends JFrame {
 
 	    GlobalClock.initialize(0.01f);
 	    FileLocator.initialize(assetsLocation);
-	    sg = SceneGraphLoader.loadSceneGraph(new FileInputStream(new File(assetsLocation + GlobalConf.data.DATA_SG_FILE)), GlobalClock.clock, GlobalConf.inst.MULTITHREADING, GlobalConf.inst.NUMBER_THREADS);
+	    sg = SceneGraphLoader.loadSceneGraph(new FileInputStream(new File(assetsLocation + GlobalConf.data.DATA_SG_FILE)), GlobalClock.clock, GlobalConf.performance.MULTITHREADING, GlobalConf.performance.NUMBER_THREADS);
 	    IconManager.initialise(new File("data/ui/"));
 	    splash.splashOff();
 	    splash.dispose();

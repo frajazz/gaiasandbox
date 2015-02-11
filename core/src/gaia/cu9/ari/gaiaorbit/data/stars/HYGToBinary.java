@@ -43,7 +43,6 @@ public class HYGToBinary implements IObserver {
 	} catch (IOException e) {
 	    e.printStackTrace(System.err);
 	}
-	GlobalConf.inst = new GlobalConf();
 	GlobalConf.version = new GlobalConf.VersionConf();
 	GlobalConf.version.initialize(vprops);
 

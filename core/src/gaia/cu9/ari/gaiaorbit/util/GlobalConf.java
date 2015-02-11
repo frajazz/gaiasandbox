@@ -22,7 +22,7 @@ import java.util.Properties;
  * @author Toni Sagrista
  *
  */
-public class GlobalConf implements IObserver {
+public class GlobalConf {
     public static final String APPLICATION_NAME = "Gaia Sandbox";
     public static final String WEBPAGE = "http://www.zah.uni-heidelberg.de/gaia2/outreach/gaiasandbox/";
     public static final String WIKI = "https://github.com/ari-zah/gaiasandbox/wiki";
@@ -31,19 +31,9 @@ public class GlobalConf implements IObserver {
     public static boolean OPENGL_GUI;
 
     /** Properties object **/
-    public CommentedProperties p;
+    public static CommentedProperties p;
 
-    public static String TEX_FOLDER = "data/tex/";
-
-    /**
-     * Property values
-     */
-    public int POSTPROCESS_ANTIALIAS, NUMBER_THREADS;
-    public float POSTPROCESS_BLOOM_INTENSITY;
-    /** This should be no smaller than 1 and no bigger than 5. The bigger the more stars with labels **/
-    public boolean MULTITHREADING, POSTPROCESS_LENS_FLARE;
-    public String SCREENSHOT_FOLDER;
-    public int SCREENSHOT_WIDTH, SCREENSHOT_HEIGHT;
+    public static final String TEXTURES_FOLDER = "data/tex/";
 
     public static interface IConf {
 	/**
@@ -60,6 +50,94 @@ public class GlobalConf implements IObserver {
 
     }
 
+    public static class ScreenshotConf implements IConf {
+	public int SCREENSHOT_WIDTH;
+	public int SCREENSHOT_HEIGHT;
+	public String SCREENSHOT_FOLDER;
+
+	@Override
+	public void persist(Properties p) {
+	    p.setProperty("screenshot.folder", SCREENSHOT_FOLDER);
+	    p.setProperty("screenshot.width", Integer.toString(SCREENSHOT_WIDTH));
+	    p.setProperty("screenshot.height", Integer.toString(SCREENSHOT_HEIGHT));
+	}
+
+	@Override
+	public void initialize(Properties p) {
+	    SCREENSHOT_FOLDER = p.getProperty("screenshot.folder").isEmpty() ? System.getProperty("java.io.tmpdir") : p.getProperty("screenshot.folder");
+	    SCREENSHOT_WIDTH = Integer.parseInt(p.getProperty("screenshot.width"));
+	    SCREENSHOT_HEIGHT = Integer.parseInt(p.getProperty("screenshot.height"));
+	}
+
+    }
+
+    public static class PerformanceConf implements IConf {
+
+	public boolean MULTITHREADING;
+	public int NUMBER_THREADS;
+
+	@Override
+	public void persist(Properties p) {
+	    p.setProperty("global.conf.multithreading", Boolean.toString(MULTITHREADING));
+	    p.setProperty("global.conf.numthreads", Integer.toString(NUMBER_THREADS));
+	}
+
+	@Override
+	public void initialize(Properties p) {
+	    MULTITHREADING = Boolean.parseBoolean(p.getProperty("global.conf.multithreading"));
+	    String propNumthreads = p.getProperty("global.conf.numthreads");
+	    NUMBER_THREADS = Integer.parseInt((propNumthreads == null || propNumthreads.isEmpty()) ? "0" : propNumthreads);
+	}
+
+    }
+
+    public static class PostprocessConf implements IConf, IObserver {
+
+	public int POSTPROCESS_ANTIALIAS;
+	public float POSTPROCESS_BLOOM_INTENSITY;
+	/** This should be no smaller than 1 and no bigger than 5. The bigger the more stars with labels **/
+	public boolean POSTPROCESS_LENS_FLARE;
+
+	public PostprocessConf() {
+	    EventManager.getInstance().subscribe(this, Events.BLOOM_CMD, Events.LENS_FLARE_CMD);
+	}
+
+	@Override
+	public void persist(Properties p) {
+	    p.setProperty("postprocess.antialiasing", Integer.toString(POSTPROCESS_ANTIALIAS));
+	    p.setProperty("postprocess.bloom.intensity", Float.toString(POSTPROCESS_BLOOM_INTENSITY));
+	    p.setProperty("postprocess.lensflare", Boolean.toString(POSTPROCESS_LENS_FLARE));
+
+	}
+
+	@Override
+	public void initialize(Properties p) {
+	    /** POSTPROCESS **/
+	    /**
+	     * aa
+	     * value < 0 - FXAA
+	     * value = 0 - no AA
+	     * value > 0 - MSAA #samples = value
+	     */
+	    POSTPROCESS_ANTIALIAS = Integer.parseInt(p.getProperty("postprocess.antialiasing"));
+	    POSTPROCESS_BLOOM_INTENSITY = Float.parseFloat(p.getProperty("postprocess.bloom.intensity"));
+	    POSTPROCESS_LENS_FLARE = Boolean.parseBoolean(p.getProperty("postprocess.lensflare"));
+	}
+
+	@Override
+	public void notify(Events event, Object... data) {
+	    switch (event) {
+	    case BLOOM_CMD:
+		POSTPROCESS_BLOOM_INTENSITY = (float) data[0];
+		break;
+	    case LENS_FLARE_CMD:
+		POSTPROCESS_LENS_FLARE = (Boolean) data[0];
+		break;
+	    }
+	}
+
+    }
+
     /**
      * Runtime configuration values, which are never persisted.
      * @author Toni Sagrista
@@ -68,8 +146,8 @@ public class GlobalConf implements IObserver {
     public static class RuntimeConf implements IConf, IObserver {
 
 	public boolean CLEAN_MODE;
-	public boolean GLOBAL_PAUSE = false;
-	public boolean TIME_ON = false;
+	public boolean GLOBAL_PAUSE;
+	public boolean TIME_ON;
 	public boolean INPUT_ENABLED;
 	public float LIMIT_MAG_RUNTIME;
 
@@ -79,8 +157,7 @@ public class GlobalConf implements IObserver {
 
 	@Override
 	public void persist(Properties p) {
-	    // TODO Auto-generated method stub
-
+	    // Runtime configuration is not persisted
 	}
 
 	@Override
@@ -88,6 +165,8 @@ public class GlobalConf implements IObserver {
 	    // Input always enabled by default
 	    INPUT_ENABLED = true;
 	    LIMIT_MAG_RUNTIME = 20;
+	    GLOBAL_PAUSE = false;
+	    TIME_ON = false;
 
 	}
 
@@ -506,8 +585,6 @@ public class GlobalConf implements IObserver {
 	}
     }
 
-    public static GlobalConf inst;
-
     public static List<IConf> configurations;
 
     public static FrameConf frame;
@@ -516,6 +593,9 @@ public class GlobalConf implements IObserver {
     public static DataConf data;
     public static SceneConf scene;
     public static RuntimeConf runtime;
+    public static ScreenshotConf screenshot;
+    public static PerformanceConf performance;
+    public static PostprocessConf postprocess;
     public static VersionConf version;
 
     static boolean initialized = false;
@@ -536,8 +616,6 @@ public class GlobalConf implements IObserver {
 	    if (configurations == null) {
 		configurations = new ArrayList<IConf>();
 	    }
-	    if (inst == null)
-		inst = new GlobalConf();
 
 	    if (version == null) {
 		version = new VersionConf();
@@ -577,7 +655,23 @@ public class GlobalConf implements IObserver {
 		configurations.add(runtime);
 	    }
 
-	    inst.init(propsFile);
+	    if (screenshot == null) {
+		screenshot = new ScreenshotConf();
+		configurations.add(screenshot);
+	    }
+
+	    if (postprocess == null) {
+		postprocess = new PostprocessConf();
+		configurations.add(postprocess);
+	    }
+
+	    if (performance == null) {
+		performance = new PerformanceConf();
+		configurations.add(performance);
+	    }
+
+	    initialize(propsFile);
+
 	    initialized = true;
 	} catch (Exception e) {
 	    EventManager.getInstance().post(Events.JAVA_EXCEPTION, e);
@@ -585,61 +679,29 @@ public class GlobalConf implements IObserver {
 
     }
 
-    public void init(InputStream propsFile) {
+    /**
+     * Runs the initialize method in all the configurations using the given properties file stream.
+     * @param propsFile An input stream sourced in the configuration file.
+     */
+    public static void initialize(InputStream propsFile) {
 	p = new CommentedProperties();
 	try {
 	    p.load(propsFile);
 
-	    /** GRAPHICS.FRAME **/
-	    frame.initialize(p);
-
-	    /** GRAPHICS.SCREEN **/
-	    screen.initialize(p);
-
-	    /** PROGRAM **/
-	    program.initialize(p);
-
-	    /** POSTPROCESS **/
-	    /**
-	     * aa
-	     * value < 0 - FXAA
-	     * value = 0 - no AA
-	     * value > 0 - MSAA #samples = value
-	     */
-	    POSTPROCESS_ANTIALIAS = Integer.parseInt(p.getProperty("postprocess.antialiasing"));
-	    POSTPROCESS_BLOOM_INTENSITY = Float.parseFloat(p.getProperty("postprocess.bloom.intensity"));
-	    POSTPROCESS_LENS_FLARE = Boolean.parseBoolean(p.getProperty("postprocess.lensflare"));
-
-	    /** GLOBAL **/
-	    MULTITHREADING = Boolean.parseBoolean(p.getProperty("global.conf.multithreading"));
-	    String propNumthreads = p.getProperty("global.conf.numthreads");
-	    NUMBER_THREADS = Integer.parseInt((propNumthreads == null || propNumthreads.isEmpty()) ? "0" : propNumthreads);
-
-	    /** DATA **/
-	    data.initialize(p);
-
-	    /** RUNTIME **/
-	    runtime.initialize(p);
-
-	    /** SCREENSHOT **/
-	    SCREENSHOT_FOLDER = p.getProperty("screenshot.folder").isEmpty() ? System.getProperty("java.io.tmpdir") : p.getProperty("screenshot.folder");
-	    SCREENSHOT_WIDTH = Integer.parseInt(p.getProperty("screenshot.width"));
-	    SCREENSHOT_HEIGHT = Integer.parseInt(p.getProperty("screenshot.height"));
-
-	    /** SCENE **/
-	    scene.initialize(p);
+	    for (IConf conf : configurations) {
+		conf.initialize(p);
+	    }
 
 	} catch (Exception e) {
 	    EventManager.getInstance().post(Events.JAVA_EXCEPTION, e);
 	}
 
-	EventManager.getInstance().subscribe(this, Events.BLOOM_CMD, Events.LENS_FLARE_CMD);
     }
 
     /**
      * Saves the current state of the properties to the properties file.
      */
-    public void saveProperties(URL propsFileURL) {
+    public static void saveProperties(URL propsFileURL) {
 	updatePropertiesValues();
 	try {
 	    FileOutputStream fos = new FileOutputStream(propsFileURL.getFile());
@@ -654,58 +716,18 @@ public class GlobalConf implements IObserver {
     /**
      * Updates the Properties object with the values of the actual property variables.
      */
-    private void updatePropertiesValues() {
+    private static void updatePropertiesValues() {
 	if (p != null && !p.isEmpty()) {
-	    /** GRAPHICS.RENDER **/
-	    frame.persist(p);
 
-	    /** GRAPHICS.SCREEN **/
-	    screen.persist(p);
-
-	    /** PROGRAM **/
-	    program.persist(p);
-
-	    /** POSTPROCESS **/
-	    p.setProperty("postprocess.antialiasing", Integer.toString(POSTPROCESS_ANTIALIAS));
-	    p.setProperty("postprocess.bloom.intensity", Float.toString(POSTPROCESS_BLOOM_INTENSITY));
-	    p.setProperty("postprocess.lensflare", Boolean.toString(POSTPROCESS_LENS_FLARE));
-
-	    /** GLOBAL **/
-	    p.setProperty("global.conf.multithreading", Boolean.toString(MULTITHREADING));
-	    p.setProperty("global.conf.numthreads", Integer.toString(NUMBER_THREADS));
-
-	    /** DATA **/
-	    data.persist(p);
-
-	    /** SCREENSHOT **/
-	    p.setProperty("screenshot.folder", SCREENSHOT_FOLDER);
-	    p.setProperty("screenshot.width", Integer.toString(SCREENSHOT_WIDTH));
-	    p.setProperty("screenshot.height", Integer.toString(SCREENSHOT_HEIGHT));
-
-	    /** SCENE **/
-	    scene.persist(p);
+	    for (IConf conf : configurations) {
+		conf.persist(p);
+	    }
 
 	}
     }
 
-    public String getFullApplicationName() {
+    public static String getFullApplicationName() {
 	return APPLICATION_NAME + " - " + version.version;
-    }
-
-    @Override
-    public void notify(Events event, Object... data) {
-	switch (event) {
-	case BLOOM_CMD:
-	    POSTPROCESS_BLOOM_INTENSITY = (float) data[0];
-	    break;
-	case LENS_FLARE_CMD:
-	    POSTPROCESS_LENS_FLARE = (Boolean) data[0];
-	    break;
-
-	default:
-	    break;
-	}
-
     }
 
 }

@@ -111,7 +111,7 @@ public class ConfigDialog extends I18nJFrame {
     JTree visualisationsTree;
 
     public ConfigDialog(final GaiaSandboxDesktop gsd, boolean startup) {
-	super(startup ? GlobalConf.inst.getFullApplicationName() : txt("gui.settings"));
+	super(startup ? GlobalConf.getFullApplicationName() : txt("gui.settings"));
 	initialize(gsd, startup);
 
 	if (startup) {
@@ -284,7 +284,7 @@ public class ConfigDialog extends I18nJFrame {
 
 	ThreadComboBoxBean[] msaas = new ThreadComboBoxBean[] { new ThreadComboBoxBean(txt("gui.aa.no"), 0), new ThreadComboBoxBean(txt("gui.aa.fxaa"), -1), new ThreadComboBoxBean(txt("gui.aa.nfaa"), -2), new ThreadComboBoxBean(txt("gui.aa.msaa", 2), 2), new ThreadComboBoxBean(txt("gui.aa.msaa", 4), 4), new ThreadComboBoxBean(txt("gui.aa.msaa", 8), 8), new ThreadComboBoxBean(txt("gui.aa.msaa", 16), 16) };
 	final JComboBox<ThreadComboBoxBean> msaa = new JComboBox<ThreadComboBoxBean>(msaas);
-	msaa.setSelectedItem(msaas[idxAa(2, GlobalConf.inst.POSTPROCESS_ANTIALIAS)]);
+	msaa.setSelectedItem(msaas[idxAa(2, GlobalConf.postprocess.POSTPROCESS_ANTIALIAS)]);
 
 	// Vsync
 	final JCheckBox vsync = new JCheckBox(txt("gui.vsync"), GlobalConf.screen.VSYNC);
@@ -381,6 +381,7 @@ public class ConfigDialog extends I18nJFrame {
 	    cbs[i] = new ThreadComboBoxBean(txt("gui.thread", i), i);
 	}
 	final JComboBox<ThreadComboBoxBean> numThreads = new JComboBox<ThreadComboBoxBean>(cbs);
+	numThreads.setSelectedIndex(GlobalConf.performance.NUMBER_THREADS);
 
 	final JCheckBox multithreadCb = new JCheckBox(txt("gui.thread.enable"));
 	multithreadCb.addChangeListener(new ChangeListener() {
@@ -389,7 +390,7 @@ public class ConfigDialog extends I18nJFrame {
 		numThreads.setEnabled(multithreadCb.isSelected());
 	    }
 	});
-	multithreadCb.setSelected(GlobalConf.inst.MULTITHREADING);
+	multithreadCb.setSelected(GlobalConf.performance.MULTITHREADING);
 	numThreads.setEnabled(multithreadCb.isSelected());
 
 	multithread.add(multithreadCb, "span");
@@ -460,10 +461,10 @@ public class ConfigDialog extends I18nJFrame {
 
 	// SCREENSHOTS LOCATION
 	JLabel screenshotsLocationLabel = new JLabel(txt("gui.screenshots.save") + ":");
-	File currentLocation = new File(GlobalConf.inst.SCREENSHOT_FOLDER);
+	File currentLocation = new File(GlobalConf.screenshot.SCREENSHOT_FOLDER);
 	String dirText = txt("gui.screenshots.directory.choose");
 	if (currentLocation.exists() && currentLocation.isDirectory()) {
-	    dirText = GlobalConf.inst.SCREENSHOT_FOLDER;
+	    dirText = GlobalConf.screenshot.SCREENSHOT_FOLDER;
 	}
 	final WebButton screenshotsLocation = new WebButton(dirText);
 	screenshotsLocation.addActionListener(new ActionListener()
@@ -479,9 +480,9 @@ public class ConfigDialog extends I18nJFrame {
 		    // Increase scrollbar speed
 		    WebScrollPane wsp = (WebScrollPane) ((Container) ((Container) ((Container) ((Container) ((Container) directoryChooser.getComponents()[0]).getComponents()[1]).getComponents()[0]).getComponents()[0]).getComponents()[1]).getComponents()[1];
 		    wsp.getVerticalScrollBar().setUnitIncrement(50);
-		    File currentLocation = new File(GlobalConf.inst.SCREENSHOT_FOLDER);
+		    File currentLocation = new File(GlobalConf.screenshot.SCREENSHOT_FOLDER);
 		    if (currentLocation.exists() && currentLocation.isDirectory()) {
-			directoryChooser.setSelectedDirectory(new File(GlobalConf.inst.SCREENSHOT_FOLDER));
+			directoryChooser.setSelectedDirectory(new File(GlobalConf.screenshot.SCREENSHOT_FOLDER));
 		    }
 		}
 		directoryChooser.setVisible(true);
@@ -496,8 +497,8 @@ public class ConfigDialog extends I18nJFrame {
 	});
 
 	// SCREENSHOT WIDTH AND HEIGHT
-	final JSpinner sswidthField = new JSpinner(new SpinnerNumberModel(GlobalConf.inst.SCREENSHOT_WIDTH, 100, 5000, 1));
-	final JSpinner ssheightField = new JSpinner(new SpinnerNumberModel(GlobalConf.inst.SCREENSHOT_HEIGHT, 100, 5000, 1));
+	final JSpinner sswidthField = new JSpinner(new SpinnerNumberModel(GlobalConf.screenshot.SCREENSHOT_WIDTH, 100, 5000, 1));
+	final JSpinner ssheightField = new JSpinner(new SpinnerNumberModel(GlobalConf.screenshot.SCREENSHOT_HEIGHT, 100, 5000, 1));
 
 	JPanel screenshotSize = new JPanel(new MigLayout("", "[][grow,fill][][grow,fill]", "[][]4[][]"));
 	screenshotSize.add(new JLabel(txt("gui.width") + ":"));
@@ -535,7 +536,7 @@ public class ConfigDialog extends I18nJFrame {
 	frameInfo.setForeground(darkgreen);
 
 	// SAVE LOCATION
-	File currentFrameLocation = new File(GlobalConf.inst.SCREENSHOT_FOLDER);
+	File currentFrameLocation = new File(GlobalConf.screenshot.SCREENSHOT_FOLDER);
 	String dirFrameText = txt("gui.frameoutput.directory.choose");
 	if (currentFrameLocation.exists() && currentFrameLocation.isDirectory()) {
 	    dirFrameText = GlobalConf.frame.RENDER_FOLDER;
@@ -841,7 +842,7 @@ public class ConfigDialog extends I18nJFrame {
 
 		// Graphics
 		ThreadComboBoxBean bean = (ThreadComboBoxBean) msaa.getSelectedItem();
-		GlobalConf.inst.POSTPROCESS_ANTIALIAS = bean.value;
+		GlobalConf.postprocess.POSTPROCESS_ANTIALIAS = bean.value;
 		GlobalConf.screen.VSYNC = vsync.isSelected();
 
 		// Interface
@@ -853,15 +854,15 @@ public class ConfigDialog extends I18nJFrame {
 
 		// Performance
 		bean = (ThreadComboBoxBean) numThreads.getSelectedItem();
-		GlobalConf.inst.NUMBER_THREADS = bean.value;
-		GlobalConf.inst.MULTITHREADING = multithreadCb.isSelected();
+		GlobalConf.performance.NUMBER_THREADS = bean.value;
+		GlobalConf.performance.MULTITHREADING = multithreadCb.isSelected();
 
 		// Screenshots
 		File ssfile = new File(screenshotsLocation.getText());
 		if (ssfile.exists() && ssfile.isDirectory())
-		    GlobalConf.inst.SCREENSHOT_FOLDER = ssfile.getAbsolutePath();
-		GlobalConf.inst.SCREENSHOT_WIDTH = ((Integer) sswidthField.getValue());
-		GlobalConf.inst.SCREENSHOT_HEIGHT = ((Integer) ssheightField.getValue());
+		    GlobalConf.screenshot.SCREENSHOT_FOLDER = ssfile.getAbsolutePath();
+		GlobalConf.screenshot.SCREENSHOT_WIDTH = ((Integer) sswidthField.getValue());
+		GlobalConf.screenshot.SCREENSHOT_HEIGHT = ((Integer) ssheightField.getValue());
 
 		// Frame output
 		File fofile = new File(frameLocation.getText());
@@ -878,7 +879,7 @@ public class ConfigDialog extends I18nJFrame {
 
 		// Save configuration
 		try {
-		    GlobalConf.inst.saveProperties(new File(System.getProperty("properties.file")).toURI().toURL());
+		    GlobalConf.saveProperties(new File(System.getProperty("properties.file")).toURI().toURL());
 		} catch (MalformedURLException e1) {
 		    EventManager.getInstance().post(Events.JAVA_EXCEPTION, e);
 		}
@@ -1037,7 +1038,7 @@ public class ConfigDialog extends I18nJFrame {
 	    // There's a new version!
 	    checkLabel.setText(txt("gui.newversion.available", GlobalConf.version, version));
 	    try {
-		final URI uri = new URI(GlobalConf.inst.WEBPAGE);
+		final URI uri = new URI(GlobalConf.WEBPAGE);
 
 		JButton button = new JButton();
 		button.setText(txt("gui.newversion.getit"));

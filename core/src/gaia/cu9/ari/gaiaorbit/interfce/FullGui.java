@@ -578,10 +578,10 @@ public class FullGui implements IGui, IObserver {
 	ambientGroup.addActor(ambient);
 
 	Label bloomLabel = new Label(txt("gui.bloom"), skin, "default");
-	bloom = new OwnLabel(Integer.toString((int) (GlobalConf.inst.POSTPROCESS_BLOOM_INTENSITY * 10)), skin);
+	bloom = new OwnLabel(Integer.toString((int) (GlobalConf.postprocess.POSTPROCESS_BLOOM_INTENSITY * 10)), skin);
 	bloomEffect = new Slider(Constants.MIN_SLIDER, Constants.MAX_SLIDER, 1, false, skin);
 	bloomEffect.setName("bloom effect");
-	bloomEffect.setValue(GlobalConf.inst.POSTPROCESS_BLOOM_INTENSITY * 10f);
+	bloomEffect.setValue(GlobalConf.postprocess.POSTPROCESS_BLOOM_INTENSITY * 10f);
 	bloomEffect.addListener(new EventListener() {
 	    @Override
 	    public boolean handle(Event event) {
@@ -611,7 +611,7 @@ public class FullGui implements IGui, IObserver {
 		return false;
 	    }
 	});
-	lensFlare.setChecked(GlobalConf.inst.POSTPROCESS_LENS_FLARE);
+	lensFlare.setChecked(GlobalConf.postprocess.POSTPROCESS_LENS_FLARE);
 
 	lightingGroup.addActor(lightingLabel);
 	lightingGroup.addActor(brightnessLabel);

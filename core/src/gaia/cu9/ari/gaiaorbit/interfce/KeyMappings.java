@@ -213,7 +213,7 @@ public class KeyMappings {
 	addMapping(new ProgramAction(txt("action.screenshot"), new Runnable() {
 	    @Override
 	    public void run() {
-		EventManager.getInstance().post(Events.SCREENSHOT_CMD, GlobalConf.inst.SCREENSHOT_WIDTH, GlobalConf.inst.SCREENSHOT_HEIGHT, GlobalConf.inst.SCREENSHOT_FOLDER);
+		EventManager.getInstance().post(Events.SCREENSHOT_CMD, GlobalConf.screenshot.SCREENSHOT_WIDTH, GlobalConf.screenshot.SCREENSHOT_HEIGHT, GlobalConf.screenshot.SCREENSHOT_FOLDER);
 	    }
 	}), Keys.F5);
 
