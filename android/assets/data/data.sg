@@ -6,10 +6,10 @@ data.providers=gaia.cu9.ari.gaiaorbit.data.HubCatalogLoader  gaia.cu9.ari.gaiaor
 
 # STAR LOADERS - loads a catalog of stars
 
-# Catalog loader class to use: HYGCSVLoader or HYGBinLoader
-gaia.cu9.ari.gaiaorbit.data.HubCatalogLoader.loader=gaia.cu9.ari.gaiaorbit.data.stars.HYGBinaryLoader
+# Catalog loader class to use with the StarLoader: HYGCSVLoader or HYGBinLoader. The ObjectServerLoader is configured elsewere (see global conf file).
+gaia.cu9.ari.gaiaorbit.data.HubCatalogLoader.StarLoader.loader=gaia.cu9.ari.gaiaorbit.data.stars.HYGBinaryLoader
 # Catalog data file
-gaia.cu9.ari.gaiaorbit.data.HubCatalogLoader.file=data/hygxyz.bin
+gaia.cu9.ari.gaiaorbit.data.HubCatalogLoader.StarLoader.file=data/hygxyz.bin
 
 # NON-STAR LOADERS - loads non-star entities (planets, satellites, moons, orbits...)
 
