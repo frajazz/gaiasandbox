@@ -383,8 +383,8 @@ public class GaiaSandbox implements ApplicationListener, IObserver {
 		}
 
 		/* FRAME OUTPUT */
-		if (GlobalConf.inst.RENDER_OUTPUT) {
-		    renderToImage(cam, pp.getPostProcessBean(RenderType.frame), GlobalConf.inst.RENDER_WIDTH, GlobalConf.inst.RENDER_HEIGHT, GlobalConf.inst.RENDER_FOLDER, GlobalConf.inst.RENDER_FILE_NAME);
+		if (GlobalConf.frame.RENDER_OUTPUT) {
+		    renderToImage(cam, pp.getPostProcessBean(RenderType.frame), GlobalConf.frame.RENDER_WIDTH, GlobalConf.frame.RENDER_HEIGHT, GlobalConf.frame.RENDER_FOLDER, GlobalConf.frame.RENDER_FILE_NAME);
 		}
 
 		/* SCREENSHOT OUTPUT */
@@ -406,9 +406,9 @@ public class GaiaSandbox implements ApplicationListener, IObserver {
      * @param dt Delta time in seconds.
      */
     public void update(float dt) {
-	if (GlobalConf.inst.RENDER_OUTPUT) {
+	if (GlobalConf.frame.RENDER_OUTPUT) {
 	    // If RENDER_OUTPUT is active, we need to set our dt according to the fps
-	    dt = 1f / GlobalConf.inst.RENDER_TARGET_FPS;
+	    dt = 1f / GlobalConf.frame.RENDER_TARGET_FPS;
 	} else {
 	    // Max time step is 0.1 seconds. Not in RENDER_OUTPUT MODE.
 	    dt = Math.min(dt, 0.1f);
@@ -470,7 +470,7 @@ public class GaiaSandbox implements ApplicationListener, IObserver {
 	    // the renderScene() has closed it.
 	    m_fbo.begin();
 	}
-	if (GlobalConf.inst.RENDER_SCREENSHOT_TIME) {
+	if (GlobalConf.frame.RENDER_SCREENSHOT_TIME) {
 	    // Timestamp
 	    renderGui.resize(camera.getViewport().getScreenWidth(), camera.getViewport().getScreenHeight());
 	    renderGui.render();

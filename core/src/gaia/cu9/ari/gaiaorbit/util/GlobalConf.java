@@ -37,15 +37,15 @@ public class GlobalConf implements IObserver {
      * Property values
      */
     public int SCREEN_WIDTH, SCREEN_HEIGHT, FULLSCREEN_WIDTH, FULLSCREEN_HEIGHT, CAMERA_FOV;
-    public int RENDER_WIDTH, RENDER_HEIGHT, RENDER_TARGET_FPS, POSTPROCESS_ANTIALIAS, NUMBER_THREADS;
+    public int POSTPROCESS_ANTIALIAS, NUMBER_THREADS;
     public long OBJECT_FADE_MS;
     public float LIMIT_MAG_RUNTIME, POSTPROCESS_BLOOM_INTENSITY, STAR_BRIGHTNESS, AMBIENT_LIGHT;
     public float CAMERA_SPEED, TURNING_SPEED, ROTATION_SPEED;
     /** This should be no smaller than 1 and no bigger than 5. The bigger the more stars with labels **/
     public float LABEL_NUMBER_FACTOR;
-    public boolean SCREEN_OUTPUT, RENDER_OUTPUT, DISPLAY_TUTORIAL, MULTITHREADING, STAR_COLOR_TRANSIT, ONLY_OBSERVED_STARS, COMPUTE_GAIA_SCAN, SHOW_DEBUG_INFO, VSYNC, POSTPROCESS_LENS_FLARE;
-    public boolean FULLSCREEN, RESIZABLE, SHOW_CONFIG_DIALOG, FOCUS_LOCK, RENDER_SCREENSHOT_TIME, INPUT_ENABLED;
-    public String RENDER_FOLDER, RENDER_FILE_NAME, TUTORIAL_SCRIPT_LOCATION;
+    public boolean SCREEN_OUTPUT, DISPLAY_TUTORIAL, MULTITHREADING, STAR_COLOR_TRANSIT, ONLY_OBSERVED_STARS, COMPUTE_GAIA_SCAN, SHOW_DEBUG_INFO, VSYNC, POSTPROCESS_LENS_FLARE;
+    public boolean FULLSCREEN, RESIZABLE, SHOW_CONFIG_DIALOG, FOCUS_LOCK, INPUT_ENABLED;
+    public String TUTORIAL_SCRIPT_LOCATION;
     public String SCREENSHOT_FOLDER, VERSION_CHECK_URL, LAST_VERSION, UI_THEME, SCRIPT_LOCATION;
     public String LOCALE;
     public int SCREENSHOT_WIDTH, SCREENSHOT_HEIGHT;
@@ -54,12 +54,90 @@ public class GlobalConf implements IObserver {
     /** Eye separation in stereoscopic mode in meters **/
     public float STEREOSCOPIC_EYE_SEPARATION_M = 1;
 
+    /** Visibility of components **/
+    public boolean[] VISIBILITY;
+
+    public static interface IConf {
+	/**
+	 * Persists this configuration in the given properties object.
+	 * @param p
+	 */
+	public void persist(Properties p);
+
+	/**
+	 * Initializes this configuration from the given properties object.
+	 * @param p
+	 */
+	public void initialize(Properties p);
+
+    }
+
+    /**
+     * Holds the configuration for the output frame subsystem.
+     * @author tsagrista
+     *
+     */
+    public static class FrameConf implements IConf, IObserver {
+
+	public int RENDER_WIDTH;
+	public int RENDER_HEIGHT;
+	public int RENDER_TARGET_FPS;
+	public String RENDER_FOLDER;
+	public String RENDER_FILE_NAME;
+	public boolean RENDER_SCREENSHOT_TIME;
+	public boolean RENDER_OUTPUT;
+
+	public FrameConf() {
+	    EventManager.getInstance().subscribe(this, Events.CONFIG_RENDER_SYSTEM, Events.RENDER_SYSTEM_CMD);
+	}
+
+	@Override
+	public void persist(Properties p) {
+	    p.setProperty("graphics.render.width", Integer.toString(RENDER_WIDTH));
+	    p.setProperty("graphics.render.height", Integer.toString(RENDER_HEIGHT));
+	    p.setProperty("graphics.render.targetfps", Integer.toString(RENDER_TARGET_FPS));
+	    p.setProperty("graphics.render.folder", RENDER_FOLDER);
+	    p.setProperty("graphics.render.filename", RENDER_FILE_NAME);
+	    p.setProperty("graphics.render.time", Boolean.toString(RENDER_SCREENSHOT_TIME));
+	    p.setProperty("graphics.render.output", Boolean.toString(RENDER_OUTPUT));
+	}
+
+	@Override
+	public void initialize(Properties p) {
+	    RENDER_WIDTH = Integer.parseInt(p.getProperty("graphics.render.width"));
+	    RENDER_HEIGHT = Integer.parseInt(p.getProperty("graphics.render.height"));
+	    RENDER_TARGET_FPS = Integer.parseInt(p.getProperty("graphics.render.targetfps"));
+	    RENDER_FOLDER = p.getProperty("graphics.render.folder");
+	    RENDER_FILE_NAME = p.getProperty("graphics.render.filename");
+	    RENDER_SCREENSHOT_TIME = Boolean.parseBoolean(p.getProperty("graphics.render.time"));
+	    RENDER_OUTPUT = Boolean.parseBoolean(p.getProperty("graphics.render.output"));
+	}
+
+	@Override
+	public void notify(Events event, Object... data) {
+	    switch (event) {
+	    case CONFIG_RENDER_SYSTEM:
+		RENDER_WIDTH = (int) data[0];
+		RENDER_HEIGHT = (int) data[1];
+		RENDER_TARGET_FPS = (int) data[2];
+		RENDER_FOLDER = (String) data[3];
+		RENDER_FILE_NAME = (String) data[4];
+		break;
+	    case RENDER_SYSTEM_CMD:
+		RENDER_OUTPUT = (Boolean) data[0];
+		break;
+	    }
+
+	}
+
+    }
+
     /**
      * Holds all configuration values related to data.
      * @author tsagrista
      *
      */
-    public static class DataConf {
+    public static class DataConf implements IConf {
 	/** Whether we use the local data source (HYG binary) or the object server **/
 	public boolean DATA_SOURCE_LOCAL = false;
 	/** The .sg file in case of local data source **/
@@ -77,6 +155,7 @@ public class GlobalConf implements IObserver {
 	/** Limit magnitude used for loading stars. All stars above this magnitude will not even be loaded by the sandbox. **/
 	public float LIMIT_MAG_LOAD;
 
+	@Override
 	public void persist(Properties p) {
 	    p.setProperty("data.source.local", Boolean.toString(DATA_SOURCE_LOCAL));
 	    p.setProperty("data.sg.file", DATA_SG_FILE);
@@ -86,6 +165,7 @@ public class GlobalConf implements IObserver {
 	    p.setProperty("data.limit.mag", Float.toString(LIMIT_MAG_LOAD));
 	}
 
+	@Override
 	public void initialize(Properties p) {
 	    /** DATA **/
 	    DATA_SOURCE_LOCAL = Boolean.parseBoolean(p.getProperty("data.source.local"));
@@ -102,14 +182,58 @@ public class GlobalConf implements IObserver {
 	}
     }
 
-    public static DataConf data = new DataConf();
+    public static class VersionConf implements IConf {
+	public String version;
+	public String buildtime;
+	public String builder;
+	public String system;
+	public String build;
+	public int major;
+	public int minor;
 
-    /** Visibility of components **/
-    public boolean[] VISIBILITY;
+	public static int[] getMajorMinorFromString(String version) {
+	    String majorS = version.substring(0, version.indexOf("."));
+	    String minorS = version.substring(version.indexOf(".") + 1, version.length());
+	    if (majorS.matches("^\\D{1}\\d+$")) {
+		majorS = majorS.substring(1, majorS.length());
+	    }
+	    if (minorS.matches("^\\d+\\D{1}$")) {
+		minorS = minorS.substring(0, minorS.length() - 1);
+	    }
+	    return new int[] { Integer.parseInt(majorS), Integer.parseInt(minorS) };
+	}
 
-    public VersionInfo VERSION;
+	@Override
+	public String toString() {
+	    return version;
+	}
+
+	@Override
+	public void persist(Properties p) {
+	    // The version info can not be modified
+	}
+
+	@Override
+	public void initialize(Properties p) {
+	    version = p.getProperty("version");
+	    buildtime = p.getProperty("buildtime");
+	    builder = p.getProperty("builder");
+	    build = p.getProperty("build");
+	    system = p.getProperty("system");
+
+	    int[] majmin = getMajorMinorFromString(version);
+	    major = majmin[0];
+	    minor = majmin[1];
+
+	}
+    }
 
     public static GlobalConf inst;
+
+    public static FrameConf frame;
+    public static DataConf data;
+    public static VersionConf version;
+
     static boolean initialized = false;
 
     public GlobalConf() {
@@ -123,25 +247,31 @@ public class GlobalConf implements IObserver {
     /**
      * Initializes the properties
      */
-    public static void initialize(InputStream propsFile) {
-	if (inst == null)
-	    inst = new GlobalConf();
-	inst.init(propsFile);
-	initialized = true;
-    }
-
-    /**
-     * Initializes the properties
-     */
     public static void initialize(InputStream propsFile, InputStream versionFile) {
-	if (inst == null)
-	    inst = new GlobalConf();
-	if (inst.VERSION == null) {
-	    inst.initializeVersion(versionFile);
-	}
+	try {
 
-	inst.init(propsFile);
-	initialized = true;
+	    if (inst == null)
+		inst = new GlobalConf();
+
+	    if (version == null) {
+		version = new VersionConf();
+
+		Properties versionProps = new Properties();
+		versionProps.load(versionFile);
+		version.initialize(versionProps);
+	    }
+
+	    if (data == null)
+		data = new DataConf();
+
+	    if (frame == null)
+		frame = new FrameConf();
+
+	    inst.init(propsFile);
+	    initialized = true;
+	} catch (Exception e) {
+	    EventManager.getInstance().post(Events.JAVA_EXCEPTION, e);
+	}
 
     }
 
@@ -154,13 +284,7 @@ public class GlobalConf implements IObserver {
 	    INPUT_ENABLED = true;
 
 	    /** GRAPHICS.RENDER **/
-	    RENDER_WIDTH = Integer.parseInt(p.getProperty("graphics.render.width"));
-	    RENDER_HEIGHT = Integer.parseInt(p.getProperty("graphics.render.height"));
-	    RENDER_TARGET_FPS = Integer.parseInt(p.getProperty("graphics.render.targetfps"));
-	    RENDER_FOLDER = p.getProperty("graphics.render.folder");
-	    RENDER_FILE_NAME = p.getProperty("graphics.render.filename");
-	    RENDER_SCREENSHOT_TIME = Boolean.parseBoolean(p.getProperty("graphics.render.time"));
-	    RENDER_OUTPUT = Boolean.parseBoolean(p.getProperty("graphics.render.output"));
+	    frame.initialize(p);
 
 	    /** GRAPHICS.SCREEN **/
 	    SCREEN_WIDTH = Integer.parseInt(p.getProperty("graphics.screen.width"));
@@ -258,13 +382,7 @@ public class GlobalConf implements IObserver {
     private void updatePropertiesValues() {
 	if (p != null && !p.isEmpty()) {
 	    /** GRAPHICS.RENDER **/
-	    p.setProperty("graphics.render.width", Integer.toString(RENDER_WIDTH));
-	    p.setProperty("graphics.render.height", Integer.toString(RENDER_HEIGHT));
-	    p.setProperty("graphics.render.targetfps", Integer.toString(RENDER_TARGET_FPS));
-	    p.setProperty("graphics.render.folder", RENDER_FOLDER);
-	    p.setProperty("graphics.render.filename", RENDER_FILE_NAME);
-	    p.setProperty("graphics.render.time", Boolean.toString(RENDER_SCREENSHOT_TIME));
-	    p.setProperty("graphics.render.output", Boolean.toString(RENDER_OUTPUT));
+	    frame.persist(p);
 
 	    /** GRAPHICS.SCREEN **/
 	    p.setProperty("graphics.screen.width", Integer.toString(SCREEN_WIDTH));
@@ -328,52 +446,8 @@ public class GlobalConf implements IObserver {
 	}
     }
 
-    public void initializeVersion(InputStream resource) {
-	Properties p = new Properties();
-	try {
-	    p.load(resource);
-	    VERSION = new VersionInfo();
-	    VERSION.version = p.getProperty("version");
-	    VERSION.buildtime = p.getProperty("buildtime");
-	    VERSION.builder = p.getProperty("builder");
-	    VERSION.build = p.getProperty("build");
-	    VERSION.system = p.getProperty("system");
-	    VERSION.initialize();
-	} catch (Exception e) {
-	    EventManager.getInstance().post(Events.JAVA_EXCEPTION, e);
-	}
-    }
-
     public String getFullApplicationName() {
-	return APPLICATION_NAME + " - " + VERSION.version;
-    }
-
-    public static class VersionInfo {
-	public String version, buildtime, builder, system, build;
-	public int major, minor;
-
-	public void initialize() {
-	    int[] majmin = getMajorMinorFromString(version);
-	    this.major = majmin[0];
-	    this.minor = majmin[1];
-	}
-
-	public static int[] getMajorMinorFromString(String version) {
-	    String majorS = version.substring(0, version.indexOf("."));
-	    String minorS = version.substring(version.indexOf(".") + 1, version.length());
-	    if (majorS.matches("^\\D{1}\\d+$")) {
-		majorS = majorS.substring(1, majorS.length());
-	    }
-	    if (minorS.matches("^\\d+\\D{1}$")) {
-		minorS = minorS.substring(0, minorS.length() - 1);
-	    }
-	    return new int[] { Integer.parseInt(majorS), Integer.parseInt(minorS) };
-	}
-
-	@Override
-	public String toString() {
-	    return version;
-	}
+	return APPLICATION_NAME + " - " + version.version;
     }
 
     @Override
@@ -415,16 +489,7 @@ public class GlobalConf implements IObserver {
 	case INPUT_ENABLED_CMD:
 	    INPUT_ENABLED = (boolean) data[0];
 	    break;
-	case CONFIG_RENDER_SYSTEM:
-	    RENDER_WIDTH = (int) data[0];
-	    RENDER_HEIGHT = (int) data[1];
-	    RENDER_TARGET_FPS = (int) data[2];
-	    RENDER_FOLDER = (String) data[3];
-	    RENDER_FILE_NAME = (String) data[4];
-	    break;
-	case RENDER_SYSTEM_CMD:
-	    RENDER_OUTPUT = (Boolean) data[0];
-	    break;
+
 	case LENS_FLARE_CMD:
 	    POSTPROCESS_LENS_FLARE = (Boolean) data[0];
 	    break;

@@ -117,7 +117,7 @@ public class ConfigDialog extends I18nJFrame {
 	if (startup) {
 	    /** SPLASH IMAGE **/
 	    URL url = this.getClass().getResource("/img/splash/splash-s.jpg");
-	    JSplashLabel label = new JSplashLabel(url, txt("gui.build", GlobalConf.inst.VERSION.build) + " - " + txt("gui.version", GlobalConf.inst.VERSION.version), null, Color.lightGray);
+	    JSplashLabel label = new JSplashLabel(url, txt("gui.build", GlobalConf.version.build) + " - " + txt("gui.version", GlobalConf.version.version), null, Color.lightGray);
 	    JPanel imagePanel = new JPanel(new GridLayout(1, 1, 0, 0));
 	    imagePanel.add(label);
 	    imagePanel.setBackground(Color.black);
@@ -538,7 +538,7 @@ public class ConfigDialog extends I18nJFrame {
 	File currentFrameLocation = new File(GlobalConf.inst.SCREENSHOT_FOLDER);
 	String dirFrameText = txt("gui.frameoutput.directory.choose");
 	if (currentFrameLocation.exists() && currentFrameLocation.isDirectory()) {
-	    dirFrameText = GlobalConf.inst.RENDER_FOLDER;
+	    dirFrameText = GlobalConf.frame.RENDER_FOLDER;
 	}
 	final WebButton frameLocation = new WebButton(dirFrameText);
 	frameLocation.addActionListener(new ActionListener()
@@ -554,9 +554,9 @@ public class ConfigDialog extends I18nJFrame {
 		    // Increase scrollbar speed
 		    WebScrollPane wsp = (WebScrollPane) ((Container) ((Container) ((Container) ((Container) ((Container) directoryChooser.getComponents()[0]).getComponents()[1]).getComponents()[0]).getComponents()[0]).getComponents()[1]).getComponents()[1];
 		    wsp.getVerticalScrollBar().setUnitIncrement(50);
-		    File currentLocation = new File(GlobalConf.inst.RENDER_FOLDER);
+		    File currentLocation = new File(GlobalConf.frame.RENDER_FOLDER);
 		    if (currentLocation.exists() && currentLocation.isDirectory()) {
-			directoryChooser.setSelectedDirectory(new File(GlobalConf.inst.RENDER_FOLDER));
+			directoryChooser.setSelectedDirectory(new File(GlobalConf.frame.RENDER_FOLDER));
 		    }
 		}
 		directoryChooser.setVisible(true);
@@ -595,11 +595,11 @@ public class ConfigDialog extends I18nJFrame {
 		}
 	    }
 	});
-	frameFileName.setText(GlobalConf.inst.RENDER_FILE_NAME);
+	frameFileName.setText(GlobalConf.frame.RENDER_FILE_NAME);
 
 	// FRAME OUTPUT WIDTH AND HEIGHT
-	final JSpinner frameWidthField = new JSpinner(new SpinnerNumberModel(GlobalConf.inst.RENDER_WIDTH, 100, 5000, 1));
-	final JSpinner frameHeightField = new JSpinner(new SpinnerNumberModel(GlobalConf.inst.RENDER_HEIGHT, 100, 5000, 1));
+	final JSpinner frameWidthField = new JSpinner(new SpinnerNumberModel(GlobalConf.frame.RENDER_WIDTH, 100, 5000, 1));
+	final JSpinner frameHeightField = new JSpinner(new SpinnerNumberModel(GlobalConf.frame.RENDER_HEIGHT, 100, 5000, 1));
 
 	JPanel renderSize = new JPanel(new MigLayout("", "[][grow,fill][][grow,fill]", "[][]4[][]"));
 	renderSize.add(new JLabel(txt("gui.width") + ":"));
@@ -608,7 +608,7 @@ public class ConfigDialog extends I18nJFrame {
 	renderSize.add(frameHeightField);
 
 	// TARGET FPS
-	final JSpinner targetFPS = new JSpinner(new SpinnerNumberModel(GlobalConf.inst.RENDER_TARGET_FPS, 1, 60, 1));
+	final JSpinner targetFPS = new JSpinner(new SpinnerNumberModel(GlobalConf.frame.RENDER_TARGET_FPS, 1, 60, 1));
 
 	// FRAME OUTPUT CHECKBOX
 	final JCheckBox frameCb = new JCheckBox(txt("gui.frameoutput.enable"));
@@ -620,7 +620,7 @@ public class ConfigDialog extends I18nJFrame {
 		enableComponents(selected, frameLocation, frameWidthField, frameHeightField, targetFPS, frameFileName);
 	    }
 	});
-	frameCb.setSelected(GlobalConf.inst.RENDER_OUTPUT);
+	frameCb.setSelected(GlobalConf.frame.RENDER_OUTPUT);
 	enableComponents(frameCb.isSelected(), frameLocation, frameWidthField, frameHeightField, targetFPS, frameFileName);
 
 	imageOutput.add(frameInfo, "span");
@@ -866,15 +866,15 @@ public class ConfigDialog extends I18nJFrame {
 		// Frame output
 		File fofile = new File(frameLocation.getText());
 		if (fofile.exists() && fofile.isDirectory())
-		    GlobalConf.inst.RENDER_FOLDER = fofile.getAbsolutePath();
+		    GlobalConf.frame.RENDER_FOLDER = fofile.getAbsolutePath();
 		String text = frameFileName.getText();
 		if (text.matches("^\\w+$")) {
-		    GlobalConf.inst.RENDER_FILE_NAME = text;
+		    GlobalConf.frame.RENDER_FILE_NAME = text;
 		}
-		GlobalConf.inst.RENDER_WIDTH = ((Integer) frameWidthField.getValue());
-		GlobalConf.inst.RENDER_HEIGHT = ((Integer) frameHeightField.getValue());
-		GlobalConf.inst.RENDER_OUTPUT = frameCb.isSelected();
-		GlobalConf.inst.RENDER_TARGET_FPS = ((Integer) targetFPS.getValue());
+		GlobalConf.frame.RENDER_WIDTH = ((Integer) frameWidthField.getValue());
+		GlobalConf.frame.RENDER_HEIGHT = ((Integer) frameHeightField.getValue());
+		GlobalConf.frame.RENDER_OUTPUT = frameCb.isSelected();
+		GlobalConf.frame.RENDER_TARGET_FPS = ((Integer) targetFPS.getValue());
 
 		// Save configuration
 		try {
@@ -1031,11 +1031,11 @@ public class ConfigDialog extends I18nJFrame {
      * @param version The version to check.
      */
     private void newVersionCheck(String version) {
-	int[] majmin = GlobalConf.VersionInfo.getMajorMinorFromString(version);
+	int[] majmin = GlobalConf.VersionConf.getMajorMinorFromString(version);
 
-	if (majmin[0] > GlobalConf.inst.VERSION.major || (majmin[0] == GlobalConf.inst.VERSION.major && majmin[1] > GlobalConf.inst.VERSION.minor)) {
+	if (majmin[0] > GlobalConf.version.major || (majmin[0] == GlobalConf.version.major && majmin[1] > GlobalConf.version.minor)) {
 	    // There's a new version!
-	    checkLabel.setText(txt("gui.newversion.available", GlobalConf.inst.VERSION, version));
+	    checkLabel.setText(txt("gui.newversion.available", GlobalConf.version, version));
 	    try {
 		final URI uri = new URI(GlobalConf.inst.WEBPAGE);
 

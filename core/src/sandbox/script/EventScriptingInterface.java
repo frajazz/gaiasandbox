@@ -471,7 +471,7 @@ public class EventScriptingInterface implements IScriptingInterface, IObserver {
 
     @Override
     public String getVersionNumber() {
-	return GlobalConf.inst.VERSION.version;
+	return GlobalConf.version.version;
     }
 
     @Override

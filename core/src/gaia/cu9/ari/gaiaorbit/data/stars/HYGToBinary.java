@@ -14,6 +14,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.List;
+import java.util.Properties;
 
 /**
  * Small utility to convert a the HYG CSV catalog to binary in the following format:
@@ -36,8 +37,15 @@ public class HYGToBinary implements IObserver {
 	EventManager.getInstance().subscribe(hyg, Events.POST_NOTIFICATION);
 
 	InputStream versionFile = HYGToBinary.class.getResourceAsStream("/version");
+	Properties vprops = new Properties();
+	try {
+	    vprops.load(versionFile);
+	} catch (IOException e) {
+	    e.printStackTrace(System.err);
+	}
 	GlobalConf.inst = new GlobalConf();
-	GlobalConf.inst.initializeVersion(versionFile);
+	GlobalConf.version = new GlobalConf.VersionConf();
+	GlobalConf.version.initialize(vprops);
 
 	//hyg.compareCSVtoBinary("/home/tsagrista/Workspaces/workspace/GaiaOrbit-android/assets/data/hyg80.csv", "/home/tsagrista/Workspaces/workspace/GaiaOrbit-android/assets/data/hyg80.bin");
 

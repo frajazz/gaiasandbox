@@ -50,7 +50,7 @@ public class GSPostProcessor implements IPostProcessor, IObserver {
 	case screenshot:
 	    return GlobalConf.inst.SCREENSHOT_WIDTH;
 	case frame:
-	    return GlobalConf.inst.RENDER_WIDTH;
+	    return GlobalConf.frame.RENDER_WIDTH;
 	}
 	return 0;
     }
@@ -62,7 +62,7 @@ public class GSPostProcessor implements IPostProcessor, IObserver {
 	case screenshot:
 	    return GlobalConf.inst.SCREENSHOT_HEIGHT;
 	case frame:
-	    return GlobalConf.inst.RENDER_HEIGHT;
+	    return GlobalConf.frame.RENDER_HEIGHT;
 	}
 	return 0;
     }
@@ -138,11 +138,11 @@ public class GSPostProcessor implements IPostProcessor, IObserver {
 		});
 	    }
 
-	    if (changed(pps[RenderType.frame.index].pp, conf.RENDER_WIDTH, conf.RENDER_HEIGHT)) {
+	    if (changed(pps[RenderType.frame.index].pp, GlobalConf.frame.RENDER_WIDTH, GlobalConf.frame.RENDER_HEIGHT)) {
 		Gdx.app.postRunnable(new Runnable() {
 		    @Override
 		    public void run() {
-			replace(RenderType.frame.index, conf.RENDER_WIDTH, conf.RENDER_HEIGHT);
+			replace(RenderType.frame.index, GlobalConf.frame.RENDER_WIDTH, GlobalConf.frame.RENDER_HEIGHT);
 		    }
 		});
 	    }

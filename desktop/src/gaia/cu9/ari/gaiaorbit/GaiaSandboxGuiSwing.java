@@ -104,7 +104,7 @@ public class GaiaSandboxGuiSwing extends JFrame {
 
 	    // The splash window
 	    URL url = GaiaSandboxGuiSwing.class.getResource("/img/splash/splash1.png");
-	    JSplash splash = new JSplash(url, true, true, false, GlobalConf.inst.VERSION.version, null, Color.WHITE, Color.BLACK);
+	    JSplash splash = new JSplash(url, true, true, false, GlobalConf.version.version, null, Color.WHITE, Color.BLACK);
 	    splash.splashOn();
 	    splash.toFront();
 

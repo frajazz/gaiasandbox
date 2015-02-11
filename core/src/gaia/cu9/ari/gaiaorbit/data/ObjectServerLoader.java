@@ -46,7 +46,7 @@ public class ObjectServerLoader implements ISceneGraphNodeProvider {
 	    Message msg = new Message("client-ident?affiliation=ARI&name="
 		    + GlobalConf.APPLICATION_NAME
 		    + "&description=Gaia Sandbox outreach software&version="
-		    + GlobalConf.inst.VERSION.version
+		    + GlobalConf.version.version
 		    + "&authors=tsagrista&homepage=" + GlobalConf.WEBPAGE
 		    + "&icon-url=" + GlobalConf.ICON_URL);
 	    cc.sendMessage(msg);
