@@ -70,6 +70,7 @@ import javax.swing.SpinnerNumberModel;
 import javax.swing.SwingConstants;
 import javax.swing.UIManager;
 import javax.swing.border.Border;
+import javax.swing.border.EmptyBorder;
 import javax.swing.border.MatteBorder;
 import javax.swing.border.TitledBorder;
 import javax.swing.event.ChangeEvent;
@@ -480,7 +481,7 @@ public class ConfigDialog extends I18nJFrame {
 		{
 		    directoryChooser = new WebDirectoryChooser(frame, txt("gui.directory.chooseany"));
 		    // Increase scrollbar speed
-		    WebScrollPane wsp = (WebScrollPane) ((Container) ((Container) ((Container) ((Container) ((Container) directoryChooser.getComponents()[0]).getComponents()[1]).getComponents()[0]).getComponents()[0]).getComponents()[1]).getComponents()[1];
+		    JScrollPane wsp = (JScrollPane) ((Container) ((Container) ((Container) ((Container) ((Container) directoryChooser.getComponents()[0]).getComponents()[1]).getComponents()[0]).getComponents()[0]).getComponents()[1]).getComponents()[1];
 		    wsp.getVerticalScrollBar().setUnitIncrement(50);
 		    File currentLocation = new File(GlobalConf.screenshot.SCREENSHOT_FOLDER);
 		    if (currentLocation.exists() && currentLocation.isDirectory()) {
@@ -658,6 +659,7 @@ public class ConfigDialog extends I18nJFrame {
 	// CONNECTION PANE
 	final JPanel connection = new JPanel(new MigLayout("", "[grow,fill]", ""));
 	final JScrollPane scrollConnection = new JScrollPane(connection);
+	scrollConnection.setBorder(new EmptyBorder(0, 0, 0, 0));
 	scrollConnection.setMinimumSize(new Dimension(0, 150));
 	scrollConnection.setVisible(false);
 
