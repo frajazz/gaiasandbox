@@ -678,7 +678,7 @@ public class ConfigDialog extends I18nJFrame {
 		    String host = hostname.getText();
 		    int prt = Integer.parseInt(port.getText());
 
-		    ClientCore cc = new ClientCore();
+		    ClientCore cc = ClientCore.getInstance();
 		    cc.connect(host, prt);
 
 		    // Get visualizations list
@@ -692,6 +692,11 @@ public class ConfigDialog extends I18nJFrame {
 				data.append((String) block.getPayload());
 			    }
 			    vislistdata = data.toString();
+			}
+
+			@Override
+			public void receivedMessageBlock(Message query, Message reply, MessagePayloadBlock block) {
+
 			}
 
 		    });
@@ -843,7 +848,7 @@ public class ConfigDialog extends I18nJFrame {
 		if (startup && objectserver.isSelected()) {
 		    try {
 			// Check object server connection
-			ClientCore cc = new ClientCore();
+			ClientCore cc = ClientCore.getInstance();
 			cc.connect(GlobalConf.data.OBJECT_SERVER_HOSTNAME, GlobalConf.data.OBJECT_SERVER_PORT);
 			cc.disconnect();
 		    } catch (IOException ex) {
