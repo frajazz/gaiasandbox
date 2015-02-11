@@ -205,7 +205,7 @@ public class SceneGraphRenderer extends AbstractRenderer implements IProcessRend
 	ComponentType[] comps = ComponentType.values();
 
 	// Set reference
-	visible = GlobalConf.inst.VISIBILITY;
+	visible = GlobalConf.scene.VISIBILITY;
 
 	times = new long[comps.length];
 	alphas = new float[comps.length];
@@ -365,7 +365,7 @@ public class SceneGraphRenderer extends AbstractRenderer implements IProcessRend
 		Pool<Vector3> vectorPool = Pools.get(Vector3.class);
 		// Vector of 1 meter length pointing to the side of the camera
 		Vector3 side = vectorPool.obtain().set(cam.direction);
-		float separation = (float) Constants.M_TO_U * GlobalConf.inst.STEREOSCOPIC_EYE_SEPARATION_M;
+		float separation = (float) Constants.M_TO_U * GlobalConf.program.STEREOSCOPIC_EYE_SEPARATION_M;
 		if (camera.getMode() == CameraMode.Focus) {
 		    // In focus mode we keep the separation dependant on the distance with a fixed angle
 		    float distToFocus = ((NaturalCamera) camera.getCurrent()).focus.distToCamera - ((NaturalCamera) camera.getCurrent()).focus.getRadius();
@@ -496,7 +496,7 @@ public class SceneGraphRenderer extends AbstractRenderer implements IProcessRend
 
     private float calculateAlpha(ComponentType type, long now) {
 	long diff = now - times[type.ordinal()];
-	if (diff > GlobalConf.inst.OBJECT_FADE_MS) {
+	if (diff > GlobalConf.scene.OBJECT_FADE_MS) {
 	    if (visible[type.ordinal()]) {
 		alphas[type.ordinal()] = 1;
 	    } else {
@@ -504,7 +504,7 @@ public class SceneGraphRenderer extends AbstractRenderer implements IProcessRend
 	    }
 	    return alphas[type.ordinal()];
 	} else {
-	    return visible[type.ordinal()] ? MathUtilsd.lint(diff, 0, GlobalConf.inst.OBJECT_FADE_MS, 0, 1) : MathUtilsd.lint(diff, 0, GlobalConf.inst.OBJECT_FADE_MS, 1, 0);
+	    return visible[type.ordinal()] ? MathUtilsd.lint(diff, 0, GlobalConf.scene.OBJECT_FADE_MS, 0, 1) : MathUtilsd.lint(diff, 0, GlobalConf.scene.OBJECT_FADE_MS, 1, 0);
 	}
     }
 

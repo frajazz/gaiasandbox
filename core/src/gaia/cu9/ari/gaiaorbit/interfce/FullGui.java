@@ -235,7 +235,7 @@ public class FullGui implements IGui, IObserver {
 	Label fovLabel = new Label(txt("gui.camera.fov"), skin, "default");
 	fieldOfView = new Slider(Constants.MIN_FOV, Constants.MAX_FOV, 1, false, skin);
 	fieldOfView.setName("field of view");
-	fieldOfView.setValue(GlobalConf.inst.CAMERA_FOV);
+	fieldOfView.setValue(GlobalConf.scene.CAMERA_FOV);
 	fieldOfView.addListener(new EventListener() {
 	    @Override
 	    public boolean handle(Event event) {
@@ -249,13 +249,13 @@ public class FullGui implements IGui, IObserver {
 	    }
 
 	});
-	fov = new OwnLabel(Integer.toString((int) GlobalConf.inst.CAMERA_FOV) + "°", skin, "default");
+	fov = new OwnLabel(Integer.toString((int) GlobalConf.scene.CAMERA_FOV) + "°", skin, "default");
 
 	/** CAMERA SPEED **/
 	Label camSpeedLabel = new Label(txt("gui.camera.speed"), skin, "default");
 	cameraSpeed = new Slider(Constants.MIN_SLIDER, Constants.MAX_SLIDER, 1, false, skin);
 	cameraSpeed.setName("camera speed");
-	cameraSpeed.setValue(GlobalConf.inst.CAMERA_SPEED * 10);
+	cameraSpeed.setValue(GlobalConf.scene.CAMERA_SPEED * 10);
 	cameraSpeed.addListener(new EventListener() {
 	    @Override
 	    public boolean handle(Event event) {
@@ -268,13 +268,13 @@ public class FullGui implements IGui, IObserver {
 	    }
 
 	});
-	speed = new OwnLabel(Integer.toString((int) (GlobalConf.inst.CAMERA_SPEED * 10)), skin, "default");
+	speed = new OwnLabel(Integer.toString((int) (GlobalConf.scene.CAMERA_SPEED * 10)), skin, "default");
 
 	/** ROTATION SPEED **/
 	Label rotateLabel = new Label(txt("gui.rotation.speed"), skin, "default");
 	rotateSpeed = new Slider(Constants.MIN_SLIDER, Constants.MAX_SLIDER, 1, false, skin);
 	rotateSpeed.setName("rotate speed");
-	rotateSpeed.setValue(MathUtilsd.lint(GlobalConf.inst.ROTATION_SPEED, Constants.MIN_ROT_SPEED, Constants.MAX_ROT_SPEED, Constants.MIN_SLIDER, Constants.MAX_SLIDER));
+	rotateSpeed.setValue(MathUtilsd.lint(GlobalConf.scene.ROTATION_SPEED, Constants.MIN_ROT_SPEED, Constants.MAX_ROT_SPEED, Constants.MIN_SLIDER, Constants.MAX_SLIDER));
 	rotateSpeed.addListener(new EventListener() {
 	    @Override
 	    public boolean handle(Event event) {
@@ -287,13 +287,13 @@ public class FullGui implements IGui, IObserver {
 	    }
 
 	});
-	rotate = new OwnLabel(Integer.toString((int) MathUtilsd.lint(GlobalConf.inst.ROTATION_SPEED, Constants.MIN_ROT_SPEED, Constants.MAX_ROT_SPEED, Constants.MIN_SLIDER, Constants.MAX_SLIDER)), skin, "default");
+	rotate = new OwnLabel(Integer.toString((int) MathUtilsd.lint(GlobalConf.scene.ROTATION_SPEED, Constants.MIN_ROT_SPEED, Constants.MAX_ROT_SPEED, Constants.MIN_SLIDER, Constants.MAX_SLIDER)), skin, "default");
 
 	/** TURNING SPEED **/
 	Label turnLabel = new Label(txt("gui.turn.speed"), skin, "default");
 	turnSpeed = new Slider(Constants.MIN_SLIDER, Constants.MAX_SLIDER, 1, false, skin);
 	turnSpeed.setName("turn speed");
-	turnSpeed.setValue(MathUtilsd.lint(GlobalConf.inst.TURNING_SPEED, Constants.MIN_TURN_SPEED, Constants.MAX_TURN_SPEED, Constants.MIN_SLIDER, Constants.MAX_SLIDER));
+	turnSpeed.setValue(MathUtilsd.lint(GlobalConf.scene.TURNING_SPEED, Constants.MIN_TURN_SPEED, Constants.MAX_TURN_SPEED, Constants.MIN_SLIDER, Constants.MAX_SLIDER));
 	turnSpeed.addListener(new EventListener() {
 	    @Override
 	    public boolean handle(Event event) {
@@ -306,12 +306,12 @@ public class FullGui implements IGui, IObserver {
 	    }
 
 	});
-	turn = new OwnLabel(Integer.toString((int) MathUtilsd.lint(GlobalConf.inst.TURNING_SPEED, Constants.MIN_TURN_SPEED, Constants.MAX_TURN_SPEED, Constants.MIN_SLIDER, Constants.MAX_SLIDER)), skin, "default");
+	turn = new OwnLabel(Integer.toString((int) MathUtilsd.lint(GlobalConf.scene.TURNING_SPEED, Constants.MIN_TURN_SPEED, Constants.MAX_TURN_SPEED, Constants.MIN_SLIDER, Constants.MAX_SLIDER)), skin, "default");
 
 	/** Focus lock **/
 	focusLock = new CheckBox(txt("gui.camera.lock"), skin);
 	focusLock.setName("focus lock");
-	focusLock.setChecked(GlobalConf.inst.FOCUS_LOCK);
+	focusLock.setChecked(GlobalConf.scene.FOCUS_LOCK);
 	focusLock.addListener(new EventListener() {
 	    @Override
 	    public boolean handle(Event event) {
@@ -536,10 +536,10 @@ public class FullGui implements IGui, IObserver {
 	VerticalGroup lightingGroup = new VerticalGroup().align(Align.left);
 	Label lightingLabel = new Label(txt("gui.lighting"), skin, "header");
 	Label brightnessLabel = new Label(txt("gui.starbrightness"), skin, "default");
-	brightness = new OwnLabel(Integer.toString((int) (MathUtilsd.lint(GlobalConf.inst.STAR_BRIGHTNESS, Constants.MIN_STAR_BRIGHT, Constants.MAX_STAR_BRIGHT, Constants.MIN_SLIDER, Constants.MAX_SLIDER))), skin);
+	brightness = new OwnLabel(Integer.toString((int) (MathUtilsd.lint(GlobalConf.scene.STAR_BRIGHTNESS, Constants.MIN_STAR_BRIGHT, Constants.MAX_STAR_BRIGHT, Constants.MIN_SLIDER, Constants.MAX_SLIDER))), skin);
 	starBrightness = new Slider(Constants.MIN_SLIDER, Constants.MAX_SLIDER, 1, false, skin);
 	starBrightness.setName("star brightness");
-	starBrightness.setValue(MathUtilsd.lint(GlobalConf.inst.STAR_BRIGHTNESS, Constants.MIN_STAR_BRIGHT, Constants.MAX_STAR_BRIGHT, Constants.MIN_SLIDER, Constants.MAX_SLIDER));
+	starBrightness.setValue(MathUtilsd.lint(GlobalConf.scene.STAR_BRIGHTNESS, Constants.MIN_STAR_BRIGHT, Constants.MAX_STAR_BRIGHT, Constants.MIN_SLIDER, Constants.MAX_SLIDER));
 	starBrightness.addListener(new EventListener() {
 	    @Override
 	    public boolean handle(Event event) {
@@ -557,10 +557,10 @@ public class FullGui implements IGui, IObserver {
 	brightnessGroup.addActor(brightness);
 
 	Label ambientLightLabel = new Label(txt("gui.light.ambient"), skin, "default");
-	ambient = new OwnLabel(Integer.toString((int) (GlobalConf.inst.AMBIENT_LIGHT * 100)), skin);
+	ambient = new OwnLabel(Integer.toString((int) (GlobalConf.scene.AMBIENT_LIGHT * 100)), skin);
 	ambientLight = new Slider(Constants.MIN_SLIDER, Constants.MAX_SLIDER, 1, false, skin);
 	ambientLight.setName("ambient light");
-	ambientLight.setValue(GlobalConf.inst.AMBIENT_LIGHT * 100);
+	ambientLight.setValue(GlobalConf.scene.AMBIENT_LIGHT * 100);
 	ambientLight.addListener(new EventListener() {
 	    @Override
 	    public boolean handle(Event event) {

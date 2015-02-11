@@ -38,23 +38,14 @@ public class GlobalConf implements IObserver {
     /**
      * Property values
      */
-    public int CAMERA_FOV;
     public int POSTPROCESS_ANTIALIAS, NUMBER_THREADS;
-    public long OBJECT_FADE_MS;
-    public float LIMIT_MAG_RUNTIME, POSTPROCESS_BLOOM_INTENSITY, STAR_BRIGHTNESS, AMBIENT_LIGHT;
-    public float CAMERA_SPEED, TURNING_SPEED, ROTATION_SPEED;
+    public float LIMIT_MAG_RUNTIME, POSTPROCESS_BLOOM_INTENSITY;
     /** This should be no smaller than 1 and no bigger than 5. The bigger the more stars with labels **/
-    public float LABEL_NUMBER_FACTOR;
     public boolean MULTITHREADING, STAR_COLOR_TRANSIT, ONLY_OBSERVED_STARS, COMPUTE_GAIA_SCAN, POSTPROCESS_LENS_FLARE;
-    public boolean FOCUS_LOCK, INPUT_ENABLED;
+    public boolean INPUT_ENABLED;
     public String SCREENSHOT_FOLDER;
     public int SCREENSHOT_WIDTH, SCREENSHOT_HEIGHT;
     public boolean CLEAN_MODE, GLOBAL_PAUSE = false, TIME_ON = false;
-    /** Eye separation in stereoscopic mode in meters **/
-    public float STEREOSCOPIC_EYE_SEPARATION_M = 1;
-
-    /** Visibility of components **/
-    public boolean[] VISIBILITY;
 
     public static interface IConf {
 	/**
@@ -132,7 +123,6 @@ public class GlobalConf implements IObserver {
 		RENDER_OUTPUT = (Boolean) data[0];
 		break;
 	    }
-
 	}
 
     }
@@ -244,6 +234,8 @@ public class GlobalConf implements IObserver {
 	public String SCRIPT_LOCATION;
 	public String LOCALE;
 	public boolean STEREOSCOPIC_MODE;
+	/** Eye separation in stereoscopic mode in meters **/
+	public float STEREOSCOPIC_EYE_SEPARATION_M = 1;
 
 	private DateFormat df;
 
@@ -303,6 +295,94 @@ public class GlobalConf implements IObserver {
 
     }
 
+    public static class SceneConf implements IConf, IObserver {
+	public long OBJECT_FADE_MS;
+	public float STAR_BRIGHTNESS;
+	public float AMBIENT_LIGHT;
+	public int CAMERA_FOV;
+	public float CAMERA_SPEED;
+	public float TURNING_SPEED;
+	public float ROTATION_SPEED;
+	public boolean FOCUS_LOCK;
+	public float LABEL_NUMBER_FACTOR;
+	public boolean[] VISIBILITY;
+
+	public SceneConf() {
+	    EventManager.getInstance().subscribe(this, Events.FOCUS_LOCK_CMD, Events.STAR_BRIGHTNESS_CMD, Events.FOV_CHANGED_CMD, Events.CAMERA_SPEED_CMD, Events.ROTATION_SPEED_CMD, Events.TURNING_SPEED_CMD);
+	}
+
+	@Override
+	public void persist(Properties p) {
+	    p.setProperty("scene.object.fadems", Long.toString(OBJECT_FADE_MS));
+	    p.setProperty("scene.star.brightness", Float.toString(STAR_BRIGHTNESS));
+	    p.setProperty("scene.ambient", Float.toString(AMBIENT_LIGHT));
+	    p.setProperty("scene.camera.fov", Integer.toString(CAMERA_FOV));
+	    p.setProperty("scene.camera.focus.vel", Float.toString(CAMERA_SPEED));
+	    p.setProperty("scene.camera.turn.vel", Float.toString(TURNING_SPEED));
+	    p.setProperty("scene.camera.rotate.vel", Float.toString(ROTATION_SPEED));
+	    p.setProperty("scene.focuslock", Boolean.toString(FOCUS_LOCK));
+	    p.setProperty("scene.labelfactor", Float.toString(LABEL_NUMBER_FACTOR));
+	    // Visibility of components
+	    int idx = 0;
+	    ComponentType[] cts = ComponentType.values();
+	    for (boolean b : VISIBILITY) {
+		ComponentType ct = cts[idx];
+		p.setProperty("scene.visibility." + ct.name(), Boolean.toString(b));
+		idx++;
+	    }
+	}
+
+	@Override
+	public void initialize(Properties p) {
+	    OBJECT_FADE_MS = Long.parseLong(p.getProperty("scene.object.fadems"));
+	    STAR_BRIGHTNESS = Float.parseFloat(p.getProperty("scene.star.brightness"));
+	    AMBIENT_LIGHT = Float.parseFloat(p.getProperty("scene.ambient"));
+	    CAMERA_FOV = Integer.parseInt(p.getProperty("scene.camera.fov"));
+	    CAMERA_SPEED = Float.parseFloat(p.getProperty("scene.camera.focus.vel"));
+	    FOCUS_LOCK = Boolean.parseBoolean(p.getProperty("scene.focuslock"));
+	    TURNING_SPEED = Float.parseFloat(p.getProperty("scene.camera.turn.vel"));
+	    ROTATION_SPEED = Float.parseFloat(p.getProperty("scene.camera.rotate.vel"));
+	    LABEL_NUMBER_FACTOR = Float.parseFloat(p.getProperty("scene.labelfactor"));
+	    //Visibility of components
+	    ComponentType[] cts = ComponentType.values();
+	    VISIBILITY = new boolean[cts.length];
+	    for (ComponentType ct : cts) {
+		String key = "scene.visibility." + ct.name();
+		if (p.containsKey(key)) {
+		    VISIBILITY[ct.ordinal()] = Boolean.parseBoolean(p.getProperty(key));
+		}
+	    }
+	}
+
+	@Override
+	public void notify(Events event, Object... data) {
+	    switch (event) {
+	    case FOCUS_LOCK_CMD:
+		FOCUS_LOCK = (boolean) data[1];
+		break;
+
+	    case STAR_BRIGHTNESS_CMD:
+		STAR_BRIGHTNESS = (float) data[0];
+		break;
+	    case FOV_CHANGED_CMD:
+		CAMERA_FOV = MathUtilsd.clamp(((Float) data[0]).intValue(), Constants.MIN_FOV, Constants.MAX_FOV);
+		break;
+
+	    case CAMERA_SPEED_CMD:
+		CAMERA_SPEED = (float) data[0];
+		break;
+	    case ROTATION_SPEED_CMD:
+		ROTATION_SPEED = (float) data[0];
+		break;
+	    case TURNING_SPEED_CMD:
+		TURNING_SPEED = (float) data[0];
+		break;
+	    }
+
+	}
+
+    }
+
     public static class VersionConf implements IConf {
 	public String version;
 	public String buildtime;
@@ -357,6 +437,7 @@ public class GlobalConf implements IObserver {
     public static ScreenConf screen;
     public static ProgramConf program;
     public static DataConf data;
+    public static SceneConf scene;
     public static VersionConf version;
 
     static boolean initialized = false;
@@ -401,6 +482,11 @@ public class GlobalConf implements IObserver {
 	    if (program == null) {
 		program = new ProgramConf();
 		configurations.add(program);
+	    }
+
+	    if (scene == null) {
+		scene = new SceneConf();
+		configurations.add(scene);
 	    }
 
 	    if (data == null) {
@@ -459,24 +545,7 @@ public class GlobalConf implements IObserver {
 	    SCREENSHOT_HEIGHT = Integer.parseInt(p.getProperty("screenshot.height"));
 
 	    /** SCENE **/
-	    OBJECT_FADE_MS = Long.parseLong(p.getProperty("scene.object.fadems"));
-	    STAR_BRIGHTNESS = Float.parseFloat(p.getProperty("scene.star.brightness"));
-	    AMBIENT_LIGHT = Float.parseFloat(p.getProperty("scene.ambient"));
-	    CAMERA_FOV = Integer.parseInt(p.getProperty("scene.camera.fov"));
-	    CAMERA_SPEED = Float.parseFloat(p.getProperty("scene.camera.focus.vel"));
-	    FOCUS_LOCK = Boolean.parseBoolean(p.getProperty("scene.focuslock"));
-	    TURNING_SPEED = Float.parseFloat(p.getProperty("scene.camera.turn.vel"));
-	    ROTATION_SPEED = Float.parseFloat(p.getProperty("scene.camera.rotate.vel"));
-	    LABEL_NUMBER_FACTOR = Float.parseFloat(p.getProperty("scene.labelfactor"));
-	    //Visibility of components
-	    ComponentType[] cts = ComponentType.values();
-	    VISIBILITY = new boolean[cts.length];
-	    for (ComponentType ct : cts) {
-		String key = "scene.visibility." + ct.name();
-		if (p.containsKey(key)) {
-		    VISIBILITY[ct.ordinal()] = Boolean.parseBoolean(p.getProperty(key));
-		}
-	    }
+	    scene.initialize(p);
 
 	} catch (Exception e) {
 	    EventManager.getInstance().post(Events.JAVA_EXCEPTION, e);
@@ -532,23 +601,7 @@ public class GlobalConf implements IObserver {
 	    p.setProperty("screenshot.height", Integer.toString(SCREENSHOT_HEIGHT));
 
 	    /** SCENE **/
-	    p.setProperty("scene.object.fadems", Long.toString(OBJECT_FADE_MS));
-	    p.setProperty("scene.star.brightness", Float.toString(STAR_BRIGHTNESS));
-	    p.setProperty("scene.ambient", Float.toString(AMBIENT_LIGHT));
-	    p.setProperty("scene.camera.fov", Integer.toString(CAMERA_FOV));
-	    p.setProperty("scene.camera.focus.vel", Float.toString(CAMERA_SPEED));
-	    p.setProperty("scene.camera.turn.vel", Float.toString(TURNING_SPEED));
-	    p.setProperty("scene.camera.rotate.vel", Float.toString(ROTATION_SPEED));
-	    p.setProperty("scene.focuslock", Boolean.toString(FOCUS_LOCK));
-	    p.setProperty("scene.labelfactor", Float.toString(LABEL_NUMBER_FACTOR));
-	    // Visibility of components
-	    int idx = 0;
-	    ComponentType[] cts = ComponentType.values();
-	    for (boolean b : VISIBILITY) {
-		ComponentType ct = cts[idx];
-		p.setProperty("scene.visibility." + ct.name(), Boolean.toString(b));
-		idx++;
-	    }
+	    scene.persist(p);
 
 	}
     }
@@ -569,30 +622,13 @@ public class GlobalConf implements IObserver {
 	case COMPUTE_GAIA_SCAN_CMD:
 	    COMPUTE_GAIA_SCAN = (boolean) data[1];
 	    break;
-	case FOCUS_LOCK_CMD:
-	    FOCUS_LOCK = (boolean) data[1];
-	    break;
 	case BLOOM_CMD:
 	    POSTPROCESS_BLOOM_INTENSITY = (float) data[0];
-	    break;
-	case STAR_BRIGHTNESS_CMD:
-	    STAR_BRIGHTNESS = (float) data[0];
-	    break;
-	case FOV_CHANGED_CMD:
-	    CAMERA_FOV = MathUtilsd.clamp(((Float) data[0]).intValue(), Constants.MIN_FOV, Constants.MAX_FOV);
 	    break;
 	case LIMIT_MAG_CMD:
 	    LIMIT_MAG_RUNTIME = (float) data[0];
 	    break;
-	case CAMERA_SPEED_CMD:
-	    CAMERA_SPEED = (float) data[0];
-	    break;
-	case ROTATION_SPEED_CMD:
-	    ROTATION_SPEED = (float) data[0];
-	    break;
-	case TURNING_SPEED_CMD:
-	    TURNING_SPEED = (float) data[0];
-	    break;
+
 	case INPUT_ENABLED_CMD:
 	    INPUT_ENABLED = (boolean) data[0];
 	    break;

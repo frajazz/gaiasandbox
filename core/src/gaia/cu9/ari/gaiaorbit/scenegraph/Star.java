@@ -158,7 +158,7 @@ public class Star extends CelestialBody {
 
 	    if (visible && !copy) {
 		viewAngle = (float) Math.atan((getRadius()) / distToCamera) / camera.getFovFactor();
-		viewAngleApparent = (float) Math.atan((getRadius() * GlobalConf.inst.STAR_BRIGHTNESS) / distToCamera) / camera.getFovFactor();
+		viewAngleApparent = (float) Math.atan((getRadius() * GlobalConf.scene.STAR_BRIGHTNESS) / distToCamera) / camera.getFovFactor();
 		addToRenderLists(camera);
 	    }
 
@@ -270,7 +270,7 @@ public class Star extends CelestialBody {
 	    computedSize = dist * Constants.TAN_TH_ANGLE_DOWN * Constants.STAR_SIZE_FACTOR_INV;
 
 	}
-	computedSize *= GlobalConf.inst.STAR_BRIGHTNESS;
+	computedSize *= GlobalConf.scene.STAR_BRIGHTNESS;
 	return (float) computedSize;
     }
 

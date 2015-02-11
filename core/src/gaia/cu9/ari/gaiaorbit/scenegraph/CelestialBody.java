@@ -86,7 +86,7 @@ public abstract class CelestialBody extends AbstractPositionEntity implements IL
 
     public CelestialBody() {
 	super();
-	TH_OVER_FACTOR = THRESHOLD_ANGLE_POINT() / GlobalConf.inst.LABEL_NUMBER_FACTOR;
+	TH_OVER_FACTOR = THRESHOLD_ANGLE_POINT() / GlobalConf.scene.LABEL_NUMBER_FACTOR;
     }
 
     /**
