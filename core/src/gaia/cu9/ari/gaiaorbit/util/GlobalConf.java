@@ -39,13 +39,11 @@ public class GlobalConf implements IObserver {
      * Property values
      */
     public int POSTPROCESS_ANTIALIAS, NUMBER_THREADS;
-    public float LIMIT_MAG_RUNTIME, POSTPROCESS_BLOOM_INTENSITY;
+    public float POSTPROCESS_BLOOM_INTENSITY;
     /** This should be no smaller than 1 and no bigger than 5. The bigger the more stars with labels **/
     public boolean MULTITHREADING, POSTPROCESS_LENS_FLARE;
-    public boolean INPUT_ENABLED;
     public String SCREENSHOT_FOLDER;
     public int SCREENSHOT_WIDTH, SCREENSHOT_HEIGHT;
-    public boolean CLEAN_MODE, GLOBAL_PAUSE = false, TIME_ON = false;
 
     public static interface IConf {
 	/**
@@ -63,8 +61,75 @@ public class GlobalConf implements IObserver {
     }
 
     /**
+     * Runtime configuration values, which are never persisted.
+     * @author Toni Sagrista
+     *
+     */
+    public static class RuntimeConf implements IConf, IObserver {
+
+	public boolean CLEAN_MODE;
+	public boolean GLOBAL_PAUSE = false;
+	public boolean TIME_ON = false;
+	public boolean INPUT_ENABLED;
+	public float LIMIT_MAG_RUNTIME;
+
+	public RuntimeConf() {
+	    EventManager.getInstance().subscribe(this, Events.LIMIT_MAG_CMD, Events.INPUT_ENABLED_CMD, Events.TOGGLE_CLEANMODE, Events.TOGGLE_GLOBALPAUSE, Events.TOGGLE_TIME_CMD);
+	}
+
+	@Override
+	public void persist(Properties p) {
+	    // TODO Auto-generated method stub
+
+	}
+
+	@Override
+	public void initialize(Properties p) {
+	    // Input always enabled by default
+	    INPUT_ENABLED = true;
+	    LIMIT_MAG_RUNTIME = 20;
+
+	}
+
+	@Override
+	public void notify(Events event, Object... data) {
+	    switch (event) {
+	    case LIMIT_MAG_CMD:
+		LIMIT_MAG_RUNTIME = (float) data[0];
+		break;
+
+	    case INPUT_ENABLED_CMD:
+		INPUT_ENABLED = (boolean) data[0];
+		break;
+
+	    case TOGGLE_CLEANMODE:
+		CLEAN_MODE = !CLEAN_MODE;
+		break;
+	    case TOGGLE_GLOBALPAUSE:
+		GLOBAL_PAUSE = !GLOBAL_PAUSE;
+		break;
+	    case TOGGLE_TIME_CMD:
+		toggleTimeOn((Boolean) data[0]);
+	    }
+
+	}
+
+	/**
+	 * Toggles the time
+	 */
+	public void toggleTimeOn(Boolean timeOn) {
+	    if (timeOn != null) {
+		TIME_ON = timeOn;
+	    } else {
+		TIME_ON = !TIME_ON;
+	    }
+	}
+
+    }
+
+    /**
      * Holds the configuration for the output frame subsystem.
-     * @author tsagrista
+     * @author Toni Sagrista
      *
      */
     public static class FrameConf implements IConf, IObserver {
@@ -129,7 +194,7 @@ public class GlobalConf implements IObserver {
 
     /**
      * Holds all configuration values related to data.
-     * @author tsagrista
+     * @author Toni Sagrista
      *
      */
     public static class DataConf implements IConf {
@@ -450,6 +515,7 @@ public class GlobalConf implements IObserver {
     public static ProgramConf program;
     public static DataConf data;
     public static SceneConf scene;
+    public static RuntimeConf runtime;
     public static VersionConf version;
 
     static boolean initialized = false;
@@ -506,6 +572,11 @@ public class GlobalConf implements IObserver {
 		configurations.add(data);
 	    }
 
+	    if (runtime == null) {
+		runtime = new RuntimeConf();
+		configurations.add(runtime);
+	    }
+
 	    inst.init(propsFile);
 	    initialized = true;
 	} catch (Exception e) {
@@ -518,9 +589,6 @@ public class GlobalConf implements IObserver {
 	p = new CommentedProperties();
 	try {
 	    p.load(propsFile);
-
-	    // Input always enabled by default
-	    INPUT_ENABLED = true;
 
 	    /** GRAPHICS.FRAME **/
 	    frame.initialize(p);
@@ -549,7 +617,9 @@ public class GlobalConf implements IObserver {
 
 	    /** DATA **/
 	    data.initialize(p);
-	    LIMIT_MAG_RUNTIME = data.LIMIT_MAG_LOAD;
+
+	    /** RUNTIME **/
+	    runtime.initialize(p);
 
 	    /** SCREENSHOT **/
 	    SCREENSHOT_FOLDER = p.getProperty("screenshot.folder").isEmpty() ? System.getProperty("java.io.tmpdir") : p.getProperty("screenshot.folder");
@@ -563,7 +633,7 @@ public class GlobalConf implements IObserver {
 	    EventManager.getInstance().post(Events.JAVA_EXCEPTION, e);
 	}
 
-	EventManager.getInstance().subscribe(this, Events.BLOOM_CMD, Events.INPUT_ENABLED_CMD, Events.LENS_FLARE_CMD, Events.LIMIT_MAG_CMD, Events.TOGGLE_CLEANMODE, Events.TOGGLE_GLOBALPAUSE, Events.TOGGLE_TIME_CMD);
+	EventManager.getInstance().subscribe(this, Events.BLOOM_CMD, Events.LENS_FLARE_CMD);
     }
 
     /**
@@ -628,41 +698,14 @@ public class GlobalConf implements IObserver {
 	case BLOOM_CMD:
 	    POSTPROCESS_BLOOM_INTENSITY = (float) data[0];
 	    break;
-	case LIMIT_MAG_CMD:
-	    LIMIT_MAG_RUNTIME = (float) data[0];
-	    break;
-
-	case INPUT_ENABLED_CMD:
-	    INPUT_ENABLED = (boolean) data[0];
-	    break;
-
 	case LENS_FLARE_CMD:
 	    POSTPROCESS_LENS_FLARE = (Boolean) data[0];
 	    break;
 
-	case TOGGLE_CLEANMODE:
-	    CLEAN_MODE = !CLEAN_MODE;
-	    break;
-	case TOGGLE_GLOBALPAUSE:
-	    GLOBAL_PAUSE = !GLOBAL_PAUSE;
-	    break;
-	case TOGGLE_TIME_CMD:
-	    toggleTimeOn((Boolean) data[0]);
 	default:
 	    break;
 	}
 
-    }
-
-    /**
-     * Toggles the time
-     */
-    public void toggleTimeOn(Boolean timeOn) {
-	if (timeOn != null) {
-	    TIME_ON = timeOn;
-	} else {
-	    TIME_ON = !TIME_ON;
-	}
     }
 
 }

@@ -181,7 +181,7 @@ public class KeyMappings {
 	addMapping(new ProgramAction(txt("action.incmag"), new Runnable() {
 	    @Override
 	    public void run() {
-		EventManager.getInstance().post(Events.LIMIT_MAG_CMD, GlobalConf.inst.LIMIT_MAG_RUNTIME + 0.1f);
+		EventManager.getInstance().post(Events.LIMIT_MAG_CMD, GlobalConf.runtime.LIMIT_MAG_RUNTIME + 0.1f);
 	    }
 	}), Keys.PLUS);
 
@@ -189,7 +189,7 @@ public class KeyMappings {
 	addMapping(new ProgramAction(txt("action.decmag"), new Runnable() {
 	    @Override
 	    public void run() {
-		EventManager.getInstance().post(Events.LIMIT_MAG_CMD, GlobalConf.inst.LIMIT_MAG_RUNTIME - 0.1f);
+		EventManager.getInstance().post(Events.LIMIT_MAG_CMD, GlobalConf.runtime.LIMIT_MAG_RUNTIME - 0.1f);
 	    }
 	}), Keys.MINUS);
 

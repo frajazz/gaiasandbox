@@ -158,7 +158,7 @@ public class GaiaInputController extends GestureDetector {
 
     @Override
     public boolean touchDown(int screenX, int screenY, int pointer, int button) {
-	if (GlobalConf.inst.INPUT_ENABLED) {
+	if (GlobalConf.runtime.INPUT_ENABLED) {
 	    touched |= (1 << pointer);
 	    multiTouch = !MathUtils.isPowerOfTwo(touched);
 	    if (multiTouch)
@@ -176,7 +176,7 @@ public class GaiaInputController extends GestureDetector {
     @Override
     public boolean touchUp(int screenX, int screenY, int pointer, int button) {
 	EventManager.getInstance().post(Events.INPUT_EVENT, button);
-	if (GlobalConf.inst.INPUT_ENABLED) {
+	if (GlobalConf.runtime.INPUT_ENABLED) {
 	    touched &= -1 ^ (1 << pointer);
 	    if (cam.isNatural()) {
 		NaturalCamera camera = cam.naturalCamera;
@@ -259,7 +259,7 @@ public class GaiaInputController extends GestureDetector {
 
     @Override
     public boolean touchDragged(int screenX, int screenY, int pointer) {
-	if (GlobalConf.inst.INPUT_ENABLED) {
+	if (GlobalConf.runtime.INPUT_ENABLED) {
 	    if (cam.isNatural()) {
 		boolean result = super.touchDragged(screenX, screenY, pointer);
 		if (result || this.button < 0)
@@ -277,7 +277,7 @@ public class GaiaInputController extends GestureDetector {
 
     @Override
     public boolean scrolled(int amount) {
-	if (GlobalConf.inst.INPUT_ENABLED) {
+	if (GlobalConf.runtime.INPUT_ENABLED) {
 	    if (cam.isNatural()) {
 		return zoom(amount * scrollFactor);
 	    }
@@ -294,7 +294,7 @@ public class GaiaInputController extends GestureDetector {
 
     @Override
     public boolean keyDown(int keycode) {
-	if (GlobalConf.inst.INPUT_ENABLED) {
+	if (GlobalConf.runtime.INPUT_ENABLED) {
 	    pressedKeys.add(keycode);
 	    return true;
 	}
@@ -305,7 +305,7 @@ public class GaiaInputController extends GestureDetector {
     @Override
     public boolean keyUp(int keycode) {
 	EventManager.getInstance().post(Events.INPUT_EVENT, keycode);
-	if (GlobalConf.inst.INPUT_ENABLED) {
+	if (GlobalConf.runtime.INPUT_ENABLED) {
 	    // Use key mappings
 	    ProgramAction action = mappings.mappings.get(pressedKeys);
 	    if (action != null) {

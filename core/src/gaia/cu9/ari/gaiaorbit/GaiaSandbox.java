@@ -347,7 +347,7 @@ public class GaiaSandbox implements ApplicationListener, IObserver {
 		renderLoadingScreen();
 	    }
 	} else {
-	    if (GlobalConf.inst.GLOBAL_PAUSE) {
+	    if (GlobalConf.runtime.GLOBAL_PAUSE) {
 		// We are in pause mode!
 		try {
 		    Thread.sleep(200);
@@ -375,7 +375,7 @@ public class GaiaSandbox implements ApplicationListener, IObserver {
 		    preRenderScene();
 		    sgr.render(cam, null, pp.getPostProcessBean(RenderType.screen));
 
-		    if (!GlobalConf.inst.CLEAN_MODE) {
+		    if (!GlobalConf.runtime.CLEAN_MODE) {
 			// Render the GUI, setting the viewport
 			gui.getGuiStage().getViewport().apply();
 			gui.render();
@@ -418,7 +418,7 @@ public class GaiaSandbox implements ApplicationListener, IObserver {
 	renderGui.update(dt);
 
 	float dtScene = dt;
-	if (!GlobalConf.inst.TIME_ON) {
+	if (!GlobalConf.runtime.TIME_ON) {
 	    dtScene = 0;
 	}
 	// Update clock

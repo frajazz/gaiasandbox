@@ -95,7 +95,7 @@ public abstract class CelestialBody extends AbstractPositionEntity implements IL
      */
     @Override
     public void update(ITimeFrameProvider time, final Transform parentTransform, ICamera camera) {
-	if (appmag <= GlobalConf.inst.LIMIT_MAG_RUNTIME) {
+	if (appmag <= GlobalConf.runtime.LIMIT_MAG_RUNTIME) {
 	    super.update(time, parentTransform, camera);
 	}
     }
@@ -265,7 +265,7 @@ public abstract class CelestialBody extends AbstractPositionEntity implements IL
     }
 
     public boolean withinMagLimit() {
-	return this.appmag <= GlobalConf.inst.LIMIT_MAG_RUNTIME;
+	return this.appmag <= GlobalConf.runtime.LIMIT_MAG_RUNTIME;
     }
 
     @Override

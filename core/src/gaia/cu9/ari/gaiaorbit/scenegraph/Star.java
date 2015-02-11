@@ -149,7 +149,7 @@ public class Star extends CelestialBody {
      */
     @Override
     public void update(ITimeFrameProvider time, final Transform parentTransform, ICamera camera, float opacity) {
-	if (appmag <= GlobalConf.inst.LIMIT_MAG_RUNTIME) {
+	if (appmag <= GlobalConf.runtime.LIMIT_MAG_RUNTIME) {
 	    this.opacity = opacity;
 	    transform.position.set(parentTransform.position).add(pos);
 
