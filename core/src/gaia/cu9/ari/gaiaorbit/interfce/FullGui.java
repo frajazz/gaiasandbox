@@ -1084,14 +1084,6 @@ public class FullGui implements IGui, IObserver {
 	return "GUI";
     }
 
-    public void hideFocusInfo() {
-	focusInterface.setVisible(false);
-    }
-
-    public void showFocusInfo() {
-	focusInterface.setVisible(true);
-    }
-
     @Override
     public void notify(Events event, Object... data) {
 	switch (event) {
@@ -1106,9 +1098,9 @@ public class FullGui implements IGui, IObserver {
 	    CameraMode mode = (CameraMode) data[0];
 	    cameraMode.setSelected(mode.toString());
 	    if (mode.equals(CameraMode.Focus)) {
-		showFocusInfo();
+		focusInterface.displayFocusInfo();
 	    } else {
-		hideFocusInfo();
+		focusInterface.hideFocusInfo();
 	    }
 	    break;
 	case FOCUS_CHANGED:

@@ -22,6 +22,8 @@ public class FocusInfoInterface extends Table implements IObserver {
     protected OwnLabel camName, camVel, camPos;
     DecimalFormat format, sformat, format8;
 
+    private Table focusInfo, cameraInfo;
+
     Vector3d pos;
 
     public FocusInfoInterface(Skin skin, DecimalFormat format, DecimalFormat sformat) {
@@ -30,7 +32,11 @@ public class FocusInfoInterface extends Table implements IObserver {
 	this.sformat = sformat;
 	this.format8 = new DecimalFormat("#####0.0#######");
 	this.setBackground("table-bg");
-	this.pad(5);
+
+	focusInfo = new Table();
+	focusInfo.pad(5);
+	cameraInfo = new Table();
+	cameraInfo.pad(5);
 
 	focusName = new OwnLabel("", skin, "hud-header");
 	focusRA = new OwnLabel("", skin, "hud");
@@ -52,35 +58,39 @@ public class FocusInfoInterface extends Table implements IObserver {
 	focusDist.setWidth(w);
 	camVel.setWidth(w);
 
-	add(focusName).left().colspan(2);
+	focusInfo.add(focusName).left().colspan(2);
+	focusInfo.row();
+	focusInfo.add(new OwnLabel(txt("gui.focusinfo.alpha"), skin, "hud-big")).left();
+	focusInfo.add(focusRA).left().padLeft(10);
+	focusInfo.row();
+	focusInfo.add(new OwnLabel(txt("gui.focusinfo.delta"), skin, "hud-big")).left();
+	focusInfo.add(focusDEC).left().padLeft(10);
+	focusInfo.row();
+	focusInfo.add(new OwnLabel(txt("gui.focusinfo.appmag"), skin, "hud-big")).left();
+	focusInfo.add(focusAppMag).left().padLeft(10);
+	focusInfo.row();
+	focusInfo.add(new OwnLabel(txt("gui.focusinfo.absmag"), skin, "hud-big")).left();
+	focusInfo.add(focusAbsMag).left().padLeft(10);
+	focusInfo.row();
+	focusInfo.add(new OwnLabel(txt("gui.focusinfo.angle"), skin, "hud-big")).left();
+	focusInfo.add(focusAngle).left().padLeft(10);
+	focusInfo.row();
+	focusInfo.add(new OwnLabel(txt("gui.focusinfo.distance"), skin, "hud-big")).left();
+	focusInfo.add(focusDist).left().padLeft(10);
+	focusInfo.row();
+	focusInfo.add(new OwnLabel(txt("gui.focusinfo.radius"), skin, "hud-big")).left();
+	focusInfo.add(focusRadius).left().padLeft(10).padBottom(5);
+
+	cameraInfo.add(camName).left().colspan(2);
+	cameraInfo.row();
+	cameraInfo.add(new OwnLabel(txt("gui.camera.vel"), skin, "hud-big")).left();
+	cameraInfo.add(camVel).left().padLeft(10);
+	cameraInfo.row();
+	cameraInfo.add(camPos).left().colspan(2);
+
+	add(focusInfo);
 	row();
-	add(new OwnLabel(txt("gui.focusinfo.alpha"), skin, "hud-big")).left();
-	add(focusRA).left().padLeft(10);
-	row();
-	add(new OwnLabel(txt("gui.focusinfo.delta"), skin, "hud-big")).left();
-	add(focusDEC).left().padLeft(10);
-	row();
-	add(new OwnLabel(txt("gui.focusinfo.appmag"), skin, "hud-big")).left();
-	add(focusAppMag).left().padLeft(10);
-	row();
-	add(new OwnLabel(txt("gui.focusinfo.absmag"), skin, "hud-big")).left();
-	add(focusAbsMag).left().padLeft(10);
-	row();
-	add(new OwnLabel(txt("gui.focusinfo.angle"), skin, "hud-big")).left();
-	add(focusAngle).left().padLeft(10);
-	row();
-	add(new OwnLabel(txt("gui.focusinfo.distance"), skin, "hud-big")).left();
-	add(focusDist).left().padLeft(10);
-	row();
-	add(new OwnLabel(txt("gui.focusinfo.radius"), skin, "hud-big")).left();
-	add(focusRadius).left().padLeft(10).padBottom(5);
-	row();
-	add(camName).left().colspan(2);
-	row();
-	add(new OwnLabel(txt("gui.camera.vel"), skin, "hud-big")).left();
-	add(camVel).left().padLeft(10);
-	row();
-	add(camPos).left().colspan(2);
+	add(cameraInfo);
 	pack();
 
 	pos = new Vector3d();
@@ -143,5 +153,19 @@ public class FocusInfoInterface extends Table implements IObserver {
 
     private String txt(String key) {
 	return I18n.bundle.get(key);
+    }
+
+    public void displayFocusInfo() {
+	this.clearChildren();
+	add(focusInfo);
+	row();
+	add(cameraInfo);
+	pack();
+    }
+
+    public void hideFocusInfo() {
+	this.clearChildren();
+	add(cameraInfo);
+	pack();
     }
 }
