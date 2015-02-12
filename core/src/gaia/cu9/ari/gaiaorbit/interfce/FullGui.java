@@ -171,7 +171,7 @@ public class FullGui implements IGui, IObserver {
 	buildGui();
 
 	// We must subscribe to the desired events
-	EventManager.getInstance().subscribe(this, Events.FOV_CHANGED_CMD, Events.CAMERA_MODE_CMD, Events.TIME_CHANGE_INFO, Events.TOGGLE_TIME_CMD, Events.SHOW_TUTORIAL_ACTION, Events.SHOW_SEARCH_ACTION, Events.FOCUS_CHANGED, Events.TOGGLE_VISIBILITY_CMD, Events.PACE_CHANGED_INFO, Events.GUI_SCROLL_POSITION_CMD, Events.GUI_FOLD_CMD, Events.GUI_MOVE_CMD, Events.ROTATION_SPEED_CMD, Events.CAMERA_SPEED_CMD, Events.TURNING_SPEED_CMD, Events.TIME_CHANGE_CMD);
+	EventManager.getInstance().subscribe(this, Events.FOV_CHANGED_CMD, Events.CAMERA_MODE_CMD, Events.TIME_CHANGE_INFO, Events.TOGGLE_TIME_CMD, Events.SHOW_TUTORIAL_ACTION, Events.SHOW_SEARCH_ACTION, Events.FOCUS_CHANGED, Events.TOGGLE_VISIBILITY_CMD, Events.PACE_CHANGED_INFO, Events.GUI_SCROLL_POSITION_CMD, Events.GUI_FOLD_CMD, Events.GUI_MOVE_CMD, Events.ROTATION_SPEED_CMD, Events.CAMERA_SPEED_CMD, Events.TURNING_SPEED_CMD, Events.TIME_CHANGE_CMD, Events.SPEED_LIMIT_CMD);
     }
 
     private void buildGui() {
@@ -272,7 +272,7 @@ public class FullGui implements IGui, IObserver {
 	    public boolean handle(Event event) {
 		if (event instanceof ChangeEvent) {
 		    int idx = cameraSpeedLimit.getSelectedIndex();
-		    EventManager.getInstance().post(Events.SPEED_LIMIT_CMD, idx);
+		    EventManager.getInstance().post(Events.SPEED_LIMIT_CMD, idx, true);
 		    return true;
 		}
 		return false;
@@ -1239,7 +1239,13 @@ public class FullGui implements IGui, IObserver {
 		turn.setText(Integer.toString((int) value));
 	    }
 	    break;
-
+	case SPEED_LIMIT_CMD:
+	    interf = (Boolean) data[1];
+	    if (!interf) {
+		int value = (Integer) data[0];
+		cameraSpeedLimit.setSelectedIndex(value);
+	    }
+	    break;
 	}
 
     }
