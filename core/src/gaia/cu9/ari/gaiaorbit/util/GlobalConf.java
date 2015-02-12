@@ -447,6 +447,8 @@ public class GlobalConf {
 	public float CAMERA_SPEED;
 	public float TURNING_SPEED;
 	public float ROTATION_SPEED;
+	public int CAMERA_SPEED_LIMIT_IDX;
+	public double CAMERA_SPEED_LIMIT;
 	public boolean FOCUS_LOCK;
 	public float LABEL_NUMBER_FACTOR;
 	public boolean[] VISIBILITY;
@@ -455,7 +457,7 @@ public class GlobalConf {
 	public boolean COMPUTE_GAIA_SCAN;
 
 	public SceneConf() {
-	    EventManager.getInstance().subscribe(this, Events.FOCUS_LOCK_CMD, Events.STAR_BRIGHTNESS_CMD, Events.FOV_CHANGED_CMD, Events.CAMERA_SPEED_CMD, Events.ROTATION_SPEED_CMD, Events.TURNING_SPEED_CMD, Events.TRANSIT_COLOUR_CMD, Events.ONLY_OBSERVED_STARS_CMD, Events.COMPUTE_GAIA_SCAN_CMD);
+	    EventManager.getInstance().subscribe(this, Events.FOCUS_LOCK_CMD, Events.STAR_BRIGHTNESS_CMD, Events.FOV_CHANGED_CMD, Events.CAMERA_SPEED_CMD, Events.ROTATION_SPEED_CMD, Events.TURNING_SPEED_CMD, Events.SPEED_LIMIT_CMD, Events.TRANSIT_COLOUR_CMD, Events.ONLY_OBSERVED_STARS_CMD, Events.COMPUTE_GAIA_SCAN_CMD);
 	}
 
 	@Override
@@ -464,6 +466,7 @@ public class GlobalConf {
 	    p.setProperty("scene.star.brightness", Float.toString(STAR_BRIGHTNESS));
 	    p.setProperty("scene.ambient", Float.toString(AMBIENT_LIGHT));
 	    p.setProperty("scene.camera.fov", Integer.toString(CAMERA_FOV));
+	    p.setProperty("scene.camera.speedlimit", Integer.toString(CAMERA_SPEED_LIMIT_IDX));
 	    p.setProperty("scene.camera.focus.vel", Float.toString(CAMERA_SPEED));
 	    p.setProperty("scene.camera.turn.vel", Float.toString(TURNING_SPEED));
 	    p.setProperty("scene.camera.rotate.vel", Float.toString(ROTATION_SPEED));
@@ -485,6 +488,8 @@ public class GlobalConf {
 	    STAR_BRIGHTNESS = Float.parseFloat(p.getProperty("scene.star.brightness"));
 	    AMBIENT_LIGHT = Float.parseFloat(p.getProperty("scene.ambient"));
 	    CAMERA_FOV = Integer.parseInt(p.getProperty("scene.camera.fov"));
+	    CAMERA_SPEED_LIMIT_IDX = Integer.parseInt(p.getProperty("scene.camera.speedlimit"));
+	    updateSpeedLimit();
 	    CAMERA_SPEED = Float.parseFloat(p.getProperty("scene.camera.focus.vel"));
 	    FOCUS_LOCK = Boolean.parseBoolean(p.getProperty("scene.focuslock"));
 	    TURNING_SPEED = Float.parseFloat(p.getProperty("scene.camera.turn.vel"));
@@ -498,6 +503,45 @@ public class GlobalConf {
 		if (p.containsKey(key)) {
 		    VISIBILITY[ct.ordinal()] = Boolean.parseBoolean(p.getProperty(key));
 		}
+	    }
+	}
+
+	public void updateSpeedLimit() {
+	    switch (CAMERA_SPEED_LIMIT_IDX) {
+	    case 0:
+		// 100 km/h is 0.027 km/s
+		CAMERA_SPEED_LIMIT = 0.0277777778 * Constants.KM_TO_U;
+		break;
+	    case 1:
+	    case 2:
+		// 1 c and 2 c
+		CAMERA_SPEED_LIMIT = CAMERA_SPEED_LIMIT_IDX * 3e8 * Constants.M_TO_U;
+		break;
+	    case 3:
+		// 10 c
+		CAMERA_SPEED_LIMIT = 10 * 3e8 * Constants.M_TO_U;
+		break;
+	    case 4:
+		//1000 c
+		CAMERA_SPEED_LIMIT = 1000 * 3e8 * Constants.M_TO_U;
+		break;
+	    case 5:
+	    case 6:
+		// 1 pc/s and 2 pc/s
+		CAMERA_SPEED_LIMIT = (CAMERA_SPEED_LIMIT_IDX - 4) * Constants.PC_TO_U;
+		break;
+	    case 7:
+		// 10 pc/s
+		CAMERA_SPEED_LIMIT = 10 * Constants.PC_TO_U;
+		break;
+	    case 8:
+		// 1000 pc/s
+		CAMERA_SPEED_LIMIT = 1000 * Constants.PC_TO_U;
+		break;
+	    case 9:
+		// No limit
+		CAMERA_SPEED_LIMIT = -1;
+		break;
 	    }
 	}
 
@@ -532,6 +576,10 @@ public class GlobalConf {
 		break;
 	    case TURNING_SPEED_CMD:
 		TURNING_SPEED = (float) data[0];
+		break;
+	    case SPEED_LIMIT_CMD:
+		CAMERA_SPEED_LIMIT_IDX = (Integer) data[0];
+		updateSpeedLimit();
 		break;
 	    }
 

@@ -87,7 +87,7 @@ public class FullGui implements IGui, IObserver {
      */
     protected OwnLabel fov, brightness, bloom, ambient, speed, turn, rotate, date;
     protected Actor objectsList;
-    protected SelectBox<String> cameraMode;
+    protected SelectBox<String> cameraMode, cameraSpeedLimit;
     protected TextField inputPace, searchBox;
     protected Button plus, minus;
     protected ImageButton dateEdit;
@@ -251,8 +251,36 @@ public class FullGui implements IGui, IObserver {
 	});
 	fov = new OwnLabel(Integer.toString((int) GlobalConf.scene.CAMERA_FOV) + "°", skin, "default");
 
+	/** CAMERA SPEED LIMIT **/
+	String[] speedLimits = new String[10];
+	speedLimits[0] = txt("gui.camera.speedlimit.100kmh");
+	speedLimits[1] = txt("gui.camera.speedlimit.c");
+	speedLimits[2] = txt("gui.camera.speedlimit.cfactor", 2);
+	speedLimits[3] = txt("gui.camera.speedlimit.cfactor", 10);
+	speedLimits[4] = txt("gui.camera.speedlimit.cfactor", 1000);
+	speedLimits[5] = txt("gui.camera.speedlimit.pcs", 1);
+	speedLimits[6] = txt("gui.camera.speedlimit.pcs", 2);
+	speedLimits[7] = txt("gui.camera.speedlimit.pcs", 10);
+	speedLimits[8] = txt("gui.camera.speedlimit.pcs", 1000);
+	speedLimits[9] = txt("gui.camera.speedlimit.nolimit");
+
+	cameraSpeedLimit = new SelectBox<String>(skin);
+	cameraSpeedLimit.setName("camera speed limit");
+	cameraSpeedLimit.setItems(speedLimits);
+	cameraSpeedLimit.addListener(new EventListener() {
+	    @Override
+	    public boolean handle(Event event) {
+		if (event instanceof ChangeEvent) {
+		    int idx = cameraSpeedLimit.getSelectedIndex();
+		    EventManager.getInstance().post(Events.SPEED_LIMIT_CMD, idx);
+		    return true;
+		}
+		return false;
+	    }
+	});
+	cameraSpeedLimit.setSelectedIndex(GlobalConf.scene.CAMERA_SPEED_LIMIT_IDX);
+
 	/** CAMERA SPEED **/
-	Label camSpeedLabel = new Label(txt("gui.camera.speed"), skin, "default");
 	cameraSpeed = new Slider(Constants.MIN_SLIDER, Constants.MAX_SLIDER, 1, false, skin);
 	cameraSpeed.setName("camera speed");
 	cameraSpeed.setValue(GlobalConf.scene.CAMERA_SPEED * 10);
@@ -271,7 +299,6 @@ public class FullGui implements IGui, IObserver {
 	speed = new OwnLabel(Integer.toString((int) (GlobalConf.scene.CAMERA_SPEED * 10)), skin, "default");
 
 	/** ROTATION SPEED **/
-	Label rotateLabel = new Label(txt("gui.rotation.speed"), skin, "default");
 	rotateSpeed = new Slider(Constants.MIN_SLIDER, Constants.MAX_SLIDER, 1, false, skin);
 	rotateSpeed.setName("rotate speed");
 	rotateSpeed.setValue(MathUtilsd.lint(GlobalConf.scene.ROTATION_SPEED, Constants.MIN_ROT_SPEED, Constants.MAX_ROT_SPEED, Constants.MIN_SLIDER, Constants.MAX_SLIDER));
@@ -290,7 +317,6 @@ public class FullGui implements IGui, IObserver {
 	rotate = new OwnLabel(Integer.toString((int) MathUtilsd.lint(GlobalConf.scene.ROTATION_SPEED, Constants.MIN_ROT_SPEED, Constants.MAX_ROT_SPEED, Constants.MIN_SLIDER, Constants.MAX_SLIDER)), skin, "default");
 
 	/** TURNING SPEED **/
-	Label turnLabel = new Label(txt("gui.turn.speed"), skin, "default");
 	turnSpeed = new Slider(Constants.MIN_SLIDER, Constants.MAX_SLIDER, 1, false, skin);
 	turnSpeed.setName("turn speed");
 	turnSpeed.setValue(MathUtilsd.lint(GlobalConf.scene.TURNING_SPEED, Constants.MIN_TURN_SPEED, Constants.MAX_TURN_SPEED, Constants.MIN_SLIDER, Constants.MAX_SLIDER));
@@ -349,11 +375,13 @@ public class FullGui implements IGui, IObserver {
 	turnGroup.addActor(turn);
 
 	cameraGroup.addActor(fovGroup);
-	cameraGroup.addActor(camSpeedLabel);
+	cameraGroup.addActor(new Label(txt("gui.camera.speedlimit"), skin, "default"));
+	cameraGroup.addActor(cameraSpeedLimit);
+	cameraGroup.addActor(new Label(txt("gui.camera.speed"), skin, "default"));
 	cameraGroup.addActor(speedGroup);
-	cameraGroup.addActor(rotateLabel);
+	cameraGroup.addActor(new Label(txt("gui.rotation.speed"), skin, "default"));
 	cameraGroup.addActor(rotateGroup);
-	cameraGroup.addActor(turnLabel);
+	cameraGroup.addActor(new Label(txt("gui.turn.speed"), skin, "default"));
 	cameraGroup.addActor(turnGroup);
 	cameraGroup.addActor(focusLock);
 
@@ -1272,5 +1300,9 @@ public class FullGui implements IGui, IObserver {
 
     private String txt(String key) {
 	return I18n.bundle.get(key);
+    }
+
+    private String txt(String key, Object... params) {
+	return I18n.bundle.format(key, params);
     }
 }
