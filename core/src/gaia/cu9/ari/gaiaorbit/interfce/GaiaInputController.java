@@ -73,7 +73,7 @@ public class GaiaInputController extends GestureDetector {
     private Comparator<CelestialBody> comp;
 
     /** Holds the pressed keys at any moment **/
-    private Set<Integer> pressedKeys = new HashSet<Integer>();
+    public static Set<Integer> pressedKeys = new HashSet<Integer>();
 
     /** The current (first) button being pressed. */
     protected int button = -1;
@@ -312,6 +312,7 @@ public class GaiaInputController extends GestureDetector {
 		action.run();
 	    }
 
+	    System.out.println("Key up: " + keycode);
 	    pressedKeys.remove(keycode);
 	    return true;
 	} else if (keycode == Keys.ESCAPE) {

@@ -14,9 +14,11 @@ import gaia.cu9.ari.gaiaorbit.util.GlobalConf;
 import gaia.cu9.ari.gaiaorbit.util.GlobalResources;
 import gaia.cu9.ari.gaiaorbit.util.I18n;
 import gaia.cu9.object.server.ClientCore;
-import gaia.cu9.object.server.commands.Message;
-import gaia.cu9.object.server.commands.MessageHandler;
-import gaia.cu9.object.server.commands.MessagePayloadBlock;
+import gaia.cu9.object.server.commands.plugins.ClientIdent;
+import gaia.cu9.object.server.structures.datasets.DatasetManager;
+import gaia.cu9.object.server.structures.tables.Table;
+import gaia.cu9.object.server.structures.visualization.Visualization;
+import gaia.cu9.object.server.structures.visualization.VisualizationManager;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
@@ -41,6 +43,7 @@ import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URL;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.Date;
 import java.util.Locale;
 import java.util.Map;
@@ -671,6 +674,17 @@ public class ConfigDialog extends I18nJFrame {
 
 	final JButton testConnection = new JButton(txt("gui.data.testconnection"), IconManager.get("config/connection"));
 	testConnection.addActionListener(new ActionListener() {
+
+	    private void connectionFailed() {
+		connection.removeAll();
+		JLabel nocon = new JLabel(txt("gui.data.connectionerror"));
+		nocon.setForeground(darkred);
+		connection.add(nocon);
+		scrollConnection.setVisible(true);
+		// Repaint frame
+		frame.repaint();
+	    }
+
 	    @Override
 	    public void actionPerformed(ActionEvent e) {
 		try {
@@ -679,100 +693,85 @@ public class ConfigDialog extends I18nJFrame {
 		    int prt = Integer.parseInt(port.getText());
 
 		    ClientCore cc = ClientCore.getInstance();
-		    cc.connect(host, prt);
+		    if (!cc.connect(host, prt)) {
+			connectionFailed();
+			return;
+		    }
+		    ClientIdent ident = new ClientIdent();
+		    ident.setAffiliation("ARI");
+		    ident.setAuthors("Toni Sagristà <tsagrista@ari.uni-heidelberg.de>");
+		    ident.setClientDescription("Real time, 3D, outreach visualization software");
+		    ident.setClientDocumentationURL(GlobalConf.WIKI);
+		    ident.setClientHomepage(GlobalConf.WEBPAGE);
+		    ident.setClientName(GlobalConf.APPLICATION_NAME);
+		    ident.setClientVersion(GlobalConf.version.version);
+		    ident.setClientPlatform(System.getProperty("os.name"));
+		    ident.setClientIconURL(GlobalConf.ICON_URL);
+		    cc.executeCommand(ident);
 
-		    // Get visualizations list
-		    Message msg = new Message("visualizations-list");
-		    msg.setMessageHandler(new MessageHandler() {
+		    DatasetManager.getInstance().refreshItems();
+		    VisualizationManager visManager = VisualizationManager.getInstance();
+		    visManager.refreshItems();
 
-			@Override
-			public void receivedMessage(Message query, Message reply) {
-			    StringBuilder data = new StringBuilder();
-			    for (MessagePayloadBlock block : reply.getPayload()) {
-				data.append((String) block.getPayload());
-			    }
-			    vislistdata = data.toString();
+		    DefaultMutableTreeNode top =
+			    new DefaultMutableTreeNode(txt("gui.data.visualisations"));
 
-			    String[] lines = vislistdata.split("\n");
+		    Collection<Visualization> visualizations = visManager.getVisualizations();
+		    for (Visualization visualization : visualizations) {
+			DefaultMutableTreeNode vis = new DefaultMutableTreeNode(visualization.getName());
 
-			    String[][] visualisations = new String[lines.length][];
-			    for (int i = 0; i < lines.length; i++) {
-				String[] tokens = lines[i].split(";");
-				visualisations[i] = new String[] { tokens[0], tokens[1], tokens[2], tokens[7], tokens[8], tokens[9], tokens[10], tokens[11], tokens[12] };
-			    }
+			// ID
+			DefaultMutableTreeNode idlabel = new DefaultMutableTreeNode(txt("gui.data.id") + ": " + visualization.getIdentifier());
+			vis.add(idlabel);
 
-			    DefaultMutableTreeNode top =
-				    new DefaultMutableTreeNode(txt("gui.data.visualisations"));
+			// TABLE
+			Table table = visualization.getAssociatedTable();
+			DefaultMutableTreeNode tablelabel = new DefaultMutableTreeNode(txt("gui.data.table") + ": " + table.getName() + " (" + txt("gui.data.numberrows", table.getRowCount()) + ")");
+			vis.add(tablelabel);
 
-			    for (String[] visualisation : visualisations) {
-				DefaultMutableTreeNode vis = new DefaultMutableTreeNode(visualisation[1]);
-
-				// ID
-				DefaultMutableTreeNode idlabel = new DefaultMutableTreeNode(txt("gui.data.id") + ": " + visualisation[0]);
-				vis.add(idlabel);
-
-				// TABLE
-				DefaultMutableTreeNode tablelabel = new DefaultMutableTreeNode(txt("gui.data.table") + ": " + visualisation[2]);
-				vis.add(tablelabel);
-
-				// COLS
-				DefaultMutableTreeNode collabel = new DefaultMutableTreeNode(txt("gui.data.columns"));
-				for (int col = 3; col < visualisation.length; col++) {
-				    collabel.add(new DefaultMutableTreeNode(visualisation[col]));
-				}
-				vis.add(collabel);
-
-				top.add(vis);
-			    }
-			    visualisationsTree = new JTree(top);
-
-			    // Selection of nodes
-			    visualisationsTree.getSelectionModel().setSelectionMode(TreeSelectionModel.SINGLE_TREE_SELECTION);
-			    //Listen for when the selection changes.
-			    visualisationsTree.addTreeSelectionListener(new TreeSelectionListener() {
-
-				@Override
-				public void valueChanged(TreeSelectionEvent e) {
-				    TreePath path = e.getNewLeadSelectionPath();
-				    DefaultMutableTreeNode visNode = (DefaultMutableTreeNode) path.getPathComponent(1);
-				    DefaultMutableTreeNode idNode = (DefaultMutableTreeNode) visNode.getChildAt(0);
-
-				    String visId = ((String) idNode.getUserObject()).split(":")[1].trim();
-				    GlobalConf.data.VISUALIZATION_ID = visId;
-
-				}
-
-			    });
-
-			    connection.removeAll();
-			    connection.add(new JLabel(txt("gui.data.selectvis") + ":"), "wrap");
-			    connection.add(visualisationsTree);
-			    scrollConnection.setVisible(true);
-			    // Repaint frame
-			    frame.repaint();
-
-			    // We can disconnect now
-			    ClientCore.getInstance().disconnect();
-
+			// COLUMNS
+			DefaultMutableTreeNode collabel = new DefaultMutableTreeNode(txt("gui.data.columns"));
+			for (int col = 0; col < visualization.getCoordinateAxisDefinitions().length; col++) {
+			    collabel.add(new DefaultMutableTreeNode(visualization.getCoordinateAxisDefinitions()[col]));
 			}
+			collabel.add(new DefaultMutableTreeNode(visualization.getColourDefinition()));
+			collabel.add(new DefaultMutableTreeNode(visualization.getSizeDefinition()));
+
+			vis.add(collabel);
+
+			top.add(vis);
+		    }
+
+		    visualisationsTree = new JTree(top);
+
+		    // Selection of nodes
+		    visualisationsTree.getSelectionModel().setSelectionMode(TreeSelectionModel.SINGLE_TREE_SELECTION);
+		    //Listen for when the selection changes.
+		    visualisationsTree.addTreeSelectionListener(new TreeSelectionListener() {
 
 			@Override
-			public void receivedMessageBlock(Message query, Message reply, MessagePayloadBlock block) {
+			public void valueChanged(TreeSelectionEvent e) {
+			    TreePath path = e.getNewLeadSelectionPath();
+			    DefaultMutableTreeNode visNode = (DefaultMutableTreeNode) path.getPathComponent(1);
+			    DefaultMutableTreeNode idNode = (DefaultMutableTreeNode) visNode.getChildAt(0);
+
+			    String visId = ((String) idNode.getUserObject()).split(":")[1].trim();
+			    GlobalConf.data.VISUALIZATION_ID = visId;
 
 			}
 
 		    });
-		    cc.sendMessage(msg);
 
-		} catch (Exception e1) {
 		    connection.removeAll();
-		    JLabel nocon = new JLabel(txt("gui.data.connectionerror"));
-		    nocon.setForeground(darkred);
-		    connection.add(nocon);
+		    connection.add(new JLabel(txt("gui.data.selectvis") + ":"), "wrap");
+		    connection.add(visualisationsTree);
 		    scrollConnection.setVisible(true);
 		    // Repaint frame
 		    frame.repaint();
 
+		} catch (Exception e1) {
+		    connectionFailed();
+		    EventManager.getInstance().post(Events.JAVA_EXCEPTION, e1);
 		}
 	    }
 	});
@@ -838,35 +837,54 @@ public class ConfigDialog extends I18nJFrame {
 
 	okButton = new JButton(startup ? txt("gui.launchapp") : txt("gui.saveprefs"));
 	okButton.addActionListener(new ActionListener() {
+	    boolean goahead = true;
+
+	    private void connectionFailed() {
+		// Connection not possible
+		goahead = false;
+		tabbedPane.setSelectedIndex(6);
+		connection.removeAll();
+
+		JTextArea noConnection = new JTextArea(txt("notif.objectserver.notconnect")) {
+		    @Override
+		    public void setBorder(Border border) {
+			// No!
+		    }
+		};
+		noConnection.setEditable(false);
+		noConnection.setBackground(transparent);
+		noConnection.setForeground(darkred);
+
+		connection.add(noConnection);
+		scrollConnection.setVisible(true);
+		// Repaint frame
+		frame.repaint();
+	    }
 
 	    @Override
 	    public void actionPerformed(ActionEvent e) {
-		boolean goahead = true;
 		if (startup && objectserver.isSelected()) {
 		    try {
 			// Check object server connection
 			ClientCore cc = ClientCore.getInstance();
-			cc.connect(GlobalConf.data.OBJECT_SERVER_HOSTNAME, GlobalConf.data.OBJECT_SERVER_PORT);
-			cc.disconnect();
-		    } catch (IOException ex) {
-			goahead = false;
-			tabbedPane.setSelectedIndex(6);
-			connection.removeAll();
-
-			JTextArea noConnection = new JTextArea(txt("notif.objectserver.notconnect")) {
-			    @Override
-			    public void setBorder(Border border) {
-				// No!
+			if (!cc.isConnected()) {
+			    if (!cc.connect(GlobalConf.data.OBJECT_SERVER_HOSTNAME, GlobalConf.data.OBJECT_SERVER_PORT)) {
+				connectionFailed();
 			    }
-			};
-			noConnection.setEditable(false);
-			noConnection.setBackground(transparent);
-			noConnection.setForeground(darkred);
-
-			connection.add(noConnection);
-			scrollConnection.setVisible(true);
-			// Repaint frame
-			frame.repaint();
+			    ClientIdent ident = new ClientIdent();
+			    ident.setAffiliation("ARI");
+			    ident.setAuthors("Toni Sagristà <tsagrista@ari.uni-heidelberg.de>");
+			    ident.setClientDescription("Real time, 3D, outreach visualization software");
+			    ident.setClientDocumentationURL(GlobalConf.WIKI);
+			    ident.setClientHomepage(GlobalConf.WEBPAGE);
+			    ident.setClientName(GlobalConf.APPLICATION_NAME);
+			    ident.setClientVersion(GlobalConf.version.version);
+			    ident.setClientPlatform(System.getProperty("os.name"));
+			    ident.setClientIconURL(GlobalConf.ICON_URL);
+			    cc.executeCommand(ident);
+			}
+		    } catch (IOException ex) {
+			connectionFailed();
 		    }
 		}
 
@@ -942,6 +960,11 @@ public class ConfigDialog extends I18nJFrame {
 	cancelButton = new JButton(txt("gui.cancel"));
 	cancelButton.addActionListener(new ActionListener() {
 	    public void actionPerformed(ActionEvent e) {
+		ClientCore cc = ClientCore.getInstance();
+		if (startup && cc.isConnected()) {
+		    // Only disconnect if no startup
+		    cc.disconnect();
+		}
 		if (frame.isDisplayable()) {
 		    frame.dispose();
 		}

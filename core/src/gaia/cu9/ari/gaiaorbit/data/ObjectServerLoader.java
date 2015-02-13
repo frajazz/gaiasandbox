@@ -14,6 +14,7 @@ import gaia.cu9.object.server.ClientCore;
 import gaia.cu9.object.server.commands.Message;
 import gaia.cu9.object.server.commands.MessageHandler;
 import gaia.cu9.object.server.commands.MessagePayloadBlock;
+import gaia.cu9.object.server.commands.plugins.ClientIdent;
 
 import java.io.IOException;
 import java.net.ConnectException;
@@ -42,45 +43,50 @@ public class ObjectServerLoader implements ISceneGraphNodeProvider {
 
 	    String visid = GlobalConf.data.VISUALIZATION_ID;
 
-	    cc.connect(GlobalConf.data.OBJECT_SERVER_HOSTNAME,
-		    GlobalConf.data.OBJECT_SERVER_PORT);
-
-	    // Identify yourself!
-	    Message msg = new Message("client-ident?affiliation=ARI&name="
-		    + GlobalConf.APPLICATION_NAME
-		    + "&description=Gaia Sandbox outreach software&version="
-		    + GlobalConf.version.version
-		    + "&authors=tsagrista&homepage=" + GlobalConf.WEBPAGE
-		    + "&icon-url=" + GlobalConf.ICON_URL);
-	    cc.sendMessage(msg);
+	    if (!cc.isConnected()) {
+		cc.connect(GlobalConf.data.OBJECT_SERVER_HOSTNAME,
+			GlobalConf.data.OBJECT_SERVER_PORT);
+		ClientIdent ident = new ClientIdent();
+		ident.setAffiliation("ARI");
+		ident.setAuthors("Toni Sagristà <tsagrista@ari.uni-heidelberg.de>");
+		ident.setClientDescription("Real time, 3D, outreach visualization software");
+		ident.setClientDocumentationURL(GlobalConf.WIKI);
+		ident.setClientHomepage(GlobalConf.WEBPAGE);
+		ident.setClientName(GlobalConf.APPLICATION_NAME);
+		ident.setClientVersion(GlobalConf.version.version);
+		ident.setClientPlatform(System.getProperty("os.name"));
+		ident.setClientIconURL(GlobalConf.ICON_URL);
+		cc.executeCommand(ident);
+	    }
 
 	    // Get star data
-	    msg = new Message("visualization-particle-data?vis-id=" + visid
+	    Message msg = new Message("visualization-particle-data?vis-id=" + visid
 		    + "&include-headers=false");
 	    msg.setMessageHandler(new MessageHandler() {
+		int blocks = 0;
 
 		@Override
 		public void receivedMessage(Message query, Message reply) {
 		    StringBuilder data = new StringBuilder();
 		    for (MessagePayloadBlock block : reply.getPayload()) {
 			data.append((String) block.getPayload());
+			System.out.println("Received block " + (++blocks));
 		    }
 		    rawdata = data.toString();
 		}
 
 		@Override
 		public void receivedMessageBlock(Message query, Message reply, MessagePayloadBlock block) {
-		    // TODO Auto-generated method stub
 
 		}
 
 	    });
 	    cc.sendMessage(msg);
 
-	    // TODO Get this shit together
+	    // TODO Get this shit together, this does not look good...
 	    do {
 		try {
-		    Thread.sleep(300);
+		    Thread.sleep(500);
 		} catch (InterruptedException e) {
 		    EventManager.getInstance().post(Events.JAVA_EXCEPTION, e);
 		}

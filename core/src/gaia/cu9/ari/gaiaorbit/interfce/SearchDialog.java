@@ -20,6 +20,7 @@ import com.badlogic.gdx.scenes.scene2d.ui.TextField;
 import com.badlogic.gdx.scenes.scene2d.ui.Window;
 import com.badlogic.gdx.scenes.scene2d.utils.Align;
 import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener.ChangeEvent;
+import com.badlogic.gdx.utils.Array;
 
 public class SearchDialog extends Window {
     private final Window me;
@@ -32,6 +33,8 @@ public class SearchDialog extends Window {
 	this.gui = gui;
 	searchInput = new TextField("", skin);
 	searchInput.setMessageText(I18n.bundle.get("gui.objects.search"));
+	Array<EventListener> e = searchInput.getListeners();
+	searchInput.removeListener(e.first());
 	searchInput.addListener(new EventListener() {
 	    @Override
 	    public boolean handle(Event event) {
@@ -50,8 +53,9 @@ public class SearchDialog extends Window {
 				}
 			    }
 			}
+
+			GaiaInputController.pressedKeys.remove(ie.getKeyCode());
 		    }
-		    return true;
 		}
 		return false;
 	    }
@@ -79,7 +83,7 @@ public class SearchDialog extends Window {
 	add(searchInput).top().left().expand().row();
 	add(buttonGroup).pad(5, 0, 0, 0).bottom().right().expand();
 	setTitleAlignment(Align.left);
-	setModal(true);
+	setModal(false);
 	pack();
 
 	this.setPosition(gui.getGuiStage().getWidth() / 2f - this.getWidth() / 2f, gui.getGuiStage().getHeight() / 2f - this.getHeight() / 2f);

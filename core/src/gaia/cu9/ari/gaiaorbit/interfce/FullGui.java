@@ -405,6 +405,7 @@ public class FullGui implements IGui, IObserver {
 				EventManager.getInstance().post(Events.FOCUS_CHANGE_CMD, node, true);
 			    }
 			}
+			GaiaInputController.pressedKeys.remove(ie.getKeyCode());
 		    }
 		    return true;
 		}
