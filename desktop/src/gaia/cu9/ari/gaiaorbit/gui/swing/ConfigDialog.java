@@ -692,6 +692,68 @@ public class ConfigDialog extends I18nJFrame {
 				data.append((String) block.getPayload());
 			    }
 			    vislistdata = data.toString();
+
+			    String[] lines = vislistdata.split("\n");
+
+			    String[][] visualisations = new String[lines.length][];
+			    for (int i = 0; i < lines.length; i++) {
+				String[] tokens = lines[i].split(";");
+				visualisations[i] = new String[] { tokens[0], tokens[1], tokens[2], tokens[7], tokens[8], tokens[9], tokens[10], tokens[11], tokens[12] };
+			    }
+
+			    DefaultMutableTreeNode top =
+				    new DefaultMutableTreeNode(txt("gui.data.visualisations"));
+
+			    for (String[] visualisation : visualisations) {
+				DefaultMutableTreeNode vis = new DefaultMutableTreeNode(visualisation[1]);
+
+				// ID
+				DefaultMutableTreeNode idlabel = new DefaultMutableTreeNode(txt("gui.data.id") + ": " + visualisation[0]);
+				vis.add(idlabel);
+
+				// TABLE
+				DefaultMutableTreeNode tablelabel = new DefaultMutableTreeNode(txt("gui.data.table") + ": " + visualisation[2]);
+				vis.add(tablelabel);
+
+				// COLS
+				DefaultMutableTreeNode collabel = new DefaultMutableTreeNode(txt("gui.data.columns"));
+				for (int col = 3; col < visualisation.length; col++) {
+				    collabel.add(new DefaultMutableTreeNode(visualisation[col]));
+				}
+				vis.add(collabel);
+
+				top.add(vis);
+			    }
+			    visualisationsTree = new JTree(top);
+
+			    // Selection of nodes
+			    visualisationsTree.getSelectionModel().setSelectionMode(TreeSelectionModel.SINGLE_TREE_SELECTION);
+			    //Listen for when the selection changes.
+			    visualisationsTree.addTreeSelectionListener(new TreeSelectionListener() {
+
+				@Override
+				public void valueChanged(TreeSelectionEvent e) {
+				    TreePath path = e.getNewLeadSelectionPath();
+				    DefaultMutableTreeNode visNode = (DefaultMutableTreeNode) path.getPathComponent(1);
+				    DefaultMutableTreeNode idNode = (DefaultMutableTreeNode) visNode.getChildAt(0);
+
+				    String visId = ((String) idNode.getUserObject()).split(":")[1].trim();
+				    GlobalConf.data.VISUALIZATION_ID = visId;
+
+				}
+
+			    });
+
+			    connection.removeAll();
+			    connection.add(new JLabel(txt("gui.data.selectvis") + ":"), "wrap");
+			    connection.add(visualisationsTree);
+			    scrollConnection.setVisible(true);
+			    // Repaint frame
+			    frame.repaint();
+
+			    // We can disconnect now
+			    ClientCore.getInstance().disconnect();
+
 			}
 
 			@Override
@@ -701,71 +763,6 @@ public class ConfigDialog extends I18nJFrame {
 
 		    });
 		    cc.sendMessage(msg);
-
-		    do {
-			Thread.sleep(200);
-		    } while (vislistdata == null);
-
-		    String[] lines = vislistdata.split("\n");
-
-		    String[][] visualisations = new String[lines.length][];
-		    for (int i = 0; i < lines.length; i++) {
-			String[] tokens = lines[i].split(";");
-			visualisations[i] = new String[] { tokens[0], tokens[1], tokens[2], tokens[7], tokens[8], tokens[9], tokens[10], tokens[11], tokens[12] };
-		    }
-
-		    // Disconnect
-		    cc.sendMessage("client-disconnect");
-
-		    DefaultMutableTreeNode top =
-			    new DefaultMutableTreeNode(txt("gui.data.visualisations"));
-
-		    for (String[] visualisation : visualisations) {
-			DefaultMutableTreeNode vis = new DefaultMutableTreeNode(visualisation[1]);
-
-			// ID
-			DefaultMutableTreeNode idlabel = new DefaultMutableTreeNode(txt("gui.data.id") + ": " + visualisation[0]);
-			vis.add(idlabel);
-
-			// TABLE
-			DefaultMutableTreeNode tablelabel = new DefaultMutableTreeNode(txt("gui.data.table") + ": " + visualisation[2]);
-			vis.add(tablelabel);
-
-			// COLS
-			DefaultMutableTreeNode collabel = new DefaultMutableTreeNode(txt("gui.data.columns"));
-			for (int col = 3; col < visualisation.length; col++) {
-			    collabel.add(new DefaultMutableTreeNode(visualisation[col]));
-			}
-			vis.add(collabel);
-
-			top.add(vis);
-		    }
-		    visualisationsTree = new JTree(top);
-
-		    // Selection of nodes
-		    visualisationsTree.getSelectionModel().setSelectionMode(TreeSelectionModel.SINGLE_TREE_SELECTION);
-		    //Listen for when the selection changes.
-		    visualisationsTree.addTreeSelectionListener(new TreeSelectionListener() {
-
-			@Override
-			public void valueChanged(TreeSelectionEvent e) {
-			    TreePath path = e.getNewLeadSelectionPath();
-			    DefaultMutableTreeNode visNode = (DefaultMutableTreeNode) path.getPathComponent(1);
-			    DefaultMutableTreeNode idNode = (DefaultMutableTreeNode) visNode.getChildAt(0);
-
-			    String visId = ((String) idNode.getUserObject()).split(":")[1].trim();
-			    GlobalConf.data.VISUALIZATION_ID = visId;
-
-			}
-
-		    });
-
-		    connection.removeAll();
-		    connection.add(new JLabel(txt("gui.data.selectvis") + ":"), "wrap");
-		    connection.add(visualisationsTree);
-		    scrollConnection.setVisible(true);
-		    // Repaint frame
-		    frame.repaint();
 
 		} catch (Exception e1) {
 		    connection.removeAll();
