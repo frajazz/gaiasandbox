@@ -8,7 +8,7 @@ import gaia.cu9.ari.gaiaorbit.render.system.AbstractRenderSystem;
 import gaia.cu9.ari.gaiaorbit.render.system.IRenderSystem;
 import gaia.cu9.ari.gaiaorbit.render.system.LineRenderSystem;
 import gaia.cu9.ari.gaiaorbit.render.system.ModelBatchRenderSystem;
-import gaia.cu9.ari.gaiaorbit.render.system.PixelRenderSystem;
+import gaia.cu9.ari.gaiaorbit.render.system.PixelBloomRenderSystem;
 import gaia.cu9.ari.gaiaorbit.render.system.ShaderQuadRenderSystem;
 import gaia.cu9.ari.gaiaorbit.render.system.SpriteBatchRenderSystem;
 import gaia.cu9.ari.gaiaorbit.scenegraph.CameraManager.CameraMode;
@@ -241,7 +241,7 @@ public class SceneGraphRenderer extends AbstractRenderer implements IProcessRend
 	int priority = 1;
 
 	// POINTS
-	AbstractRenderSystem pixelProc = new PixelRenderSystem(RenderGroup.POINT, priority++, alphas);
+	AbstractRenderSystem pixelProc = new PixelBloomRenderSystem(RenderGroup.POINT, priority++, alphas);
 	pixelProc.setPreRunnable(blendNoDepthRunnable);
 
 	// MODEL BACK

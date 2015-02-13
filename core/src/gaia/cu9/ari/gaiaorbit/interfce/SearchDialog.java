@@ -20,7 +20,6 @@ import com.badlogic.gdx.scenes.scene2d.ui.TextField;
 import com.badlogic.gdx.scenes.scene2d.ui.Window;
 import com.badlogic.gdx.scenes.scene2d.utils.Align;
 import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener.ChangeEvent;
-import com.badlogic.gdx.utils.Array;
 
 public class SearchDialog extends Window {
     private final Window me;
@@ -33,8 +32,6 @@ public class SearchDialog extends Window {
 	this.gui = gui;
 	searchInput = new TextField("", skin);
 	searchInput.setMessageText(I18n.bundle.get("gui.objects.search"));
-	Array<EventListener> e = searchInput.getListeners();
-	searchInput.removeListener(e.first());
 	searchInput.addListener(new EventListener() {
 	    @Override
 	    public boolean handle(Event event) {
