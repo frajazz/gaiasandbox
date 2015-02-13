@@ -2,7 +2,7 @@
 
 	{
 	"name" : "Mercury orbit",
-	"color" : [1.0, 1.0, 1.0, 0.4],
+	"color" : [1.0, 1.0, 1.0, 0.55],
 	"ct" : Orbits,
 	
 	"parent" : "Sol", 
@@ -17,7 +17,7 @@
 	
 	{
 		"name" : "Venus orbit",
-		"color" : [1.0, 1.0, 1.0, 0.4],
+		"color" : [1.0, 1.0, 1.0, 0.55],
 		"ct" : Orbits,
 		
 		"parent" : "Sol", 
@@ -32,7 +32,7 @@
 	
 	{
 		"name" : "Earth orbit",
-		"color" : [1.0, 1.0, 1.0, 0.4],
+		"color" : [1.0, 1.0, 1.0, 0.55],
 		"ct" : Orbits,
 		
 		"parent" : "Sol", 
@@ -47,7 +47,7 @@
 	
 	{
 		"name" : "Mars orbit",
-		"color" : [1.0, 1.0, 1.0, 0.4],
+		"color" : [1.0, 1.0, 1.0, 0.55],
 		"ct" : Orbits,
 		
 		"parent" : "Sol", 
@@ -62,7 +62,7 @@
 	
 	{
 		"name" : "Jupiter orbit",
-		"color" : [1.0, 1.0, 1.0, 0.4],
+		"color" : [1.0, 1.0, 1.0, 0.55],
 		"ct" : Orbits,
 		
 		"parent" : "Sol", 
@@ -77,7 +77,7 @@
 	
 	{
 		"name" : "Saturn orbit",
-		"color" : [1.0, 1.0, 1.0, 0.4],
+		"color" : [1.0, 1.0, 1.0, 0.55],
 		"ct" : Orbits,
 		
 		"parent" : "Sol", 
@@ -92,7 +92,7 @@
 	
 	{
 		"name" : "Uranus orbit",
-		"color" : [1.0, 1.0, 1.0, 0.4],
+		"color" : [1.0, 1.0, 1.0, 0.55],
 		"ct" : Orbits,
 		
 		"parent" : "Sol", 
@@ -107,7 +107,7 @@
 	
 	{
 		"name" : "Neptune orbit",
-		"color" : [1.0, 1.0, 1.0, 0.4],
+		"color" : [1.0, 1.0, 1.0, 0.55],
 		"ct" : Orbits,
 		
 		"parent" : "Sol", 
@@ -349,6 +349,34 @@
 							"ascendingnode" : 226.1099,
 							"argofpericenter" : 23.3280,
 							"meananomaly" : 266.2144
+							}
+							
+	},
+	
+	
+	{
+		"name" : "Vesta orbit",
+		"color" : [1.0, 1.0, 1.0, 0.15],
+		"ct" : Orbits,
+		
+		"parent" : "Sol", 
+		"impl" : "gaia.cu9.ari.gaiaorbit.scenegraph.Orbit",
+		"provider" : "gaia.cu9.ari.gaiaorbit.data.orbit.OrbitalParametersProvider",
+		
+		"transformFunction" : "equatorialToEcliptic",
+			
+		"orbit" 		: {
+							// In days
+							"period" : 1325.85,
+							//  2010-Jul-23
+							"epoch" : 2455400.5,
+							"semimajoraxis" : 353350171.0,
+							"eccentricity" : 0.08862,
+							// Inclination of orbit with respect to the Ecliptic
+							"inclination" : 7.134,
+							"ascendingnode" : 103.91,
+							"argofpericenter" : 149.84,
+							"meananomaly" : 307.80
 							}
 							
 	}

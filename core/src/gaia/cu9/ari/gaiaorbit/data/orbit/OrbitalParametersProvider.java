@@ -5,9 +5,11 @@ import gaia.cu9.ari.gaiaorbit.event.EventManager;
 import gaia.cu9.ari.gaiaorbit.event.Events;
 import gaia.cu9.ari.gaiaorbit.scenegraph.component.OrbitComponent;
 import gaia.cu9.ari.gaiaorbit.util.Constants;
+import gaia.cu9.ari.gaiaorbit.util.coord.Coordinates;
 import gaia.cu9.ari.gaiaorbit.util.math.Matrix4d;
 import gaia.cu9.ari.gaiaorbit.util.math.Vector3d;
 
+import java.lang.reflect.Method;
 import java.util.Date;
 
 /**
@@ -27,7 +29,7 @@ public class OrbitalParametersProvider implements IOrbitDataProvider {
 	    double f = params.e * params.semimajoraxis;
 	    double b = Math.sqrt(Math.pow(a, 2) - Math.pow(f, 2));
 
-	    int nsamples = 180;
+	    int nsamples = Math.min(Math.max(180, (int) a), 10000);
 	    double step = 360d / nsamples;
 	    Vector3d[] samples = new Vector3d[nsamples + 1];
 	    int i = 0;
@@ -40,8 +42,17 @@ public class OrbitalParametersProvider implements IOrbitDataProvider {
 	    // Last, to close the orbit.
 	    samples[i] = samples[0].cpy();
 
+	    Matrix4d func = null;
+	    if (parameter.function != null && !parameter.function.isEmpty()) {
+		Method m = Coordinates.class.getMethod(parameter.function);
+		func = (Matrix4d) m.invoke(null);
+	    }
+
 	    Matrix4d transform = new Matrix4d();
 	    transform.scl(Constants.KM_TO_U);
+	    if (func != null) {
+		transform.mul(func);
+	    }
 	    data = new OrbitData();
 	    for (Vector3d point : samples) {
 		point.mul(transform);

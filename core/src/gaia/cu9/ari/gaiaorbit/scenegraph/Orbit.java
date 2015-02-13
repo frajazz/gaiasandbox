@@ -29,6 +29,7 @@ public class Orbit extends LineObject {
     protected float alpha;
     public Matrix4d localTransformD;
     protected String provider;
+    protected String transformFunction;
     protected Class<? extends IOrbitDataProvider> providerClass;
     public OrbitComponent oc;
 
@@ -47,7 +48,7 @@ public class Orbit extends LineObject {
 	    IOrbitDataProvider provider;
 	    try {
 		provider = providerClass.newInstance();
-		provider.load(oc.source, new OrbitDataLoader.OrbitDataLoaderParameter(providerClass, oc));
+		provider.load(oc.source, new OrbitDataLoader.OrbitDataLoaderParameter(providerClass, oc, transformFunction));
 		orbitData = provider.getData();
 	    } catch (Exception e) {
 		Gdx.app.error(getClass().getSimpleName(), e.getMessage());
@@ -72,7 +73,7 @@ public class Orbit extends LineObject {
     }
 
     protected void updateLocalTransform(Date date) {
-	if (oc.source != null) {
+	if (oc.source != null || parent.orientation == null) {
 	    // Orbit is sampled, only get position
 	    localTransformD.set(transform.getMatrix());
 	} else {
@@ -152,6 +153,10 @@ public class Orbit extends LineObject {
 
     public void setOrbit(OrbitComponent oc) {
 	this.oc = oc;
+    }
+
+    public void setTransformFunction(String transformFunction) {
+	this.transformFunction = transformFunction;
     }
 
 }

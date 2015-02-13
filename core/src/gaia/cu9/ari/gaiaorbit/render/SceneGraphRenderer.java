@@ -8,7 +8,7 @@ import gaia.cu9.ari.gaiaorbit.render.system.AbstractRenderSystem;
 import gaia.cu9.ari.gaiaorbit.render.system.IRenderSystem;
 import gaia.cu9.ari.gaiaorbit.render.system.LineRenderSystem;
 import gaia.cu9.ari.gaiaorbit.render.system.ModelBatchRenderSystem;
-import gaia.cu9.ari.gaiaorbit.render.system.PixelBloomRenderSystem;
+import gaia.cu9.ari.gaiaorbit.render.system.PixelRenderSystem;
 import gaia.cu9.ari.gaiaorbit.render.system.ShaderQuadRenderSystem;
 import gaia.cu9.ari.gaiaorbit.render.system.SpriteBatchRenderSystem;
 import gaia.cu9.ari.gaiaorbit.scenegraph.CameraManager.CameraMode;
@@ -46,7 +46,6 @@ import com.badlogic.gdx.graphics.g3d.utils.RenderableSorter;
 import com.badlogic.gdx.graphics.g3d.utils.ShaderProvider;
 import com.badlogic.gdx.graphics.glutils.FrameBuffer;
 import com.badlogic.gdx.graphics.glutils.ShaderProgram;
-import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.Pool;
@@ -140,9 +139,6 @@ public class SceneGraphRenderer extends AbstractRenderer implements IProcessRend
     /** Render lists for all render groups **/
     public static Map<RenderGroup, List<IRenderable>> render_lists;
 
-    // Line renderer
-    private ShapeRenderer shapeRenderer;
-
     // Two model batches, for front (models), back and atmospheres
     private SpriteBatch spriteBatch, fontBatch;
 
@@ -170,9 +166,6 @@ public class SceneGraphRenderer extends AbstractRenderer implements IProcessRend
 	for (RenderGroup rg : renderGroups) {
 	    render_lists.put(rg, Collections.synchronizedList(new ArrayList<IRenderable>()));
 	}
-
-	// Shape renderers
-	shapeRenderer = new ShapeRenderer();
 
 	ShaderProvider spnormal = new AtmosphereGroundShaderProvider(Gdx.files.internal("shader/normal.vertex.glsl"), Gdx.files.internal("shader/normal.fragment.glsl"));
 	ShaderProvider sp = new AtmosphereGroundShaderProvider(Gdx.files.internal("shader/default.vertex.glsl"), Gdx.files.internal("shader/default.fragment.glsl"));
@@ -241,7 +234,7 @@ public class SceneGraphRenderer extends AbstractRenderer implements IProcessRend
 	int priority = 1;
 
 	// POINTS
-	AbstractRenderSystem pixelProc = new PixelBloomRenderSystem(RenderGroup.POINT, priority++, alphas);
+	AbstractRenderSystem pixelProc = new PixelRenderSystem(RenderGroup.POINT, priority++, alphas);
 	pixelProc.setPreRunnable(blendNoDepthRunnable);
 
 	// MODEL BACK
@@ -271,7 +264,7 @@ public class SceneGraphRenderer extends AbstractRenderer implements IProcessRend
 	shaderBackProc.setPreRunnable(blendNoDepthRunnable);
 
 	// LINES
-	AbstractRenderSystem lineProc = new LineRenderSystem(RenderGroup.LINE, priority++, alphas, shapeRenderer);
+	AbstractRenderSystem lineProc = new LineRenderSystem(RenderGroup.LINE, priority++, alphas);
 	lineProc.setPreRunnable(blendDepthRunnable);
 
 	// MODEL FRONT

@@ -312,7 +312,6 @@ public class GaiaInputController extends GestureDetector {
 		action.run();
 	    }
 
-	    System.out.println("Key up: " + keycode);
 	    pressedKeys.remove(keycode);
 	    return true;
 	} else if (keycode == Keys.ESCAPE) {
