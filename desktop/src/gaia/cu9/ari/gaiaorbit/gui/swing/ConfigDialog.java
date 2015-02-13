@@ -192,7 +192,7 @@ public class ConfigDialog extends I18nJFrame {
 	//	JTabbedPane tabbedPane = new JTabbedPane();
 	//	tabbedPane.setTabPlacement(WebTabbedPane.LEFT);
 
-	JXTabbedPane tabbedPane = new JXTabbedPane(JTabbedPane.LEFT);
+	final JXTabbedPane tabbedPane = new JXTabbedPane(JTabbedPane.LEFT);
 	AbstractTabRenderer renderer = (AbstractTabRenderer) tabbedPane.getTabRenderer();
 	renderer.setPrototypeText("123456789012345678");
 	renderer.setHorizontalTextAlignment(SwingConstants.LEADING);
@@ -669,7 +669,7 @@ public class ConfigDialog extends I18nJFrame {
 	scrollConnection.setMinimumSize(new Dimension(0, 150));
 	scrollConnection.setVisible(false);
 
-	JButton testConnection = new JButton(txt("gui.data.testconnection"), IconManager.get("config/connection"));
+	final JButton testConnection = new JButton(txt("gui.data.testconnection"), IconManager.get("config/connection"));
 	testConnection.addActionListener(new ActionListener() {
 	    @Override
 	    public void actionPerformed(ActionEvent e) {

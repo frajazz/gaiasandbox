@@ -28,7 +28,7 @@ public class ObjectServerLoader implements ISceneGraphNodeProvider {
     @Override
     public void initialize(Properties properties) {
 	result = new ArrayList<CelestialBody>();
-	cc = new ClientCore();
+	cc = ClientCore.getInstance();
     }
 
     String rawdata = null;
@@ -66,6 +66,12 @@ public class ObjectServerLoader implements ISceneGraphNodeProvider {
 			data.append((String) block.getPayload());
 		    }
 		    rawdata = data.toString();
+		}
+
+		@Override
+		public void receivedMessageBlock(Message query, Message reply, MessagePayloadBlock block) {
+		    // TODO Auto-generated method stub
+
 		}
 
 	    });
