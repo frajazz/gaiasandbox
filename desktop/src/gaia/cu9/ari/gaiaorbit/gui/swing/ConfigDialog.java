@@ -13,12 +13,6 @@ import gaia.cu9.ari.gaiaorbit.interfce.KeyMappings.ProgramAction;
 import gaia.cu9.ari.gaiaorbit.util.GlobalConf;
 import gaia.cu9.ari.gaiaorbit.util.GlobalResources;
 import gaia.cu9.ari.gaiaorbit.util.I18n;
-import gaia.cu9.object.server.ClientCore;
-import gaia.cu9.object.server.commands.plugins.ClientIdent;
-import gaia.cu9.object.server.structures.datasets.DatasetManager;
-import gaia.cu9.object.server.structures.tables.Table;
-import gaia.cu9.object.server.structures.visualization.Visualization;
-import gaia.cu9.object.server.structures.visualization.VisualizationManager;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
@@ -43,7 +37,6 @@ import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URL;
 import java.util.Arrays;
-import java.util.Collection;
 import java.util.Date;
 import java.util.Locale;
 import java.util.Map;
@@ -73,18 +66,12 @@ import javax.swing.SpinnerNumberModel;
 import javax.swing.SwingConstants;
 import javax.swing.UIManager;
 import javax.swing.border.Border;
-import javax.swing.border.EmptyBorder;
 import javax.swing.border.MatteBorder;
 import javax.swing.border.TitledBorder;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
-import javax.swing.event.TreeSelectionEvent;
-import javax.swing.event.TreeSelectionListener;
-import javax.swing.tree.DefaultMutableTreeNode;
-import javax.swing.tree.TreePath;
-import javax.swing.tree.TreeSelectionModel;
 
 import net.miginfocom.swing.MigLayout;
 
@@ -652,171 +639,6 @@ public class ConfigDialog extends I18nJFrame {
 	tabbedPane.addTab(txt("gui.frameoutput.title"), IconManager.get("config/frameoutput"), imageOutputPanel);
 	tabbedPane.setMnemonicAt(5, KeyEvent.VK_6);
 
-	/**
-	 * ====== DATA TAB =======
-	 */
-	JPanel datasource = new JPanel(new MigLayout("", "[][grow,fill][]", ""));
-	datasource.setBorder(new TitledBorder(new MatteBorder(new Insets(thick, 0, 0, 0), bcol), txt("gui.data.source"), just, pos));
-
-	// OBJECT SERVER CONFIGURATION PANEL
-
-	final JTextField hostname = new JTextField();
-	hostname.setText(GlobalConf.data.OBJECT_SERVER_HOSTNAME);
-	final JTextField port = new JTextField();
-	port.setText(Integer.toString(GlobalConf.data.OBJECT_SERVER_PORT));
-
-	// CONNECTION PANE
-	final JPanel connection = new JPanel(new MigLayout("", "[grow,fill]", ""));
-	final JScrollPane scrollConnection = new JScrollPane(connection);
-	scrollConnection.setBorder(new EmptyBorder(0, 0, 0, 0));
-	scrollConnection.setMinimumSize(new Dimension(0, 150));
-	scrollConnection.setVisible(false);
-
-	final JButton testConnection = new JButton(txt("gui.data.testconnection"), IconManager.get("config/connection"));
-	testConnection.addActionListener(new ActionListener() {
-
-	    private void connectionFailed() {
-		connection.removeAll();
-		JLabel nocon = new JLabel(txt("gui.data.connectionerror"));
-		nocon.setForeground(darkred);
-		connection.add(nocon);
-		scrollConnection.setVisible(true);
-		// Repaint frame
-		frame.repaint();
-	    }
-
-	    @Override
-	    public void actionPerformed(ActionEvent e) {
-		try {
-
-		    String host = hostname.getText();
-		    int prt = Integer.parseInt(port.getText());
-
-		    ClientCore cc = ClientCore.getInstance();
-		    if (!cc.connect(host, prt)) {
-			connectionFailed();
-			return;
-		    }
-		    ClientIdent ident = new ClientIdent();
-		    ident.setAffiliation("ARI");
-		    ident.setAuthors("Toni Sagristà <tsagrista@ari.uni-heidelberg.de>");
-		    ident.setClientDescription("Real time, 3D, outreach visualization software");
-		    ident.setClientDocumentationURL(GlobalConf.WIKI);
-		    ident.setClientHomepage(GlobalConf.WEBPAGE);
-		    ident.setClientName(GlobalConf.APPLICATION_NAME);
-		    ident.setClientVersion(GlobalConf.version.version);
-		    ident.setClientPlatform(System.getProperty("os.name"));
-		    ident.setClientIconURL(GlobalConf.ICON_URL);
-		    cc.executeCommand(ident);
-
-		    DatasetManager.getInstance().refreshItems();
-		    VisualizationManager visManager = VisualizationManager.getInstance();
-		    visManager.refreshItems();
-
-		    DefaultMutableTreeNode top =
-			    new DefaultMutableTreeNode(txt("gui.data.visualisations"));
-
-		    Collection<Visualization> visualizations = visManager.getVisualizations();
-		    for (Visualization visualization : visualizations) {
-			DefaultMutableTreeNode vis = new DefaultMutableTreeNode(visualization.getName());
-
-			// ID
-			DefaultMutableTreeNode idlabel = new DefaultMutableTreeNode(txt("gui.data.id") + ": " + visualization.getIdentifier());
-			vis.add(idlabel);
-
-			// TABLE
-			Table table = visualization.getAssociatedTable();
-			DefaultMutableTreeNode tablelabel = new DefaultMutableTreeNode(txt("gui.data.table") + ": " + table.getName() + " (" + txt("gui.data.numberrows", table.getRowCount()) + ")");
-			vis.add(tablelabel);
-
-			// COLUMNS
-			DefaultMutableTreeNode collabel = new DefaultMutableTreeNode(txt("gui.data.columns"));
-			for (int col = 0; col < visualization.getCoordinateAxisDefinitions().length; col++) {
-			    collabel.add(new DefaultMutableTreeNode(visualization.getCoordinateAxisDefinitions()[col]));
-			}
-			collabel.add(new DefaultMutableTreeNode(visualization.getColourDefinition()));
-			collabel.add(new DefaultMutableTreeNode(visualization.getSizeDefinition()));
-
-			vis.add(collabel);
-
-			top.add(vis);
-		    }
-
-		    visualisationsTree = new JTree(top);
-
-		    // Selection of nodes
-		    visualisationsTree.getSelectionModel().setSelectionMode(TreeSelectionModel.SINGLE_TREE_SELECTION);
-		    //Listen for when the selection changes.
-		    visualisationsTree.addTreeSelectionListener(new TreeSelectionListener() {
-
-			@Override
-			public void valueChanged(TreeSelectionEvent e) {
-			    TreePath path = e.getNewLeadSelectionPath();
-			    DefaultMutableTreeNode visNode = (DefaultMutableTreeNode) path.getPathComponent(1);
-			    DefaultMutableTreeNode idNode = (DefaultMutableTreeNode) visNode.getChildAt(0);
-
-			    String visId = ((String) idNode.getUserObject()).split(":")[1].trim();
-			    GlobalConf.data.VISUALIZATION_ID = visId;
-
-			}
-
-		    });
-
-		    connection.removeAll();
-		    connection.add(new JLabel(txt("gui.data.selectvis") + ":"), "wrap");
-		    connection.add(visualisationsTree);
-		    scrollConnection.setVisible(true);
-		    // Repaint frame
-		    frame.repaint();
-
-		} catch (Exception e1) {
-		    connectionFailed();
-		    EventManager.getInstance().post(Events.JAVA_EXCEPTION, e1);
-		}
-	    }
-	});
-
-	// LOCAL DATA OR OBJECT SERVER RADIO BUTTONS
-	final JRadioButton local = new JRadioButton(txt("gui.data.local"));
-	local.addActionListener(new ActionListener() {
-	    @Override
-	    public void actionPerformed(ActionEvent e) {
-		GlobalConf.data.DATA_SOURCE_LOCAL = local.isSelected();
-		enableComponents(!local.isSelected(), hostname, port, testConnection, visualisationsTree);
-	    }
-	});
-	local.setSelected(GlobalConf.data.DATA_SOURCE_LOCAL);
-
-	final JRadioButton objectserver = new JRadioButton(txt("gui.data.objectserver"));
-	objectserver.addActionListener(new ActionListener() {
-	    @Override
-	    public void actionPerformed(ActionEvent e) {
-		GlobalConf.data.DATA_SOURCE_LOCAL = !objectserver.isSelected();
-		enableComponents(objectserver.isSelected(), hostname, port, testConnection, visualisationsTree);
-	    }
-	});
-	objectserver.setSelected(!GlobalConf.data.DATA_SOURCE_LOCAL);
-	enableComponents(!GlobalConf.data.DATA_SOURCE_LOCAL, hostname, port, testConnection, visualisationsTree);
-
-	ButtonGroup dataButtons = new ButtonGroup();
-	dataButtons.add(local);
-	dataButtons.add(objectserver);
-
-	datasource.add(local, "span,wrap");
-	datasource.add(objectserver, "span,wrap");
-	datasource.add(new JLabel(txt("gui.data.hostname") + ":"));
-	datasource.add(hostname, "span, wrap");
-	datasource.add(new JLabel(txt("gui.data.port") + ":"));
-	datasource.add(port);
-	datasource.add(testConnection, "wrap");
-
-	final JPanel dataPanel = new JPanel(new MigLayout("", "[grow,fill]", ""));
-	dataPanel.add(datasource, "wrap");
-	dataPanel.add(scrollConnection);
-
-	tabbedPane.addTab(txt("gui.data"), IconManager.get("config/data"), dataPanel);
-	tabbedPane.setMnemonicAt(6, KeyEvent.VK_7);
-
 	// Do not show again
 	final JCheckBox showAgain = new JCheckBox(txt("gui.notagain"));
 	showAgain.addChangeListener(new ChangeListener() {
@@ -839,54 +661,8 @@ public class ConfigDialog extends I18nJFrame {
 	okButton.addActionListener(new ActionListener() {
 	    boolean goahead = true;
 
-	    private void connectionFailed() {
-		// Connection not possible
-		goahead = false;
-		tabbedPane.setSelectedIndex(6);
-		connection.removeAll();
-
-		JTextArea noConnection = new JTextArea(txt("notif.objectserver.notconnect")) {
-		    @Override
-		    public void setBorder(Border border) {
-			// No!
-		    }
-		};
-		noConnection.setEditable(false);
-		noConnection.setBackground(transparent);
-		noConnection.setForeground(darkred);
-
-		connection.add(noConnection);
-		scrollConnection.setVisible(true);
-		// Repaint frame
-		frame.repaint();
-	    }
-
 	    @Override
 	    public void actionPerformed(ActionEvent e) {
-		if (startup && objectserver.isSelected()) {
-		    try {
-			// Check object server connection
-			ClientCore cc = ClientCore.getInstance();
-			if (!cc.isConnected()) {
-			    if (!cc.connect(GlobalConf.data.OBJECT_SERVER_HOSTNAME, GlobalConf.data.OBJECT_SERVER_PORT)) {
-				connectionFailed();
-			    }
-			    ClientIdent ident = new ClientIdent();
-			    ident.setAffiliation("ARI");
-			    ident.setAuthors("Toni Sagristà <tsagrista@ari.uni-heidelberg.de>");
-			    ident.setClientDescription("Real time, 3D, outreach visualization software");
-			    ident.setClientDocumentationURL(GlobalConf.WIKI);
-			    ident.setClientHomepage(GlobalConf.WEBPAGE);
-			    ident.setClientName(GlobalConf.APPLICATION_NAME);
-			    ident.setClientVersion(GlobalConf.version.version);
-			    ident.setClientPlatform(System.getProperty("os.name"));
-			    ident.setClientIconURL(GlobalConf.ICON_URL);
-			    cc.executeCommand(ident);
-			}
-		    } catch (IOException ex) {
-			connectionFailed();
-		    }
-		}
 
 		if (goahead) {
 		    // Add all properties to GlobalConf.instance
@@ -960,11 +736,6 @@ public class ConfigDialog extends I18nJFrame {
 	cancelButton = new JButton(txt("gui.cancel"));
 	cancelButton.addActionListener(new ActionListener() {
 	    public void actionPerformed(ActionEvent e) {
-		ClientCore cc = ClientCore.getInstance();
-		if (startup && cc.isConnected()) {
-		    // Only disconnect if no startup
-		    cc.disconnect();
-		}
 		if (frame.isDisplayable()) {
 		    frame.dispose();
 		}

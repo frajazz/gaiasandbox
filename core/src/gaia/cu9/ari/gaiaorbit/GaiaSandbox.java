@@ -39,7 +39,6 @@ import gaia.cu9.ari.gaiaorbit.util.ModelCache;
 import gaia.cu9.ari.gaiaorbit.util.math.MathUtilsd;
 import gaia.cu9.ari.gaiaorbit.util.math.Vector3d;
 import gaia.cu9.ari.gaiaorbit.util.time.GlobalClock;
-import gaia.cu9.object.server.ClientCore;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -320,10 +319,6 @@ public class GaiaSandbox implements ApplicationListener, IObserver {
 		GlobalConf.saveProperties(new File(System.getProperty("properties.file")).toURI().toURL());
 	} catch (MalformedURLException e) {
 	    EventManager.getInstance().post(Events.JAVA_EXCEPTION, e);
-	}
-	if (ClientCore.getInstance().isConnected()) {
-	    // Terminate connection
-	    ClientCore.getInstance().disconnect();
 	}
 
 	gui.dispose();
