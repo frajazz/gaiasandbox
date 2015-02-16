@@ -39,6 +39,7 @@ import gaia.cu9.ari.gaiaorbit.util.ModelCache;
 import gaia.cu9.ari.gaiaorbit.util.math.MathUtilsd;
 import gaia.cu9.ari.gaiaorbit.util.math.Vector3d;
 import gaia.cu9.ari.gaiaorbit.util.time.GlobalClock;
+import gaia.cu9.object.server.ClientCore;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -140,12 +141,6 @@ public class GaiaSandbox implements ApplicationListener, IObserver {
 	EventManager.getInstance().post(Events.INPUT_ENABLED_CMD, false);
 
 	if (!GlobalClock.initialized()) {
-	    //	    Calendar c = new GregorianCalendar();
-	    //	    c.set(Calendar.YEAR, 2013);
-	    //	    c.set(Calendar.MONTH, Calendar.DECEMBER);
-	    //	    c.set(Calendar.DAY_OF_MONTH, 19);
-	    //	    c.set(Calendar.HOUR_OF_DAY, 10);
-	    //	    c.set(Calendar.MINUTE, 56);
 	    // Initialize clock with a pace of 2 simulation hours/second
 	    GlobalClock.initialize(0.01, new Date());
 	}
@@ -192,7 +187,7 @@ public class GaiaSandbox implements ApplicationListener, IObserver {
 	if (sg == null) {
 	    // Set asset manager to asset bean
 	    AssetBean.setAssetManager(manager);
-	    manager.load(GlobalConf.instance.SG_FILE, ISceneGraph.class, new SGLoaderParameter(GlobalClock.clock, GlobalConf.instance.MULTITHREADING, GlobalConf.instance.NUMBER_THREADS));
+	    manager.load(GlobalConf.data.DATA_SG_FILE, ISceneGraph.class, new SGLoaderParameter(GlobalClock.clock, GlobalConf.performance.MULTITHREADING, GlobalConf.performance.NUMBER_THREADS));
 	}
 
 	// Initialize timestamp for screenshots
@@ -241,8 +236,8 @@ public class GaiaSandbox implements ApplicationListener, IObserver {
 
 	GlobalResources.doneLoading(manager);
 
-	if (manager.isLoaded(GlobalConf.instance.SG_FILE)) {
-	    sg = manager.get(GlobalConf.instance.SG_FILE);
+	if (manager.isLoaded(GlobalConf.data.DATA_SG_FILE)) {
+	    sg = manager.get(GlobalConf.data.DATA_SG_FILE);
 	}
 
 	AbstractRenderer.initialize(sg);
@@ -282,7 +277,7 @@ public class GaiaSandbox implements ApplicationListener, IObserver {
 	EventManager.getInstance().post(Events.SCENE_GRAPH_LOADED, sg);
 	EventManager.getInstance().post(Events.CAMERA_MODE_CMD, CameraMode.Focus);
 
-	AbstractPositionEntity focus = (AbstractPositionEntity) sg.getNode("earth");
+	AbstractPositionEntity focus = (AbstractPositionEntity) sg.getNode("Earth");
 	EventManager.getInstance().post(Events.FOCUS_CHANGE_CMD, focus, true);
 	float dst = focus.size * 3;
 	Vector3d newCameraPos = focus.pos.cpy().add(0, 0, -dst);
@@ -311,9 +306,9 @@ public class GaiaSandbox implements ApplicationListener, IObserver {
 	initialized = true;
 
 	// Run tutorial
-	if (GlobalConf.instance.DISPLAY_TUTORIAL) {
+	if (GlobalConf.program.DISPLAY_TUTORIAL) {
 	    EventManager.getInstance().post(Events.SHOW_TUTORIAL_ACTION);
-	    GlobalConf.instance.DISPLAY_TUTORIAL = false;
+	    GlobalConf.program.DISPLAY_TUTORIAL = false;
 	}
 
     }
@@ -322,10 +317,15 @@ public class GaiaSandbox implements ApplicationListener, IObserver {
     public void dispose() {
 	try {
 	    if (!Constants.mobile)
-		GlobalConf.instance.saveProperties(new File(System.getProperty("properties.file")).toURI().toURL());
+		GlobalConf.saveProperties(new File(System.getProperty("properties.file")).toURI().toURL());
 	} catch (MalformedURLException e) {
 	    EventManager.getInstance().post(Events.JAVA_EXCEPTION, e);
 	}
+	if (ClientCore.getInstance().isConnected()) {
+	    // Terminate connection
+	    ClientCore.getInstance().disconnect();
+	}
+
 	gui.dispose();
 	renderGui.dispose();
 	if (sg != null) {
@@ -346,7 +346,7 @@ public class GaiaSandbox implements ApplicationListener, IObserver {
 		renderLoadingScreen();
 	    }
 	} else {
-	    if (GlobalConf.instance.GLOBAL_PAUSE) {
+	    if (GlobalConf.runtime.GLOBAL_PAUSE) {
 		// We are in pause mode!
 		try {
 		    Thread.sleep(200);
@@ -367,14 +367,14 @@ public class GaiaSandbox implements ApplicationListener, IObserver {
 		 */
 
 		/* SCREEN OUTPUT */
-		if (GlobalConf.instance.SCREEN_OUTPUT) {
+		if (GlobalConf.screen.SCREEN_OUTPUT) {
 		    /** RENDER THE SCENE **/
 		    // Set viewport
 		    setViewportSize(Gdx.graphics.getWidth(), Gdx.graphics.getHeight(), cam);
 		    preRenderScene();
 		    sgr.render(cam, null, pp.getPostProcessBean(RenderType.screen));
 
-		    if (!GlobalConf.instance.CLEAN_MODE) {
+		    if (!GlobalConf.runtime.CLEAN_MODE) {
 			// Render the GUI, setting the viewport
 			gui.getGuiStage().getViewport().apply();
 			gui.render();
@@ -382,8 +382,8 @@ public class GaiaSandbox implements ApplicationListener, IObserver {
 		}
 
 		/* FRAME OUTPUT */
-		if (GlobalConf.instance.RENDER_OUTPUT) {
-		    renderToImage(cam, pp.getPostProcessBean(RenderType.frame), GlobalConf.instance.RENDER_WIDTH, GlobalConf.instance.RENDER_HEIGHT, GlobalConf.instance.RENDER_FOLDER, GlobalConf.instance.RENDER_FILE_NAME);
+		if (GlobalConf.frame.RENDER_OUTPUT) {
+		    renderToImage(cam, pp.getPostProcessBean(RenderType.frame), GlobalConf.frame.RENDER_WIDTH, GlobalConf.frame.RENDER_HEIGHT, GlobalConf.frame.RENDER_FOLDER, GlobalConf.frame.RENDER_FILE_NAME);
 		}
 
 		/* SCREENSHOT OUTPUT */
@@ -405,9 +405,9 @@ public class GaiaSandbox implements ApplicationListener, IObserver {
      * @param dt Delta time in seconds.
      */
     public void update(float dt) {
-	if (GlobalConf.instance.RENDER_OUTPUT) {
+	if (GlobalConf.frame.RENDER_OUTPUT) {
 	    // If RENDER_OUTPUT is active, we need to set our dt according to the fps
-	    dt = 1f / GlobalConf.instance.RENDER_TARGET_FPS;
+	    dt = 1f / GlobalConf.frame.RENDER_TARGET_FPS;
 	} else {
 	    // Max time step is 0.1 seconds. Not in RENDER_OUTPUT MODE.
 	    dt = Math.min(dt, 0.1f);
@@ -417,7 +417,7 @@ public class GaiaSandbox implements ApplicationListener, IObserver {
 	renderGui.update(dt);
 
 	float dtScene = dt;
-	if (!GlobalConf.instance.TIME_ON) {
+	if (!GlobalConf.runtime.TIME_ON) {
 	    dtScene = 0;
 	}
 	// Update clock
@@ -469,7 +469,7 @@ public class GaiaSandbox implements ApplicationListener, IObserver {
 	    // the renderScene() has closed it.
 	    m_fbo.begin();
 	}
-	if (GlobalConf.instance.RENDER_SCREENSHOT_TIME) {
+	if (GlobalConf.frame.RENDER_SCREENSHOT_TIME) {
 	    // Timestamp
 	    renderGui.resize(camera.getViewport().getScreenWidth(), camera.getViewport().getScreenHeight());
 	    renderGui.render();
@@ -558,13 +558,13 @@ public class GaiaSandbox implements ApplicationListener, IObserver {
 	    int width;
 	    int height;
 	    if (toFullscreen) {
-		width = GlobalConf.instance.FULLSCREEN_WIDTH;
-		height = GlobalConf.instance.FULLSCREEN_HEIGHT;
-		GlobalConf.instance.SCREEN_WIDTH = Gdx.graphics.getWidth();
-		GlobalConf.instance.SCREEN_HEIGHT = Gdx.graphics.getHeight();
+		width = GlobalConf.screen.FULLSCREEN_WIDTH;
+		height = GlobalConf.screen.FULLSCREEN_HEIGHT;
+		GlobalConf.screen.SCREEN_WIDTH = Gdx.graphics.getWidth();
+		GlobalConf.screen.SCREEN_HEIGHT = Gdx.graphics.getHeight();
 	    } else {
-		width = GlobalConf.instance.SCREEN_WIDTH;
-		height = GlobalConf.instance.SCREEN_HEIGHT;
+		width = GlobalConf.screen.SCREEN_WIDTH;
+		height = GlobalConf.screen.SCREEN_HEIGHT;
 	    }
 	    // Only switch if needed
 	    if (Gdx.graphics.isFullscreen() != toFullscreen) {

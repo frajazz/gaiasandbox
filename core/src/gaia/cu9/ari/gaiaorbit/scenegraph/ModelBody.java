@@ -110,7 +110,7 @@ public abstract class ModelBody extends CelestialBody {
     }
 
     public boolean withinMagLimit() {
-	return this.absmag <= GlobalConf.instance.LIMIT_MAG_RUNTIME;
+	return this.absmag <= GlobalConf.runtime.LIMIT_MAG_RUNTIME;
     }
 
     @Override

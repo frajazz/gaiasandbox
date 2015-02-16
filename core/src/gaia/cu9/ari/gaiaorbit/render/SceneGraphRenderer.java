@@ -46,7 +46,6 @@ import com.badlogic.gdx.graphics.g3d.utils.RenderableSorter;
 import com.badlogic.gdx.graphics.g3d.utils.ShaderProvider;
 import com.badlogic.gdx.graphics.glutils.FrameBuffer;
 import com.badlogic.gdx.graphics.glutils.ShaderProgram;
-import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.Pool;
@@ -140,9 +139,6 @@ public class SceneGraphRenderer extends AbstractRenderer implements IProcessRend
     /** Render lists for all render groups **/
     public static Map<RenderGroup, List<IRenderable>> render_lists;
 
-    // Line renderer
-    private ShapeRenderer shapeRenderer;
-
     // Two model batches, for front (models), back and atmospheres
     private SpriteBatch spriteBatch, fontBatch;
 
@@ -170,9 +166,6 @@ public class SceneGraphRenderer extends AbstractRenderer implements IProcessRend
 	for (RenderGroup rg : renderGroups) {
 	    render_lists.put(rg, Collections.synchronizedList(new ArrayList<IRenderable>()));
 	}
-
-	// Shape renderers
-	shapeRenderer = new ShapeRenderer();
 
 	ShaderProvider spnormal = new AtmosphereGroundShaderProvider(Gdx.files.internal("shader/normal.vertex.glsl"), Gdx.files.internal("shader/normal.fragment.glsl"));
 	ShaderProvider sp = new AtmosphereGroundShaderProvider(Gdx.files.internal("shader/default.vertex.glsl"), Gdx.files.internal("shader/default.fragment.glsl"));
@@ -205,7 +198,7 @@ public class SceneGraphRenderer extends AbstractRenderer implements IProcessRend
 	ComponentType[] comps = ComponentType.values();
 
 	// Set reference
-	visible = GlobalConf.instance.VISIBILITY;
+	visible = GlobalConf.scene.VISIBILITY;
 
 	times = new long[comps.length];
 	alphas = new float[comps.length];
@@ -238,14 +231,14 @@ public class SceneGraphRenderer extends AbstractRenderer implements IProcessRend
 	    }
 	};
 
-	int i = 1;
+	int priority = 1;
 
 	// POINTS
-	AbstractRenderSystem pixelProc = new PixelRenderSystem(RenderGroup.POINT, i++, alphas);
+	AbstractRenderSystem pixelProc = new PixelRenderSystem(RenderGroup.POINT, priority++, alphas);
 	pixelProc.setPreRunnable(blendNoDepthRunnable);
 
 	// MODEL BACK
-	AbstractRenderSystem modelBackProc = new ModelBatchRenderSystem(RenderGroup.MODEL_B, i++, alphas, modelBatchB, false);
+	AbstractRenderSystem modelBackProc = new ModelBatchRenderSystem(RenderGroup.MODEL_B, priority++, alphas, modelBatchB, false);
 	modelBackProc.setPreRunnable(blendNoDepthRunnable);
 	modelBackProc.setPostRunnable(new Runnable() {
 	    @Override
@@ -256,7 +249,7 @@ public class SceneGraphRenderer extends AbstractRenderer implements IProcessRend
 	});
 
 	// ANNOTATIONS
-	AbstractRenderSystem annotationsProc = new SpriteBatchRenderSystem(RenderGroup.MODEL_B_ANNOT, i++, alphas, spriteBatch);
+	AbstractRenderSystem annotationsProc = new SpriteBatchRenderSystem(RenderGroup.MODEL_B_ANNOT, priority++, alphas, spriteBatch);
 	annotationsProc.setPreRunnable(blendNoDepthRunnable);
 	annotationsProc.setPostRunnable(new Runnable() {
 	    @Override
@@ -266,28 +259,28 @@ public class SceneGraphRenderer extends AbstractRenderer implements IProcessRend
 	    }
 	});
 
-	// SHADER BACK
-	AbstractRenderSystem shaderBackProc = new ShaderQuadRenderSystem(RenderGroup.SHADER, i++, alphas, starShader, true);
+	// SHADER STARS
+	AbstractRenderSystem shaderBackProc = new ShaderQuadRenderSystem(RenderGroup.SHADER, priority++, alphas, starShader, true);
 	shaderBackProc.setPreRunnable(blendNoDepthRunnable);
 
 	// LINES
-	AbstractRenderSystem lineProc = new LineRenderSystem(RenderGroup.LINE, i++, alphas, shapeRenderer);
+	AbstractRenderSystem lineProc = new LineRenderSystem(RenderGroup.LINE, priority++, alphas);
 	lineProc.setPreRunnable(blendDepthRunnable);
 
 	// MODEL FRONT
-	AbstractRenderSystem modelFrontProc = new ModelBatchRenderSystem(RenderGroup.MODEL_F, i++, alphas, modelBatchF, false);
+	AbstractRenderSystem modelFrontProc = new ModelBatchRenderSystem(RenderGroup.MODEL_F, priority++, alphas, modelBatchF, false);
 	modelFrontProc.setPreRunnable(blendDepthRunnable);
 
 	// MODEL STARS
-	AbstractRenderSystem modelStarsProc = new ModelBatchRenderSystem(RenderGroup.MODEL_S, i++, alphas, modelBatchS, false);
+	AbstractRenderSystem modelStarsProc = new ModelBatchRenderSystem(RenderGroup.MODEL_S, priority++, alphas, modelBatchS, false);
 	modelStarsProc.setPreRunnable(blendDepthRunnable);
 
 	// LABELS
-	AbstractRenderSystem labelsProc = new SpriteBatchRenderSystem(RenderGroup.LABEL, i++, alphas, fontBatch, fontShader);
+	AbstractRenderSystem labelsProc = new SpriteBatchRenderSystem(RenderGroup.LABEL, priority++, alphas, fontBatch, fontShader);
 	labelsProc.setPreRunnable(blendDepthRunnable);
 
 	// MODEL ATMOSPHERE
-	AbstractRenderSystem modelAtmProc = new ModelBatchRenderSystem(RenderGroup.MODEL_F_ATM, i++, alphas, modelBatchAtm, true) {
+	AbstractRenderSystem modelAtmProc = new ModelBatchRenderSystem(RenderGroup.MODEL_F_ATM, priority++, alphas, modelBatchAtm, true) {
 	    @Override
 	    protected float getAlpha(IRenderable s) {
 		return alphas[ComponentType.Atmospheres.ordinal()] * (float) Math.pow(alphas[s.getComponentType().ordinal()], 2);
@@ -300,8 +293,8 @@ public class SceneGraphRenderer extends AbstractRenderer implements IProcessRend
 	};
 	modelAtmProc.setPreRunnable(blendDepthRunnable);
 
-	// SHADER FRONT
-	AbstractRenderSystem shaderFrontProc = new ShaderQuadRenderSystem(RenderGroup.SHADER_F, i++, alphas, starShader, false);
+	// SHADER SSO
+	AbstractRenderSystem shaderFrontProc = new ShaderQuadRenderSystem(RenderGroup.SHADER_F, priority++, alphas, starShader, false);
 	shaderFrontProc.setPreRunnable(blendDepthRunnable);
 
 	// Add components to set
@@ -354,7 +347,7 @@ public class SceneGraphRenderer extends AbstractRenderer implements IProcessRend
 	} else {
 	    /** NORMAL MODE **/
 
-	    if (GlobalConf.instance.STEREOSCOPIC_MODE) {
+	    if (GlobalConf.program.STEREOSCOPIC_MODE) {
 		boolean movecam = camera.getMode() == CameraMode.Free_Camera || camera.getMode() == CameraMode.Focus;
 		// Side by side rendering
 		Viewport vp = camera.getViewport();
@@ -365,7 +358,7 @@ public class SceneGraphRenderer extends AbstractRenderer implements IProcessRend
 		Pool<Vector3> vectorPool = Pools.get(Vector3.class);
 		// Vector of 1 meter length pointing to the side of the camera
 		Vector3 side = vectorPool.obtain().set(cam.direction);
-		float separation = (float) Constants.M_TO_U * GlobalConf.instance.STEREOSCOPIC_EYE_SEPARATION_M;
+		float separation = (float) Constants.M_TO_U * GlobalConf.program.STEREOSCOPIC_EYE_SEPARATION_M;
 		if (camera.getMode() == CameraMode.Focus) {
 		    // In focus mode we keep the separation dependant on the distance with a fixed angle
 		    float distToFocus = ((NaturalCamera) camera.getCurrent()).focus.distToCamera - ((NaturalCamera) camera.getCurrent()).focus.getRadius();
@@ -496,7 +489,7 @@ public class SceneGraphRenderer extends AbstractRenderer implements IProcessRend
 
     private float calculateAlpha(ComponentType type, long now) {
 	long diff = now - times[type.ordinal()];
-	if (diff > GlobalConf.instance.OBJECT_FADE_MS) {
+	if (diff > GlobalConf.scene.OBJECT_FADE_MS) {
 	    if (visible[type.ordinal()]) {
 		alphas[type.ordinal()] = 1;
 	    } else {
@@ -504,7 +497,7 @@ public class SceneGraphRenderer extends AbstractRenderer implements IProcessRend
 	    }
 	    return alphas[type.ordinal()];
 	} else {
-	    return visible[type.ordinal()] ? MathUtilsd.lint(diff, 0, GlobalConf.instance.OBJECT_FADE_MS, 0, 1) : MathUtilsd.lint(diff, 0, GlobalConf.instance.OBJECT_FADE_MS, 1, 0);
+	    return visible[type.ordinal()] ? MathUtilsd.lint(diff, 0, GlobalConf.scene.OBJECT_FADE_MS, 0, 1) : MathUtilsd.lint(diff, 0, GlobalConf.scene.OBJECT_FADE_MS, 1, 0);
 	}
     }
 

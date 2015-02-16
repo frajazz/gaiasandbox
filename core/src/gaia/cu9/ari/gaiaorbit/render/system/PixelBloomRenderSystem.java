@@ -39,7 +39,7 @@ public class PixelBloomRenderSystem extends AbstractRenderSystem implements IObs
 	if (!pointShader.isCompiled()) {
 	    Gdx.app.error(this.getClass().getName(), "Point shader compilation failed:\n" + pointShader.getLog());
 	}
-	this.renderer = new ImmediateModeRenderer20(120000, false, true, 0, pointShader);
+	this.renderer = new ImmediateModeRenderer20(1500000, false, true, 0, pointShader);
 
 	// Init bloom
 	pp = new PostProcessor(true, true, true);
@@ -57,7 +57,7 @@ public class PixelBloomRenderSystem extends AbstractRenderSystem implements IObs
 
 	// Own frame buffer
 	screen_fb = new FrameBuffer(Format.RGB888, Gdx.graphics.getWidth(), Gdx.graphics.getHeight(), true);
-	frame_fb = new FrameBuffer(Format.RGB888, GlobalConf.instance.SCREENSHOT_WIDTH, GlobalConf.instance.SCREEN_HEIGHT, true);
+	frame_fb = new FrameBuffer(Format.RGB888, GlobalConf.screenshot.SCREENSHOT_WIDTH, GlobalConf.screen.SCREEN_HEIGHT, true);
 
 	EventManager.getInstance().subscribe(this, Events.TRANSIT_COLOUR_CMD, Events.SCREEN_RESIZE, Events.TOGGLE_STEREOSCOPIC);
     }
@@ -109,7 +109,7 @@ public class PixelBloomRenderSystem extends AbstractRenderSystem implements IObs
 	    break;
 	case TOGGLE_STEREOSCOPIC:
 	    // Update size
-	    if (GlobalConf.instance.STEREOSCOPIC_MODE) {
+	    if (GlobalConf.program.STEREOSCOPIC_MODE) {
 		screen_fb = new FrameBuffer(Format.RGB888, Gdx.graphics.getWidth() / 2, Gdx.graphics.getHeight(), true);
 	    } else {
 		screen_fb = new FrameBuffer(Format.RGB888, Gdx.graphics.getWidth(), Gdx.graphics.getHeight(), true);

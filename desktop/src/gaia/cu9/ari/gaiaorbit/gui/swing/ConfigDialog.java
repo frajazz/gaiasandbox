@@ -13,6 +13,12 @@ import gaia.cu9.ari.gaiaorbit.interfce.KeyMappings.ProgramAction;
 import gaia.cu9.ari.gaiaorbit.util.GlobalConf;
 import gaia.cu9.ari.gaiaorbit.util.GlobalResources;
 import gaia.cu9.ari.gaiaorbit.util.I18n;
+import gaia.cu9.object.server.ClientCore;
+import gaia.cu9.object.server.commands.plugins.ClientIdent;
+import gaia.cu9.object.server.structures.datasets.DatasetManager;
+import gaia.cu9.object.server.structures.tables.Table;
+import gaia.cu9.object.server.structures.visualization.Visualization;
+import gaia.cu9.object.server.structures.visualization.VisualizationManager;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
@@ -37,6 +43,7 @@ import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URL;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.Date;
 import java.util.Locale;
 import java.util.Map;
@@ -57,25 +64,33 @@ import javax.swing.JRadioButton;
 import javax.swing.JScrollPane;
 import javax.swing.JSpinner;
 import javax.swing.JTabbedPane;
+import javax.swing.JTable;
 import javax.swing.JTextArea;
 import javax.swing.JTextField;
+import javax.swing.JTree;
 import javax.swing.KeyStroke;
 import javax.swing.SpinnerNumberModel;
 import javax.swing.SwingConstants;
 import javax.swing.UIManager;
 import javax.swing.border.Border;
+import javax.swing.border.EmptyBorder;
+import javax.swing.border.MatteBorder;
 import javax.swing.border.TitledBorder;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
+import javax.swing.event.TreeSelectionEvent;
+import javax.swing.event.TreeSelectionListener;
+import javax.swing.tree.DefaultMutableTreeNode;
+import javax.swing.tree.TreePath;
+import javax.swing.tree.TreeSelectionModel;
 
 import net.miginfocom.swing.MigLayout;
 
 import com.alee.extended.filechooser.WebDirectoryChooser;
 import com.alee.laf.button.WebButton;
 import com.alee.laf.scroll.WebScrollPane;
-import com.alee.laf.table.WebTable;
 import com.alee.utils.FileUtils;
 import com.alee.utils.swing.DialogOptions;
 import com.badlogic.gdx.Graphics.DisplayMode;
@@ -92,20 +107,28 @@ import com.badlogic.gdx.utils.JsonValue;
 public class ConfigDialog extends I18nJFrame {
     private static long fiveDaysMs = 5 * 24 * 60 * 60 * 1000;
 
+    /** Border params **/
+    private static final Color bcol = new Color(0.0f, 0.0f, 0.0f);
+    private static final int just = TitledBorder.LEADING;
+    private static final int pos = TitledBorder.ABOVE_TOP;
+    private static final int thick = 2;
+
     JFrame frame;
     JLabel checkLabel;
     JPanel checkPanel;
-    Color darkgreen, darkred;
+    Color darkgreen, darkred, transparent;
     JButton cancelButton, okButton;
+    String vislistdata;
+    JTree visualisationsTree;
 
     public ConfigDialog(final GaiaSandboxDesktop gsd, boolean startup) {
-	super(startup ? GlobalConf.instance.getFullApplicationName() : txt("gui.settings"));
+	super(startup ? GlobalConf.getFullApplicationName() : txt("gui.settings"));
 	initialize(gsd, startup);
 
 	if (startup) {
 	    /** SPLASH IMAGE **/
 	    URL url = this.getClass().getResource("/img/splash/splash-s.jpg");
-	    JSplashLabel label = new JSplashLabel(url, txt("gui.build", GlobalConf.instance.VERSION.build) + " - " + txt("gui.version", GlobalConf.instance.VERSION.version), null, Color.lightGray);
+	    JSplashLabel label = new JSplashLabel(url, txt("gui.build", GlobalConf.version.build) + " - " + txt("gui.version", GlobalConf.version.version), null, Color.lightGray);
 	    JPanel imagePanel = new JPanel(new GridLayout(1, 1, 0, 0));
 	    imagePanel.add(label);
 	    imagePanel.setBackground(Color.black);
@@ -144,7 +167,8 @@ public class ConfigDialog extends I18nJFrame {
 	frame.setResizable(false);
 
 	darkgreen = new Color(0, .5f, 0);
-	darkred = new Color(.7f, 0, 0);
+	darkred = new Color(.8f, 0, 0);
+	transparent = new Color(0f, 0f, 0f, 0f);
 
 	// Build content
 	frame.setLayout(new BorderLayout(0, 0));
@@ -156,13 +180,13 @@ public class ConfigDialog extends I18nJFrame {
 	checkPanel = new JPanel(new MigLayout("", "[][]", "[]4[]"));
 	checkLabel = new JLabel("");
 	checkPanel.add(checkLabel);
-	if (GlobalConf.instance.LAST_CHECKED == null || GlobalConf.instance.LAST_VERSION.isEmpty() || new Date().getTime() - GlobalConf.instance.LAST_CHECKED.getTime() > fiveDaysMs) {
+	if (GlobalConf.program.LAST_CHECKED == null || GlobalConf.program.LAST_VERSION.isEmpty() || new Date().getTime() - GlobalConf.program.LAST_CHECKED.getTime() > fiveDaysMs) {
 	    // Check!
 	    checkLabel.setText(txt("gui.newversion.checking"));
 	    getCheckVersionThread().start();
 	} else {
 	    // Inform latest
-	    newVersionCheck(GlobalConf.instance.LAST_VERSION);
+	    newVersionCheck(GlobalConf.program.LAST_VERSION);
 
 	}
 
@@ -171,7 +195,7 @@ public class ConfigDialog extends I18nJFrame {
 	//	JTabbedPane tabbedPane = new JTabbedPane();
 	//	tabbedPane.setTabPlacement(WebTabbedPane.LEFT);
 
-	JXTabbedPane tabbedPane = new JXTabbedPane(JTabbedPane.LEFT);
+	final JXTabbedPane tabbedPane = new JXTabbedPane(JTabbedPane.LEFT);
 	AbstractTabRenderer renderer = (AbstractTabRenderer) tabbedPane.getTabRenderer();
 	renderer.setPrototypeText("123456789012345678");
 	renderer.setHorizontalTextAlignment(SwingConstants.LEADING);
@@ -182,7 +206,7 @@ public class ConfigDialog extends I18nJFrame {
 
 	/** RESOLUTION **/
 	JPanel mode = new JPanel(new MigLayout("fillx", "[grow,fill][grow,fill]", ""));
-	mode.setBorder(new TitledBorder(txt("gui.resolutionmode")));
+	mode.setBorder(new TitledBorder(new MatteBorder(new Insets(thick, 0, 0, 0), bcol), txt("gui.resolutionmode"), just, pos));
 
 	// Full screen mode resolutions
 	DisplayMode[] modes = LwjglApplicationConfiguration.getDisplayModes();
@@ -190,7 +214,7 @@ public class ConfigDialog extends I18nJFrame {
 
 	DisplayMode selectedMode = null;
 	for (DisplayMode dm : modes) {
-	    if (dm.width == GlobalConf.instance.FULLSCREEN_WIDTH && dm.height == GlobalConf.instance.FULLSCREEN_HEIGHT) {
+	    if (dm.width == GlobalConf.screen.FULLSCREEN_WIDTH && dm.height == GlobalConf.screen.FULLSCREEN_HEIGHT) {
 		selectedMode = dm;
 		break;
 	    }
@@ -214,9 +238,9 @@ public class ConfigDialog extends I18nJFrame {
 
 	// Windowed mode resolutions
 	JPanel windowedResolutions = new JPanel(new MigLayout("", "[][grow,fill][][grow,fill]", "[][]4[][]"));
-	final JSpinner widthField = new JSpinner(new SpinnerNumberModel(MathUtils.clamp(GlobalConf.instance.SCREEN_WIDTH, 100, nativeMode.width), 100, nativeMode.width, 1));
-	final JSpinner heightField = new JSpinner(new SpinnerNumberModel(MathUtils.clamp(GlobalConf.instance.SCREEN_HEIGHT, 100, nativeMode.height), 100, nativeMode.height, 1));
-	final JCheckBox resizable = new JCheckBox("Resizable", GlobalConf.instance.RESIZABLE);
+	final JSpinner widthField = new JSpinner(new SpinnerNumberModel(MathUtils.clamp(GlobalConf.screen.SCREEN_WIDTH, 100, nativeMode.width), 100, nativeMode.width, 1));
+	final JSpinner heightField = new JSpinner(new SpinnerNumberModel(MathUtils.clamp(GlobalConf.screen.SCREEN_HEIGHT, 100, nativeMode.height), 100, nativeMode.height, 1));
+	final JCheckBox resizable = new JCheckBox("Resizable", GlobalConf.screen.RESIZABLE);
 
 	windowedResolutions.add(new JLabel(txt("gui.width") + ":"));
 	windowedResolutions.add(widthField);
@@ -229,22 +253,22 @@ public class ConfigDialog extends I18nJFrame {
 	fullscreen.addActionListener(new ActionListener() {
 	    @Override
 	    public void actionPerformed(ActionEvent e) {
-		GlobalConf.instance.FULLSCREEN = fullscreen.isSelected();
+		GlobalConf.screen.FULLSCREEN = fullscreen.isSelected();
 		selectFullscreen(fullscreen.isSelected(), widthField, heightField, fullScreenResolutions, resizable);
 	    }
 	});
-	fullscreen.setSelected(GlobalConf.instance.FULLSCREEN);
+	fullscreen.setSelected(GlobalConf.screen.FULLSCREEN);
 
 	final JRadioButton windowed = new JRadioButton(txt("gui.windowed"));
 	windowed.addActionListener(new ActionListener() {
 	    @Override
 	    public void actionPerformed(ActionEvent e) {
-		GlobalConf.instance.FULLSCREEN = !windowed.isSelected();
+		GlobalConf.screen.FULLSCREEN = !windowed.isSelected();
 		selectFullscreen(!windowed.isSelected(), widthField, heightField, fullScreenResolutions, resizable);
 	    }
 	});
-	windowed.setSelected(!GlobalConf.instance.FULLSCREEN);
-	selectFullscreen(GlobalConf.instance.FULLSCREEN, widthField, heightField, fullScreenResolutions, resizable);
+	windowed.setSelected(!GlobalConf.screen.FULLSCREEN);
+	selectFullscreen(GlobalConf.screen.FULLSCREEN, widthField, heightField, fullScreenResolutions, resizable);
 
 	ButtonGroup modeButtons = new ButtonGroup();
 	modeButtons.add(fullscreen);
@@ -257,7 +281,7 @@ public class ConfigDialog extends I18nJFrame {
 
 	/** GRAPHICS **/
 	JPanel graphics = new JPanel(new MigLayout("", "[][]", ""));
-	graphics.setBorder(new TitledBorder(txt("gui.graphicssettings")));
+	graphics.setBorder(new TitledBorder(new MatteBorder(new Insets(thick, 0, 0, 0), bcol), txt("gui.graphicssettings"), just, pos));
 
 	// MSAA
 	JTextArea msaaInfo = new JTextArea(txt("gui.aa.info")) {
@@ -266,19 +290,19 @@ public class ConfigDialog extends I18nJFrame {
 		// No!
 	    }
 	};
-	msaaInfo.setBackground(new Color(1, 1, 1, 0));
+	msaaInfo.setBackground(transparent);
 	msaaInfo.setForeground(darkgreen);
 	msaaInfo.setEditable(false);
 
 	ThreadComboBoxBean[] msaas = new ThreadComboBoxBean[] { new ThreadComboBoxBean(txt("gui.aa.no"), 0), new ThreadComboBoxBean(txt("gui.aa.fxaa"), -1), new ThreadComboBoxBean(txt("gui.aa.nfaa"), -2), new ThreadComboBoxBean(txt("gui.aa.msaa", 2), 2), new ThreadComboBoxBean(txt("gui.aa.msaa", 4), 4), new ThreadComboBoxBean(txt("gui.aa.msaa", 8), 8), new ThreadComboBoxBean(txt("gui.aa.msaa", 16), 16) };
 	final JComboBox<ThreadComboBoxBean> msaa = new JComboBox<ThreadComboBoxBean>(msaas);
-	msaa.setSelectedItem(msaas[idxAa(2, GlobalConf.instance.POSTPROCESS_ANTIALIAS)]);
+	msaa.setSelectedItem(msaas[idxAa(2, GlobalConf.postprocess.POSTPROCESS_ANTIALIAS)]);
 
 	// Vsync
-	final JCheckBox vsync = new JCheckBox(txt("gui.vsync"), GlobalConf.instance.VSYNC);
+	final JCheckBox vsync = new JCheckBox(txt("gui.vsync"), GlobalConf.screen.VSYNC);
 
 	graphics.add(msaaInfo, "span,wrap");
-	graphics.add(new JLabel(txt("gui.aa")));
+	graphics.add(new JLabel(txt("gui.aa") + ":"));
 	graphics.add(msaa);
 	graphics.add(vsync, "span");
 
@@ -302,7 +326,7 @@ public class ConfigDialog extends I18nJFrame {
 	 * ====== USER INTERFACE TAB =======
 	 */
 	JPanel ui = new JPanel(new MigLayout("", "[grow,fill][grow,fill]", ""));
-	ui.setBorder(new TitledBorder(txt("gui.ui.interfacesettings")));
+	ui.setBorder(new TitledBorder(new MatteBorder(new Insets(thick, 0, 0, 0), bcol), txt("gui.ui.interfacesettings"), just, pos));
 
 	File i18nfolder = new File("./data/i18n/");
 	if (!i18nfolder.exists()) {
@@ -328,15 +352,15 @@ public class ConfigDialog extends I18nJFrame {
 	}
 	Arrays.sort(langs);
 	final JComboBox<LangComboBoxBean> lang = new JComboBox<LangComboBoxBean>(langs);
-	lang.setSelectedItem(langs[idxLang(GlobalConf.instance.LOCALE, langs)]);
+	lang.setSelectedItem(langs[idxLang(GlobalConf.program.LOCALE, langs)]);
 
 	String[] themes = new String[] { "dark", "bright", "dark-big" };
 	final JComboBox<String> theme = new JComboBox<String>(themes);
-	theme.setSelectedItem(GlobalConf.instance.UI_THEME);
+	theme.setSelectedItem(GlobalConf.program.UI_THEME);
 
-	ui.add(new JLabel(txt("gui.ui.language")));
+	ui.add(new JLabel(txt("gui.ui.language") + ":"));
 	ui.add(lang, "wrap");
-	ui.add(new JLabel(txt("gui.ui.theme")));
+	ui.add(new JLabel(txt("gui.ui.theme") + ":"));
 	ui.add(theme);
 
 	/** NOTICE **/
@@ -360,7 +384,7 @@ public class ConfigDialog extends I18nJFrame {
 
 	/** MULTITHREAD **/
 	JPanel multithread = new JPanel(new MigLayout("", "[grow,fill][grow,fill]", ""));
-	multithread.setBorder(new TitledBorder(txt("gui.multithreading")));
+	multithread.setBorder(new TitledBorder(new MatteBorder(new Insets(thick, 0, 0, 0), bcol), txt("gui.multithreading"), just, pos));
 
 	int maxthreads = Runtime.getRuntime().availableProcessors();
 	ThreadComboBoxBean[] cbs = new ThreadComboBoxBean[maxthreads + 1];
@@ -369,6 +393,7 @@ public class ConfigDialog extends I18nJFrame {
 	    cbs[i] = new ThreadComboBoxBean(txt("gui.thread", i), i);
 	}
 	final JComboBox<ThreadComboBoxBean> numThreads = new JComboBox<ThreadComboBoxBean>(cbs);
+	numThreads.setSelectedIndex(GlobalConf.performance.NUMBER_THREADS);
 
 	final JCheckBox multithreadCb = new JCheckBox(txt("gui.thread.enable"));
 	multithreadCb.addChangeListener(new ChangeListener() {
@@ -377,7 +402,7 @@ public class ConfigDialog extends I18nJFrame {
 		numThreads.setEnabled(multithreadCb.isSelected());
 	    }
 	});
-	multithreadCb.setSelected(GlobalConf.instance.MULTITHREADING);
+	multithreadCb.setSelected(GlobalConf.performance.MULTITHREADING);
 	numThreads.setEnabled(multithreadCb.isSelected());
 
 	multithread.add(multithreadCb, "span");
@@ -394,7 +419,7 @@ public class ConfigDialog extends I18nJFrame {
 	 * ====== CONTROLS TAB =======
 	 */
 	JPanel controls = new JPanel(new MigLayout("", "[grow,fill][]", ""));
-	controls.setBorder(new TitledBorder(txt("gui.keymappings")));
+	controls.setBorder(new TitledBorder(new MatteBorder(new Insets(thick, 0, 0, 0), bcol), txt("gui.keymappings"), just, pos));
 
 	Map<TreeSet<Integer>, ProgramAction> maps = KeyMappings.instance.mappings;
 	Set<TreeSet<Integer>> keymaps = maps.keySet();
@@ -409,9 +434,8 @@ public class ConfigDialog extends I18nJFrame {
 	    i++;
 	}
 
-	WebTable table = new WebTable(data, headers);
-	table.setEditable(false);
-	table.setAutoResizeMode(WebTable.AUTO_RESIZE_ALL_COLUMNS);
+	JTable table = new JTable(data, headers);
+	table.setAutoResizeMode(JTable.AUTO_RESIZE_ALL_COLUMNS);
 	table.setRowSelectionAllowed(true);
 	table.setColumnSelectionAllowed(false);
 
@@ -435,7 +459,7 @@ public class ConfigDialog extends I18nJFrame {
 
 	/** SCREENSHOTS CONFIG **/
 	JPanel screenshots = new JPanel(new MigLayout("", "[grow,fill][grow,fill]", ""));
-	screenshots.setBorder(new TitledBorder(txt("gui.screencapture")));
+	screenshots.setBorder(new TitledBorder(new MatteBorder(new Insets(thick, 0, 0, 0), bcol), txt("gui.screencapture"), just, pos));
 
 	JTextArea screenshotsInfo = new JTextArea(txt("gui.screencapture.info")) {
 	    @Override
@@ -444,15 +468,15 @@ public class ConfigDialog extends I18nJFrame {
 	    }
 	};
 	screenshotsInfo.setEditable(false);
-	screenshotsInfo.setBackground(new Color(1, 1, 1, 0));
+	screenshotsInfo.setBackground(transparent);
 	screenshotsInfo.setForeground(darkgreen);
 
 	// SCREENSHOTS LOCATION
 	JLabel screenshotsLocationLabel = new JLabel(txt("gui.screenshots.save") + ":");
-	File currentLocation = new File(GlobalConf.instance.SCREENSHOT_FOLDER);
+	File currentLocation = new File(GlobalConf.screenshot.SCREENSHOT_FOLDER);
 	String dirText = txt("gui.screenshots.directory.choose");
 	if (currentLocation.exists() && currentLocation.isDirectory()) {
-	    dirText = GlobalConf.instance.SCREENSHOT_FOLDER;
+	    dirText = GlobalConf.screenshot.SCREENSHOT_FOLDER;
 	}
 	final WebButton screenshotsLocation = new WebButton(dirText);
 	screenshotsLocation.addActionListener(new ActionListener()
@@ -466,11 +490,11 @@ public class ConfigDialog extends I18nJFrame {
 		{
 		    directoryChooser = new WebDirectoryChooser(frame, txt("gui.directory.chooseany"));
 		    // Increase scrollbar speed
-		    WebScrollPane wsp = (WebScrollPane) ((Container) ((Container) ((Container) ((Container) ((Container) directoryChooser.getComponents()[0]).getComponents()[1]).getComponents()[0]).getComponents()[0]).getComponents()[1]).getComponents()[1];
+		    JScrollPane wsp = (JScrollPane) ((Container) ((Container) ((Container) ((Container) ((Container) directoryChooser.getComponents()[0]).getComponents()[1]).getComponents()[0]).getComponents()[0]).getComponents()[1]).getComponents()[1];
 		    wsp.getVerticalScrollBar().setUnitIncrement(50);
-		    File currentLocation = new File(GlobalConf.instance.SCREENSHOT_FOLDER);
+		    File currentLocation = new File(GlobalConf.screenshot.SCREENSHOT_FOLDER);
 		    if (currentLocation.exists() && currentLocation.isDirectory()) {
-			directoryChooser.setSelectedDirectory(new File(GlobalConf.instance.SCREENSHOT_FOLDER));
+			directoryChooser.setSelectedDirectory(new File(GlobalConf.screenshot.SCREENSHOT_FOLDER));
 		    }
 		}
 		directoryChooser.setVisible(true);
@@ -485,8 +509,8 @@ public class ConfigDialog extends I18nJFrame {
 	});
 
 	// SCREENSHOT WIDTH AND HEIGHT
-	final JSpinner sswidthField = new JSpinner(new SpinnerNumberModel(GlobalConf.instance.SCREENSHOT_WIDTH, 100, 5000, 1));
-	final JSpinner ssheightField = new JSpinner(new SpinnerNumberModel(GlobalConf.instance.SCREENSHOT_HEIGHT, 100, 5000, 1));
+	final JSpinner sswidthField = new JSpinner(new SpinnerNumberModel(GlobalConf.screenshot.SCREENSHOT_WIDTH, 100, 5000, 1));
+	final JSpinner ssheightField = new JSpinner(new SpinnerNumberModel(GlobalConf.screenshot.SCREENSHOT_HEIGHT, 100, 5000, 1));
 
 	JPanel screenshotSize = new JPanel(new MigLayout("", "[][grow,fill][][grow,fill]", "[][]4[][]"));
 	screenshotSize.add(new JLabel(txt("gui.width") + ":"));
@@ -511,7 +535,7 @@ public class ConfigDialog extends I18nJFrame {
 
 	/** IMAGE OUTPUT CONFIG **/
 	JPanel imageOutput = new JPanel(new MigLayout("", "[grow,fill][grow,fill]", ""));
-	imageOutput.setBorder(new TitledBorder(txt("gui.frameoutput")));
+	imageOutput.setBorder(new TitledBorder(new MatteBorder(new Insets(thick, 0, 0, 0), bcol), txt("gui.frameoutput"), just, pos));
 
 	JTextArea frameInfo = new JTextArea(txt("gui.frameoutput.info")) {
 	    @Override
@@ -520,14 +544,14 @@ public class ConfigDialog extends I18nJFrame {
 	    }
 	};
 	frameInfo.setEditable(false);
-	frameInfo.setBackground(new Color(1, 1, 1, 0));
+	frameInfo.setBackground(transparent);
 	frameInfo.setForeground(darkgreen);
 
 	// SAVE LOCATION
-	File currentFrameLocation = new File(GlobalConf.instance.SCREENSHOT_FOLDER);
+	File currentFrameLocation = new File(GlobalConf.screenshot.SCREENSHOT_FOLDER);
 	String dirFrameText = txt("gui.frameoutput.directory.choose");
 	if (currentFrameLocation.exists() && currentFrameLocation.isDirectory()) {
-	    dirFrameText = GlobalConf.instance.RENDER_FOLDER;
+	    dirFrameText = GlobalConf.frame.RENDER_FOLDER;
 	}
 	final WebButton frameLocation = new WebButton(dirFrameText);
 	frameLocation.addActionListener(new ActionListener()
@@ -543,9 +567,9 @@ public class ConfigDialog extends I18nJFrame {
 		    // Increase scrollbar speed
 		    WebScrollPane wsp = (WebScrollPane) ((Container) ((Container) ((Container) ((Container) ((Container) directoryChooser.getComponents()[0]).getComponents()[1]).getComponents()[0]).getComponents()[0]).getComponents()[1]).getComponents()[1];
 		    wsp.getVerticalScrollBar().setUnitIncrement(50);
-		    File currentLocation = new File(GlobalConf.instance.RENDER_FOLDER);
+		    File currentLocation = new File(GlobalConf.frame.RENDER_FOLDER);
 		    if (currentLocation.exists() && currentLocation.isDirectory()) {
-			directoryChooser.setSelectedDirectory(new File(GlobalConf.instance.RENDER_FOLDER));
+			directoryChooser.setSelectedDirectory(new File(GlobalConf.frame.RENDER_FOLDER));
 		    }
 		}
 		directoryChooser.setVisible(true);
@@ -584,11 +608,11 @@ public class ConfigDialog extends I18nJFrame {
 		}
 	    }
 	});
-	frameFileName.setText(GlobalConf.instance.RENDER_FILE_NAME);
+	frameFileName.setText(GlobalConf.frame.RENDER_FILE_NAME);
 
 	// FRAME OUTPUT WIDTH AND HEIGHT
-	final JSpinner frameWidthField = new JSpinner(new SpinnerNumberModel(GlobalConf.instance.RENDER_WIDTH, 100, 5000, 1));
-	final JSpinner frameHeightField = new JSpinner(new SpinnerNumberModel(GlobalConf.instance.RENDER_HEIGHT, 100, 5000, 1));
+	final JSpinner frameWidthField = new JSpinner(new SpinnerNumberModel(GlobalConf.frame.RENDER_WIDTH, 100, 5000, 1));
+	final JSpinner frameHeightField = new JSpinner(new SpinnerNumberModel(GlobalConf.frame.RENDER_HEIGHT, 100, 5000, 1));
 
 	JPanel renderSize = new JPanel(new MigLayout("", "[][grow,fill][][grow,fill]", "[][]4[][]"));
 	renderSize.add(new JLabel(txt("gui.width") + ":"));
@@ -597,7 +621,7 @@ public class ConfigDialog extends I18nJFrame {
 	renderSize.add(frameHeightField);
 
 	// TARGET FPS
-	final JSpinner targetFPS = new JSpinner(new SpinnerNumberModel(GlobalConf.instance.RENDER_TARGET_FPS, 1, 60, 1));
+	final JSpinner targetFPS = new JSpinner(new SpinnerNumberModel(GlobalConf.frame.RENDER_TARGET_FPS, 1, 60, 1));
 
 	// FRAME OUTPUT CHECKBOX
 	final JCheckBox frameCb = new JCheckBox(txt("gui.frameoutput.enable"));
@@ -606,11 +630,11 @@ public class ConfigDialog extends I18nJFrame {
 	    public void stateChanged(ChangeEvent e) {
 		JCheckBox cb = (JCheckBox) e.getSource();
 		boolean selected = cb.isSelected();
-		setEnabledFrameOutput(selected, frameLocation, frameWidthField, frameHeightField, targetFPS, frameFileName);
+		enableComponents(selected, frameLocation, frameWidthField, frameHeightField, targetFPS, frameFileName);
 	    }
 	});
-	frameCb.setSelected(GlobalConf.instance.RENDER_OUTPUT);
-	setEnabledFrameOutput(frameCb.isSelected(), frameLocation, frameWidthField, frameHeightField, targetFPS, frameFileName);
+	frameCb.setSelected(GlobalConf.frame.RENDER_OUTPUT);
+	enableComponents(frameCb.isSelected(), frameLocation, frameWidthField, frameHeightField, targetFPS, frameFileName);
 
 	imageOutput.add(frameInfo, "span");
 	imageOutput.add(frameCb, "span");
@@ -628,12 +652,177 @@ public class ConfigDialog extends I18nJFrame {
 	tabbedPane.addTab(txt("gui.frameoutput.title"), IconManager.get("config/frameoutput"), imageOutputPanel);
 	tabbedPane.setMnemonicAt(5, KeyEvent.VK_6);
 
+	/**
+	 * ====== DATA TAB =======
+	 */
+	JPanel datasource = new JPanel(new MigLayout("", "[][grow,fill][]", ""));
+	datasource.setBorder(new TitledBorder(new MatteBorder(new Insets(thick, 0, 0, 0), bcol), txt("gui.data.source"), just, pos));
+
+	// OBJECT SERVER CONFIGURATION PANEL
+
+	final JTextField hostname = new JTextField();
+	hostname.setText(GlobalConf.data.OBJECT_SERVER_HOSTNAME);
+	final JTextField port = new JTextField();
+	port.setText(Integer.toString(GlobalConf.data.OBJECT_SERVER_PORT));
+
+	// CONNECTION PANE
+	final JPanel connection = new JPanel(new MigLayout("", "[grow,fill]", ""));
+	final JScrollPane scrollConnection = new JScrollPane(connection);
+	scrollConnection.setBorder(new EmptyBorder(0, 0, 0, 0));
+	scrollConnection.setMinimumSize(new Dimension(0, 150));
+	scrollConnection.setVisible(false);
+
+	final JButton testConnection = new JButton(txt("gui.data.testconnection"), IconManager.get("config/connection"));
+	testConnection.addActionListener(new ActionListener() {
+
+	    private void connectionFailed() {
+		connection.removeAll();
+		JLabel nocon = new JLabel(txt("gui.data.connectionerror"));
+		nocon.setForeground(darkred);
+		connection.add(nocon);
+		scrollConnection.setVisible(true);
+		// Repaint frame
+		frame.repaint();
+	    }
+
+	    @Override
+	    public void actionPerformed(ActionEvent e) {
+		try {
+
+		    String host = hostname.getText();
+		    int prt = Integer.parseInt(port.getText());
+
+		    ClientCore cc = ClientCore.getInstance();
+		    if (!cc.connect(host, prt)) {
+			connectionFailed();
+			return;
+		    }
+		    ClientIdent ident = new ClientIdent();
+		    ident.setAffiliation("ARI");
+		    ident.setAuthors("Toni Sagristà <tsagrista@ari.uni-heidelberg.de>");
+		    ident.setClientDescription("Real time, 3D, outreach visualization software");
+		    ident.setClientDocumentationURL(GlobalConf.WIKI);
+		    ident.setClientHomepage(GlobalConf.WEBPAGE);
+		    ident.setClientName(GlobalConf.APPLICATION_NAME);
+		    ident.setClientVersion(GlobalConf.version.version);
+		    ident.setClientPlatform(System.getProperty("os.name"));
+		    ident.setClientIconURL(GlobalConf.ICON_URL);
+		    cc.executeCommand(ident);
+
+		    DatasetManager.getInstance().refreshItems();
+		    VisualizationManager visManager = VisualizationManager.getInstance();
+		    visManager.refreshItems();
+
+		    DefaultMutableTreeNode top =
+			    new DefaultMutableTreeNode(txt("gui.data.visualisations"));
+
+		    Collection<Visualization> visualizations = visManager.getVisualizations();
+		    for (Visualization visualization : visualizations) {
+			DefaultMutableTreeNode vis = new DefaultMutableTreeNode(visualization.getName());
+
+			// ID
+			DefaultMutableTreeNode idlabel = new DefaultMutableTreeNode(txt("gui.data.id") + ": " + visualization.getIdentifier());
+			vis.add(idlabel);
+
+			// TABLE
+			Table table = visualization.getAssociatedTable();
+			DefaultMutableTreeNode tablelabel = new DefaultMutableTreeNode(txt("gui.data.table") + ": " + table.getName() + " (" + txt("gui.data.numberrows", table.getRowCount()) + ")");
+			vis.add(tablelabel);
+
+			// COLUMNS
+			DefaultMutableTreeNode collabel = new DefaultMutableTreeNode(txt("gui.data.columns"));
+			for (int col = 0; col < visualization.getCoordinateAxisDefinitions().length; col++) {
+			    collabel.add(new DefaultMutableTreeNode(visualization.getCoordinateAxisDefinitions()[col]));
+			}
+			collabel.add(new DefaultMutableTreeNode(visualization.getColourDefinition()));
+			collabel.add(new DefaultMutableTreeNode(visualization.getSizeDefinition()));
+
+			vis.add(collabel);
+
+			top.add(vis);
+		    }
+
+		    visualisationsTree = new JTree(top);
+
+		    // Selection of nodes
+		    visualisationsTree.getSelectionModel().setSelectionMode(TreeSelectionModel.SINGLE_TREE_SELECTION);
+		    //Listen for when the selection changes.
+		    visualisationsTree.addTreeSelectionListener(new TreeSelectionListener() {
+
+			@Override
+			public void valueChanged(TreeSelectionEvent e) {
+			    TreePath path = e.getNewLeadSelectionPath();
+			    DefaultMutableTreeNode visNode = (DefaultMutableTreeNode) path.getPathComponent(1);
+			    DefaultMutableTreeNode idNode = (DefaultMutableTreeNode) visNode.getChildAt(0);
+
+			    String visId = ((String) idNode.getUserObject()).split(":")[1].trim();
+			    GlobalConf.data.VISUALIZATION_ID = visId;
+
+			}
+
+		    });
+
+		    connection.removeAll();
+		    connection.add(new JLabel(txt("gui.data.selectvis") + ":"), "wrap");
+		    connection.add(visualisationsTree);
+		    scrollConnection.setVisible(true);
+		    // Repaint frame
+		    frame.repaint();
+
+		} catch (Exception e1) {
+		    connectionFailed();
+		    EventManager.getInstance().post(Events.JAVA_EXCEPTION, e1);
+		}
+	    }
+	});
+
+	// LOCAL DATA OR OBJECT SERVER RADIO BUTTONS
+	final JRadioButton local = new JRadioButton(txt("gui.data.local"));
+	local.addActionListener(new ActionListener() {
+	    @Override
+	    public void actionPerformed(ActionEvent e) {
+		GlobalConf.data.DATA_SOURCE_LOCAL = local.isSelected();
+		enableComponents(!local.isSelected(), hostname, port, testConnection, visualisationsTree);
+	    }
+	});
+	local.setSelected(GlobalConf.data.DATA_SOURCE_LOCAL);
+
+	final JRadioButton objectserver = new JRadioButton(txt("gui.data.objectserver"));
+	objectserver.addActionListener(new ActionListener() {
+	    @Override
+	    public void actionPerformed(ActionEvent e) {
+		GlobalConf.data.DATA_SOURCE_LOCAL = !objectserver.isSelected();
+		enableComponents(objectserver.isSelected(), hostname, port, testConnection, visualisationsTree);
+	    }
+	});
+	objectserver.setSelected(!GlobalConf.data.DATA_SOURCE_LOCAL);
+	enableComponents(!GlobalConf.data.DATA_SOURCE_LOCAL, hostname, port, testConnection, visualisationsTree);
+
+	ButtonGroup dataButtons = new ButtonGroup();
+	dataButtons.add(local);
+	dataButtons.add(objectserver);
+
+	datasource.add(local, "span,wrap");
+	datasource.add(objectserver, "span,wrap");
+	datasource.add(new JLabel(txt("gui.data.hostname") + ":"));
+	datasource.add(hostname, "span, wrap");
+	datasource.add(new JLabel(txt("gui.data.port") + ":"));
+	datasource.add(port);
+	datasource.add(testConnection, "wrap");
+
+	final JPanel dataPanel = new JPanel(new MigLayout("", "[grow,fill]", ""));
+	dataPanel.add(datasource, "wrap");
+	dataPanel.add(scrollConnection);
+
+	tabbedPane.addTab(txt("gui.data"), IconManager.get("config/data"), dataPanel);
+	tabbedPane.setMnemonicAt(6, KeyEvent.VK_7);
+
 	// Do not show again
 	final JCheckBox showAgain = new JCheckBox(txt("gui.notagain"));
 	showAgain.addChangeListener(new ChangeListener() {
 	    @Override
 	    public void stateChanged(ChangeEvent e) {
-		GlobalConf.instance.SHOW_CONFIG_DIALOG = !showAgain.isSelected();
+		GlobalConf.program.SHOW_CONFIG_DIALOG = !showAgain.isSelected();
 	    }
 	});
 
@@ -648,71 +837,121 @@ public class ConfigDialog extends I18nJFrame {
 
 	okButton = new JButton(startup ? txt("gui.launchapp") : txt("gui.saveprefs"));
 	okButton.addActionListener(new ActionListener() {
+	    boolean goahead = true;
+
+	    private void connectionFailed() {
+		// Connection not possible
+		goahead = false;
+		tabbedPane.setSelectedIndex(6);
+		connection.removeAll();
+
+		JTextArea noConnection = new JTextArea(txt("notif.objectserver.notconnect")) {
+		    @Override
+		    public void setBorder(Border border) {
+			// No!
+		    }
+		};
+		noConnection.setEditable(false);
+		noConnection.setBackground(transparent);
+		noConnection.setForeground(darkred);
+
+		connection.add(noConnection);
+		scrollConnection.setVisible(true);
+		// Repaint frame
+		frame.repaint();
+	    }
 
 	    @Override
 	    public void actionPerformed(ActionEvent e) {
-		// Add all properties to GlobalConf.instance
-		GlobalConf.instance.FULLSCREEN = fullscreen.isSelected();
-
-		// Fullscreen options
-		GlobalConf.instance.FULLSCREEN_WIDTH = ((DisplayMode) fullScreenResolutions.getSelectedItem()).width;
-		GlobalConf.instance.FULLSCREEN_HEIGHT = ((DisplayMode) fullScreenResolutions.getSelectedItem()).height;
-
-		// Windowed options
-		GlobalConf.instance.SCREEN_WIDTH = ((Integer) widthField.getValue());
-		GlobalConf.instance.SCREEN_HEIGHT = ((Integer) heightField.getValue());
-		GlobalConf.instance.RESIZABLE = resizable.isSelected();
-
-		// Graphics
-		ThreadComboBoxBean bean = (ThreadComboBoxBean) msaa.getSelectedItem();
-		GlobalConf.instance.POSTPROCESS_ANTIALIAS = bean.value;
-		GlobalConf.instance.VSYNC = vsync.isSelected();
-
-		// Interface
-		LangComboBoxBean lbean = (LangComboBoxBean) lang.getSelectedItem();
-		GlobalConf.instance.LOCALE = lbean.locale.toLanguageTag();
-		if (!I18n.forceinit("./data/i18n/gsbundle"))
-		    I18n.forceinit("../android/assets/i18n/gsbundle");
-		GlobalConf.instance.UI_THEME = (String) theme.getSelectedItem();
-
-		// Performance
-		bean = (ThreadComboBoxBean) numThreads.getSelectedItem();
-		GlobalConf.instance.NUMBER_THREADS = bean.value;
-		GlobalConf.instance.MULTITHREADING = multithreadCb.isSelected();
-
-		// Screenshots
-		File ssfile = new File(screenshotsLocation.getText());
-		if (ssfile.exists() && ssfile.isDirectory())
-		    GlobalConf.instance.SCREENSHOT_FOLDER = ssfile.getAbsolutePath();
-		GlobalConf.instance.SCREENSHOT_WIDTH = ((Integer) sswidthField.getValue());
-		GlobalConf.instance.SCREENSHOT_HEIGHT = ((Integer) ssheightField.getValue());
-
-		// Frame output
-		File fofile = new File(frameLocation.getText());
-		if (fofile.exists() && fofile.isDirectory())
-		    GlobalConf.instance.RENDER_FOLDER = fofile.getAbsolutePath();
-		String text = frameFileName.getText();
-		if (text.matches("^\\w+$")) {
-		    GlobalConf.instance.RENDER_FILE_NAME = text;
-		}
-		GlobalConf.instance.RENDER_WIDTH = ((Integer) frameWidthField.getValue());
-		GlobalConf.instance.RENDER_HEIGHT = ((Integer) frameHeightField.getValue());
-		GlobalConf.instance.RENDER_OUTPUT = frameCb.isSelected();
-		GlobalConf.instance.RENDER_TARGET_FPS = ((Integer) targetFPS.getValue());
-
-		// Save configuration
-		try {
-		    GlobalConf.instance.saveProperties(new File(System.getProperty("properties.file")).toURI().toURL());
-		} catch (MalformedURLException e1) {
-		    EventManager.getInstance().post(Events.JAVA_EXCEPTION, e);
+		if (startup && objectserver.isSelected()) {
+		    try {
+			// Check object server connection
+			ClientCore cc = ClientCore.getInstance();
+			if (!cc.isConnected()) {
+			    if (!cc.connect(GlobalConf.data.OBJECT_SERVER_HOSTNAME, GlobalConf.data.OBJECT_SERVER_PORT)) {
+				connectionFailed();
+			    }
+			    ClientIdent ident = new ClientIdent();
+			    ident.setAffiliation("ARI");
+			    ident.setAuthors("Toni Sagristà <tsagrista@ari.uni-heidelberg.de>");
+			    ident.setClientDescription("Real time, 3D, outreach visualization software");
+			    ident.setClientDocumentationURL(GlobalConf.WIKI);
+			    ident.setClientHomepage(GlobalConf.WEBPAGE);
+			    ident.setClientName(GlobalConf.APPLICATION_NAME);
+			    ident.setClientVersion(GlobalConf.version.version);
+			    ident.setClientPlatform(System.getProperty("os.name"));
+			    ident.setClientIconURL(GlobalConf.ICON_URL);
+			    cc.executeCommand(ident);
+			}
+		    } catch (IOException ex) {
+			connectionFailed();
+		    }
 		}
 
-		EventManager.getInstance().post(Events.PROPERTIES_WRITTEN);
+		if (goahead) {
+		    // Add all properties to GlobalConf.instance
+		    GlobalConf.screen.FULLSCREEN = fullscreen.isSelected();
 
-		if (startup) {
-		    gsd.launchMainApp();
+		    // Fullscreen options
+		    GlobalConf.screen.FULLSCREEN_WIDTH = ((DisplayMode) fullScreenResolutions.getSelectedItem()).width;
+		    GlobalConf.screen.FULLSCREEN_HEIGHT = ((DisplayMode) fullScreenResolutions.getSelectedItem()).height;
+
+		    // Windowed options
+		    GlobalConf.screen.SCREEN_WIDTH = ((Integer) widthField.getValue());
+		    GlobalConf.screen.SCREEN_HEIGHT = ((Integer) heightField.getValue());
+		    GlobalConf.screen.RESIZABLE = resizable.isSelected();
+
+		    // Graphics
+		    ThreadComboBoxBean bean = (ThreadComboBoxBean) msaa.getSelectedItem();
+		    GlobalConf.postprocess.POSTPROCESS_ANTIALIAS = bean.value;
+		    GlobalConf.screen.VSYNC = vsync.isSelected();
+
+		    // Interface
+		    LangComboBoxBean lbean = (LangComboBoxBean) lang.getSelectedItem();
+		    GlobalConf.program.LOCALE = lbean.locale.toLanguageTag();
+		    if (!I18n.forceinit("./data/i18n/gsbundle"))
+			I18n.forceinit("../android/assets/i18n/gsbundle");
+		    GlobalConf.program.UI_THEME = (String) theme.getSelectedItem();
+
+		    // Performance
+		    bean = (ThreadComboBoxBean) numThreads.getSelectedItem();
+		    GlobalConf.performance.NUMBER_THREADS = bean.value;
+		    GlobalConf.performance.MULTITHREADING = multithreadCb.isSelected();
+
+		    // Screenshots
+		    File ssfile = new File(screenshotsLocation.getText());
+		    if (ssfile.exists() && ssfile.isDirectory())
+			GlobalConf.screenshot.SCREENSHOT_FOLDER = ssfile.getAbsolutePath();
+		    GlobalConf.screenshot.SCREENSHOT_WIDTH = ((Integer) sswidthField.getValue());
+		    GlobalConf.screenshot.SCREENSHOT_HEIGHT = ((Integer) ssheightField.getValue());
+
+		    // Frame output
+		    File fofile = new File(frameLocation.getText());
+		    if (fofile.exists() && fofile.isDirectory())
+			GlobalConf.frame.RENDER_FOLDER = fofile.getAbsolutePath();
+		    String text = frameFileName.getText();
+		    if (text.matches("^\\w+$")) {
+			GlobalConf.frame.RENDER_FILE_NAME = text;
+		    }
+		    GlobalConf.frame.RENDER_WIDTH = ((Integer) frameWidthField.getValue());
+		    GlobalConf.frame.RENDER_HEIGHT = ((Integer) frameHeightField.getValue());
+		    GlobalConf.frame.RENDER_OUTPUT = frameCb.isSelected();
+		    GlobalConf.frame.RENDER_TARGET_FPS = ((Integer) targetFPS.getValue());
+
+		    // Save configuration
+		    try {
+			GlobalConf.saveProperties(new File(System.getProperty("properties.file")).toURI().toURL());
+		    } catch (MalformedURLException e1) {
+			EventManager.getInstance().post(Events.JAVA_EXCEPTION, e);
+		    }
+
+		    EventManager.getInstance().post(Events.PROPERTIES_WRITTEN);
+
+		    if (startup) {
+			gsd.launchMainApp();
+		    }
+		    frame.setVisible(false);
 		}
-		frame.setVisible(false);
 	    }
 
 	});
@@ -721,6 +960,11 @@ public class ConfigDialog extends I18nJFrame {
 	cancelButton = new JButton(txt("gui.cancel"));
 	cancelButton.addActionListener(new ActionListener() {
 	    public void actionPerformed(ActionEvent e) {
+		ClientCore cc = ClientCore.getInstance();
+		if (startup && cc.isConnected()) {
+		    // Only disconnect if no startup
+		    cc.disconnect();
+		}
 		if (frame.isDisplayable()) {
 		    frame.dispose();
 		}
@@ -736,24 +980,24 @@ public class ConfigDialog extends I18nJFrame {
 
     }
 
-    private void setEnabledFrameOutput(boolean enabled, JComponent... components) {
-	for (JComponent c : components)
-	    c.setEnabled(enabled);
+    private void enableComponents(boolean enabled, JComponent... components) {
+	for (JComponent c : components) {
+	    if (c != null)
+		c.setEnabled(enabled);
+	}
     }
 
     private void selectFullscreen(boolean fullscreen, JSpinner widthField, JSpinner heightField, JComboBox<DisplayMode> fullScreenResolutions, JCheckBox resizable) {
 	if (fullscreen) {
-	    GlobalConf.instance.SCREEN_WIDTH = ((DisplayMode) fullScreenResolutions.getSelectedItem()).width;
-	    GlobalConf.instance.SCREEN_HEIGHT = ((DisplayMode) fullScreenResolutions.getSelectedItem()).height;
+	    GlobalConf.screen.SCREEN_WIDTH = ((DisplayMode) fullScreenResolutions.getSelectedItem()).width;
+	    GlobalConf.screen.SCREEN_HEIGHT = ((DisplayMode) fullScreenResolutions.getSelectedItem()).height;
 	} else {
-	    GlobalConf.instance.SCREEN_WIDTH = (Integer) widthField.getValue();
-	    GlobalConf.instance.SCREEN_HEIGHT = (Integer) heightField.getValue();
+	    GlobalConf.screen.SCREEN_WIDTH = (Integer) widthField.getValue();
+	    GlobalConf.screen.SCREEN_HEIGHT = (Integer) heightField.getValue();
 	}
-	widthField.setEnabled(!fullscreen);
-	heightField.setEnabled(!fullscreen);
-	resizable.setEnabled(!fullscreen);
-	fullScreenResolutions.setEnabled(fullscreen);
 
+	enableComponents(!fullscreen, widthField, heightField, resizable);
+	enableComponents(fullscreen, fullScreenResolutions);
     }
 
     private int idxAa(int base, int x) {
@@ -818,7 +1062,7 @@ public class ConfigDialog extends I18nJFrame {
     }
 
     private Thread getCheckVersionThread() {
-	return new Thread(new CallbackTask(new VersionChecker(GlobalConf.instance.VERSION_CHECK_URL), new Callback() {
+	return new Thread(new CallbackTask(new VersionChecker(GlobalConf.program.VERSION_CHECK_URL), new Callback() {
 	    @Override
 	    public void complete(Object result) {
 		checkPanel.removeAll();
@@ -834,8 +1078,8 @@ public class ConfigDialog extends I18nJFrame {
 		    JsonValue last = json.get(json.size - 1);
 		    String version = last.getString("name");
 		    if (version.matches("^(\\D{1})?\\d+.\\d+(\\D{1})?$")) {
-			GlobalConf.instance.LAST_VERSION = new String(version);
-			GlobalConf.instance.LAST_CHECKED = new Date();
+			GlobalConf.program.LAST_VERSION = new String(version);
+			GlobalConf.program.LAST_CHECKED = new Date();
 			newVersionCheck(version);
 		    }
 		    checkPanel.validate();
@@ -855,13 +1099,13 @@ public class ConfigDialog extends I18nJFrame {
      * @param version The version to check.
      */
     private void newVersionCheck(String version) {
-	int[] majmin = GlobalConf.VersionInfo.getMajorMinorFromString(version);
+	int[] majmin = GlobalConf.VersionConf.getMajorMinorFromString(version);
 
-	if (majmin[0] > GlobalConf.instance.VERSION.major || (majmin[0] == GlobalConf.instance.VERSION.major && majmin[1] > GlobalConf.instance.VERSION.minor)) {
+	if (majmin[0] > GlobalConf.version.major || (majmin[0] == GlobalConf.version.major && majmin[1] > GlobalConf.version.minor)) {
 	    // There's a new version!
-	    checkLabel.setText(txt("gui.newversion.available", GlobalConf.instance.VERSION, version));
+	    checkLabel.setText(txt("gui.newversion.available", GlobalConf.version, version));
 	    try {
-		final URI uri = new URI(GlobalConf.instance.WEBPAGE);
+		final URI uri = new URI(GlobalConf.WEBPAGE);
 
 		JButton button = new JButton();
 		button.setText(txt("gui.newversion.getit"));
@@ -888,7 +1132,7 @@ public class ConfigDialog extends I18nJFrame {
 	    } catch (URISyntaxException e1) {
 	    }
 	} else {
-	    checkLabel.setText(txt("gui.newversion.nonew", GlobalConf.instance.getLastCheckedString()));
+	    checkLabel.setText(txt("gui.newversion.nonew", GlobalConf.program.getLastCheckedString()));
 	    // Add check now button
 	    JButton button = new JButton();
 	    button.setText(txt("gui.newversion.checknow"));

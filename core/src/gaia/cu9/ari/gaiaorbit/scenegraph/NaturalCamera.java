@@ -23,13 +23,11 @@ import com.badlogic.gdx.utils.viewport.Viewport;
  *
  */
 public class NaturalCamera extends AbstractCamera implements IObserver {
+
     /** Camera far value **/
     public static final double CAM_FAR = 1e15 * Constants.KM_TO_U;
     /** Camera near values **/
     public static final double CAM_NEAR = 1e4 * Constants.KM_TO_U;
-
-    /** Max turn velocity in deg/s **/
-    private static final double MAX_ANGLE_V = .01;
 
     /** Acceleration, velocity and position of the entity **/
     public Vector3d accel, vel;
@@ -88,7 +86,7 @@ public class NaturalCamera extends AbstractCamera implements IObserver {
     }
 
     public void initialize(AssetManager assetManager) {
-	camera = new PerspectiveCamera(GlobalConf.instance.CAMERA_FOV, Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
+	camera = new PerspectiveCamera(GlobalConf.scene.CAMERA_FOV, Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
 	camera.near = (float) CAM_NEAR;
 	camera.far = (float) CAM_FAR;
 
@@ -140,7 +138,7 @@ public class NaturalCamera extends AbstractCamera implements IObserver {
 		focusBak = focus;
 		focus = (CelestialBody) focus.getComputedAncestor();
 		focus.getPosition(focusPos);
-		if (GlobalConf.instance.FOCUS_LOCK && time.getDt() != 0) {
+		if (GlobalConf.scene.FOCUS_LOCK && time.getDt() != 0) {
 		    // Get copy of focus and update it to know where it will be in the next step
 		    AbstractPositionEntity fc = (AbstractPositionEntity) focus;
 		    AbstractPositionEntity fccopy = fc.getLineCopy();
@@ -166,11 +164,11 @@ public class NaturalCamera extends AbstractCamera implements IObserver {
 		    updateRotation(dt, focusPos);
 
 		    if (!diverted) {
-			directionToTarget(dt, focusPos, GlobalConf.instance.TURNING_SPEED / 1e3f);
+			directionToTarget(dt, focusPos, GlobalConf.scene.TURNING_SPEED / 1e3f);
 		    } else {
-			updateRotationFree(dt, GlobalConf.instance.TURNING_SPEED);
+			updateRotationFree(dt, GlobalConf.scene.TURNING_SPEED);
 		    }
-		    updateRoll(dt, GlobalConf.instance.TURNING_SPEED);
+		    updateRoll(dt, GlobalConf.scene.TURNING_SPEED);
 		}
 
 		// Update focus direction
@@ -186,8 +184,8 @@ public class NaturalCamera extends AbstractCamera implements IObserver {
 		updatePosition(dt, translateUnits);
 
 		// Update direction with pitch, yaw, roll
-		updateRotationFree(dt, GlobalConf.instance.TURNING_SPEED);
-		updateRoll(dt, GlobalConf.instance.TURNING_SPEED);
+		updateRotationFree(dt, GlobalConf.scene.TURNING_SPEED);
+		updateRoll(dt, GlobalConf.scene.TURNING_SPEED);
 	    }
 	    break;
 	default:
@@ -197,7 +195,9 @@ public class NaturalCamera extends AbstractCamera implements IObserver {
 	lastFwdTime += dt;
 	lastMode = m;
 
-	camera.near = (float) Math.min(CAM_NEAR, (closest.distToCamera - closest.getRadius()) / 2);
+	if (closest != null) {
+	    camera.near = (float) Math.min(CAM_NEAR, (closest.distToCamera - closest.getRadius()) / 2);
+	}
 	camera.position.set(0f, 0f, 0f);
 	camera.direction.set(direction.valuesf());
 	camera.up.set(up.valuesf());
@@ -341,6 +341,11 @@ public class NaturalCamera extends AbstractCamera implements IObserver {
 	if (!(force.isZero() && velocity == 0 && accel.isZero())) {
 	    vel.add(accel.scl(dt));
 
+	    // Clamp to top speed
+	    if (GlobalConf.scene.CAMERA_SPEED_LIMIT > 0 && vel.len() > GlobalConf.scene.CAMERA_SPEED_LIMIT) {
+		vel.clamp(0, GlobalConf.scene.CAMERA_SPEED_LIMIT);
+	    }
+
 	    // Velocity changed direction
 	    if (lastvel.dot(vel) < 0) {
 		vel.scl(0);
@@ -407,11 +412,11 @@ public class NaturalCamera extends AbstractCamera implements IObserver {
 	if (updatePosition(vert, dt)) {
 	    // Pitch
 	    aux1.set(direction).crs(up).nor();
-	    rotateAround(rotationCenter, aux1, vert.z * GlobalConf.instance.ROTATION_SPEED);
+	    rotateAround(rotationCenter, aux1, vert.z * GlobalConf.scene.ROTATION_SPEED);
 	}
 	if (updatePosition(hor, dt)) {
 	    // Yaw
-	    rotateAround(rotationCenter, up, -hor.z * GlobalConf.instance.ROTATION_SPEED);
+	    rotateAround(rotationCenter, up, -hor.z * GlobalConf.scene.ROTATION_SPEED);
 	}
 
 	// Set acceleration to 0
@@ -430,7 +435,7 @@ public class NaturalCamera extends AbstractCamera implements IObserver {
 	    // Calculate velocity from acceleration
 	    angle.y += angle.x * dt;
 	    // Cap velocity
-	    angle.y = Math.signum(angle.y) * Math.min(MAX_ANGLE_V, Math.abs(angle.y));
+	    angle.y = Math.signum(angle.y) * Math.abs(angle.y);
 	    // Update position
 	    angle.z = (angle.y * dt) % 360f;
 	    return true;
@@ -490,7 +495,7 @@ public class NaturalCamera extends AbstractCamera implements IObserver {
 	} else {
 	    dist = distance;
 	}
-	return dist * GlobalConf.instance.CAMERA_SPEED;
+	return dist * GlobalConf.scene.CAMERA_SPEED;
     }
 
     /**
@@ -505,7 +510,7 @@ public class NaturalCamera extends AbstractCamera implements IObserver {
 	} else {
 	    dist = distance;
 	}
-	return Math.max(2000, Math.min(dist * Constants.U_TO_KM, GlobalConf.instance.ROTATION_SPEED));
+	return Math.max(2000, Math.min(dist * Constants.U_TO_KM, GlobalConf.scene.ROTATION_SPEED));
     }
 
     @Override

@@ -27,7 +27,7 @@ public class ScriptStateInterface extends Table implements IObserver {
 	super(skin);
 	img = new Image(new Texture(Gdx.files.internal("img/keyboard.png")));
 	this.add(img).left().row();
-	img.setVisible(!GlobalConf.instance.INPUT_ENABLED);
+	img.setVisible(!GlobalConf.runtime.INPUT_ENABLED);
 
 	int num = JythonFactory.getInstance().getNumRunningScripts();
 	cancelScript = new OwnTextButton(I18n.bundle.format("gui.script.stop", num), skin);

@@ -27,7 +27,7 @@ public class OrbitalParametersProvider implements IOrbitDataProvider {
 	    double f = params.e * params.semimajoraxis;
 	    double b = Math.sqrt(Math.pow(a, 2) - Math.pow(f, 2));
 
-	    int nsamples = 180;
+	    int nsamples = Math.min(Math.max(180, (int) a), 10000);
 	    double step = 360d / nsamples;
 	    Vector3d[] samples = new Vector3d[nsamples + 1];
 	    int i = 0;

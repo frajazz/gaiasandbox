@@ -57,7 +57,7 @@ public class ShaderQuadRenderSystem extends AbstractRenderSystem implements IObs
 	float[] vertices = new float[20];
 	fillVertices(vertices);
 
-	noise = new Texture(Gdx.files.internal(GlobalConf.TEX_FOLDER + "static.jpg"));
+	noise = new Texture(Gdx.files.internal(GlobalConf.TEXTURES_FOLDER + "static.jpg"));
 	noise.setFilter(TextureFilter.Linear, TextureFilter.Linear);
 
 	// We wont need indices if we use GL_TRIANGLE_FAN to draw our quad

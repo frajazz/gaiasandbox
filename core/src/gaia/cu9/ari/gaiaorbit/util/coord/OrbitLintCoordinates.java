@@ -66,7 +66,13 @@ public class OrbitLintCoordinates implements IBodyCoordinates {
 	aux.nor().scl(percent * len);
 	out.add(aux);
 
-	transf.set(((CelestialBody) orbit.parent).orientation);
+	if (((CelestialBody) orbit.parent).orientation != null) {
+	    transf.set(((CelestialBody) orbit.parent).orientation);
+	} else if (orbit.transformFunction != null) {
+	    transf.set(orbit.transformFunction);
+	} else {
+	    transf.idt();
+	}
 	transf.rotate(0, 1, 0, orbitalParams.argofpericenter);
 	transf.rotate(0, 0, 1, orbitalParams.i);
 	transf.rotate(0, 1, 0, orbitalParams.ascendingnode);

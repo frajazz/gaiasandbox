@@ -31,7 +31,7 @@ public class HYGCSVLoader extends AbstractCatalogLoader implements ICatalogLoade
     public List<CelestialBody> loadStars(InputStream data) throws FileNotFoundException {
 	List<CelestialBody> stars = new ArrayList<CelestialBody>();
 	BufferedReader br = new BufferedReader(new InputStreamReader(data));
-	EventManager.getInstance().post(Events.POST_NOTIFICATION, this.getClass().getSimpleName(), I18n.bundle.format("notif.limitmag", GlobalConf.instance.LIMIT_MAG_LOAD));
+	EventManager.getInstance().post(Events.POST_NOTIFICATION, this.getClass().getSimpleName(), I18n.bundle.format("notif.limitmag", GlobalConf.data.LIMIT_MAG_LOAD));
 
 	try {
 	    //Skip first line
@@ -69,7 +69,7 @@ public class HYGCSVLoader extends AbstractCatalogLoader implements ICatalogLoade
 	    colorbv = 1;
 	}
 
-	if (appmag < GlobalConf.instance.LIMIT_MAG_LOAD) {
+	if (appmag < GlobalConf.data.LIMIT_MAG_LOAD) {
 	    float absmag = Float.parseFloat(st[11].trim());
 	    String name = null;
 	    if (!st[6].trim().isEmpty()) {

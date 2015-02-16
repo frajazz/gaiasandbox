@@ -87,7 +87,7 @@ public class FullGui implements IGui, IObserver {
      */
     protected OwnLabel fov, brightness, bloom, ambient, speed, turn, rotate, date;
     protected Actor objectsList;
-    protected SelectBox<String> cameraMode;
+    protected SelectBox<String> cameraMode, cameraSpeedLimit;
     protected TextField inputPace, searchBox;
     protected Button plus, minus;
     protected ImageButton dateEdit;
@@ -171,7 +171,7 @@ public class FullGui implements IGui, IObserver {
 	buildGui();
 
 	// We must subscribe to the desired events
-	EventManager.getInstance().subscribe(this, Events.FOV_CHANGED_CMD, Events.CAMERA_MODE_CMD, Events.TIME_CHANGE_INFO, Events.TOGGLE_TIME_CMD, Events.SHOW_TUTORIAL_ACTION, Events.SHOW_SEARCH_ACTION, Events.FOCUS_CHANGED, Events.TOGGLE_VISIBILITY_CMD, Events.PACE_CHANGED_INFO, Events.GUI_SCROLL_POSITION_CMD, Events.GUI_FOLD_CMD, Events.GUI_MOVE_CMD, Events.ROTATION_SPEED_CMD, Events.CAMERA_SPEED_CMD, Events.TURNING_SPEED_CMD, Events.TIME_CHANGE_CMD);
+	EventManager.getInstance().subscribe(this, Events.FOV_CHANGED_CMD, Events.CAMERA_MODE_CMD, Events.TIME_CHANGE_INFO, Events.TOGGLE_TIME_CMD, Events.SHOW_TUTORIAL_ACTION, Events.SHOW_SEARCH_ACTION, Events.FOCUS_CHANGED, Events.TOGGLE_VISIBILITY_CMD, Events.PACE_CHANGED_INFO, Events.GUI_SCROLL_POSITION_CMD, Events.GUI_FOLD_CMD, Events.GUI_MOVE_CMD, Events.ROTATION_SPEED_CMD, Events.CAMERA_SPEED_CMD, Events.TURNING_SPEED_CMD, Events.TIME_CHANGE_CMD, Events.SPEED_LIMIT_CMD);
     }
 
     private void buildGui() {
@@ -235,7 +235,7 @@ public class FullGui implements IGui, IObserver {
 	Label fovLabel = new Label(txt("gui.camera.fov"), skin, "default");
 	fieldOfView = new Slider(Constants.MIN_FOV, Constants.MAX_FOV, 1, false, skin);
 	fieldOfView.setName("field of view");
-	fieldOfView.setValue(GlobalConf.instance.CAMERA_FOV);
+	fieldOfView.setValue(GlobalConf.scene.CAMERA_FOV);
 	fieldOfView.addListener(new EventListener() {
 	    @Override
 	    public boolean handle(Event event) {
@@ -249,13 +249,41 @@ public class FullGui implements IGui, IObserver {
 	    }
 
 	});
-	fov = new OwnLabel(Integer.toString((int) GlobalConf.instance.CAMERA_FOV) + "°", skin, "default");
+	fov = new OwnLabel(Integer.toString((int) GlobalConf.scene.CAMERA_FOV) + "°", skin, "default");
+
+	/** CAMERA SPEED LIMIT **/
+	String[] speedLimits = new String[10];
+	speedLimits[0] = txt("gui.camera.speedlimit.100kmh");
+	speedLimits[1] = txt("gui.camera.speedlimit.c");
+	speedLimits[2] = txt("gui.camera.speedlimit.cfactor", 2);
+	speedLimits[3] = txt("gui.camera.speedlimit.cfactor", 10);
+	speedLimits[4] = txt("gui.camera.speedlimit.cfactor", 1000);
+	speedLimits[5] = txt("gui.camera.speedlimit.pcs", 1);
+	speedLimits[6] = txt("gui.camera.speedlimit.pcs", 2);
+	speedLimits[7] = txt("gui.camera.speedlimit.pcs", 10);
+	speedLimits[8] = txt("gui.camera.speedlimit.pcs", 1000);
+	speedLimits[9] = txt("gui.camera.speedlimit.nolimit");
+
+	cameraSpeedLimit = new SelectBox<String>(skin);
+	cameraSpeedLimit.setName("camera speed limit");
+	cameraSpeedLimit.setItems(speedLimits);
+	cameraSpeedLimit.addListener(new EventListener() {
+	    @Override
+	    public boolean handle(Event event) {
+		if (event instanceof ChangeEvent) {
+		    int idx = cameraSpeedLimit.getSelectedIndex();
+		    EventManager.getInstance().post(Events.SPEED_LIMIT_CMD, idx, true);
+		    return true;
+		}
+		return false;
+	    }
+	});
+	cameraSpeedLimit.setSelectedIndex(GlobalConf.scene.CAMERA_SPEED_LIMIT_IDX);
 
 	/** CAMERA SPEED **/
-	Label camSpeedLabel = new Label(txt("gui.camera.speed"), skin, "default");
 	cameraSpeed = new Slider(Constants.MIN_SLIDER, Constants.MAX_SLIDER, 1, false, skin);
 	cameraSpeed.setName("camera speed");
-	cameraSpeed.setValue(GlobalConf.instance.CAMERA_SPEED * 10);
+	cameraSpeed.setValue(GlobalConf.scene.CAMERA_SPEED * 10);
 	cameraSpeed.addListener(new EventListener() {
 	    @Override
 	    public boolean handle(Event event) {
@@ -268,13 +296,12 @@ public class FullGui implements IGui, IObserver {
 	    }
 
 	});
-	speed = new OwnLabel(Integer.toString((int) (GlobalConf.instance.CAMERA_SPEED * 10)), skin, "default");
+	speed = new OwnLabel(Integer.toString((int) (GlobalConf.scene.CAMERA_SPEED * 10)), skin, "default");
 
 	/** ROTATION SPEED **/
-	Label rotateLabel = new Label(txt("gui.rotation.speed"), skin, "default");
 	rotateSpeed = new Slider(Constants.MIN_SLIDER, Constants.MAX_SLIDER, 1, false, skin);
 	rotateSpeed.setName("rotate speed");
-	rotateSpeed.setValue(MathUtilsd.lint(GlobalConf.instance.ROTATION_SPEED, Constants.MIN_ROT_SPEED, Constants.MAX_ROT_SPEED, Constants.MIN_SLIDER, Constants.MAX_SLIDER));
+	rotateSpeed.setValue(MathUtilsd.lint(GlobalConf.scene.ROTATION_SPEED, Constants.MIN_ROT_SPEED, Constants.MAX_ROT_SPEED, Constants.MIN_SLIDER, Constants.MAX_SLIDER));
 	rotateSpeed.addListener(new EventListener() {
 	    @Override
 	    public boolean handle(Event event) {
@@ -287,13 +314,12 @@ public class FullGui implements IGui, IObserver {
 	    }
 
 	});
-	rotate = new OwnLabel(Integer.toString((int) MathUtilsd.lint(GlobalConf.instance.ROTATION_SPEED, Constants.MIN_ROT_SPEED, Constants.MAX_ROT_SPEED, Constants.MIN_SLIDER, Constants.MAX_SLIDER)), skin, "default");
+	rotate = new OwnLabel(Integer.toString((int) MathUtilsd.lint(GlobalConf.scene.ROTATION_SPEED, Constants.MIN_ROT_SPEED, Constants.MAX_ROT_SPEED, Constants.MIN_SLIDER, Constants.MAX_SLIDER)), skin, "default");
 
 	/** TURNING SPEED **/
-	Label turnLabel = new Label(txt("gui.turn.speed"), skin, "default");
 	turnSpeed = new Slider(Constants.MIN_SLIDER, Constants.MAX_SLIDER, 1, false, skin);
 	turnSpeed.setName("turn speed");
-	turnSpeed.setValue(MathUtilsd.lint(GlobalConf.instance.TURNING_SPEED, Constants.MIN_TURN_SPEED, Constants.MAX_TURN_SPEED, Constants.MIN_SLIDER, Constants.MAX_SLIDER));
+	turnSpeed.setValue(MathUtilsd.lint(GlobalConf.scene.TURNING_SPEED, Constants.MIN_TURN_SPEED, Constants.MAX_TURN_SPEED, Constants.MIN_SLIDER, Constants.MAX_SLIDER));
 	turnSpeed.addListener(new EventListener() {
 	    @Override
 	    public boolean handle(Event event) {
@@ -306,12 +332,12 @@ public class FullGui implements IGui, IObserver {
 	    }
 
 	});
-	turn = new OwnLabel(Integer.toString((int) MathUtilsd.lint(GlobalConf.instance.TURNING_SPEED, Constants.MIN_TURN_SPEED, Constants.MAX_TURN_SPEED, Constants.MIN_SLIDER, Constants.MAX_SLIDER)), skin, "default");
+	turn = new OwnLabel(Integer.toString((int) MathUtilsd.lint(GlobalConf.scene.TURNING_SPEED, Constants.MIN_TURN_SPEED, Constants.MAX_TURN_SPEED, Constants.MIN_SLIDER, Constants.MAX_SLIDER)), skin, "default");
 
 	/** Focus lock **/
 	focusLock = new CheckBox(txt("gui.camera.lock"), skin);
 	focusLock.setName("focus lock");
-	focusLock.setChecked(GlobalConf.instance.FOCUS_LOCK);
+	focusLock.setChecked(GlobalConf.scene.FOCUS_LOCK);
 	focusLock.addListener(new EventListener() {
 	    @Override
 	    public boolean handle(Event event) {
@@ -349,11 +375,13 @@ public class FullGui implements IGui, IObserver {
 	turnGroup.addActor(turn);
 
 	cameraGroup.addActor(fovGroup);
-	cameraGroup.addActor(camSpeedLabel);
+	cameraGroup.addActor(new Label(txt("gui.camera.speedlimit"), skin, "default"));
+	cameraGroup.addActor(cameraSpeedLimit);
+	cameraGroup.addActor(new Label(txt("gui.camera.speed"), skin, "default"));
 	cameraGroup.addActor(speedGroup);
-	cameraGroup.addActor(rotateLabel);
+	cameraGroup.addActor(new Label(txt("gui.rotation.speed"), skin, "default"));
 	cameraGroup.addActor(rotateGroup);
-	cameraGroup.addActor(turnLabel);
+	cameraGroup.addActor(new Label(txt("gui.turn.speed"), skin, "default"));
 	cameraGroup.addActor(turnGroup);
 	cameraGroup.addActor(focusLock);
 
@@ -377,6 +405,7 @@ public class FullGui implements IGui, IObserver {
 				EventManager.getInstance().post(Events.FOCUS_CHANGE_CMD, node, true);
 			    }
 			}
+			GaiaInputController.pressedKeys.remove(ie.getKeyCode());
 		    }
 		    return true;
 		}
@@ -426,7 +455,7 @@ public class FullGui implements IGui, IObserver {
 	    Array<String> names = new Array<String>(focusableObjects.size());
 	    for (CelestialBody cb : focusableObjects) {
 		// Omit stars with no proper names
-		if (!cb.name.startsWith("star_") && !cb.name.startsWith("Hip ")) {
+		if (!cb.name.startsWith("star_") && !cb.name.startsWith("Hip ") && !cb.name.startsWith("dummy")) {
 		    names.add(cb.name);
 		}
 	    }
@@ -536,10 +565,10 @@ public class FullGui implements IGui, IObserver {
 	VerticalGroup lightingGroup = new VerticalGroup().align(Align.left);
 	Label lightingLabel = new Label(txt("gui.lighting"), skin, "header");
 	Label brightnessLabel = new Label(txt("gui.starbrightness"), skin, "default");
-	brightness = new OwnLabel(Integer.toString((int) (MathUtilsd.lint(GlobalConf.instance.STAR_BRIGHTNESS, Constants.MIN_STAR_BRIGHT, Constants.MAX_STAR_BRIGHT, Constants.MIN_SLIDER, Constants.MAX_SLIDER))), skin);
+	brightness = new OwnLabel(Integer.toString((int) (MathUtilsd.lint(GlobalConf.scene.STAR_BRIGHTNESS, Constants.MIN_STAR_BRIGHT, Constants.MAX_STAR_BRIGHT, Constants.MIN_SLIDER, Constants.MAX_SLIDER))), skin);
 	starBrightness = new Slider(Constants.MIN_SLIDER, Constants.MAX_SLIDER, 1, false, skin);
 	starBrightness.setName("star brightness");
-	starBrightness.setValue(MathUtilsd.lint(GlobalConf.instance.STAR_BRIGHTNESS, Constants.MIN_STAR_BRIGHT, Constants.MAX_STAR_BRIGHT, Constants.MIN_SLIDER, Constants.MAX_SLIDER));
+	starBrightness.setValue(MathUtilsd.lint(GlobalConf.scene.STAR_BRIGHTNESS, Constants.MIN_STAR_BRIGHT, Constants.MAX_STAR_BRIGHT, Constants.MIN_SLIDER, Constants.MAX_SLIDER));
 	starBrightness.addListener(new EventListener() {
 	    @Override
 	    public boolean handle(Event event) {
@@ -557,10 +586,10 @@ public class FullGui implements IGui, IObserver {
 	brightnessGroup.addActor(brightness);
 
 	Label ambientLightLabel = new Label(txt("gui.light.ambient"), skin, "default");
-	ambient = new OwnLabel(Integer.toString((int) (GlobalConf.instance.AMBIENT_LIGHT * 100)), skin);
+	ambient = new OwnLabel(Integer.toString((int) (GlobalConf.scene.AMBIENT_LIGHT * 100)), skin);
 	ambientLight = new Slider(Constants.MIN_SLIDER, Constants.MAX_SLIDER, 1, false, skin);
 	ambientLight.setName("ambient light");
-	ambientLight.setValue(GlobalConf.instance.AMBIENT_LIGHT * 100);
+	ambientLight.setValue(GlobalConf.scene.AMBIENT_LIGHT * 100);
 	ambientLight.addListener(new EventListener() {
 	    @Override
 	    public boolean handle(Event event) {
@@ -578,10 +607,10 @@ public class FullGui implements IGui, IObserver {
 	ambientGroup.addActor(ambient);
 
 	Label bloomLabel = new Label(txt("gui.bloom"), skin, "default");
-	bloom = new OwnLabel(Integer.toString((int) (GlobalConf.instance.POSTPROCESS_BLOOM_INTENSITY * 10)), skin);
+	bloom = new OwnLabel(Integer.toString((int) (GlobalConf.postprocess.POSTPROCESS_BLOOM_INTENSITY * 10)), skin);
 	bloomEffect = new Slider(Constants.MIN_SLIDER, Constants.MAX_SLIDER, 1, false, skin);
 	bloomEffect.setName("bloom effect");
-	bloomEffect.setValue(GlobalConf.instance.POSTPROCESS_BLOOM_INTENSITY * 10f);
+	bloomEffect.setValue(GlobalConf.postprocess.POSTPROCESS_BLOOM_INTENSITY * 10f);
 	bloomEffect.addListener(new EventListener() {
 	    @Override
 	    public boolean handle(Event event) {
@@ -611,7 +640,7 @@ public class FullGui implements IGui, IObserver {
 		return false;
 	    }
 	});
-	lensFlare.setChecked(GlobalConf.instance.POSTPROCESS_LENS_FLARE);
+	lensFlare.setChecked(GlobalConf.postprocess.POSTPROCESS_LENS_FLARE);
 
 	lightingGroup.addActor(lightingLabel);
 	lightingGroup.addActor(brightnessLabel);
@@ -638,7 +667,7 @@ public class FullGui implements IGui, IObserver {
 		return false;
 	    }
 	});
-	computeGaiaScan.setChecked(GlobalConf.instance.COMPUTE_GAIA_SCAN);
+	computeGaiaScan.setChecked(GlobalConf.scene.COMPUTE_GAIA_SCAN);
 
 	transitColor = new CheckBox(txt("gui.gaiascan.colour"), skin);
 	transitColor.setName("transit color");
@@ -652,7 +681,7 @@ public class FullGui implements IGui, IObserver {
 		return false;
 	    }
 	});
-	transitColor.setChecked(GlobalConf.instance.STAR_COLOR_TRANSIT);
+	transitColor.setChecked(GlobalConf.scene.STAR_COLOR_TRANSIT);
 
 	onlyObservedStars = new CheckBox(txt("gui.gaiascan.onlyobserved"), skin);
 	onlyObservedStars.setName("only observed stars");
@@ -666,7 +695,7 @@ public class FullGui implements IGui, IObserver {
 		return false;
 	    }
 	});
-	onlyObservedStars.setChecked(GlobalConf.instance.ONLY_OBSERVED_STARS);
+	onlyObservedStars.setChecked(GlobalConf.scene.ONLY_OBSERVED_STARS);
 
 	optionsGroup.addActor(togglesLabel);
 	optionsGroup.addActor(computeGaiaScan);
@@ -704,7 +733,7 @@ public class FullGui implements IGui, IObserver {
 	// Play/stop
 	playstop = new OwnImageButton(skin, "playstop");
 	playstop.setName("play stop");
-	playstop.setChecked(GlobalConf.instance.TIME_ON);
+	playstop.setChecked(GlobalConf.runtime.TIME_ON);
 	playstop.addListener(new EventListener() {
 	    @Override
 	    public boolean handle(Event event) {
@@ -1056,14 +1085,6 @@ public class FullGui implements IGui, IObserver {
 	return "GUI";
     }
 
-    public void hideFocusInfo() {
-	focusInterface.setVisible(false);
-    }
-
-    public void showFocusInfo() {
-	focusInterface.setVisible(true);
-    }
-
     @Override
     public void notify(Events event, Object... data) {
 	switch (event) {
@@ -1078,9 +1099,9 @@ public class FullGui implements IGui, IObserver {
 	    CameraMode mode = (CameraMode) data[0];
 	    cameraMode.setSelected(mode.toString());
 	    if (mode.equals(CameraMode.Focus)) {
-		showFocusInfo();
+		focusInterface.displayFocusInfo();
 	    } else {
-		hideFocusInfo();
+		focusInterface.hideFocusInfo();
 	    }
 	    break;
 	case FOCUS_CHANGED:
@@ -1132,7 +1153,7 @@ public class FullGui implements IGui, IObserver {
 	    }
 	    break;
 	case SHOW_TUTORIAL_ACTION:
-	    EventManager.getInstance().post(Events.RUN_SCRIPT_PATH, GlobalConf.instance.TUTORIAL_SCRIPT_LOCATION);
+	    EventManager.getInstance().post(Events.RUN_SCRIPT_PATH, GlobalConf.program.TUTORIAL_SCRIPT_LOCATION);
 	    break;
 	case SHOW_SEARCH_ACTION:
 	    if (searchDialog == null) {
@@ -1219,7 +1240,13 @@ public class FullGui implements IGui, IObserver {
 		turn.setText(Integer.toString((int) value));
 	    }
 	    break;
-
+	case SPEED_LIMIT_CMD:
+	    interf = (Boolean) data[1];
+	    if (!interf) {
+		int value = (Integer) data[0];
+		cameraSpeedLimit.setSelectedIndex(value);
+	    }
+	    break;
 	}
 
     }
@@ -1272,5 +1299,9 @@ public class FullGui implements IGui, IObserver {
 
     private String txt(String key) {
 	return I18n.bundle.get(key);
+    }
+
+    private String txt(String key, Object... params) {
+	return I18n.bundle.format(key, params);
     }
 }

@@ -94,7 +94,7 @@ public class GaiaSandboxDesktop implements IObserver {
 
     private void init() {
 	// Show configuration
-	if (GlobalConf.instance.SHOW_CONFIG_DIALOG) {
+	if (GlobalConf.program.SHOW_CONFIG_DIALOG) {
 	    new ConfigDialog(this, true);
 	} else {
 	    launchMainApp();
@@ -104,14 +104,14 @@ public class GaiaSandboxDesktop implements IObserver {
     public void launchMainApp() {
 	LwjglApplicationConfiguration cfg = new LwjglApplicationConfiguration();
 	LwjglApplicationConfiguration.disableAudio = true;
-	cfg.title = GlobalConf.instance.getFullApplicationName();
-	cfg.fullscreen = GlobalConf.instance.FULLSCREEN;
-	cfg.resizable = GlobalConf.instance.RESIZABLE;
-	cfg.width = GlobalConf.instance.getScreenWidth();
-	cfg.height = GlobalConf.instance.getScreenHeight();
-	cfg.samples = MathUtilsd.clamp(GlobalConf.instance.POSTPROCESS_ANTIALIAS, 0, 16);
-	cfg.vSyncEnabled = GlobalConf.instance.VSYNC;
-	cfg.foregroundFPS = 0;
+	cfg.title = GlobalConf.getFullApplicationName();
+	cfg.fullscreen = GlobalConf.screen.FULLSCREEN;
+	cfg.resizable = GlobalConf.screen.RESIZABLE;
+	cfg.width = GlobalConf.screen.getScreenWidth();
+	cfg.height = GlobalConf.screen.getScreenHeight();
+	cfg.samples = MathUtilsd.clamp(GlobalConf.postprocess.POSTPROCESS_ANTIALIAS, 0, 16);
+	cfg.vSyncEnabled = GlobalConf.screen.VSYNC;
+	cfg.foregroundFPS = 400;
 	cfg.backgroundFPS = 30;
 	cfg.useGL30 = false;
 	cfg.addIcon("icon/ic_launcher.png", Files.FileType.Internal);

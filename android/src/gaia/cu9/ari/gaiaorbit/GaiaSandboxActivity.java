@@ -48,7 +48,7 @@ public class GaiaSandboxActivity extends AndroidApplication {
 	}
 
 	AndroidApplicationConfiguration cfg = new AndroidApplicationConfiguration();
-	cfg.numSamples = MathUtilsd.clamp(GlobalConf.instance.POSTPROCESS_ANTIALIAS, 0, 16);
+	cfg.numSamples = MathUtilsd.clamp(GlobalConf.postprocess.POSTPROCESS_ANTIALIAS, 0, 16);
 	cfg.depth = 8;
 	cfg.stencil = 8;
 

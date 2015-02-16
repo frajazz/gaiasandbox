@@ -106,7 +106,7 @@ public class Constants {
     public static final float MAX_SLIDER = 100;
 
     /** Maximum fov value, in degrees **/
-    public static final int MAX_FOV = 160;
+    public static final int MAX_FOV = 145;
     /** Minimum fov value, in degrees **/
     public static final int MIN_FOV = 20;
 

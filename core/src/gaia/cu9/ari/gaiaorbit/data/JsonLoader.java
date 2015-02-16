@@ -49,7 +49,9 @@ public class JsonLoader<T extends SceneGraphNode> implements ISceneGraphNodeProv
 	    for (String filePath : filePaths) {
 		JsonValue model = json.parse(FileLocator.getStream(filePath));
 		JsonValue child = model.get("objects").child;
+		int size = 0;
 		while (child != null) {
+		    size++;
 		    String clazzName = child.getString("impl");
 
 		    @SuppressWarnings("unchecked")
@@ -66,7 +68,7 @@ public class JsonLoader<T extends SceneGraphNode> implements ISceneGraphNodeProv
 
 		    child = child.next;
 		}
-		EventManager.getInstance().post(Events.POST_NOTIFICATION, this.getClass().getSimpleName(), I18n.bundle.format("notif.nodeloader", model.size, filePath));
+		EventManager.getInstance().post(Events.POST_NOTIFICATION, this.getClass().getSimpleName(), I18n.bundle.format("notif.nodeloader", size, filePath));
 	    }
 
 	} catch (Exception e) {

@@ -14,9 +14,9 @@ public class LineRenderSystem extends AbstractRenderSystem {
 
     private ShapeRenderer renderer;
 
-    public LineRenderSystem(RenderGroup rg, int priority, float[] alphas, ShapeRenderer renderer) {
+    public LineRenderSystem(RenderGroup rg, int priority, float[] alphas) {
 	super(rg, priority, alphas);
-	this.renderer = renderer;
+	this.renderer = new ShapeRenderer(400000);
     }
 
     @Override

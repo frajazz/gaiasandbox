@@ -181,7 +181,7 @@ public class KeyMappings {
 	addMapping(new ProgramAction(txt("action.incmag"), new Runnable() {
 	    @Override
 	    public void run() {
-		EventManager.getInstance().post(Events.LIMIT_MAG_CMD, GlobalConf.instance.LIMIT_MAG_RUNTIME + 0.1f);
+		EventManager.getInstance().post(Events.LIMIT_MAG_CMD, GlobalConf.runtime.LIMIT_MAG_RUNTIME + 0.1f);
 	    }
 	}), Keys.PLUS);
 
@@ -189,7 +189,7 @@ public class KeyMappings {
 	addMapping(new ProgramAction(txt("action.decmag"), new Runnable() {
 	    @Override
 	    public void run() {
-		EventManager.getInstance().post(Events.LIMIT_MAG_CMD, GlobalConf.instance.LIMIT_MAG_RUNTIME - 0.1f);
+		EventManager.getInstance().post(Events.LIMIT_MAG_CMD, GlobalConf.runtime.LIMIT_MAG_RUNTIME - 0.1f);
 	    }
 	}), Keys.MINUS);
 
@@ -197,7 +197,7 @@ public class KeyMappings {
 	addMapping(new ProgramAction(txt("action.resetmag"), new Runnable() {
 	    @Override
 	    public void run() {
-		EventManager.getInstance().post(Events.LIMIT_MAG_CMD, GlobalConf.instance.LIMIT_MAG_LOAD);
+		EventManager.getInstance().post(Events.LIMIT_MAG_CMD, GlobalConf.data.LIMIT_MAG_LOAD);
 	    }
 	}), Keys.STAR);
 
@@ -213,7 +213,7 @@ public class KeyMappings {
 	addMapping(new ProgramAction(txt("action.screenshot"), new Runnable() {
 	    @Override
 	    public void run() {
-		EventManager.getInstance().post(Events.SCREENSHOT_CMD, GlobalConf.instance.SCREENSHOT_WIDTH, GlobalConf.instance.SCREENSHOT_HEIGHT, GlobalConf.instance.SCREENSHOT_FOLDER);
+		EventManager.getInstance().post(Events.SCREENSHOT_CMD, GlobalConf.screenshot.SCREENSHOT_WIDTH, GlobalConf.screenshot.SCREENSHOT_HEIGHT, GlobalConf.screenshot.SCREENSHOT_FOLDER);
 	    }
 	}), Keys.F5);
 

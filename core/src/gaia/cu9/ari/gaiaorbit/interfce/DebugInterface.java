@@ -31,7 +31,7 @@ public class DebugInterface extends Table implements IObserver {
 	fps = new OwnLabel("", skin, "hud");
 	add(fps).right();
 	row();
-	this.setVisible(GlobalConf.instance.SHOW_DEBUG_INFO);
+	this.setVisible(GlobalConf.program.SHOW_DEBUG_INFO);
 	this.lock = lock;
 	EventManager.getInstance().subscribe(this, Events.DEBUG1, Events.DEBUG2, Events.DEBUG3, Events.FPS_INFO, Events.SHOW_DEBUG_CMD);
     }
@@ -65,8 +65,8 @@ public class DebugInterface extends Table implements IObserver {
 		} else {
 		    shw = !this.isVisible();
 		}
-		GlobalConf.instance.SHOW_DEBUG_INFO = shw;
-		this.setVisible(GlobalConf.instance.SHOW_DEBUG_INFO);
+		GlobalConf.program.SHOW_DEBUG_INFO = shw;
+		this.setVisible(GlobalConf.program.SHOW_DEBUG_INFO);
 		break;
 	    }
 	}

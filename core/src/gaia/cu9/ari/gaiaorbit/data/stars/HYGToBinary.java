@@ -14,6 +14,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.List;
+import java.util.Properties;
 
 /**
  * Small utility to convert a the HYG CSV catalog to binary in the following format:
@@ -36,8 +37,14 @@ public class HYGToBinary implements IObserver {
 	EventManager.getInstance().subscribe(hyg, Events.POST_NOTIFICATION);
 
 	InputStream versionFile = HYGToBinary.class.getResourceAsStream("/version");
-	GlobalConf.instance = new GlobalConf();
-	GlobalConf.instance.initializeVersion(versionFile);
+	Properties vprops = new Properties();
+	try {
+	    vprops.load(versionFile);
+	} catch (IOException e) {
+	    e.printStackTrace(System.err);
+	}
+	GlobalConf.version = new GlobalConf.VersionConf();
+	GlobalConf.version.initialize(vprops);
 
 	//hyg.compareCSVtoBinary("/home/tsagrista/Workspaces/workspace/GaiaOrbit-android/assets/data/hyg80.csv", "/home/tsagrista/Workspaces/workspace/GaiaOrbit-android/assets/data/hyg80.bin");
 
@@ -83,7 +90,7 @@ public class HYGToBinary implements IObserver {
     public void convertToBinary(String fileIn, String fileOut) {
 	HYGCSVLoader cat = new HYGCSVLoader();
 	try {
-	    GlobalConf.instance.LIMIT_MAG_LOAD = 6.3f;
+	    GlobalConf.data.LIMIT_MAG_LOAD = 6.3f;
 	    List<CelestialBody> stars = cat.loadStars(new FileInputStream(new File(fileIn)));
 
 	    // Write to binary

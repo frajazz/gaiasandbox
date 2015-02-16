@@ -69,8 +69,8 @@ public class Star extends CelestialBody {
 
     public static void initModel() {
 	if (mc == null) {
-	    Texture tex = new Texture(Gdx.files.internal(GlobalConf.TEX_FOLDER + "star.jpg"));
-	    Texture lut = new Texture(Gdx.files.internal(GlobalConf.TEX_FOLDER + "lut.jpg"));
+	    Texture tex = new Texture(Gdx.files.internal(GlobalConf.TEXTURES_FOLDER + "star.jpg"));
+	    Texture lut = new Texture(Gdx.files.internal(GlobalConf.TEXTURES_FOLDER + "lut.jpg"));
 	    tex.setFilter(TextureFilter.Linear, TextureFilter.Linear);
 
 	    Map<String, Object> params = new TreeMap<String, Object>();
@@ -149,16 +149,16 @@ public class Star extends CelestialBody {
      */
     @Override
     public void update(ITimeFrameProvider time, final Transform parentTransform, ICamera camera, float opacity) {
-	if (appmag <= GlobalConf.instance.LIMIT_MAG_RUNTIME) {
+	if (appmag <= GlobalConf.runtime.LIMIT_MAG_RUNTIME) {
 	    this.opacity = opacity;
 	    transform.position.set(parentTransform.position).add(pos);
 
 	    distToCamera = (float) transform.position.len();
-	    boolean visible = computeVisible(time, camera, GlobalConf.instance.COMPUTE_GAIA_SCAN) || camera.isFocus(this);
+	    boolean visible = computeVisible(time, camera, GlobalConf.scene.COMPUTE_GAIA_SCAN) || camera.isFocus(this);
 
 	    if (visible && !copy) {
 		viewAngle = (float) Math.atan((getRadius()) / distToCamera) / camera.getFovFactor();
-		viewAngleApparent = (float) Math.atan((getRadius() * GlobalConf.instance.STAR_BRIGHTNESS) / distToCamera) / camera.getFovFactor();
+		viewAngleApparent = (float) Math.atan((getRadius() * GlobalConf.scene.STAR_BRIGHTNESS) / distToCamera) / camera.getFovFactor();
 		addToRenderLists(camera);
 	    }
 
@@ -270,7 +270,7 @@ public class Star extends CelestialBody {
 	    computedSize = dist * Constants.TAN_TH_ANGLE_DOWN * Constants.STAR_SIZE_FACTOR_INV;
 
 	}
-	computedSize *= GlobalConf.instance.STAR_BRIGHTNESS;
+	computedSize *= GlobalConf.scene.STAR_BRIGHTNESS;
 	return (float) computedSize;
     }
 

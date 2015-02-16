@@ -50,8 +50,9 @@ public class SearchDialog extends Window {
 				}
 			    }
 			}
+
+			GaiaInputController.pressedKeys.remove(ie.getKeyCode());
 		    }
-		    return true;
 		}
 		return false;
 	    }
@@ -79,7 +80,7 @@ public class SearchDialog extends Window {
 	add(searchInput).top().left().expand().row();
 	add(buttonGroup).pad(5, 0, 0, 0).bottom().right().expand();
 	setTitleAlignment(Align.left);
-	setModal(true);
+	setModal(false);
 	pack();
 
 	this.setPosition(gui.getGuiStage().getWidth() / 2f - this.getWidth() / 2f, gui.getGuiStage().getHeight() / 2f - this.getHeight() / 2f);

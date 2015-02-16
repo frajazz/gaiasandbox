@@ -24,7 +24,6 @@ public class GSPostProcessor implements IPostProcessor, IObserver {
 
     public GSPostProcessor() {
 	ShaderLoader.BasePath = "shaders/";
-	GlobalConf conf = GlobalConf.instance;
 
 	pps = new PostProcessBean[RenderType.values().length];
 
@@ -33,9 +32,9 @@ public class GSPostProcessor implements IPostProcessor, IObserver {
 	pps[RenderType.frame.index] = newPostProcessor(getWidth(RenderType.frame), getHeight(RenderType.frame));
 
 	// Output AA info.
-	if (conf.POSTPROCESS_ANTIALIAS == -1) {
+	if (GlobalConf.postprocess.POSTPROCESS_ANTIALIAS == -1) {
 	    EventManager.getInstance().post(Events.POST_NOTIFICATION, this.getClass().getSimpleName(), I18n.bundle.format("notif.selected", "FXAA"));
-	} else if (conf.POSTPROCESS_ANTIALIAS == -2) {
+	} else if (GlobalConf.postprocess.POSTPROCESS_ANTIALIAS == -2) {
 	    EventManager.getInstance().post(Events.POST_NOTIFICATION, this.getClass().getSimpleName(), I18n.bundle.format("notif.selected", "NFAA"));
 	}
 
@@ -48,9 +47,9 @@ public class GSPostProcessor implements IPostProcessor, IObserver {
 	case screen:
 	    return Gdx.graphics.getWidth();
 	case screenshot:
-	    return GlobalConf.instance.SCREENSHOT_WIDTH;
+	    return GlobalConf.screenshot.SCREENSHOT_WIDTH;
 	case frame:
-	    return GlobalConf.instance.RENDER_WIDTH;
+	    return GlobalConf.frame.RENDER_WIDTH;
 	}
 	return 0;
     }
@@ -60,15 +59,14 @@ public class GSPostProcessor implements IPostProcessor, IObserver {
 	case screen:
 	    return Gdx.graphics.getHeight();
 	case screenshot:
-	    return GlobalConf.instance.SCREENSHOT_HEIGHT;
+	    return GlobalConf.screenshot.SCREENSHOT_HEIGHT;
 	case frame:
-	    return GlobalConf.instance.RENDER_HEIGHT;
+	    return GlobalConf.frame.RENDER_HEIGHT;
 	}
 	return 0;
     }
 
     private PostProcessBean newPostProcessor(int width, int height) {
-	GlobalConf conf = GlobalConf.instance;
 	PostProcessBean ppb = new PostProcessBean();
 	ppb.pp = new PostProcessor(width, height, true, false, true);
 
@@ -83,24 +81,24 @@ public class GSPostProcessor implements IPostProcessor, IObserver {
 	ppb.lens.setBias(-0.99f);
 	ppb.lens.setBlurAmount(0.0f);
 	ppb.lens.setBlurPasses(2);
-	ppb.lens.setEnabled(conf.POSTPROCESS_LENS_FLARE);
+	ppb.lens.setEnabled(GlobalConf.postprocess.POSTPROCESS_LENS_FLARE);
 	ppb.pp.addEffect(ppb.lens);
 
 	// BLOOM
 	ppb.bloom = new Bloom((int) (width * bloomFboScale), (int) (height * bloomFboScale));
-	ppb.bloom.setBloomIntesity(conf.POSTPROCESS_BLOOM_INTENSITY);
+	ppb.bloom.setBloomIntesity(GlobalConf.postprocess.POSTPROCESS_BLOOM_INTENSITY);
 	ppb.bloom.setThreshold(0f);
-	ppb.bloom.setEnabled(conf.POSTPROCESS_BLOOM_INTENSITY > 0);
+	ppb.bloom.setEnabled(GlobalConf.postprocess.POSTPROCESS_BLOOM_INTENSITY > 0);
 	ppb.pp.addEffect(ppb.bloom);
 
 	// ANTIALIAS
 
-	if (conf.POSTPROCESS_ANTIALIAS == -1) {
+	if (GlobalConf.postprocess.POSTPROCESS_ANTIALIAS == -1) {
 	    ppb.antialiasing = new Fxaa(width, height);
 	} else {
 	    ppb.antialiasing = new Nfaa(width, height);
 	}
-	ppb.antialiasing.setEnabled(conf.POSTPROCESS_ANTIALIAS < 0);
+	ppb.antialiasing.setEnabled(GlobalConf.postprocess.POSTPROCESS_ANTIALIAS < 0);
 	ppb.pp.addEffect(ppb.antialiasing);
 
 	return ppb;
@@ -126,23 +124,22 @@ public class GSPostProcessor implements IPostProcessor, IObserver {
 
     @Override
     public void notify(Events event, final Object... data) {
-	final GlobalConf conf = GlobalConf.instance;
 	switch (event) {
 	case PROPERTIES_WRITTEN:
-	    if (changed(pps[RenderType.screenshot.index].pp, conf.SCREENSHOT_WIDTH, conf.SCREENSHOT_HEIGHT)) {
+	    if (changed(pps[RenderType.screenshot.index].pp, GlobalConf.screenshot.SCREENSHOT_WIDTH, GlobalConf.screenshot.SCREENSHOT_HEIGHT)) {
 		Gdx.app.postRunnable(new Runnable() {
 		    @Override
 		    public void run() {
-			replace(RenderType.screenshot.index, conf.SCREENSHOT_WIDTH, conf.SCREENSHOT_HEIGHT);
+			replace(RenderType.screenshot.index, GlobalConf.screenshot.SCREENSHOT_WIDTH, GlobalConf.screenshot.SCREENSHOT_HEIGHT);
 		    }
 		});
 	    }
 
-	    if (changed(pps[RenderType.frame.index].pp, conf.RENDER_WIDTH, conf.RENDER_HEIGHT)) {
+	    if (changed(pps[RenderType.frame.index].pp, GlobalConf.frame.RENDER_WIDTH, GlobalConf.frame.RENDER_HEIGHT)) {
 		Gdx.app.postRunnable(new Runnable() {
 		    @Override
 		    public void run() {
-			replace(RenderType.frame.index, conf.RENDER_WIDTH, conf.RENDER_HEIGHT);
+			replace(RenderType.frame.index, GlobalConf.frame.RENDER_WIDTH, GlobalConf.frame.RENDER_HEIGHT);
 		    }
 		});
 	    }

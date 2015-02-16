@@ -190,7 +190,7 @@ public class FovCamera extends AbstractCamera implements IObserver {
 	    vectorPool.free(directions[1]);
 	}
 	interpolatedDirections.clear();
-	if (GlobalConf.instance.COMPUTE_GAIA_SCAN) {
+	if (GlobalConf.scene.COMPUTE_GAIA_SCAN) {
 	    if (lastTime != 0 && currentTime - lastTime > MAX_OVERLAP_TIME) {
 		if (((GlobalClock) time).fps < 0) {
 		    ((GlobalClock) time).fps = 10;

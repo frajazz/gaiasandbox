@@ -68,7 +68,6 @@ public class OrbitDataLoader extends AsynchronousAssetLoader<OrbitData, OrbitDat
 	public OrbitDataLoaderParameter(Class<? extends IOrbitDataProvider> providerClass, OrbitComponent orbitalParameters) {
 	    this(providerClass);
 	    this.orbitalParamaters = orbitalParameters;
-
 	}
 
 	public OrbitDataLoaderParameter(Class<? extends IOrbitDataProvider> providerClass, String name, Date ini, boolean forward, float orbitalPeriod, int numSamples) {

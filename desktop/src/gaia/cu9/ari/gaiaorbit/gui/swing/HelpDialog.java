@@ -38,7 +38,7 @@ public class HelpDialog extends I18nJFrame {
     JButton okButton;
 
     public HelpDialog() {
-	super(txt("gui.help.help") + " - " + GlobalConf.APPLICATION_NAME + " v" + GlobalConf.instance.VERSION.version);
+	super(txt("gui.help.help") + " - " + GlobalConf.APPLICATION_NAME + " v" + GlobalConf.version.version);
 	initialize();
 	frame.pack();
 	frame.setResizable(false);
@@ -145,20 +145,20 @@ public class HelpDialog extends I18nJFrame {
 	aux = new JLabel(txt("gui.help.version", GlobalConf.APPLICATION_NAME));
 	aux.setFont(boldFont);
 	build.add(aux);
-	build.add(new JLabel(GlobalConf.instance.VERSION.version), "wrap");
+	build.add(new JLabel(GlobalConf.version.version), "wrap");
 	aux = new JLabel(txt("gui.help.buildnumber"));
 	aux.setFont(boldFont);
 	build.add(aux);
-	build.add(new JLabel(GlobalConf.instance.VERSION.build), "wrap");
+	build.add(new JLabel(GlobalConf.version.build), "wrap");
 	aux = new JLabel(txt("gui.help.buildtime"));
 	aux.setFont(boldFont);
 	build.add(aux);
-	build.add(new JLabel(GlobalConf.instance.VERSION.buildtime), "wrap");
+	build.add(new JLabel(GlobalConf.version.buildtime), "wrap");
 	aux = new JLabel(txt("gui.help.buildsys"));
 	aux.setFont(boldFont);
 	build.add(aux);
 
-	JTextArea versionsystem = new JTextArea(GlobalConf.instance.VERSION.system);
+	JTextArea versionsystem = new JTextArea(GlobalConf.version.system);
 	versionsystem.setEditable(false);
 	versionsystem.setBackground(null);
 	versionsystem.setLineWrap(true);
@@ -167,7 +167,7 @@ public class HelpDialog extends I18nJFrame {
 	aux = new JLabel(txt("gui.help.builder"));
 	aux.setFont(boldFont);
 	build.add(aux);
-	build.add(new JLabel(GlobalConf.instance.VERSION.builder), "wrap");
+	build.add(new JLabel(GlobalConf.version.builder), "wrap");
 
 	JPanel java = new JPanel(new MigLayout("fillx", "[grow,fill][grow,fill]", ""));
 	java.setBorder(new TitledBorder(txt("gui.help.javainfo")));
@@ -228,7 +228,7 @@ public class HelpDialog extends I18nJFrame {
 	JPanel about = new JPanel(new MigLayout("fillx", "[grow,fill][grow,fill][]", ""));
 	about.setBorder(new EmptyBorder(10, 10, 10, 10));
 
-	JTextArea intro = new JTextArea(txt("gui.help.gscredits", GlobalConf.instance.VERSION.version));
+	JTextArea intro = new JTextArea(txt("gui.help.gscredits", GlobalConf.version.version));
 	intro.setEditable(false);
 	intro.setBackground(null);
 	intro.setLineWrap(true);

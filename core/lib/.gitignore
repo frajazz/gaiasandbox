@@ -1,2 +1,4 @@
 *.jar
 !postprocessing.jar
+!ObjectServerJavaClient-src.jar
+!ObjectServerJavaClient.jar
