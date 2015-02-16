@@ -59,31 +59,28 @@ public class OrbitDataLoader extends AsynchronousAssetLoader<OrbitData, OrbitDat
 	float orbitalPeriod;
 	int numSamples;
 	String name;
-	String function;
 	OrbitComponent orbitalParamaters;
 
 	public OrbitDataLoaderParameter(Class<? extends IOrbitDataProvider> providerClass) {
 	    this.providerClass = providerClass;
 	}
 
-	public OrbitDataLoaderParameter(Class<? extends IOrbitDataProvider> providerClass, OrbitComponent orbitalParameters, String function) {
+	public OrbitDataLoaderParameter(Class<? extends IOrbitDataProvider> providerClass, OrbitComponent orbitalParameters) {
 	    this(providerClass);
 	    this.orbitalParamaters = orbitalParameters;
-	    this.function = function;
 	}
 
-	public OrbitDataLoaderParameter(Class<? extends IOrbitDataProvider> providerClass, String name, String function, Date ini, boolean forward, float orbitalPeriod, int numSamples) {
+	public OrbitDataLoaderParameter(Class<? extends IOrbitDataProvider> providerClass, String name, Date ini, boolean forward, float orbitalPeriod, int numSamples) {
 	    this(providerClass);
 	    this.name = name;
-	    this.function = function;
 	    this.ini = ini;
 	    this.forward = forward;
 	    this.orbitalPeriod = orbitalPeriod;
 	    this.numSamples = numSamples;
 	}
 
-	public OrbitDataLoaderParameter(Class<? extends IOrbitDataProvider> providerClass, String name, String function, Date ini, boolean forward, float orbitalPeriod) {
-	    this(providerClass, name, function, ini, forward, orbitalPeriod, -1);
+	public OrbitDataLoaderParameter(Class<? extends IOrbitDataProvider> providerClass, String name, Date ini, boolean forward, float orbitalPeriod) {
+	    this(providerClass, name, ini, forward, orbitalPeriod, -1);
 	}
 
 	public void setIni(Date date) {

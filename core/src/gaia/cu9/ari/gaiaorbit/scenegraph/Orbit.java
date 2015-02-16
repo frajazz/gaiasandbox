@@ -3,12 +3,16 @@ package gaia.cu9.ari.gaiaorbit.scenegraph;
 import gaia.cu9.ari.gaiaorbit.data.orbit.IOrbitDataProvider;
 import gaia.cu9.ari.gaiaorbit.data.orbit.OrbitData;
 import gaia.cu9.ari.gaiaorbit.data.orbit.OrbitDataLoader;
+import gaia.cu9.ari.gaiaorbit.event.EventManager;
+import gaia.cu9.ari.gaiaorbit.event.Events;
 import gaia.cu9.ari.gaiaorbit.scenegraph.component.OrbitComponent;
 import gaia.cu9.ari.gaiaorbit.util.Constants;
+import gaia.cu9.ari.gaiaorbit.util.coord.Coordinates;
 import gaia.cu9.ari.gaiaorbit.util.math.MathUtilsd;
 import gaia.cu9.ari.gaiaorbit.util.math.Matrix4d;
 import gaia.cu9.ari.gaiaorbit.util.math.Vector3d;
 
+import java.lang.reflect.Method;
 import java.util.Date;
 
 import com.badlogic.gdx.Gdx;
@@ -27,9 +31,8 @@ public class Orbit extends LineObject {
     public OrbitData orbitData;
     protected Vector3d prev, curr;
     protected float alpha;
-    public Matrix4d localTransformD;
+    public Matrix4d localTransformD, transformFunction;
     protected String provider;
-    protected String transformFunction;
     protected Class<? extends IOrbitDataProvider> providerClass;
     public OrbitComponent oc;
 
@@ -48,7 +51,7 @@ public class Orbit extends LineObject {
 	    IOrbitDataProvider provider;
 	    try {
 		provider = providerClass.newInstance();
-		provider.load(oc.source, new OrbitDataLoader.OrbitDataLoaderParameter(providerClass, oc, transformFunction));
+		provider.load(oc.source, new OrbitDataLoader.OrbitDataLoaderParameter(providerClass, oc));
 		orbitData = provider.getData();
 	    } catch (Exception e) {
 		Gdx.app.error(getClass().getSimpleName(), e.getMessage());
@@ -76,6 +79,12 @@ public class Orbit extends LineObject {
 	if (oc.source != null || parent.orientation == null) {
 	    // Orbit is sampled, only get position
 	    localTransformD.set(transform.getMatrix());
+	    if (transformFunction != null)
+		localTransformD.mul(transformFunction);
+
+	    localTransformD.rotate(0, 1, 0, oc.argofpericenter);
+	    localTransformD.rotate(0, 0, 1, oc.i);
+	    localTransformD.rotate(0, 1, 0, oc.ascendingnode);
 	} else {
 	    // Orbit is defined by its parameters and not sampled
 	    // Set to parent orientation
@@ -85,6 +94,7 @@ public class Orbit extends LineObject {
 	    localTransformD.rotate(0, 0, 1, oc.i);
 	    localTransformD.rotate(0, 1, 0, oc.ascendingnode);
 	}
+
     }
 
     @Override
@@ -156,7 +166,15 @@ public class Orbit extends LineObject {
     }
 
     public void setTransformFunction(String transformFunction) {
-	this.transformFunction = transformFunction;
+	if (transformFunction != null && !transformFunction.isEmpty()) {
+	    try {
+		Method m = Coordinates.class.getMethod(transformFunction);
+		this.transformFunction = (Matrix4d) m.invoke(null);
+	    } catch (Exception e) {
+		EventManager.getInstance().post(Events.JAVA_EXCEPTION, e);
+	    }
+
+	}
     }
 
 }

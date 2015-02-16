@@ -35,7 +35,7 @@ public class OrbitSamplerDataProvider implements IOrbitDataProvider, IObserver {
 
 	    String b = bodies[i];
 	    float period = periods[i];
-	    OrbitDataLoaderParameter param = new OrbitDataLoaderParameter(me.getClass(), b, null, now, true, period, 80);
+	    OrbitDataLoaderParameter param = new OrbitDataLoaderParameter(me.getClass(), b, now, true, period, 80);
 	    me.load(null, param);
 
 	}
