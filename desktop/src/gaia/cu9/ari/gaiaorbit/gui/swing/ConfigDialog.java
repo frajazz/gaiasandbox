@@ -692,22 +692,28 @@ public class ConfigDialog extends I18nJFrame {
 		    String host = hostname.getText();
 		    int prt = Integer.parseInt(port.getText());
 
-		    ClientCore cc = ClientCore.getInstance();
-		    if (!cc.connect(host, prt)) {
+		    try {
+			// Check object server connection
+			ClientCore cc = ClientCore.getInstance();
+			if (!cc.isConnected()) {
+			    if (!cc.connect(host, prt)) {
+				connectionFailed();
+			    }
+			    ClientIdent ident = new ClientIdent();
+			    ident.setAffiliation("ARI");
+			    ident.setAuthors("Toni Sagristà <tsagrista@ari.uni-heidelberg.de>");
+			    ident.setClientDescription("Real time, 3D, outreach visualization software");
+			    ident.setClientDocumentationURL(GlobalConf.WIKI);
+			    ident.setClientHomepage(GlobalConf.WEBPAGE);
+			    ident.setClientName(GlobalConf.APPLICATION_NAME);
+			    ident.setClientVersion(GlobalConf.version.version);
+			    ident.setClientPlatform(System.getProperty("os.name"));
+			    ident.setClientIconURL(GlobalConf.ICON_URL);
+			    cc.executeCommand(ident, true);
+			}
+		    } catch (IOException ex) {
 			connectionFailed();
-			return;
 		    }
-		    ClientIdent ident = new ClientIdent();
-		    ident.setAffiliation("ARI");
-		    ident.setAuthors("Toni Sagristà <tsagrista@ari.uni-heidelberg.de>");
-		    ident.setClientDescription("Real time, 3D, outreach visualization software");
-		    ident.setClientDocumentationURL(GlobalConf.WIKI);
-		    ident.setClientHomepage(GlobalConf.WEBPAGE);
-		    ident.setClientName(GlobalConf.APPLICATION_NAME);
-		    ident.setClientVersion(GlobalConf.version.version);
-		    ident.setClientPlatform(System.getProperty("os.name"));
-		    ident.setClientIconURL(GlobalConf.ICON_URL);
-		    cc.executeCommand(ident);
 
 		    DatasetManager.getInstance().refreshItems();
 		    VisualizationManager visManager = VisualizationManager.getInstance();
@@ -742,6 +748,9 @@ public class ConfigDialog extends I18nJFrame {
 			top.add(vis);
 		    }
 
+		    if (visualisationsTree != null) {
+			visualisationsTree.removeAll();
+		    }
 		    visualisationsTree = new JTree(top);
 
 		    // Selection of nodes

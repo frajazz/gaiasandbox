@@ -2,42 +2,51 @@ package gaia.cu9.ari.gaiaorbit.data;
 
 import gaia.cu9.ari.gaiaorbit.event.EventManager;
 import gaia.cu9.ari.gaiaorbit.event.Events;
+import gaia.cu9.ari.gaiaorbit.scenegraph.AbstractPositionEntity;
 import gaia.cu9.ari.gaiaorbit.scenegraph.CelestialBody;
 import gaia.cu9.ari.gaiaorbit.scenegraph.SceneGraphNode;
 import gaia.cu9.ari.gaiaorbit.scenegraph.Star;
 import gaia.cu9.ari.gaiaorbit.util.Constants;
 import gaia.cu9.ari.gaiaorbit.util.GlobalConf;
 import gaia.cu9.ari.gaiaorbit.util.I18n;
-import gaia.cu9.ari.gaiaorbit.util.coord.Coordinates;
+import gaia.cu9.ari.gaiaorbit.util.Pair;
 import gaia.cu9.ari.gaiaorbit.util.math.Vector3d;
+import gaia.cu9.ari.gaiaorbit.util.tree.OctreeNode;
 import gaia.cu9.object.server.ClientCore;
 import gaia.cu9.object.server.commands.Message;
 import gaia.cu9.object.server.commands.MessageHandler;
 import gaia.cu9.object.server.commands.MessagePayloadBlock;
 import gaia.cu9.object.server.commands.plugins.ClientIdent;
 
+import java.io.BufferedReader;
 import java.io.IOException;
+import java.io.StringReader;
 import java.net.ConnectException;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Properties;
 
 public class ObjectServerLoader implements ISceneGraphNodeProvider {
     ClientCore cc;
     List<CelestialBody> result;
+    Map<Long, Pair<OctreeNode<AbstractPositionEntity>, long[]>> nodesMap;
+    Long starid = 1l;
+    Long errors = 0l;
 
     @Override
     public void initialize(Properties properties) {
-	result = new ArrayList<CelestialBody>();
+	result = Collections.synchronizedList(new ArrayList<CelestialBody>());
+	nodesMap = Collections.synchronizedMap(new HashMap<Long, Pair<OctreeNode<AbstractPositionEntity>, long[]>>());
 	cc = ClientCore.getInstance();
     }
 
-    String rawdata = null;
-
     @Override
     public List<? extends SceneGraphNode> loadObjects() {
-	long starid = 1;
-	long errors = 0;
+	errors = 0l;
+
 	try {
 	    EventManager.getInstance().post(Events.POST_NOTIFICATION, this.getClass().getSimpleName(), I18n.bundle.format("notif.objectserver.gettingdata"));
 
@@ -56,72 +65,110 @@ public class ObjectServerLoader implements ISceneGraphNodeProvider {
 		ident.setClientVersion(GlobalConf.version.version);
 		ident.setClientPlatform(System.getProperty("os.name"));
 		ident.setClientIconURL(GlobalConf.ICON_URL);
-		cc.executeCommand(ident);
+		cc.executeCommand(ident, true);
 	    }
 
 	    // Get star data
-	    Message msg = new Message("visualization-particle-data?vis-id=" + visid
+	    Message msgParticle = new Message("visualization-particle-data?vis-id=" + visid
 		    + "&include-headers=false");
-	    msg.setMessageHandler(new MessageHandler() {
-		int blocks = 0;
+	    msgParticle.setMessageHandler(new MessageHandler() {
 
 		@Override
 		public void receivedMessage(Message query, Message reply) {
-		    StringBuilder data = new StringBuilder();
 		    for (MessagePayloadBlock block : reply.getPayload()) {
-			data.append((String) block.getPayload());
-			System.out.println("Received block " + (++blocks));
+			String data = (String) block.getPayload();
+			BufferedReader reader = new BufferedReader(new StringReader(data));
+			try {
+			    String line = null;
+			    while ((line = reader.readLine()) != null) {
+				Star star = parseLine(line, starid, errors);
+				if (star != null)
+				    result.add(star);
+			    }
+			} catch (IOException e) {
+			    EventManager.getInstance().post(Events.JAVA_EXCEPTION, e);
+			}
 		    }
-		    rawdata = data.toString();
 		}
 
 		@Override
 		public void receivedMessageBlock(Message query, Message reply, MessagePayloadBlock block) {
+		}
+
+	    });
+	    cc.sendMessage(msgParticle, true);
+
+	    // Get LoD data
+	    Message msgMetadata = new Message("visualization-metadata?vis-id=" + visid
+		    + "&lod-level=-1");
+	    msgMetadata.setMessageHandler(new MessageHandler() {
+
+		@Override
+		public void receivedMessage(Message query, Message reply) {
+		    OctreeNode<AbstractPositionEntity> root = null;
+		    for (MessagePayloadBlock block : reply.getPayload()) {
+			String data = (String) block.getPayload();
+			BufferedReader reader = new BufferedReader(new StringReader(data));
+			try {
+			    String line = null;
+			    while ((line = reader.readLine()) != null) {
+				System.out.println(line);
+				String[] tokens = line.split(";");
+				long pageid = Long.parseLong(tokens[0]);
+
+				String[] xyz = tokens[1].split(",");
+				double x = Double.parseDouble(xyz[0]) * Constants.PC_TO_U;
+				double y = Double.parseDouble(xyz[1]) * Constants.PC_TO_U;
+				double z = Double.parseDouble(xyz[2]) * Constants.PC_TO_U;
+
+				String[] hsxyz = tokens[2].split(",");
+				double hsx = Double.parseDouble(hsxyz[0]) * Constants.PC_TO_U;
+				double hsy = Double.parseDouble(hsxyz[1]) * Constants.PC_TO_U;
+				double hsz = Double.parseDouble(hsxyz[2]) * Constants.PC_TO_U;
+
+				int nObjects = Integer.parseInt(tokens[3]);
+				int ownObjects = Integer.parseInt(tokens[4]);
+				int childrenCount = Integer.parseInt(tokens[5]);
+
+				long[] childrenIds = new long[8];
+				String[] childrenIdsStr = tokens[6].split(",");
+				for (int i = 0; i < 8; i++) {
+				    childrenIds[i] = Long.parseLong(childrenIdsStr[i]);
+				}
+				int depth = Integer.parseInt(tokens[7]);
+
+				OctreeNode<AbstractPositionEntity> node = new OctreeNode<AbstractPositionEntity>(pageid, x, y, z, hsx, hsy, hsz, childrenCount, depth);
+				nodesMap.put(pageid, new Pair<OctreeNode<AbstractPositionEntity>, long[]>(node, childrenIds));
+
+				if (depth == 0) {
+				    root = node;
+				}
+
+			    }
+			} catch (IOException e) {
+			    EventManager.getInstance().post(Events.JAVA_EXCEPTION, e);
+			}
+		    }
+		    // All data has arrived
+		    if (root != null) {
+			root.resolveChildren(nodesMap);
+			System.out.println(root.toString());
+		    } else {
+			EventManager.getInstance().post(Events.JAVA_EXCEPTION, new RuntimeException("No root node in visualization-metadata"));
+		    }
+
+		}
+
+		@Override
+		public void receivedMessageBlock(Message query, Message reply, MessagePayloadBlock block) {
+		    // TODO Auto-generated method stub
 
 		}
 
 	    });
-	    cc.sendMessage(msg);
+	    cc.sendMessage(msgMetadata, true);
 
-	    // TODO Get this shit together, this does not look good...
-	    do {
-		try {
-		    Thread.sleep(500);
-		} catch (InterruptedException e) {
-		    EventManager.getInstance().post(Events.JAVA_EXCEPTION, e);
-		}
-	    } while (rawdata == null);
-
-	    // Get LoD data
-	    //	    msg = new Message("visualization-metadata?vis-id=" + visid
-	    //		    + "&lod-level=-1");
-	    //	    cc.sendMessage(msg);
-	    //	    Collection<MessagePayloadBlock> lod = msg.getPayload();
-
-	    // Parse into list of stars
-	    String[] lines = rawdata.split("\n");
-	    for (String line : lines) {
-		String[] tokens = line.split(";");
-		try {
-		    double ra = Double.parseDouble(tokens[0]);
-		    double dec = Double.parseDouble(tokens[1]);
-		    double dist = Double.parseDouble(tokens[2]);
-
-		    float mag = tokens[3].isEmpty() ? 12f : Float.parseFloat(tokens[3]);
-		    float bv = Float.parseFloat(tokens[4]);
-
-		    if (mag <= GlobalConf.data.LIMIT_MAG_LOAD) {
-			String name = "dummy" + starid;
-			Star s = new Star(Coordinates.sphericalToCartesian(ra, dec, dist * Constants.PC_TO_U, new Vector3d()), mag, mag, bv, name, starid++);
-			s.initialize();
-			result.add(s);
-		    }
-
-		} catch (Exception e) {
-		    //EventManager.getInstance().post(Events.JAVA_EXCEPTION, new RuntimeException("Error in star " + starid + ": Skipping it"));
-		    errors++;
-		}
-	    }
+	    // Insert stars in octree
 
 	    // Disconnect
 	    cc.sendMessage("client-disconnect");
@@ -142,5 +189,33 @@ public class ObjectServerLoader implements ISceneGraphNodeProvider {
 	EventManager.getInstance().post(Events.POST_NOTIFICATION, this.getClass().getSimpleName(), I18n.bundle.format("notif.catalog.init", result.size()));
 
 	return result;
+    }
+
+    private Star parseLine(String line, Long starid, Long errors) {
+	String[] tokens = line.split(";");
+	try {
+	    double ra = Double.parseDouble(tokens[0]);
+	    double dec = Double.parseDouble(tokens[1]);
+	    double dist = Double.parseDouble(tokens[2]);
+
+	    double x = ra * Constants.PC_TO_U;
+	    double y = dec * Constants.PC_TO_U;
+	    double z = dist * Constants.PC_TO_U;
+
+	    float mag = tokens[3].isEmpty() ? 12f : Float.parseFloat(tokens[3]);
+	    float bv = Float.parseFloat(tokens[4]);
+
+	    if (mag <= GlobalConf.data.LIMIT_MAG_LOAD) {
+		String name = "dummy" + starid;
+		Star s = new Star(new Vector3d(y, z, x), mag, mag, bv, name, starid++);
+		s.initialize();
+		return s;
+	    }
+
+	} catch (Exception e) {
+	    //EventManager.getInstance().post(Events.JAVA_EXCEPTION, new RuntimeException("Error in star " + starid + ": Skipping it"));
+	    errors++;
+	}
+	return null;
     }
 }

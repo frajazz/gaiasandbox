@@ -1,9 +1,12 @@
 package gaia.cu9.ari.gaiaorbit.util.tree;
 
+import gaia.cu9.ari.gaiaorbit.util.Pair;
 import gaia.cu9.ari.gaiaorbit.util.math.Vector3d;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.LinkedList;
+import java.util.Map;
 import java.util.TreeSet;
 
 /**
@@ -15,13 +18,18 @@ import java.util.TreeSet;
  */
 public class OctreeNode<T extends IPosition> {
 
-    private Octree<T> octree;
+    /** The unique page identifier **/
+    final long pageid;
     /** Contains the bottom-left-front position of the node **/
     final Vector3d loc;
     /** Contains the top-right-back position of the cube **/
     final Vector3d boundary;
     /** Contains the depth level **/
     final int depth;
+    /** Number of children of this node **/
+    final int childrenCount;
+    /** The parent, if any **/
+    OctreeNode<T> parent;
     /** Children nodes **/
     @SuppressWarnings("unchecked")
     OctreeNode<T>[] children = new OctreeNode[8];
@@ -29,32 +37,54 @@ public class OctreeNode<T extends IPosition> {
     LinkedList<T> objects = new LinkedList<T>();
 
     /**
-     * Constructs a node with the given depth in the given position.
-     * @param octree The parent.
-     * @param depth The depth.
-     * @param x X coordinate of the bottom-left-front vertex.
-     * @param y Y coordinate of the bottom-left-front vertex.
-     * @param z Z coordinate of the bottom-left-front vertex.
+     * Constructs an octree node.
+     * @param pageid The page id.
+     * @param x The x coordinate of the center.
+     * @param y The y coordinate of the center.
+     * @param z The z coordinate of the center.
+     * @param hsx The half-size in x.
+     * @param hsy The half-size in y.
+     * @param hsz The half-size in z.
      */
-    public OctreeNode(Octree<T> octree, int depth, double x, double y, double z) {
-	this.octree = octree;
-	double mySize = this.octree.size / Math.pow(2, depth);
-
-	loc = new Vector3d(x, y, z);
-	boundary = new Vector3d(x + mySize, y + mySize, z + mySize);
+    public OctreeNode(long pageid, double x, double y, double z, double hsx, double hsy, double hsz, int childrenCount, int depth) {
+	this.pageid = pageid;
+	this.loc = new Vector3d(x - hsx, y - hsy, z - hsz);
+	this.boundary = new Vector3d(x + hsx, y + hsy, z + hsz);
+	this.childrenCount = childrenCount;
 	this.depth = depth;
-	if (this.depth <= octree.depth) {
-	    //create subChildren at proper locations
-	    children[0] = new OctreeNode<T>(octree, depth + 1, loc.x, loc.y, loc.z);
-	    children[1] = new OctreeNode<T>(octree, depth + 1, loc.x + ((boundary.x - loc.x) / 2), loc.y, loc.z);
-	    children[2] = new OctreeNode<T>(octree, depth + 1, loc.x, loc.y, loc.z + ((boundary.z - loc.z) / 2));
-	    children[3] = new OctreeNode<T>(octree, depth + 1, loc.x + ((boundary.x - loc.x) / 2), loc.y, loc.z + ((boundary.z - loc.z) / 2));
-	    children[4] = new OctreeNode<T>(octree, depth + 1, loc.x, loc.y + ((boundary.y - loc.y) / 2), loc.z);
-	    children[5] = new OctreeNode<T>(octree, depth + 1, loc.x + ((boundary.x - loc.x) / 2), loc.y + ((boundary.y - loc.y) / 2), loc.z);
-	    children[6] = new OctreeNode<T>(octree, depth + 1, loc.x, loc.y + ((boundary.y - loc.y) / 2), loc.z + ((boundary.z - loc.z) / 2));
-	    children[7] = new OctreeNode<T>(octree, depth + 1, loc.x + ((boundary.x - loc.x) / 2), loc.y + ((boundary.y - loc.y) / 2), loc.z + ((boundary.z - loc.z) / 2));
-	} else {
-	    children = null;
+    }
+
+    /** 
+     * Resolves and adds the children of this node using the map. It runs recursively
+     * once the children have been added.
+     * @param map
+     */
+    public void resolveChildren(Map<Long, Pair<OctreeNode<T>, long[]>> map) {
+	Pair<OctreeNode<T>, long[]> me = map.get(pageid);
+	if (me == null) {
+	    throw new RuntimeException("OctreeNode with page ID " + pageid + " not found in map");
+	}
+
+	long[] childrenIds = me.getSecond();
+	int i = 0;
+	for (long childId : childrenIds) {
+	    if (childId >= 0) {
+		// Child exists
+		OctreeNode<T> child = map.get(childId).getFirst();
+		children[i] = child;
+		child.parent = this;
+	    } else {
+		// No node in this position
+	    }
+	    i++;
+	}
+
+	// Recursive running
+	for (int j = 0; j < children.length; j++) {
+	    OctreeNode<T> child = children[j];
+	    if (child != null) {
+		child.resolveChildren(map);
+	    }
 	}
     }
 
@@ -98,4 +128,25 @@ public class OctreeNode<T extends IPosition> {
 	}
     }
 
+    public String toString() {
+	StringBuffer str = new StringBuffer(depth);
+	for (int i = 0; i < depth; i++) {
+	    str.append("    ");
+	}
+	str.append(pageid).append("(").append(depth).append(")");
+	if (parent != null) {
+	    str.append(" [i: ").append(Arrays.asList(parent.children).indexOf(this)).append(", obj: ");
+	} else {
+	    str.append("[obj: ");
+	}
+	str.append(objects.size()).append(", nchld: ").append(childrenCount).append("]\n");
+	if (childrenCount > 0) {
+	    for (OctreeNode<T> child : children) {
+		if (child != null) {
+		    str.append(child.toString());
+		}
+	    }
+	}
+	return str.toString();
+    }
 }

@@ -8,6 +8,7 @@ import gaia.cu9.ari.gaiaorbit.util.GlobalResources;
 import gaia.cu9.ari.gaiaorbit.util.coord.IBodyCoordinates;
 import gaia.cu9.ari.gaiaorbit.util.math.Vector2d;
 import gaia.cu9.ari.gaiaorbit.util.math.Vector3d;
+import gaia.cu9.ari.gaiaorbit.util.tree.IPosition;
 
 import com.badlogic.gdx.assets.AssetManager;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
@@ -21,7 +22,7 @@ import com.badlogic.gdx.utils.Pools;
  * @author Toni Sagrista
  *
  */
-public abstract class AbstractPositionEntity extends SceneGraphNode {
+public abstract class AbstractPositionEntity extends SceneGraphNode implements IPosition {
     /**
      * Overlap factor applied to angle to get the upper boundary when rendering with shader and model. 
      */
@@ -214,6 +215,11 @@ public abstract class AbstractPositionEntity extends SceneGraphNode {
 
     public void setCoordinates(IBodyCoordinates coord) {
 	coordinates = coord;
+    }
+
+    @Override
+    public Vector3d getPosition() {
+	return pos;
     }
 
 }
