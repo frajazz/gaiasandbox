@@ -1,13 +1,23 @@
 package gaia.cu9.ari.gaiaorbit.util.tree;
 
+import gaia.cu9.ari.gaiaorbit.render.ILineRenderable;
+import gaia.cu9.ari.gaiaorbit.render.SceneGraphRenderer;
+import gaia.cu9.ari.gaiaorbit.render.SceneGraphRenderer.ComponentType;
+import gaia.cu9.ari.gaiaorbit.scenegraph.ICamera;
+import gaia.cu9.ari.gaiaorbit.scenegraph.SceneGraphNode.RenderGroup;
 import gaia.cu9.ari.gaiaorbit.util.Pair;
+import gaia.cu9.ari.gaiaorbit.util.math.MathUtilsd;
 import gaia.cu9.ari.gaiaorbit.util.math.Vector3d;
 
+import java.awt.Color;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.Map;
 import java.util.TreeSet;
+
+import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
+import com.badlogic.gdx.utils.Pools;
 
 /**
  * Octree node implementation which contains a list of {@link IPosition} objects
@@ -16,17 +26,23 @@ import java.util.TreeSet;
  *
  * @param <T> The type of object that the octree holds.
  */
-public class OctreeNode<T extends IPosition> {
-
+public class OctreeNode<T extends IPosition> implements ILineRenderable {
+    public static int maxDepth;
     /** The unique page identifier **/
     final long pageid;
     /** Contains the bottom-left-front position of the node **/
     final Vector3d loc;
     /** Contains the top-right-back position of the cube **/
     final Vector3d boundary;
+    /** Octant size in x, y and z **/
+    final Vector3d size;
     /** Contains the depth level **/
     final int depth;
-    /** Number of children of this node **/
+    /** Number of objects contained in this node and its descendants **/
+    final int nObjects;
+    /** Number of objects contained in this node **/
+    final int ownObjects;
+    /** Number of children nodes of this node **/
     final int childrenCount;
     /** The parent, if any **/
     OctreeNode<T> parent;
@@ -35,6 +51,8 @@ public class OctreeNode<T extends IPosition> {
     OctreeNode<T>[] children = new OctreeNode[8];
     /** List of objects **/
     LinkedList<T> objects = new LinkedList<T>();
+    /** Camera transform to render **/
+    Vector3d transform;
 
     /**
      * Constructs an octree node.
@@ -45,13 +63,20 @@ public class OctreeNode<T extends IPosition> {
      * @param hsx The half-size in x.
      * @param hsy The half-size in y.
      * @param hsz The half-size in z.
+     * @param childrenCount Number of children nodes. Same as non null positions in children vector.
+     * @param nObjects Number of objects contained in this node and its descendants.
+     * @param ownObjects Number of objects contained in this node. Same as objects.size().
      */
-    public OctreeNode(long pageid, double x, double y, double z, double hsx, double hsy, double hsz, int childrenCount, int depth) {
+    public OctreeNode(long pageid, double x, double y, double z, double hsx, double hsy, double hsz, int childrenCount, int nObjects, int ownObjects, int depth) {
 	this.pageid = pageid;
 	this.loc = new Vector3d(x - hsx, y - hsy, z - hsz);
 	this.boundary = new Vector3d(x + hsx, y + hsy, z + hsz);
+	this.size = new Vector3d(hsx * 2, hsy * 2, hsz * 2);
 	this.childrenCount = childrenCount;
+	this.nObjects = nObjects;
+	this.ownObjects = ownObjects;
 	this.depth = depth;
+	this.transform = new Vector3d();
     }
 
     /** 
@@ -135,11 +160,11 @@ public class OctreeNode<T extends IPosition> {
 	}
 	str.append(pageid).append("(").append(depth).append(")");
 	if (parent != null) {
-	    str.append(" [i: ").append(Arrays.asList(parent.children).indexOf(this)).append(", obj: ");
+	    str.append(" [i: ").append(Arrays.asList(parent.children).indexOf(this)).append(", ownobj: ");
 	} else {
-	    str.append("[obj: ");
+	    str.append("[ownobj: ");
 	}
-	str.append(objects.size()).append(", nchld: ").append(childrenCount).append("]\n");
+	str.append(objects.size()).append("/").append(ownObjects).append(", recobj: ").append(nObjects).append(", nchld: ").append(childrenCount).append("]\n");
 	if (childrenCount > 0) {
 	    for (OctreeNode<T> child : children) {
 		if (child != null) {
@@ -148,5 +173,120 @@ public class OctreeNode<T extends IPosition> {
 	    }
 	}
 	return str.toString();
+    }
+
+    @Override
+    public void render(Object... params) {
+	render((ShapeRenderer) params[0], (Float) params[1]);
+    }
+
+    @Override
+    public ComponentType getComponentType() {
+	return ComponentType.Others;
+    }
+
+    @Override
+    public float getDistToCamera() {
+	return 0;
+    }
+
+    /**
+     * Adds nodes to render lists.
+     */
+    public void update(ICamera cam) {
+	transform.set(cam.getInversePos());
+	int i = getComponentType().ordinal();
+	if (SceneGraphRenderer.visible[i] || (!SceneGraphRenderer.visible[i] && SceneGraphRenderer.alphas[i] > 0)) {
+	    SceneGraphRenderer.render_lists.get(RenderGroup.LINE).add(this);
+	    for (OctreeNode<T> child : children) {
+		if (child != null) {
+		    child.update(cam);
+		}
+	    }
+	}
+    }
+
+    @Override
+    public void render(ShapeRenderer sr, float alpha) {
+	// Color depends on depth
+	Color col = new Color(Color.HSBtoRGB((float) depth / (float) maxDepth, 1f, 0.5f));
+
+	alpha *= MathUtilsd.lint(depth, 0, maxDepth, 1.0, 0.5);
+	sr.setColor(col.getRed() * alpha, col.getGreen() * alpha, col.getBlue() * alpha, alpha);
+
+	// Camera correction
+	Vector3d loc = Pools.get(Vector3d.class).obtain();
+	loc.set(this.loc).add(transform);
+
+	/*
+	 *       .·------·
+	 *     .' |    .'|
+	 *    +---+--·'  |
+	 *    |   |  |   |
+	 *    |  ,+--+---·
+	 *    |.'    | .'
+	 *    +------+' 
+	 */
+	line(sr, loc.x, loc.y, loc.z, loc.x + size.x, loc.y, loc.z);
+	line(sr, loc.x, loc.y, loc.z, loc.x, loc.y + size.y, loc.z);
+	line(sr, loc.x, loc.y, loc.z, loc.x, loc.y, loc.z + size.z);
+
+	/*
+	 *       .·------·
+	 *     .' |    .'|
+	 *    ·---+--+'  |
+	 *    |   |  |   |
+	 *    |  ,·--+---+
+	 *    |.'    | .'
+	 *    ·------+' 
+	 */
+	line(sr, loc.x + size.x, loc.y, loc.z, loc.x + size.x, loc.y + size.y, loc.z);
+	line(sr, loc.x + size.x, loc.y, loc.z, loc.x + size.x, loc.y, loc.z + size.z);
+
+	/*
+	 *       .·------+
+	 *     .' |    .'|
+	 *    ·---+--·'  |
+	 *    |   |  |   |
+	 *    |  ,+--+---+
+	 *    |.'    | .'
+	 *    ·------·' 
+	 */
+	line(sr, loc.x + size.x, loc.y, loc.z + size.z, loc.x, loc.y, loc.z + size.z);
+	line(sr, loc.x + size.x, loc.y, loc.z + size.z, loc.x + size.x, loc.y + size.y, loc.z + size.z);
+
+	/*
+	 *       .+------·
+	 *     .' |    .'|
+	 *    ·---+--·'  |
+	 *    |   |  |   |
+	 *    |  ,+--+---·
+	 *    |.'    | .'
+	 *    ·------·' 
+	 */
+	line(sr, loc.x, loc.y, loc.z + size.z, loc.x, loc.y + size.y, loc.z + size.z);
+
+	/*
+	 *       .+------+
+	 *     .' |    .'|
+	 *    +---+--+'  |
+	 *    |   |  |   |
+	 *    |  ,·--+---·
+	 *    |.'    | .'
+	 *    ·------·' 
+	 */
+	line(sr, loc.x, loc.y + size.y, loc.z, loc.x + size.x, loc.y + size.y, loc.z);
+	line(sr, loc.x, loc.y + size.y, loc.z, loc.x, loc.y + size.y, loc.z + size.z);
+	line(sr, loc.x, loc.y + size.y, loc.z + size.z, loc.x + size.x, loc.y + size.y, loc.z + size.z);
+	line(sr, loc.x + size.x, loc.y + size.y, loc.z, loc.x + size.x, loc.y + size.y, loc.z + size.z);
+
+	Pools.get(Vector3d.class).free(loc);
+    }
+
+    /**
+     * Draws a line.
+     */
+    private void line(ShapeRenderer sr, double x, double y, double z, double x1, double y1, double z1) {
+	sr.line((float) x, (float) y, (float) z, (float) x1, (float) y1, (float) z1);
     }
 }

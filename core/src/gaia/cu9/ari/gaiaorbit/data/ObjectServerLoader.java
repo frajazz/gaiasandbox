@@ -11,6 +11,7 @@ import gaia.cu9.ari.gaiaorbit.util.GlobalConf;
 import gaia.cu9.ari.gaiaorbit.util.I18n;
 import gaia.cu9.ari.gaiaorbit.util.Pair;
 import gaia.cu9.ari.gaiaorbit.util.math.Vector3d;
+import gaia.cu9.ari.gaiaorbit.util.tree.Octree;
 import gaia.cu9.ari.gaiaorbit.util.tree.OctreeNode;
 import gaia.cu9.object.server.ClientCore;
 import gaia.cu9.object.server.commands.Message;
@@ -33,6 +34,7 @@ public class ObjectServerLoader implements ISceneGraphNodeProvider {
     ClientCore cc;
     List<CelestialBody> result;
     Map<Long, Pair<OctreeNode<AbstractPositionEntity>, long[]>> nodesMap;
+    OctreeNode<AbstractPositionEntity> root;
     Long starid = 1l;
     Long errors = 0l;
 
@@ -105,14 +107,13 @@ public class ObjectServerLoader implements ISceneGraphNodeProvider {
 
 		@Override
 		public void receivedMessage(Message query, Message reply) {
-		    OctreeNode<AbstractPositionEntity> root = null;
+		    int maxdepth = 0;
 		    for (MessagePayloadBlock block : reply.getPayload()) {
 			String data = (String) block.getPayload();
 			BufferedReader reader = new BufferedReader(new StringReader(data));
 			try {
 			    String line = null;
 			    while ((line = reader.readLine()) != null) {
-				System.out.println(line);
 				String[] tokens = line.split(";");
 				long pageid = Long.parseLong(tokens[0]);
 
@@ -136,8 +137,9 @@ public class ObjectServerLoader implements ISceneGraphNodeProvider {
 				    childrenIds[i] = Long.parseLong(childrenIdsStr[i]);
 				}
 				int depth = Integer.parseInt(tokens[7]);
+				maxdepth = Math.max(maxdepth, depth);
 
-				OctreeNode<AbstractPositionEntity> node = new OctreeNode<AbstractPositionEntity>(pageid, x, y, z, hsx, hsy, hsz, childrenCount, depth);
+				OctreeNode<AbstractPositionEntity> node = new OctreeNode<AbstractPositionEntity>(pageid, x, y, z, hsx, hsy, hsz, childrenCount, nObjects, ownObjects, depth);
 				nodesMap.put(pageid, new Pair<OctreeNode<AbstractPositionEntity>, long[]>(node, childrenIds));
 
 				if (depth == 0) {
@@ -149,10 +151,11 @@ public class ObjectServerLoader implements ISceneGraphNodeProvider {
 			    EventManager.getInstance().post(Events.JAVA_EXCEPTION, e);
 			}
 		    }
+		    // Set max depth. Multiply by two to stay in the first half of hue in HSL color space.
+		    OctreeNode.maxDepth = maxdepth * 2;
 		    // All data has arrived
 		    if (root != null) {
 			root.resolveChildren(nodesMap);
-			System.out.println(root.toString());
 		    } else {
 			EventManager.getInstance().post(Events.JAVA_EXCEPTION, new RuntimeException("No root node in visualization-metadata"));
 		    }
@@ -168,7 +171,13 @@ public class ObjectServerLoader implements ISceneGraphNodeProvider {
 	    });
 	    cc.sendMessage(msgMetadata, true);
 
-	    // Insert stars in octree
+	    // Insert stars in Octree
+	    for (CelestialBody cb : result) {
+		Star s = (Star) cb;
+		nodesMap.get(s.pageid).getFirst().add(s);
+	    }
+
+	    Octree.root = root;
 
 	    // Disconnect
 	    cc.sendMessage("client-disconnect");
@@ -194,20 +203,28 @@ public class ObjectServerLoader implements ISceneGraphNodeProvider {
     private Star parseLine(String line, Long starid, Long errors) {
 	String[] tokens = line.split(";");
 	try {
-	    double ra = Double.parseDouble(tokens[0]);
-	    double dec = Double.parseDouble(tokens[1]);
-	    double dist = Double.parseDouble(tokens[2]);
-
-	    double x = ra * Constants.PC_TO_U;
-	    double y = dec * Constants.PC_TO_U;
-	    double z = dist * Constants.PC_TO_U;
+	    double x = Double.parseDouble(tokens[0]) * Constants.PC_TO_U;
+	    double y = Double.parseDouble(tokens[1]) * Constants.PC_TO_U;
+	    double z = Double.parseDouble(tokens[2]) * Constants.PC_TO_U;
 
 	    float mag = tokens[3].isEmpty() ? 12f : Float.parseFloat(tokens[3]);
 	    float bv = Float.parseFloat(tokens[4]);
 
+	    int particleCount = Integer.parseInt(tokens[7]);
+	    long pageid = Long.parseLong(tokens[8]);
+	    int type = Integer.parseInt(tokens[9]);
+
+	    if (type == 92) {
+		// Virtual particle!
+
+	    }
+
 	    if (mag <= GlobalConf.data.LIMIT_MAG_LOAD) {
 		String name = "dummy" + starid;
 		Star s = new Star(new Vector3d(y, z, x), mag, mag, bv, name, starid++);
+		s.pageid = pageid;
+		s.particleCount = particleCount;
+		s.type = type;
 		s.initialize();
 		return s;
 	    }

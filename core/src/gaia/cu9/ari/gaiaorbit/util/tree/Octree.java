@@ -1,34 +1,29 @@
 package gaia.cu9.ari.gaiaorbit.util.tree;
 
+import gaia.cu9.ari.gaiaorbit.scenegraph.AbstractPositionEntity;
+
 import java.util.ArrayList;
 import java.util.Iterator;
 
 /**
- * Static generic octree implementation. Nodes are not divided upon insertion.
- * The structure of the octree is supposed to be worked out elsewhere.
+ * Static octree holder. Holds a static octree node which is the root of the
+ * tree, the 0 depth node.
  * @author Toni Sagrista
  *
- * @param <T> The type of object that the octree holds.
  */
-public class Octree<T extends IPosition> implements Iterable<OctreeNode<T>> {
+public class Octree implements Iterable<OctreeNode<AbstractPositionEntity>> {
 
-    public double size; //size of the galaxy/tree
-    public OctreeNode<T> root = null;
+    public static OctreeNode<AbstractPositionEntity> root = null;
 
-    public Octree(int depth, double size, OctreeNode<T> root) {
-	this.size = size;
-	this.root = root;
-    }
-
-    public ArrayList<OctreeNode<T>> toList() {
-	ArrayList<OctreeNode<T>> tree = new ArrayList<OctreeNode<T>>();
+    public ArrayList<OctreeNode<AbstractPositionEntity>> toList() {
+	ArrayList<OctreeNode<AbstractPositionEntity>> tree = new ArrayList<OctreeNode<AbstractPositionEntity>>();
 	tree.add(root);
 	root.addChildrenToList(tree);
 	return tree;
     }
 
     @Override
-    public Iterator<OctreeNode<T>> iterator() {
+    public Iterator<OctreeNode<AbstractPositionEntity>> iterator() {
 	return this.toList().iterator();
     }
 

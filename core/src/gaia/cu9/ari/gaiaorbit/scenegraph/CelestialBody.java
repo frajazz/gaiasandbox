@@ -383,7 +383,7 @@ public abstract class CelestialBody extends AbstractPositionEntity implements IL
 
     @Override
     public boolean renderLabel() {
-	return viewAngle > TH_OVER_FACTOR;
+	return name != null && viewAngle > TH_OVER_FACTOR;
     }
 
     @Override

@@ -67,6 +67,17 @@ public class Star extends CelestialBody {
     boolean randomName = false;
     double modelDistance;
 
+    /**
+     * Object server properties
+     */
+
+    /** The id of the octant it belongs to **/
+    public long pageid;
+    /** The type: 90 - particle, 91 - blob **/
+    public int type;
+    /** Number of particles this represents. It is 1 if this represents a star, >1 if it is a blob **/
+    public int particleCount;
+
     public static void initModel() {
 	if (mc == null) {
 	    Texture tex = new Texture(Gdx.files.internal(GlobalConf.TEXTURES_FOLDER + "star.jpg"));

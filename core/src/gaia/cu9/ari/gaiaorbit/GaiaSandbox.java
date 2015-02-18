@@ -39,6 +39,7 @@ import gaia.cu9.ari.gaiaorbit.util.ModelCache;
 import gaia.cu9.ari.gaiaorbit.util.math.MathUtilsd;
 import gaia.cu9.ari.gaiaorbit.util.math.Vector3d;
 import gaia.cu9.ari.gaiaorbit.util.time.GlobalClock;
+import gaia.cu9.ari.gaiaorbit.util.tree.Octree;
 import gaia.cu9.object.server.ClientCore;
 
 import java.io.File;
@@ -431,6 +432,8 @@ public class GaiaSandbox implements ApplicationListener, IObserver {
 
 	// Update scene graph
 	sg.update(GlobalClock.clock, cam);
+
+	Octree.root.update(cam);
 
     }
 
