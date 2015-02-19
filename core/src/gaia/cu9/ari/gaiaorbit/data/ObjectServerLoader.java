@@ -26,14 +26,17 @@ import java.net.ConnectException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
+import java.util.Set;
 
 public class ObjectServerLoader implements ISceneGraphNodeProvider {
     ClientCore cc;
     List<CelestialBody> result;
     Map<Long, Pair<OctreeNode<AbstractPositionEntity>, long[]>> nodesMap;
+    Set<Long> pageIds;
     OctreeNode<AbstractPositionEntity> root;
     Long starid = 1l;
     Long errors = 0l;
@@ -42,6 +45,7 @@ public class ObjectServerLoader implements ISceneGraphNodeProvider {
     public void initialize(Properties properties) {
 	result = Collections.synchronizedList(new ArrayList<CelestialBody>());
 	nodesMap = Collections.synchronizedMap(new HashMap<Long, Pair<OctreeNode<AbstractPositionEntity>, long[]>>());
+	pageIds = new HashSet<Long>();
 	cc = ClientCore.getInstance();
     }
 
@@ -115,7 +119,8 @@ public class ObjectServerLoader implements ISceneGraphNodeProvider {
 			    String line = null;
 			    while ((line = reader.readLine()) != null) {
 				String[] tokens = line.split(";");
-				long pageid = Long.parseLong(tokens[0]);
+				long pageId = Long.parseLong(tokens[0]);
+				pageIds.add(pageId);
 
 				String[] xyz = tokens[1].split(",");
 				double x = Double.parseDouble(xyz[0]) * Constants.PC_TO_U;
@@ -139,8 +144,8 @@ public class ObjectServerLoader implements ISceneGraphNodeProvider {
 				int depth = Integer.parseInt(tokens[7]);
 				maxdepth = Math.max(maxdepth, depth);
 
-				OctreeNode<AbstractPositionEntity> node = new OctreeNode<AbstractPositionEntity>(pageid, x, y, z, hsx, hsy, hsz, childrenCount, nObjects, ownObjects, depth);
-				nodesMap.put(pageid, new Pair<OctreeNode<AbstractPositionEntity>, long[]>(node, childrenIds));
+				OctreeNode<AbstractPositionEntity> node = new OctreeNode<AbstractPositionEntity>(pageId, y, z, x, hsy, hsz, hsx, childrenCount, nObjects, ownObjects, depth);
+				nodesMap.put(pageId, new Pair<OctreeNode<AbstractPositionEntity>, long[]>(node, childrenIds));
 
 				if (depth == 0) {
 				    root = node;

@@ -29,7 +29,7 @@ import com.badlogic.gdx.utils.Pools;
 public class OctreeNode<T extends IPosition> implements ILineRenderable {
     public static int maxDepth;
     /** The unique page identifier **/
-    final long pageid;
+    final long pageId;
     /** Contains the bottom-left-front position of the node **/
     final Vector3d loc;
     /** Contains the top-right-back position of the cube **/
@@ -56,7 +56,7 @@ public class OctreeNode<T extends IPosition> implements ILineRenderable {
 
     /**
      * Constructs an octree node.
-     * @param pageid The page id.
+     * @param pageId The page id.
      * @param x The x coordinate of the center.
      * @param y The y coordinate of the center.
      * @param z The z coordinate of the center.
@@ -67,8 +67,8 @@ public class OctreeNode<T extends IPosition> implements ILineRenderable {
      * @param nObjects Number of objects contained in this node and its descendants.
      * @param ownObjects Number of objects contained in this node. Same as objects.size().
      */
-    public OctreeNode(long pageid, double x, double y, double z, double hsx, double hsy, double hsz, int childrenCount, int nObjects, int ownObjects, int depth) {
-	this.pageid = pageid;
+    public OctreeNode(long pageId, double x, double y, double z, double hsx, double hsy, double hsz, int childrenCount, int nObjects, int ownObjects, int depth) {
+	this.pageId = pageId;
 	this.loc = new Vector3d(x - hsx, y - hsy, z - hsz);
 	this.boundary = new Vector3d(x + hsx, y + hsy, z + hsz);
 	this.size = new Vector3d(hsx * 2, hsy * 2, hsz * 2);
@@ -85,9 +85,9 @@ public class OctreeNode<T extends IPosition> implements ILineRenderable {
      * @param map
      */
     public void resolveChildren(Map<Long, Pair<OctreeNode<T>, long[]>> map) {
-	Pair<OctreeNode<T>, long[]> me = map.get(pageid);
+	Pair<OctreeNode<T>, long[]> me = map.get(pageId);
 	if (me == null) {
-	    throw new RuntimeException("OctreeNode with page ID " + pageid + " not found in map");
+	    throw new RuntimeException("OctreeNode with page ID " + pageId + " not found in map");
 	}
 
 	long[] childrenIds = me.getSecond();
@@ -158,7 +158,7 @@ public class OctreeNode<T extends IPosition> implements ILineRenderable {
 	for (int i = 0; i < depth; i++) {
 	    str.append("    ");
 	}
-	str.append(pageid).append("(").append(depth).append(")");
+	str.append(pageId).append("(").append(depth).append(")");
 	if (parent != null) {
 	    str.append(" [i: ").append(Arrays.asList(parent.children).indexOf(this)).append(", ownobj: ");
 	} else {
