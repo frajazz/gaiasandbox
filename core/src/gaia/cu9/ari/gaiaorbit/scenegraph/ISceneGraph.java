@@ -43,4 +43,18 @@ public interface ISceneGraph extends Serializable {
     public void dispose();
 
     public List<IRenderable> getToRenderList();
+
+    /** 
+     * Returns the number of threads used by this scene graph.
+     * @return Number of threads.
+     */
+    public int getNThreads();
+
+    /**
+     * Returns the number of objects being processed per thread in a 
+     * list of integers. Each position represents the number of objects of 
+     * the thread identified by the index.
+     * @return Number of objects being processed per thread.
+     */
+    public int[] getObjectsPerThread();
 }

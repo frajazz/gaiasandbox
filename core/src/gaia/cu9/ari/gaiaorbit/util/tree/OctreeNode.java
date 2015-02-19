@@ -1,10 +1,8 @@
 package gaia.cu9.ari.gaiaorbit.util.tree;
 
 import gaia.cu9.ari.gaiaorbit.render.ILineRenderable;
-import gaia.cu9.ari.gaiaorbit.render.SceneGraphRenderer;
 import gaia.cu9.ari.gaiaorbit.render.SceneGraphRenderer.ComponentType;
 import gaia.cu9.ari.gaiaorbit.scenegraph.ICamera;
-import gaia.cu9.ari.gaiaorbit.scenegraph.SceneGraphNode.RenderGroup;
 import gaia.cu9.ari.gaiaorbit.util.Pair;
 import gaia.cu9.ari.gaiaorbit.util.math.MathUtilsd;
 import gaia.cu9.ari.gaiaorbit.util.math.Vector3d;
@@ -27,30 +25,32 @@ import com.badlogic.gdx.utils.Pools;
  * @param <T> The type of object that the octree holds.
  */
 public class OctreeNode<T extends IPosition> implements ILineRenderable {
+    /** Max depth of the structure this node belongs to **/
     public static int maxDepth;
+
     /** The unique page identifier **/
-    final long pageId;
+    public final long pageId;
     /** Contains the bottom-left-front position of the node **/
-    final Vector3d loc;
+    public final Vector3d loc;
     /** Contains the top-right-back position of the cube **/
-    final Vector3d boundary;
+    public final Vector3d boundary;
     /** Octant size in x, y and z **/
-    final Vector3d size;
+    public final Vector3d size;
     /** Contains the depth level **/
-    final int depth;
+    public final int depth;
     /** Number of objects contained in this node and its descendants **/
-    final int nObjects;
+    public final int nObjects;
     /** Number of objects contained in this node **/
-    final int ownObjects;
+    public final int ownObjects;
     /** Number of children nodes of this node **/
-    final int childrenCount;
+    public final int childrenCount;
     /** The parent, if any **/
-    OctreeNode<T> parent;
+    public OctreeNode<T> parent;
     /** Children nodes **/
     @SuppressWarnings("unchecked")
-    OctreeNode<T>[] children = new OctreeNode[8];
+    public OctreeNode<T>[] children = new OctreeNode[8];
     /** List of objects **/
-    LinkedList<T> objects = new LinkedList<T>();
+    public LinkedList<T> objects = new LinkedList<T>();
     /** Camera transform to render **/
     Vector3d transform;
 
@@ -147,8 +147,10 @@ public class OctreeNode<T extends IPosition> implements ILineRenderable {
     public void addChildrenToList(ArrayList<OctreeNode<T>> tree) {
 	if (children != null) {
 	    for (int i = 0; i < 8; i++) {
-		tree.add(children[i]);
-		children[i].addChildrenToList(tree);
+		if (children[i] != null) {
+		    tree.add(children[i]);
+		    children[i].addChildrenToList(tree);
+		}
 	    }
 	}
     }
@@ -195,19 +197,16 @@ public class OctreeNode<T extends IPosition> implements ILineRenderable {
      */
     public void update(ICamera cam) {
 	transform.set(cam.getInversePos());
-	int i = getComponentType().ordinal();
-	if (SceneGraphRenderer.visible[i] || (!SceneGraphRenderer.visible[i] && SceneGraphRenderer.alphas[i] > 0)) {
-	    SceneGraphRenderer.render_lists.get(RenderGroup.LINE).add(this);
-	    for (OctreeNode<T> child : children) {
-		if (child != null) {
-		    child.update(cam);
-		}
+	for (OctreeNode<T> child : children) {
+	    if (child != null) {
+		child.update(cam);
 	    }
 	}
     }
 
     @Override
     public void render(ShapeRenderer sr, float alpha) {
+	float maxDepth = OctreeNode.maxDepth * 2;
 	// Color depends on depth
 	Color col = new Color(Color.HSBtoRGB((float) depth / (float) maxDepth, 1f, 0.5f));
 

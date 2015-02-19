@@ -39,12 +39,12 @@ import gaia.cu9.ari.gaiaorbit.util.ModelCache;
 import gaia.cu9.ari.gaiaorbit.util.math.MathUtilsd;
 import gaia.cu9.ari.gaiaorbit.util.math.Vector3d;
 import gaia.cu9.ari.gaiaorbit.util.time.GlobalClock;
-import gaia.cu9.ari.gaiaorbit.util.tree.Octree;
 import gaia.cu9.object.server.ClientCore;
 
 import java.io.File;
 import java.io.FileInputStream;
 import java.net.MalformedURLException;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 import java.util.Set;
@@ -251,7 +251,7 @@ public class GaiaSandbox implements ApplicationListener, IObserver {
 	    sgn.doneLoading(manager);
 	}
 	// Update whole tree to initialize positions
-	GlobalClock.clock.update(0.00000001f);
+	GlobalClock.clock.update(0.000000001f);
 	sg.update(GlobalClock.clock, cam);
 	GlobalClock.clock.update(0);
 
@@ -433,7 +433,9 @@ public class GaiaSandbox implements ApplicationListener, IObserver {
 	// Update scene graph
 	sg.update(GlobalClock.clock, cam);
 
-	Octree.root.update(cam);
+	// Debug thread number
+	EventManager.getInstance().post(Events.DEBUG2, "Threads: " + sg.getNThreads());
+	EventManager.getInstance().post(Events.DEBUG3, Arrays.toString(sg.getObjectsPerThread()));
 
     }
 

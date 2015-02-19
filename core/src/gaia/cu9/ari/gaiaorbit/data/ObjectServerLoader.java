@@ -4,6 +4,7 @@ import gaia.cu9.ari.gaiaorbit.event.EventManager;
 import gaia.cu9.ari.gaiaorbit.event.Events;
 import gaia.cu9.ari.gaiaorbit.scenegraph.AbstractPositionEntity;
 import gaia.cu9.ari.gaiaorbit.scenegraph.CelestialBody;
+import gaia.cu9.ari.gaiaorbit.scenegraph.OctreeWrapper;
 import gaia.cu9.ari.gaiaorbit.scenegraph.SceneGraphNode;
 import gaia.cu9.ari.gaiaorbit.scenegraph.Star;
 import gaia.cu9.ari.gaiaorbit.util.Constants;
@@ -11,7 +12,6 @@ import gaia.cu9.ari.gaiaorbit.util.GlobalConf;
 import gaia.cu9.ari.gaiaorbit.util.I18n;
 import gaia.cu9.ari.gaiaorbit.util.Pair;
 import gaia.cu9.ari.gaiaorbit.util.math.Vector3d;
-import gaia.cu9.ari.gaiaorbit.util.tree.Octree;
 import gaia.cu9.ari.gaiaorbit.util.tree.OctreeNode;
 import gaia.cu9.object.server.ClientCore;
 import gaia.cu9.object.server.commands.Message;
@@ -26,26 +26,24 @@ import java.net.ConnectException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
-import java.util.Set;
 
 public class ObjectServerLoader implements ISceneGraphNodeProvider {
     ClientCore cc;
-    List<CelestialBody> result;
+    List<SceneGraphNode> result;
+    List<CelestialBody> particleList;
     Map<Long, Pair<OctreeNode<AbstractPositionEntity>, long[]>> nodesMap;
-    Set<Long> pageIds;
     OctreeNode<AbstractPositionEntity> root;
     Long starid = 1l;
     Long errors = 0l;
 
     @Override
     public void initialize(Properties properties) {
-	result = Collections.synchronizedList(new ArrayList<CelestialBody>());
+	result = Collections.synchronizedList(new ArrayList<SceneGraphNode>());
+	particleList = Collections.synchronizedList(new ArrayList<CelestialBody>());
 	nodesMap = Collections.synchronizedMap(new HashMap<Long, Pair<OctreeNode<AbstractPositionEntity>, long[]>>());
-	pageIds = new HashSet<Long>();
 	cc = ClientCore.getInstance();
     }
 
@@ -74,37 +72,7 @@ public class ObjectServerLoader implements ISceneGraphNodeProvider {
 		cc.executeCommand(ident, true);
 	    }
 
-	    // Get star data
-	    Message msgParticle = new Message("visualization-particle-data?vis-id=" + visid
-		    + "&include-headers=false");
-	    msgParticle.setMessageHandler(new MessageHandler() {
-
-		@Override
-		public void receivedMessage(Message query, Message reply) {
-		    for (MessagePayloadBlock block : reply.getPayload()) {
-			String data = (String) block.getPayload();
-			BufferedReader reader = new BufferedReader(new StringReader(data));
-			try {
-			    String line = null;
-			    while ((line = reader.readLine()) != null) {
-				Star star = parseLine(line, starid, errors);
-				if (star != null)
-				    result.add(star);
-			    }
-			} catch (IOException e) {
-			    EventManager.getInstance().post(Events.JAVA_EXCEPTION, e);
-			}
-		    }
-		}
-
-		@Override
-		public void receivedMessageBlock(Message query, Message reply, MessagePayloadBlock block) {
-		}
-
-	    });
-	    cc.sendMessage(msgParticle, true);
-
-	    // Get LoD data
+	    // Get Octree data
 	    Message msgMetadata = new Message("visualization-metadata?vis-id=" + visid
 		    + "&lod-level=-1");
 	    msgMetadata.setMessageHandler(new MessageHandler() {
@@ -120,7 +88,6 @@ public class ObjectServerLoader implements ISceneGraphNodeProvider {
 			    while ((line = reader.readLine()) != null) {
 				String[] tokens = line.split(";");
 				long pageId = Long.parseLong(tokens[0]);
-				pageIds.add(pageId);
 
 				String[] xyz = tokens[1].split(",");
 				double x = Double.parseDouble(xyz[0]) * Constants.PC_TO_U;
@@ -157,7 +124,7 @@ public class ObjectServerLoader implements ISceneGraphNodeProvider {
 			}
 		    }
 		    // Set max depth. Multiply by two to stay in the first half of hue in HSL color space.
-		    OctreeNode.maxDepth = maxdepth * 2;
+		    OctreeNode.maxDepth = maxdepth;
 		    // All data has arrived
 		    if (root != null) {
 			root.resolveChildren(nodesMap);
@@ -176,16 +143,53 @@ public class ObjectServerLoader implements ISceneGraphNodeProvider {
 	    });
 	    cc.sendMessage(msgMetadata, true);
 
+	    // Fetch particle data
+	    for (int level = 0; level <= OctreeNode.maxDepth; level++) {
+		Message msgParticle = new Message("visualization-lod-data?vis-id=" + visid
+			+ "&lod-level=" + level);
+		msgParticle.setMessageHandler(new MessageHandler() {
+
+		    @Override
+		    public void receivedMessage(Message query, Message reply) {
+			for (MessagePayloadBlock block : reply.getPayload()) {
+			    String data = (String) block.getPayload();
+			    BufferedReader reader = new BufferedReader(new StringReader(data));
+			    try {
+				String line = null;
+				while ((line = reader.readLine()) != null) {
+				    Star star = parseLine(line);
+				    if (star != null)
+					particleList.add(star);
+				}
+			    } catch (IOException e) {
+				EventManager.getInstance().post(Events.JAVA_EXCEPTION, e);
+			    }
+			}
+		    }
+
+		    @Override
+		    public void receivedMessageBlock(Message query, Message reply, MessagePayloadBlock block) {
+		    }
+
+		});
+		cc.sendMessage(msgParticle, true);
+	    }
+	    // Manually add sun
+	    Star s = new Star(new Vector3d(0, 0, 0), 4.83f, 4.83f, 0.656f, "Sol", starid++);
+	    s.initialize();
+	    particleList.add(s);
+
 	    // Insert stars in Octree
-	    for (CelestialBody cb : result) {
-		Star s = (Star) cb;
+	    for (CelestialBody cb : particleList) {
+		s = (Star) cb;
 		nodesMap.get(s.pageid).getFirst().add(s);
 	    }
 
-	    Octree.root = root;
+	    // Add octree wrapper to result
+	    OctreeWrapper otw = new OctreeWrapper("Universe", root);
+	    otw.initialize();
+	    result.add(otw);
 
-	    // Disconnect
-	    cc.sendMessage("client-disconnect");
 	} catch (ConnectException e) {
 	    EventManager.getInstance().post(Events.POST_NOTIFICATION, I18n.bundle.get("notif.objectserver.notconnect"));
 	    EventManager.getInstance().post(Events.JAVA_EXCEPTION, e);
@@ -193,27 +197,24 @@ public class ObjectServerLoader implements ISceneGraphNodeProvider {
 	    EventManager.getInstance().post(Events.JAVA_EXCEPTION, e);
 	}
 
-	// Manually add sun
-	Star s = new Star(new Vector3d(0, 0, 0), 4.83f, 4.83f, 0.656f, "Sol", starid++);
-	s.initialize();
-	result.add(s);
-
 	if (errors > 0)
 	    EventManager.getInstance().post(Events.JAVA_EXCEPTION, new RuntimeException(I18n.bundle.format("error.loading.objects", errors)));
-	EventManager.getInstance().post(Events.POST_NOTIFICATION, this.getClass().getSimpleName(), I18n.bundle.format("notif.catalog.init", result.size()));
+	EventManager.getInstance().post(Events.POST_NOTIFICATION, this.getClass().getSimpleName(), I18n.bundle.format("notif.catalog.init", particleList.size()));
 
 	return result;
     }
 
-    private Star parseLine(String line, Long starid, Long errors) {
+    private Star parseLine(String line) {
 	String[] tokens = line.split(";");
 	try {
 	    double x = Double.parseDouble(tokens[0]) * Constants.PC_TO_U;
 	    double y = Double.parseDouble(tokens[1]) * Constants.PC_TO_U;
 	    double z = Double.parseDouble(tokens[2]) * Constants.PC_TO_U;
 
-	    float mag = tokens[3].isEmpty() ? 12f : Float.parseFloat(tokens[3]);
-	    float bv = Float.parseFloat(tokens[4]);
+	    // Magnitude in virtual particles (type=92) must depend on number of particles contained
+	    float mag = (tokens[3].equalsIgnoreCase("null") || tokens[3].isEmpty()) ? 12f : Float.parseFloat(tokens[3]);
+	    // Color in virtual particles should be that of the sun - yellowish
+	    float bv = (tokens[4].equalsIgnoreCase("null") || tokens[4].isEmpty()) ? 0.656f : Float.parseFloat(tokens[4]);
 
 	    int particleCount = Integer.parseInt(tokens[7]);
 	    long pageid = Long.parseLong(tokens[8]);
@@ -225,7 +226,7 @@ public class ObjectServerLoader implements ISceneGraphNodeProvider {
 	    }
 
 	    if (mag <= GlobalConf.data.LIMIT_MAG_LOAD) {
-		String name = "dummy" + starid;
+		String name = type == 92 ? ("virtual" + starid) : ("dummy" + starid);
 		Star s = new Star(new Vector3d(y, z, x), mag, mag, bv, name, starid++);
 		s.pageid = pageid;
 		s.particleCount = particleCount;

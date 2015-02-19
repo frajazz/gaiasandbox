@@ -34,6 +34,7 @@ import com.badlogic.gdx.graphics.g3d.attributes.TextureAttribute;
 import com.badlogic.gdx.math.Matrix4;
 
 public class Star extends CelestialBody {
+
     private static final float TH_ANGLE_POINT = (float) Math.toRadians(2e-7f);
     private static final float TH_ANGLE_NONE = 0;
     private static ThreadLocal<Random> rnd = new ThreadLocal<Random>() {
@@ -294,4 +295,13 @@ public class Star extends CelestialBody {
     public void updateLocalValues(ITimeFrameProvider time) {
     }
 
+    @Override
+    public int getStarCount() {
+	return 1;
+    }
+
+    @Override
+    public Object getStars() {
+	return this;
+    }
 }

@@ -24,11 +24,16 @@ public abstract class AbstractSceneGraph implements ISceneGraph {
     HashMap<String, SceneGraphNode> stringToNode;
     /** Star id map **/
     LongMap<Star> starMap;
+    /** Number of objects per thread **/
+    int[] objectsPerThread;
 
     public AbstractSceneGraph() {
 	// Id = -1 for root
 	root = new SceneGraphNode(-1);
 	root.name = SceneGraphNode.ROOT_NAME;
+
+	// Objects per thread
+	objectsPerThread = new int[1];
     }
 
     @Override
@@ -46,10 +51,29 @@ public abstract class AbstractSceneGraph implements ISceneGraph {
 	    if (node.name != null && !node.name.isEmpty()) {
 		stringToNode.put(node.name, node);
 		stringToNode.put(node.name.toLowerCase(), node);
+
+		// Unwrap octree objects
+		if (node instanceof OctreeWrapper) {
+		    OctreeWrapper ow = (OctreeWrapper) node;
+		    for (SceneGraphNode ownode : ow.children) {
+			if (ownode.name != null && !ownode.name.isEmpty()) {
+			    stringToNode.put(ownode.name, ownode);
+			    stringToNode.put(ownode.name.toLowerCase(), ownode);
+			}
+		    }
+		}
 	    }
-	    if (node instanceof Star) {
-		Star s = (Star) node;
+
+	    // Star map
+	    if (node.getStarCount() == 1) {
+		Star s = (Star) node.getStars();
 		starMap.put(s.id, s);
+	    } else if (node.getStarCount() > 1) {
+		List<AbstractPositionEntity> stars = (List<AbstractPositionEntity>) node.getStars();
+		for (AbstractPositionEntity s : stars) {
+		    if (s instanceof Star)
+			starMap.put(s.id, (Star) s);
+		}
 	    }
 	}
 
@@ -144,6 +168,17 @@ public abstract class AbstractSceneGraph implements ISceneGraph {
     @Override
     public LongMap<Star> getStarMap() {
 	return starMap;
+    }
+
+    @Override
+    public int getNThreads() {
+	// Default: 1 thread
+	return 1;
+    }
+
+    @Override
+    public int[] getObjectsPerThread() {
+	return objectsPerThread;
     }
 
 }

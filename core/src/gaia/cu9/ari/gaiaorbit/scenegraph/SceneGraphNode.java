@@ -24,7 +24,7 @@ import com.badlogic.gdx.utils.Pools;
  *
  * @param <T>
  */
-public class SceneGraphNode {
+public class SceneGraphNode implements ISceneGraphNode {
     public static final String ROOT_NAME = "Universe";
 
     /** Static Thread local auxiliary Vector3d **/
@@ -532,5 +532,15 @@ public class SceneGraphNode {
 
     protected boolean isInRender(IRenderable renderable, RenderGroup rg) {
 	return SceneGraphRenderer.render_lists.get(rg).contains(renderable);
+    }
+
+    @Override
+    public int getStarCount() {
+	return 0;
+    }
+
+    @Override
+    public Object getStars() {
+	return null;
     }
 }

@@ -32,6 +32,7 @@ public class SceneGraphConcurrent extends AbstractSceneGraph {
     public SceneGraphConcurrent(int maxThreads) {
 	super();
 	this.maxThreads = maxThreads;
+
     }
 
     /** 
@@ -44,7 +45,7 @@ public class SceneGraphConcurrent extends AbstractSceneGraph {
 	int threads = maxThreads <= 0 ? Runtime.getRuntime().availableProcessors() : maxThreads;
 
 	pool = (ThreadPoolExecutor) Executors.newFixedThreadPool(threads, new SceneGraphThreadFactory());
-
+	objectsPerThread = new int[threads];
 	tasks = new ArrayList<UpdaterTask>(pool.getCorePoolSize());
 
 	// First naive implementation, we only separate the first-level stars.
@@ -60,7 +61,9 @@ public class SceneGraphConcurrent extends AbstractSceneGraph {
 	    }
 
 	    tasks.add(new UpdaterTask(partialList, time));
+	    objectsPerThread[i] = currentNumber;
 	}
+
 	EventManager.getInstance().post(Events.POST_NOTIFICATION, this.getClass().getSimpleName(), I18n.bundle.format("notif.threadpool.init", threads));
     }
 
@@ -121,6 +124,11 @@ public class SceneGraphConcurrent extends AbstractSceneGraph {
 		t.setPriority(Thread.NORM_PRIORITY);
 	    return t;
 	}
+    }
+
+    @Override
+    public int getNThreads() {
+	return pool.getCorePoolSize();
     }
 
 }
