@@ -82,7 +82,7 @@ public class OctreeWrapperConcurrent extends AbstractOctreeWrapper {
     private String getRouletteDebug() {
 	String s = "[";
 	for (int i = 0; i < roulette.getNumCollections(); i++) {
-	    s += roulette.getCollection(0).size();
+	    s += roulette.getCollection(i).size();
 	    if (i < roulette.getNumCollections() - 1)
 		s += ", ";
 	}

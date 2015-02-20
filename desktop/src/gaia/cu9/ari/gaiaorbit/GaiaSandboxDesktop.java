@@ -112,7 +112,7 @@ public class GaiaSandboxDesktop implements IObserver {
 	cfg.samples = MathUtilsd.clamp(GlobalConf.postprocess.POSTPROCESS_ANTIALIAS, 0, 16);
 	cfg.vSyncEnabled = GlobalConf.screen.VSYNC;
 	cfg.foregroundFPS = 400;
-	cfg.backgroundFPS = 30;
+	cfg.backgroundFPS = 400;
 	cfg.useGL30 = false;
 	cfg.addIcon("icon/ic_launcher.png", Files.FileType.Internal);
 
