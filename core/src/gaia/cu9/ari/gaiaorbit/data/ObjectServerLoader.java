@@ -4,9 +4,11 @@ import gaia.cu9.ari.gaiaorbit.event.EventManager;
 import gaia.cu9.ari.gaiaorbit.event.Events;
 import gaia.cu9.ari.gaiaorbit.scenegraph.AbstractPositionEntity;
 import gaia.cu9.ari.gaiaorbit.scenegraph.CelestialBody;
-import gaia.cu9.ari.gaiaorbit.scenegraph.OctreeWrapper;
 import gaia.cu9.ari.gaiaorbit.scenegraph.SceneGraphNode;
 import gaia.cu9.ari.gaiaorbit.scenegraph.Star;
+import gaia.cu9.ari.gaiaorbit.scenegraph.octreewrapper.AbstractOctreeWrapper;
+import gaia.cu9.ari.gaiaorbit.scenegraph.octreewrapper.OctreeWrapper;
+import gaia.cu9.ari.gaiaorbit.scenegraph.octreewrapper.OctreeWrapperConcurrent;
 import gaia.cu9.ari.gaiaorbit.util.Constants;
 import gaia.cu9.ari.gaiaorbit.util.GlobalConf;
 import gaia.cu9.ari.gaiaorbit.util.I18n;
@@ -186,7 +188,12 @@ public class ObjectServerLoader implements ISceneGraphNodeProvider {
 	    }
 
 	    // Add octree wrapper to result
-	    OctreeWrapper otw = new OctreeWrapper("Universe", root);
+	    AbstractOctreeWrapper otw = null;
+	    if (GlobalConf.performance.MULTITHREADING) {
+		otw = new OctreeWrapperConcurrent("Universe", root, GlobalConf.performance.NUMBER_THREADS);
+	    } else {
+		otw = new OctreeWrapper("Universe", root);
+	    }
 	    otw.initialize();
 	    result.add(otw);
 

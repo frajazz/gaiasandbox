@@ -1,5 +1,7 @@
 package gaia.cu9.ari.gaiaorbit.scenegraph;
 
+import gaia.cu9.ari.gaiaorbit.util.time.ITimeFrameProvider;
+
 /**
  * Implementation of a 3D scene graph.
  * @author Toni Sagrista

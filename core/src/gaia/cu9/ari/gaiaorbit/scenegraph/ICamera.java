@@ -2,6 +2,7 @@ package gaia.cu9.ari.gaiaorbit.scenegraph;
 
 import gaia.cu9.ari.gaiaorbit.scenegraph.CameraManager.CameraMode;
 import gaia.cu9.ari.gaiaorbit.util.math.Vector3d;
+import gaia.cu9.ari.gaiaorbit.util.time.ITimeFrameProvider;
 
 import com.badlogic.gdx.graphics.PerspectiveCamera;
 import com.badlogic.gdx.utils.viewport.Viewport;

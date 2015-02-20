@@ -1,6 +1,7 @@
 package gaia.cu9.ari.gaiaorbit.scenegraph;
 
 import gaia.cu9.ari.gaiaorbit.util.math.Vector3d;
+import gaia.cu9.ari.gaiaorbit.util.time.ITimeFrameProvider;
 
 import java.util.List;
 

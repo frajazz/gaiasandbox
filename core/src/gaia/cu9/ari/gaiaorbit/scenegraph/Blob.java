@@ -2,6 +2,7 @@ package gaia.cu9.ari.gaiaorbit.scenegraph;
 
 import gaia.cu9.ari.gaiaorbit.util.Constants;
 import gaia.cu9.ari.gaiaorbit.util.math.MathUtilsd;
+import gaia.cu9.ari.gaiaorbit.util.time.ITimeFrameProvider;
 
 /**
  * This acts as aggregator node. It does not represent a physical entity, but a 

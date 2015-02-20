@@ -1,8 +1,13 @@
-package gaia.cu9.ari.gaiaorbit.scenegraph;
+package gaia.cu9.ari.gaiaorbit.scenegraph.octreewrapper;
 
 import gaia.cu9.ari.gaiaorbit.event.EventManager;
 import gaia.cu9.ari.gaiaorbit.event.Events;
 import gaia.cu9.ari.gaiaorbit.render.SceneGraphRenderer.ComponentType;
+import gaia.cu9.ari.gaiaorbit.scenegraph.AbstractPositionEntity;
+import gaia.cu9.ari.gaiaorbit.scenegraph.ICamera;
+import gaia.cu9.ari.gaiaorbit.scenegraph.SceneGraphNode;
+import gaia.cu9.ari.gaiaorbit.scenegraph.Transform;
+import gaia.cu9.ari.gaiaorbit.util.time.ITimeFrameProvider;
 import gaia.cu9.ari.gaiaorbit.util.tree.OctreeNode;
 
 import java.util.ArrayList;
@@ -12,12 +17,12 @@ import com.badlogic.gdx.utils.Pool;
 import com.badlogic.gdx.utils.Pools;
 
 /**
- * Static octree wrapper that can be inserted into the scene graph. 
- * Holds a static octree node which is the root of the tree, the 0 depth node.
+ * Abstract octree wrapper with the common parts of the regular octree wrapper and
+ * the concurrent one.
  * @author Toni Sagrista
  *
  */
-public class OctreeWrapper extends SceneGraphNode implements Iterable<OctreeNode<AbstractPositionEntity>> {
+public abstract class AbstractOctreeWrapper extends SceneGraphNode implements Iterable<OctreeNode<AbstractPositionEntity>> {
 
     public OctreeNode<AbstractPositionEntity> root;
     /** A collection of all the octants in this octree **/
@@ -28,11 +33,13 @@ public class OctreeWrapper extends SceneGraphNode implements Iterable<OctreeNode
      */
     protected boolean copy = false;
 
-    public OctreeWrapper() {
+    protected AbstractOctreeWrapper() {
+	super("Octree", null);
+
     }
 
-    public OctreeWrapper(String parentName, OctreeNode<AbstractPositionEntity> root) {
-	super("Octree", null);
+    protected AbstractOctreeWrapper(String parentName, OctreeNode<AbstractPositionEntity> root) {
+	this();
 	this.ct = ComponentType.Others;
 	this.root = root;
 	this.parentName = parentName;
@@ -46,7 +53,7 @@ public class OctreeWrapper extends SceneGraphNode implements Iterable<OctreeNode
     public void initialize() {
 	super.initialize();
 
-	// An octree
+	// Add all objects into children list
 	if (children == null) {
 	    children = new ArrayList<SceneGraphNode>(root.nObjects);
 	    Iterator<OctreeNode<AbstractPositionEntity>> it = iterator();
@@ -71,13 +78,18 @@ public class OctreeWrapper extends SceneGraphNode implements Iterable<OctreeNode
 	    updateLocal(time, camera);
 	}
 
-	// TODO remove this, not all stars should be updated!
-	if (children != null) {
-	    for (int i = 0; i < children.size(); i++) {
-		children.get(i).update(time, transform, camera);
-	    }
-	}
+	processOctree(time, transform, camera);
+
     }
+
+    /**
+     * Processes the octree. This takes each node and decide if it is to be processed or not.
+     * In case affirmative, it processes all its objects.
+     * @param time
+     * @param parentTransform
+     * @param camera
+     */
+    protected abstract void processOctree(ITimeFrameProvider time, final Transform parentTransform, ICamera camera);
 
     /**
      * Updates the local transform matrix.
@@ -127,10 +139,10 @@ public class OctreeWrapper extends SceneGraphNode implements Iterable<OctreeNode
      */
     @Override
     public <T extends SceneGraphNode> T getSimpleCopy() {
-	Class<? extends OctreeWrapper> clazz = this.getClass();
-	Pool<? extends OctreeWrapper> pool = Pools.get(clazz);
+	Class<? extends AbstractOctreeWrapper> clazz = this.getClass();
+	Pool<? extends AbstractOctreeWrapper> pool = Pools.get(clazz);
 	try {
-	    OctreeWrapper instance = pool.obtain();
+	    AbstractOctreeWrapper instance = pool.obtain();
 	    instance.copy = true;
 	    instance.name = this.name;
 	    instance.transform.set(this.transform);

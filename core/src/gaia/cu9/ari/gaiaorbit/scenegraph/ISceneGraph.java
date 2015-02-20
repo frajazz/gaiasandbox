@@ -1,6 +1,7 @@
 package gaia.cu9.ari.gaiaorbit.scenegraph;
 
 import gaia.cu9.ari.gaiaorbit.render.IRenderable;
+import gaia.cu9.ari.gaiaorbit.util.time.ITimeFrameProvider;
 
 import java.io.Serializable;
 import java.util.HashMap;
@@ -44,17 +45,4 @@ public interface ISceneGraph extends Serializable {
 
     public List<IRenderable> getToRenderList();
 
-    /** 
-     * Returns the number of threads used by this scene graph.
-     * @return Number of threads.
-     */
-    public int getNThreads();
-
-    /**
-     * Returns the number of objects being processed per thread in a 
-     * list of integers. Each position represents the number of objects of 
-     * the thread identified by the index.
-     * @return Number of objects being processed per thread.
-     */
-    public int[] getObjectsPerThread();
 }

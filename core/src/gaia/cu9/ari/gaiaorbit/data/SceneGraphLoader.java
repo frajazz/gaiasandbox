@@ -3,10 +3,10 @@ package gaia.cu9.ari.gaiaorbit.data;
 import gaia.cu9.ari.gaiaorbit.event.EventManager;
 import gaia.cu9.ari.gaiaorbit.event.Events;
 import gaia.cu9.ari.gaiaorbit.scenegraph.ISceneGraph;
-import gaia.cu9.ari.gaiaorbit.scenegraph.ITimeFrameProvider;
 import gaia.cu9.ari.gaiaorbit.scenegraph.SceneGraph;
 import gaia.cu9.ari.gaiaorbit.scenegraph.SceneGraphConcurrent;
 import gaia.cu9.ari.gaiaorbit.scenegraph.SceneGraphNode;
+import gaia.cu9.ari.gaiaorbit.util.time.ITimeFrameProvider;
 
 import java.io.InputStream;
 import java.util.List;

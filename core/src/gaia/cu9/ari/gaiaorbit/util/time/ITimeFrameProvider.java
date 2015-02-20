@@ -1,4 +1,4 @@
-package gaia.cu9.ari.gaiaorbit.scenegraph;
+package gaia.cu9.ari.gaiaorbit.util.time;
 
 import java.util.Date;
 

@@ -3,6 +3,7 @@ package gaia.cu9.ari.gaiaorbit.scenegraph;
 import gaia.cu9.ari.gaiaorbit.render.ILabelRenderable;
 import gaia.cu9.ari.gaiaorbit.util.Constants;
 import gaia.cu9.ari.gaiaorbit.util.math.Vector3d;
+import gaia.cu9.ari.gaiaorbit.util.time.ITimeFrameProvider;
 
 import java.util.ArrayList;
 import java.util.List;

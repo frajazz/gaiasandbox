@@ -3,7 +3,9 @@ package gaia.cu9.ari.gaiaorbit.scenegraph;
 import gaia.cu9.ari.gaiaorbit.event.EventManager;
 import gaia.cu9.ari.gaiaorbit.event.Events;
 import gaia.cu9.ari.gaiaorbit.render.IRenderable;
+import gaia.cu9.ari.gaiaorbit.scenegraph.octreewrapper.AbstractOctreeWrapper;
 import gaia.cu9.ari.gaiaorbit.util.I18n;
+import gaia.cu9.ari.gaiaorbit.util.time.ITimeFrameProvider;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -53,8 +55,8 @@ public abstract class AbstractSceneGraph implements ISceneGraph {
 		stringToNode.put(node.name.toLowerCase(), node);
 
 		// Unwrap octree objects
-		if (node instanceof OctreeWrapper) {
-		    OctreeWrapper ow = (OctreeWrapper) node;
+		if (node instanceof AbstractOctreeWrapper) {
+		    AbstractOctreeWrapper ow = (AbstractOctreeWrapper) node;
 		    for (SceneGraphNode ownode : ow.children) {
 			if (ownode.name != null && !ownode.name.isEmpty()) {
 			    stringToNode.put(ownode.name, ownode);
@@ -168,17 +170,6 @@ public abstract class AbstractSceneGraph implements ISceneGraph {
     @Override
     public LongMap<Star> getStarMap() {
 	return starMap;
-    }
-
-    @Override
-    public int getNThreads() {
-	// Default: 1 thread
-	return 1;
-    }
-
-    @Override
-    public int[] getObjectsPerThread() {
-	return objectsPerThread;
     }
 
 }

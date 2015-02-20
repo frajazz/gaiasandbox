@@ -44,7 +44,6 @@ import gaia.cu9.object.server.ClientCore;
 import java.io.File;
 import java.io.FileInputStream;
 import java.net.MalformedURLException;
-import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 import java.util.Set;
@@ -432,10 +431,6 @@ public class GaiaSandbox implements ApplicationListener, IObserver {
 
 	// Update scene graph
 	sg.update(GlobalClock.clock, cam);
-
-	// Debug thread number
-	EventManager.getInstance().post(Events.DEBUG2, "Threads: " + sg.getNThreads());
-	EventManager.getInstance().post(Events.DEBUG3, Arrays.toString(sg.getObjectsPerThread()));
 
     }
 

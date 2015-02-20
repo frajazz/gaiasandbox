@@ -1,18 +1,19 @@
 package gaia.cu9.ari.gaiaorbit.scenegraph;
 
-import gaia.cu9.ari.gaiaorbit.concurrent.UpdaterTask;
 import gaia.cu9.ari.gaiaorbit.event.EventManager;
 import gaia.cu9.ari.gaiaorbit.event.Events;
 import gaia.cu9.ari.gaiaorbit.util.I18n;
+import gaia.cu9.ari.gaiaorbit.util.concurrent.GaiaSandboxThreadFactory;
+import gaia.cu9.ari.gaiaorbit.util.concurrent.UpdaterTask;
+import gaia.cu9.ari.gaiaorbit.util.time.ITimeFrameProvider;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
 import java.util.concurrent.Executors;
-import java.util.concurrent.ThreadFactory;
 import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
-import java.util.concurrent.atomic.AtomicInteger;
 
 import com.badlogic.gdx.Gdx;
 
@@ -26,12 +27,12 @@ public class SceneGraphConcurrent extends AbstractSceneGraph {
 
     /** The executor service containing the pool **/
     ThreadPoolExecutor pool;
-    private List<UpdaterTask> tasks;
-    int maxThreads;
+    private List<UpdaterTask<SceneGraphNode>> tasks;
+    int numThreads;
 
-    public SceneGraphConcurrent(int maxThreads) {
+    public SceneGraphConcurrent(int numThreads) {
 	super();
-	this.maxThreads = maxThreads;
+	this.numThreads = numThreads;
 
     }
 
@@ -42,11 +43,9 @@ public class SceneGraphConcurrent extends AbstractSceneGraph {
     public void initialize(List<SceneGraphNode> nodes, ITimeFrameProvider time) {
 	super.initialize(nodes, time);
 
-	int threads = maxThreads <= 0 ? Runtime.getRuntime().availableProcessors() : maxThreads;
-
-	pool = (ThreadPoolExecutor) Executors.newFixedThreadPool(threads, new SceneGraphThreadFactory());
-	objectsPerThread = new int[threads];
-	tasks = new ArrayList<UpdaterTask>(pool.getCorePoolSize());
+	pool = (ThreadPoolExecutor) Executors.newFixedThreadPool(numThreads, new GaiaSandboxThreadFactory("sg-updater-"));
+	objectsPerThread = new int[numThreads];
+	tasks = new ArrayList<UpdaterTask<SceneGraphNode>>(pool.getCorePoolSize());
 
 	// First naive implementation, we only separate the first-level stars.
 	Iterator<SceneGraphNode> toUpdate = root.children.iterator();
@@ -60,22 +59,29 @@ public class SceneGraphConcurrent extends AbstractSceneGraph {
 		partialList.add(node);
 	    }
 
-	    tasks.add(new UpdaterTask(partialList, time));
+	    tasks.add(new UpdaterTask<SceneGraphNode>(partialList));
 	    objectsPerThread[i] = currentNumber;
 	}
 
-	EventManager.getInstance().post(Events.POST_NOTIFICATION, this.getClass().getSimpleName(), I18n.bundle.format("notif.threadpool.init", threads));
+	EventManager.getInstance().post(Events.POST_NOTIFICATION, this.getClass().getSimpleName(), I18n.bundle.format("notif.threadpool.init", numThreads));
     }
 
     public void update(ITimeFrameProvider time, ICamera camera) {
 	super.update(time, camera);
 	root.transform.position.set(camera.getInversePos());
-	UpdaterTask.setCamera(camera);
+
+	// Update params
+	for (UpdaterTask<SceneGraphNode> task : tasks)
+	    task.setParameters(camera, time);
+
 	try {
 	    pool.invokeAll(tasks);
 	} catch (InterruptedException e) {
 	    Gdx.app.error(SceneGraphConcurrent.class.getName(), e.getLocalizedMessage());
 	}
+
+	// Debug thread number
+	EventManager.getInstance().post(Events.DEBUG2, "SG threads: " + Arrays.toString(objectsPerThread));
     }
 
     public void dispose() {
@@ -95,40 +101,6 @@ public class SceneGraphConcurrent extends AbstractSceneGraph {
 	    // Preserve interrupt status
 	    Thread.currentThread().interrupt();
 	}
-    }
-
-    /**
-     * The default thread factory
-     */
-    static class SceneGraphThreadFactory implements ThreadFactory {
-	private static final AtomicInteger poolNumber = new AtomicInteger(1);
-	private final ThreadGroup group;
-	private final AtomicInteger threadNumber = new AtomicInteger(1);
-	private final String namePrefix;
-
-	SceneGraphThreadFactory() {
-	    SecurityManager s = System.getSecurityManager();
-	    group = (s != null) ? s.getThreadGroup() :
-		    Thread.currentThread().getThreadGroup();
-	    namePrefix = "sg-updater-" +
-		    poolNumber.getAndIncrement();
-	}
-
-	public Thread newThread(Runnable r) {
-	    Thread t = new Thread(group, r,
-		    namePrefix + threadNumber.getAndIncrement(),
-		    0);
-	    if (t.isDaemon())
-		t.setDaemon(false);
-	    if (t.getPriority() != Thread.NORM_PRIORITY)
-		t.setPriority(Thread.NORM_PRIORITY);
-	    return t;
-	}
-    }
-
-    @Override
-    public int getNThreads() {
-	return pool.getCorePoolSize();
     }
 
 }

@@ -10,6 +10,7 @@ import gaia.cu9.ari.gaiaorbit.util.color.ColourUtils;
 import gaia.cu9.ari.gaiaorbit.util.math.MathUtilsd;
 import gaia.cu9.ari.gaiaorbit.util.math.Vector2d;
 import gaia.cu9.ari.gaiaorbit.util.math.Vector3d;
+import gaia.cu9.ari.gaiaorbit.util.time.ITimeFrameProvider;
 import gaia.cu9.ari.gaiaorbit.util.time.TimeUtils;
 
 import java.util.Map;
