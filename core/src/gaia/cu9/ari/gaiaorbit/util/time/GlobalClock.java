@@ -59,14 +59,14 @@ public class GlobalClock implements IObserver, ITimeFrameProvider {
 	// Now
 	cal = new GregorianCalendar();
 	this.pace = pace;
-	hdiff = 0;
+	hdiff = 0d;
 	time = date;
 	lastTime = new Date(time.getTime());
 	cal.setTime(time);
 	EventManager.getInstance().subscribe(this, Events.PACE_CHANGE_CMD, Events.PACE_DIVIDE_CMD, Events.PACE_DOUBLE_CMD, Events.TIME_CHANGE_CMD);
     }
 
-    double msacum = 0;
+    double msacum = 0d;
 
     public void update(double dt) {
 	if (dt != 0) {
@@ -124,7 +124,7 @@ public class GlobalClock implements IObserver, ITimeFrameProvider {
 	    hdiff = (time.getTime() - lastTime.getTime()) * MS_TO_HOUR;
 	    lastTime.setTime(time.getTime());
 	} else {
-	    hdiff = 0;
+	    hdiff = 0d;
 	}
     }
 
