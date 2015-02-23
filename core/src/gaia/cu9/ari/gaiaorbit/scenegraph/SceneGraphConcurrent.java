@@ -1,18 +1,17 @@
 package gaia.cu9.ari.gaiaorbit.scenegraph;
 
-import gaia.cu9.ari.gaiaorbit.concurrent.UpdaterTask;
 import gaia.cu9.ari.gaiaorbit.event.EventManager;
 import gaia.cu9.ari.gaiaorbit.event.Events;
 import gaia.cu9.ari.gaiaorbit.util.I18n;
+import gaia.cu9.ari.gaiaorbit.util.concurrent.GaiaSandboxThreadFactory;
+import gaia.cu9.ari.gaiaorbit.util.concurrent.UpdaterTask;
 
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 import java.util.concurrent.Executors;
-import java.util.concurrent.ThreadFactory;
 import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
-import java.util.concurrent.atomic.AtomicInteger;
 
 import com.badlogic.gdx.Gdx;
 
@@ -43,7 +42,7 @@ public class SceneGraphConcurrent extends AbstractSceneGraph {
 
 	int threads = maxThreads <= 0 ? Runtime.getRuntime().availableProcessors() : maxThreads;
 
-	pool = (ThreadPoolExecutor) Executors.newFixedThreadPool(threads, new SceneGraphThreadFactory());
+	pool = (ThreadPoolExecutor) Executors.newFixedThreadPool(threads, new GaiaSandboxThreadFactory("sg-updater-"));
 
 	tasks = new ArrayList<UpdaterTask>(pool.getCorePoolSize());
 
@@ -91,35 +90,6 @@ public class SceneGraphConcurrent extends AbstractSceneGraph {
 	    pool.shutdownNow();
 	    // Preserve interrupt status
 	    Thread.currentThread().interrupt();
-	}
-    }
-
-    /**
-     * The default thread factory
-     */
-    static class SceneGraphThreadFactory implements ThreadFactory {
-	private static final AtomicInteger poolNumber = new AtomicInteger(1);
-	private final ThreadGroup group;
-	private final AtomicInteger threadNumber = new AtomicInteger(1);
-	private final String namePrefix;
-
-	SceneGraphThreadFactory() {
-	    SecurityManager s = System.getSecurityManager();
-	    group = (s != null) ? s.getThreadGroup() :
-		    Thread.currentThread().getThreadGroup();
-	    namePrefix = "sg-updater-" +
-		    poolNumber.getAndIncrement();
-	}
-
-	public Thread newThread(Runnable r) {
-	    Thread t = new Thread(group, r,
-		    namePrefix + threadNumber.getAndIncrement(),
-		    0);
-	    if (t.isDaemon())
-		t.setDaemon(false);
-	    if (t.getPriority() != Thread.NORM_PRIORITY)
-		t.setPriority(Thread.NORM_PRIORITY);
-	    return t;
 	}
     }
 

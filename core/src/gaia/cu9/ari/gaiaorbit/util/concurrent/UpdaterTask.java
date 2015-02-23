@@ -1,4 +1,4 @@
-package gaia.cu9.ari.gaiaorbit.concurrent;
+package gaia.cu9.ari.gaiaorbit.util.concurrent;
 
 import gaia.cu9.ari.gaiaorbit.scenegraph.ICamera;
 import gaia.cu9.ari.gaiaorbit.scenegraph.ITimeFrameProvider;
@@ -20,7 +20,7 @@ public class UpdaterTask implements Callable<Void> {
     }
 
     @Override
-    public Void call() {
+    public Void call() throws Exception {
 	for (SceneGraphNode node : nodes) {
 	    node.update(time, node.parent.transform, camera);
 	}

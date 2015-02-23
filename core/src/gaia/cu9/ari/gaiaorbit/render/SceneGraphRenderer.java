@@ -19,12 +19,11 @@ import gaia.cu9.ari.gaiaorbit.util.Constants;
 import gaia.cu9.ari.gaiaorbit.util.GlobalConf;
 import gaia.cu9.ari.gaiaorbit.util.GlobalResources;
 import gaia.cu9.ari.gaiaorbit.util.I18n;
+import gaia.cu9.ari.gaiaorbit.util.ds.Multilist;
 import gaia.cu9.ari.gaiaorbit.util.math.MathUtilsd;
 import gaia.cu9.ari.gaiaorbit.util.override.AtmosphereGroundShaderProvider;
 import gaia.cu9.ari.gaiaorbit.util.override.AtmosphereShaderProvider;
 
-import java.util.ArrayList;
-import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -137,7 +136,7 @@ public class SceneGraphRenderer extends AbstractRenderer implements IProcessRend
     private RenderContext rc;
 
     /** Render lists for all render groups **/
-    public static Map<RenderGroup, List<IRenderable>> render_lists;
+    public static Map<RenderGroup, Multilist<IRenderable>> render_lists;
 
     // Two model batches, for front (models), back and atmospheres
     private SpriteBatch spriteBatch, fontBatch;
@@ -161,10 +160,11 @@ public class SceneGraphRenderer extends AbstractRenderer implements IProcessRend
 	    Gdx.app.error(this.getClass().getName(), "Font shader compilation failed:\n" + fontShader.getLog());
 	}
 
+	int numLists = GlobalConf.performance.MULTITHREADING ? GlobalConf.performance.NUMBER_THREADS : 1;
 	RenderGroup[] renderGroups = RenderGroup.values();
-	render_lists = new HashMap<RenderGroup, List<IRenderable>>(renderGroups.length);
+	render_lists = new HashMap<RenderGroup, Multilist<IRenderable>>(renderGroups.length);
 	for (RenderGroup rg : renderGroups) {
-	    render_lists.put(rg, Collections.synchronizedList(new ArrayList<IRenderable>()));
+	    render_lists.put(rg, new Multilist<IRenderable>(numLists, 100));
 	}
 
 	ShaderProvider spnormal = new AtmosphereGroundShaderProvider(Gdx.files.internal("shader/normal.vertex.glsl"), Gdx.files.internal("shader/normal.fragment.glsl"));
@@ -440,7 +440,8 @@ public class SceneGraphRenderer extends AbstractRenderer implements IProcessRend
 	while (it.hasNext()) {
 	    IRenderSystem process = it.next();
 
-	    process.render(render_lists.get(process.getRenderGroup()), camera, rc);
+	    List<IRenderable> l = render_lists.get(process.getRenderGroup()).toList();
+	    process.render(l, camera, rc);
 	}
 
     }
