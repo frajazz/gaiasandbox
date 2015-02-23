@@ -24,13 +24,11 @@ import gaia.cu9.ari.gaiaorbit.util.math.MathUtilsd;
 import gaia.cu9.ari.gaiaorbit.util.override.AtmosphereGroundShaderProvider;
 import gaia.cu9.ari.gaiaorbit.util.override.AtmosphereShaderProvider;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-import java.util.NavigableSet;
-import java.util.TreeSet;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.assets.AssetManager;
@@ -141,7 +139,7 @@ public class SceneGraphRenderer extends AbstractRenderer implements IProcessRend
     // Two model batches, for front (models), back and atmospheres
     private SpriteBatch spriteBatch, fontBatch;
 
-    private NavigableSet<IRenderSystem> renderProcesses;
+    private List<IRenderSystem> renderProcesses;
 
     public SceneGraphRenderer() {
 	super();
@@ -212,7 +210,7 @@ public class SceneGraphRenderer extends AbstractRenderer implements IProcessRend
 	 * 
 	 **/
 
-	renderProcesses = new TreeSet<IRenderSystem>();
+	renderProcesses = new ArrayList<IRenderSystem>();
 
 	Runnable blendNoDepthRunnable = new Runnable() {
 	    @Override
@@ -434,11 +432,11 @@ public class SceneGraphRenderer extends AbstractRenderer implements IProcessRend
 	    alphas[ct.ordinal()] = calculateAlpha(ct, now);
 	}
 
-	EventManager.getInstance().post(Events.DEBUG1, "quad: " + (render_lists.get(RenderGroup.SHADER).size() + render_lists.get(RenderGroup.SHADER_F).size() + ", point: " + render_lists.get(RenderGroup.POINT).size()));
+	EventManager.getInstance().post(Events.DEBUG1, "quad: " + (render_lists.get(RenderGroup.SHADER).size() + render_lists.get(RenderGroup.SHADER_F).size()) + ", point: " + render_lists.get(RenderGroup.POINT).size());
 
-	Iterator<IRenderSystem> it = renderProcesses.iterator();
-	while (it.hasNext()) {
-	    IRenderSystem process = it.next();
+	int size = renderProcesses.size();
+	for (int i = 0; i < size; i++) {
+	    IRenderSystem process = renderProcesses.get(i);
 	    List<IRenderable> l = render_lists.get(process.getRenderGroup()).toList();
 	    process.render(l, camera, rc);
 	}

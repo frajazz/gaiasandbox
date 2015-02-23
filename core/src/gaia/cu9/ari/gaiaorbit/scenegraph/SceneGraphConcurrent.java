@@ -49,8 +49,10 @@ public class SceneGraphConcurrent extends AbstractSceneGraph {
 
 	// First naive implementation, we only separate the first-level stars.
 	Iterator<SceneGraphNode> toUpdate = root.children.iterator();
-	int nodesPerThread = root.numChildren / pool.getCorePoolSize();
-	for (int i = 0; i < pool.getCorePoolSize(); i++) {
+	int poolSize = pool.getCorePoolSize();
+	int nodesPerThread = root.numChildren / poolSize;
+
+	for (int i = 0; i < poolSize; i++) {
 	    List<SceneGraphNode> partialList = new ArrayList<SceneGraphNode>(nodesPerThread);
 	    int currentNumber = 0;
 	    while (toUpdate.hasNext() && currentNumber <= nodesPerThread) {
@@ -71,8 +73,11 @@ public class SceneGraphConcurrent extends AbstractSceneGraph {
 	root.transform.position.set(camera.getInversePos());
 
 	// Update params
-	for (UpdaterTask<SceneGraphNode> task : tasks)
+	int size = tasks.size();
+	for (int i = 0; i < size; i++) {
+	    UpdaterTask<SceneGraphNode> task = tasks.get(i);
 	    task.setParameters(camera, time);
+	}
 
 	try {
 	    pool.invokeAll(tasks);

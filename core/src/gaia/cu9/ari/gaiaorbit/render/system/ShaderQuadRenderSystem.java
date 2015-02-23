@@ -134,7 +134,9 @@ public class ShaderQuadRenderSystem extends AbstractRenderSystem implements IObs
 	    noise.bind(0);
 	    shaderProgram.setUniformi("u_noiseTexture", 0);
 	}
-	for (IRenderable s : renderables) {
+	int size = renderables.size();
+	for (int i = 0; i < size; i++) {
+	    IRenderable s = renderables.get(i);
 	    s.render(shaderProgram, alphas[s.getComponentType().ordinal()], starColorTransit, mesh, camera);
 	}
 	shaderProgram.end();

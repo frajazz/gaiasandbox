@@ -24,7 +24,9 @@ public class LineRenderSystem extends AbstractRenderSystem {
 	Gdx.gl.glLineWidth(1f);
 	renderer.setProjectionMatrix(camera.getCamera().combined);
 	renderer.begin(ShapeType.Line);
-	for (IRenderable l : renderables) {
+	int size = renderables.size();
+	for (int i = 0; i < size; i++) {
+	    IRenderable l = renderables.get(i);
 	    l.render(renderer, alphas[l.getComponentType().ordinal()]);
 	}
 	renderer.end();

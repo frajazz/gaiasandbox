@@ -182,7 +182,8 @@ public class Star extends CelestialBody {
 		}
 		// Compute nested
 		if (children != null) {
-		    for (int i = 0; i < children.size(); i++) {
+		    int size = children.size();
+		    for (int i = 0; i < size; i++) {
 			SceneGraphNode child = children.get(i);
 			child.update(time, parentTransform, camera);
 		    }

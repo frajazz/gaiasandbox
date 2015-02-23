@@ -8,6 +8,7 @@ import java.util.ListIterator;
 
 /**
  * A multiple list, holding a number of indexed lists. Useful for threaded applications.
+ * Not all methods of {@link java.util.List} are implemented, check the comments.
  * @author Toni Sagrista
  *
  * @param <T>
@@ -48,7 +49,8 @@ public class Multilist<T> implements List<T> {
      * @return
      */
     public List<T> toList() {
-	for (int i = 0; i < lists.length; i++)
+	int size = lists.length;
+	for (int i = 0; i < size; i++)
 	    tolist.addAll(lists[i]);
 	return tolist;
     }
@@ -65,7 +67,8 @@ public class Multilist<T> implements List<T> {
 
     @Override
     public boolean contains(Object o) {
-	for (int i = 0; i < lists.length; i++) {
+	int size = lists.length;
+	for (int i = 0; i < size; i++) {
 	    if (lists[i].contains(o))
 		return true;
 	}
@@ -86,6 +89,7 @@ public class Multilist<T> implements List<T> {
     }
 
     @Override
+    /** Not implemented **/
     public Iterator<T> iterator() {
 	return new MultilistIterator<T>();
     }
@@ -93,7 +97,8 @@ public class Multilist<T> implements List<T> {
     @Override
     public T[] toArray() {
 	List<T> l = new ArrayList<T>(size);
-	for (int i = 0; i < lists.length; i++)
+	int size = lists.length;
+	for (int i = 0; i < size; i++)
 	    l.addAll(lists[i]);
 	return (T[]) l.toArray();
     }
@@ -103,8 +108,10 @@ public class Multilist<T> implements List<T> {
 	if (a.length >= size) {
 	    int k = 0;
 	    // Use a
-	    for (int i = 0; i < lists.length; i++) {
-		for (int j = 0; j < lists[i].size(); j++) {
+	    int size = lists.length;
+	    for (int i = 0; i < size; i++) {
+		int listSize = lists[i].size();
+		for (int j = 0; j < listSize; j++) {
 		    a[k] = (T) lists[i].get(j);
 		    k++;
 		}

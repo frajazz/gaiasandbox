@@ -224,7 +224,8 @@ public class SceneGraphNode implements ISceneGraphNode {
 	if (this.children == null) {
 	    initChildren(this.parent == null ? 100000 : children.length * 5, this.parent == null ? 1000 : children.length);
 	}
-	for (SceneGraphNode child : children) {
+	for (int i = 0; i < children.length; i++) {
+	    SceneGraphNode child = children[i];
 	    this.children.add(child);
 	    child.parent = this;
 	}
@@ -323,7 +324,9 @@ public class SceneGraphNode implements ISceneGraphNode {
 	if (this.name != null && this.name.equals(name)) {
 	    return this;
 	} else if (children != null) {
-	    for (SceneGraphNode child : children) {
+	    int size = children.size();
+	    for (int i = 0; i < size; i++) {
+		SceneGraphNode child = children.get(i);
 		SceneGraphNode n = child.getNode(name);
 		if (n != null) {
 		    return n;
@@ -337,7 +340,9 @@ public class SceneGraphNode implements ISceneGraphNode {
 	if (this.id != null && this.id.equals(id)) {
 	    return this;
 	} else if (children != null) {
-	    for (SceneGraphNode child : children) {
+	    int size = children.size();
+	    for (int i = 0; i < size; i++) {
+		SceneGraphNode child = children.get(i);
 		SceneGraphNode n = child.getNode(id);
 		if (n != null) {
 		    return n;
@@ -359,7 +364,8 @@ public class SceneGraphNode implements ISceneGraphNode {
 	updateLocal(time, camera);
 
 	if (children != null) {
-	    for (int i = 0; i < children.size(); i++) {
+	    int size = children.size();
+	    for (int i = 0; i < size; i++) {
 		children.get(i).update(time, transform, camera);
 	    }
 	}
@@ -405,7 +411,9 @@ public class SceneGraphNode implements ISceneGraphNode {
      */
     public void addFocusableObjects(List<CelestialBody> list) {
 	if (children != null) {
-	    for (SceneGraphNode child : children) {
+	    int size = children.size();
+	    for (int i = 0; i < size; i++) {
+		SceneGraphNode child = children.get(i);
 		child.addFocusableObjects(list);
 	    }
 	}
@@ -414,7 +422,9 @@ public class SceneGraphNode implements ISceneGraphNode {
     public void addNodes(List<SceneGraphNode> nodes) {
 	nodes.add(this);
 	if (children != null) {
-	    for (SceneGraphNode child : children) {
+	    int size = children.size();
+	    for (int i = 0; i < size; i++) {
+		SceneGraphNode child = children.get(i);
 		child.addNodes(nodes);
 	    }
 	}
@@ -449,10 +459,13 @@ public class SceneGraphNode implements ISceneGraphNode {
 	if (clazz.isInstance(this)) {
 	    n = 1;
 	}
-	if (children != null)
-	    for (SceneGraphNode child : children) {
+	if (children != null) {
+	    int size = children.size();
+	    for (int i = 0; i < size; i++) {
+		SceneGraphNode child = children.get(i);
 		n += child.getNumNodes(clazz);
 	    }
+	}
 	return n;
     }
 
@@ -460,10 +473,13 @@ public class SceneGraphNode implements ISceneGraphNode {
 	if (clazz.isInstance(this)) {
 	    l.add(clazz.cast(this));
 	}
-	if (children != null)
-	    for (SceneGraphNode child : children) {
+	if (children != null) {
+	    int size = children.size();
+	    for (int i = 0; i < size; i++) {
+		SceneGraphNode child = children.get(i);
 		child.getNodes(clazz, l);
 	    }
+	}
     }
 
     public <T extends SceneGraphNode> T getLineCopy() {
@@ -519,7 +535,9 @@ public class SceneGraphNode implements ISceneGraphNode {
      */
     protected void setComputedFlag(List<SceneGraphNode> nodes, boolean computed) {
 	if (nodes != null) {
-	    for (SceneGraphNode node : nodes) {
+	    int size = nodes.size();
+	    for (int i = 0; i < size; i++) {
+		SceneGraphNode node = nodes.get(i);
 		node.computed = computed;
 		setComputedFlag(node.children, computed);
 	    }
