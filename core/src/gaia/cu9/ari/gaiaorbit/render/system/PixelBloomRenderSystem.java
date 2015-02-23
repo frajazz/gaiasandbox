@@ -77,8 +77,7 @@ public class PixelBloomRenderSystem extends AbstractRenderSystem implements IObs
 
 	pp.capture();
 	renderer.begin(camera.getCamera().combined, ShapeType.Point.getGlType());
-	for (int i = 0; i < renderables.size(); i++) {
-	    IRenderable s = renderables.get(i);
+	for (IRenderable s : renderables) {
 	    s.render(renderer, alphas[s.getComponentType().ordinal()], starColorTransit);
 	}
 	renderer.end();

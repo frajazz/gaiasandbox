@@ -846,7 +846,7 @@ public class ConfigDialog extends I18nJFrame {
 
 	okButton = new JButton(startup ? txt("gui.launchapp") : txt("gui.saveprefs"));
 	okButton.addActionListener(new ActionListener() {
-	    boolean goahead = true;
+	    boolean goahead;
 
 	    private void connectionFailed() {
 		// Connection not possible
@@ -872,6 +872,7 @@ public class ConfigDialog extends I18nJFrame {
 
 	    @Override
 	    public void actionPerformed(ActionEvent e) {
+		goahead = true;
 		if (startup && objectserver.isSelected()) {
 		    try {
 			// Check object server connection

@@ -35,8 +35,7 @@ public class PixelRenderSystem extends AbstractRenderSystem implements IObserver
     @Override
     public void renderStud(List<IRenderable> renderables, ICamera camera) {
 	renderer.begin(camera.getCamera().combined, ShapeType.Point.getGlType());
-	for (int i = 0; i < renderables.size(); i++) {
-	    IRenderable s = renderables.get(i);
+	for (IRenderable s : renderables) {
 	    s.render(renderer, alphas[s.getComponentType().ordinal()], starColorTransit);
 	}
 	renderer.end();

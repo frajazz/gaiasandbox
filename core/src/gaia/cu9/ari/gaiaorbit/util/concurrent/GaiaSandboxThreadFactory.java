@@ -9,7 +9,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 public class GaiaSandboxThreadFactory implements ThreadFactory {
     private static final AtomicInteger poolNumber = new AtomicInteger(1);
     private final ThreadGroup group;
-    private final AtomicInteger threadNumber = new AtomicInteger(1);
+    private final AtomicInteger threadNumber = new AtomicInteger(0);
     private final String namePrefix;
 
     public GaiaSandboxThreadFactory(String threadNamePrefix) {
@@ -21,13 +21,21 @@ public class GaiaSandboxThreadFactory implements ThreadFactory {
     }
 
     public Thread newThread(Runnable r) {
-	Thread t = new Thread(group, r,
-		namePrefix + threadNumber.getAndIncrement(),
-		0);
+	Thread t = new GSThread(group, r,
+		namePrefix + threadNumber.get(), threadNumber.getAndIncrement());
 	if (t.isDaemon())
 	    t.setDaemon(false);
 	if (t.getPriority() != Thread.NORM_PRIORITY)
 	    t.setPriority(Thread.NORM_PRIORITY);
 	return t;
+    }
+
+    public class GSThread extends Thread {
+	public int index;
+
+	public GSThread(ThreadGroup group, Runnable r, String name, int index) {
+	    super(group, r, name);
+	    this.index = index;
+	}
     }
 }

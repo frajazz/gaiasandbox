@@ -19,7 +19,7 @@ public class UpdaterTask<T extends SceneGraphNode> implements Callable<Void> {
     }
 
     @Override
-    public Void call() {
+    public Void call() throws Exception {
 	Iterator<T> it = nodes.iterator();
 	while (it.hasNext()) {
 	    SceneGraphNode node = it.next();
