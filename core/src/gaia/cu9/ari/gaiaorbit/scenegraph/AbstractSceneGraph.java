@@ -2,13 +2,11 @@ package gaia.cu9.ari.gaiaorbit.scenegraph;
 
 import gaia.cu9.ari.gaiaorbit.event.EventManager;
 import gaia.cu9.ari.gaiaorbit.event.Events;
-import gaia.cu9.ari.gaiaorbit.render.IRenderable;
 import gaia.cu9.ari.gaiaorbit.scenegraph.octreewrapper.AbstractOctreeWrapper;
 import gaia.cu9.ari.gaiaorbit.util.I18n;
 import gaia.cu9.ari.gaiaorbit.util.time.ITimeFrameProvider;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 
@@ -20,8 +18,6 @@ public abstract class AbstractSceneGraph implements ISceneGraph {
 
     /** The root of the tree **/
     public SceneGraphNode root;
-    /** Updated every frame with the visible entities **/
-    public List<IRenderable> toRender;
     /** Quick lookup map. Name to node. **/
     HashMap<String, SceneGraphNode> stringToNode;
     /** Star id map **/
@@ -90,8 +86,6 @@ public abstract class AbstractSceneGraph implements ISceneGraph {
 	    }
 	}
 
-	toRender = Collections.synchronizedList(new ArrayList<IRenderable>(nodes.size()));
-
 	EventManager.getInstance().post(Events.POST_NOTIFICATION, this.getClass().getSimpleName(), I18n.bundle.format("notif.sg.init", root.numChildren));
     }
 
@@ -100,7 +94,6 @@ public abstract class AbstractSceneGraph implements ISceneGraph {
      */
     @Override
     public void update(ITimeFrameProvider time, ICamera camera) {
-	toRender.clear();
     }
 
     public HashMap<String, SceneGraphNode> getStringToNodeMap() {
@@ -160,11 +153,6 @@ public abstract class AbstractSceneGraph implements ISceneGraph {
     @Override
     public SceneGraphNode getRoot() {
 	return root;
-    }
-
-    @Override
-    public List<IRenderable> getToRenderList() {
-	return toRender;
     }
 
     @Override

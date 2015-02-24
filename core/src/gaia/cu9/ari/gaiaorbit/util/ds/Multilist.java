@@ -49,6 +49,7 @@ public class Multilist<T> implements List<T> {
      * @return
      */
     public List<T> toList() {
+	tolist.clear();
 	int size = lists.length;
 	for (int i = 0; i < size; i++)
 	    tolist.addAll(lists[i]);

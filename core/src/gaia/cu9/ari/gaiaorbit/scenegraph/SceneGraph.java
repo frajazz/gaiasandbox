@@ -11,7 +11,6 @@ public class SceneGraph extends AbstractSceneGraph {
 
     public SceneGraph() {
 	super();
-
     }
 
     public void update(ITimeFrameProvider time, ICamera camera) {

@@ -25,7 +25,6 @@ import java.io.IOException;
 import java.io.StringReader;
 import java.net.ConnectException;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -42,9 +41,9 @@ public class ObjectServerLoader implements ISceneGraphNodeProvider {
 
     @Override
     public void initialize(Properties properties) {
-	result = Collections.synchronizedList(new ArrayList<SceneGraphNode>());
-	particleList = Collections.synchronizedList(new ArrayList<CelestialBody>());
-	nodesMap = Collections.synchronizedMap(new HashMap<Long, Pair<OctreeNode<SceneGraphNode>, long[]>>());
+	result = new ArrayList<SceneGraphNode>();
+	particleList = new ArrayList<CelestialBody>();
+	nodesMap = new HashMap<Long, Pair<OctreeNode<SceneGraphNode>, long[]>>();
 	cc = ClientCore.getInstance();
     }
 
@@ -72,6 +71,42 @@ public class ObjectServerLoader implements ISceneGraphNodeProvider {
 		ident.setClientIconURL(GlobalConf.ICON_URL);
 		cc.executeCommand(ident, true);
 	    }
+
+	    // Fetch particle data
+	    for (int level = 0; level <= OctreeNode.maxDepth; level++) {
+		Message msgParticle = new Message("visualization-lod-data?vis-id=" + visid
+			+ "&lod-level=" + level);
+		msgParticle.setMessageHandler(new MessageHandler() {
+
+		    @Override
+		    public void receivedMessage(Message query, Message reply) {
+			for (MessagePayloadBlock block : reply.getPayload()) {
+			    String data = (String) block.getPayload();
+			    BufferedReader reader = new BufferedReader(new StringReader(data));
+			    try {
+				String line = null;
+				while ((line = reader.readLine()) != null) {
+				    Star star = parseLine(line);
+				    if (star != null)
+					particleList.add(star);
+				}
+			    } catch (IOException e) {
+				EventManager.getInstance().post(Events.JAVA_EXCEPTION, e);
+			    }
+			}
+		    }
+
+		    @Override
+		    public void receivedMessageBlock(Message query, Message reply, MessagePayloadBlock block) {
+		    }
+
+		});
+		cc.sendMessage(msgParticle, true);
+	    }
+	    // Manually add sun
+	    Star s = new Star(new Vector3d(0, 0, 0), 4.83f, 4.83f, 0.656f, "Sol", starid++);
+	    s.initialize();
+	    particleList.add(s);
 
 	    // Get Octree data
 	    Message msgMetadata = new Message("visualization-metadata?vis-id=" + visid
@@ -137,48 +172,10 @@ public class ObjectServerLoader implements ISceneGraphNodeProvider {
 
 		@Override
 		public void receivedMessageBlock(Message query, Message reply, MessagePayloadBlock block) {
-		    // TODO Auto-generated method stub
-
 		}
 
 	    });
 	    cc.sendMessage(msgMetadata, true);
-
-	    // Fetch particle data
-	    for (int level = 0; level <= OctreeNode.maxDepth; level++) {
-		Message msgParticle = new Message("visualization-lod-data?vis-id=" + visid
-			+ "&lod-level=" + level);
-		msgParticle.setMessageHandler(new MessageHandler() {
-
-		    @Override
-		    public void receivedMessage(Message query, Message reply) {
-			for (MessagePayloadBlock block : reply.getPayload()) {
-			    String data = (String) block.getPayload();
-			    BufferedReader reader = new BufferedReader(new StringReader(data));
-			    try {
-				String line = null;
-				while ((line = reader.readLine()) != null) {
-				    Star star = parseLine(line);
-				    if (star != null)
-					particleList.add(star);
-				}
-			    } catch (IOException e) {
-				EventManager.getInstance().post(Events.JAVA_EXCEPTION, e);
-			    }
-			}
-		    }
-
-		    @Override
-		    public void receivedMessageBlock(Message query, Message reply, MessagePayloadBlock block) {
-		    }
-
-		});
-		cc.sendMessage(msgParticle, true);
-	    }
-	    // Manually add sun
-	    Star s = new Star(new Vector3d(0, 0, 0), 4.83f, 4.83f, 0.656f, "Sol", starid++);
-	    s.initialize();
-	    particleList.add(s);
 
 	    // Insert stars in Octree
 	    for (CelestialBody cb : particleList) {

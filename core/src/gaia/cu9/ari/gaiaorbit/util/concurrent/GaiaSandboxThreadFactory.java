@@ -7,7 +7,6 @@ import java.util.concurrent.atomic.AtomicInteger;
  * The default thread factory
  */
 public class GaiaSandboxThreadFactory implements ThreadFactory {
-    private static final AtomicInteger poolNumber = new AtomicInteger(1);
     private final ThreadGroup group;
     private final AtomicInteger threadNumber = new AtomicInteger(0);
     private final String namePrefix;
@@ -16,8 +15,7 @@ public class GaiaSandboxThreadFactory implements ThreadFactory {
 	SecurityManager s = System.getSecurityManager();
 	group = (s != null) ? s.getThreadGroup() :
 		Thread.currentThread().getThreadGroup();
-	namePrefix = threadNamePrefix +
-		poolNumber.getAndIncrement();
+	namePrefix = threadNamePrefix;
     }
 
     public Thread newThread(Runnable r) {
@@ -25,8 +23,8 @@ public class GaiaSandboxThreadFactory implements ThreadFactory {
 		namePrefix + threadNumber.get(), threadNumber.getAndIncrement());
 	if (t.isDaemon())
 	    t.setDaemon(false);
-	if (t.getPriority() != Thread.NORM_PRIORITY)
-	    t.setPriority(Thread.NORM_PRIORITY);
+	if (t.getPriority() != Thread.MAX_PRIORITY)
+	    t.setPriority(Thread.MAX_PRIORITY);
 	return t;
     }
 

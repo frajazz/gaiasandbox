@@ -223,7 +223,7 @@ public class OctreeNode<T extends IPosition> implements ILineRenderable {
 
 	if (observed) {
 	    // Add my objects
-	    roulette.addAll(this.objects);
+	    roulette.addAll(objects);
 
 	    // Update children
 	    for (int i = 0; i < 8; i++) {

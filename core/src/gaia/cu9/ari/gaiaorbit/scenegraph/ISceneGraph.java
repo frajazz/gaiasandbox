@@ -1,6 +1,5 @@
 package gaia.cu9.ari.gaiaorbit.scenegraph;
 
-import gaia.cu9.ari.gaiaorbit.render.IRenderable;
 import gaia.cu9.ari.gaiaorbit.util.time.ITimeFrameProvider;
 
 import java.io.Serializable;
@@ -42,7 +41,5 @@ public interface ISceneGraph extends Serializable {
     public <T extends SceneGraphNode> List<T> getNodes(Class<T> clazz);
 
     public void dispose();
-
-    public List<IRenderable> getToRenderList();
 
 }

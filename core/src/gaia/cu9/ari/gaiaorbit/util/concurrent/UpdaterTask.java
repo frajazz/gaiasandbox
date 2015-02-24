@@ -20,6 +20,10 @@ public class UpdaterTask<T extends SceneGraphNode> implements Callable<Void> {
 	this.step = step;
     }
 
+    public UpdaterTask(List<T> nodes) {
+	this(nodes, 0, 1);
+    }
+
     @Override
     public Void call() throws Exception {
 	int size = nodes.size();

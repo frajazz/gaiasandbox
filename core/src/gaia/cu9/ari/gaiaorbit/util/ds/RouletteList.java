@@ -20,13 +20,13 @@ public class RouletteList<T> implements Collection<T> {
 
     /**
      * Constructs a roulette list with a given size.
-     * @param size The number of collections.
+     * @param numLists The number of collections.
      * @param initialCollectionSize The initial size of each collection.
      */
     @SuppressWarnings("unchecked")
-    public RouletteList(int size, int initialCollectionSize) {
-	roulette = new List[size];
-	for (int i = 0; i < size; i++) {
+    public RouletteList(int numLists, int initialCollectionSize) {
+	roulette = new List[numLists];
+	for (int i = 0; i < numLists; i++) {
 	    roulette[i] = new ArrayList<T>(initialCollectionSize);
 	}
 	currentIndex = 0;
@@ -137,7 +137,7 @@ public class RouletteList<T> implements Collection<T> {
 	Iterator<? extends T> it = c.iterator();
 	boolean result = false;
 	while (it.hasNext()) {
-	    result = result || add(it.next());
+	    result = result || this.add(it.next());
 	}
 	return result;
     }

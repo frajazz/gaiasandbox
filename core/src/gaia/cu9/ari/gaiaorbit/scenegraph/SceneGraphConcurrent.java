@@ -3,7 +3,7 @@ package gaia.cu9.ari.gaiaorbit.scenegraph;
 import gaia.cu9.ari.gaiaorbit.event.EventManager;
 import gaia.cu9.ari.gaiaorbit.event.Events;
 import gaia.cu9.ari.gaiaorbit.util.I18n;
-import gaia.cu9.ari.gaiaorbit.util.concurrent.GaiaSandboxThreadFactory;
+import gaia.cu9.ari.gaiaorbit.util.concurrent.ThreadPoolManager;
 import gaia.cu9.ari.gaiaorbit.util.concurrent.UpdaterTask;
 import gaia.cu9.ari.gaiaorbit.util.time.ITimeFrameProvider;
 
@@ -11,7 +11,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
-import java.util.concurrent.Executors;
 import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 
@@ -25,8 +24,7 @@ import com.badlogic.gdx.Gdx;
  */
 public class SceneGraphConcurrent extends AbstractSceneGraph {
 
-    /** The executor service containing the pool **/
-    ThreadPoolExecutor pool;
+    private ThreadPoolExecutor pool;
     private List<UpdaterTask<SceneGraphNode>> tasks;
     int numThreads;
 
@@ -43,16 +41,15 @@ public class SceneGraphConcurrent extends AbstractSceneGraph {
     public void initialize(List<SceneGraphNode> nodes, ITimeFrameProvider time) {
 	super.initialize(nodes, time);
 
-	pool = (ThreadPoolExecutor) Executors.newFixedThreadPool(numThreads, new GaiaSandboxThreadFactory("sg-updater-"));
+	pool = ThreadPoolManager.pool;
 	objectsPerThread = new int[numThreads];
 	tasks = new ArrayList<UpdaterTask<SceneGraphNode>>(pool.getCorePoolSize());
 
 	// First naive implementation, we only separate the first-level stars.
 	Iterator<SceneGraphNode> toUpdate = root.children.iterator();
-	int poolSize = pool.getCorePoolSize();
-	int nodesPerThread = root.numChildren / poolSize;
+	int nodesPerThread = root.numChildren / numThreads;
 
-	for (int i = 0; i < poolSize; i++) {
+	for (int i = 0; i < numThreads; i++) {
 	    List<SceneGraphNode> partialList = new ArrayList<SceneGraphNode>(nodesPerThread);
 	    int currentNumber = 0;
 	    while (toUpdate.hasNext() && currentNumber <= nodesPerThread) {
@@ -61,7 +58,7 @@ public class SceneGraphConcurrent extends AbstractSceneGraph {
 		partialList.add(node);
 	    }
 
-	    tasks.add(new UpdaterTask<SceneGraphNode>(partialList, 0, 1));
+	    tasks.add(new UpdaterTask<SceneGraphNode>(partialList));
 	    objectsPerThread[i] = currentNumber;
 	}
 

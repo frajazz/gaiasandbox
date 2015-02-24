@@ -28,7 +28,7 @@ public class SceneGraphLoader {
 
 	    List<SceneGraphNode> nodes = sgnpm.loadObjects();
 
-	    // Implement one or the other depending on multi-threading setting
+	    // Implement one or the other depending on concurrency setting
 	    if (multithreading) {
 		sg = new SceneGraphConcurrent(maxThreads);
 	    } else {

@@ -6,12 +6,12 @@ import gaia.cu9.ari.gaiaorbit.render.SceneGraphRenderer.ComponentType;
 import gaia.cu9.ari.gaiaorbit.scenegraph.ICamera;
 import gaia.cu9.ari.gaiaorbit.scenegraph.SceneGraphNode;
 import gaia.cu9.ari.gaiaorbit.scenegraph.Transform;
-import gaia.cu9.ari.gaiaorbit.util.ds.Multilist;
 import gaia.cu9.ari.gaiaorbit.util.time.ITimeFrameProvider;
 import gaia.cu9.ari.gaiaorbit.util.tree.OctreeNode;
 
 import java.util.ArrayList;
 import java.util.Iterator;
+import java.util.List;
 
 import com.badlogic.gdx.utils.Pool;
 import com.badlogic.gdx.utils.Pools;
@@ -28,7 +28,7 @@ public abstract class AbstractOctreeWrapper extends SceneGraphNode implements It
     /** A collection of all the octants in this octree **/
     private ArrayList<OctreeNode<SceneGraphNode>> octants;
     /** Roulette list with the objects to process **/
-    protected Multilist<SceneGraphNode> roulette;
+    protected List<SceneGraphNode> roulette;
     /**
      * Is this just a copy?
      */
@@ -55,6 +55,7 @@ public abstract class AbstractOctreeWrapper extends SceneGraphNode implements It
 	super.initialize();
 
 	// Add all objects into children list
+	// Do not touch this, as it is needed to create the stringToNode map in AbstractSG 
 	if (children == null) {
 	    children = new ArrayList<SceneGraphNode>(root.nObjects);
 	    Iterator<OctreeNode<SceneGraphNode>> it = iterator();
