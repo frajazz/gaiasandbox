@@ -61,7 +61,7 @@ public class SceneGraphConcurrent extends AbstractSceneGraph {
 		partialList.add(node);
 	    }
 
-	    tasks.add(new UpdaterTask<SceneGraphNode>(partialList));
+	    tasks.add(new UpdaterTask<SceneGraphNode>(partialList, 0, 1));
 	    objectsPerThread[i] = currentNumber;
 	}
 

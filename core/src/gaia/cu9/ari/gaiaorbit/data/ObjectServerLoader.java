@@ -2,7 +2,6 @@ package gaia.cu9.ari.gaiaorbit.data;
 
 import gaia.cu9.ari.gaiaorbit.event.EventManager;
 import gaia.cu9.ari.gaiaorbit.event.Events;
-import gaia.cu9.ari.gaiaorbit.scenegraph.AbstractPositionEntity;
 import gaia.cu9.ari.gaiaorbit.scenegraph.CelestialBody;
 import gaia.cu9.ari.gaiaorbit.scenegraph.SceneGraphNode;
 import gaia.cu9.ari.gaiaorbit.scenegraph.Star;
@@ -36,8 +35,8 @@ public class ObjectServerLoader implements ISceneGraphNodeProvider {
     ClientCore cc;
     List<SceneGraphNode> result;
     List<CelestialBody> particleList;
-    Map<Long, Pair<OctreeNode<AbstractPositionEntity>, long[]>> nodesMap;
-    OctreeNode<AbstractPositionEntity> root;
+    Map<Long, Pair<OctreeNode<SceneGraphNode>, long[]>> nodesMap;
+    OctreeNode<SceneGraphNode> root;
     Long starid = 1l;
     Long errors = 0l;
 
@@ -45,7 +44,7 @@ public class ObjectServerLoader implements ISceneGraphNodeProvider {
     public void initialize(Properties properties) {
 	result = Collections.synchronizedList(new ArrayList<SceneGraphNode>());
 	particleList = Collections.synchronizedList(new ArrayList<CelestialBody>());
-	nodesMap = Collections.synchronizedMap(new HashMap<Long, Pair<OctreeNode<AbstractPositionEntity>, long[]>>());
+	nodesMap = Collections.synchronizedMap(new HashMap<Long, Pair<OctreeNode<SceneGraphNode>, long[]>>());
 	cc = ClientCore.getInstance();
     }
 
@@ -113,8 +112,8 @@ public class ObjectServerLoader implements ISceneGraphNodeProvider {
 				int depth = Integer.parseInt(tokens[7]);
 				maxdepth = Math.max(maxdepth, depth);
 
-				OctreeNode<AbstractPositionEntity> node = new OctreeNode<AbstractPositionEntity>(pageId, y, z, x, hsy, hsz, hsx, childrenCount, nObjects, ownObjects, depth);
-				nodesMap.put(pageId, new Pair<OctreeNode<AbstractPositionEntity>, long[]>(node, childrenIds));
+				OctreeNode<SceneGraphNode> node = new OctreeNode<SceneGraphNode>(pageId, y, z, x, hsy, hsz, hsx, childrenCount, nObjects, ownObjects, depth);
+				nodesMap.put(pageId, new Pair<OctreeNode<SceneGraphNode>, long[]>(node, childrenIds));
 
 				if (depth == 0) {
 				    root = node;

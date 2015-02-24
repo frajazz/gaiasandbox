@@ -3,10 +3,10 @@ package gaia.cu9.ari.gaiaorbit.scenegraph.octreewrapper;
 import gaia.cu9.ari.gaiaorbit.event.EventManager;
 import gaia.cu9.ari.gaiaorbit.event.Events;
 import gaia.cu9.ari.gaiaorbit.render.SceneGraphRenderer.ComponentType;
-import gaia.cu9.ari.gaiaorbit.scenegraph.AbstractPositionEntity;
 import gaia.cu9.ari.gaiaorbit.scenegraph.ICamera;
 import gaia.cu9.ari.gaiaorbit.scenegraph.SceneGraphNode;
 import gaia.cu9.ari.gaiaorbit.scenegraph.Transform;
+import gaia.cu9.ari.gaiaorbit.util.ds.Multilist;
 import gaia.cu9.ari.gaiaorbit.util.time.ITimeFrameProvider;
 import gaia.cu9.ari.gaiaorbit.util.tree.OctreeNode;
 
@@ -22,12 +22,13 @@ import com.badlogic.gdx.utils.Pools;
  * @author Toni Sagrista
  *
  */
-public abstract class AbstractOctreeWrapper extends SceneGraphNode implements Iterable<OctreeNode<AbstractPositionEntity>> {
+public abstract class AbstractOctreeWrapper extends SceneGraphNode implements Iterable<OctreeNode<SceneGraphNode>> {
 
-    public OctreeNode<AbstractPositionEntity> root;
+    public OctreeNode<SceneGraphNode> root;
     /** A collection of all the octants in this octree **/
-    private ArrayList<OctreeNode<AbstractPositionEntity>> octants;
-
+    private ArrayList<OctreeNode<SceneGraphNode>> octants;
+    /** Roulette list with the objects to process **/
+    protected Multilist<SceneGraphNode> roulette;
     /**
      * Is this just a copy?
      */
@@ -35,14 +36,14 @@ public abstract class AbstractOctreeWrapper extends SceneGraphNode implements It
 
     protected AbstractOctreeWrapper() {
 	super("Octree", null);
-
     }
 
-    protected AbstractOctreeWrapper(String parentName, OctreeNode<AbstractPositionEntity> root) {
+    protected AbstractOctreeWrapper(String parentName, OctreeNode<SceneGraphNode> root) {
 	this();
 	this.ct = ComponentType.Others;
 	this.root = root;
 	this.parentName = parentName;
+
     }
 
     /** 
@@ -56,9 +57,9 @@ public abstract class AbstractOctreeWrapper extends SceneGraphNode implements It
 	// Add all objects into children list
 	if (children == null) {
 	    children = new ArrayList<SceneGraphNode>(root.nObjects);
-	    Iterator<OctreeNode<AbstractPositionEntity>> it = iterator();
+	    Iterator<OctreeNode<SceneGraphNode>> it = iterator();
 	    while (it.hasNext()) {
-		OctreeNode<AbstractPositionEntity> node = it.next();
+		OctreeNode<SceneGraphNode> node = it.next();
 		this.add(node.objects);
 	    }
 	}
@@ -74,25 +75,30 @@ public abstract class AbstractOctreeWrapper extends SceneGraphNode implements It
 
 	// Update octants
 	if (!copy) {
-	    root.update(camera);
+	    // Compute observed octants and fill roulette list
+	    root.update(transform, camera.getCamera().frustum, roulette);
 	    updateLocal(time, camera);
 	}
 
-	processOctree(time, transform, camera);
+	// Call the update method of all entities in the roulette list. This is implemented in the subclass.
+	EventManager.getInstance().post(Events.DEBUG3, "Octree threads: " + getRouletteDebug());
+	updateOctreeObjects(time, transform, camera);
+
+	// Reset mask
+	roulette.clear();
 
     }
 
     /**
-     * Processes the octree. This takes each node and decide if it is to be processed or not.
-     * In case affirmative, it processes all its objects.
+     * Runs the update on all the observed and selected octree objects.
      * @param time
      * @param parentTransform
      * @param camera
      */
-    protected abstract void processOctree(ITimeFrameProvider time, final Transform parentTransform, ICamera camera);
+    protected abstract void updateOctreeObjects(ITimeFrameProvider time, final Transform parentTransform, ICamera camera);
 
     /**
-     * Updates the local transform matrix.
+     * Adds the octants to the render lists.
      * @param time
      */
     @Override
@@ -104,14 +110,17 @@ public abstract class AbstractOctreeWrapper extends SceneGraphNode implements It
 
     protected void addToRenderLists(ICamera camera) {
 	// Add all children
-	for (OctreeNode<AbstractPositionEntity> octant : octants) {
-	    addToRender(octant, RenderGroup.LINE);
+	int size = octants.size();
+	for (int i = 0; i < size; i++) {
+	    OctreeNode<SceneGraphNode> octant = octants.get(i);
+	    if (octant.observed)
+		addToRender(octant, RenderGroup.LINE);
 	}
     }
 
-    public ArrayList<OctreeNode<AbstractPositionEntity>> toList() {
+    public ArrayList<OctreeNode<SceneGraphNode>> toList() {
 	if (octants == null) {
-	    octants = new ArrayList<OctreeNode<AbstractPositionEntity>>();
+	    octants = new ArrayList<OctreeNode<SceneGraphNode>>();
 	    octants.add(root);
 	    root.addChildrenToList(octants);
 	}
@@ -119,7 +128,7 @@ public abstract class AbstractOctreeWrapper extends SceneGraphNode implements It
     }
 
     @Override
-    public Iterator<OctreeNode<AbstractPositionEntity>> iterator() {
+    public Iterator<OctreeNode<SceneGraphNode>> iterator() {
 	return this.toList().iterator();
     }
 
@@ -157,4 +166,5 @@ public abstract class AbstractOctreeWrapper extends SceneGraphNode implements It
 	return null;
     }
 
+    protected abstract String getRouletteDebug();
 }

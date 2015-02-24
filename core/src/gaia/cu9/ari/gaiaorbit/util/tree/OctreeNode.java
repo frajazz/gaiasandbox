@@ -2,7 +2,7 @@ package gaia.cu9.ari.gaiaorbit.util.tree;
 
 import gaia.cu9.ari.gaiaorbit.render.ILineRenderable;
 import gaia.cu9.ari.gaiaorbit.render.SceneGraphRenderer.ComponentType;
-import gaia.cu9.ari.gaiaorbit.scenegraph.ICamera;
+import gaia.cu9.ari.gaiaorbit.scenegraph.Transform;
 import gaia.cu9.ari.gaiaorbit.util.Pair;
 import gaia.cu9.ari.gaiaorbit.util.math.MathUtilsd;
 import gaia.cu9.ari.gaiaorbit.util.math.Vector3d;
@@ -10,11 +10,15 @@ import gaia.cu9.ari.gaiaorbit.util.math.Vector3d;
 import java.awt.Color;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.LinkedList;
+import java.util.List;
 import java.util.Map;
 import java.util.TreeSet;
 
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
+import com.badlogic.gdx.math.Frustum;
+import com.badlogic.gdx.math.Matrix4;
+import com.badlogic.gdx.math.Vector3;
+import com.badlogic.gdx.math.collision.BoundingBox;
 import com.badlogic.gdx.utils.Pools;
 
 /**
@@ -28,12 +32,18 @@ public class OctreeNode<T extends IPosition> implements ILineRenderable {
     /** Max depth of the structure this node belongs to **/
     public static int maxDepth;
 
+    /** Since OctreeNode is not to be parallelized, this can be static **/
+    private static BoundingBox boxcopy = new BoundingBox(new Vector3(), new Vector3());
+    private static Matrix4 boxtransf = new Matrix4();
+
     /** The unique page identifier **/
     public final long pageId;
     /** Contains the bottom-left-front position of the node **/
-    public final Vector3d loc;
+    public final Vector3d blf;
     /** Contains the top-right-back position of the cube **/
-    public final Vector3d boundary;
+    public final Vector3d trb;
+    /** The bounding box **/
+    public final BoundingBox box;
     /** Octant size in x, y and z **/
     public final Vector3d size;
     /** Contains the depth level **/
@@ -50,7 +60,10 @@ public class OctreeNode<T extends IPosition> implements ILineRenderable {
     @SuppressWarnings("unchecked")
     public OctreeNode<T>[] children = new OctreeNode[8];
     /** List of objects **/
-    public LinkedList<T> objects = new LinkedList<T>();
+    public List<T> objects = new ArrayList<T>(100);
+
+    /** Is this octant observed in this frame? **/
+    public boolean observed;
     /** Camera transform to render **/
     Vector3d transform;
 
@@ -69,14 +82,16 @@ public class OctreeNode<T extends IPosition> implements ILineRenderable {
      */
     public OctreeNode(long pageId, double x, double y, double z, double hsx, double hsy, double hsz, int childrenCount, int nObjects, int ownObjects, int depth) {
 	this.pageId = pageId;
-	this.loc = new Vector3d(x - hsx, y - hsy, z - hsz);
-	this.boundary = new Vector3d(x + hsx, y + hsy, z + hsz);
+	this.blf = new Vector3d(x - hsx, y - hsy, z - hsz);
+	this.trb = new Vector3d(x + hsx, y + hsy, z + hsz);
 	this.size = new Vector3d(hsx * 2, hsy * 2, hsz * 2);
+	this.box = new BoundingBox(blf.toVector3(), trb.toVector3());
 	this.childrenCount = childrenCount;
 	this.nObjects = nObjects;
 	this.ownObjects = ownObjects;
 	this.depth = depth;
 	this.transform = new Vector3d();
+	this.observed = true;
     }
 
     /** 
@@ -120,11 +135,11 @@ public class OctreeNode<T extends IPosition> implements ILineRenderable {
 
     public boolean insert(T e, int level) {
 	int node = 0;
-	if (e.getPosition().y > loc.y + ((boundary.y - loc.y) / 2))
+	if (e.getPosition().y > blf.y + ((trb.y - blf.y) / 2))
 	    node += 4;
-	if (e.getPosition().z > loc.z + ((boundary.z - loc.z) / 2))
+	if (e.getPosition().z > blf.z + ((trb.z - blf.z) / 2))
 	    node += 2;
-	if (e.getPosition().x > loc.x + ((boundary.x - loc.x) / 2))
+	if (e.getPosition().x > blf.x + ((trb.x - blf.x) / 2))
 	    node += 1;
 	if (level == this.depth + 1) {
 	    return children[node].add(e);
@@ -193,13 +208,29 @@ public class OctreeNode<T extends IPosition> implements ILineRenderable {
     }
 
     /**
-     * Adds nodes to render lists.
+     * Computes the observed value and the transform of each observed node.
+     * @param frustum The camera frustum.
+     * @param invpos The camera inverse position.
+     * @param roulette List where the nodes to be processed are to be added.
      */
-    public void update(ICamera cam) {
-	transform.set(cam.getInversePos());
-	for (OctreeNode<T> child : children) {
-	    if (child != null) {
-		child.update(cam);
+    public void update(Transform parentTransform, Frustum frustum, List<T> roulette) {
+	parentTransform.getTranslation(transform);
+
+	// Is this octant observed??
+	boxcopy.set(box);
+	boxcopy.mul(boxtransf.idt().translate(parentTransform.getTranslationf()[0], parentTransform.getTranslationf()[1], parentTransform.getTranslationf()[2]));
+	observed = frustum.boundsInFrustum(boxcopy);
+
+	if (observed) {
+	    // Add my objects
+	    roulette.addAll(this.objects);
+
+	    // Update children
+	    for (int i = 0; i < 8; i++) {
+		OctreeNode<T> child = children[i];
+		if (child != null) {
+		    child.update(parentTransform, frustum, roulette);
+		}
 	    }
 	}
     }
@@ -215,7 +246,7 @@ public class OctreeNode<T extends IPosition> implements ILineRenderable {
 
 	// Camera correction
 	Vector3d loc = Pools.get(Vector3d.class).obtain();
-	loc.set(this.loc).add(transform);
+	loc.set(this.blf).add(transform);
 
 	/*
 	 *       .·------·
@@ -288,4 +319,5 @@ public class OctreeNode<T extends IPosition> implements ILineRenderable {
     private void line(ShapeRenderer sr, double x, double y, double z, double x1, double y1, double z1) {
 	sr.line((float) x, (float) y, (float) z, (float) x1, (float) y1, (float) z1);
     }
+
 }

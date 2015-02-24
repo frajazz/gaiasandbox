@@ -8,6 +8,7 @@ import gaia.cu9.ari.gaiaorbit.util.math.Matrix4d;
 import gaia.cu9.ari.gaiaorbit.util.math.Vector2d;
 import gaia.cu9.ari.gaiaorbit.util.math.Vector3d;
 import gaia.cu9.ari.gaiaorbit.util.time.ITimeFrameProvider;
+import gaia.cu9.ari.gaiaorbit.util.tree.IPosition;
 
 import java.util.Iterator;
 import java.util.List;
@@ -26,7 +27,7 @@ import com.badlogic.gdx.utils.Pools;
  *
  * @param <T>
  */
-public class SceneGraphNode implements ISceneGraphNode {
+public class SceneGraphNode implements ISceneGraphNode, IPosition {
     public static final String ROOT_NAME = "Universe";
 
     /** Static Thread local auxiliary Vector3d **/
@@ -561,6 +562,11 @@ public class SceneGraphNode implements ISceneGraphNode {
 
     @Override
     public Object getStars() {
+	return null;
+    }
+
+    @Override
+    public Vector3d getPosition() {
 	return null;
     }
 }

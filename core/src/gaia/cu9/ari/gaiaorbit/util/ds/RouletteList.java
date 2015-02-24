@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Iterator;
+import java.util.List;
 
 /**
  * A structure composed of a set of collections of a given size in which
@@ -13,7 +14,7 @@ import java.util.Iterator;
  */
 public class RouletteList<T> implements Collection<T> {
 
-    private Collection<T>[] roulette;
+    private List<T>[] roulette;
     private int currentIndex;
     private int numElements;
 
@@ -24,7 +25,7 @@ public class RouletteList<T> implements Collection<T> {
      */
     @SuppressWarnings("unchecked")
     public RouletteList(int size, int initialCollectionSize) {
-	roulette = new Collection[size];
+	roulette = new List[size];
 	for (int i = 0; i < size; i++) {
 	    roulette[i] = new ArrayList<T>(initialCollectionSize);
 	}
@@ -32,13 +33,13 @@ public class RouletteList<T> implements Collection<T> {
     }
 
     /**
-     * Returns the collection for the given index. If the index is negative
-     * or greater than the number of collections in the roulette, it asserts an 
+     * Returns the list for the given index. If the index is negative
+     * or greater than the number of lists in the roulette, it asserts an 
      * exception.
      * @param index The index.
-     * @return The collection at the given index in this roulette.
+     * @return The list at the given index in this roulette.
      */
-    public Collection<T> getCollection(int index) {
+    public List<T> getList(int index) {
 	assert index >= 0 && index < roulette.length : "Index out of bounds: " + index;
 	return roulette[index];
     }
@@ -54,7 +55,8 @@ public class RouletteList<T> implements Collection<T> {
 
     @Override
     public boolean isEmpty() {
-	for (int i = 0; i < roulette.length; i++) {
+	int size = roulette.length;
+	for (int i = 0; i < size; i++) {
 	    if (!roulette[i].isEmpty())
 		return false;
 	}
@@ -63,7 +65,8 @@ public class RouletteList<T> implements Collection<T> {
 
     @Override
     public boolean contains(Object o) {
-	for (int i = 0; i < roulette.length; i++) {
+	int size = roulette.length;
+	for (int i = 0; i < size; i++) {
 	    if (roulette[i].contains(o))
 		return true;
 	}
@@ -114,7 +117,8 @@ public class RouletteList<T> implements Collection<T> {
 
     @Override
     public boolean remove(Object o) {
-	for (int i = 0; i < roulette.length; i++) {
+	int size = roulette.length;
+	for (int i = 0; i < size; i++) {
 	    if (roulette[i].remove(o)) {
 		numElements--;
 		return true;
@@ -152,7 +156,8 @@ public class RouletteList<T> implements Collection<T> {
     public boolean retainAll(Collection<?> c) {
 	boolean result = false;
 	numElements = 0;
-	for (int i = 0; i < roulette.length; i++) {
+	int size = roulette.length;
+	for (int i = 0; i < size; i++) {
 	    result = result || roulette[i].retainAll(c);
 	    numElements += roulette[i].size();
 	}
@@ -161,7 +166,8 @@ public class RouletteList<T> implements Collection<T> {
 
     @Override
     public void clear() {
-	for (int i = 0; i < roulette.length; i++) {
+	int size = roulette.length;
+	for (int i = 0; i < size; i++) {
 	    roulette[i].clear();
 	}
 	numElements = 0;

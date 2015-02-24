@@ -1,13 +1,14 @@
 package gaia.cu9.ari.gaiaorbit.scenegraph.octreewrapper;
 
-import gaia.cu9.ari.gaiaorbit.scenegraph.AbstractPositionEntity;
 import gaia.cu9.ari.gaiaorbit.scenegraph.ICamera;
+import gaia.cu9.ari.gaiaorbit.scenegraph.SceneGraphNode;
 import gaia.cu9.ari.gaiaorbit.scenegraph.Transform;
+import gaia.cu9.ari.gaiaorbit.util.ds.Multilist;
 import gaia.cu9.ari.gaiaorbit.util.time.ITimeFrameProvider;
 import gaia.cu9.ari.gaiaorbit.util.tree.OctreeNode;
 
 /**
- * Static octree wrapper that can be inserted into the scene graph.
+ * Static Octree wrapper that can be inserted into the scene graph.
  * This implementation is single-threaded.
  * @author Toni Sagrista
  *
@@ -18,18 +19,22 @@ public class OctreeWrapper extends AbstractOctreeWrapper {
 	super();
     }
 
-    public OctreeWrapper(String parentName, OctreeNode<AbstractPositionEntity> root) {
+    public OctreeWrapper(String parentName, OctreeNode<SceneGraphNode> root) {
 	super(parentName, root);
+	roulette = new Multilist<SceneGraphNode>(1, root.nObjects);
     }
 
     @Override
-    protected void processOctree(ITimeFrameProvider time, Transform parentTransform, ICamera camera) {
-	// TODO remove this, not all stars should be updated!
-	if (children != null) {
-	    for (int i = 0; i < children.size(); i++) {
-		children.get(i).update(time, transform, camera);
-	    }
+    protected void updateOctreeObjects(ITimeFrameProvider time, Transform parentTransform, ICamera camera) {
+	int lists = roulette.size();
+	for (int i = 0; i < lists; i++) {
+	    roulette.get(i).update(time, parentTransform, camera);
 	}
+    }
+
+    @Override
+    protected String getRouletteDebug() {
+	return "[" + roulette.size() + "]";
     }
 
 }
