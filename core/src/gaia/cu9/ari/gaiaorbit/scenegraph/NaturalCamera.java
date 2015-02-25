@@ -176,9 +176,6 @@ public class NaturalCamera extends AbstractCamera implements IObserver {
 		focus.transform.getTranslation(focusDirection);
 		focus = focusBak;
 
-		// Update focus manually, just in case
-		focus.update(time, focus.parent.transform, this);
-
 		EventManager.getInstance().post(Events.FOCUS_INFO_UPDATED, focus.distToCamera - focus.getRadius(), ((AbstractPositionEntity) focus).viewAngle);
 	    } else {
 		EventManager.getInstance().post(Events.CAMERA_MODE_CMD, CameraMode.Free_Camera);
@@ -711,5 +708,10 @@ public class NaturalCamera extends AbstractCamera implements IObserver {
 		closest = cb;
 	    }
 	}
+    }
+
+    @Override
+    public CelestialBody getFocus() {
+	return getMode().equals(CameraMode.Focus) ? focus : null;
     }
 }

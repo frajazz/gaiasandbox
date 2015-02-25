@@ -367,4 +367,9 @@ public class FovCamera extends AbstractCamera implements IObserver {
     public void checkClosest(CelestialBody cb) {
     }
 
+    @Override
+    public CelestialBody getFocus() {
+	return null;
+    }
+
 }

@@ -77,6 +77,12 @@ public interface ICamera {
     public boolean superVelocity();
 
     /**
+     * Returns the foucs if any.
+     * @return The foucs object if it is in focus mode. Null otherwise.
+     */
+    public CelestialBody getFocus();
+
+    /**
      * Checks if this body is the current focus.
      * @param cb
      * @return

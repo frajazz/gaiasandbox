@@ -555,6 +555,17 @@ public class SceneGraphNode implements ISceneGraphNode, IPosition {
 	return SceneGraphRenderer.render_lists.get(rg).contains(renderable, ThreadIndexer.inst.i());
     }
 
+    public SceneGraphNode getFirstAncestorOfType(Class<? extends SceneGraphNode> clazz) {
+	if (parent != null) {
+	    if (parent.getClass().isAssignableFrom(clazz)) {
+		return parent;
+	    } else {
+		return parent.getFirstAncestorOfType(clazz);
+	    }
+	}
+	return null;
+    }
+
     @Override
     public int getStarCount() {
 	return 0;

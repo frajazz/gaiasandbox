@@ -3,8 +3,10 @@ package gaia.cu9.ari.gaiaorbit.scenegraph.octreewrapper;
 import gaia.cu9.ari.gaiaorbit.event.EventManager;
 import gaia.cu9.ari.gaiaorbit.event.Events;
 import gaia.cu9.ari.gaiaorbit.render.SceneGraphRenderer.ComponentType;
+import gaia.cu9.ari.gaiaorbit.scenegraph.CelestialBody;
 import gaia.cu9.ari.gaiaorbit.scenegraph.ICamera;
 import gaia.cu9.ari.gaiaorbit.scenegraph.SceneGraphNode;
+import gaia.cu9.ari.gaiaorbit.scenegraph.Star;
 import gaia.cu9.ari.gaiaorbit.scenegraph.Transform;
 import gaia.cu9.ari.gaiaorbit.util.time.ITimeFrameProvider;
 import gaia.cu9.ari.gaiaorbit.util.tree.OctreeNode;
@@ -96,6 +98,13 @@ public abstract class AbstractOctreeWrapper extends SceneGraphNode implements It
 
 	    // Reset mask
 	    roulette.clear();
+
+	    // Update focus, just in case
+	    CelestialBody focus = camera.getFocus();
+	    if (focus != null) {
+		SceneGraphNode star = focus.getFirstAncestorOfType(Star.class);
+		star.update(time, star.parent.transform, camera);
+	    }
 	} else {
 	    // Just update children
 	    for (SceneGraphNode node : children) {

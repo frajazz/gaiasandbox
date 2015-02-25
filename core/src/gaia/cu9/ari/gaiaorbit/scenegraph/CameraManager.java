@@ -294,4 +294,9 @@ public class CameraManager implements ICamera, IObserver {
 	current.checkClosest(cb);
     }
 
+    @Override
+    public CelestialBody getFocus() {
+	return current.getFocus();
+    }
+
 }
