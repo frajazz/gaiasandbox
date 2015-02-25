@@ -312,7 +312,7 @@ public abstract class CelestialBody extends AbstractPositionEntity implements IL
     /**
      * Computes whether a body with the given position is visible by a camera with the given direction
      * and angle.
-     * @param pos The position of the body.
+     * @param pos The position of the body in the reference system of the camera.
      * @param coneAngle The cone angle of the camera.
      * @param dir The direction.
      * @return True if the body is visible.

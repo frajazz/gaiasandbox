@@ -4,13 +4,14 @@ import gaia.cu9.ari.gaiaorbit.scenegraph.ICamera;
 import gaia.cu9.ari.gaiaorbit.scenegraph.SceneGraphConcurrent;
 import gaia.cu9.ari.gaiaorbit.scenegraph.SceneGraphNode;
 import gaia.cu9.ari.gaiaorbit.scenegraph.Transform;
-import gaia.cu9.ari.gaiaorbit.util.concurrent.ThreadPoolManager;
+import gaia.cu9.ari.gaiaorbit.util.concurrent.GaiaSandboxThreadFactory;
 import gaia.cu9.ari.gaiaorbit.util.concurrent.UpdaterTask;
 import gaia.cu9.ari.gaiaorbit.util.time.ITimeFrameProvider;
 import gaia.cu9.ari.gaiaorbit.util.tree.OctreeNode;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.Executors;
 import java.util.concurrent.ThreadPoolExecutor;
 
 import com.badlogic.gdx.Gdx;
@@ -28,6 +29,10 @@ public class OctreeWrapperConcurrent extends AbstractOctreeWrapper {
     private List<UpdaterTask<SceneGraphNode>> tasks;
     private int numThreads;
 
+    public OctreeWrapperConcurrent() {
+	super();
+    }
+
     public OctreeWrapperConcurrent(String parentName, OctreeNode<SceneGraphNode> root, int numThreads) {
 	super(parentName, root);
 	this.numThreads = numThreads;
@@ -38,7 +43,8 @@ public class OctreeWrapperConcurrent extends AbstractOctreeWrapper {
     public void initialize() {
 	super.initialize();
 
-	this.pool = ThreadPoolManager.pool;
+	//	this.pool = ThreadPoolManager.pool;
+	pool = (ThreadPoolExecutor) Executors.newFixedThreadPool(numThreads, new GaiaSandboxThreadFactory());
 	tasks = new ArrayList<UpdaterTask<SceneGraphNode>>(pool.getCorePoolSize());
 
 	// Create the tasks with the roulette collections references

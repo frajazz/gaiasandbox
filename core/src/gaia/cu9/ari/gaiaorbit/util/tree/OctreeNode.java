@@ -2,9 +2,12 @@ package gaia.cu9.ari.gaiaorbit.util.tree;
 
 import gaia.cu9.ari.gaiaorbit.render.ILineRenderable;
 import gaia.cu9.ari.gaiaorbit.render.SceneGraphRenderer.ComponentType;
+import gaia.cu9.ari.gaiaorbit.scenegraph.ICamera;
 import gaia.cu9.ari.gaiaorbit.scenegraph.Transform;
 import gaia.cu9.ari.gaiaorbit.util.Pair;
+import gaia.cu9.ari.gaiaorbit.util.math.BoundingBoxd;
 import gaia.cu9.ari.gaiaorbit.util.math.MathUtilsd;
+import gaia.cu9.ari.gaiaorbit.util.math.Matrix4d;
 import gaia.cu9.ari.gaiaorbit.util.math.Vector3d;
 
 import java.awt.Color;
@@ -16,9 +19,7 @@ import java.util.TreeSet;
 
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.math.Frustum;
-import com.badlogic.gdx.math.Matrix4;
 import com.badlogic.gdx.math.Vector3;
-import com.badlogic.gdx.math.collision.BoundingBox;
 import com.badlogic.gdx.utils.Pools;
 
 /**
@@ -31,19 +32,25 @@ import com.badlogic.gdx.utils.Pools;
 public class OctreeNode<T extends IPosition> implements ILineRenderable {
     /** Max depth of the structure this node belongs to **/
     public static int maxDepth;
+    /** Angle threshold in which we break the octree **/
+    public static final double ANGLE_THRESHOLD = 10d;
 
     /** Since OctreeNode is not to be parallelized, this can be static **/
-    private static BoundingBox boxcopy = new BoundingBox(new Vector3(), new Vector3());
-    private static Matrix4 boxtransf = new Matrix4();
+    private static BoundingBoxd boxcopy = new BoundingBoxd(new Vector3d(), new Vector3d());
+    private static Matrix4d boxtransf = new Matrix4d();
+    private static Vector3d auxD = new Vector3d();
+    private static Vector3 auxF1 = new Vector3(), auxF2 = new Vector3();
 
     /** The unique page identifier **/
     public final long pageId;
-    /** Contains the bottom-left-front position of the node **/
+    /** Contains the bottom-left-front position of the octant **/
     public final Vector3d blf;
-    /** Contains the top-right-back position of the cube **/
+    /** Contains the top-right-back position of the octant **/
     public final Vector3d trb;
+    /** The centre of this octant **/
+    public final Vector3d centre;
     /** The bounding box **/
-    public final BoundingBox box;
+    public final BoundingBoxd box;
     /** Octant size in x, y and z **/
     public final Vector3d size;
     /** Contains the depth level **/
@@ -62,6 +69,11 @@ public class OctreeNode<T extends IPosition> implements ILineRenderable {
     /** List of objects **/
     public List<T> objects = new ArrayList<T>(100);
 
+    private double radius;
+    /** If observed, the view angle in radians of this octant **/
+    public double viewAngle;
+    /** The distance to the camera in units of the center of this octant **/
+    public double distToCamera;
     /** Is this octant observed in this frame? **/
     public boolean observed;
     /** Camera transform to render **/
@@ -84,14 +96,17 @@ public class OctreeNode<T extends IPosition> implements ILineRenderable {
 	this.pageId = pageId;
 	this.blf = new Vector3d(x - hsx, y - hsy, z - hsz);
 	this.trb = new Vector3d(x + hsx, y + hsy, z + hsz);
+	this.centre = new Vector3d(x, y, z);
 	this.size = new Vector3d(hsx * 2, hsy * 2, hsz * 2);
-	this.box = new BoundingBox(blf.toVector3(), trb.toVector3());
+	this.box = new BoundingBoxd(blf, trb);
 	this.childrenCount = childrenCount;
 	this.nObjects = nObjects;
 	this.ownObjects = ownObjects;
 	this.depth = depth;
 	this.transform = new Vector3d();
-	this.observed = true;
+	this.observed = false;
+
+	this.radius = Math.sqrt(hsx * hsx + hsy * hsy + hsz * hsz);
     }
 
     /** 
@@ -208,31 +223,124 @@ public class OctreeNode<T extends IPosition> implements ILineRenderable {
     }
 
     /**
-     * Computes the observed value and the transform of each observed node.
-     * @param frustum The camera frustum.
-     * @param invpos The camera inverse position.
-     * @param roulette List where the nodes to be processed are to be added.
+     * Returns the deepest octant that contains the position.
+     * @param position
+     * @return
      */
-    public void update(Transform parentTransform, Frustum frustum, List<T> roulette) {
-	parentTransform.getTranslation(transform);
-
-	// Is this octant observed??
-	boxcopy.set(box);
-	boxcopy.mul(boxtransf.idt().translate(parentTransform.getTranslationf()[0], parentTransform.getTranslationf()[1], parentTransform.getTranslationf()[2]));
-	observed = frustum.boundsInFrustum(boxcopy);
-
-	if (observed) {
-	    // Add my objects
-	    roulette.addAll(objects);
-
-	    // Update children
+    public OctreeNode<T> getBestOctant(Vector3d position) {
+	if (!this.box.contains(position)) {
+	    return null;
+	} else {
+	    OctreeNode<T> candidate = null;
 	    for (int i = 0; i < 8; i++) {
 		OctreeNode<T> child = children[i];
 		if (child != null) {
-		    child.update(parentTransform, frustum, roulette);
+		    candidate = child.getBestOctant(position);
+		    if (candidate != null) {
+			return candidate;
+		    }
+		}
+	    }
+	    // We could not found a candidate in our children, we use this node.
+	    return this;
+	}
+    }
+
+    /**
+     * Computes the observed value and the transform of each observed node.
+     * @param parentTransform The parent transform.
+     * @param cam The current camera.
+     * @param roulette List where the nodes to be processed are to be added.
+     */
+    public void update(Transform parentTransform, ICamera cam, List<T> roulette) {
+	parentTransform.getTranslation(transform);
+
+	// Is this octant observed??
+	computeObserved2(parentTransform, cam);
+
+	if (observed) {
+	    // Compute distance and view angle
+	    distToCamera = auxD.set(centre).add(cam.getInversePos()).len();
+	    viewAngle = Math.atan(radius / distToCamera) / cam.getFovFactor();
+
+	    if (Math.toDegrees(viewAngle) < ANGLE_THRESHOLD) {
+		// If it is sufficiently small, we stay with the "virtual" particles
+		roulette.addAll(objects);
+		setChildrenObserved(false);
+	    } else {
+		if (childrenCount == 0) {
+		    // We are a leaf, add objects anyway
+		    roulette.addAll(objects);
+		    setChildrenObserved(false);
+		} else {
+		    // Update children
+		    for (int i = 0; i < 8; i++) {
+			OctreeNode<T> child = children[i];
+			if (child != null) {
+			    child.update(parentTransform, cam, roulette);
+			}
+		    }
 		}
 	    }
 	}
+    }
+
+    private void setChildrenObserved(boolean observed) {
+	for (int i = 0; i < 8; i++) {
+	    OctreeNode<T> child = children[i];
+	    if (child != null) {
+		child.observed = observed;
+	    }
+	}
+    }
+
+    /**
+     * Uses the camera frustum element to check the octant.
+     * @param parentTransform
+     * @param cam
+     */
+    private void computeObserved1(Transform parentTransform, ICamera cam) {
+	// Is this octant observed??
+	Frustum frustum = cam.getCamera().frustum;
+	boxcopy.set(box);
+	boxcopy.mul(boxtransf.idt().translate(parentTransform.getTranslation()));
+	observed = frustum.boundsInFrustum(boxcopy.getCenter(auxD).setVector3(auxF1), size.setVector3(auxF2));
+    }
+
+    /**
+     * The octant is observed if at least one of its vertices is in the view or the
+     * camera itself is in the view.
+     * @param parentTransform
+     * @param cam
+     */
+    private void computeObserved2(Transform parentTransform, ICamera cam) {
+	float angle = cam.getAngleEdge();
+	Vector3d dir = cam.getDirection();
+	boxcopy.set(box);
+	boxcopy.mul(boxtransf.idt().translate(parentTransform.getTranslation()));
+	observed = computeVisibleFov(boxcopy.getCenter(auxD), angle, dir) ||
+		computeVisibleFov(boxcopy.getCorner000(auxD), angle, dir) ||
+		computeVisibleFov(boxcopy.getCorner001(auxD), angle, dir) ||
+		computeVisibleFov(boxcopy.getCorner010(auxD), angle, dir) ||
+		computeVisibleFov(boxcopy.getCorner011(auxD), angle, dir) ||
+		computeVisibleFov(boxcopy.getCorner100(auxD), angle, dir) ||
+		computeVisibleFov(boxcopy.getCorner101(auxD), angle, dir) ||
+		computeVisibleFov(boxcopy.getCorner110(auxD), angle, dir) ||
+		computeVisibleFov(boxcopy.getCorner111(auxD), angle, dir) ||
+		box.contains(cam.getPos());
+
+    }
+
+    /**
+     * Computes whether a body with the given position is visible by a camera with the given direction
+     * and angle.
+     * @param pos The position of the body in the reference system of the camera.
+     * @param coneAngle The cone angle of the camera.
+     * @param dir The direction.
+     * @return True if the body is visible.
+     */
+    private boolean computeVisibleFov(Vector3d pos, float coneAngle, Vector3d dir) {
+	return MathUtilsd.acos(pos.dot(dir) / pos.len()) < coneAngle;
     }
 
     @Override

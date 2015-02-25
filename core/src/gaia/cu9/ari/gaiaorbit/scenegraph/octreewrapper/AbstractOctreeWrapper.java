@@ -25,8 +25,6 @@ import com.badlogic.gdx.utils.Pools;
 public abstract class AbstractOctreeWrapper extends SceneGraphNode implements Iterable<OctreeNode<SceneGraphNode>> {
 
     public OctreeNode<SceneGraphNode> root;
-    /** A collection of all the octants in this octree **/
-    private ArrayList<OctreeNode<SceneGraphNode>> octants;
     /** Roulette list with the objects to process **/
     protected List<SceneGraphNode> roulette;
     /**
@@ -58,10 +56,22 @@ public abstract class AbstractOctreeWrapper extends SceneGraphNode implements It
 	// Do not touch this, as it is needed to create the stringToNode map in AbstractSG 
 	if (children == null) {
 	    children = new ArrayList<SceneGraphNode>(root.nObjects);
-	    Iterator<OctreeNode<SceneGraphNode>> it = iterator();
-	    while (it.hasNext()) {
-		OctreeNode<SceneGraphNode> node = it.next();
-		this.add(node.objects);
+	    // Add objects to our children list
+	    addObjects(root, this);
+	}
+    }
+
+    /**
+     * Adds all the objects of the octree to the root list.
+     * @param octant
+     * @param root
+     */
+    private void addObjects(OctreeNode<SceneGraphNode> octant, SceneGraphNode root) {
+	root.add(octant.objects);
+	for (int i = 0; i < 8; i++) {
+	    OctreeNode<SceneGraphNode> child = octant.children[i];
+	    if (child != null) {
+		addObjects(child, root);
 	    }
 	}
     }
@@ -77,16 +87,21 @@ public abstract class AbstractOctreeWrapper extends SceneGraphNode implements It
 	// Update octants
 	if (!copy) {
 	    // Compute observed octants and fill roulette list
-	    root.update(transform, camera.getCamera().frustum, roulette);
+	    root.update(transform, camera, roulette);
 	    updateLocal(time, camera);
+
+	    // Call the update method of all entities in the roulette list. This is implemented in the subclass.
+	    EventManager.getInstance().post(Events.DEBUG3, "Octree threads: " + getRouletteDebug());
+	    updateOctreeObjects(time, transform, camera);
+
+	    // Reset mask
+	    roulette.clear();
+	} else {
+	    // Just update children
+	    for (SceneGraphNode node : children) {
+		node.update(time, transform, camera);
+	    }
 	}
-
-	// Call the update method of all entities in the roulette list. This is implemented in the subclass.
-	EventManager.getInstance().post(Events.DEBUG3, "Octree threads: " + getRouletteDebug());
-	updateOctreeObjects(time, transform, camera);
-
-	// Reset mask
-	roulette.clear();
 
     }
 
@@ -105,32 +120,25 @@ public abstract class AbstractOctreeWrapper extends SceneGraphNode implements It
     @Override
     public void updateLocal(ITimeFrameProvider time, ICamera camera) {
 	if (!copy) {
-	    addToRenderLists(camera);
+	    addToRenderLists(camera, root);
 	}
     }
 
-    protected void addToRenderLists(ICamera camera) {
-	// Add all children
-	int size = octants.size();
-	for (int i = 0; i < size; i++) {
-	    OctreeNode<SceneGraphNode> octant = octants.get(i);
-	    if (octant.observed)
-		addToRender(octant, RenderGroup.LINE);
+    public void addToRenderLists(ICamera camera, OctreeNode<SceneGraphNode> octant) {
+	if (octant.observed) {
+	    addToRender(octant, RenderGroup.LINE);
+	    for (int i = 0; i < 8; i++) {
+		OctreeNode<SceneGraphNode> child = octant.children[i];
+		if (child != null)
+		    addToRenderLists(camera, child);
+	    }
 	}
-    }
-
-    public ArrayList<OctreeNode<SceneGraphNode>> toList() {
-	if (octants == null) {
-	    octants = new ArrayList<OctreeNode<SceneGraphNode>>();
-	    octants.add(root);
-	    root.addChildrenToList(octants);
-	}
-	return octants;
     }
 
     @Override
+    /** Not implemented **/
     public Iterator<OctreeNode<SceneGraphNode>> iterator() {
-	return this.toList().iterator();
+	return null;
     }
 
     @Override

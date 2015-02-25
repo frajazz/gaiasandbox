@@ -72,42 +72,6 @@ public class ObjectServerLoader implements ISceneGraphNodeProvider {
 		cc.executeCommand(ident, true);
 	    }
 
-	    // Fetch particle data
-	    for (int level = 0; level <= OctreeNode.maxDepth; level++) {
-		Message msgParticle = new Message("visualization-lod-data?vis-id=" + visid
-			+ "&lod-level=" + level);
-		msgParticle.setMessageHandler(new MessageHandler() {
-
-		    @Override
-		    public void receivedMessage(Message query, Message reply) {
-			for (MessagePayloadBlock block : reply.getPayload()) {
-			    String data = (String) block.getPayload();
-			    BufferedReader reader = new BufferedReader(new StringReader(data));
-			    try {
-				String line = null;
-				while ((line = reader.readLine()) != null) {
-				    Star star = parseLine(line);
-				    if (star != null)
-					particleList.add(star);
-				}
-			    } catch (IOException e) {
-				EventManager.getInstance().post(Events.JAVA_EXCEPTION, e);
-			    }
-			}
-		    }
-
-		    @Override
-		    public void receivedMessageBlock(Message query, Message reply, MessagePayloadBlock block) {
-		    }
-
-		});
-		cc.sendMessage(msgParticle, true);
-	    }
-	    // Manually add sun
-	    Star s = new Star(new Vector3d(0, 0, 0), 4.83f, 4.83f, 0.656f, "Sol", starid++);
-	    s.initialize();
-	    particleList.add(s);
-
 	    // Get Octree data
 	    Message msgMetadata = new Message("visualization-metadata?vis-id=" + visid
 		    + "&lod-level=-1");
@@ -177,10 +141,54 @@ public class ObjectServerLoader implements ISceneGraphNodeProvider {
 	    });
 	    cc.sendMessage(msgMetadata, true);
 
+	    // Fetch particle data
+	    for (int level = 0; level <= OctreeNode.maxDepth; level++) {
+		Message msgParticle = new Message("visualization-lod-data?vis-id=" + visid
+			+ "&lod-level=" + level);
+		msgParticle.setMessageHandler(new MessageHandler() {
+
+		    @Override
+		    public void receivedMessage(Message query, Message reply) {
+			for (MessagePayloadBlock block : reply.getPayload()) {
+			    String data = (String) block.getPayload();
+			    BufferedReader reader = new BufferedReader(new StringReader(data));
+			    try {
+				String line = null;
+				while ((line = reader.readLine()) != null) {
+				    Star star = parseLine(line);
+				    if (star != null)
+					particleList.add(star);
+				}
+			    } catch (IOException e) {
+				EventManager.getInstance().post(Events.JAVA_EXCEPTION, e);
+			    }
+			}
+		    }
+
+		    @Override
+		    public void receivedMessageBlock(Message query, Message reply, MessagePayloadBlock block) {
+		    }
+
+		});
+		cc.sendMessage(msgParticle, true);
+	    }
+	    // Manually add sun
+	    Star s = new Star(new Vector3d(0, 0, 0), 4.83f, 4.83f, 0.656f, "Sol", starid++);
+	    s.initialize();
+	    particleList.add(s);
+
+	    // Find out octant of sun
+	    OctreeNode<SceneGraphNode> candidate = root.getBestOctant(s.pos);
+	    if (candidate == null) {
+		EventManager.getInstance().post(Events.JAVA_EXCEPTION, new RuntimeException("No octant candidate for the Sun found!"));
+	    } else {
+		s.pageId = candidate.pageId;
+	    }
+
 	    // Insert stars in Octree
 	    for (CelestialBody cb : particleList) {
 		s = (Star) cb;
-		nodesMap.get(s.pageid).getFirst().add(s);
+		nodesMap.get(s.pageId).getFirst().add(s);
 	    }
 
 	    // Add octree wrapper to result
@@ -215,7 +223,7 @@ public class ObjectServerLoader implements ISceneGraphNodeProvider {
 	    double z = Double.parseDouble(tokens[2]) * Constants.PC_TO_U;
 
 	    // Magnitude in virtual particles (type=92) must depend on number of particles contained
-	    float mag = (tokens[3].equalsIgnoreCase("null") || tokens[3].isEmpty()) ? 12f : Float.parseFloat(tokens[3]);
+	    float mag = (tokens[3].equalsIgnoreCase("null") || tokens[3].isEmpty()) ? 4f : Float.parseFloat(tokens[3]);
 	    // Color in virtual particles should be that of the sun - yellowish
 	    float bv = (tokens[4].equalsIgnoreCase("null") || tokens[4].isEmpty()) ? 0.656f : Float.parseFloat(tokens[4]);
 
@@ -231,7 +239,7 @@ public class ObjectServerLoader implements ISceneGraphNodeProvider {
 	    if (mag <= GlobalConf.data.LIMIT_MAG_LOAD) {
 		String name = type == 92 ? ("virtual" + starid) : ("dummy" + starid);
 		Star s = new Star(new Vector3d(y, z, x), mag, mag, bv, name, starid++);
-		s.pageid = pageid;
+		s.pageId = pageid;
 		s.particleCount = particleCount;
 		s.type = type;
 		s.initialize();

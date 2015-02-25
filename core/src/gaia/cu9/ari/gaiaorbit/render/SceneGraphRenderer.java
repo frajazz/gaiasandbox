@@ -158,7 +158,7 @@ public class SceneGraphRenderer extends AbstractRenderer implements IProcessRend
 	    Gdx.app.error(this.getClass().getName(), "Font shader compilation failed:\n" + fontShader.getLog());
 	}
 
-	int numLists = GlobalConf.performance.MULTITHREADING ? GlobalConf.performance.NUMBER_THREADS * 2 : 1;
+	int numLists = GlobalConf.performance.MULTITHREADING ? GlobalConf.performance.NUMBER_THREADS : 1;
 	RenderGroup[] renderGroups = RenderGroup.values();
 	render_lists = new HashMap<RenderGroup, Multilist<IRenderable>>(renderGroups.length);
 	for (RenderGroup rg : renderGroups) {

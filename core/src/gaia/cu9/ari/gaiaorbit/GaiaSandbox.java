@@ -176,7 +176,7 @@ public class GaiaSandbox implements ApplicationListener, IObserver {
 
 	if (GlobalConf.performance.MULTITHREADING)
 	    // Initialize thread pool manager
-	    ThreadPoolManager.initialize(GlobalConf.performance.NUMBER_THREADS * 2);
+	    ThreadPoolManager.initialize(GlobalConf.performance.NUMBER_THREADS);
 
 	// Initialize thread indexer
 	ThreadIndexer.initialize();

@@ -1,6 +1,8 @@
 package gaia.cu9.ari.gaiaorbit.util;
 
 import gaia.cu9.ari.gaiaorbit.util.coord.AstroUtils;
+import gaia.cu9.ari.gaiaorbit.util.math.MathUtilsd;
+import gaia.cu9.ari.gaiaorbit.util.math.Vector3d;
 
 import java.text.DecimalFormat;
 import java.text.NumberFormat;
@@ -117,6 +119,18 @@ public class GlobalResources {
 	for (int i = 0; i < array.length; i++)
 	    res[i] = (float) array[i];
 	return res;
+    }
+
+    /**
+     * Computes whether a body with the given position is visible by a camera with the given direction
+     * and angle. Coordinates are assumed to be in the camera-origin system.
+     * @param pos The position of the body in the reference system of the camera (i.e. camera is at origin).
+     * @param coneAngle The cone angle of the camera.
+     * @param dir The direction.
+     * @return True if the body is visible.
+     */
+    private boolean isInView(Vector3d pos, float coneAngle, Vector3d dir) {
+	return MathUtilsd.acos(pos.dot(dir) / pos.len()) < coneAngle;
     }
 
 }

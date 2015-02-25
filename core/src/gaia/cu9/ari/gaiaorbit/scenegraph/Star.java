@@ -74,7 +74,7 @@ public class Star extends CelestialBody {
      */
 
     /** The id of the octant it belongs to **/
-    public long pageid;
+    public long pageId;
     /** The type: 90 - particle, 91 - blob **/
     public int type;
     /** Number of particles this represents. It is 1 if this represents a star, >1 if it is a blob **/
