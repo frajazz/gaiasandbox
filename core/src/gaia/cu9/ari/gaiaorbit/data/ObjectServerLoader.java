@@ -59,6 +59,8 @@ public class ObjectServerLoader implements ISceneGraphNodeProvider {
 	}
     }
 
+    private static int preloadDepth = 1;
+
     Longref starid = new Longref(1l);
     Longref errors = new Longref();
 
@@ -171,35 +173,38 @@ public class ObjectServerLoader implements ISceneGraphNodeProvider {
 	    });
 	    cc.sendMessage(msgMetadata, true);
 
-	    // Fetch particle data for level 0
-	    Message msgParticle = new Message("visualization-lod-data?vis-id=" + visid
-		    + "&lod-level=0");
-	    msgParticle.setMessageHandler(new MessageHandler() {
+	    int depthLevel = Math.min(OctreeNode.maxDepth, preloadDepth);
+	    for (int level = 0; level <= depthLevel; level++) {
+		// Fetch particle data for level 0
+		Message msgParticle = new Message("visualization-lod-data?vis-id=" + visid
+			+ "&lod-level=" + level);
+		msgParticle.setMessageHandler(new MessageHandler() {
 
-		@Override
-		public void receivedMessage(Message query, Message reply) {
-		    for (MessagePayloadBlock block : reply.getPayload()) {
-			String data = (String) block.getPayload();
-			BufferedReader reader = new BufferedReader(new StringReader(data));
-			try {
-			    String line = null;
-			    while ((line = reader.readLine()) != null) {
-				Star star = parseLine(line, errors, starid);
-				if (star != null)
-				    particleList.add(star);
+		    @Override
+		    public void receivedMessage(Message query, Message reply) {
+			for (MessagePayloadBlock block : reply.getPayload()) {
+			    String data = (String) block.getPayload();
+			    BufferedReader reader = new BufferedReader(new StringReader(data));
+			    try {
+				String line = null;
+				while ((line = reader.readLine()) != null) {
+				    Star star = parseLine(line, errors, starid);
+				    if (star != null)
+					particleList.add(star);
+				}
+			    } catch (IOException e) {
+				EventManager.getInstance().post(Events.JAVA_EXCEPTION, e);
 			    }
-			} catch (IOException e) {
-			    EventManager.getInstance().post(Events.JAVA_EXCEPTION, e);
 			}
 		    }
-		}
 
-		@Override
-		public void receivedMessageBlock(Message query, Message reply, MessagePayloadBlock block) {
-		}
+		    @Override
+		    public void receivedMessageBlock(Message query, Message reply, MessagePayloadBlock block) {
+		    }
 
-	    });
-	    cc.sendMessage(msgParticle, true);
+		});
+		cc.sendMessage(msgParticle, true);
+	    }
 
 	    // Manually add sun
 	    Star s = new Star(new Vector3d(0, 0, 0), 4.83f, 4.83f, 0.656f, "Sol", starid.num++);
@@ -221,7 +226,7 @@ public class ObjectServerLoader implements ISceneGraphNodeProvider {
 		octant.add(s);
 	    }
 	    // Level 0 is loaded
-	    root.setStatus(OctantStatus.LOADED);
+	    root.setStatus(OctantStatus.LOADED, depthLevel);
 
 	    // Add octree wrapper to result
 	    if (GlobalConf.performance.MULTITHREADING) {

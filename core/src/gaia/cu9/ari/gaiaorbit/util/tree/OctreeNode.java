@@ -370,6 +370,24 @@ public class OctreeNode<T extends IPosition> implements ILineRenderable {
 	}
     }
 
+    /**
+     * Sets the status to this node and its descendants recursively
+     * to the given depth level.
+     * @param status The new status.
+     * @param depth The depth.
+     */
+    public void setStatus(OctantStatus status, int depth) {
+	if (depth >= this.depth) {
+	    setStatus(status);
+	    for (int i = 0; i < 8; i++) {
+		OctreeNode<T> child = children[i];
+		if (child != null) {
+		    child.setStatus(status, depth);
+		}
+	    }
+	}
+    }
+
     @Override
     public void render(ShapeRenderer sr, float alpha) {
 	float maxDepth = OctreeNode.maxDepth * 2;

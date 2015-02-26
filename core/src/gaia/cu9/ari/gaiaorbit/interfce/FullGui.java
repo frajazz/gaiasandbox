@@ -959,7 +959,7 @@ public class FullGui implements IGui, IObserver {
 	inputInterface = new ScriptStateInterface(skin);
 	inputInterface.setFillParent(true);
 	inputInterface.right().top();
-	inputInterface.pad(50, 0, 0, 5);
+	inputInterface.pad(100, 0, 0, 5);
 
 	// CUSTOM OBJECTS INTERFACE
 	customInterface = new CustomInterface(ui, skin, lock);

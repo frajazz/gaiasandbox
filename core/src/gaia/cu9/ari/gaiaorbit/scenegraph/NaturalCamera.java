@@ -314,6 +314,22 @@ public class NaturalCamera extends AbstractCamera implements IObserver {
      * Stops the camera movement.
      * @return True if the camera had any movement at all and it has been stopped. False if camera was already still.
      */
+    public boolean stopTotalMovement() {
+	boolean stopped = (vel.len2() != 0 || yaw.y != 0 || pitch.y != 0 || roll.y != 0 || vert.y != 0 || hor.y != 0);
+	force.scl(0f);
+	vel.scl(0f);
+	yaw.scl(0f);
+	pitch.scl(0f);
+	roll.scl(0f);
+	hor.scl(0f);
+	vert.scl(0f);
+	return stopped;
+    }
+
+    /**
+     * Stops the camera movement.
+     * @return True if the camera had any movement at all and it has been stopped. False if camera was already still.
+     */
     public boolean stopForwardMovement() {
 	boolean stopped = (vel.len2() != 0);
 	force.scl(0f);
@@ -569,7 +585,7 @@ public class NaturalCamera extends AbstractCamera implements IObserver {
 	    addRoll((double) data[0]);
 	    break;
 	case CAMERA_STOP:
-	    stopMovement();
+	    stopTotalMovement();
 	    break;
 	case CAMERA_CENTER:
 	    diverted = false;
