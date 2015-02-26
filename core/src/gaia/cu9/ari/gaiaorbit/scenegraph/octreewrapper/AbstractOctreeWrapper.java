@@ -106,7 +106,7 @@ public abstract class AbstractOctreeWrapper extends SceneGraphNode implements It
 	// Update octants
 	if (!copy) {
 	    // Compute observed octants and fill roulette list
-	    root.update(transform, camera, roulette);
+	    root.update(transform, camera, roulette, 1f);
 	    updateLocal(time, camera);
 
 	    // Call the update method of all entities in the roulette list. This is implemented in the subclass.

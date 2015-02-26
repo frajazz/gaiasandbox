@@ -34,8 +34,10 @@ import com.badlogic.gdx.utils.Pools;
 public class OctreeNode<T extends IPosition> implements ILineRenderable {
     /** Max depth of the structure this node belongs to **/
     public static int maxDepth;
-    /** Angle threshold in which we break the octree **/
-    public static final double ANGLE_THRESHOLD = 10d;
+    /** Angle threshold below which we stay with the current level. Lower limit of overlap **/
+    public static final double ANGLE_THRESHOLD_1 = Math.toRadians(6d);
+    /** Angle threshold above which we break the Octree. Upper limit of overlap **/
+    public static final double ANGLE_THRESHOLD_2 = Math.toRadians(16d);
 
     /** Since OctreeNode is not to be parallelized, this can be static **/
     private static BoundingBoxd boxcopy = new BoundingBoxd(new Vector3d(), new Vector3d());
@@ -90,6 +92,8 @@ public class OctreeNode<T extends IPosition> implements ILineRenderable {
     public boolean observed;
     /** Camera transform to render **/
     Vector3d transform;
+    /** The opacity of this node **/
+    public float opacity;
 
     /**
      * Constructs an octree node.
@@ -270,9 +274,11 @@ public class OctreeNode<T extends IPosition> implements ILineRenderable {
      * @param parentTransform The parent transform.
      * @param cam The current camera.
      * @param roulette List where the nodes to be processed are to be added.
+     * @param opacity The opacity to set.
      */
-    public void update(Transform parentTransform, ICamera cam, List<T> roulette) {
+    public void update(Transform parentTransform, ICamera cam, List<T> roulette, float opacity) {
 	parentTransform.getTranslation(transform);
+	this.opacity = opacity;
 
 	// Is this octant observed??
 	computeObserved2(parentTransform, cam);
@@ -287,11 +293,12 @@ public class OctreeNode<T extends IPosition> implements ILineRenderable {
 	    distToCamera = auxD.set(centre).add(cam.getInversePos()).len();
 	    viewAngle = Math.atan(radius / distToCamera) / cam.getFovFactor();
 
-	    if (Math.toDegrees(viewAngle) < ANGLE_THRESHOLD) {
-		// If it is sufficiently small, we stay with the "virtual" particles
+	    if (viewAngle < ANGLE_THRESHOLD_1) {
+		// Stay in current level
 		roulette.addAll(objects);
 		setChildrenObserved(false);
-	    } else {
+	    } else if (viewAngle > ANGLE_THRESHOLD_2) {
+		// Break down tree
 		if (childrenCount == 0) {
 		    // We are a leaf, add objects anyway
 		    roulette.addAll(objects);
@@ -301,10 +308,31 @@ public class OctreeNode<T extends IPosition> implements ILineRenderable {
 		    for (int i = 0; i < 8; i++) {
 			OctreeNode<T> child = children[i];
 			if (child != null) {
-			    child.update(parentTransform, cam, roulette);
+			    child.update(parentTransform, cam, roulette, opacity);
 			}
 		    }
 		}
+	    } else {
+		// Overlap area, fade in/out
+
+		double alpha = MathUtilsd.lint(viewAngle, ANGLE_THRESHOLD_1, ANGLE_THRESHOLD_2, 0d, 1d);
+
+		// from 1 to 0, th1 to th2
+		roulette.addAll(objects);
+		setChildrenObserved(false);
+		if (childrenCount != 0) {
+		    this.opacity = 1f - (float) alpha;
+		    // Update children
+		    for (int i = 0; i < 8; i++) {
+			OctreeNode<T> child = children[i];
+			if (child != null) {
+			    child.update(parentTransform, cam, roulette, (float) alpha);
+			}
+		    }
+		}
+
+		// from 0 to 1, th2 to th1
+
 	    }
 
 	}
@@ -320,7 +348,7 @@ public class OctreeNode<T extends IPosition> implements ILineRenderable {
     }
 
     public boolean isObserved() {
-	return observed && parent.isObserved();
+	return observed && (parent == null ? true : parent.isObserved());
     }
 
     /**

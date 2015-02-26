@@ -12,6 +12,7 @@ import gaia.cu9.ari.gaiaorbit.util.math.Vector2d;
 import gaia.cu9.ari.gaiaorbit.util.math.Vector3d;
 import gaia.cu9.ari.gaiaorbit.util.time.ITimeFrameProvider;
 import gaia.cu9.ari.gaiaorbit.util.time.TimeUtils;
+import gaia.cu9.ari.gaiaorbit.util.tree.OctreeNode;
 
 import java.util.Map;
 import java.util.Random;
@@ -75,10 +76,8 @@ public class Star extends CelestialBody {
 
     /** The id of the octant it belongs to **/
     public long pageId;
-    /** The type: 90 - particle, 91 - blob **/
-    public int type;
-    /** Number of particles this represents. It is 1 if this represents a star, >1 if it is a blob **/
-    public int particleCount;
+    /** Its page **/
+    public OctreeNode<SceneGraphNode> page;
 
     public static void initModel() {
 	if (mc == null) {
@@ -163,7 +162,7 @@ public class Star extends CelestialBody {
     @Override
     public void update(ITimeFrameProvider time, final Transform parentTransform, ICamera camera, float opacity) {
 	if (appmag <= GlobalConf.runtime.LIMIT_MAG_RUNTIME) {
-	    this.opacity = opacity;
+	    this.opacity = opacity * (page != null ? page.opacity : 1);
 	    transform.position.set(parentTransform.position).add(pos);
 
 	    distToCamera = (float) transform.position.len();
@@ -209,6 +208,7 @@ public class Star extends CelestialBody {
 		if (viewAngleApparent < THRESHOLD_ANGLE_POINT() * camera.getFovFactor()) {
 		    // Update opacity
 		    opacity *= MathUtilsd.lint(viewAngleApparent, 0, THRESHOLD_ANGLE_POINT(), Constants.pointAlphaMin, Constants.pointAlphaMax);
+
 		    addToRender(this, RenderGroup.POINT);
 		} else {
 		    addToRender(this, RenderGroup.POINT);

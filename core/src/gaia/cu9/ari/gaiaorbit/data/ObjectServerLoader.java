@@ -59,7 +59,10 @@ public class ObjectServerLoader implements ISceneGraphNodeProvider {
 	}
     }
 
-    private static int preloadDepth = 1;
+    /**
+     * Data will be pre-loaded at startup down to this octree depth.
+     */
+    private static int preloadDepth = 9;
 
     Longref starid = new Longref(1l);
     Longref errors = new Longref();
@@ -224,6 +227,7 @@ public class ObjectServerLoader implements ISceneGraphNodeProvider {
 		s = (Star) cb;
 		OctreeNode<SceneGraphNode> octant = nodesMap.get(s.pageId).getFirst();
 		octant.add(s);
+		s.page = octant;
 	    }
 	    // Level 0 is loaded
 	    root.setStatus(OctantStatus.LOADED, depthLevel);
@@ -284,8 +288,6 @@ public class ObjectServerLoader implements ISceneGraphNodeProvider {
 		String name = type == 92 ? ("virtual" + starid) : ("dummy" + starid);
 		Star s = new Star(new Vector3d(y, z, x), mag, mag, bv, name, starid.num++);
 		s.pageId = pageid;
-		s.particleCount = particleCount;
-		s.type = type;
 		s.initialize();
 		return s;
 	    }
@@ -369,11 +371,15 @@ public class ObjectServerLoader implements ISceneGraphNodeProvider {
 
 			    cc.sendMessage(msgParticle, true);
 
-			    // Set objects to octant
+			    // Set objects to octant, and octant to objects
 			    if (octant.objects != null) {
 				particleList.addAll(octant.objects);
 			    }
 			    octant.setObjects(particleList);
+			    for (SceneGraphNode particle : particleList) {
+				((Star) particle).page = octant;
+			    }
+
 			    // Add objects to octree wrapper node
 			    aow.add(octant.objects, octant);
 			    octant.setStatus(OctantStatus.LOADED);
