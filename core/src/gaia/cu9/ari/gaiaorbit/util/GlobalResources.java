@@ -129,7 +129,7 @@ public class GlobalResources {
      * @param dir The direction.
      * @return True if the body is visible.
      */
-    private boolean isInView(Vector3d pos, float coneAngle, Vector3d dir) {
+    public static boolean isInView(Vector3d pos, float coneAngle, Vector3d dir) {
 	return MathUtilsd.acos(pos.dot(dir) / pos.len()) < coneAngle;
     }
 

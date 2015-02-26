@@ -12,8 +12,10 @@ import gaia.cu9.ari.gaiaorbit.util.time.ITimeFrameProvider;
 import gaia.cu9.ari.gaiaorbit.util.tree.OctreeNode;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 
 import com.badlogic.gdx.utils.Pool;
 import com.badlogic.gdx.utils.Pools;
@@ -29,6 +31,7 @@ public abstract class AbstractOctreeWrapper extends SceneGraphNode implements It
     public OctreeNode<SceneGraphNode> root;
     /** Roulette list with the objects to process **/
     protected List<SceneGraphNode> roulette;
+    protected Map<SceneGraphNode, OctreeNode<SceneGraphNode>> parenthood;
     /**
      * Is this just a copy?
      */
@@ -43,6 +46,7 @@ public abstract class AbstractOctreeWrapper extends SceneGraphNode implements It
 	this.ct = ComponentType.Others;
 	this.root = root;
 	this.parentName = parentName;
+	this.parenthood = new HashMap<SceneGraphNode, OctreeNode<SceneGraphNode>>();
 
     }
 
@@ -59,22 +63,35 @@ public abstract class AbstractOctreeWrapper extends SceneGraphNode implements It
 	if (children == null) {
 	    children = new ArrayList<SceneGraphNode>(root.nObjects);
 	    // Add objects to our children list
-	    addObjects(root, this);
+	    addObjectsDeep(root, this);
 	}
     }
 
     /**
-     * Adds all the objects of the octree to the root list.
+     * Adds all the objects of the octree (recursively) to the root list.
      * @param octant
      * @param root
      */
-    private void addObjects(OctreeNode<SceneGraphNode> octant, SceneGraphNode root) {
-	root.add(octant.objects);
+    private void addObjectsDeep(OctreeNode<SceneGraphNode> octant, SceneGraphNode root) {
+	if (octant.objects != null) {
+	    root.add(octant.objects);
+	    for (SceneGraphNode sgn : octant.objects) {
+		parenthood.put(sgn, octant);
+	    }
+	}
+
 	for (int i = 0; i < 8; i++) {
 	    OctreeNode<SceneGraphNode> child = octant.children[i];
 	    if (child != null) {
-		addObjects(child, root);
+		addObjectsDeep(child, root);
 	    }
+	}
+    }
+
+    public void add(List<? extends SceneGraphNode> children, OctreeNode<SceneGraphNode> octant) {
+	super.add(children);
+	for (SceneGraphNode sgn : children) {
+	    parenthood.put(sgn, octant);
 	}
     }
 
@@ -103,7 +120,10 @@ public abstract class AbstractOctreeWrapper extends SceneGraphNode implements It
 	    CelestialBody focus = camera.getFocus();
 	    if (focus != null) {
 		SceneGraphNode star = focus.getFirstAncestorOfType(Star.class);
-		star.update(time, star.parent.transform, camera);
+		OctreeNode<SceneGraphNode> parent = parenthood.get(star);
+		if (parent != null && !parent.isObserved()) {
+		    star.update(time, star.parent.transform, camera);
+		}
 	    }
 	} else {
 	    // Just update children

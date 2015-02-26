@@ -7,6 +7,7 @@ import gaia.cu9.ari.gaiaorbit.scenegraph.component.RotationComponent;
 import gaia.cu9.ari.gaiaorbit.util.Constants;
 import gaia.cu9.ari.gaiaorbit.util.DecalUtils;
 import gaia.cu9.ari.gaiaorbit.util.GlobalConf;
+import gaia.cu9.ari.gaiaorbit.util.GlobalResources;
 import gaia.cu9.ari.gaiaorbit.util.color.ColourUtils;
 import gaia.cu9.ari.gaiaorbit.util.math.MathUtilsd;
 import gaia.cu9.ari.gaiaorbit.util.math.Vector2d;
@@ -310,18 +311,6 @@ public abstract class CelestialBody extends AbstractPositionEntity implements IL
     }
 
     /**
-     * Computes whether a body with the given position is visible by a camera with the given direction
-     * and angle.
-     * @param pos The position of the body in the reference system of the camera.
-     * @param coneAngle The cone angle of the camera.
-     * @param dir The direction.
-     * @return True if the body is visible.
-     */
-    protected boolean computeVisibleFov(Vector3d pos, float coneAngle, Vector3d dir) {
-	return MathUtilsd.acos(pos.dot(dir) / pos.len()) < coneAngle;
-    }
-
-    /**
      * Computes the visible value, which indicates whether this body is visible or not
      * in the given time with the given camera.
      * If updateGaia is true, it also detects if this body is observed by Gaia and updates 
@@ -340,7 +329,7 @@ public abstract class CelestialBody extends AbstractPositionEntity implements IL
 	    updateTransitNumber(visible && time.getDt() != 0, time, camera.getManager().fovCamera);
 	} else {
 	    // We are in Free, Focus, Fov1 or Fov2 mode
-	    visible = computeVisibleFov(transform.position, camera.getAngleEdge(), camera.getDirection());
+	    visible = GlobalResources.isInView(transform.position, camera.getAngleEdge(), camera.getDirection());
 
 	    /** If time is running, check Gaia **/
 	    if (computeGaiaScan && time.getDt() != 0) {

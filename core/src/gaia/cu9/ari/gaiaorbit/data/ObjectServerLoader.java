@@ -14,6 +14,7 @@ import gaia.cu9.ari.gaiaorbit.util.I18n;
 import gaia.cu9.ari.gaiaorbit.util.Pair;
 import gaia.cu9.ari.gaiaorbit.util.math.Vector3d;
 import gaia.cu9.ari.gaiaorbit.util.tree.OctreeNode;
+import gaia.cu9.ari.gaiaorbit.util.tree.OctreeNode.OctantStatus;
 import gaia.cu9.object.server.ClientCore;
 import gaia.cu9.object.server.commands.Message;
 import gaia.cu9.object.server.commands.MessageHandler;
@@ -29,32 +30,61 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
+import java.util.Queue;
+import java.util.concurrent.ArrayBlockingQueue;
 
 public class ObjectServerLoader implements ISceneGraphNodeProvider {
+    /** The loading queue **/
+    private static Queue<OctreeNode<?>> loadQueue = new ArrayBlockingQueue<OctreeNode<?>>(5000);
+
+    /** Daemon thread that gets the data loading requests and serves them **/
+    private static DaemonLoader daemon;
+
+    /** Adds an octant to the queue to be loaded **/
+    public static void addToQueue(OctreeNode<?> octant) {
+	synchronized (loadQueue) {
+	    loadQueue.add(octant);
+	    octant.setStatus(OctantStatus.QUEUED);
+	    // More than one second, flush
+	    flushLoadQueue();
+	}
+    }
+
+    /**
+     * Tells the loader to start loading the octants in the queue.
+     */
+    public static void flushLoadQueue() {
+	if (daemon != null && !daemon.awake && !loadQueue.isEmpty()) {
+	    daemon.interrupt();
+	}
+    }
+
+    Longref starid = new Longref(1l);
+    Longref errors = new Longref();
+
     ClientCore cc;
     List<SceneGraphNode> result;
-    List<CelestialBody> particleList;
+
     Map<Long, Pair<OctreeNode<SceneGraphNode>, long[]>> nodesMap;
     OctreeNode<SceneGraphNode> root;
-    Long starid = 1l;
-    Long errors = 0l;
 
     @Override
     public void initialize(Properties properties) {
 	result = new ArrayList<SceneGraphNode>();
-	particleList = new ArrayList<CelestialBody>();
 	nodesMap = new HashMap<Long, Pair<OctreeNode<SceneGraphNode>, long[]>>();
 	cc = ClientCore.getInstance();
     }
 
     @Override
     public List<? extends SceneGraphNode> loadObjects() {
-	errors = 0l;
-
+	errors.num = 0l;
+	String visid = null;
+	AbstractOctreeWrapper otw = null;
+	final List<CelestialBody> particleList = new ArrayList<CelestialBody>(10000);
 	try {
 	    EventManager.getInstance().post(Events.POST_NOTIFICATION, this.getClass().getSimpleName(), I18n.bundle.format("notif.objectserver.gettingdata"));
 
-	    String visid = GlobalConf.data.VISUALIZATION_ID;
+	    visid = GlobalConf.data.VISUALIZATION_ID;
 
 	    if (!cc.isConnected()) {
 		cc.connect(GlobalConf.data.OBJECT_SERVER_HOSTNAME,
@@ -141,39 +171,38 @@ public class ObjectServerLoader implements ISceneGraphNodeProvider {
 	    });
 	    cc.sendMessage(msgMetadata, true);
 
-	    // Fetch particle data
-	    for (int level = 0; level <= OctreeNode.maxDepth; level++) {
-		Message msgParticle = new Message("visualization-lod-data?vis-id=" + visid
-			+ "&lod-level=" + level);
-		msgParticle.setMessageHandler(new MessageHandler() {
+	    // Fetch particle data for level 0
+	    Message msgParticle = new Message("visualization-lod-data?vis-id=" + visid
+		    + "&lod-level=0");
+	    msgParticle.setMessageHandler(new MessageHandler() {
 
-		    @Override
-		    public void receivedMessage(Message query, Message reply) {
-			for (MessagePayloadBlock block : reply.getPayload()) {
-			    String data = (String) block.getPayload();
-			    BufferedReader reader = new BufferedReader(new StringReader(data));
-			    try {
-				String line = null;
-				while ((line = reader.readLine()) != null) {
-				    Star star = parseLine(line);
-				    if (star != null)
-					particleList.add(star);
-				}
-			    } catch (IOException e) {
-				EventManager.getInstance().post(Events.JAVA_EXCEPTION, e);
+		@Override
+		public void receivedMessage(Message query, Message reply) {
+		    for (MessagePayloadBlock block : reply.getPayload()) {
+			String data = (String) block.getPayload();
+			BufferedReader reader = new BufferedReader(new StringReader(data));
+			try {
+			    String line = null;
+			    while ((line = reader.readLine()) != null) {
+				Star star = parseLine(line, errors, starid);
+				if (star != null)
+				    particleList.add(star);
 			    }
+			} catch (IOException e) {
+			    EventManager.getInstance().post(Events.JAVA_EXCEPTION, e);
 			}
 		    }
+		}
 
-		    @Override
-		    public void receivedMessageBlock(Message query, Message reply, MessagePayloadBlock block) {
-		    }
+		@Override
+		public void receivedMessageBlock(Message query, Message reply, MessagePayloadBlock block) {
+		}
 
-		});
-		cc.sendMessage(msgParticle, true);
-	    }
+	    });
+	    cc.sendMessage(msgParticle, true);
+
 	    // Manually add sun
-	    Star s = new Star(new Vector3d(0, 0, 0), 4.83f, 4.83f, 0.656f, "Sol", starid++);
+	    Star s = new Star(new Vector3d(0, 0, 0), 4.83f, 4.83f, 0.656f, "Sol", starid.num++);
 	    s.initialize();
 	    particleList.add(s);
 
@@ -188,11 +217,13 @@ public class ObjectServerLoader implements ISceneGraphNodeProvider {
 	    // Insert stars in Octree
 	    for (CelestialBody cb : particleList) {
 		s = (Star) cb;
-		nodesMap.get(s.pageId).getFirst().add(s);
+		OctreeNode<SceneGraphNode> octant = nodesMap.get(s.pageId).getFirst();
+		octant.add(s);
 	    }
+	    // Level 0 is loaded
+	    root.setStatus(OctantStatus.LOADED);
 
 	    // Add octree wrapper to result
-	    AbstractOctreeWrapper otw = null;
 	    if (GlobalConf.performance.MULTITHREADING) {
 		otw = new OctreeWrapperConcurrent("Universe", root, GlobalConf.performance.NUMBER_THREADS);
 	    } else {
@@ -208,14 +239,22 @@ public class ObjectServerLoader implements ISceneGraphNodeProvider {
 	    EventManager.getInstance().post(Events.JAVA_EXCEPTION, e);
 	}
 
-	if (errors > 0)
+	if (errors.num > 0l)
 	    EventManager.getInstance().post(Events.JAVA_EXCEPTION, new RuntimeException(I18n.bundle.format("error.loading.objects", errors)));
 	EventManager.getInstance().post(Events.POST_NOTIFICATION, this.getClass().getSimpleName(), I18n.bundle.format("notif.catalog.init", particleList.size()));
+
+	/**
+	 * INITIALIZE DAEMON LOADER THREAD
+	 */
+	daemon = new DaemonLoader(visid, starid, otw);
+	daemon.setDaemon(true);
+	daemon.setName("daemon-objectserver-loader");
+	daemon.start();
 
 	return result;
     }
 
-    private Star parseLine(String line) {
+    private static Star parseLine(String line, Longref errors, Longref starid) {
 	String[] tokens = line.split(";");
 	try {
 	    double x = Double.parseDouble(tokens[0]) * Constants.PC_TO_U;
@@ -238,7 +277,7 @@ public class ObjectServerLoader implements ISceneGraphNodeProvider {
 
 	    if (mag <= GlobalConf.data.LIMIT_MAG_LOAD) {
 		String name = type == 92 ? ("virtual" + starid) : ("dummy" + starid);
-		Star s = new Star(new Vector3d(y, z, x), mag, mag, bv, name, starid++);
+		Star s = new Star(new Vector3d(y, z, x), mag, mag, bv, name, starid.num++);
 		s.pageId = pageid;
 		s.particleCount = particleCount;
 		s.type = type;
@@ -248,8 +287,131 @@ public class ObjectServerLoader implements ISceneGraphNodeProvider {
 
 	} catch (Exception e) {
 	    //EventManager.getInstance().post(Events.JAVA_EXCEPTION, new RuntimeException("Error in star " + starid + ": Skipping it"));
-	    errors++;
+	    errors.num++;
 	}
 	return null;
+    }
+
+    /**
+     * The daemon loader thread.
+     * @author Toni Sagrista
+     *
+     */
+    private static class DaemonLoader extends Thread {
+	public boolean awake = false;
+
+	/** The ID of the visualization **/
+	private String visid;
+	private Longref errors;
+	private Longref starid;
+	private ClientCore cc;
+	private AbstractOctreeWrapper aow;
+	private String globalPauseName;
+
+	public DaemonLoader(String visid, Longref starid, AbstractOctreeWrapper aow) {
+	    this.visid = visid;
+	    this.starid = starid;
+	    this.errors = new Longref(0l);
+	    this.aow = aow;
+	    this.cc = ClientCore.getInstance();
+	    this.globalPauseName = I18n.bundle.get("notif.globalpause");
+	}
+
+	@Override
+	public void run() {
+	    while (true) {
+		synchronized (loadQueue) {
+		    EventManager.getInstance().post(Events.CAMERA_STOP);
+		    // Disable input
+		    EventManager.getInstance().post(Events.INPUT_ENABLED_CMD, false);
+		    // Stop program
+		    EventManager.getInstance().post(Events.TOGGLE_UPDATEPAUSE, globalPauseName);
+		    // Load data in queue
+		    while (!loadQueue.isEmpty()) {
+			OctreeNode<SceneGraphNode> octant = (OctreeNode<SceneGraphNode>) loadQueue.poll();
+			EventManager.getInstance().post(Events.POST_NOTIFICATION, I18n.bundle.format("notif.loadingoctant", octant.pageId));
+			try {
+			    final List<SceneGraphNode> particleList = new ArrayList<SceneGraphNode>(50);
+
+			    octant.setStatus(OctantStatus.LOADING);
+			    Message msgParticle = new Message("visualization-page?vis-id=" + visid
+				    + "&page-id=" + octant.pageId);
+			    msgParticle.setMessageHandler(new MessageHandler() {
+
+				@Override
+				public void receivedMessage(Message query, Message reply) {
+				    for (MessagePayloadBlock block : reply.getPayload()) {
+					String data = (String) block.getPayload();
+					BufferedReader reader = new BufferedReader(new StringReader(data));
+					try {
+					    String line = null;
+					    while ((line = reader.readLine()) != null) {
+						Star star = parseLine(line, errors, starid);
+						if (star != null)
+						    particleList.add(star);
+					    }
+					} catch (IOException e) {
+					    EventManager.getInstance().post(Events.JAVA_EXCEPTION, e);
+					}
+				    }
+				}
+
+				@Override
+				public void receivedMessageBlock(Message query, Message reply, MessagePayloadBlock block) {
+				}
+
+			    });
+
+			    cc.sendMessage(msgParticle, true);
+
+			    // Set objects to octant
+			    if (octant.objects != null) {
+				particleList.addAll(octant.objects);
+			    }
+			    octant.setObjects(particleList);
+			    // Add objects to octree wrapper node
+			    aow.add(octant.objects, octant);
+			    octant.setStatus(OctantStatus.LOADED);
+
+			} catch (IOException e) {
+			    EventManager.getInstance().post(Events.JAVA_EXCEPTION, e);
+			    EventManager.getInstance().post(Events.POST_NOTIFICATION, I18n.bundle.format("notif.loadingoctant.fail", octant.pageId));
+			    octant.setStatus(OctantStatus.LOADING_FAILED);
+			}
+		    }
+
+		    // Resume program
+		    EventManager.getInstance().post(Events.TOGGLE_UPDATEPAUSE, globalPauseName);
+		    // Enable input
+		    EventManager.getInstance().post(Events.INPUT_ENABLED_CMD, true);
+
+		}
+
+		// Sleep until new data comes
+		try {
+		    awake = false;
+		    Thread.sleep(Long.MAX_VALUE - 8);
+		} catch (InterruptedException e) {
+		    // New data!
+		    awake = true;
+		}
+	    }
+	}
+    }
+
+    private static class Longref {
+	public long num;
+
+	public Longref() {
+	}
+
+	public Longref(long num) {
+	    this.num = num;
+	}
+
+	@Override
+	public String toString() {
+	    return String.valueOf(num);
+	}
     }
 }

@@ -286,7 +286,7 @@ public class SceneGraphNode implements ISceneGraphNode, IPosition {
      * Adds the given list of children as child nodes.
      * @param children
      */
-    public final void add(List<? extends SceneGraphNode> children) {
+    public void add(List<? extends SceneGraphNode> children) {
 	add(children.toArray(new SceneGraphNode[children.size()]));
     }
 
@@ -534,7 +534,7 @@ public class SceneGraphNode implements ISceneGraphNode, IPosition {
      * @param nodes List of nodes to set the flag to. May be null.
      * @param computed The computed value.
      */
-    protected void setComputedFlag(List<SceneGraphNode> nodes, boolean computed) {
+    public void setComputedFlag(List<SceneGraphNode> nodes, boolean computed) {
 	if (nodes != null) {
 	    int size = nodes.size();
 	    for (int i = 0; i < size; i++) {
@@ -556,14 +556,13 @@ public class SceneGraphNode implements ISceneGraphNode, IPosition {
     }
 
     public SceneGraphNode getFirstAncestorOfType(Class<? extends SceneGraphNode> clazz) {
-	if (parent != null) {
-	    if (parent.getClass().isAssignableFrom(clazz)) {
-		return parent;
-	    } else {
-		return parent.getFirstAncestorOfType(clazz);
-	    }
+	if (this.getClass().isAssignableFrom(clazz))
+	    return this;
+	else if (parent != null) {
+	    return parent.getFirstAncestorOfType(clazz);
+	} else {
+	    return null;
 	}
-	return null;
     }
 
     @Override

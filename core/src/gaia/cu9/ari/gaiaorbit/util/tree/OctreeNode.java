@@ -1,9 +1,11 @@
 package gaia.cu9.ari.gaiaorbit.util.tree;
 
+import gaia.cu9.ari.gaiaorbit.data.ObjectServerLoader;
 import gaia.cu9.ari.gaiaorbit.render.ILineRenderable;
 import gaia.cu9.ari.gaiaorbit.render.SceneGraphRenderer.ComponentType;
 import gaia.cu9.ari.gaiaorbit.scenegraph.ICamera;
 import gaia.cu9.ari.gaiaorbit.scenegraph.Transform;
+import gaia.cu9.ari.gaiaorbit.util.GlobalResources;
 import gaia.cu9.ari.gaiaorbit.util.Pair;
 import gaia.cu9.ari.gaiaorbit.util.math.BoundingBoxd;
 import gaia.cu9.ari.gaiaorbit.util.math.MathUtilsd;
@@ -41,6 +43,16 @@ public class OctreeNode<T extends IPosition> implements ILineRenderable {
     private static Vector3d auxD = new Vector3d();
     private static Vector3 auxF1 = new Vector3(), auxF2 = new Vector3();
 
+    public enum OctantStatus {
+	NOT_LOADED,
+	QUEUED,
+	LOADING,
+	LOADING_FAILED,
+	LOADED
+    }
+
+    /** The load status of this node **/
+    private OctantStatus status;
     /** The unique page identifier **/
     public final long pageId;
     /** Contains the bottom-left-front position of the octant **/
@@ -67,7 +79,7 @@ public class OctreeNode<T extends IPosition> implements ILineRenderable {
     @SuppressWarnings("unchecked")
     public OctreeNode<T>[] children = new OctreeNode[8];
     /** List of objects **/
-    public List<T> objects = new ArrayList<T>(100);
+    public List<T> objects;
 
     private double radius;
     /** If observed, the view angle in radians of this octant **/
@@ -105,6 +117,7 @@ public class OctreeNode<T extends IPosition> implements ILineRenderable {
 	this.depth = depth;
 	this.transform = new Vector3d();
 	this.observed = false;
+	this.status = OctantStatus.NOT_LOADED;
 
 	this.radius = Math.sqrt(hsx * hsx + hsy * hsy + hsz * hsz);
     }
@@ -144,8 +157,14 @@ public class OctreeNode<T extends IPosition> implements ILineRenderable {
     }
 
     public boolean add(T e) {
+	if (objects == null)
+	    objects = new ArrayList<T>(100);
 	objects.add(e);
 	return true;
+    }
+
+    public void setObjects(List<T> l) {
+	this.objects = l;
     }
 
     public boolean insert(T e, int level) {
@@ -259,6 +278,11 @@ public class OctreeNode<T extends IPosition> implements ILineRenderable {
 	computeObserved2(parentTransform, cam);
 
 	if (observed) {
+	    if (status == OctantStatus.NOT_LOADED) {
+		// Add to load
+		ObjectServerLoader.addToQueue(this);
+	    }
+
 	    // Compute distance and view angle
 	    distToCamera = auxD.set(centre).add(cam.getInversePos()).len();
 	    viewAngle = Math.atan(radius / distToCamera) / cam.getFovFactor();
@@ -282,6 +306,7 @@ public class OctreeNode<T extends IPosition> implements ILineRenderable {
 		    }
 		}
 	    }
+
 	}
     }
 
@@ -292,6 +317,10 @@ public class OctreeNode<T extends IPosition> implements ILineRenderable {
 		child.observed = observed;
 	    }
 	}
+    }
+
+    public boolean isObserved() {
+	return observed && parent.isObserved();
     }
 
     /**
@@ -318,29 +347,27 @@ public class OctreeNode<T extends IPosition> implements ILineRenderable {
 	Vector3d dir = cam.getDirection();
 	boxcopy.set(box);
 	boxcopy.mul(boxtransf.idt().translate(parentTransform.getTranslation()));
-	observed = computeVisibleFov(boxcopy.getCenter(auxD), angle, dir) ||
-		computeVisibleFov(boxcopy.getCorner000(auxD), angle, dir) ||
-		computeVisibleFov(boxcopy.getCorner001(auxD), angle, dir) ||
-		computeVisibleFov(boxcopy.getCorner010(auxD), angle, dir) ||
-		computeVisibleFov(boxcopy.getCorner011(auxD), angle, dir) ||
-		computeVisibleFov(boxcopy.getCorner100(auxD), angle, dir) ||
-		computeVisibleFov(boxcopy.getCorner101(auxD), angle, dir) ||
-		computeVisibleFov(boxcopy.getCorner110(auxD), angle, dir) ||
-		computeVisibleFov(boxcopy.getCorner111(auxD), angle, dir) ||
+	observed = GlobalResources.isInView(boxcopy.getCenter(auxD), angle, dir) ||
+		GlobalResources.isInView(boxcopy.getCorner000(auxD), angle, dir) ||
+		GlobalResources.isInView(boxcopy.getCorner001(auxD), angle, dir) ||
+		GlobalResources.isInView(boxcopy.getCorner010(auxD), angle, dir) ||
+		GlobalResources.isInView(boxcopy.getCorner011(auxD), angle, dir) ||
+		GlobalResources.isInView(boxcopy.getCorner100(auxD), angle, dir) ||
+		GlobalResources.isInView(boxcopy.getCorner101(auxD), angle, dir) ||
+		GlobalResources.isInView(boxcopy.getCorner110(auxD), angle, dir) ||
+		GlobalResources.isInView(boxcopy.getCorner111(auxD), angle, dir) ||
 		box.contains(cam.getPos());
 
     }
 
-    /**
-     * Computes whether a body with the given position is visible by a camera with the given direction
-     * and angle.
-     * @param pos The position of the body in the reference system of the camera.
-     * @param coneAngle The cone angle of the camera.
-     * @param dir The direction.
-     * @return True if the body is visible.
-     */
-    private boolean computeVisibleFov(Vector3d pos, float coneAngle, Vector3d dir) {
-	return MathUtilsd.acos(pos.dot(dir) / pos.len()) < coneAngle;
+    public OctantStatus getStatus() {
+	return status;
+    }
+
+    public void setStatus(OctantStatus status) {
+	synchronized (status) {
+	    this.status = status;
+	}
     }
 
     @Override

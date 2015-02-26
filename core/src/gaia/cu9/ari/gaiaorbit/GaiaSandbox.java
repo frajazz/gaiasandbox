@@ -71,6 +71,7 @@ public class GaiaSandbox implements ApplicationListener, IObserver {
     private static boolean LOADING = true;
 
     private static GaiaSandbox instance;
+    private static Thread mainThread;
 
     // Asset manager
     public AssetManager manager;
@@ -286,9 +287,9 @@ public class GaiaSandbox implements ApplicationListener, IObserver {
 	EventManager.getInstance().post(Events.SCENE_GRAPH_LOADED, sg);
 	EventManager.getInstance().post(Events.CAMERA_MODE_CMD, CameraMode.Focus);
 
-	AbstractPositionEntity focus = (AbstractPositionEntity) sg.getNode("Earth");
+	AbstractPositionEntity focus = (AbstractPositionEntity) sg.getNode("Sol");
 	EventManager.getInstance().post(Events.FOCUS_CHANGE_CMD, focus, true);
-	float dst = focus.size * 3;
+	double dst = 2.6e4 * Constants.PC_TO_U;
 	Vector3d newCameraPos = focus.pos.cpy().add(0, 0, -dst);
 	EventManager.getInstance().post(Events.CAMERA_POS_CMD, newCameraPos.values());
 
@@ -346,6 +347,10 @@ public class GaiaSandbox implements ApplicationListener, IObserver {
     @Override
     public void render() {
 	if (LOADING) {
+	    // Set main thread
+	    if (mainThread == null)
+		mainThread = Thread.currentThread();
+
 	    if (manager.update()) {
 		doneLoading();
 
@@ -355,17 +360,11 @@ public class GaiaSandbox implements ApplicationListener, IObserver {
 		renderLoadingScreen();
 	    }
 	} else {
-	    if (GlobalConf.runtime.GLOBAL_PAUSE) {
-		// We are in pause mode!
-		try {
-		    Thread.sleep(200);
-		} catch (InterruptedException e) {
-		    EventManager.getInstance().post(Events.JAVA_EXCEPTION, e);
-		}
-	    } else {
-		// Asynchronous load of textures and resources
-		manager.update();
 
+	    // Asynchronous load of textures and resources
+	    manager.update();
+
+	    if (!GlobalConf.runtime.UPDATE_PAUSE) {
 		/**
 		 * UPDATE
 		 */
@@ -404,6 +403,7 @@ public class GaiaSandbox implements ApplicationListener, IObserver {
 
 		sgr.clearLists();
 	    }
+
 	}
 
 	EventManager.getInstance().post(Events.FPS_INFO, Gdx.graphics.getFramesPerSecond());
@@ -585,4 +585,5 @@ public class GaiaSandbox implements ApplicationListener, IObserver {
 	}
 
     }
+
 }
