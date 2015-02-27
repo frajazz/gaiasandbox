@@ -180,9 +180,9 @@ public class ColourUtils {
 
 	float max = Math.max(1, Math.max(cc[2], Math.max(cc[0], cc[1])));
 
-	cc[0] = cc[0] / max;
-	cc[1] = cc[1] / max;
-	cc[2] = cc[2] / max;
+	cc[0] = Math.max(cc[0] / max, 0f);
+	cc[1] = Math.max(cc[1] / max, 0f);
+	cc[2] = Math.max(cc[2] / max, 0f);
 
 	return cc;
     }

@@ -298,13 +298,13 @@ public class OctreeNode<T extends IPosition> implements ILineRenderable {
 
 	    if (viewAngle < ANGLE_THRESHOLD_1) {
 		// Stay in current level
-		roulette.addAll(objects);
+		addObjectsTo(roulette);
 		setChildrenObserved(false);
 	    } else if (viewAngle > ANGLE_THRESHOLD_2) {
 		// Break down tree
 		if (childrenCount == 0) {
 		    // We are a leaf, add objects anyway
-		    roulette.addAll(objects);
+		    addObjectsTo(roulette);
 		    setChildrenObserved(false);
 		} else {
 		    // Update children
@@ -316,16 +316,13 @@ public class OctreeNode<T extends IPosition> implements ILineRenderable {
 		    }
 		}
 	    } else {
-		// Overlap area, fade in/out
-
-		double alpha = MathUtilsd.lint(viewAngle, ANGLE_THRESHOLD_1, ANGLE_THRESHOLD_2, 0d, 1d);
-
-		// from 1 to 0, th1 to th2
-		roulette.addAll(objects);
-		setChildrenObserved(false);
-		if (childrenCount != 0) {
-		    this.opacity = 1f - (float) alpha;
+		// View angle between th1 and th2
+		addObjectsTo(roulette);
+		if (childrenCount > 0) {
+		    // Opacity = this?  1 - alpha : children? alpha
+		    double alpha = MathUtilsd.lint(viewAngle, ANGLE_THRESHOLD_1, ANGLE_THRESHOLD_2, 0d, 1d);
 		    // Update children
+		    this.opacity = 1f - (float) alpha;
 		    for (int i = 0; i < 8; i++) {
 			OctreeNode<T> child = children[i];
 			if (child != null) {
@@ -334,10 +331,14 @@ public class OctreeNode<T extends IPosition> implements ILineRenderable {
 		    }
 		}
 
-		// from 0 to 1, th2 to th1
-
 	    }
 
+	}
+    }
+
+    private void addObjectsTo(List<T> roulette) {
+	if (objects != null) {
+	    roulette.addAll(objects);
 	}
     }
 

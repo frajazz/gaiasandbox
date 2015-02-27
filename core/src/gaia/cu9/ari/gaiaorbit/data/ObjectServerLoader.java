@@ -62,7 +62,7 @@ public class ObjectServerLoader implements ISceneGraphNodeProvider {
     /**
      * Data will be pre-loaded at startup down to this octree depth.
      */
-    private static int preloadDepth = 9;
+    private static int preloadDepth = 0;
 
     Longref starid = new Longref(1l);
     Longref errors = new Longref();
