@@ -8,8 +8,10 @@ import gaia.cu9.ari.gaiaorbit.scenegraph.Transform;
 import gaia.cu9.ari.gaiaorbit.util.GlobalResources;
 import gaia.cu9.ari.gaiaorbit.util.Pair;
 import gaia.cu9.ari.gaiaorbit.util.math.BoundingBoxd;
+import gaia.cu9.ari.gaiaorbit.util.math.Intersectord;
 import gaia.cu9.ari.gaiaorbit.util.math.MathUtilsd;
 import gaia.cu9.ari.gaiaorbit.util.math.Matrix4d;
+import gaia.cu9.ari.gaiaorbit.util.math.Rayd;
 import gaia.cu9.ari.gaiaorbit.util.math.Vector3d;
 
 import java.awt.Color;
@@ -42,8 +44,9 @@ public class OctreeNode<T extends IPosition> implements ILineRenderable {
     /** Since OctreeNode is not to be parallelized, this can be static **/
     private static BoundingBoxd boxcopy = new BoundingBoxd(new Vector3d(), new Vector3d());
     private static Matrix4d boxtransf = new Matrix4d();
-    private static Vector3d auxD = new Vector3d();
+    private static Vector3d auxD1 = new Vector3d(), auxD2 = new Vector3d(), auxD3 = new Vector3d(), auxD4 = new Vector3d();
     private static Vector3 auxF1 = new Vector3(), auxF2 = new Vector3();
+    private static Rayd ray = new Rayd(new Vector3d(), new Vector3d());
 
     public enum OctantStatus {
 	NOT_LOADED,
@@ -290,7 +293,7 @@ public class OctreeNode<T extends IPosition> implements ILineRenderable {
 	    }
 
 	    // Compute distance and view angle
-	    distToCamera = auxD.set(centre).add(cam.getInversePos()).len();
+	    distToCamera = auxD1.set(centre).add(cam.getInversePos()).len();
 	    viewAngle = Math.atan(radius / distToCamera) / cam.getFovFactor();
 
 	    if (viewAngle < ANGLE_THRESHOLD_1) {
@@ -361,7 +364,7 @@ public class OctreeNode<T extends IPosition> implements ILineRenderable {
 	Frustum frustum = cam.getCamera().frustum;
 	boxcopy.set(box);
 	boxcopy.mul(boxtransf.idt().translate(parentTransform.getTranslation()));
-	observed = frustum.boundsInFrustum(boxcopy.getCenter(auxD).setVector3(auxF1), size.setVector3(auxF2));
+	observed = frustum.boundsInFrustum(boxcopy.getCenter(auxD1).setVector3(auxF1), size.setVector3(auxF2));
     }
 
     /**
@@ -373,18 +376,36 @@ public class OctreeNode<T extends IPosition> implements ILineRenderable {
     private void computeObserved2(Transform parentTransform, ICamera cam) {
 	float angle = cam.getAngleEdge();
 	Vector3d dir = cam.getDirection();
+	Vector3d up = cam.getUp();
+
 	boxcopy.set(box);
 	boxcopy.mul(boxtransf.idt().translate(parentTransform.getTranslation()));
-	observed = GlobalResources.isInView(boxcopy.getCenter(auxD), angle, dir) ||
-		GlobalResources.isInView(boxcopy.getCorner000(auxD), angle, dir) ||
-		GlobalResources.isInView(boxcopy.getCorner001(auxD), angle, dir) ||
-		GlobalResources.isInView(boxcopy.getCorner010(auxD), angle, dir) ||
-		GlobalResources.isInView(boxcopy.getCorner011(auxD), angle, dir) ||
-		GlobalResources.isInView(boxcopy.getCorner100(auxD), angle, dir) ||
-		GlobalResources.isInView(boxcopy.getCorner101(auxD), angle, dir) ||
-		GlobalResources.isInView(boxcopy.getCorner110(auxD), angle, dir) ||
-		GlobalResources.isInView(boxcopy.getCorner111(auxD), angle, dir) ||
+	observed = GlobalResources.isInView(boxcopy.getCenter(auxD1), angle, dir) ||
+		GlobalResources.isInView(boxcopy.getCorner000(auxD1), angle, dir) ||
+		GlobalResources.isInView(boxcopy.getCorner001(auxD1), angle, dir) ||
+		GlobalResources.isInView(boxcopy.getCorner010(auxD1), angle, dir) ||
+		GlobalResources.isInView(boxcopy.getCorner011(auxD1), angle, dir) ||
+		GlobalResources.isInView(boxcopy.getCorner100(auxD1), angle, dir) ||
+		GlobalResources.isInView(boxcopy.getCorner101(auxD1), angle, dir) ||
+		GlobalResources.isInView(boxcopy.getCorner110(auxD1), angle, dir) ||
+		GlobalResources.isInView(boxcopy.getCorner111(auxD1), angle, dir) ||
 		box.contains(cam.getPos());
+
+	// Rays
+	if (!observed) {
+	    // Rays in direction-up plane (vertical plane)
+	    auxD2.set(dir).crs(up);
+	    ray.direction.set(auxD1.set(dir).rotate(auxD2, angle));
+	    observed = observed || Intersectord.intersectRayBoundsFast(ray, boxcopy.getCenter(auxD3), boxcopy.getDimensions(auxD4));
+	    ray.direction.set(auxD1.set(dir).rotate(auxD2, -angle));
+	    observed = observed || Intersectord.intersectRayBoundsFast(ray, boxcopy.getCenter(auxD3), boxcopy.getDimensions(auxD4));
+
+	    // Rays in direction-crs(direction,up) plane (horizontal plane)
+	    ray.direction.set(auxD1.set(dir).rotate(up, angle));
+	    observed = observed || Intersectord.intersectRayBoundsFast(ray, boxcopy.getCenter(auxD3), boxcopy.getDimensions(auxD4));
+	    ray.direction.set(auxD1.set(dir).rotate(up, -angle));
+	    observed = observed || Intersectord.intersectRayBoundsFast(ray, boxcopy.getCenter(auxD3), boxcopy.getDimensions(auxD4));
+	}
 
     }
 

@@ -150,6 +150,11 @@ public class CameraManager implements ICamera, IObserver {
 	return current.getDirection();
     }
 
+    @Override
+    public Vector3d getUp() {
+	return current.getUp();
+    }
+
     /**
      * Update method.
      * @param dt Delta time in seconds.

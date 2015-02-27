@@ -124,13 +124,30 @@ public class GlobalResources {
     /**
      * Computes whether a body with the given position is visible by a camera with the given direction
      * and angle. Coordinates are assumed to be in the camera-origin system.
-     * @param pos The position of the body in the reference system of the camera (i.e. camera is at origin).
+     * @param point The position of the body in the reference system of the camera (i.e. camera is at origin).
      * @param coneAngle The cone angle of the camera.
      * @param dir The direction.
      * @return True if the body is visible.
      */
-    public static boolean isInView(Vector3d pos, float coneAngle, Vector3d dir) {
-	return MathUtilsd.acos(pos.dot(dir) / pos.len()) < coneAngle;
+    public static boolean isInView(Vector3d point, float coneAngle, Vector3d dir) {
+	return MathUtilsd.acos(point.dot(dir) / point.len()) < coneAngle;
+    }
+
+    /**
+     * Computes whether any of the given points is visible by a camera with the given direction
+     * and the given cone angle. Coordinates are assumed to be in the camera-origin system.
+     * @param points The array of points to check.
+     * @param coneAngle The cone angle of the camera (field of view).
+     * @param dir The direction.
+     * @return True if any of the points is in the camera view cone.
+     */
+    public static boolean isAnyInView(Vector3d[] points, float coneAngle, Vector3d dir) {
+	boolean inview = false;
+	int size = points.length;
+	for (int i = 0; i < size; i++) {
+	    inview = inview || MathUtilsd.acos(points[i].dot(dir) / points[i].len()) < coneAngle;
+	}
+	return inview;
     }
 
 }
