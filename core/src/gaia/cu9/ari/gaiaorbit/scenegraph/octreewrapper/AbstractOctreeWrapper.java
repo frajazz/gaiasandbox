@@ -11,7 +11,6 @@ import gaia.cu9.ari.gaiaorbit.scenegraph.Transform;
 import gaia.cu9.ari.gaiaorbit.util.time.ITimeFrameProvider;
 import gaia.cu9.ari.gaiaorbit.util.tree.OctreeNode;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -21,7 +20,7 @@ import com.badlogic.gdx.utils.Pool;
 import com.badlogic.gdx.utils.Pools;
 
 /**
- * Abstract octree wrapper with the common parts of the regular octree wrapper and
+ * Abstract Octree wrapper with the common parts of the regular Octree wrapper and
  * the concurrent one.
  * @author Toni Sagrista
  *
@@ -58,13 +57,6 @@ public abstract class AbstractOctreeWrapper extends SceneGraphNode implements It
     public void initialize() {
 	super.initialize();
 
-	// Add all objects into children list
-	// Do not touch this, as it is needed to create the stringToNode map in AbstractSG 
-	if (children == null) {
-	    children = new ArrayList<SceneGraphNode>(root.nObjects);
-	    // Add objects to our children list
-	    addObjectsDeep(root, this);
-	}
     }
 
     /**
@@ -93,6 +85,11 @@ public abstract class AbstractOctreeWrapper extends SceneGraphNode implements It
 	for (SceneGraphNode sgn : children) {
 	    parenthood.put(sgn, octant);
 	}
+    }
+
+    public void add(SceneGraphNode child, OctreeNode<SceneGraphNode> octant) {
+	super.add(child);
+	parenthood.put(child, octant);
     }
 
     public void update(ITimeFrameProvider time, final Transform parentTransform, ICamera camera) {

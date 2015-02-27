@@ -40,6 +40,8 @@ public class OctreeNode<T extends IPosition> implements ILineRenderable {
     public static final double ANGLE_THRESHOLD_1 = Math.toRadians(6d);
     /** Angle threshold above which we break the Octree. Upper limit of overlap **/
     public static final double ANGLE_THRESHOLD_2 = Math.toRadians(16d);
+    /** Is dynamic loading active? **/
+    public static boolean LOAD_ACTIVE;
 
     /** Since OctreeNode is not to be parallelized, this can be static **/
     private static BoundingBoxd boxcopy = new BoundingBoxd(new Vector3d(), new Vector3d());
@@ -48,16 +50,8 @@ public class OctreeNode<T extends IPosition> implements ILineRenderable {
     private static Vector3 auxF1 = new Vector3(), auxF2 = new Vector3();
     private static Rayd ray = new Rayd(new Vector3d(), new Vector3d());
 
-    public enum OctantStatus {
-	NOT_LOADED,
-	QUEUED,
-	LOADING,
-	LOADING_FAILED,
-	LOADED
-    }
-
     /** The load status of this node **/
-    private OctantStatus status;
+    private LoadStatus status;
     /** The unique page identifier **/
     public final long pageId;
     /** Contains the bottom-left-front position of the octant **/
@@ -124,7 +118,7 @@ public class OctreeNode<T extends IPosition> implements ILineRenderable {
 	this.depth = depth;
 	this.transform = new Vector3d();
 	this.observed = false;
-	this.status = OctantStatus.NOT_LOADED;
+	this.status = LoadStatus.NOT_LOADED;
 
 	this.radius = Math.sqrt(hsx * hsx + hsy * hsy + hsz * hsz);
     }
@@ -272,6 +266,14 @@ public class OctreeNode<T extends IPosition> implements ILineRenderable {
 	}
     }
 
+    private LoadStatus getLevelStatus(Integer level) {
+	if (ObjectServerLoader.lodStatus[level] == null) {
+	    return LoadStatus.NOT_LOADED;
+	} else {
+	    return ObjectServerLoader.lodStatus[level];
+	}
+    }
+
     /**
      * Computes the observed value and the transform of each observed node.
      * @param parentTransform The parent transform.
@@ -287,52 +289,65 @@ public class OctreeNode<T extends IPosition> implements ILineRenderable {
 	computeObserved2(parentTransform, cam);
 
 	if (observed) {
-	    if (status == OctantStatus.NOT_LOADED) {
-		// Add to load
-		ObjectServerLoader.addToQueue(this);
+
+	    /**
+	     * Load individual pages
+	     */
+	    //	    if (status == LoadStatus.NOT_LOADED && LOAD_ACTIVE) {
+	    //		// Add to load all the level
+	    //		ObjectServerLoader.addToQueue(this.parent.children);
+	    //	    }
+
+	    /**
+	     * Load whole levels of detail
+	     */
+	    if (getLevelStatus(depth) == LoadStatus.NOT_LOADED && LOAD_ACTIVE) {
+		// Add current level of detail to load
+		ObjectServerLoader.addToQueue(depth);
 	    }
 
-	    // Compute distance and view angle
-	    distToCamera = auxD1.set(centre).add(cam.getInversePos()).len();
-	    viewAngle = Math.atan(radius / distToCamera) / cam.getFovFactor();
+	    synchronized (this) {
+		// Compute distance and view angle
+		distToCamera = auxD1.set(centre).add(cam.getInversePos()).len();
+		viewAngle = Math.atan(radius / distToCamera) / cam.getFovFactor();
 
-	    if (viewAngle < ANGLE_THRESHOLD_1) {
-		// Stay in current level
-		addObjectsTo(roulette);
-		setChildrenObserved(false);
-	    } else if (viewAngle > ANGLE_THRESHOLD_2) {
-		// Break down tree
-		if (childrenCount == 0) {
-		    // We are a leaf, add objects anyway
+		if (viewAngle < ANGLE_THRESHOLD_1) {
+		    // Stay in current level
 		    addObjectsTo(roulette);
 		    setChildrenObserved(false);
+		} else if (viewAngle > ANGLE_THRESHOLD_2) {
+		    // Break down tree
+		    if (childrenCount == 0) {
+			// We are a leaf, add objects anyway
+			addObjectsTo(roulette);
+			setChildrenObserved(false);
+		    } else {
+			// Update children
+			for (int i = 0; i < 8; i++) {
+			    OctreeNode<T> child = children[i];
+			    if (child != null) {
+				child.update(parentTransform, cam, roulette, opacity);
+			    }
+			}
+		    }
 		} else {
-		    // Update children
-		    for (int i = 0; i < 8; i++) {
-			OctreeNode<T> child = children[i];
-			if (child != null) {
-			    child.update(parentTransform, cam, roulette, opacity);
+		    // View angle between th1 and th2
+		    addObjectsTo(roulette);
+		    if (childrenCount > 0) {
+			// Opacity = this?  1 - alpha : children? alpha
+			double alpha = MathUtilsd.lint(viewAngle, ANGLE_THRESHOLD_1, ANGLE_THRESHOLD_2, 0d, 1d);
+			// Update children
+			this.opacity = 1f - (float) alpha;
+			for (int i = 0; i < 8; i++) {
+			    OctreeNode<T> child = children[i];
+			    if (child != null) {
+				child.update(parentTransform, cam, roulette, (float) alpha);
+			    }
 			}
 		    }
-		}
-	    } else {
-		// View angle between th1 and th2
-		addObjectsTo(roulette);
-		if (childrenCount > 0) {
-		    // Opacity = this?  1 - alpha : children? alpha
-		    double alpha = MathUtilsd.lint(viewAngle, ANGLE_THRESHOLD_1, ANGLE_THRESHOLD_2, 0d, 1d);
-		    // Update children
-		    this.opacity = 1f - (float) alpha;
-		    for (int i = 0; i < 8; i++) {
-			OctreeNode<T> child = children[i];
-			if (child != null) {
-			    child.update(parentTransform, cam, roulette, (float) alpha);
-			}
-		    }
-		}
 
+		}
 	    }
-
 	}
     }
 
@@ -410,11 +425,11 @@ public class OctreeNode<T extends IPosition> implements ILineRenderable {
 
     }
 
-    public OctantStatus getStatus() {
+    public LoadStatus getStatus() {
 	return status;
     }
 
-    public void setStatus(OctantStatus status) {
+    public void setStatus(LoadStatus status) {
 	synchronized (status) {
 	    this.status = status;
 	}
@@ -426,7 +441,7 @@ public class OctreeNode<T extends IPosition> implements ILineRenderable {
      * @param status The new status.
      * @param depth The depth.
      */
-    public void setStatus(OctantStatus status, int depth) {
+    public void setStatus(LoadStatus status, int depth) {
 	if (depth >= this.depth) {
 	    setStatus(status);
 	    for (int i = 0; i < 8; i++) {

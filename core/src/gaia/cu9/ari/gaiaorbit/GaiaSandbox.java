@@ -41,6 +41,7 @@ import gaia.cu9.ari.gaiaorbit.util.concurrent.ThreadPoolManager;
 import gaia.cu9.ari.gaiaorbit.util.math.MathUtilsd;
 import gaia.cu9.ari.gaiaorbit.util.math.Vector3d;
 import gaia.cu9.ari.gaiaorbit.util.time.GlobalClock;
+import gaia.cu9.ari.gaiaorbit.util.tree.OctreeNode;
 import gaia.cu9.object.server.ClientCore;
 
 import java.io.File;
@@ -136,6 +137,7 @@ public class GaiaSandbox implements ApplicationListener, IObserver {
     @Override
     public void create() {
 	Gdx.app.setLogLevel(Application.LOG_INFO);
+	Thread.currentThread().setPriority(Thread.MAX_PRIORITY);
 
 	boolean mobile = Constants.mobile;
 	boolean desktop = !mobile;
@@ -260,9 +262,11 @@ public class GaiaSandbox implements ApplicationListener, IObserver {
 	    sgn.doneLoading(manager);
 	}
 	// Update whole tree to initialize positions
+	OctreeNode.LOAD_ACTIVE = false;
 	GlobalClock.clock.update(0.000000001f);
 	sg.update(GlobalClock.clock, cam);
 	GlobalClock.clock.update(0);
+	OctreeNode.LOAD_ACTIVE = true;
 
 	// Initialize  input handlers
 	InputMultiplexer inputMultiplexer = new InputMultiplexer();
@@ -289,7 +293,7 @@ public class GaiaSandbox implements ApplicationListener, IObserver {
 
 	AbstractPositionEntity focus = (AbstractPositionEntity) sg.getNode("Sol");
 	EventManager.getInstance().post(Events.FOCUS_CHANGE_CMD, focus, true);
-	double dst = 2.6e4 * Constants.PC_TO_U;
+	double dst = 5e5 * Constants.PC_TO_U;
 	Vector3d newCameraPos = focus.pos.cpy().add(0, 0, -dst);
 	EventManager.getInstance().post(Events.CAMERA_POS_CMD, newCameraPos.values());
 

@@ -3,6 +3,7 @@ package gaia.cu9.ari.gaiaorbit.scenegraph;
 import gaia.cu9.ari.gaiaorbit.render.IRenderable;
 import gaia.cu9.ari.gaiaorbit.render.SceneGraphRenderer;
 import gaia.cu9.ari.gaiaorbit.render.SceneGraphRenderer.ComponentType;
+import gaia.cu9.ari.gaiaorbit.scenegraph.octreewrapper.AbstractOctreeWrapper;
 import gaia.cu9.ari.gaiaorbit.util.concurrent.ThreadIndexer;
 import gaia.cu9.ari.gaiaorbit.util.math.Matrix4d;
 import gaia.cu9.ari.gaiaorbit.util.math.Vector2d;
@@ -223,7 +224,7 @@ public class SceneGraphNode implements ISceneGraphNode, IPosition {
     @SafeVarargs
     public final void add(SceneGraphNode... children) {
 	if (this.children == null) {
-	    initChildren(this.parent == null ? 100000 : children.length * 5, this.parent == null ? 1000 : children.length);
+	    initChildren(this.parent == null || this instanceof AbstractOctreeWrapper ? 300000 : children.length * 5, this.parent == null ? 1000 : children.length);
 	}
 	for (int i = 0; i < children.length; i++) {
 	    SceneGraphNode child = children[i];
