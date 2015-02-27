@@ -218,19 +218,22 @@ public class ObjectServerLoader implements ISceneGraphNodeProvider {
 	    }
 
 	    // Manually add sun
-	    Star s = new Star(new Vector3d(0, 0, 0), 4.83f, 4.83f, 0.656f, "Sol", starid.num++);
-	    s.initialize();
-	    particleList.add(s);
+	    Star sun = new Star(new Vector3d(0, 0, 0), 4.83f, 4.83f, 0.656f, "Sol", starid.num++);
+	    sun.initialize();
+	    particleList.add(sun);
 
 	    // Find out octant of sun
-	    OctreeNode<SceneGraphNode> candidate = root.getBestOctant(s.pos);
+	    OctreeNode<SceneGraphNode> candidate = root.getBestOctant(sun.pos);
 	    if (candidate == null) {
 		EventManager.getInstance().post(Events.JAVA_EXCEPTION, new RuntimeException("No octant candidate for the Sun found!"));
 	    } else {
-		s.pageId = candidate.pageId;
+		sun.pageId = candidate.pageId;
 		// Add objects to octree wrapper node
-		octreeWrapper.add(s, candidate);
+		octreeWrapper.add(sun, candidate);
+		candidate.add(sun);
 	    }
+
+	    // Add sun to octant
 
 	} catch (ConnectException e) {
 	    EventManager.getInstance().post(Events.POST_NOTIFICATION, I18n.bundle.get("notif.objectserver.notconnect"));
