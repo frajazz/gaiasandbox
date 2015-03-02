@@ -10,6 +10,7 @@ import gaia.cu9.ari.gaiaorbit.util.I18n;
 import gaia.cu9.ari.gaiaorbit.util.coord.Coordinates;
 import gaia.cu9.ari.gaiaorbit.util.math.MathUtilsd;
 import gaia.cu9.ari.gaiaorbit.util.math.Vector3d;
+import gaia.cu9.ari.gaiaorbit.util.parse.Parser;
 
 import java.io.BufferedReader;
 import java.io.FileNotFoundException;
@@ -55,22 +56,22 @@ public class HYGCSVLoader extends AbstractCatalogLoader implements ICatalogLoade
 
     private void addStar(String line, List<CelestialBody> stars) {
 	String[] st = line.split(separator);
-	double ra = MathUtilsd.lint(Float.parseFloat(st[7].trim()), 0, 24, 0, 360);
-	double dec = Double.parseDouble(st[8].trim());
-	double dist = Double.parseDouble(st[9]) * Constants.PC_TO_U;
+	double ra = MathUtilsd.lint(Parser.parseFloat(st[7].trim()), 0, 24, 0, 360);
+	double dec = Parser.parseDouble(st[8].trim());
+	double dist = Parser.parseDouble(st[9]) * Constants.PC_TO_U;
 	Vector3d pos = Coordinates.sphericalToCartesian(Math.toRadians(ra), Math.toRadians(dec), dist, new Vector3d());
 
-	float appmag = Float.parseFloat(st[10].trim());
+	float appmag = Parser.parseFloat(st[10].trim());
 	float colorbv = 0f;
 
 	if (st.length >= 14 && !st[13].trim().isEmpty()) {
-	    colorbv = Float.parseFloat(st[13].trim());
+	    colorbv = Parser.parseFloat(st[13].trim());
 	} else {
 	    colorbv = 1;
 	}
 
 	if (appmag < GlobalConf.data.LIMIT_MAG_LOAD) {
-	    float absmag = Float.parseFloat(st[11].trim());
+	    float absmag = Parser.parseFloat(st[11].trim());
 	    String name = null;
 	    if (!st[6].trim().isEmpty()) {
 		name = st[6].trim().replaceAll("\\s+", " ");
@@ -81,7 +82,7 @@ public class HYGCSVLoader extends AbstractCatalogLoader implements ICatalogLoade
 	    } else if (!st[2].trim().isEmpty()) {
 		name = "Hip " + st[1].trim();
 	    }
-	    long starid = Long.parseLong(st[0].trim());
+	    long starid = Parser.parseLong(st[0].trim());
 
 	    Star star = new Star(pos, appmag, absmag, colorbv, name, ra, dec, starid);
 	    stars.add(star);

@@ -4,6 +4,7 @@ import gaia.cu9.ari.gaiaorbit.scenegraph.CelestialBody;
 import gaia.cu9.ari.gaiaorbit.scenegraph.Star;
 import gaia.cu9.ari.gaiaorbit.util.coord.Coordinates;
 import gaia.cu9.ari.gaiaorbit.util.math.Vector3d;
+import gaia.cu9.ari.gaiaorbit.util.parse.Parser;
 
 import java.io.BufferedReader;
 import java.io.FileNotFoundException;
@@ -45,8 +46,8 @@ public class BrightStarsCatalogLoader extends AbstractCatalogLoader implements I
 
     private void addStar(String line, List<CelestialBody> stars) {
 	String[] st = line.split(separator);
-	float ra = Float.parseFloat(st[1]);
-	float dec = Float.parseFloat(st[2]);
+	float ra = Parser.parseFloat(st[1]);
+	float dec = Parser.parseFloat(st[2]);
 	float dist = 1e5f;
 	Vector3d pos = Coordinates.sphericalToCartesian(ra, dec, dist, new Vector3d());
 	float absmag = Float.parseFloat(st[3]);

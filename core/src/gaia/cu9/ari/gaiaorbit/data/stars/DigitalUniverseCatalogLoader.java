@@ -3,6 +3,7 @@ package gaia.cu9.ari.gaiaorbit.data.stars;
 import gaia.cu9.ari.gaiaorbit.scenegraph.CelestialBody;
 import gaia.cu9.ari.gaiaorbit.scenegraph.Star;
 import gaia.cu9.ari.gaiaorbit.util.math.Vector3d;
+import gaia.cu9.ari.gaiaorbit.util.parse.Parser;
 
 import java.io.BufferedReader;
 import java.io.FileNotFoundException;
@@ -47,12 +48,12 @@ public class DigitalUniverseCatalogLoader extends AbstractCatalogLoader implemen
 
     private void addStar(String line, List<CelestialBody> stars) {
 	String[] st = line.split(separator);
-	float x = Float.parseFloat(st[1]) * factor;
-	float y = Float.parseFloat(st[2]) * factor;
-	float z = Float.parseFloat(st[3]) * factor;
-	float absmag = Float.parseFloat(st[6]);
-	float appmag = Float.parseFloat(st[7]);
-	float colorbv = Float.parseFloat(st[4]);
+	float x = Parser.parseFloat(st[1]) * factor;
+	float y = Parser.parseFloat(st[2]) * factor;
+	float z = Parser.parseFloat(st[3]) * factor;
+	float absmag = Parser.parseFloat(st[6]);
+	float appmag = Parser.parseFloat(st[7]);
+	float colorbv = Parser.parseFloat(st[4]);
 	String name = st[19];
 	Vector3d pos = new Vector3d(x, y, z);
 	float dist = (float) pos.len();

@@ -12,6 +12,7 @@ import gaia.cu9.ari.gaiaorbit.util.GlobalConf;
 import gaia.cu9.ari.gaiaorbit.util.I18n;
 import gaia.cu9.ari.gaiaorbit.util.Pair;
 import gaia.cu9.ari.gaiaorbit.util.math.Vector3d;
+import gaia.cu9.ari.gaiaorbit.util.parse.Parser;
 import gaia.cu9.ari.gaiaorbit.util.tree.LoadStatus;
 import gaia.cu9.ari.gaiaorbit.util.tree.OctreeNode;
 import gaia.cu9.object.server.ClientCore;
@@ -263,18 +264,18 @@ public class ObjectServerLoader implements ISceneGraphNodeProvider {
     private static Star parseLine(String line, Longref errors, Longref starid) {
 	String[] tokens = line.split(";");
 	try {
-	    double x = Double.parseDouble(tokens[0]) * Constants.PC_TO_U;
-	    double y = Double.parseDouble(tokens[1]) * Constants.PC_TO_U;
-	    double z = Double.parseDouble(tokens[2]) * Constants.PC_TO_U;
+	    double x = Parser.parseDouble(tokens[0]) * Constants.PC_TO_U;
+	    double y = Parser.parseDouble(tokens[1]) * Constants.PC_TO_U;
+	    double z = Parser.parseDouble(tokens[2]) * Constants.PC_TO_U;
 
 	    // Magnitude in virtual particles (type=92) must depend on number of particles contained
-	    float mag = (tokens[3].equalsIgnoreCase("null") || tokens[3].isEmpty()) ? 4f : Float.parseFloat(tokens[3]);
+	    float mag = (float) ((tokens[3].equalsIgnoreCase("null") || tokens[3].isEmpty()) ? 4d : Parser.parseDouble(tokens[3]));
 	    // Color in virtual particles should be that of the sun - yellowish
-	    float bv = (tokens[4].equalsIgnoreCase("null") || tokens[4].isEmpty()) ? 0.656f : Float.parseFloat(tokens[4]);
+	    float bv = (float) ((tokens[4].equalsIgnoreCase("null") || tokens[4].isEmpty()) ? 0.656d : Parser.parseDouble(tokens[4]));
 
-	    int particleCount = Integer.parseInt(tokens[7]);
-	    long pageid = Long.parseLong(tokens[8]);
-	    int type = Integer.parseInt(tokens[9]);
+	    int particleCount = Parser.parseInt(tokens[7]);
+	    long pageid = Parser.parseLong(tokens[8]);
+	    int type = Parser.parseInt(tokens[9]);
 
 	    if (type == 92) {
 		// Virtual particle!
