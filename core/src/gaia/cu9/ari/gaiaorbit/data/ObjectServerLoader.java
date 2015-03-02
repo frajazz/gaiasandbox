@@ -26,7 +26,6 @@ import java.io.IOException;
 import java.io.StringReader;
 import java.net.ConnectException;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -80,7 +79,7 @@ public class ObjectServerLoader implements ISceneGraphNodeProvider {
     /**
      * Data will be pre-loaded at startup down to this octree depth.
      */
-    private static int preloadDepth = 3;
+    private static int preloadDepth = 8;
 
     Longref starid = new Longref(1l);
     Longref errors = new Longref();
@@ -316,7 +315,6 @@ public class ObjectServerLoader implements ISceneGraphNodeProvider {
 
 	    @Override
 	    public void receivedMessage(Message query, Message reply) {
-		System.out.println(new Date() + " Receiving response: " + reply);
 		for (MessagePayloadBlock block : reply.getPayload()) {
 		    String data = (String) block.getPayload();
 		    BufferedReader reader = new BufferedReader(new StringReader(data));
@@ -350,7 +348,6 @@ public class ObjectServerLoader implements ISceneGraphNodeProvider {
 		// Update status
 		lodStatus[lod] = LoadStatus.LOADED;
 
-		System.out.println(new Date() + " Response processed");
 	    }
 
 	    @Override
@@ -358,7 +355,6 @@ public class ObjectServerLoader implements ISceneGraphNodeProvider {
 	    }
 
 	});
-	System.out.println(new Date() + " Sending request: " + msgParticle);
 	ClientCore.getInstance().sendMessage(msgParticle, synchronous);
 
     }
