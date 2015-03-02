@@ -31,55 +31,72 @@ import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 import java.util.Queue;
+import java.util.Set;
+import java.util.Timer;
+import java.util.TimerTask;
 import java.util.concurrent.ArrayBlockingQueue;
 
 public class ObjectServerLoader implements ISceneGraphNodeProvider {
-    /** The loading queue **/
-    private static Queue<Object> loadQueue = new ArrayBlockingQueue<Object>(5000);
+    /** The octant loading queue **/
+    private static Queue<OctreeNode<?>> octantQueue = new ArrayBlockingQueue<OctreeNode<?>>(5000);
+    /** The lod loading queue **/
+    private static Queue<Integer> lodQueue = new ArrayBlockingQueue<Integer>(20);
     /** Load status of the different levels of detail **/
     public static LoadStatus[] lodStatus = new LoadStatus[30];
 
     /** Daemon thread that gets the data loading requests and serves them **/
     private static DaemonLoader daemon;
+    private static int flushCalls = 0;
+
+    /** Adds a lod to the queue to be loaded **/
+    public static void addToQueue(Integer object) {
+	lodQueue.add(object);
+	lodStatus[(Integer) object] = LoadStatus.QUEUED;
+
+	// Force flush
+	flushLoadQueue(true);
+    }
 
     /** Adds an octant to the queue to be loaded **/
-    public static void addToQueue(Object object) {
-	loadQueue.add(object);
-	if (object instanceof OctreeNode<?>)
-	    ((OctreeNode<?>) object).setStatus(LoadStatus.QUEUED);
-	else if (object instanceof Integer)
-	    lodStatus[(Integer) object] = LoadStatus.QUEUED;
-	// More than one second, flush
-	flushLoadQueue();
+    public static void addToQueue(OctreeNode<?> object) {
+	octantQueue.add(object);
+	((OctreeNode<?>) object).setStatus(LoadStatus.QUEUED);
     }
 
     /** Adds a list of octants to the queue to be loaded **/
     public static void addToQueue(OctreeNode<?>... octants) {
-	synchronized (loadQueue) {
+	synchronized (octantQueue) {
 	    for (OctreeNode<?> octant : octants) {
 		if (octant != null && octant.getStatus() == LoadStatus.NOT_LOADED) {
-		    loadQueue.add(octant);
+		    octantQueue.add(octant);
 		    octant.setStatus(LoadStatus.QUEUED);
 		}
 	    }
-	    // More than one second, flush
-	    flushLoadQueue();
 	}
+    }
+
+    public static void flushLoadQueue() {
+	flushLoadQueue(false);
     }
 
     /**
      * Tells the loader to start loading the octants in the queue.
      */
-    public static void flushLoadQueue() {
-	if (daemon != null && !daemon.awake && !loadQueue.isEmpty()) {
-	    daemon.interrupt();
+    public static void flushLoadQueue(boolean force) {
+	if (daemon != null && !daemon.awake && !octantQueue.isEmpty()) {
+	    if (!force && octantQueue.size() <= 2 && flushCalls == 0) {
+		flushCalls++;
+	    } else {
+		daemon.interrupt();
+		flushCalls = 0;
+	    }
 	}
     }
 
     /**
      * Data will be pre-loaded at startup down to this octree depth.
      */
-    private static int preloadDepth = 8;
+    private static int preloadDepth = 6;
 
     Longref starid = new Longref(1l);
     Longref errors = new Longref();
@@ -255,6 +272,18 @@ public class ObjectServerLoader implements ISceneGraphNodeProvider {
 	daemon.setPriority(Thread.MIN_PRIORITY);
 	daemon.start();
 
+	/**
+	 * INITIALIZE TIMER TO FLUSH THE QUEUE AT REGULAR INTERVALS
+	 */
+	Timer timer = new Timer(true);
+	timer.schedule(new TimerTask() {
+	    @Override
+	    public void run() {
+		flushLoadQueue();
+	    }
+
+	}, 1000, 2000);
+
 	// Add octreeWrapper to result list and return
 	result.add(octreeWrapper);
 	return result;
@@ -422,6 +451,77 @@ public class ObjectServerLoader implements ISceneGraphNodeProvider {
     }
 
     /**
+     * Loads the objects of the given octants using the given list from the visualization identified by <tt>visid</tt>
+     * @param octants The map of <pageId, octant> holding the octants to load.
+     * @param visid The visualization id.
+     * @param errors The errors reference.
+     * @param starid The star id reference.
+     * @param octreeWrapper The octree wrapper.
+     * @param particleList The list to load the data to.
+     * @throws IOException
+     */
+    public static void loadOctants(final Map<Long, OctreeNode<SceneGraphNode>> octants, String visid, final Longref errors, final Longref starid, final AbstractOctreeWrapper octreeWrapper, final List<SceneGraphNode> particleList, boolean synchronous) throws IOException {
+	StringBuilder pageIds = new StringBuilder();
+	Set<Long> keys = octants.keySet();
+	int size = octants.size();
+	int i = 0;
+	for (Long key : keys) {
+	    OctreeNode<SceneGraphNode> octant = octants.get(key);
+	    octant.setStatus(LoadStatus.LOADING);
+	    pageIds.append(octant.pageId);
+	    if (i < size - 1)
+		pageIds.append(",");
+	    i++;
+	}
+
+	Message msgParticle = new Message("visualization-page?vis-id=" + visid
+		+ (octants.size() > 1 ? "&page-ids=" : "&page-id=") + pageIds.toString());
+	msgParticle.setMessageHandler(new MessageHandler() {
+
+	    @Override
+	    public void receivedMessage(Message query, Message reply) {
+		for (MessagePayloadBlock block : reply.getPayload()) {
+		    String data = (String) block.getPayload();
+		    BufferedReader reader = new BufferedReader(new StringReader(data));
+		    try {
+			String line = null;
+			while ((line = reader.readLine()) != null) {
+			    Star star = parseLine(line, errors, starid);
+			    if (star != null)
+				particleList.add(star);
+			}
+		    } catch (IOException e) {
+			EventManager.getInstance().post(Events.JAVA_EXCEPTION, e);
+		    }
+		}
+
+		for (SceneGraphNode star : particleList) {
+		    OctreeNode<SceneGraphNode> octant = octants.get(((Star) star).pageId);
+		    // Update model
+		    synchronized (octant) {
+			// Set objects to octant, and octant to objects
+			octant.add(star);
+			((Star) star).page = octant;
+
+			// Update status
+			octant.setStatus(LoadStatus.LOADED);
+			octreeWrapper.add(star, octant);
+		    }
+		}
+		particleList.clear();
+
+	    }
+
+	    @Override
+	    public void receivedMessageBlock(Message query, Message reply, MessagePayloadBlock block) {
+	    }
+
+	});
+
+	ClientCore.getInstance().sendMessage(msgParticle, synchronous);
+    }
+
+    /**
      * The daemon loader thread.
      * @author Toni Sagrista
      *
@@ -435,30 +535,29 @@ public class ObjectServerLoader implements ISceneGraphNodeProvider {
 	private Longref starid;
 	private AbstractOctreeWrapper octreeWrapper;
 	final List<SceneGraphNode> particleList = new ArrayList<SceneGraphNode>(50000);
+	private Map<Long, OctreeNode<SceneGraphNode>> toLoad;
 
 	public DaemonLoader(String visid, Longref starid, AbstractOctreeWrapper aow) {
 	    this.visid = visid;
 	    this.starid = starid;
 	    this.errors = new Longref(0l);
 	    this.octreeWrapper = aow;
+	    this.toLoad = new HashMap<Long, OctreeNode<SceneGraphNode>>();
 	}
 
 	@Override
 	public void run() {
 	    while (true) {
-		while (!loadQueue.isEmpty()) {
-		    Object obj = loadQueue.poll();
+		while (!octantQueue.isEmpty()) {
+		    Object obj = octantQueue.poll();
 		    if (obj instanceof OctreeNode) {
+			// Add octant to the toLoad map
 			OctreeNode<SceneGraphNode> octant = (OctreeNode<SceneGraphNode>) obj;
-			EventManager.getInstance().post(Events.POST_NOTIFICATION, I18n.bundle.format("notif.loadingoctant", octant.pageId));
-			try {
-			    ObjectServerLoader.loadOctant(octant, visid, errors, starid, octreeWrapper, particleList, false);
-			} catch (IOException e) {
-			    EventManager.getInstance().post(Events.JAVA_EXCEPTION, e);
-			    EventManager.getInstance().post(Events.POST_NOTIFICATION, I18n.bundle.format("notif.loadingoctant.fail", octant.pageId));
-			    octant.setStatus(LoadStatus.LOADING_FAILED);
-			}
+			toLoad.put(octant.pageId, octant);
+
 		    } else if (obj instanceof Integer) {
+			// Load level right away
+
 			Integer lod = (Integer) obj;
 			EventManager.getInstance().post(Events.POST_NOTIFICATION, I18n.bundle.format("notif.loadinglod", lod));
 			try {
@@ -470,6 +569,19 @@ public class ObjectServerLoader implements ISceneGraphNodeProvider {
 			}
 		    }
 		}
+
+		// Load octants if any
+		if (!toLoad.isEmpty()) {
+		    EventManager.getInstance().post(Events.POST_NOTIFICATION, I18n.bundle.format("notif.loadingoctants", toLoad.size()));
+		    try {
+			ObjectServerLoader.loadOctants(toLoad, visid, errors, starid, octreeWrapper, particleList, false);
+		    } catch (Exception e) {
+			EventManager.getInstance().post(Events.JAVA_EXCEPTION, e);
+			EventManager.getInstance().post(Events.POST_NOTIFICATION, I18n.bundle.get("notif.loadingoctants.fail"));
+		    }
+		}
+		toLoad.clear();
+
 		// Sleep until new data comes
 		try {
 		    awake = false;

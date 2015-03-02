@@ -37,9 +37,9 @@ public class OctreeNode<T extends IPosition> implements ILineRenderable {
     /** Max depth of the structure this node belongs to **/
     public static int maxDepth;
     /** Angle threshold below which we stay with the current level. Lower limit of overlap **/
-    public static final double ANGLE_THRESHOLD_1 = Math.toRadians(6d);
+    public static final double ANGLE_THRESHOLD_1 = Math.toRadians(12d);
     /** Angle threshold above which we break the Octree. Upper limit of overlap **/
-    public static final double ANGLE_THRESHOLD_2 = Math.toRadians(16d);
+    public static final double ANGLE_THRESHOLD_2 = Math.toRadians(22d);
     /** Is dynamic loading active? **/
     public static boolean LOAD_ACTIVE;
 
@@ -291,20 +291,20 @@ public class OctreeNode<T extends IPosition> implements ILineRenderable {
 	if (observed) {
 
 	    /**
-	     * Load individual pages
+	     * Load lists of pages
 	     */
-	    //	    if (status == LoadStatus.NOT_LOADED && LOAD_ACTIVE) {
-	    //		// Add to load all the level
-	    //		ObjectServerLoader.addToQueue(this.parent.children);
-	    //	    }
+	    if (status == LoadStatus.NOT_LOADED && LOAD_ACTIVE) {
+		// Add to load all the level
+		ObjectServerLoader.addToQueue(this.parent.children);
+	    }
 
 	    /**
 	     * Load whole levels of detail
 	     */
-	    if (getLevelStatus(depth) == LoadStatus.NOT_LOADED && LOAD_ACTIVE) {
-		// Add current level of detail to load
-		ObjectServerLoader.addToQueue(depth);
-	    }
+	    //	    if (getLevelStatus(depth) == LoadStatus.NOT_LOADED && LOAD_ACTIVE) {
+	    //		// Add current level of detail to load
+	    //		ObjectServerLoader.addToQueue(depth);
+	    //	    }
 
 	    synchronized (this) {
 		// Compute distance and view angle
