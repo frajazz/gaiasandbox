@@ -5,6 +5,7 @@ import gaia.cu9.ari.gaiaorbit.util.GlobalConf;
 import gaia.cu9.ari.gaiaorbit.util.math.MathUtilsd;
 
 import java.io.IOException;
+import java.io.InputStream;
 
 import android.content.Context;
 import android.hardware.Sensor;
@@ -33,7 +34,12 @@ public class GaiaSandboxActivity extends AndroidApplication {
 	this.mWakeLock.acquire();
 
 	try {
-	    GlobalConf.initialize(this.getAssets().open("conf/android/global.properties"), GaiaSandboxActivity.class.getResourceAsStream("/version"));
+	    InputStream version = GaiaSandboxActivity.class.getResourceAsStream("/version");
+	    if (version == null) {
+		// In case of running in 'developer' mode
+		version = this.getAssets().open("data/dummyversion");
+	    }
+	    GlobalConf.initialize(this.getAssets().open("conf/android/global.properties"), version);
 	} catch (IOException e) {
 	    Log.e(this.getApplicationInfo().name, "Error initializing global configuration");
 	    this.finish();

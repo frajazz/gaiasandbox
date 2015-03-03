@@ -121,7 +121,7 @@
 									"flip" : false
 									},
 						"texture" : {
-									"base" : "data/tex/earth.jpg"
+									"base" : "data/tex/earth.jpg",
 									"specular" : "data/tex/earth-specular.jpg",
 									"normal" : "data/tex/earth-normal.jpg",
 									"night" : "data/tex/earth-night-2k.jpg"
