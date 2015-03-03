@@ -52,8 +52,16 @@ public class GaiaSandboxActivity extends AndroidApplication {
 	cfg.depth = 8;
 	cfg.stencil = 8;
 
+	// Init sensors
+	sensorMan = (SensorManager) getContext().getSystemService(Context.SENSOR_SERVICE);
+	sensorAcce = sensorMan.getDefaultSensor(Sensor.TYPE_ACCELEROMETER);
+	sensorMagn = sensorMan.getDefaultSensor(Sensor.TYPE_MAGNETIC_FIELD);
+
 	initialize(new GaiaSandbox(true), cfg);
     }
+
+    SensorManager sensorMan;
+    Sensor sensorAcce, sensorMagn;
 
     @Override
     protected void onResume() {
@@ -72,17 +80,11 @@ public class GaiaSandboxActivity extends AndroidApplication {
     private void registerSensorListener() {
 	lis = new GSSensorListener();
 
-	SensorManager sensorMan = (SensorManager) getContext().getSystemService(Context.SENSOR_SERVICE);
-	Sensor sensorAcce = sensorMan.getSensorList(Sensor.TYPE_ACCELEROMETER).get(0);
-	Sensor sensorMagn = sensorMan.getSensorList(Sensor.TYPE_MAGNETIC_FIELD).get(0);
 	sensorMan.registerListener(lis, sensorAcce, SensorManager.SENSOR_DELAY_GAME);
 	sensorMan.registerListener(lis, sensorMagn, SensorManager.SENSOR_DELAY_GAME);
     }
 
     private void unregisterSensorListeners() {
-	SensorManager sensorMan = (SensorManager) getContext().getSystemService(Context.SENSOR_SERVICE);
-	Sensor sensorAcce = sensorMan.getSensorList(Sensor.TYPE_ACCELEROMETER).get(0);
-	Sensor sensorMagn = sensorMan.getSensorList(Sensor.TYPE_MAGNETIC_FIELD).get(0);
 	sensorMan.unregisterListener(lis, sensorAcce);
 	sensorMan.unregisterListener(lis, sensorMagn);
 	lis = null;
@@ -134,7 +136,9 @@ public class GaiaSandboxActivity extends AndroidApplication {
 		boolean success = SensorManager.getRotationMatrix(Rtmp, null, acceleration, orientation);
 
 		if (success) {
-		    SensorManager.remapCoordinateSystem(Rtmp, SensorManager.AXIS_Y, SensorManager.AXIS_MINUS_X, Rtmp);
+		    // THIS WORKS
+		    //SensorManager.remapCoordinateSystem(Rtmp, SensorManager.AXIS_Y, SensorManager.AXIS_MINUS_X, Rtmp);
+		    SensorManager.remapCoordinateSystem(Rtmp, SensorManager.AXIS_Z, SensorManager.AXIS_MINUS_X, Rtmp);
 		    matT.set(Rtmp).tra();
 
 		    // Synchronize

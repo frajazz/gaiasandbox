@@ -16,12 +16,18 @@ import gaia.cu9.ari.gaiaorbit.util.parse.Parser;
 import gaia.cu9.ari.gaiaorbit.util.tree.LoadStatus;
 import gaia.cu9.ari.gaiaorbit.util.tree.OctreeNode;
 import gaia.cu9.object.server.ClientCore;
+import gaia.cu9.object.server.commands.ICommand;
+import gaia.cu9.object.server.commands.ICommand.CommandState;
+import gaia.cu9.object.server.commands.ICommandListener;
 import gaia.cu9.object.server.commands.Message;
 import gaia.cu9.object.server.commands.MessageHandler;
 import gaia.cu9.object.server.commands.MessagePayloadBlock;
 import gaia.cu9.object.server.commands.plugins.ClientIdent;
+import gaia.cu9.object.server.commands.plugins.VisualizationPage;
+import gaia.cu9.object.server.utils.BufferedInputStreamReader;
 
 import java.io.BufferedReader;
+import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.StringReader;
 import java.net.ConnectException;
@@ -31,14 +37,13 @@ import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 import java.util.Queue;
-import java.util.Set;
 import java.util.Timer;
 import java.util.TimerTask;
 import java.util.concurrent.ArrayBlockingQueue;
 
 public class ObjectServerLoader implements ISceneGraphNodeProvider {
     /** The octant loading queue **/
-    private static Queue<OctreeNode<?>> octantQueue = new ArrayBlockingQueue<OctreeNode<?>>(5000);
+    private static Queue<OctreeNode<?>> octantQueue = new ArrayBlockingQueue<OctreeNode<?>>(40000);
     /** The lod loading queue **/
     private static Queue<Integer> lodQueue = new ArrayBlockingQueue<Integer>(20);
     /** Load status of the different levels of detail **/
@@ -46,7 +51,6 @@ public class ObjectServerLoader implements ISceneGraphNodeProvider {
 
     /** Daemon thread that gets the data loading requests and serves them **/
     private static DaemonLoader daemon;
-    private static int flushCalls = 0;
 
     /** Adds a lod to the queue to be loaded **/
     public static void addToQueue(Integer object) {
@@ -65,12 +69,10 @@ public class ObjectServerLoader implements ISceneGraphNodeProvider {
 
     /** Adds a list of octants to the queue to be loaded **/
     public static void addToQueue(OctreeNode<?>... octants) {
-	synchronized (octantQueue) {
-	    for (OctreeNode<?> octant : octants) {
-		if (octant != null && octant.getStatus() == LoadStatus.NOT_LOADED) {
-		    octantQueue.add(octant);
-		    octant.setStatus(LoadStatus.QUEUED);
-		}
+	for (OctreeNode<?> octant : octants) {
+	    if (octant != null && octant.getStatus() == LoadStatus.NOT_LOADED) {
+		octantQueue.add(octant);
+		octant.setStatus(LoadStatus.QUEUED);
 	    }
 	}
     }
@@ -83,13 +85,8 @@ public class ObjectServerLoader implements ISceneGraphNodeProvider {
      * Tells the loader to start loading the octants in the queue.
      */
     public static void flushLoadQueue(boolean force) {
-	if (daemon != null && !daemon.awake && !octantQueue.isEmpty()) {
-	    if (!force && octantQueue.size() <= 2 && flushCalls == 0) {
-		flushCalls++;
-	    } else {
-		daemon.interrupt();
-		flushCalls = 0;
-	    }
+	if (!daemon.awake && !octantQueue.isEmpty()) {
+	    daemon.interrupt();
 	}
     }
 
@@ -228,16 +225,14 @@ public class ObjectServerLoader implements ISceneGraphNodeProvider {
 	    /** 
 	     * LOAD LOD LEVELS - LOAD PARTICLE DATA
 	     */
-	    final List<SceneGraphNode> particleList = new ArrayList<SceneGraphNode>(100000);
 	    int depthLevel = Math.min(OctreeNode.maxDepth, preloadDepth);
 	    for (int level = 0; level <= depthLevel; level++) {
-		loadLod(level, visid, errors, starid, octreeWrapper, particleList, true);
+		loadLod(level, visid, errors, starid, octreeWrapper, true);
 	    }
 
 	    // Manually add sun
 	    Star sun = new Star(new Vector3d(0, 0, 0), 4.83f, 4.83f, 0.656f, "Sol", starid.num++);
 	    sun.initialize();
-	    particleList.add(sun);
 
 	    // Find out octant of sun
 	    OctreeNode<SceneGraphNode> candidate = root.getBestOctant(sun.pos);
@@ -245,6 +240,7 @@ public class ObjectServerLoader implements ISceneGraphNodeProvider {
 		EventManager.getInstance().post(Events.JAVA_EXCEPTION, new RuntimeException("No octant candidate for the Sun found!"));
 	    } else {
 		sun.pageId = candidate.pageId;
+		sun.page = candidate;
 		// Add objects to octree wrapper node
 		octreeWrapper.add(sun, candidate);
 		candidate.add(sun);
@@ -335,12 +331,13 @@ public class ObjectServerLoader implements ISceneGraphNodeProvider {
      * @param particleList The particle list to load the data to. This will be cleared.
      * @throws IOException 
      */
-    public static void loadLod(final Integer lod, String visid, final Longref errors, final Longref starid, final AbstractOctreeWrapper octreeWrapper, final List<SceneGraphNode> particleList, boolean synchronous) throws IOException {
+    public static void loadLod(final Integer lod, String visid, final Longref errors, final Longref starid, final AbstractOctreeWrapper octreeWrapper, boolean synchronous) throws IOException {
 	lodStatus[lod] = LoadStatus.LOADING;
+	final List<SceneGraphNode> particleList = new ArrayList<SceneGraphNode>(500);
 	// Fetch particle data for level 0
-	Message msgParticle = new Message("visualization-lod-data?vis-id=" + visid
+	Message message = new Message("visualization-lod-data?vis-id=" + visid
 		+ "&lod-level=" + lod);
-	msgParticle.setMessageHandler(new MessageHandler() {
+	message.setMessageHandler(new MessageHandler() {
 
 	    @Override
 	    public void receivedMessage(Message query, Message reply) {
@@ -357,6 +354,7 @@ public class ObjectServerLoader implements ISceneGraphNodeProvider {
 		    } catch (IOException e) {
 			EventManager.getInstance().post(Events.JAVA_EXCEPTION, e);
 		    }
+		    block.__clearPayload();
 		}
 
 		// Update model
@@ -373,7 +371,6 @@ public class ObjectServerLoader implements ISceneGraphNodeProvider {
 			octreeWrapper.add(s, octant);
 		    }
 		}
-		particleList.clear();
 		// Update status
 		lodStatus[lod] = LoadStatus.LOADED;
 
@@ -384,7 +381,7 @@ public class ObjectServerLoader implements ISceneGraphNodeProvider {
 	    }
 
 	});
-	ClientCore.getInstance().sendMessage(msgParticle, synchronous);
+	ClientCore.getInstance().sendMessage(message, synchronous);
 
     }
 
@@ -398,27 +395,33 @@ public class ObjectServerLoader implements ISceneGraphNodeProvider {
      * @param particleList The list to load the data to.
      * @throws IOException
      */
-    public static void loadOctant(final OctreeNode<SceneGraphNode> octant, String visid, final Longref errors, final Longref starid, final AbstractOctreeWrapper octreeWrapper, final List<SceneGraphNode> particleList, boolean synchronous) throws IOException {
+    public static void loadOctant(final OctreeNode<SceneGraphNode> octant, String visid, final Longref errors, final Longref starid, final AbstractOctreeWrapper octreeWrapper, boolean synchronous) throws IOException {
+	final List<SceneGraphNode> particleList = new ArrayList<SceneGraphNode>(500);
 	octant.setStatus(LoadStatus.LOADING);
-	Message msgParticle = new Message("visualization-page?vis-id=" + visid
-		+ "&page-id=" + octant.pageId);
-	msgParticle.setMessageHandler(new MessageHandler() {
+
+	VisualizationPage visPage = new VisualizationPage(visid, octant.pageId);
+	visPage.addListener(new ICommandListener() {
 
 	    @Override
-	    public void receivedMessage(Message query, Message reply) {
+	    public void notifyStateChange(ICommand command, CommandState state) {
+		Message reply = command.getMessagePair().getReply();
 		for (MessagePayloadBlock block : reply.getPayload()) {
-		    String data = (String) block.getPayload();
-		    BufferedReader reader = new BufferedReader(new StringReader(data));
+		    byte[] payload = block.getPayloadAsByteArray();
+		    ByteArrayInputStream bais = new ByteArrayInputStream(payload);
+		    BufferedInputStreamReader sr = new BufferedInputStreamReader(bais, "UTF-8");
 		    try {
 			String line = null;
-			while ((line = reader.readLine()) != null) {
+			while ((line = sr.readLine()) != null) {
 			    Star star = parseLine(line, errors, starid);
 			    if (star != null)
 				particleList.add(star);
 			}
+			sr.close();
 		    } catch (IOException e) {
 			EventManager.getInstance().post(Events.JAVA_EXCEPTION, e);
 		    }
+
+		    block.__clearPayload();
 		}
 
 		// Update model
@@ -437,16 +440,16 @@ public class ObjectServerLoader implements ISceneGraphNodeProvider {
 		}
 		// Add objects to octree wrapper node
 		octreeWrapper.add(octant.objects, octant);
-		particleList.clear();
+
 	    }
 
 	    @Override
-	    public void receivedMessageBlock(Message query, Message reply, MessagePayloadBlock block) {
+	    public void notifyBlockReceived(ICommand command, CommandState state, MessagePayloadBlock block) {
 	    }
 
 	});
 
-	ClientCore.getInstance().sendMessage(msgParticle, synchronous);
+	ClientCore.getInstance().executeCommand(visPage, synchronous);
 
     }
 
@@ -460,65 +463,58 @@ public class ObjectServerLoader implements ISceneGraphNodeProvider {
      * @param particleList The list to load the data to.
      * @throws IOException
      */
-    public static void loadOctants(final Map<Long, OctreeNode<SceneGraphNode>> octants, String visid, final Longref errors, final Longref starid, final AbstractOctreeWrapper octreeWrapper, final List<SceneGraphNode> particleList, boolean synchronous) throws IOException {
-	StringBuilder pageIds = new StringBuilder();
-	Set<Long> keys = octants.keySet();
-	int size = octants.size();
-	int i = 0;
-	for (Long key : keys) {
-	    OctreeNode<SceneGraphNode> octant = octants.get(key);
-	    octant.setStatus(LoadStatus.LOADING);
-	    pageIds.append(octant.pageId);
-	    if (i < size - 1)
-		pageIds.append(",");
-	    i++;
-	}
+    public static void loadOctants(final Map<Long, OctreeNode<SceneGraphNode>> octants, String visid, final Longref errors, final Longref starid, final AbstractOctreeWrapper octreeWrapper, boolean synchronous) throws IOException {
+	final List<SceneGraphNode> particleList = new ArrayList<SceneGraphNode>(500);
 
-	Message msgParticle = new Message("visualization-page?vis-id=" + visid
-		+ (octants.size() > 1 ? "&page-ids=" : "&page-id=") + pageIds.toString());
-	msgParticle.setMessageHandler(new MessageHandler() {
+	VisualizationPage visPage = new VisualizationPage(visid, octants.keySet());
+	visPage.addListener(new ICommandListener() {
 
 	    @Override
-	    public void receivedMessage(Message query, Message reply) {
-		for (MessagePayloadBlock block : reply.getPayload()) {
-		    String data = (String) block.getPayload();
-		    BufferedReader reader = new BufferedReader(new StringReader(data));
-		    try {
-			String line = null;
-			while ((line = reader.readLine()) != null) {
-			    Star star = parseLine(line, errors, starid);
-			    if (star != null)
-				particleList.add(star);
-			}
-		    } catch (IOException e) {
-			EventManager.getInstance().post(Events.JAVA_EXCEPTION, e);
+	    public void notifyStateChange(ICommand command, CommandState state) {
+
+	    }
+
+	    @Override
+	    public void notifyBlockReceived(ICommand command, CommandState state, MessagePayloadBlock block) {
+		byte[] payload = block.getPayloadAsByteArray();
+		ByteArrayInputStream bais = new ByteArrayInputStream(payload);
+		BufferedInputStreamReader sr = new BufferedInputStreamReader(bais, "UTF-8");
+		try {
+		    String line = null;
+		    while ((line = sr.readLine()) != null) {
+			Star star = parseLine(line, errors, starid);
+			if (star != null)
+			    particleList.add(star);
 		    }
+		    sr.close();
+		} catch (IOException e) {
+		    EventManager.getInstance().post(Events.JAVA_EXCEPTION, e);
 		}
+
+		block.__clearPayload();
 
 		for (SceneGraphNode star : particleList) {
 		    OctreeNode<SceneGraphNode> octant = octants.get(((Star) star).pageId);
-		    // Update model
-		    synchronized (octant) {
-			// Set objects to octant, and octant to objects
-			octant.add(star);
-			((Star) star).page = octant;
+		    if (octant != null) {
+			// Update model
+			synchronized (octant) {
+			    // Set objects to octant, and octant to objects
+			    octant.add(star);
+			    ((Star) star).page = octant;
 
-			// Update status
-			octant.setStatus(LoadStatus.LOADED);
-			octreeWrapper.add(star, octant);
+			    // Update status
+			    octant.setStatus(LoadStatus.LOADED);
+			    octreeWrapper.add(star, octant);
+			}
 		    }
 		}
 		particleList.clear();
 
 	    }
 
-	    @Override
-	    public void receivedMessageBlock(Message query, Message reply, MessagePayloadBlock block) {
-	    }
-
 	});
 
-	ClientCore.getInstance().sendMessage(msgParticle, synchronous);
+	ClientCore.getInstance().executeCommand(visPage, synchronous);
     }
 
     /**
@@ -534,7 +530,6 @@ public class ObjectServerLoader implements ISceneGraphNodeProvider {
 	private Longref errors;
 	private Longref starid;
 	private AbstractOctreeWrapper octreeWrapper;
-	final List<SceneGraphNode> particleList = new ArrayList<SceneGraphNode>(50000);
 	private Map<Long, OctreeNode<SceneGraphNode>> toLoad;
 
 	public DaemonLoader(String visid, Longref starid, AbstractOctreeWrapper aow) {
@@ -548,41 +543,40 @@ public class ObjectServerLoader implements ISceneGraphNodeProvider {
 	@Override
 	public void run() {
 	    while (true) {
+		/** ----------- PROCESS OCTANTS ----------- **/
 		while (!octantQueue.isEmpty()) {
-		    Object obj = octantQueue.poll();
-		    if (obj instanceof OctreeNode) {
-			// Add octant to the toLoad map
-			OctreeNode<SceneGraphNode> octant = (OctreeNode<SceneGraphNode>) obj;
+		    toLoad.clear();
+		    while (octantQueue.peek() != null) {
+			OctreeNode<SceneGraphNode> octant = (OctreeNode<SceneGraphNode>) octantQueue.poll();
 			toLoad.put(octant.pageId, octant);
+		    }
 
-		    } else if (obj instanceof Integer) {
-			// Load level right away
-
-			Integer lod = (Integer) obj;
-			EventManager.getInstance().post(Events.POST_NOTIFICATION, I18n.bundle.format("notif.loadinglod", lod));
+		    // Load octants if any
+		    if (!toLoad.isEmpty()) {
+			EventManager.getInstance().post(Events.POST_NOTIFICATION, I18n.bundle.format("notif.loadingoctants", toLoad.size()));
 			try {
-			    ObjectServerLoader.loadLod(lod, visid, errors, starid, octreeWrapper, particleList, false);
+			    ObjectServerLoader.loadOctants(toLoad, visid, errors, starid, octreeWrapper, false);
 			} catch (Exception e) {
 			    EventManager.getInstance().post(Events.JAVA_EXCEPTION, e);
-			    EventManager.getInstance().post(Events.POST_NOTIFICATION, I18n.bundle.format("notif.loadinglod.fail", lod));
-			    lodStatus[lod] = LoadStatus.LOADING_FAILED;
+			    EventManager.getInstance().post(Events.POST_NOTIFICATION, I18n.bundle.get("notif.loadingoctants.fail"));
 			}
 		    }
 		}
 
-		// Load octants if any
-		if (!toLoad.isEmpty()) {
-		    EventManager.getInstance().post(Events.POST_NOTIFICATION, I18n.bundle.format("notif.loadingoctants", toLoad.size()));
+		/** ----------- PROCESS LODS ----------- **/
+		while (!lodQueue.isEmpty()) {
+		    Integer lod = (Integer) (lodQueue.poll());
+		    EventManager.getInstance().post(Events.POST_NOTIFICATION, I18n.bundle.format("notif.loadinglod", lod));
 		    try {
-			ObjectServerLoader.loadOctants(toLoad, visid, errors, starid, octreeWrapper, particleList, false);
+			ObjectServerLoader.loadLod(lod, visid, errors, starid, octreeWrapper, false);
 		    } catch (Exception e) {
 			EventManager.getInstance().post(Events.JAVA_EXCEPTION, e);
-			EventManager.getInstance().post(Events.POST_NOTIFICATION, I18n.bundle.get("notif.loadingoctants.fail"));
+			EventManager.getInstance().post(Events.POST_NOTIFICATION, I18n.bundle.format("notif.loadinglod.fail", lod));
+			lodStatus[lod] = LoadStatus.LOADING_FAILED;
 		    }
 		}
-		toLoad.clear();
 
-		// Sleep until new data comes
+		/** ----------- SLEEP UNTIL INTERRUPTED ----------- **/
 		try {
 		    awake = false;
 		    Thread.sleep(Long.MAX_VALUE - 8);
@@ -609,4 +603,5 @@ public class ObjectServerLoader implements ISceneGraphNodeProvider {
 	    return String.valueOf(num);
 	}
     }
+
 }
