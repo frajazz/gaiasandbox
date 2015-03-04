@@ -142,11 +142,25 @@ public class GaiaSandboxActivity extends AndroidApplication {
 		    synchronized (lookAtSensor) {
 			System.arraycopy(newLookAt, 0, lookAtSensor, 0, 4);
 			Matrix4.mulVec(matT.val, lookAtSensor);
+			switchIndices(lookAtSensor);
+
 			System.arraycopy(newUp, 0, upSensor, 0, 4);
 			Matrix4.mulVec(matT.val, upSensor);
+			switchIndices(upSensor);
+
 		    }
 		}
 	    }
+	}
+
+	private void switchIndices(float[] vec) {
+	    float x, y, z;
+	    x = vec[0];
+	    y = vec[1];
+	    z = vec[2];
+	    vec[0] = -x;
+	    vec[1] = z;
+	    vec[2] = y;
 	}
 
 	/**
