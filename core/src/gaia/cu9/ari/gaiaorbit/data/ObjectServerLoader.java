@@ -32,6 +32,7 @@ import java.io.IOException;
 import java.io.StringReader;
 import java.net.ConnectException;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -93,7 +94,7 @@ public class ObjectServerLoader implements ISceneGraphNodeProvider {
     /**
      * Data will be pre-loaded at startup down to this octree depth.
      */
-    private static int preloadDepth = 6;
+    private static int preloadDepth = 3;
 
     Longref starid = new Longref(1l);
     Longref errors = new Longref();
@@ -453,6 +454,14 @@ public class ObjectServerLoader implements ISceneGraphNodeProvider {
 
     }
 
+    private static String toString(Collection<Long> pageids) {
+	StringBuilder sb = new StringBuilder();
+	for (Long pageid : pageids) {
+	    sb.append(pageid).append(",");
+	}
+	return sb.toString();
+    }
+
     /**
      * Loads the objects of the given octants using the given list from the visualization identified by <tt>visid</tt>
      * @param octants The map of <pageId, octant> holding the octants to load.
@@ -466,6 +475,8 @@ public class ObjectServerLoader implements ISceneGraphNodeProvider {
     public static void loadOctants(final Map<Long, OctreeNode<SceneGraphNode>> octants, String visid, final Longref errors, final Longref starid, final AbstractOctreeWrapper octreeWrapper, boolean synchronous) throws IOException {
 	final List<SceneGraphNode> particleList = new ArrayList<SceneGraphNode>(500);
 
+	System.out.println(toString(octants.keySet()));
+
 	VisualizationPage visPage = new VisualizationPage(visid, octants.keySet());
 	visPage.addListener(new ICommandListener() {
 
@@ -476,6 +487,7 @@ public class ObjectServerLoader implements ISceneGraphNodeProvider {
 
 	    @Override
 	    public void notifyBlockReceived(ICommand command, CommandState state, MessagePayloadBlock block) {
+		System.out.println("YEA");
 		byte[] payload = block.getPayloadAsByteArray();
 		ByteArrayInputStream bais = new ByteArrayInputStream(payload);
 		BufferedInputStreamReader sr = new BufferedInputStreamReader(bais, "UTF-8");
@@ -555,7 +567,7 @@ public class ObjectServerLoader implements ISceneGraphNodeProvider {
 		    if (!toLoad.isEmpty()) {
 			EventManager.getInstance().post(Events.POST_NOTIFICATION, I18n.bundle.format("notif.loadingoctants", toLoad.size()));
 			try {
-			    ObjectServerLoader.loadOctants(toLoad, visid, errors, starid, octreeWrapper, false);
+			    ObjectServerLoader.loadOctants(toLoad, visid, errors, starid, octreeWrapper, true);
 			} catch (Exception e) {
 			    EventManager.getInstance().post(Events.JAVA_EXCEPTION, e);
 			    EventManager.getInstance().post(Events.POST_NOTIFICATION, I18n.bundle.get("notif.loadingoctants.fail"));
@@ -568,7 +580,7 @@ public class ObjectServerLoader implements ISceneGraphNodeProvider {
 		    Integer lod = (Integer) (lodQueue.poll());
 		    EventManager.getInstance().post(Events.POST_NOTIFICATION, I18n.bundle.format("notif.loadinglod", lod));
 		    try {
-			ObjectServerLoader.loadLod(lod, visid, errors, starid, octreeWrapper, false);
+			ObjectServerLoader.loadLod(lod, visid, errors, starid, octreeWrapper, true);
 		    } catch (Exception e) {
 			EventManager.getInstance().post(Events.JAVA_EXCEPTION, e);
 			EventManager.getInstance().post(Events.POST_NOTIFICATION, I18n.bundle.format("notif.loadinglod.fail", lod));
