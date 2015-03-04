@@ -13,12 +13,12 @@ import gaia.cu9.ari.gaiaorbit.interfce.KeyMappings.ProgramAction;
 import gaia.cu9.ari.gaiaorbit.util.GlobalConf;
 import gaia.cu9.ari.gaiaorbit.util.GlobalResources;
 import gaia.cu9.ari.gaiaorbit.util.I18n;
-import gaia.cu9.object.server.ClientCore;
-import gaia.cu9.object.server.commands.plugins.ClientIdent;
-import gaia.cu9.object.server.structures.datasets.DatasetManager;
-import gaia.cu9.object.server.structures.tables.Table;
-import gaia.cu9.object.server.structures.visualization.Visualization;
-import gaia.cu9.object.server.structures.visualization.VisualizationManager;
+import gaia.cu9.visualization.objectserver.ClientCore;
+import gaia.cu9.visualization.objectserver.commands.plugins.ClientIdent;
+import gaia.cu9.visualization.objectserver.structures.datasets.DatasetManager;
+import gaia.cu9.visualization.objectserver.structures.tables.Table;
+import gaia.cu9.visualization.objectserver.structures.visualization.Visualization;
+import gaia.cu9.visualization.objectserver.structures.visualization.VisualizationManager;
 
 import java.awt.BorderLayout;
 import java.awt.Color;

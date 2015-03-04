@@ -15,16 +15,16 @@ import gaia.cu9.ari.gaiaorbit.util.math.Vector3d;
 import gaia.cu9.ari.gaiaorbit.util.parse.Parser;
 import gaia.cu9.ari.gaiaorbit.util.tree.LoadStatus;
 import gaia.cu9.ari.gaiaorbit.util.tree.OctreeNode;
-import gaia.cu9.object.server.ClientCore;
-import gaia.cu9.object.server.commands.ICommand;
-import gaia.cu9.object.server.commands.ICommand.CommandState;
-import gaia.cu9.object.server.commands.ICommandListener;
-import gaia.cu9.object.server.commands.Message;
-import gaia.cu9.object.server.commands.MessageHandler;
-import gaia.cu9.object.server.commands.MessagePayloadBlock;
-import gaia.cu9.object.server.commands.plugins.ClientIdent;
-import gaia.cu9.object.server.commands.plugins.VisualizationPage;
-import gaia.cu9.object.server.utils.BufferedInputStreamReader;
+import gaia.cu9.visualization.objectserver.ClientCore;
+import gaia.cu9.visualization.objectserver.commands.ICommand;
+import gaia.cu9.visualization.objectserver.commands.ICommand.CommandState;
+import gaia.cu9.visualization.objectserver.commands.ICommandListener;
+import gaia.cu9.visualization.objectserver.commands.Message;
+import gaia.cu9.visualization.objectserver.commands.MessageHandler;
+import gaia.cu9.visualization.objectserver.commands.MessagePayloadBlock;
+import gaia.cu9.visualization.objectserver.commands.plugins.ClientIdent;
+import gaia.cu9.visualization.objectserver.commands.plugins.VisualizationPage;
+import gaia.cu9.visualization.objectserver.utils.BufferedInputStreamReader;
 
 import java.io.BufferedReader;
 import java.io.ByteArrayInputStream;
@@ -487,7 +487,6 @@ public class ObjectServerLoader implements ISceneGraphNodeProvider {
 
 	    @Override
 	    public void notifyBlockReceived(ICommand command, CommandState state, MessagePayloadBlock block) {
-		System.out.println("YEA");
 		byte[] payload = block.getPayloadAsByteArray();
 		ByteArrayInputStream bais = new ByteArrayInputStream(payload);
 		BufferedInputStreamReader sr = new BufferedInputStreamReader(bais, "UTF-8");

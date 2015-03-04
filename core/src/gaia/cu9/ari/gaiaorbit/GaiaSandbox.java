@@ -42,7 +42,7 @@ import gaia.cu9.ari.gaiaorbit.util.math.MathUtilsd;
 import gaia.cu9.ari.gaiaorbit.util.math.Vector3d;
 import gaia.cu9.ari.gaiaorbit.util.time.GlobalClock;
 import gaia.cu9.ari.gaiaorbit.util.tree.OctreeNode;
-import gaia.cu9.object.server.ClientCore;
+import gaia.cu9.visualization.objectserver.ClientCore;
 
 import java.io.File;
 import java.io.FileInputStream;
