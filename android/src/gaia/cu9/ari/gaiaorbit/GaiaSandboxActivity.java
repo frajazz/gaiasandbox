@@ -125,9 +125,9 @@ public class GaiaSandboxActivity extends AndroidApplication {
 	    int type = evt.sensor.getType();
 	    //Smoothing the sensor
 	    if (type == Sensor.TYPE_MAGNETIC_FIELD) {
-		orientation = lowPass(evt.values, orientation, 0.05f);
+		orientation = lowPass(evt.values, orientation, 0.1f);
 	    } else if (type == Sensor.TYPE_ACCELEROMETER) {
-		acceleration = lowPass(evt.values, acceleration, 0.05f);
+		acceleration = lowPass(evt.values, acceleration, 0.1f);
 	    }
 
 	    if (acceleration != null && orientation != null) {
@@ -135,8 +135,7 @@ public class GaiaSandboxActivity extends AndroidApplication {
 
 		if (success) {
 		    // THIS WORKS
-		    //SensorManager.remapCoordinateSystem(Rtmp, SensorManager.AXIS_Y, SensorManager.AXIS_MINUS_X, Rtmp);
-		    SensorManager.remapCoordinateSystem(Rtmp, SensorManager.AXIS_Z, SensorManager.AXIS_MINUS_X, Rtmp);
+		    SensorManager.remapCoordinateSystem(Rtmp, SensorManager.AXIS_Y, SensorManager.AXIS_MINUS_X, Rtmp);
 		    matT.set(Rtmp).tra();
 
 		    // Synchronize

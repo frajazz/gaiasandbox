@@ -32,7 +32,7 @@
 						"args" : [true],
 						"type" : "sphere",
 						"params" : {
-									"quality" : 50,
+									"quality" : 40,
 									"diameter" : 1.0,
 									"flip" : false
 									},
@@ -74,7 +74,7 @@
 						"args" : [true],
 						"type" : "sphere",
 						"params" : {
-									"quality" : 50,
+									"quality" : 40,
 									"diameter" : 1.0,
 									"flip" : false
 									},
@@ -135,7 +135,7 @@
 						"m_Km" : 0.001,
 						
 						"params" : {
-									"quality" : 120,
+									"quality" : 100,
 									// Atmosphere diameters are always 2
 									"diameter" : 2.0,
 									"flip" : true
@@ -176,7 +176,7 @@
 						"args" : [true],
 						"type" : "sphere",
 						"params" : {
-									"quality" : 50,
+									"quality" : 40,
 									"diameter" : 1.0,
 									"flip" : false
 									},
@@ -219,7 +219,7 @@
 						"args" : [true],
 						"type" : "sphere",
 						"params" : {
-									"quality" : 50,
+									"quality" : 40,
 									"diameter" : 1.0,
 									"flip" : false
 									},
@@ -261,7 +261,7 @@
 						"args" : [true],
 						"type" : "ring",
 						"params" : {
-									"quality" : 50,
+									"quality" : 40,
 									"diameter" : 1.0,
 									"flip" : false,
 									"divisions" : 90,
@@ -307,7 +307,7 @@
 						"args" : [true],
 						"type" : "sphere",
 						"params" : {
-									"quality" : 50,
+									"quality" : 40,
 									"diameter" : 1.0,
 									"flip" : false
 									},
@@ -350,7 +350,7 @@
 						"args" : [true],
 						"type" : "sphere",
 						"params" : {
-									"quality" : 50,
+									"quality" : 40,
 									"diameter" : 1.0,
 									"flip" : false
 									},
