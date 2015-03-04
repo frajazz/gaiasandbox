@@ -14,7 +14,7 @@ gaia.cu9.ari.gaiaorbit.data.StarLoader.file=data/android/hygxyz.bin
 # NON-STAR LOADERS - loads non-star entities (planets, satellites, moons, orbits...)
 
 # Configuration file with the entities
-gaia.cu9.ari.gaiaorbit.data.JsonLoader.files=data/android/planets.json data/android/moons.json data/android/satellites.json data/android/asteroids.json data/android/orbits.json data/android/extra.json
+gaia.cu9.ari.gaiaorbit.data.JsonLoader.files=data/android/planets.json data/android/moons.json data/android/satellites.json data/android/orbits.json data/android/extra.json
 
 
 # CONSTELLATION LINE LOADER

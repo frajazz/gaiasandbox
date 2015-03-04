@@ -48,7 +48,7 @@ public class NotificationsInterface extends Table implements IObserver {
 	message = new OwnLabel("", skin, "hud-med");
 	this.add(message).left();
 	this.historical = new LinkedList<MessageBean>();
-	this.df = DateFormat.getDateInstance(DateFormat.SHORT);
+	this.df = DateFormat.getDateInstance(DateFormat.LONG);
 	EventManager.getInstance().subscribe(this, Events.POST_NOTIFICATION, Events.FOCUS_CHANGED, Events.TOGGLE_TIME_CMD, Events.TOGGLE_VISIBILITY_CMD, Events.CAMERA_MODE_CMD, Events.PACE_CHANGED_INFO, Events.FOCUS_LOCK_CMD, Events.TOGGLE_AMBIENT_LIGHT, Events.FOV_CHANGE_NOTIFICATION, Events.JAVA_EXCEPTION, Events.ORBIT_DATA_LOADED, Events.SCREENSHOT_INFO, Events.COMPUTE_GAIA_SCAN_CMD, Events.ONLY_OBSERVED_STARS_CMD, Events.TRANSIT_COLOUR_CMD, Events.LIMIT_MAG_CMD, Events.TOGGLE_STEREOSCOPIC, Events.TOGGLE_CLEANMODE, Events.TOGGLE_GLOBALPAUSE);
     }
 
