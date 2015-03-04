@@ -125,9 +125,15 @@ public class NaturalCamera extends AbstractCamera implements IObserver {
 	    synchronized (lookAtSensor) {
 		direction.set(lookAtSensor);
 		up.set(upSensor);
+		camUpdate(dt, time);
 	    }
+	} else {
+	    camUpdate(dt, time);
 	}
 
+    }
+
+    private void camUpdate(float dt, ITimeFrameProvider time) {
 	// The whole update thread must lock the value of direction and up
 	distance = pos.len();
 	CameraMode m = (parent.current == this ? parent.mode : lastMode);
