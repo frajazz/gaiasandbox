@@ -11,9 +11,8 @@ uniform vec4 u_color;
 #ifdef GL_ES
     vec4 draw_star() {
 	// Distance from the center of the image to the border, in [0, 1]
-	float dist = distance(vec2(0.5, 0.5), v_texCoords.xy) * 2.0;
-	float fac = 1.0 - pow (dist, 0.25);
-	return vec4(u_color.rgb, u_color.a * fac);
+	float dist = 1.0 - distance(vec2(0.5, 0.5), v_texCoords.xy) * 8.0;
+	return vec4(u_color.rgb, u_color.a * dist);
     }
 #else
     uniform float u_th_dist_up;

@@ -125,8 +125,8 @@ public class NaturalCamera extends AbstractCamera implements IObserver {
 	    synchronized (lookAtSensor) {
 		direction.set(lookAtSensor);
 		up.set(upSensor);
-		camUpdate(dt, time);
 	    }
+	    updatePerspectiveCamera();
 	} else {
 	    camUpdate(dt, time);
 	}
@@ -165,17 +165,15 @@ public class NaturalCamera extends AbstractCamera implements IObserver {
 		}
 
 		// Update direction to follow focus and activate custom input listener
-		if (!accelerometer) {
-		    updatePosition(dt, translateUnits);
-		    updateRotation(dt, focusPos);
+		updatePosition(dt, translateUnits);
+		updateRotation(dt, focusPos);
 
-		    if (!diverted) {
-			directionToTarget(dt, focusPos, GlobalConf.scene.TURNING_SPEED / 1e3f);
-		    } else {
-			updateRotationFree(dt, GlobalConf.scene.TURNING_SPEED);
-		    }
-		    updateRoll(dt, GlobalConf.scene.TURNING_SPEED);
+		if (!diverted) {
+		    directionToTarget(dt, focusPos, GlobalConf.scene.TURNING_SPEED / 1e3f);
+		} else {
+		    updateRotationFree(dt, GlobalConf.scene.TURNING_SPEED);
 		}
+		updateRoll(dt, GlobalConf.scene.TURNING_SPEED);
 
 		// Update focus direction
 		focus.transform.getTranslation(focusDirection);
@@ -186,13 +184,11 @@ public class NaturalCamera extends AbstractCamera implements IObserver {
 	    }
 	    break;
 	case Free_Camera:
-	    if (!accelerometer) {
-		updatePosition(dt, translateUnits);
+	    updatePosition(dt, translateUnits);
 
-		// Update direction with pitch, yaw, roll
-		updateRotationFree(dt, GlobalConf.scene.TURNING_SPEED);
-		updateRoll(dt, GlobalConf.scene.TURNING_SPEED);
-	    }
+	    // Update direction with pitch, yaw, roll
+	    updateRotationFree(dt, GlobalConf.scene.TURNING_SPEED);
+	    updateRoll(dt, GlobalConf.scene.TURNING_SPEED);
 	    break;
 	default:
 	    break;
@@ -200,6 +196,11 @@ public class NaturalCamera extends AbstractCamera implements IObserver {
 
 	lastFwdTime += dt;
 	lastMode = m;
+
+	updatePerspectiveCamera();
+    }
+
+    private void updatePerspectiveCamera() {
 
 	if (closest != null) {
 	    camera.near = (float) Math.min(CAM_NEAR, (closest.distToCamera - closest.getRadius()) / 2);

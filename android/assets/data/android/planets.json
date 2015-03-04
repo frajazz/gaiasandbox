@@ -126,7 +126,8 @@
 									"normal" : "data/tex/earth-normal.jpg",
 									"night" : "data/tex/earth-night-2k.jpg"
 									}
-						},
+						}
+						,
 									
 	"atmosphere" 	: {
 						"size" : 6600.0,

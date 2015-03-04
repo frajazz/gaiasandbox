@@ -94,8 +94,6 @@ public class GaiaSandboxActivity extends AndroidApplication {
 
 	float[] newLookAt, newUp;
 
-	public float[] lookAtSensor, upSensor;
-
 	Matrix4 matT;
 
 	private float Rtmp[] = new float[16];
@@ -104,17 +102,14 @@ public class GaiaSandboxActivity extends AndroidApplication {
 	    orientation = new float[3];
 	    acceleration = new float[3];
 
-	    lookAtSensor = new float[4];
-	    upSensor = new float[4];
-
 	    newLookAt = new float[] { 0, 0, -1, 1 };
 	    newUp = new float[] { 0, 1, 0, 1 };
 
 	    matT = new Matrix4();
 
-	    // Link to natural camera
-	    NaturalCamera.upSensor = upSensor;
-	    NaturalCamera.lookAtSensor = lookAtSensor;
+	    // Init camera up and lookat links
+	    NaturalCamera.upSensor = new float[4];
+	    NaturalCamera.lookAtSensor = new float[4];
 
 	}
 
@@ -139,14 +134,14 @@ public class GaiaSandboxActivity extends AndroidApplication {
 		    matT.set(Rtmp).tra();
 
 		    // Synchronize
-		    synchronized (lookAtSensor) {
-			System.arraycopy(newLookAt, 0, lookAtSensor, 0, 4);
-			Matrix4.mulVec(matT.val, lookAtSensor);
-			switchIndices(lookAtSensor);
+		    synchronized (NaturalCamera.lookAtSensor) {
+			System.arraycopy(newLookAt, 0, NaturalCamera.lookAtSensor, 0, 4);
+			Matrix4.mulVec(matT.val, NaturalCamera.lookAtSensor);
+			switchIndices(NaturalCamera.lookAtSensor);
 
-			System.arraycopy(newUp, 0, upSensor, 0, 4);
-			Matrix4.mulVec(matT.val, upSensor);
-			switchIndices(upSensor);
+			System.arraycopy(newUp, 0, NaturalCamera.upSensor, 0, 4);
+			Matrix4.mulVec(matT.val, NaturalCamera.upSensor);
+			switchIndices(NaturalCamera.upSensor);
 
 		    }
 		}
