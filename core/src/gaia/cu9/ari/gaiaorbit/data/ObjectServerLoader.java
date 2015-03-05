@@ -153,7 +153,7 @@ public class ObjectServerLoader implements ISceneGraphNodeProvider {
 		public void receivedMessage(Message query, Message reply) {
 		    int maxdepth = 0;
 		    for (MessagePayloadBlock block : reply.getPayload()) {
-			String data = (String) block.getPayload();
+			String data = (String) block.getPayloadAsString();
 			BufferedReader reader = new BufferedReader(new StringReader(data));
 			try {
 			    String line = null;
@@ -343,7 +343,7 @@ public class ObjectServerLoader implements ISceneGraphNodeProvider {
 	    @Override
 	    public void receivedMessage(Message query, Message reply) {
 		for (MessagePayloadBlock block : reply.getPayload()) {
-		    String data = (String) block.getPayload();
+		    String data = (String) block.getPayloadAsString();
 		    BufferedReader reader = new BufferedReader(new StringReader(data));
 		    try {
 			String line = null;
