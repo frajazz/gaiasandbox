@@ -7,6 +7,7 @@ import gaia.cu9.ari.gaiaorbit.util.math.MathUtilsd;
 import java.io.IOException;
 import java.io.InputStream;
 
+import android.app.Activity;
 import android.content.Context;
 import android.hardware.Sensor;
 import android.hardware.SensorEvent;
@@ -16,6 +17,7 @@ import android.os.Bundle;
 import android.os.PowerManager;
 import android.os.PowerManager.WakeLock;
 import android.util.Log;
+import android.view.View;
 import android.view.inputmethod.InputMethodManager;
 
 import com.badlogic.gdx.backends.android.AndroidApplication;
@@ -67,7 +69,8 @@ public class GaiaSandboxActivity extends AndroidApplication {
 	super.onResume();
 	this.mWakeLock.acquire();
 	registerSensorListener();
-	hideSoftKeyboard();
+	hideSoftKeyboard(this);
+
     }
 
     @Override
@@ -199,10 +202,14 @@ public class GaiaSandboxActivity extends AndroidApplication {
     /**
      * Hides the soft keyboard
      */
-    public void hideSoftKeyboard() {
-	if (getCurrentFocus() != null) {
-	    InputMethodManager inputMethodManager = (InputMethodManager) getSystemService(INPUT_METHOD_SERVICE);
-	    inputMethodManager.hideSoftInputFromWindow(getCurrentFocus().getWindowToken(), 0);
+    public static void hideSoftKeyboard(Activity activity) {
+	InputMethodManager inputMethodManager = (InputMethodManager) activity.getSystemService(Activity.INPUT_METHOD_SERVICE);
+	//Find the currently focused view, so we can grab the correct window token from it.
+	View view = activity.getCurrentFocus();
+	//If no view currently has focus, create a new one, just so we can grab a window token from it
+	if (view == null) {
+	    view = new View(activity);
 	}
+	inputMethodManager.hideSoftInputFromWindow(view.getWindowToken(), 0);
     }
 }
