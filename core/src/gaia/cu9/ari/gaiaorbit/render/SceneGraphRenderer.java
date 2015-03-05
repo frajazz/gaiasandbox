@@ -362,7 +362,7 @@ public class SceneGraphRenderer extends AbstractRenderer implements IProcessRend
 		if (camera.getMode() == CameraMode.Focus) {
 		    // In focus mode we keep the separation dependant on the distance with a fixed angle
 		    float distToFocus = ((NaturalCamera) camera.getCurrent()).focus.distToCamera - ((NaturalCamera) camera.getCurrent()).focus.getRadius();
-		    separation = (float) Math.min((Math.tan(Math.toRadians(1.5)) * distToFocus), 1e16 * Constants.M_TO_U);
+		    separation = (float) Math.min((Math.tan(Math.toRadians(1.5)) * distToFocus), 1e11 * Constants.M_TO_U);
 		}
 
 		side.crs(cam.up).nor().scl(separation);

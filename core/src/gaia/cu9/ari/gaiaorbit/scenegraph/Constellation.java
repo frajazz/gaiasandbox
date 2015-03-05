@@ -111,7 +111,7 @@ public class Constellation extends LineObject implements ILabelRenderable {
     }
 
     @Override
-    public void updateLocalValues(ITimeFrameProvider time) {
+    public void updateLocalValues(ITimeFrameProvider time, ICamera camera) {
     }
 
     @Override

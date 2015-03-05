@@ -104,7 +104,7 @@ public abstract class AbstractPositionEntity extends SceneGraphNode {
      */
     @Override
     public void updateLocal(ITimeFrameProvider time, ICamera camera) {
-	updateLocalValues(time);
+	updateLocalValues(time, camera);
 
 	this.transform.translate(pos);
 
@@ -128,7 +128,7 @@ public abstract class AbstractPositionEntity extends SceneGraphNode {
      * @param dt
      * @param time
      */
-    public abstract void updateLocalValues(ITimeFrameProvider time);
+    public abstract void updateLocalValues(ITimeFrameProvider time, ICamera camera);
 
     public float getRadius() {
 	return size / 2;

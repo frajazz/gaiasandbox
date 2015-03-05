@@ -3,6 +3,7 @@ package gaia.cu9.ari.gaiaorbit.util.math;
 import java.io.Serializable;
 
 import com.badlogic.gdx.math.Quaternion;
+import com.badlogic.gdx.math.Vector3;
 
 /**
  * Copy of libgdx's Vector3d class using doubles for some precision calculations.
@@ -80,6 +81,10 @@ public class Vector3d implements Serializable {
 	return this.set(vector.x, vector.y, vector.z);
     }
 
+    public Vector3d set(final Vector3 vector) {
+	return this.set(vector.x, vector.y, vector.z);
+    }
+
     public Vector3d setZero() {
 	return this.set(0, 0, 0);
     }
@@ -144,6 +149,10 @@ public class Vector3d implements Serializable {
     }
 
     public Vector3d sub(final Vector3d a_vec) {
+	return this.sub(a_vec.x, a_vec.y, a_vec.z);
+    }
+
+    public Vector3d sub(final Vector3 a_vec) {
 	return this.sub(a_vec.x, a_vec.y, a_vec.z);
     }
 

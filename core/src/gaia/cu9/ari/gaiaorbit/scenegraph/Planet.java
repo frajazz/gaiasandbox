@@ -84,7 +84,7 @@ public class Planet extends ModelBody implements IAtmosphereRenderable {
     }
 
     @Override
-    public void updateLocalValues(ITimeFrameProvider time) {
+    public void updateLocalValues(ITimeFrameProvider time, ICamera camera) {
 	forceUpdateLocalValues(time, false);
     }
 

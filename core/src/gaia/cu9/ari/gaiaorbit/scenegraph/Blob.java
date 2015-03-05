@@ -54,7 +54,7 @@ public abstract class Blob extends AbstractPositionEntity {
     }
 
     @Override
-    public void updateLocalValues(ITimeFrameProvider time) {
+    public void updateLocalValues(ITimeFrameProvider time, ICamera camera) {
     }
 
 }

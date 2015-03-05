@@ -56,7 +56,7 @@ public class Gaia extends ModelBody {
     }
 
     @Override
-    public void updateLocalValues(ITimeFrameProvider time) {
+    public void updateLocalValues(ITimeFrameProvider time, ICamera camera) {
 	forceUpdatePosition(time, false);
     }
 

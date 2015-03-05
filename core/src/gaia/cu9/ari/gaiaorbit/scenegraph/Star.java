@@ -278,7 +278,7 @@ public class Star extends CelestialBody {
     }
 
     @Override
-    public void updateLocalValues(ITimeFrameProvider time) {
+    public void updateLocalValues(ITimeFrameProvider time, ICamera camera) {
     }
 
 }
