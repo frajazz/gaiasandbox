@@ -123,8 +123,8 @@ public class NaturalCamera extends AbstractCamera implements IObserver {
 	// Set up direction and lookAtSensor if accelerometer is enabled
 	if (accelerometer) {
 	    synchronized (lookAtSensor) {
-		direction.set(lookAtSensor);
-		up.set(upSensor);
+		direction.set(lookAtSensor).nor();
+		up.set(upSensor).nor();
 	    }
 	    updatePerspectiveCamera();
 	} else {

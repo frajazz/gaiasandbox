@@ -9,13 +9,13 @@ import com.badlogic.gdx.graphics.g3d.ModelBatch;
 import com.badlogic.gdx.math.Matrix4;
 
 public abstract class ModelBody extends CelestialBody {
-    protected static final float TH_ANGLE_POINT = (float) Math.toRadians(0.35);
+    protected static final double TH_ANGLE_POINT = Math.toRadians(0.35);
 
     /**
      * Angle limit for rendering as point. If angle is any bigger, we render with shader.
      * Returns Math.toRadians(0.35)
      */
-    public float THRESHOLD_ANGLE_POINT() {
+    public double THRESHOLD_ANGLE_POINT() {
 	return TH_ANGLE_POINT;
     }
 
@@ -74,8 +74,8 @@ public abstract class ModelBody extends CelestialBody {
 	    if (viewAngle < THRESHOLD_ANGLE_POINT() * camera.getFovFactor()) {
 		addToRender(this, RenderGroup.POINT);
 	    } else {
-		float shaderCamera = THRESHOLD_ANGLE_SHADER() * camera.getFovFactor();
-		float shaderCameraOverlap = shaderCamera * ModelBody.SHADER_MODEL_OVERLAP_FACTOR;
+		double shaderCamera = THRESHOLD_ANGLE_QUAD() * camera.getFovFactor();
+		double shaderCameraOverlap = shaderCamera * ModelBody.SHADER_MODEL_OVERLAP_FACTOR;
 		if (viewAngle < shaderCameraOverlap) {
 		    addToRender(this, RenderGroup.SHADER_F);
 		}

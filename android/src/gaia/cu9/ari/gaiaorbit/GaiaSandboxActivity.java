@@ -16,6 +16,7 @@ import android.os.Bundle;
 import android.os.PowerManager;
 import android.os.PowerManager.WakeLock;
 import android.util.Log;
+import android.view.inputmethod.InputMethodManager;
 
 import com.badlogic.gdx.backends.android.AndroidApplication;
 import com.badlogic.gdx.backends.android.AndroidApplicationConfiguration;
@@ -66,6 +67,7 @@ public class GaiaSandboxActivity extends AndroidApplication {
 	super.onResume();
 	this.mWakeLock.acquire();
 	registerSensorListener();
+	hideSoftKeyboard();
     }
 
     @Override
@@ -120,9 +122,9 @@ public class GaiaSandboxActivity extends AndroidApplication {
 	    int type = evt.sensor.getType();
 	    //Smoothing the sensor
 	    if (type == Sensor.TYPE_MAGNETIC_FIELD) {
-		orientation = lowPass(evt.values, orientation, 0.1f);
+		orientation = lowPass2(evt.values, orientation);
 	    } else if (type == Sensor.TYPE_ACCELEROMETER) {
-		acceleration = lowPass(evt.values, acceleration, 0.1f);
+		acceleration = lowPass2(evt.values, acceleration);
 	    }
 
 	    if (acceleration != null && orientation != null) {
@@ -158,17 +160,29 @@ public class GaiaSandboxActivity extends AndroidApplication {
 	    vec[2] = y;
 	}
 
+	static final float ALPHA = 0.1f;
+
 	/**
 	 * Fast implementation of low-pass filter to smooth angle values coming from noisy sensor readings
 	 * @see http://en.wikipedia.org/wiki/Low-pass_filter#Algorithmic_implementation
 	 * @see http://en.wikipedia.org/wiki/Low-pass_filter#Simple_infinite_impulse_response_filter
 	 */
-	protected float[] lowPass(float[] input, float[] output, float alpha) {
+	protected float[] lowPass(float[] input, float[] output) {
 	    if (output == null)
 		return input.clone();
 
 	    for (int i = 0; i < input.length; i++) {
-		output[i] = output[i] + alpha * (input[i] - output[i]);
+		output[i] = output[i] + ALPHA * (input[i] - output[i]);
+	    }
+	    return output;
+	}
+
+	protected float[] lowPass2(float[] input, float[] output) {
+	    if (output == null)
+		return input.clone();
+
+	    for (int i = 0; i < input.length; i++) {
+		output[i] = (input[i] * ALPHA) + (output[i] * (1.0f - ALPHA));
 	    }
 	    return output;
 	}
@@ -180,5 +194,15 @@ public class GaiaSandboxActivity extends AndroidApplication {
 	unregisterSensorListeners();
 	this.mWakeLock.release();
 	super.onDestroy();
+    }
+
+    /**
+     * Hides the soft keyboard
+     */
+    public void hideSoftKeyboard() {
+	if (getCurrentFocus() != null) {
+	    InputMethodManager inputMethodManager = (InputMethodManager) getSystemService(INPUT_METHOD_SERVICE);
+	    inputMethodManager.hideSoftInputFromWindow(getCurrentFocus().getWindowToken(), 0);
+	}
     }
 }

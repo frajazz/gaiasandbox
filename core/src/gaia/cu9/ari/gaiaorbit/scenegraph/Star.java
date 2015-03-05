@@ -34,8 +34,6 @@ import com.badlogic.gdx.graphics.g3d.attributes.TextureAttribute;
 import com.badlogic.gdx.math.Matrix4;
 
 public class Star extends CelestialBody {
-    private static final float TH_ANGLE_POINT = (float) Math.toRadians(2e-7f);
-    private static final float TH_ANGLE_NONE = 0;
     private static ThreadLocal<Random> rnd = new ThreadLocal<Random>() {
 	@Override
 	public Random initialValue() {
@@ -44,18 +42,18 @@ public class Star extends CelestialBody {
     };
 
     @Override
-    public float THRESHOLD_ANGLE_NONE() {
-	return TH_ANGLE_NONE;
+    public double THRESHOLD_ANGLE_NONE() {
+	return GlobalConf.scene.STAR_TH_ANGLE_NONE;
     }
 
     @Override
-    public float THRESHOLD_ANGLE_POINT() {
-	return TH_ANGLE_POINT;
+    public double THRESHOLD_ANGLE_POINT() {
+	return GlobalConf.scene.STAR_TH_ANGLE_POINT;
     }
 
     @Override
-    public float THRESHOLD_ANGLE_SHADER() {
-	return 0;
+    public double THRESHOLD_ANGLE_QUAD() {
+	return GlobalConf.scene.STAR_TH_ANGLE_QUAD;
     }
 
     /** Has the model used to represent the star **/
@@ -194,7 +192,7 @@ public class Star extends CelestialBody {
 	    } else {
 		if (viewAngleApparent < THRESHOLD_ANGLE_POINT() * camera.getFovFactor()) {
 		    // Update opacity
-		    opacity *= MathUtilsd.lint(viewAngleApparent, 0, THRESHOLD_ANGLE_POINT(), Constants.pointAlphaMin, Constants.pointAlphaMax);
+		    opacity *= MathUtilsd.lint(viewAngleApparent, 0, THRESHOLD_ANGLE_POINT(), GlobalConf.scene.POINT_ALPHA_MIN, GlobalConf.scene.POINT_ALPHA_MAX);
 		    addToRender(this, RenderGroup.POINT);
 		} else {
 		    addToRender(this, RenderGroup.POINT);
