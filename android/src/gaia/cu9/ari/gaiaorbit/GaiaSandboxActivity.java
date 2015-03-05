@@ -166,7 +166,8 @@ public class GaiaSandboxActivity extends AndroidApplication {
 	static final float ALPHA = 0.1f;
 
 	/**
-	 * Fast implementation of low-pass filter to smooth angle values coming from noisy sensor readings
+	 * Fast implementation of low-pass filter to smooth angle values coming from noisy sensor readings.
+	 * This results in <code>i*a + o - o*a</code>
 	 * @see http://en.wikipedia.org/wiki/Low-pass_filter#Algorithmic_implementation
 	 * @see http://en.wikipedia.org/wiki/Low-pass_filter#Simple_infinite_impulse_response_filter
 	 */
@@ -180,6 +181,12 @@ public class GaiaSandboxActivity extends AndroidApplication {
 	    return output;
 	}
 
+	/**
+	 * Second implementation of low pass filter. This results in <code>i*a + o - a</code>
+	 * @param input
+	 * @param output
+	 * @return
+	 */
 	protected float[] lowPass2(float[] input, float[] output) {
 	    if (output == null)
 		return input.clone();
@@ -195,7 +202,6 @@ public class GaiaSandboxActivity extends AndroidApplication {
     @Override
     public void onDestroy() {
 	unregisterSensorListeners();
-	this.mWakeLock.release();
 	super.onDestroy();
     }
 
