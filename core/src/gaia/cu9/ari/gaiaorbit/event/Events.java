@@ -104,7 +104,10 @@ public enum Events {
     PACE_DIVIDE_CMD,
     /** Contains the new pace **/
     PACE_CHANGED_INFO,
-    /** Will be displayed in the notifications area (bottom left). Contains an array of strings with the messages **/
+    /** 
+     * Will be displayed in the notifications area (bottom left). Contains an array of strings with the messages and an optional boolean
+     * indicating whether the message is permanent so should stay until the next message is received.
+     **/
     POST_NOTIFICATION,
     /** Contains a string with the headline message, will be displayed in a big font in the center of the screen **/
     POST_HEADLINE_MESSAGE,

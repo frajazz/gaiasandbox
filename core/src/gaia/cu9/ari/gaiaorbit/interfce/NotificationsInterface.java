@@ -33,6 +33,7 @@ public class NotificationsInterface extends Table implements IObserver {
     LinkedList<MessageBean> historical;
     boolean displaying = false;
     boolean consoleLog = true;
+    boolean permanent = false;
 
     /** Lock object for synchronization **/
     Object lock;
@@ -53,16 +54,21 @@ public class NotificationsInterface extends Table implements IObserver {
     }
 
     private void addMessage(String msg) {
+	addMessage(msg, false);
+    }
+
+    private void addMessage(String msg, boolean permanent) {
 	this.historical.add(new MessageBean(msg));
 	this.message.setText(msg);
-	displaying = true;
+	this.displaying = true;
+	this.permanent = permanent;
 	if (consoleLog) {
 	    Gdx.app.log(df.format(new Date()), msg);
 	}
     }
 
     public void update() {
-	if (displaying) {
+	if (displaying && !permanent) {
 	    if (new Date().getTime() - historical.getLast().date.getTime() > msTimeout) {
 		displaying = false;
 		message.setText("");
@@ -76,13 +82,18 @@ public class NotificationsInterface extends Table implements IObserver {
 	    switch (event) {
 	    case POST_NOTIFICATION:
 		String message = "";
+		boolean perm = false;
 		for (int i = 0; i < data.length; i++) {
-		    message += (String) data[i];
-		    if (i < data.length - 1) {
-			message += " - ";
+		    if (i == data.length - 1 && data[i] instanceof Boolean) {
+			perm = (Boolean) data[i];
+		    } else {
+			message += (String) data[i];
+			if (i < data.length - 1 && !(i == data.length - 2 && data[data.length - 1] instanceof Boolean)) {
+			    message += " - ";
+			}
 		    }
 		}
-		addMessage(message);
+		addMessage(message, perm);
 		break;
 	    case FOCUS_CHANGED:
 		if (data[0] != null) {

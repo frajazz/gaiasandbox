@@ -9,6 +9,7 @@ import gaia.cu9.ari.gaiaorbit.scenegraph.octreewrapper.OctreeWrapper;
 import gaia.cu9.ari.gaiaorbit.scenegraph.octreewrapper.OctreeWrapperConcurrent;
 import gaia.cu9.ari.gaiaorbit.util.Constants;
 import gaia.cu9.ari.gaiaorbit.util.GlobalConf;
+import gaia.cu9.ari.gaiaorbit.util.GlobalResources;
 import gaia.cu9.ari.gaiaorbit.util.I18n;
 import gaia.cu9.ari.gaiaorbit.util.Pair;
 import gaia.cu9.ari.gaiaorbit.util.math.Vector3d;
@@ -43,6 +44,15 @@ import java.util.TimerTask;
 import java.util.concurrent.ArrayBlockingQueue;
 
 public class ObjectServerLoader implements ISceneGraphNodeProvider {
+    /**
+     * Data will be pre-loaded at startup down to this octree depth.
+     */
+    private static final int PRELOAD_DEPTH = 3;
+    /**
+     * Max number of pages to retrieve at once
+     */
+    private static final int MAX_PAGES_AT_ONCE = 1000;
+
     /** The octant loading queue **/
     private static Queue<OctreeNode<?>> octantQueue = new ArrayBlockingQueue<OctreeNode<?>>(40000);
     /** The lod loading queue **/
@@ -90,11 +100,6 @@ public class ObjectServerLoader implements ISceneGraphNodeProvider {
 	    daemon.interrupt();
 	}
     }
-
-    /**
-     * Data will be pre-loaded at startup down to this octree depth.
-     */
-    private static int preloadDepth = 3;
 
     Longref starid = new Longref(1l);
     Longref errors = new Longref();
@@ -226,7 +231,7 @@ public class ObjectServerLoader implements ISceneGraphNodeProvider {
 	    /** 
 	     * LOAD LOD LEVELS - LOAD PARTICLE DATA
 	     */
-	    int depthLevel = Math.min(OctreeNode.maxDepth, preloadDepth);
+	    int depthLevel = Math.min(OctreeNode.maxDepth, PRELOAD_DEPTH);
 	    for (int level = 0; level <= depthLevel; level++) {
 		loadLod(level, visid, errors, starid, octreeWrapper, true);
 	    }
@@ -286,6 +291,8 @@ public class ObjectServerLoader implements ISceneGraphNodeProvider {
 	return result;
     }
 
+    private static final char[] nullBuffer = new char[] { 'n', 'u', 'l', 'l' };
+
     private static Star parseLine(String line, Longref errors, Longref starid) {
 	String[] tokens = line.split(";");
 	try {
@@ -294,9 +301,10 @@ public class ObjectServerLoader implements ISceneGraphNodeProvider {
 	    double z = Parser.parseDouble(tokens[2]) * Constants.PC_TO_U;
 
 	    // Magnitude in virtual particles (type=92) must depend on number of particles contained
-	    float mag = (float) ((tokens[3].equalsIgnoreCase("null") || tokens[3].isEmpty()) ? 4d : Parser.parseDouble(tokens[3]));
+	    float mag = (float) (!GlobalResources.compareString(tokens[3], nullBuffer, true) ? 4d : Parser.parseDouble(tokens[3]));
+
 	    // Color in virtual particles should be that of the sun - yellowish
-	    float bv = (float) ((tokens[4].equalsIgnoreCase("null") || tokens[4].isEmpty()) ? 0.656d : Parser.parseDouble(tokens[4]));
+	    float bv = (float) (!GlobalResources.compareString(tokens[4], nullBuffer, true) ? 0.656d : Parser.parseDouble(tokens[4]));
 
 	    int particleCount = Parser.parseInt(tokens[7]);
 	    long pageid = Parser.parseLong(tokens[8]);
@@ -557,16 +565,19 @@ public class ObjectServerLoader implements ISceneGraphNodeProvider {
 		/** ----------- PROCESS OCTANTS ----------- **/
 		while (!octantQueue.isEmpty()) {
 		    toLoad.clear();
-		    while (octantQueue.peek() != null) {
+		    int n = 0;
+		    while (octantQueue.peek() != null && n < MAX_PAGES_AT_ONCE) {
 			OctreeNode<SceneGraphNode> octant = (OctreeNode<SceneGraphNode>) octantQueue.poll();
 			toLoad.put(octant.pageId, octant);
+			n++;
 		    }
 
 		    // Load octants if any
 		    if (!toLoad.isEmpty()) {
-			EventManager.getInstance().post(Events.POST_NOTIFICATION, I18n.bundle.format("notif.loadingoctants", toLoad.size()));
+			EventManager.getInstance().post(Events.POST_NOTIFICATION, I18n.bundle.format("notif.loadingoctants", toLoad.size()), true);
 			try {
 			    ObjectServerLoader.loadOctants(toLoad, visid, errors, starid, octreeWrapper, true);
+			    EventManager.getInstance().post(Events.POST_NOTIFICATION, I18n.bundle.format("notif.loadingoctants.finished", toLoad.size()));
 			} catch (Exception e) {
 			    EventManager.getInstance().post(Events.JAVA_EXCEPTION, e);
 			    EventManager.getInstance().post(Events.POST_NOTIFICATION, I18n.bundle.get("notif.loadingoctants.fail"));
