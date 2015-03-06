@@ -37,9 +37,9 @@ public class OctreeNode<T extends IPosition> implements ILineRenderable {
     /** Max depth of the structure this node belongs to **/
     public static int maxDepth;
     /** Angle threshold below which we stay with the current level. Lower limit of overlap **/
-    public static final double ANGLE_THRESHOLD_1 = Math.toRadians(12d);
+    public static final double ANGLE_THRESHOLD_1 = Math.toRadians(18d);
     /** Angle threshold above which we break the Octree. Upper limit of overlap **/
-    public static final double ANGLE_THRESHOLD_2 = Math.toRadians(22d);
+    public static final double ANGLE_THRESHOLD_2 = Math.toRadians(35d);
     /** Is dynamic loading active? **/
     public static boolean LOAD_ACTIVE;
 
@@ -294,8 +294,11 @@ public class OctreeNode<T extends IPosition> implements ILineRenderable {
 	     * Load lists of pages
 	     */
 	    if (status == LoadStatus.NOT_LOADED && LOAD_ACTIVE) {
-		// Add to load all the level
-		ObjectServerLoader.addToQueue(this.parent.children);
+		if (this.parent != null)
+		    // Add to load all the level
+		    ObjectServerLoader.addToQueue(this.parent.children);
+		else
+		    ObjectServerLoader.addToQueue(this);
 	    }
 
 	    /**

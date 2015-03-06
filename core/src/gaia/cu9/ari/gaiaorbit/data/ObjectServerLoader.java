@@ -33,7 +33,6 @@ import java.io.IOException;
 import java.io.StringReader;
 import java.net.ConnectException;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -301,10 +300,10 @@ public class ObjectServerLoader implements ISceneGraphNodeProvider {
 	    double z = Parser.parseDouble(tokens[2]) * Constants.PC_TO_U;
 
 	    // Magnitude in virtual particles (type=92) must depend on number of particles contained
-	    float mag = (float) (!GlobalResources.compareString(tokens[3], nullBuffer, true) ? 4d : Parser.parseDouble(tokens[3]));
+	    float mag = (float) (tokens[3].isEmpty() || GlobalResources.equal(tokens[3], nullBuffer, true) ? 4d : Parser.parseDouble(tokens[3]));
 
 	    // Color in virtual particles should be that of the sun - yellowish
-	    float bv = (float) (!GlobalResources.compareString(tokens[4], nullBuffer, true) ? 0.656d : Parser.parseDouble(tokens[4]));
+	    float bv = (float) (tokens[3].isEmpty() || GlobalResources.equal(tokens[4], nullBuffer, true) ? 0.656d : Parser.parseDouble(tokens[4]));
 
 	    int particleCount = Parser.parseInt(tokens[7]);
 	    long pageid = Parser.parseLong(tokens[8]);
@@ -344,8 +343,9 @@ public class ObjectServerLoader implements ISceneGraphNodeProvider {
 	lodStatus[lod] = LoadStatus.LOADING;
 	final List<SceneGraphNode> particleList = new ArrayList<SceneGraphNode>(500);
 	// Fetch particle data for level 0
-	Message message = new Message("visualization-lod-data?vis-id=" + visid
-		+ "&lod-level=" + lod);
+	Message message = new Message("visualization-lod-data");
+	message.addParameter("vis-id", visid);
+	message.addParameter("lod-level", lod.toString());
 	message.setMessageHandler(new MessageHandler() {
 
 	    @Override
@@ -462,14 +462,6 @@ public class ObjectServerLoader implements ISceneGraphNodeProvider {
 
     }
 
-    private static String toString(Collection<Long> pageids) {
-	StringBuilder sb = new StringBuilder();
-	for (Long pageid : pageids) {
-	    sb.append(pageid).append(",");
-	}
-	return sb.toString();
-    }
-
     /**
      * Loads the objects of the given octants using the given list from the visualization identified by <tt>visid</tt>
      * @param octants The map of <pageId, octant> holding the octants to load.
@@ -482,8 +474,6 @@ public class ObjectServerLoader implements ISceneGraphNodeProvider {
      */
     public static void loadOctants(final Map<Long, OctreeNode<SceneGraphNode>> octants, String visid, final Longref errors, final Longref starid, final AbstractOctreeWrapper octreeWrapper, boolean synchronous) throws IOException {
 	final List<SceneGraphNode> particleList = new ArrayList<SceneGraphNode>(500);
-
-	System.out.println(toString(octants.keySet()));
 
 	VisualizationPage visPage = new VisualizationPage(visid, octants.keySet());
 	visPage.addListener(new ICommandListener() {

@@ -19,4 +19,5 @@ public interface IRenderSystem extends Comparable<IRenderSystem> {
     public int getPriority();
 
     public void render(List<IRenderable> renderables, ICamera camera, RenderContext rc);
+
 }

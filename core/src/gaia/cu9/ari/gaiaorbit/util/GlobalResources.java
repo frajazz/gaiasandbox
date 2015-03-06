@@ -156,7 +156,7 @@ public class GlobalResources {
      * @param compareTo Buffer to compare to (content should be ASCII lowercase if possible)
      * @return True if the buffers compare favourably, false otherwise
      */
-    public static boolean compareString(String buf, char[] compareTo, boolean ignoreCase) {
+    public static boolean equal(String buf, char[] compareTo, boolean ignoreCase) {
 	if (buf == null || compareTo == null || buf.length() == 0)
 	    return false;
 	char a, b;
