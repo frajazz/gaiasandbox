@@ -46,7 +46,7 @@ public class ObjectServerLoader implements ISceneGraphNodeProvider {
     /**
      * Data will be pre-loaded at startup down to this octree depth.
      */
-    private static final int PRELOAD_DEPTH = 3;
+    private static final int PRELOAD_DEPTH = 5;
     /**
      * Max number of pages to retrieve at once
      */
