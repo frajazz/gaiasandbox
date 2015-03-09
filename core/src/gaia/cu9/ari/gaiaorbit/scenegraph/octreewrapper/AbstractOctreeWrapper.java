@@ -30,7 +30,7 @@ public abstract class AbstractOctreeWrapper extends SceneGraphNode implements It
     public OctreeNode<SceneGraphNode> root;
     /** Roulette list with the objects to process **/
     protected List<SceneGraphNode> roulette;
-    protected Map<SceneGraphNode, OctreeNode<SceneGraphNode>> parenthood;
+    public Map<SceneGraphNode, OctreeNode<SceneGraphNode>> parenthood;
     /**
      * Is this just a copy?
      */

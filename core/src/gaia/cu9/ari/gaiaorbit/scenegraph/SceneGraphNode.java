@@ -259,6 +259,27 @@ public class SceneGraphNode implements ISceneGraphNode, IPosition {
     }
 
     /**
+     * Removes the given child from this node, if it exists.
+     * @param child
+     * @param updateAncestorCount
+     */
+    public final void removeChild(SceneGraphNode child, boolean updateAncestorCount) {
+	if (this.children.contains(child)) {
+	    this.children.remove(child);
+	    child.parent = null;
+	    numChildren--;
+	    if (updateAncestorCount) {
+		// Update num children in ancestors
+		SceneGraphNode ancestor = this.parent;
+		while (ancestor != null) {
+		    ancestor.numChildren--;
+		    ancestor = ancestor.parent;
+		}
+	    }
+	}
+    }
+
+    /**
      * Adds a child to the given node and updates the number of children in this node
      * and in all ancestors.
      * @param child The child node to add.

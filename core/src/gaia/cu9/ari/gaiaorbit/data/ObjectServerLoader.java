@@ -221,7 +221,7 @@ public class ObjectServerLoader implements ISceneGraphNodeProvider {
 	     * CREATE OCTREE WRAPPER WITH ROOT NODE
 	     */
 	    if (GlobalConf.performance.MULTITHREADING) {
-		octreeWrapper = new OctreeWrapperConcurrent("Universe", root, GlobalConf.performance.NUMBER_THREADS);
+		octreeWrapper = new OctreeWrapperConcurrent("Universe", root);
 	    } else {
 		octreeWrapper = new OctreeWrapper("Universe", root);
 	    }

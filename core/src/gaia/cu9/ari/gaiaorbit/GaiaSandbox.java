@@ -199,7 +199,7 @@ public class GaiaSandbox implements ApplicationListener, IObserver {
 	if (sg == null) {
 	    // Set asset manager to asset bean
 	    AssetBean.setAssetManager(manager);
-	    manager.load(GlobalConf.data.DATA_SG_FILE, ISceneGraph.class, new SGLoaderParameter(GlobalClock.clock, GlobalConf.performance.MULTITHREADING, GlobalConf.performance.NUMBER_THREADS));
+	    manager.load(GlobalConf.data.DATA_SG_FILE, ISceneGraph.class, new SGLoaderParameter(GlobalClock.clock, GlobalConf.performance.MULTITHREADING, GlobalConf.performance.NUMBER_THREADS, !GlobalConf.data.DATA_SOURCE_LOCAL));
 	}
 
 	// Initialize timestamp for screenshots
