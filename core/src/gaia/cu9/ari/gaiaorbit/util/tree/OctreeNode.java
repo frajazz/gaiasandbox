@@ -21,6 +21,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.TreeSet;
 
+import com.badlogic.gdx.graphics.glutils.ImmediateModeRenderer20;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.math.Frustum;
 import com.badlogic.gdx.math.Vector3;
@@ -67,11 +68,11 @@ public class OctreeNode<T extends IPosition> implements ILineRenderable {
     /** Contains the depth level **/
     public final int depth;
     /** Number of objects contained in this node and its descendants **/
-    public final int nObjects;
+    public int nObjects;
     /** Number of objects contained in this node **/
-    public final int ownObjects;
+    public int ownObjects;
     /** Number of children nodes of this node **/
-    public final int childrenCount;
+    public int childrenCount;
     /** The parent, if any **/
     public OctreeNode<T> parent;
     /** Children nodes **/
@@ -456,14 +457,17 @@ public class OctreeNode<T extends IPosition> implements ILineRenderable {
 	}
     }
 
+    com.badlogic.gdx.graphics.Color col = new com.badlogic.gdx.graphics.Color();
+
     @Override
-    public void render(ShapeRenderer sr, float alpha) {
+    public void render(ImmediateModeRenderer20 sr, float alpha) {
 	float maxDepth = OctreeNode.maxDepth * 2;
 	// Color depends on depth
 	Color col = new Color(Color.HSBtoRGB((float) depth / (float) maxDepth, 1f, 0.5f));
 
 	alpha *= MathUtilsd.lint(depth, 0, maxDepth, 1.0, 0.5);
-	sr.setColor(col.getRed() * alpha, col.getGreen() * alpha, col.getBlue() * alpha, alpha);
+
+	this.col.set(col.getRed() * alpha, col.getGreen() * alpha, col.getBlue() * alpha, alpha);
 
 	// Camera correction
 	Vector3d loc = Pools.get(Vector3d.class).obtain();
@@ -478,9 +482,9 @@ public class OctreeNode<T extends IPosition> implements ILineRenderable {
 	 *    |.'    | .'
 	 *    +------+' 
 	 */
-	line(sr, loc.x, loc.y, loc.z, loc.x + size.x, loc.y, loc.z);
-	line(sr, loc.x, loc.y, loc.z, loc.x, loc.y + size.y, loc.z);
-	line(sr, loc.x, loc.y, loc.z, loc.x, loc.y, loc.z + size.z);
+	line(sr, loc.x, loc.y, loc.z, loc.x + size.x, loc.y, loc.z, this.col);
+	line(sr, loc.x, loc.y, loc.z, loc.x, loc.y + size.y, loc.z, this.col);
+	line(sr, loc.x, loc.y, loc.z, loc.x, loc.y, loc.z + size.z, this.col);
 
 	/*
 	 *       .·------·
@@ -491,8 +495,8 @@ public class OctreeNode<T extends IPosition> implements ILineRenderable {
 	 *    |.'    | .'
 	 *    ·------+' 
 	 */
-	line(sr, loc.x + size.x, loc.y, loc.z, loc.x + size.x, loc.y + size.y, loc.z);
-	line(sr, loc.x + size.x, loc.y, loc.z, loc.x + size.x, loc.y, loc.z + size.z);
+	line(sr, loc.x + size.x, loc.y, loc.z, loc.x + size.x, loc.y + size.y, loc.z, this.col);
+	line(sr, loc.x + size.x, loc.y, loc.z, loc.x + size.x, loc.y, loc.z + size.z, this.col);
 
 	/*
 	 *       .·------+
@@ -503,8 +507,8 @@ public class OctreeNode<T extends IPosition> implements ILineRenderable {
 	 *    |.'    | .'
 	 *    ·------·' 
 	 */
-	line(sr, loc.x + size.x, loc.y, loc.z + size.z, loc.x, loc.y, loc.z + size.z);
-	line(sr, loc.x + size.x, loc.y, loc.z + size.z, loc.x + size.x, loc.y + size.y, loc.z + size.z);
+	line(sr, loc.x + size.x, loc.y, loc.z + size.z, loc.x, loc.y, loc.z + size.z, this.col);
+	line(sr, loc.x + size.x, loc.y, loc.z + size.z, loc.x + size.x, loc.y + size.y, loc.z + size.z, this.col);
 
 	/*
 	 *       .+------·
@@ -515,7 +519,7 @@ public class OctreeNode<T extends IPosition> implements ILineRenderable {
 	 *    |.'    | .'
 	 *    ·------·' 
 	 */
-	line(sr, loc.x, loc.y, loc.z + size.z, loc.x, loc.y + size.y, loc.z + size.z);
+	line(sr, loc.x, loc.y, loc.z + size.z, loc.x, loc.y + size.y, loc.z + size.z, this.col);
 
 	/*
 	 *       .+------+
@@ -526,19 +530,19 @@ public class OctreeNode<T extends IPosition> implements ILineRenderable {
 	 *    |.'    | .'
 	 *    ·------·' 
 	 */
-	line(sr, loc.x, loc.y + size.y, loc.z, loc.x + size.x, loc.y + size.y, loc.z);
-	line(sr, loc.x, loc.y + size.y, loc.z, loc.x, loc.y + size.y, loc.z + size.z);
-	line(sr, loc.x, loc.y + size.y, loc.z + size.z, loc.x + size.x, loc.y + size.y, loc.z + size.z);
-	line(sr, loc.x + size.x, loc.y + size.y, loc.z, loc.x + size.x, loc.y + size.y, loc.z + size.z);
+	line(sr, loc.x, loc.y + size.y, loc.z, loc.x + size.x, loc.y + size.y, loc.z, this.col);
+	line(sr, loc.x, loc.y + size.y, loc.z, loc.x, loc.y + size.y, loc.z + size.z, this.col);
+	line(sr, loc.x, loc.y + size.y, loc.z + size.z, loc.x + size.x, loc.y + size.y, loc.z + size.z, this.col);
+	line(sr, loc.x + size.x, loc.y + size.y, loc.z, loc.x + size.x, loc.y + size.y, loc.z + size.z, this.col);
 
 	Pools.get(Vector3d.class).free(loc);
     }
 
-    /**
-     * Draws a line.
-     */
-    private void line(ShapeRenderer sr, double x, double y, double z, double x1, double y1, double z1) {
-	sr.line((float) x, (float) y, (float) z, (float) x1, (float) y1, (float) z1);
+    /** Draws a line **/
+    private void line(ImmediateModeRenderer20 sr, double x1, double y1, double z1, double x2, double y2, double z2, com.badlogic.gdx.graphics.Color col) {
+	sr.color(col);
+	sr.vertex((float) x1, (float) y1, (float) z1);
+	sr.color(col);
+	sr.vertex((float) x2, (float) y2, (float) z2);
     }
-
 }

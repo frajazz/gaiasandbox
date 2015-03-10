@@ -12,6 +12,7 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.graphics.glutils.ImmediateModeRenderer20;
 import com.badlogic.gdx.graphics.glutils.ShaderProgram;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 
@@ -79,15 +80,16 @@ public class Constellation extends LineObject implements ILabelRenderable {
      * Line rendering.
      */
     @Override
-    public void render(ShapeRenderer renderer, float alpha) {
+    public void render(ImmediateModeRenderer20 renderer, float alpha) {
 	alpha *= this.alpha;
-	renderer.setColor(cc[0], cc[1], cc[2], alpha);
 	// This is so that the shape renderer does not mess up the z-buffer
 	for (AbstractPositionEntity[] pair : stars) {
 	    double[] p1 = pair[0].transform.getTranslation();
 	    double[] p2 = pair[1].transform.getTranslation();
-
-	    renderer.line((float) p1[0], (float) p1[1], (float) p1[2], (float) p2[0], (float) p2[1], (float) p2[2]);
+	    renderer.color(cc[0], cc[1], cc[2], alpha);
+	    renderer.vertex((float) p1[0], (float) p1[1], (float) p1[2]);
+	    renderer.color(cc[0], cc[1], cc[2], alpha);
+	    renderer.vertex((float) p2[0], (float) p2[1], (float) p2[2]);
 	}
 
     }
