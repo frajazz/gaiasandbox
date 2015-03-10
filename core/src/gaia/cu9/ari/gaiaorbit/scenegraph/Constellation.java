@@ -14,7 +14,6 @@ import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.glutils.ImmediateModeRenderer20;
 import com.badlogic.gdx.graphics.glutils.ShaderProgram;
-import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 
 /**
  * Has the lines of a constellation
@@ -23,6 +22,7 @@ import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
  */
 public class Constellation extends LineObject implements ILabelRenderable {
     float alpha = .5f;
+    float constalpha;
 
     /** List of pairs of identifiers **/
     public List<long[]> ids;
@@ -69,7 +69,7 @@ public class Constellation extends LineObject implements ILabelRenderable {
 
     @Override
     public void render(Object... params) {
-	if (params[0] instanceof ShapeRenderer) {
+	if (params[0] instanceof ImmediateModeRenderer20) {
 	    super.render(params);
 	} else if (params[0] instanceof SpriteBatch) {
 	    render((SpriteBatch) params[0], (ShaderProgram) params[1], (BitmapFont) params[2], (ICamera) params[3], (Float) params[4]);
@@ -81,6 +81,7 @@ public class Constellation extends LineObject implements ILabelRenderable {
      */
     @Override
     public void render(ImmediateModeRenderer20 renderer, float alpha) {
+	constalpha = alpha;
 	alpha *= this.alpha;
 	// This is so that the shape renderer does not mess up the z-buffer
 	for (AbstractPositionEntity[] pair : stars) {
@@ -124,7 +125,7 @@ public class Constellation extends LineObject implements ILabelRenderable {
 
     @Override
     public float labelAlpha() {
-	return .9f;
+	return .9f * constalpha;
     }
 
     @Override

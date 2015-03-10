@@ -86,6 +86,8 @@ public abstract class CelestialBody extends AbstractPositionEntity implements IL
     /** Last observations increase in ms **/
     public long lastTransitIncrease = 0;
 
+    public float compalpha;
+
     public CelestialBody() {
 	super();
 	TH_OVER_FACTOR = THRESHOLD_ANGLE_POINT() / GlobalConf.scene.LABEL_NUMBER_FACTOR;
@@ -135,10 +137,11 @@ public abstract class CelestialBody extends AbstractPositionEntity implements IL
     float precomp = -1;
 
     /**
-     * Shader render, for planets and bodies, not stars.
+     * Shader render, for planets, bodies and stars.
      */
     @Override
     public void render(ShaderProgram shader, float alpha, boolean colorTransit, Mesh mesh, ICamera camera) {
+	compalpha = alpha;
 	Quaternion rotation = CelestialBody.rotation.get();
 	// Set rotation matrix so that the star faces us at all times
 	DecalUtils.setBillboardRotation(rotation, camera.getCamera().direction, camera.getCamera().up);
@@ -384,7 +387,7 @@ public abstract class CelestialBody extends AbstractPositionEntity implements IL
     @Override
     public float labelAlpha() {
 	// Increase the 2.5f to increase the range where the label is kind of transparent. 
-	return Math.max(0, Math.min(.95f, (viewAngle - TH_OVER_FACTOR) / (TH_OVER_FACTOR * 2.5f)));
+	return Math.max(0, Math.min(.95f, (viewAngle - TH_OVER_FACTOR) / (TH_OVER_FACTOR * 2.5f))) * compalpha;
     }
 
     @Override

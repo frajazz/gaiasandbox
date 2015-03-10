@@ -122,6 +122,7 @@ public class Planet extends ModelBody implements IAtmosphereRenderable {
      */
     @Override
     public void render(ModelBatch modelBatch, float alpha) {
+	compalpha = alpha;
 	if (ac != null) {
 	    if (GlobalConf.scene.VISIBILITY[ComponentType.Atmospheres.ordinal()]) {
 		ac.updateAtmosphericScatteringParams(mc.instance.materials.first(), alpha, true, transform, parent, rc);
