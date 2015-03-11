@@ -17,12 +17,12 @@ import gaia.cu9.ari.gaiaorbit.util.math.Vector3d;
 import java.awt.Color;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 import java.util.TreeSet;
 
 import com.badlogic.gdx.graphics.glutils.ImmediateModeRenderer20;
-import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.math.Frustum;
 import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.utils.Pools;
@@ -94,6 +94,27 @@ public class OctreeNode<T extends IPosition> implements ILineRenderable {
     public float opacity;
 
     /**
+     * Constructs an octree node
+     * @param pageId
+     * @param centre
+     * @param size
+     * @param depth
+     */
+    public OctreeNode(long pageId, double x, double y, double z, double hsx, double hsy, double hsz, int depth) {
+	this.pageId = pageId;
+	this.blf = new Vector3d(x - hsx, y - hsy, z - hsz);
+	this.trb = new Vector3d(x + hsx, y + hsy, z + hsz);
+	this.centre = new Vector3d(x, y, z);
+	this.size = new Vector3d(hsx * 2, hsy * 2, hsz * 2);
+	this.box = new BoundingBoxd(blf, trb);
+	this.depth = depth;
+	this.transform = new Vector3d();
+	this.observed = false;
+	this.status = LoadStatus.NOT_LOADED;
+	this.radius = Math.sqrt(hsx * hsx + hsy * hsy + hsz * hsz);
+    }
+
+    /**
      * Constructs an octree node.
      * @param pageId The page id.
      * @param x The x coordinate of the center.
@@ -107,21 +128,10 @@ public class OctreeNode<T extends IPosition> implements ILineRenderable {
      * @param ownObjects Number of objects contained in this node. Same as objects.size().
      */
     public OctreeNode(long pageId, double x, double y, double z, double hsx, double hsy, double hsz, int childrenCount, int nObjects, int ownObjects, int depth) {
-	this.pageId = pageId;
-	this.blf = new Vector3d(x - hsx, y - hsy, z - hsz);
-	this.trb = new Vector3d(x + hsx, y + hsy, z + hsz);
-	this.centre = new Vector3d(x, y, z);
-	this.size = new Vector3d(hsx * 2, hsy * 2, hsz * 2);
-	this.box = new BoundingBoxd(blf, trb);
+	this(pageId, x, y, z, hsx, hsy, hsz, depth);
 	this.childrenCount = childrenCount;
 	this.nObjects = nObjects;
 	this.ownObjects = ownObjects;
-	this.depth = depth;
-	this.transform = new Vector3d();
-	this.observed = false;
-	this.status = LoadStatus.NOT_LOADED;
-
-	this.radius = Math.sqrt(hsx * hsx + hsy * hsy + hsz * hsz);
     }
 
     /** 
@@ -162,11 +172,21 @@ public class OctreeNode<T extends IPosition> implements ILineRenderable {
 	if (objects == null)
 	    objects = new ArrayList<T>(100);
 	objects.add(e);
+	ownObjects = objects.size();
+	return true;
+    }
+
+    public boolean addAll(Collection<T> l) {
+	if (objects == null)
+	    objects = new ArrayList<T>(l.size());
+	objects.addAll(l);
+	ownObjects = objects.size();
 	return true;
     }
 
     public void setObjects(List<T> l) {
 	this.objects = l;
+	ownObjects = objects.size();
     }
 
     public boolean insert(T e, int level) {
@@ -230,7 +250,7 @@ public class OctreeNode<T extends IPosition> implements ILineRenderable {
 
     @Override
     public void render(Object... params) {
-	render((ShapeRenderer) params[0], (Float) params[1]);
+	render((ImmediateModeRenderer20) params[0], (Float) params[1]);
     }
 
     @Override
@@ -455,6 +475,30 @@ public class OctreeNode<T extends IPosition> implements ILineRenderable {
 		}
 	    }
 	}
+    }
+
+    /**
+     * Updates the number of objects, own objects and children. This operation
+     * runs recursively in depth.
+     */
+    public void updateNumbers() {
+	// Number of own objects
+	this.ownObjects = objects.size();
+
+	// Number of recursive objects
+	this.nObjects = objects.size();
+
+	// Children count
+	this.childrenCount = 0;
+	for (int i = 0; i < 8; i++) {
+	    if (children[i] != null) {
+		this.childrenCount++;
+		// Recursive call
+		children[i].updateNumbers();
+		nObjects += children[i].nObjects;
+	    }
+	}
+
     }
 
     com.badlogic.gdx.graphics.Color col = new com.badlogic.gdx.graphics.Color();

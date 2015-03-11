@@ -12,6 +12,7 @@ import gaia.cu9.ari.gaiaorbit.util.GlobalConf;
 import gaia.cu9.ari.gaiaorbit.util.GlobalResources;
 import gaia.cu9.ari.gaiaorbit.util.I18n;
 import gaia.cu9.ari.gaiaorbit.util.Pair;
+import gaia.cu9.ari.gaiaorbit.util.math.Longref;
 import gaia.cu9.ari.gaiaorbit.util.math.Vector3d;
 import gaia.cu9.ari.gaiaorbit.util.parse.Parser;
 import gaia.cu9.ari.gaiaorbit.util.tree.LoadStatus;
@@ -46,11 +47,11 @@ public class ObjectServerLoader implements ISceneGraphNodeProvider {
     /**
      * Data will be pre-loaded at startup down to this octree depth.
      */
-    private static final int PRELOAD_DEPTH = 5;
+    private static final int PRELOAD_DEPTH = 7;
     /**
      * Max number of pages to retrieve at once
      */
-    private static final int MAX_PAGES_AT_ONCE = 1000;
+    private static final int MAX_PAGES_AT_ONCE = 500;
 
     /** The octant loading queue **/
     private static Queue<OctreeNode<?>> octantQueue = new ArrayBlockingQueue<OctreeNode<?>>(40000);
@@ -299,13 +300,15 @@ public class ObjectServerLoader implements ISceneGraphNodeProvider {
 	    double y = Parser.parseDouble(tokens[1]) * Constants.PC_TO_U;
 	    double z = Parser.parseDouble(tokens[2]) * Constants.PC_TO_U;
 
+	    // Particle count to work out magnitude
+	    int particleCount = Parser.parseInt(tokens[7]);
+
 	    // Magnitude in virtual particles (type=92) must depend on number of particles contained
-	    float mag = (float) (tokens[3].isEmpty() || GlobalResources.equal(tokens[3], nullBuffer, true) ? 4d : Parser.parseDouble(tokens[3]));
+	    float mag = (float) (tokens[3].isEmpty() || GlobalResources.equal(tokens[3], nullBuffer, true) ? Math.max(-10d, 10d - particleCount) : Parser.parseDouble(tokens[3]));
 
 	    // Color in virtual particles should be that of the sun - yellowish
 	    float bv = (float) (tokens[3].isEmpty() || GlobalResources.equal(tokens[4], nullBuffer, true) ? 0.656d : Parser.parseDouble(tokens[4]));
 
-	    int particleCount = Parser.parseInt(tokens[7]);
 	    long pageid = Parser.parseLong(tokens[8]);
 	    int type = Parser.parseInt(tokens[9]);
 
@@ -318,6 +321,8 @@ public class ObjectServerLoader implements ISceneGraphNodeProvider {
 		String name = type == 92 ? ("virtual" + starid) : ("dummy" + starid);
 		Star s = new Star(new Vector3d(y, z, x), mag, mag, bv, name, starid.num++);
 		s.pageId = pageid;
+		s.type = type;
+		s.nparticles = particleCount;
 		s.initialize();
 		return s;
 	    }
@@ -597,22 +602,6 @@ public class ObjectServerLoader implements ISceneGraphNodeProvider {
 		    awake = true;
 		}
 	    }
-	}
-    }
-
-    private static class Longref {
-	public long num;
-
-	public Longref() {
-	}
-
-	public Longref(long num) {
-	    this.num = num;
-	}
-
-	@Override
-	public String toString() {
-	    return String.valueOf(num);
 	}
     }
 

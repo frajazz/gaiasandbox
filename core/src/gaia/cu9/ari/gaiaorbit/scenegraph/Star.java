@@ -37,7 +37,7 @@ import com.badlogic.gdx.math.Matrix4;
 
 public class Star extends CelestialBody {
 
-    private static final float TH_ANGLE_POINT = (float) Math.toRadians(5e-7f);
+    private static final float TH_ANGLE_POINT = (float) Math.toRadians(4e-7f);
     private static final float TH_ANGLE_NONE = 0;
     private static ThreadLocal<Random> rnd = new ThreadLocal<Random>() {
 	@Override
@@ -78,6 +78,12 @@ public class Star extends CelestialBody {
     public long pageId;
     /** Its page **/
     public OctreeNode<SceneGraphNode> page;
+    /** Particle type
+     * 90 - real star
+     * 92 - virtual particle
+     */
+    public int type = 90;
+    public int nparticles = 1;
 
     public static void initModel() {
 	if (mc == null) {

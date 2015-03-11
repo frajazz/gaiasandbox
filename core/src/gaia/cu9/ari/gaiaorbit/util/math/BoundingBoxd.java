@@ -131,6 +131,10 @@ public class BoundingBoxd implements Serializable {
 	return out.set(dim);
     }
 
+    public double getVolume() {
+	return dim.x * dim.y * dim.z;
+    }
+
     public double getWidth() {
 	return dim.x;
     }
