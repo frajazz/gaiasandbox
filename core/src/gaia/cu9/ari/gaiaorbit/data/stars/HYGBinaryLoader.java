@@ -2,7 +2,6 @@ package gaia.cu9.ari.gaiaorbit.data.stars;
 
 import gaia.cu9.ari.gaiaorbit.event.EventManager;
 import gaia.cu9.ari.gaiaorbit.event.Events;
-import gaia.cu9.ari.gaiaorbit.scenegraph.CelestialBody;
 import gaia.cu9.ari.gaiaorbit.scenegraph.Star;
 import gaia.cu9.ari.gaiaorbit.util.GlobalConf;
 import gaia.cu9.ari.gaiaorbit.util.I18n;
@@ -13,9 +12,9 @@ import java.io.DataInputStream;
 import java.io.EOFException;
 import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Properties;
 
 import com.badlogic.gdx.Gdx;
 
@@ -32,6 +31,7 @@ import com.badlogic.gdx.Gdx;
  * - 32 bits (float) - ra
  * - 32 bits (float) - dec
  * - 32 bits (float) - distance
+ * - 64 bits (long) - id
  * 
  * @author Toni Sagrista
  *
@@ -39,8 +39,8 @@ import com.badlogic.gdx.Gdx;
 public class HYGBinaryLoader extends AbstractCatalogLoader implements ICatalogLoader {
 
     @Override
-    public List<CelestialBody> loadStars(InputStream data) throws FileNotFoundException {
-	List<CelestialBody> stars = new ArrayList<CelestialBody>();
+    public List<Star> loadCatalog() throws FileNotFoundException {
+	List<Star> stars = new ArrayList<Star>();
 	DataInputStream data_in = new DataInputStream(data);
 
 	EventManager.getInstance().post(Events.POST_NOTIFICATION, this.getClass().getSimpleName(), I18n.bundle.format("notif.limitmag", GlobalConf.data.LIMIT_MAG_LOAD));
@@ -80,6 +80,11 @@ public class HYGBinaryLoader extends AbstractCatalogLoader implements ICatalogLo
 
 	EventManager.getInstance().post(Events.POST_NOTIFICATION, this.getClass().getSimpleName(), I18n.bundle.format("notif.catalog.init", stars.size()));
 	return stars;
+    }
+
+    @Override
+    public void initialize(Properties p) {
+	super.initialize(p);
     }
 
 }

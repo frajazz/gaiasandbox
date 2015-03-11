@@ -1133,7 +1133,9 @@ public class FullGui implements IGui, IObserver {
 
 		    int itemIdx = items.indexOf(node.name, false);
 		    if (itemIdx >= 0) {
+			objList.getSelection().setProgrammaticChangeEvents(false);
 			objList.setSelectedIndex(itemIdx);
+			objList.getSelection().setProgrammaticChangeEvents(true);
 			float itemHeight = objList.getItemHeight();
 			focusListScrollPane.setScrollY(itemIdx * itemHeight);
 		    }

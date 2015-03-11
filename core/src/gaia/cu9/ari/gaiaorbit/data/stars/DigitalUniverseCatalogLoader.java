@@ -8,10 +8,10 @@ import gaia.cu9.ari.gaiaorbit.util.parse.Parser;
 import java.io.BufferedReader;
 import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Properties;
 
 import com.badlogic.gdx.Gdx;
 
@@ -23,7 +23,7 @@ public class DigitalUniverseCatalogLoader extends AbstractCatalogLoader implemen
     private static final float distcut = 1000000f;
 
     @Override
-    public List<CelestialBody> loadStars(InputStream data) throws FileNotFoundException {
+    public List<CelestialBody> loadCatalog() throws FileNotFoundException {
 	List<CelestialBody> stars = new ArrayList<CelestialBody>();
 	BufferedReader br = new BufferedReader(new InputStreamReader(data));
 
@@ -61,5 +61,11 @@ public class DigitalUniverseCatalogLoader extends AbstractCatalogLoader implemen
 	    Star star = new Star(pos, absmag, appmag, colorbv, name, 0l);
 	    stars.add(star);
 	}
+    }
+
+    @Override
+    public void initialize(Properties p) {
+	super.initialize(p);
+
     }
 }

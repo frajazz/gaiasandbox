@@ -57,7 +57,7 @@ public class SceneGraphConcurrentOctree extends AbstractSceneGraph {
 		octree = (OctreeWrapperConcurrent) node;
 		it.remove();
 		octree.setRoulette(roulette);
-
+		break;
 	    }
 	}
 

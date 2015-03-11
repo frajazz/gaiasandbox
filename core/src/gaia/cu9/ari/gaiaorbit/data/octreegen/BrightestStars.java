@@ -12,9 +12,11 @@ public class BrightestStars implements IAggregationAlgorithm<Star> {
     private static final int MAX_DEPTH = 10;
     private static final int MAX_PART = 16000;
     Comparator<Star> comp;
+    long starId;
 
     public BrightestStars() {
 	comp = new StarBrightnessComparator();
+	starId = System.currentTimeMillis();
     }
 
     @Override
@@ -57,6 +59,7 @@ public class BrightestStars implements IAggregationAlgorithm<Star> {
 	copy.colorbv = s.colorbv;
 	copy.ct = s.ct;
 	copy.pos = new Vector3d(s.pos);
+	copy.id = starId++;
 	return copy;
     }
 

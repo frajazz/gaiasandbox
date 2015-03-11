@@ -36,7 +36,7 @@ public class SGLoader extends AsynchronousAssetLoader<ISceneGraph, SGLoader.SGLo
 
     @Override
     public void loadAsync(AssetManager manager, String fileName, FileHandle file, SGLoaderParameter parameter) {
-	sg = SceneGraphLoader.loadSceneGraph(file.read(), parameter.time, parameter.multithreading, parameter.maxThreads, parameter.hasOctree);
+	sg = SceneGraphLoader.loadSceneGraph(file.read(), parameter.time, parameter.multithreading, parameter.maxThreads);
 	EventManager.getInstance().post(Events.POST_NOTIFICATION, I18n.bundle.get("notif.render.init"));
     }
 
@@ -51,13 +51,11 @@ public class SGLoader extends AsynchronousAssetLoader<ISceneGraph, SGLoader.SGLo
 	ITimeFrameProvider time;
 	boolean multithreading;
 	int maxThreads;
-	boolean hasOctree;
 
-	public SGLoaderParameter(ITimeFrameProvider time, boolean multithreading, int maxThreads, boolean hasOctree) {
+	public SGLoaderParameter(ITimeFrameProvider time, boolean multithreading, int maxThreads) {
 	    this.time = time;
 	    this.multithreading = multithreading;
 	    this.maxThreads = maxThreads;
-	    this.hasOctree = hasOctree;
 	}
     }
 }

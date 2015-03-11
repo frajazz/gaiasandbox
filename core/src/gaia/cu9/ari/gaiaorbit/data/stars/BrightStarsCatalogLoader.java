@@ -9,10 +9,10 @@ import gaia.cu9.ari.gaiaorbit.util.parse.Parser;
 import java.io.BufferedReader;
 import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Properties;
 
 import com.badlogic.gdx.Gdx;
 
@@ -25,7 +25,7 @@ public class BrightStarsCatalogLoader extends AbstractCatalogLoader implements I
     private static final String separator = ",";
 
     @Override
-    public List<CelestialBody> loadStars(InputStream data) throws FileNotFoundException {
+    public List<CelestialBody> loadCatalog() throws FileNotFoundException {
 	List<CelestialBody> stars = new ArrayList<CelestialBody>();
 	BufferedReader br = new BufferedReader(new InputStreamReader(data));
 
@@ -54,6 +54,11 @@ public class BrightStarsCatalogLoader extends AbstractCatalogLoader implements I
 	String name = (st.length == 6 ? st[5].substring(1, st[5].length() - 1) : null);
 	Star star = new Star(pos, absmag, absmag, 0, name, ra, dec, 0l);
 	stars.add(star);
+    }
+
+    @Override
+    public void initialize(Properties p) {
+	super.initialize(p);
     }
 
 }

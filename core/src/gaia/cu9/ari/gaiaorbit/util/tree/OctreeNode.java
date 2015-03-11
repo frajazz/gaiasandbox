@@ -215,6 +215,10 @@ public class OctreeNode<T extends IPosition> implements ILineRenderable {
 	}
     }
 
+    /**
+     * Adds all the children of this node and its descendants to the given list.
+     * @param tree
+     */
     public void addChildrenToList(ArrayList<OctreeNode<T>> tree) {
 	if (children != null) {
 	    for (int i = 0; i < 8; i++) {
@@ -222,6 +226,19 @@ public class OctreeNode<T extends IPosition> implements ILineRenderable {
 		    tree.add(children[i]);
 		    children[i].addChildrenToList(tree);
 		}
+	    }
+	}
+    }
+
+    /**
+     * Adds all the particles of this node and its descendants to the given list.
+     * @param particles
+     */
+    public void addParticlesTo(Collection<T> particles) {
+	particles.addAll(this.objects);
+	for (int i = 0; i < 8; i++) {
+	    if (children[i] != null) {
+		children[i].addParticlesTo(particles);
 	    }
 	}
     }
@@ -246,6 +263,20 @@ public class OctreeNode<T extends IPosition> implements ILineRenderable {
 	    }
 	}
 	return str.toString();
+    }
+
+    /**
+     * Counts the number of nodes recursively.
+     * @return
+     */
+    public int numNodes() {
+	int numNodes = 1;
+	for (int i = 0; i < 8; i++) {
+	    if (children[i] != null) {
+		numNodes += children[i].numNodes();
+	    }
+	}
+	return numNodes;
     }
 
     @Override
