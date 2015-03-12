@@ -1,6 +1,5 @@
 package gaia.cu9.ari.gaiaorbit.data.octreegen;
 
-import gaia.cu9.ari.gaiaorbit.data.stars.HYGBinaryLoader;
 import gaia.cu9.ari.gaiaorbit.event.EventManager;
 import gaia.cu9.ari.gaiaorbit.event.Events;
 import gaia.cu9.ari.gaiaorbit.scenegraph.SceneGraphNode;
@@ -17,8 +16,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
-import com.badlogic.gdx.Gdx;
 
 /**
  * Writes and reats the metadata to/from binary. The format is as follows:
@@ -51,7 +48,6 @@ public class MetadataBinaryIO {
     public OctreeNode<? extends SceneGraphNode> readMetadata(InputStream in) {
 	nodesMap = new HashMap<Long, Pair<OctreeNode<SceneGraphNode>, long[]>>();
 
-	List<OctreeNode<SceneGraphNode>> nodes = new ArrayList<OctreeNode<SceneGraphNode>>();
 	DataInputStream data_in = new DataInputStream(in);
 	try {
 	    OctreeNode<SceneGraphNode> root = null;
@@ -88,7 +84,7 @@ public class MetadataBinaryIO {
 		    }
 
 		} catch (EOFException eof) {
-
+		    EventManager.getInstance().post(Events.JAVA_EXCEPTION, eof);
 		}
 	    }
 
@@ -103,7 +99,7 @@ public class MetadataBinaryIO {
 	    return root;
 
 	} catch (IOException e) {
-	    Gdx.app.log(HYGBinaryLoader.class.getSimpleName(), e.getLocalizedMessage());
+	    EventManager.getInstance().post(Events.JAVA_EXCEPTION, e);
 	}
 	return null;
     }
@@ -146,7 +142,7 @@ public class MetadataBinaryIO {
 	    out.close();
 
 	} catch (IOException e) {
-	    e.printStackTrace();
+	    EventManager.getInstance().post(Events.JAVA_EXCEPTION, e);
 	}
 
     }

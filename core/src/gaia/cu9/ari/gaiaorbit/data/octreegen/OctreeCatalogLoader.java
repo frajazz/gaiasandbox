@@ -11,6 +11,7 @@ import gaia.cu9.ari.gaiaorbit.scenegraph.octreewrapper.AbstractOctreeWrapper;
 import gaia.cu9.ari.gaiaorbit.scenegraph.octreewrapper.OctreeWrapper;
 import gaia.cu9.ari.gaiaorbit.scenegraph.octreewrapper.OctreeWrapperConcurrent;
 import gaia.cu9.ari.gaiaorbit.util.GlobalConf;
+import gaia.cu9.ari.gaiaorbit.util.I18n;
 import gaia.cu9.ari.gaiaorbit.util.math.Vector3d;
 import gaia.cu9.ari.gaiaorbit.util.tree.LoadStatus;
 import gaia.cu9.ari.gaiaorbit.util.tree.OctreeNode;
@@ -26,6 +27,8 @@ public class OctreeCatalogLoader implements ICatalogLoader {
 
     @Override
     public List<? extends SceneGraphNode> loadCatalog() throws FileNotFoundException {
+	EventManager.getInstance().post(Events.POST_NOTIFICATION, this.getClass().getSimpleName(), I18n.bundle.format("notif.limitmag", GlobalConf.data.LIMIT_MAG_LOAD));
+
 	MetadataBinaryIO metadataReader = new MetadataBinaryIO();
 	OctreeNode<SceneGraphNode> root = (OctreeNode<SceneGraphNode>) metadataReader.readMetadata(FileLocator.getStream(metadata));
 
@@ -78,6 +81,8 @@ public class OctreeCatalogLoader implements ICatalogLoader {
 	    octreeWrapper.add(sun, candidate);
 	    candidate.add(sun);
 	}
+
+	EventManager.getInstance().post(Events.POST_NOTIFICATION, this.getClass().getSimpleName(), I18n.bundle.format("notif.catalog.init", particleList.size()));
 
 	return result;
     }

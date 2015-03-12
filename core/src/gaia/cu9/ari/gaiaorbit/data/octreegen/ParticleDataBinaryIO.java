@@ -108,7 +108,7 @@ public class ParticleDataBinaryIO {
 			stars.add(s);
 		    }
 		} catch (EOFException eof) {
-
+		    EventManager.getInstance().post(Events.JAVA_EXCEPTION, eof);
 		}
 	    }
 
