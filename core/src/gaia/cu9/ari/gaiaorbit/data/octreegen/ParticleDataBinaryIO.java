@@ -5,7 +5,6 @@ import gaia.cu9.ari.gaiaorbit.event.Events;
 import gaia.cu9.ari.gaiaorbit.scenegraph.CelestialBody;
 import gaia.cu9.ari.gaiaorbit.scenegraph.Star;
 import gaia.cu9.ari.gaiaorbit.util.GlobalConf;
-import gaia.cu9.ari.gaiaorbit.util.I18n;
 import gaia.cu9.ari.gaiaorbit.util.coord.Coordinates;
 import gaia.cu9.ari.gaiaorbit.util.math.Vector3d;
 
@@ -74,8 +73,6 @@ public class ParticleDataBinaryIO {
 	List<CelestialBody> stars = new ArrayList<CelestialBody>();
 	DataInputStream data_in = new DataInputStream(in);
 
-	EventManager.getInstance().post(Events.POST_NOTIFICATION, this.getClass().getSimpleName(), I18n.bundle.format("notif.limitmag", GlobalConf.data.LIMIT_MAG_LOAD));
-
 	try {
 	    // Read size of stars
 	    int size = data_in.readInt();
@@ -116,7 +113,6 @@ public class ParticleDataBinaryIO {
 	    EventManager.getInstance().post(Events.JAVA_EXCEPTION, e);
 	}
 
-	EventManager.getInstance().post(Events.POST_NOTIFICATION, this.getClass().getSimpleName(), I18n.bundle.format("notif.catalog.init", stars.size()));
 	return stars;
     }
 }

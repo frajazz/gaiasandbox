@@ -155,8 +155,9 @@ public abstract class AbstractOctreeWrapper extends SceneGraphNode implements It
 	    addToRender(octant, RenderGroup.LINE);
 	    for (int i = 0; i < 8; i++) {
 		OctreeNode<SceneGraphNode> child = octant.children[i];
-		if (child != null)
+		if (child != null) {
 		    addToRenderLists(camera, child);
+		}
 	    }
 	}
     }

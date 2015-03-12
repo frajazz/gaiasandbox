@@ -88,64 +88,72 @@ public class OctreeGenerator {
 
 	    // Front - top - left
 	    OctreeNode<Star> node000 = new OctreeNode<Star>(nextPageId(), octant.centre.x - hsx, octant.centre.y + hsy, octant.centre.z - hsz, hsx, hsy, hsz, octant.depth + 1);
-	    List<Star> l = intersect(catalog, node000.box);
+	    List<Star> l = intersect(catalog, node000);
 	    if (!l.isEmpty()) {
 		treatOctant(node000, l);
 		octant.children[0] = node000;
+		node000.parent = octant;
 	    }
 
 	    // Front - top - right
 	    OctreeNode<Star> node001 = new OctreeNode<Star>(nextPageId(), octant.centre.x + hsx, octant.centre.y + hsy, octant.centre.z - hsz, hsx, hsy, hsz, octant.depth + 1);
-	    l = intersect(catalog, node001.box);
+	    l = intersect(catalog, node001);
 	    if (!l.isEmpty()) {
 		treatOctant(node001, l);
 		octant.children[1] = node001;
+		node001.parent = octant;
 	    }
 
 	    // Front - bottom - left
 	    OctreeNode<Star> node010 = new OctreeNode<Star>(nextPageId(), octant.centre.x - hsx, octant.centre.y - hsy, octant.centre.z - hsz, hsx, hsy, hsz, octant.depth + 1);
-	    l = intersect(catalog, node010.box);
+	    l = intersect(catalog, node010);
 	    if (!l.isEmpty()) {
 		treatOctant(node010, l);
 		octant.children[2] = node010;
+		node010.parent = octant;
 	    }
 
 	    // Front - bottom - right
 	    OctreeNode<Star> node011 = new OctreeNode<Star>(nextPageId(), octant.centre.x + hsx, octant.centre.y - hsy, octant.centre.z - hsz, hsx, hsy, hsz, octant.depth + 1);
-	    l = intersect(catalog, node011.box);
+	    l = intersect(catalog, node011);
 	    if (!l.isEmpty()) {
 		treatOctant(node011, l);
 		octant.children[3] = node011;
+		node011.parent = octant;
 	    }
 
 	    // Back - top - left
 	    OctreeNode<Star> node100 = new OctreeNode<Star>(nextPageId(), octant.centre.x - hsx, octant.centre.y + hsy, octant.centre.z + hsz, hsx, hsy, hsz, octant.depth + 1);
-	    l = intersect(catalog, node100.box);
+	    l = intersect(catalog, node100);
 	    if (!l.isEmpty()) {
 		treatOctant(node100, l);
 		octant.children[4] = node100;
+		node100.parent = octant;
 	    }
 
 	    // Back - top - right
 	    OctreeNode<Star> node101 = new OctreeNode<Star>(nextPageId(), octant.centre.x + hsx, octant.centre.y + hsy, octant.centre.z + hsz, hsx, hsy, hsz, octant.depth + 1);
-	    l = intersect(catalog, node101.box);
+	    l = intersect(catalog, node101);
 	    if (!l.isEmpty()) {
 		treatOctant(node101, l);
 		octant.children[5] = node101;
+		node101.parent = octant;
 	    }
 	    // Back - bottom - left
 	    OctreeNode<Star> node110 = new OctreeNode<Star>(nextPageId(), octant.centre.x - hsx, octant.centre.y - hsy, octant.centre.z + hsz, hsx, hsy, hsz, octant.depth + 1);
-	    l = intersect(catalog, node110.box);
+	    l = intersect(catalog, node110);
 	    if (!l.isEmpty()) {
 		treatOctant(node110, l);
 		octant.children[6] = node110;
+		node110.parent = octant;
 	    }
 	    // Back - bottom - right
 	    OctreeNode<Star> node111 = new OctreeNode<Star>(nextPageId(), octant.centre.x + hsx, octant.centre.y - hsy, octant.centre.z + hsz, hsx, hsy, hsz, octant.depth + 1);
-	    l = intersect(catalog, node111.box);
+	    l = intersect(catalog, node111);
 	    if (!l.isEmpty()) {
 		treatOctant(node111, l);
 		octant.children[7] = node111;
+		node111.parent = octant;
 	    }
 	}
     }
@@ -156,10 +164,10 @@ public class OctreeGenerator {
      * @param box
      * @return
      */
-    private List<Star> intersect(List<Star> stars, BoundingBoxd box) {
+    private List<Star> intersect(List<Star> stars, OctreeNode<Star> box) {
 	List<Star> result = new ArrayList<Star>();
 	for (Star star : stars) {
-	    if (box.contains(star.pos)) {
+	    if (box.box.contains(star.pos)) {
 		result.add(star);
 	    }
 	}

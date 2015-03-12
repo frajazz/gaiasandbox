@@ -37,6 +37,8 @@ public class BrightestStars implements IAggregationAlgorithm<Star> {
 		Star virtual = getVirtualCopy(s);
 		virtual.type = 92;
 		virtual.nparticles = inputStars.size() / MAX_PART;
+
+		// Add virtual to octant
 		octant.add(virtual);
 		virtual.page = octant;
 		virtual.pageId = octant.pageId;

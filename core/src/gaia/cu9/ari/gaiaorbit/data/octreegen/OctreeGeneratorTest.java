@@ -1,10 +1,14 @@
 package gaia.cu9.ari.gaiaorbit.data.octreegen;
 
+import gaia.cu9.ari.gaiaorbit.data.FileLocator;
 import gaia.cu9.ari.gaiaorbit.data.stars.HYGBinaryLoader;
+import gaia.cu9.ari.gaiaorbit.data.stars.ICatalogLoader;
 import gaia.cu9.ari.gaiaorbit.event.EventManager;
 import gaia.cu9.ari.gaiaorbit.event.Events;
 import gaia.cu9.ari.gaiaorbit.event.IObserver;
+import gaia.cu9.ari.gaiaorbit.scenegraph.SceneGraphNode;
 import gaia.cu9.ari.gaiaorbit.scenegraph.Star;
+import gaia.cu9.ari.gaiaorbit.scenegraph.octreewrapper.AbstractOctreeWrapper;
 import gaia.cu9.ari.gaiaorbit.util.GlobalConf;
 import gaia.cu9.ari.gaiaorbit.util.I18n;
 import gaia.cu9.ari.gaiaorbit.util.tree.OctreeNode;
@@ -15,8 +19,15 @@ import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.List;
+import java.util.Properties;
 
 public class OctreeGeneratorTest implements IObserver {
+
+    public static enum Operation {
+	LOAD_OCTREE, GENERATE_OCTREE
+    }
+
+    public static Operation operation = Operation.LOAD_OCTREE;
 
     public static void main(String[] args) {
 	try {
@@ -27,50 +38,80 @@ public class OctreeGeneratorTest implements IObserver {
 	    // Add notif watch
 	    EventManager.getInstance().subscribe(new OctreeGeneratorTest(), Events.POST_NOTIFICATION, Events.JAVA_EXCEPTION);
 
-	    OctreeGenerator og = new OctreeGenerator(BrightestStars.class);
-
-	    HYGBinaryLoader starLoader = new HYGBinaryLoader();
-
-	    List<Star> list = (List<Star>) starLoader.loadCatalog(new FileInputStream(new File("../android/assets/data/hygxyz.bin")));
-	    OctreeNode<Star> octree = og.generateOctree(list);
-
-	    // Put all new particles in list
-	    list.clear();
-	    octree.addParticlesTo(list);
-
-	    System.out.println(octree.toString());
-
-	    String temp = System.getProperty("java.io.tmpdir");
-
-	    /** WRITE METADATA **/
-	    File metadata = new File(temp, "metadata_" + System.currentTimeMillis() + ".bin");
-	    if (metadata.exists()) {
-		metadata.delete();
+	    switch (operation) {
+	    case GENERATE_OCTREE:
+		generateOctree();
+		break;
+	    case LOAD_OCTREE:
+		FileLocator.initialize("../android/assets/");
+		loadOctree();
+		break;
 	    }
-	    metadata.createNewFile();
-
-	    System.out.println("Writing metadata (" + octree.numNodes() + " nodes): " + metadata.getAbsolutePath());
-
-	    MetadataBinaryIO metadataWriter = new MetadataBinaryIO();
-	    metadataWriter.writeMetadata(octree, new FileOutputStream(metadata));
-
-	    /** WRITE PARTICLES **/
-	    File particles = new File(temp, "particles_" + System.currentTimeMillis() + ".bin");
-	    if (particles.exists()) {
-		particles.delete();
-	    }
-	    particles.createNewFile();
-
-	    System.out.println("Writing particles (" + list.size() + " particles): " + particles.getAbsolutePath());
-
-	    ParticleDataBinaryIO particleWriter = new ParticleDataBinaryIO();
-	    particleWriter.writeParticles(list, new FileOutputStream(particles));
 
 	} catch (FileNotFoundException e) {
 	    e.printStackTrace();
 	} catch (IOException e) {
 	    e.printStackTrace();
 	}
+    }
+
+    private static void generateOctree() throws IOException {
+	OctreeGenerator og = new OctreeGenerator(BrightestStars.class);
+
+	HYGBinaryLoader starLoader = new HYGBinaryLoader();
+
+	List<Star> list = (List<Star>) starLoader.loadCatalog(new FileInputStream(new File("../android/assets/data/hygxyz.bin")));
+	OctreeNode<Star> octree = og.generateOctree(list);
+
+	// Put all new particles in list
+	list.clear();
+	octree.addParticlesTo(list);
+
+	System.out.println(octree.toString());
+
+	String temp = System.getProperty("java.io.tmpdir");
+
+	/** WRITE METADATA **/
+	File metadata = new File(temp, "metadata_" + System.currentTimeMillis() + ".bin");
+	if (metadata.exists()) {
+	    metadata.delete();
+	}
+	metadata.createNewFile();
+
+	System.out.println("Writing metadata (" + octree.numNodes() + " nodes): " + metadata.getAbsolutePath());
+
+	MetadataBinaryIO metadataWriter = new MetadataBinaryIO();
+	metadataWriter.writeMetadata(octree, new FileOutputStream(metadata));
+
+	/** WRITE PARTICLES **/
+	File particles = new File(temp, "particles_" + System.currentTimeMillis() + ".bin");
+	if (particles.exists()) {
+	    particles.delete();
+	}
+	particles.createNewFile();
+
+	System.out.println("Writing particles (" + list.size() + " particles): " + particles.getAbsolutePath());
+
+	ParticleDataBinaryIO particleWriter = new ParticleDataBinaryIO();
+	particleWriter.writeParticles(list, new FileOutputStream(particles));
+    }
+
+    private static void loadOctree() throws FileNotFoundException {
+	Properties p = new Properties();
+	p.put("metadata", "data/hyg_metadata.bin");
+	p.put("particles", "data/hyg_particles.bin");
+	ICatalogLoader loader = new OctreeCatalogLoader();
+	loader.initialize(p);
+	List<? extends SceneGraphNode> l = loader.loadCatalog();
+	AbstractOctreeWrapper ow = null;
+	for (SceneGraphNode n : l) {
+	    if (n instanceof AbstractOctreeWrapper) {
+		ow = (AbstractOctreeWrapper) n;
+		break;
+	    }
+	}
+	System.out.println(ow.root.toString());
+
     }
 
     @Override

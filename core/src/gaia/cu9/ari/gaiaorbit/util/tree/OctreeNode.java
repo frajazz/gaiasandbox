@@ -254,7 +254,7 @@ public class OctreeNode<T extends IPosition> implements ILineRenderable {
 	} else {
 	    str.append("[ownobj: ");
 	}
-	str.append(objects.size()).append("/").append(ownObjects).append(", recobj: ").append(nObjects).append(", nchld: ").append(childrenCount).append("]\n");
+	str.append(objects.size()).append("/").append(ownObjects).append(", recobj: ").append(nObjects).append(", nchld: ").append(childrenCount).append("] ").append(status).append("\n");
 	if (childrenCount > 0) {
 	    for (OctreeNode<T> child : children) {
 		if (child != null) {
@@ -361,47 +361,45 @@ public class OctreeNode<T extends IPosition> implements ILineRenderable {
 	    //		ObjectServerLoader.addToQueue(depth);
 	    //	    }
 
-	    synchronized (this) {
-		// Compute distance and view angle
-		distToCamera = auxD1.set(centre).add(cam.getInversePos()).len();
-		viewAngle = Math.atan(radius / distToCamera) / cam.getFovFactor();
+	    // Compute distance and view angle
+	    distToCamera = auxD1.set(centre).add(cam.getInversePos()).len();
+	    viewAngle = Math.atan(radius / distToCamera) / cam.getFovFactor();
 
-		if (viewAngle < ANGLE_THRESHOLD_1) {
-		    // Stay in current level
+	    if (viewAngle < ANGLE_THRESHOLD_1) {
+		// Stay in current level
+		addObjectsTo(roulette);
+		setChildrenObserved(false);
+	    } else if (viewAngle > ANGLE_THRESHOLD_2) {
+		// Break down tree
+		if (childrenCount == 0) {
+		    // We are a leaf, add objects anyway
 		    addObjectsTo(roulette);
 		    setChildrenObserved(false);
-		} else if (viewAngle > ANGLE_THRESHOLD_2) {
-		    // Break down tree
-		    if (childrenCount == 0) {
-			// We are a leaf, add objects anyway
-			addObjectsTo(roulette);
-			setChildrenObserved(false);
-		    } else {
-			// Update children
-			for (int i = 0; i < 8; i++) {
-			    OctreeNode<T> child = children[i];
-			    if (child != null) {
-				child.update(parentTransform, cam, roulette, opacity);
-			    }
-			}
-		    }
 		} else {
-		    // View angle between th1 and th2
-		    addObjectsTo(roulette);
-		    if (childrenCount > 0) {
-			// Opacity = this?  1 - alpha : children? alpha
-			double alpha = MathUtilsd.lint(viewAngle, ANGLE_THRESHOLD_1, ANGLE_THRESHOLD_2, 0d, 1d);
-			// Update children
-			this.opacity = 1f - (float) alpha;
-			for (int i = 0; i < 8; i++) {
-			    OctreeNode<T> child = children[i];
-			    if (child != null) {
-				child.update(parentTransform, cam, roulette, (float) alpha);
-			    }
+		    // Update children
+		    for (int i = 0; i < 8; i++) {
+			OctreeNode<T> child = children[i];
+			if (child != null) {
+			    child.update(parentTransform, cam, roulette, opacity);
 			}
 		    }
-
 		}
+	    } else {
+		// View angle between th1 and th2
+		addObjectsTo(roulette);
+		if (childrenCount > 0) {
+		    // Opacity = this?  1 - alpha : children? alpha
+		    double alpha = MathUtilsd.lint(viewAngle, ANGLE_THRESHOLD_1, ANGLE_THRESHOLD_2, 0d, 1d);
+		    // Update children
+		    this.opacity = 1f - (float) alpha;
+		    for (int i = 0; i < 8; i++) {
+			OctreeNode<T> child = children[i];
+			if (child != null) {
+			    child.update(parentTransform, cam, roulette, (float) alpha);
+			}
+		    }
+		}
+
 	    }
 	}
     }

@@ -76,7 +76,7 @@ public class MetadataBinaryIO {
 
 		    maxDepth = Math.max(maxDepth, depth);
 
-		    OctreeNode<SceneGraphNode> node = new OctreeNode<SceneGraphNode>(pageId, y, z, x, hsy, hsz, hsx, childrenCount, nObjects, ownObjects, depth);
+		    OctreeNode<SceneGraphNode> node = new OctreeNode<SceneGraphNode>(pageId, x, y, z, hsx, hsy, hsz, childrenCount, nObjects, ownObjects, depth);
 		    nodesMap.put(pageId, new Pair<OctreeNode<SceneGraphNode>, long[]>(node, childrenIds));
 
 		    if (depth == 0) {
@@ -126,11 +126,11 @@ public class MetadataBinaryIO {
 		data_out.writeDouble(node.centre.x);
 		data_out.writeDouble(node.centre.y);
 		data_out.writeDouble(node.centre.z);
-		data_out.writeDouble(node.box.getWidth());
-		data_out.writeDouble(node.box.getHeight());
-		data_out.writeDouble(node.box.getDepth());
-		for (OctreeNode<?> child : node.children) {
-		    data_out.writeLong(child != null ? child.pageId : -1l);
+		data_out.writeDouble(node.size.x);
+		data_out.writeDouble(node.size.y);
+		data_out.writeDouble(node.size.z);
+		for (int i = 0; i < 8; i++) {
+		    data_out.writeLong(node.children[i] != null ? node.children[i].pageId : -1l);
 		}
 		data_out.writeInt(node.depth);
 		data_out.writeInt(node.nObjects);
