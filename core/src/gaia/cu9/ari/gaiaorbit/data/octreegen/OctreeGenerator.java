@@ -1,17 +1,21 @@
 package gaia.cu9.ari.gaiaorbit.data.octreegen;
 
 import gaia.cu9.ari.gaiaorbit.scenegraph.Star;
+import gaia.cu9.ari.gaiaorbit.util.Constants;
 import gaia.cu9.ari.gaiaorbit.util.math.BoundingBoxd;
 import gaia.cu9.ari.gaiaorbit.util.math.Longref;
 import gaia.cu9.ari.gaiaorbit.util.tree.OctreeNode;
 
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 
 public class OctreeGenerator {
 
     /** Is the octree centred at the sun? **/
-    private static final boolean SUN_CENTRE = true;
+    private static final boolean SUN_CENTRE = false;
+    /** Maximum distance in parsecs **/
+    private static final double MAX_DISTANCE_CAP = 5e4;
 
     IAggregationAlgorithm<Star> aggregation;
     Longref pageid;
@@ -28,10 +32,15 @@ public class OctreeGenerator {
     public OctreeNode<Star> generateOctree(List<Star> catalog) {
 
 	double maxdist = Double.MIN_VALUE;
+	Iterator<Star> it = catalog.iterator();
 	Star furthest = null;
-	for (Star s : catalog) {
+	while (it.hasNext()) {
+	    Star s = it.next();
 	    double dist = s.pos.len();
-	    if (dist > maxdist) {
+	    if (dist * Constants.U_TO_PC > MAX_DISTANCE_CAP) {
+		// Remove star
+		it.remove();
+	    } else if (dist > maxdist) {
 		furthest = s;
 		maxdist = dist;
 	    }
@@ -73,9 +82,9 @@ public class OctreeGenerator {
 
 	if (!leaf) {
 	    // Generate 8 children
-	    double hsx = octant.size.x / 4;
-	    double hsy = octant.size.y / 4;
-	    double hsz = octant.size.z / 4;
+	    double hsx = octant.size.x / 4d;
+	    double hsy = octant.size.y / 4d;
+	    double hsz = octant.size.z / 4d;
 
 	    // Front - top - left
 	    OctreeNode<Star> node000 = new OctreeNode<Star>(nextPageId(), octant.centre.x - hsx, octant.centre.y + hsy, octant.centre.z - hsz, hsx, hsy, hsz, octant.depth + 1);

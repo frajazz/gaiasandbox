@@ -29,9 +29,9 @@ import com.badlogic.gdx.Gdx;
  * - 64 bits (double) - centreX - The x component of the centre
  * - 64 bits (double) - centreY - The y component of the centre
  * - 64 bits (double) - centreZ - The z component of the centre
- * - 64 bits (double) - hsx - The half size in x
- * - 64 bits (double) - hsy - The half size in y
- * - 64 bits (double) - hsz - The half size in z
+ * - 64 bits (double) - sx - The size in x
+ * - 64 bits (double) - sy - The size in y
+ * - 64 bits (double) - sz - The size in z
  * - 64 bits * 8 (long) - childrenIds - 8 longs with the ids of the children. If no child in the given position, the id is negative.
  * - 32 bits (int) - depth - The depth of the node
  * - 32 bits (int) - nObjects - The number of objects of this node and its descendants
@@ -66,9 +66,9 @@ public class MetadataBinaryIO {
 		    double x = data_in.readDouble();
 		    double y = data_in.readDouble();
 		    double z = data_in.readDouble();
-		    double hsx = data_in.readDouble();
-		    double hsy = data_in.readDouble();
-		    double hsz = data_in.readDouble();
+		    double hsx = data_in.readDouble() / 2d;
+		    double hsy = data_in.readDouble() / 2d;
+		    double hsz = data_in.readDouble() / 2d;
 		    long[] childrenIds = new long[8];
 		    for (int i = 0; i < 8; i++) {
 			childrenIds[i] = data_in.readLong();

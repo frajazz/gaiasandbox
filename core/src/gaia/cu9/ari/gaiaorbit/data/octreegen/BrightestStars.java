@@ -10,7 +10,7 @@ import java.util.List;
 
 public class BrightestStars implements IAggregationAlgorithm<Star> {
     private static final int MAX_DEPTH = 10;
-    private static final int MAX_PART = 16000;
+    private static final int MAX_PART = 25000;
     Comparator<Star> comp;
     long starId;
 
@@ -24,6 +24,10 @@ public class BrightestStars implements IAggregationAlgorithm<Star> {
 	if (inputStars.size() < MAX_PART || octant.depth >= MAX_DEPTH) {
 	    // Downright use all stars
 	    octant.addAll(inputStars);
+	    for (Star s : inputStars) {
+		s.page = octant;
+		s.pageId = octant.pageId;
+	    }
 	    return true;
 	} else {
 	    // Extract sample
@@ -34,7 +38,7 @@ public class BrightestStars implements IAggregationAlgorithm<Star> {
 		virtual.type = 92;
 		virtual.nparticles = inputStars.size() / MAX_PART;
 		octant.add(virtual);
-		virtual.page = (OctreeNode) octant;
+		virtual.page = octant;
 		virtual.pageId = octant.pageId;
 	    }
 	    return false;

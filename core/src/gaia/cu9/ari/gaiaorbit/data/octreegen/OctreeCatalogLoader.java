@@ -1,8 +1,7 @@
-package gaia.cu9.ari.gaiaorbit.data.stars;
+package gaia.cu9.ari.gaiaorbit.data.octreegen;
 
 import gaia.cu9.ari.gaiaorbit.data.FileLocator;
-import gaia.cu9.ari.gaiaorbit.data.octreegen.MetadataBinaryIO;
-import gaia.cu9.ari.gaiaorbit.data.octreegen.ParticleDataBinaryIO;
+import gaia.cu9.ari.gaiaorbit.data.stars.ICatalogLoader;
 import gaia.cu9.ari.gaiaorbit.event.EventManager;
 import gaia.cu9.ari.gaiaorbit.event.Events;
 import gaia.cu9.ari.gaiaorbit.scenegraph.CelestialBody;

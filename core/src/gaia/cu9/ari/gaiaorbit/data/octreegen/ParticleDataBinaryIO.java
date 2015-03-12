@@ -104,6 +104,7 @@ public class ParticleDataBinaryIO {
 			Star s = new Star(pos, appmag, absmag, colorbv, name, sph.x, sph.y, id);
 			s.pageId = pageId;
 			s.type = type;
+			s.initialize();
 			stars.add(s);
 		    }
 		} catch (EOFException eof) {

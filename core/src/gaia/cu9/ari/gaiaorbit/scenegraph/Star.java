@@ -77,7 +77,7 @@ public class Star extends CelestialBody {
     /** The id of the octant it belongs to **/
     public long pageId;
     /** Its page **/
-    public OctreeNode<SceneGraphNode> page;
+    public OctreeNode<? extends SceneGraphNode> page;
     /** Particle type
      * 90 - real star
      * 92 - virtual particle
@@ -118,6 +118,15 @@ public class Star extends CelestialBody {
 	this.parentName = ROOT_NAME;
     }
 
+    /**
+     * Creates a new star.
+     * @param pos Cartesian position, in equatorial coordinates and in internal units.
+     * @param appmag Apparent magnitude.
+     * @param absmag Absolute magnitude.
+     * @param colorbv The B-V color index.
+     * @param name The label or name.
+     * @param starid The star unique id.
+     */
     public Star(Vector3d pos, float appmag, float absmag, float colorbv, String name, long starid) {
 	this();
 	this.pos = pos;
