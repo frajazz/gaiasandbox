@@ -58,6 +58,7 @@ import com.badlogic.gdx.InputMultiplexer;
 import com.badlogic.gdx.assets.AssetManager;
 import com.badlogic.gdx.assets.loaders.FileHandleResolver;
 import com.badlogic.gdx.assets.loaders.resolvers.InternalFileHandleResolver;
+import com.badlogic.gdx.controllers.Controllers;
 import com.badlogic.gdx.files.FileHandle;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.Pixmap.Format;
@@ -284,6 +285,7 @@ public class GaiaSandbox implements ApplicationListener, IObserver {
 	EventManager.getInstance().post(Events.VISIBILITY_OF_COMPONENTS, new Object[] { SceneGraphRenderer.visible });
 
 	inputController = new GaiaInputController(cam, gui);
+	Controllers.addListener(inputController);
 	inputMultiplexer.addProcessor(inputController);
 
 	Gdx.input.setInputProcessor(inputMultiplexer);

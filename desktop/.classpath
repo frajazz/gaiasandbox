@@ -15,6 +15,8 @@
 	<classpathentry kind="lib" path="lib/xstream-1.4.7.jar"/>
 	<classpathentry kind="lib" path="lib/lwjgl-2.9.1.jar"/>
 	<classpathentry kind="lib" path="lib/gdx-backend-lwjgl-1.5.0.jar"/>
+	<classpathentry kind="lib" path="lib/gdx-controllers-desktop-1.5.0.jar"/>
+	<classpathentry kind="lib" path="lib/gdx-controllers-desktop-natives.jar"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/ObjectServerJavaWrapper"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

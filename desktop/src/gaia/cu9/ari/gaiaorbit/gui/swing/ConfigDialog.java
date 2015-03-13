@@ -14,6 +14,7 @@ import gaia.cu9.ari.gaiaorbit.util.GlobalConf;
 import gaia.cu9.ari.gaiaorbit.util.GlobalResources;
 import gaia.cu9.ari.gaiaorbit.util.I18n;
 import gaia.cu9.visualization.objectserver.ClientCore;
+import gaia.cu9.visualization.objectserver.commands.Message;
 import gaia.cu9.visualization.objectserver.commands.plugins.ClientIdent;
 import gaia.cu9.visualization.objectserver.structures.datasets.DatasetManager;
 import gaia.cu9.visualization.objectserver.structures.tables.Table;
@@ -881,6 +882,12 @@ public class ConfigDialog extends I18nJFrame {
 			    if (!cc.connect(GlobalConf.data.OBJECT_SERVER_HOSTNAME, GlobalConf.data.OBJECT_SERVER_PORT)) {
 				connectionFailed();
 			    }
+			    // Perform login if necessary
+			    if (!GlobalConf.data.OBJECT_SERVER_HOSTNAME.equals("localhost") && !GlobalConf.data.OBJECT_SERVER_HOSTNAME.equals("127.0.0.1")) {
+				Message ms = new Message("login?username=test&password=password");
+				cc.sendMessage(ms);
+			    }
+
 			    ClientIdent ident = new ClientIdent();
 			    ident.setAffiliation("ARI");
 			    ident.setAuthors("Toni Sagristà <tsagrista@ari.uni-heidelberg.de>");

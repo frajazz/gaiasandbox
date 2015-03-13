@@ -134,6 +134,12 @@ public class ObjectServerLoader implements ISceneGraphNodeProvider {
 	    if (!cc.isConnected()) {
 		cc.connect(GlobalConf.data.OBJECT_SERVER_HOSTNAME,
 			GlobalConf.data.OBJECT_SERVER_PORT);
+
+		// Perform login if necessary
+		if (!GlobalConf.data.OBJECT_SERVER_HOSTNAME.equals("localhost") && !GlobalConf.data.OBJECT_SERVER_HOSTNAME.equals("127.0.0.1")) {
+		    Message ms = new Message("login?username=test&password=password");
+		    cc.sendMessage(ms);
+		}
 		ClientIdent ident = new ClientIdent();
 		ident.setAffiliation("ARI");
 		ident.setAuthors("Toni Sagristà <tsagrista@ari.uni-heidelberg.de>");

@@ -26,6 +26,9 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.Input.Buttons;
 import com.badlogic.gdx.Input.Keys;
+import com.badlogic.gdx.controllers.Controller;
+import com.badlogic.gdx.controllers.ControllerListener;
+import com.badlogic.gdx.controllers.PovDirection;
 import com.badlogic.gdx.input.GestureDetector;
 import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Vector2;
@@ -36,7 +39,7 @@ import com.badlogic.gdx.math.Vector3;
  * @author Toni Sagrista
  *
  */
-public class GaiaInputController extends GestureDetector {
+public class GaiaInputController extends GestureDetector implements ControllerListener {
     public static final float WASD_MOVEMENT_SENSITIVITY = .5f;
 
     public KeyMappings mappings;
@@ -331,6 +334,60 @@ public class GaiaInputController extends GestureDetector {
 
     public boolean isKeyPressed(int keycode) {
 	return pressedKeys.contains(keycode);
+    }
+
+    @Override
+    public boolean accelerometerMoved(Controller arg0, int arg1, Vector3 arg2) {
+	// TODO Auto-generated method stub
+	return false;
+    }
+
+    @Override
+    public boolean axisMoved(Controller arg0, int arg1, float arg2) {
+	System.out.println(arg0.getName() + ", " + arg1 + ", " + arg2);
+	return false;
+    }
+
+    @Override
+    public boolean buttonDown(Controller arg0, int arg1) {
+	// TODO Auto-generated method stub
+	return false;
+    }
+
+    @Override
+    public boolean buttonUp(Controller arg0, int arg1) {
+	// TODO Auto-generated method stub
+	return false;
+    }
+
+    @Override
+    public void connected(Controller arg0) {
+	// TODO Auto-generated method stub
+
+    }
+
+    @Override
+    public void disconnected(Controller arg0) {
+	// TODO Auto-generated method stub
+
+    }
+
+    @Override
+    public boolean povMoved(Controller arg0, int arg1, PovDirection arg2) {
+	// TODO Auto-generated method stub
+	return false;
+    }
+
+    @Override
+    public boolean xSliderMoved(Controller arg0, int arg1, boolean arg2) {
+	// TODO Auto-generated method stub
+	return false;
+    }
+
+    @Override
+    public boolean ySliderMoved(Controller arg0, int arg1, boolean arg2) {
+	// TODO Auto-generated method stub
+	return false;
     }
 
 }
