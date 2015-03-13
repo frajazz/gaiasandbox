@@ -71,6 +71,9 @@ public class NaturalCamera extends AbstractCamera implements IObserver {
 
     private Vector3d desired;
 
+    /** Velocity module, in case it comes from a gamepad **/
+    private double velocityGamepad = 0;
+
     Viewport viewport;
     boolean diverted = false;
 
@@ -226,7 +229,16 @@ public class NaturalCamera extends AbstractCamera implements IObserver {
 
 	desired.nor().scl(amount * tu * 10);
 	force.add(desired);
+	// We reset the time counter
 	lastFwdTime = 0;
+    }
+
+    /**
+     * Sets the gamepad velocity as it comes from the joystick sensor. 
+     * @param amount The amount in [-1, 1].
+     */
+    public void setVelocity(double amount) {
+	velocityGamepad = amount;
     }
 
     /**
@@ -274,14 +286,29 @@ public class NaturalCamera extends AbstractCamera implements IObserver {
 	addAmountX(yaw, amount);
     }
 
+    public void setYaw(double amount) {
+	yaw.x = 0;
+	yaw.y = amount;
+    }
+
     /** Adds the given amount to the camera pitch acceleration **/
     public void addPitch(double amount) {
 	addAmountX(pitch, amount);
     }
 
+    public void setPitch(double amount) {
+	pitch.x = 0;
+	pitch.y = amount;
+    }
+
     /** Adds the given amount to the camera roll acceleration **/
     public void addRoll(double amount) {
 	addAmountX(roll, amount);
+    }
+
+    public void setRoll(double amount) {
+	roll.x = 0;
+	roll.y = amount;
     }
 
     /** Adds the given amount to camera horizontal rotation around the focus acceleration **/
@@ -343,6 +370,11 @@ public class NaturalCamera extends AbstractCamera implements IObserver {
      * @param multiplier
      */
     protected void updatePosition(double dt, double multiplier) {
+	// Calculate velocity if coming from gamepad
+	if (velocityGamepad != 0) {
+	    vel.set(direction).nor().scl(velocityGamepad * multiplier);
+	}
+
 	double forceLen = force.len();
 	double velocity = vel.len();
 
@@ -350,7 +382,7 @@ public class NaturalCamera extends AbstractCamera implements IObserver {
 	friction.set(force).nor().scl(-forceLen * dt * (lastFwdTime > 0.5 ? (lastFwdTime - 0.5) * 1000 : 1));
 	force.add(friction);
 
-	if (lastFwdTime > 1.2) {
+	if (lastFwdTime > 1.2 && velocityGamepad == 0) {
 	    stopForwardMovement();
 	}
 

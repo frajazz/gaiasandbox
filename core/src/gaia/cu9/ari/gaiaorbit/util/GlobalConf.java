@@ -527,19 +527,31 @@ public class GlobalConf {
 		CAMERA_SPEED_LIMIT = 1000 * 3e8 * Constants.M_TO_U;
 		break;
 	    case 5:
+		CAMERA_SPEED_LIMIT = 1 * Constants.AU_TO_U;
+		break;
 	    case 6:
-		// 1 pc/s and 2 pc/s
-		CAMERA_SPEED_LIMIT = (CAMERA_SPEED_LIMIT_IDX - 4) * Constants.PC_TO_U;
+		CAMERA_SPEED_LIMIT = 10 * Constants.AU_TO_U;
 		break;
 	    case 7:
+		CAMERA_SPEED_LIMIT = 1000 * Constants.AU_TO_U;
+		break;
+	    case 8:
+		CAMERA_SPEED_LIMIT = 10000 * Constants.AU_TO_U;
+		break;
+	    case 9:
+	    case 10:
+		// 1 pc/s and 2 pc/s
+		CAMERA_SPEED_LIMIT = (CAMERA_SPEED_LIMIT_IDX - 8) * Constants.PC_TO_U;
+		break;
+	    case 11:
 		// 10 pc/s
 		CAMERA_SPEED_LIMIT = 10 * Constants.PC_TO_U;
 		break;
-	    case 8:
+	    case 12:
 		// 1000 pc/s
 		CAMERA_SPEED_LIMIT = 1000 * Constants.PC_TO_U;
 		break;
-	    case 9:
+	    case 13:
 		// No limit
 		CAMERA_SPEED_LIMIT = -1;
 		break;

@@ -313,6 +313,8 @@ public abstract class CelestialBody extends AbstractPositionEntity implements IL
 	return visible;
     }
 
+    private static final double VIEW_ANGLE = 0.43633231;
+
     /**
      * Computes the visible value, which indicates whether this body is visible or not
      * in the given time with the given camera.
@@ -332,7 +334,7 @@ public abstract class CelestialBody extends AbstractPositionEntity implements IL
 	    updateTransitNumber(visible && time.getDt() != 0, time, camera.getManager().fovCamera);
 	} else {
 	    // We are in Free, Focus, Fov1 or Fov2 mode
-	    visible = GlobalResources.isInView(transform.position, camera.getAngleEdge(), camera.getDirection());
+	    visible = viewAngle > VIEW_ANGLE || GlobalResources.isInView(transform.position, camera.getAngleEdge(), camera.getDirection());
 
 	    /** If time is running, check Gaia **/
 	    if (computeGaiaScan && time.getDt() != 0) {

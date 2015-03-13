@@ -9,6 +9,7 @@ import gaia.cu9.ari.gaiaorbit.event.EventManager;
 import gaia.cu9.ari.gaiaorbit.event.Events;
 import gaia.cu9.ari.gaiaorbit.event.IObserver;
 import gaia.cu9.ari.gaiaorbit.interfce.FullGui;
+import gaia.cu9.ari.gaiaorbit.interfce.GaiaControllerListener;
 import gaia.cu9.ari.gaiaorbit.interfce.GaiaInputController;
 import gaia.cu9.ari.gaiaorbit.interfce.HUDGui;
 import gaia.cu9.ari.gaiaorbit.interfce.IGui;
@@ -285,7 +286,7 @@ public class GaiaSandbox implements ApplicationListener, IObserver {
 	EventManager.getInstance().post(Events.VISIBILITY_OF_COMPONENTS, new Object[] { SceneGraphRenderer.visible });
 
 	inputController = new GaiaInputController(cam, gui);
-	Controllers.addListener(inputController);
+	Controllers.addListener(new GaiaControllerListener(cam, gui));
 	inputMultiplexer.addProcessor(inputController);
 
 	Gdx.input.setInputProcessor(inputMultiplexer);
