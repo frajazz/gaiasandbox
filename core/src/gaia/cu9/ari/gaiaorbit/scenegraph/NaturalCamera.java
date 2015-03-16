@@ -191,6 +191,7 @@ public class NaturalCamera extends AbstractCamera implements IObserver {
 		// Update direction with pitch, yaw, roll
 		updateRotationFree(dt, GlobalConf.scene.TURNING_SPEED);
 		updateRoll(dt, GlobalConf.scene.TURNING_SPEED);
+		updateLateral(dt, translateUnits);
 	    }
 	    break;
 	default:
@@ -482,6 +483,14 @@ public class NaturalCamera extends AbstractCamera implements IObserver {
 	// Set acceleration to 0
 	vert.x = 0f;
 	hor.x = 0f;
+    }
+
+    private void updateLateral(float dt, double translateUnits) {
+	// Pan with hor
+	aux1.set(direction).crs(up).nor();
+	aux1.scl(hor.y * dt * translateUnits);
+	translate(aux1);
+
     }
 
     /**

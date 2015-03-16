@@ -60,6 +60,7 @@ public class GaiaControllerListener implements ControllerListener {
 		cam.naturalCamera.setRoll(value * 1e-2f);
 	    } else {
 		// Use this for lateral movement
+		cam.naturalCamera.setHorizontalRotation(value);
 	    }
 
 	    treated = true;
@@ -77,9 +78,9 @@ public class GaiaControllerListener implements ControllerListener {
 	    if (cam.mode.equals(CameraMode.Focus)) {
 		cam.naturalCamera.setHorizontalRotation(value * 0.1);
 	    } else {
-		cam.naturalCamera.setPitch(value * 1.5e-2f);
+		cam.naturalCamera.setYaw(value * 1.5e-2f);
 	    }
-	    cam.naturalCamera.setYaw(value * 1.5e-2f);
+
 	    treated = true;
 	    break;
 	case SPEED_AXIS:
