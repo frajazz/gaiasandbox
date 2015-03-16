@@ -37,7 +37,7 @@ import com.badlogic.gdx.math.Matrix4;
 
 public class Star extends CelestialBody {
 
-    private static final float TH_ANGLE_POINT = (float) Math.toRadians(4e-7f);
+    private static final float TH_ANGLE_POINT = (float) Math.toRadians(2e-7f);
     private static final float TH_ANGLE_NONE = 0;
     private static ThreadLocal<Random> rnd = new ThreadLocal<Random>() {
 	@Override

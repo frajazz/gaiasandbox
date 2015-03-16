@@ -9,8 +9,11 @@ import java.util.Comparator;
 import java.util.List;
 
 public class BrightestStars implements IAggregationAlgorithm<Star> {
-    private static final int MAX_DEPTH = 10;
-    private static final int MAX_PART = 25000;
+    private static final int MAX_DEPTH = 6;
+    // Maximum number of objects in the densest node of this level
+    private static final int MAX_PART = 40000;
+    // Minimum number of objects under which we do not need to break the octree further
+    private static final int MIN_PART = 1500;
     Comparator<Star> comp;
     long starId;
 
@@ -20,8 +23,12 @@ public class BrightestStars implements IAggregationAlgorithm<Star> {
     }
 
     @Override
-    public boolean sample(List<Star> inputStars, OctreeNode<Star> octant) {
-	if (inputStars.size() < MAX_PART || octant.depth >= MAX_DEPTH) {
+    public boolean sample(List<Star> inputStars, OctreeNode<Star> octant, int maxObjs) {
+	// Calculate nObjects for this octant based on maxObjs and the MAX_PART
+	int nInput = inputStars.size();
+	int nObjects = Math.round(nInput * ((float) MAX_PART / (float) maxObjs));
+
+	if (nInput < MIN_PART || nInput < nObjects || octant.depth >= MAX_DEPTH) {
 	    // Downright use all stars
 	    octant.addAll(inputStars);
 	    for (Star s : inputStars) {
@@ -32,11 +39,11 @@ public class BrightestStars implements IAggregationAlgorithm<Star> {
 	} else {
 	    // Extract sample
 	    Collections.sort(inputStars, comp);
-	    for (int i = 0; i < MAX_PART; i++) {
+	    for (int i = 0; i < nObjects; i++) {
 		Star s = inputStars.get(i);
 		Star virtual = getVirtualCopy(s);
 		virtual.type = 92;
-		virtual.nparticles = inputStars.size() / MAX_PART;
+		virtual.nparticles = inputStars.size() / nObjects;
 
 		// Add virtual to octant
 		octant.add(virtual);

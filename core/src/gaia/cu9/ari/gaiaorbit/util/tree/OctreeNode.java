@@ -235,7 +235,8 @@ public class OctreeNode<T extends IPosition> implements ILineRenderable {
      * @param particles
      */
     public void addParticlesTo(Collection<T> particles) {
-	particles.addAll(this.objects);
+	if (this.objects != null)
+	    particles.addAll(this.objects);
 	for (int i = 0; i < 8; i++) {
 	    if (children[i] != null) {
 		children[i].addParticlesTo(particles);
@@ -254,7 +255,7 @@ public class OctreeNode<T extends IPosition> implements ILineRenderable {
 	} else {
 	    str.append("[ownobj: ");
 	}
-	str.append(objects.size()).append("/").append(ownObjects).append(", recobj: ").append(nObjects).append(", nchld: ").append(childrenCount).append("] ").append(status).append("\n");
+	str.append(objects != null ? objects.size() : "0").append("/").append(ownObjects).append(", recobj: ").append(nObjects).append(", nchld: ").append(childrenCount).append("] ").append(status).append("\n");
 	if (childrenCount > 0) {
 	    for (OctreeNode<T> child : children) {
 		if (child != null) {
@@ -512,10 +513,10 @@ public class OctreeNode<T extends IPosition> implements ILineRenderable {
      */
     public void updateNumbers() {
 	// Number of own objects
-	this.ownObjects = objects.size();
+	this.ownObjects = objects != null ? objects.size() : 0;
 
 	// Number of recursive objects
-	this.nObjects = objects.size();
+	this.nObjects = this.ownObjects;
 
 	// Children count
 	this.childrenCount = 0;

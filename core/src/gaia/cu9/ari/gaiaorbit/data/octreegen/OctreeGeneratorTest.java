@@ -27,7 +27,7 @@ public class OctreeGeneratorTest implements IObserver {
 	LOAD_OCTREE, GENERATE_OCTREE
     }
 
-    public static Operation operation = Operation.LOAD_OCTREE;
+    public static Operation operation = Operation.GENERATE_OCTREE;
 
     public static void main(String[] args) {
 	try {

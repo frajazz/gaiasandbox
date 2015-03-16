@@ -16,6 +16,8 @@ public class GaiaControllerListener implements ControllerListener {
     private static final int PITCH_AXIS = 1;
     private static final int YAW_AXIS = 0;
     private static final int SPEED_AXIS = 4;
+    private static final int LEFT_TRIGGER_BUTTON = 4;
+    private static final int RIGHT_TRIGGER_BUTTON = 5;
 
     public GaiaControllerListener(CameraManager cam, IGui gui) {
 	this.cam = cam;
@@ -36,22 +38,20 @@ public class GaiaControllerListener implements ControllerListener {
 
     @Override
     public boolean buttonDown(Controller controller, int buttonCode) {
-	// TODO Auto-generated method stub
 	return false;
     }
 
     @Override
     public boolean buttonUp(Controller controller, int buttonCode) {
-	// TODO Auto-generated method stub
 	return false;
     }
 
     @Override
     public boolean axisMoved(Controller controller, int axisCode, float value) {
 	boolean treated = false;
-	// y = x^3
+	// y = x^4
 	// http://www.wolframalpha.com/input/?i=y+%3D+sign%28x%29+*+x%5E2+%28x+from+-1+to+1%29}
-	value = value * value * value;
+	value = Math.signum(value) * value * value * value * value;
 	switch (axisCode) {
 	case ROLL_AXIS:
 	    cam.naturalCamera.setRoll(value * 1e-2f);
@@ -68,6 +68,10 @@ public class GaiaControllerListener implements ControllerListener {
 	case SPEED_AXIS:
 	    if (Math.abs(value) < 0.005)
 		value = 0;
+
+	    if (controller.getButton(LEFT_TRIGGER_BUTTON)) {
+		value *= 0.001;
+	    }
 	    cam.naturalCamera.setVelocity(-value);
 	    treated = true;
 	    break;

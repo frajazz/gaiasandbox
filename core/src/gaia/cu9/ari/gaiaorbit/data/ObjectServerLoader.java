@@ -258,8 +258,6 @@ public class ObjectServerLoader implements ISceneGraphNodeProvider {
 		candidate.add(sun);
 	    }
 
-	    // Add sun to octant
-
 	} catch (ConnectException e) {
 	    EventManager.getInstance().post(Events.POST_NOTIFICATION, I18n.bundle.get("notif.objectserver.notconnect"));
 	    EventManager.getInstance().post(Events.JAVA_EXCEPTION, e);
