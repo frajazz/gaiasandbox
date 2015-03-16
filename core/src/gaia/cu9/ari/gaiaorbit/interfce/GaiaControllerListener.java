@@ -1,6 +1,7 @@
 package gaia.cu9.ari.gaiaorbit.interfce;
 
 import gaia.cu9.ari.gaiaorbit.scenegraph.CameraManager;
+import gaia.cu9.ari.gaiaorbit.scenegraph.CameraManager.CameraMode;
 
 import com.badlogic.gdx.controllers.Controller;
 import com.badlogic.gdx.controllers.ControllerListener;
@@ -54,14 +55,30 @@ public class GaiaControllerListener implements ControllerListener {
 	value = Math.signum(value) * value * value * value * value;
 	switch (axisCode) {
 	case ROLL_AXIS:
-	    cam.naturalCamera.setRoll(value * 1e-2f);
+
+	    if (cam.mode.equals(CameraMode.Focus)) {
+		cam.naturalCamera.setRoll(value * 1e-2f);
+	    } else {
+		// Use this for lateral movement
+	    }
+
 	    treated = true;
 	    break;
 	case PITCH_AXIS:
-	    cam.naturalCamera.setPitch(value * 1.5e-2f);
+	    if (cam.mode.equals(CameraMode.Focus)) {
+		cam.naturalCamera.setVerticalRotation(value * 0.1);
+	    } else {
+		cam.naturalCamera.setPitch(value * 1.5e-2f);
+	    }
+
 	    treated = true;
 	    break;
 	case YAW_AXIS:
+	    if (cam.mode.equals(CameraMode.Focus)) {
+		cam.naturalCamera.setHorizontalRotation(value * 0.1);
+	    } else {
+		cam.naturalCamera.setPitch(value * 1.5e-2f);
+	    }
 	    cam.naturalCamera.setYaw(value * 1.5e-2f);
 	    treated = true;
 	    break;

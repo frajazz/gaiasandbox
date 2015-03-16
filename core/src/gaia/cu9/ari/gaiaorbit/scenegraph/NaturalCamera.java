@@ -316,9 +316,19 @@ public class NaturalCamera extends AbstractCamera implements IObserver {
 	addAmountX(hor, amount);
     }
 
+    public void setHorizontalRotation(double amount) {
+	hor.x = 0;
+	hor.y = amount;
+    }
+
     /** Adds the given amount to camera vertical rotation around the focus acceleration **/
     public void addVerticalRotation(double amount) {
 	addAmountX(vert, amount);
+    }
+
+    public void setVerticalRotation(double amount) {
+	vert.x = 0;
+	vert.y = amount;
     }
 
     /**
