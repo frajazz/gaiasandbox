@@ -31,6 +31,7 @@ import gaia.cu9.ari.gaiaorbit.scenegraph.ICamera;
 import gaia.cu9.ari.gaiaorbit.scenegraph.ISceneGraph;
 import gaia.cu9.ari.gaiaorbit.scenegraph.SceneGraphNode;
 import gaia.cu9.ari.gaiaorbit.scenegraph.component.ModelComponent;
+import gaia.cu9.ari.gaiaorbit.util.CamRecorder;
 import gaia.cu9.ari.gaiaorbit.util.Constants;
 import gaia.cu9.ari.gaiaorbit.util.GlobalConf;
 import gaia.cu9.ari.gaiaorbit.util.GlobalResources;
@@ -181,6 +182,9 @@ public class GaiaSandbox implements ApplicationListener, IObserver {
 
 	// Initialize thread indexer
 	ThreadIndexer.initialize();
+
+	// Initialize camera recorder
+	CamRecorder.initialize();
 
 	// Initialize asset manager
 	FileHandleResolver resolver = new InternalFileHandleResolver();

@@ -5,6 +5,7 @@ import gaia.cu9.ari.gaiaorbit.event.EventManager;
 import gaia.cu9.ari.gaiaorbit.event.Events;
 import gaia.cu9.ari.gaiaorbit.event.IObserver;
 import gaia.cu9.ari.gaiaorbit.scenegraph.CameraManager.CameraMode;
+import gaia.cu9.ari.gaiaorbit.util.CamRecorder;
 import gaia.cu9.ari.gaiaorbit.util.Constants;
 import gaia.cu9.ari.gaiaorbit.util.GlobalConf;
 import gaia.cu9.ari.gaiaorbit.util.math.MathUtilsd;
@@ -210,6 +211,9 @@ public class NaturalCamera extends AbstractCamera implements IObserver {
 	camera.update();
 
 	posinv.set(pos).scl(-1);
+
+	// Camera recording
+	CamRecorder.instance.update(pos, direction, up);
     }
 
     /**
