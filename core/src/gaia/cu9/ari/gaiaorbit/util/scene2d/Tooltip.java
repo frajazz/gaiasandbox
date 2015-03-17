@@ -15,6 +15,7 @@ public class Tooltip<T extends Actor> implements EventListener {
     private static final Timer timer = new Timer(true);
 
     final T tooltipObject;
+    TimerTask tt;
 
     public Tooltip(T tooltipObject) {
 	this.tooltipObject = tooltipObject;
@@ -26,17 +27,22 @@ public class Tooltip<T extends Actor> implements EventListener {
 	if (event instanceof InputEvent) {
 	    InputEvent ie = (InputEvent) event;
 	    if (ie.getType().equals(Type.enter)) {
-		// Set timer
-		timer.schedule(new TimerTask() {
+		tt = new TimerTask() {
 		    @Override
 		    public void run() {
 			tooltipObject.setPosition(Gdx.input.getX() + 10, Gdx.graphics.getHeight() - Gdx.input.getY());
 			tooltipObject.setVisible(true);
 			tooltipObject.setZIndex(100);
 		    }
-		}, TOOLTIP_DELAY_MS);
+		};
+		// Set timer
+		timer.schedule(tt, TOOLTIP_DELAY_MS);
 	    } else if (ie.getType().equals(Type.exit)) {
 		// Remove
+		if (tt != null) {
+		    tt.cancel();
+		    tt = null;
+		}
 		tooltipObject.setVisible(false);
 	    } else if (ie.getType().equals(Type.mouseMoved)) {
 		if (tooltipObject.isVisible()) {
@@ -46,5 +52,4 @@ public class Tooltip<T extends Actor> implements EventListener {
 	}
 	return false;
     }
-
 }

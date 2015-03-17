@@ -93,7 +93,7 @@ public class FullGui implements IGui, IObserver {
     protected TextField inputPace, searchBox;
     protected Button plus, minus;
     protected ImageButton dateEdit;
-    protected OwnImageButton playstop;
+    protected OwnImageButton playstop, recCamera;
     protected OwnScrollPane focusListScrollPane;
     protected Slider fieldOfView, starBrightness, bloomEffect, ambientLight, cameraSpeed, turnSpeed, rotateSpeed;
     protected CheckBox focusLock, transitColor, onlyObservedStars, computeGaiaScan, lensFlare;
@@ -206,8 +206,27 @@ public class FullGui implements IGui, IObserver {
 	VerticalGroup cameraGroup = new VerticalGroup().align(Align.left);
 
 	Label cameraLabel = new Label(txt("gui.camera"), skin, "header");
-	Label modeLabel = new Label(txt("gui.camera.mode"), skin, "default");
 
+	// Record camera button
+
+	recCamera = new OwnImageButton(skin, "rec");
+	recCamera.setName("rec");
+	recCamera.setChecked(GlobalConf.runtime.RECORD_CAMERA);
+	recCamera.addListener(new EventListener() {
+	    @Override
+	    public boolean handle(Event event) {
+		if (event instanceof ChangeEvent) {
+		    EventManager.getInstance().post(Events.RECORD_CAMERA_CMD, recCamera.isChecked(), true);
+		    return true;
+		}
+		return false;
+	    }
+	});
+	Label recTooltip = new Label(txt("gui.tooltip.reccamera"), skin, "tooltip");
+	tooltips.add(recTooltip);
+	recCamera.addListener(new Tooltip<Label>(recTooltip));
+
+	Label modeLabel = new Label(txt("gui.camera.mode"), skin, "default");
 	int cameraModes = CameraMode.values().length;
 	String[] cameraOptions = new String[cameraModes];
 	for (int i = 0; i < cameraModes; i++) {
@@ -358,7 +377,12 @@ public class FullGui implements IGui, IObserver {
 	    }
 	});
 
-	cameraGroup.addActor(cameraLabel);
+	HorizontalGroup camLabelGroup = new HorizontalGroup();
+	camLabelGroup.space(HPADDING);
+	camLabelGroup.addActor(cameraLabel);
+	camLabelGroup.addActor(recCamera);
+	cameraGroup.addActor(camLabelGroup);
+
 	cameraGroup.addActor(modeLabel);
 	cameraGroup.addActor(cameraMode);
 	cameraGroup.addActor(fovLabel);
@@ -713,8 +737,6 @@ public class FullGui implements IGui, IObserver {
 
 	/** ----TIME GROUP---- **/
 	VerticalGroup timeGroup = new VerticalGroup().align(Align.left).space(3).padTop(3);
-	;
-
 	Label timeLabel = new Label(txt("gui.time"), skin, "header");
 
 	// Time

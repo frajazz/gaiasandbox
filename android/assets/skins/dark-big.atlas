@@ -313,3 +313,17 @@ pause-icon
   orig: 16, 16
   offset: 0, 0
   index: -1  
+rec-icon-gray
+  rotate: false
+  xy: 168, 3
+  size: 16, 16
+  orig: 16, 16
+  offset: 0, 0
+  index: -1  
+rec-icon-red
+  rotate: false
+  xy: 185, 3
+  size: 16, 16
+  orig: 16, 16
+  offset: 0, 0
+  index: -1  

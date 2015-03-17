@@ -32,7 +32,8 @@ com.badlogic.gdx.scenes.scene2d.ui.TextButton$TextButtonStyle: {
 },
 com.badlogic.gdx.scenes.scene2d.ui.ImageButton$ImageButtonStyle: {
 	edit: { imageUp: edit-icon },
-	playstop: { imageUp: play-icon, imageChecked: pause-icon }
+	playstop: { imageUp: play-icon, imageChecked: pause-icon },
+	rec: { imageUp: rec-icon-gray, imageChecked: rec-icon-red }
 },
 com.badlogic.gdx.scenes.scene2d.ui.ScrollPane$ScrollPaneStyle: {
 	default: { vScroll: default-round-down, hScrollKnob: default-round, background: default-rect, hScroll: default-round-down, vScrollKnob: default-round },

@@ -149,10 +149,11 @@ public class GlobalConf {
 	public boolean UPDATE_PAUSE;
 	public boolean TIME_ON;
 	public boolean INPUT_ENABLED;
+	public boolean RECORD_CAMERA;
 	public float LIMIT_MAG_RUNTIME;
 
 	public RuntimeConf() {
-	    EventManager.getInstance().subscribe(this, Events.LIMIT_MAG_CMD, Events.INPUT_ENABLED_CMD, Events.TOGGLE_CLEANMODE, Events.TOGGLE_UPDATEPAUSE, Events.TOGGLE_TIME_CMD);
+	    EventManager.getInstance().subscribe(this, Events.LIMIT_MAG_CMD, Events.INPUT_ENABLED_CMD, Events.TOGGLE_CLEANMODE, Events.TOGGLE_UPDATEPAUSE, Events.TOGGLE_TIME_CMD, Events.RECORD_CAMERA_CMD);
 	}
 
 	@Override
@@ -167,6 +168,7 @@ public class GlobalConf {
 	    LIMIT_MAG_RUNTIME = 20;
 	    UPDATE_PAUSE = false;
 	    TIME_ON = false;
+	    RECORD_CAMERA = false;
 
 	}
 
@@ -190,6 +192,10 @@ public class GlobalConf {
 		break;
 	    case TOGGLE_TIME_CMD:
 		toggleTimeOn((Boolean) data[0]);
+		break;
+	    case RECORD_CAMERA_CMD:
+		toggleRecord((Boolean) data[0]);
+		break;
 	    }
 
 	}
@@ -202,6 +208,17 @@ public class GlobalConf {
 		TIME_ON = timeOn;
 	    } else {
 		TIME_ON = !TIME_ON;
+	    }
+	}
+
+	/**
+	 * Toggles the record camera
+	 */
+	public void toggleRecord(Boolean rec) {
+	    if (rec != null) {
+		RECORD_CAMERA = rec;
+	    } else {
+		RECORD_CAMERA = !RECORD_CAMERA;
 	    }
 	}
 

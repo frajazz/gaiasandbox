@@ -76,7 +76,7 @@ public enum Events {
     /** Contains the distance [0] and the viewing angle [1] **/
     FOCUS_INFO_UPDATED,
 
-    /** Issues the command to toggle the time. Contains the boolean indicating the state (may be null) and a boolean indicating whether this coems from the interface. **/
+    /** Issues the command to toggle the time. Contains the boolean indicating the state (may be null) and a boolean indicating whether this comes from the interface. **/
     TOGGLE_TIME_CMD,
     /** Contains the name of the type, a boolean indicating if this comes from the interface and an optional boolean with the state **/
     TOGGLE_VISIBILITY_CMD,
@@ -104,6 +104,8 @@ public enum Events {
     PACE_DIVIDE_CMD,
     /** Contains the new pace **/
     PACE_CHANGED_INFO,
+    /** Issues the command to enable camera recording. Contains the boolean indicating the state (may be null) and a boolean indicating whether this comes from the interface. **/
+    RECORD_CAMERA_CMD,
     /** 
      * Will be displayed in the notifications area (bottom left). Contains an array of strings with the messages and an optional boolean
      * indicating whether the message is permanent so should stay until the next message is received.
