@@ -7,7 +7,6 @@
   <dependencies>
     <dependency org="com.badlogicgames.gdx" name="gdx" rev="&gdx.version;" conf="default"/>
     <dependency org="com.badlogicgames.gdx" name="gdx-controllers" rev="&gdx.version;" conf="default"/>
-    <dependency org="net.dermetfan.libgdx-utils" name="libgdx-utils" rev="0.10.0" conf="default"/>
     <dependency org="org.python" name="jython-standalone" rev="2.5.4-rc1" conf="default"/>
   </dependencies>
 </ivy-module>

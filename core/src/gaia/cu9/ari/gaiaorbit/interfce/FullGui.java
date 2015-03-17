@@ -20,10 +20,12 @@ import gaia.cu9.ari.gaiaorbit.util.scene2d.OwnLabel;
 import gaia.cu9.ari.gaiaorbit.util.scene2d.OwnScrollPane;
 import gaia.cu9.ari.gaiaorbit.util.scene2d.OwnTextButton;
 import gaia.cu9.ari.gaiaorbit.util.scene2d.OwnTextIconButton;
+import gaia.cu9.ari.gaiaorbit.util.scene2d.Tooltip;
 import gaia.cu9.ari.gaiaorbit.util.time.GlobalClock;
 
 import java.text.DateFormat;
 import java.text.DecimalFormat;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -112,6 +114,8 @@ public class FullGui implements IGui, IObserver {
     protected ScriptStateInterface inputInterface;
     protected CustomInterface customInterface;
 
+    protected List<Actor> tooltips;
+
     protected Map<String, Button> buttonMap;
 
     /**
@@ -176,6 +180,7 @@ public class FullGui implements IGui, IObserver {
 
     private void buildGui() {
 	final IGui gui = this;
+	tooltips = new ArrayList<Actor>(10);
 
 	/** Global resources **/
 	TextureRegion septexreg = ((TextureRegionDrawable) skin.newDrawable("separator")).getRegion();
@@ -733,12 +738,15 @@ public class FullGui implements IGui, IObserver {
 	    }
 
 	});
+	Label dateEditTooltip = new Label(txt("gui.tooltip.dateedit"), skin, "tooltip");
+	tooltips.add(dateEditTooltip);
+	dateEdit.addListener(new Tooltip<Label>(dateEditTooltip));
 
 	// Play/stop
+
 	playstop = new OwnImageButton(skin, "playstop");
 	playstop.setName("play stop");
 	playstop.setChecked(GlobalConf.runtime.TIME_ON);
-	playstop.setTooltip("Hello I'm a tooltip");
 	playstop.addListener(new EventListener() {
 	    @Override
 	    public boolean handle(Event event) {
@@ -749,6 +757,9 @@ public class FullGui implements IGui, IObserver {
 		return false;
 	    }
 	});
+	Label playstopTooltip = new Label(txt("gui.tooltip.playstop"), skin, "tooltip");
+	tooltips.add(playstopTooltip);
+	playstop.addListener(new Tooltip<Label>(playstopTooltip));
 
 	// Pace
 	Label paceLabel = new Label(txt("gui.pace"), skin);
@@ -760,6 +771,7 @@ public class FullGui implements IGui, IObserver {
 		if (event instanceof ChangeEvent) {
 		    // Plus pressed
 		    EventManager.getInstance().post(Events.PACE_DOUBLE_CMD);
+
 		    return true;
 		}
 		return false;
@@ -1013,6 +1025,9 @@ public class FullGui implements IGui, IObserver {
 	    }
 	    if (customInterface != null) {
 		customInterface.reAddObjects();
+	    }
+	    for (Actor tooltip : tooltips) {
+		ui.addActor(tooltip);
 	    }
 
 	    /** CAPTURE SCROLL FOCUS **/

@@ -19,7 +19,6 @@ import com.badlogic.gdx.utils.DelayedRemovalArray;
  */
 public class OwnImageButton extends ImageButton {
     Array<EventListener> listeners;
-    String tooltip = null;
 
     public OwnImageButton(Skin skin) {
 	super(skin);
@@ -71,25 +70,6 @@ public class OwnImageButton extends ImageButton {
 		return false;
 	    }
 	});
-    }
-
-    /**
-     * Sets a tooltip and activates it. To deactivate, set it to null.
-     * @param tooltip
-     */
-    public void setTooltip(final String tooltip) {
-	this.tooltip = tooltip;
-	if (tooltip != null) {
-	    this.addListener(new EventListener() {
-
-		@Override
-		public boolean handle(Event event) {
-		    System.out.println(event.getClass() + ", " + event.toString());
-		    return false;
-		}
-
-	    });
-	}
     }
 
 }
