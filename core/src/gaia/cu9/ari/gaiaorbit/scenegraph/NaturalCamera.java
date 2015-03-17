@@ -213,7 +213,7 @@ public class NaturalCamera extends AbstractCamera implements IObserver {
 	posinv.set(pos).scl(-1);
 
 	// Camera recording
-	CamRecorder.instance.update(pos, direction, up);
+	CamRecorder.instance.update(dt, pos, direction, up);
     }
 
     /**

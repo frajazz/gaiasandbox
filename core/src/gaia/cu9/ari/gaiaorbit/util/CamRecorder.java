@@ -11,7 +11,10 @@ import java.io.FileWriter;
 import java.io.IOException;
 
 /** 
- * Contains the logic to record the camera state at each frame.
+ * Contains the logic to record the camera state at each frame. The format is as follows:
+ * > time[s](float) cam_pos(double x3) cam_dir(double x3) cam_up(double x3)
+ * 
+ * The time is the time in seconds since the start of the recording, to synchronize with the current FPS in playing mode.
  * @author Toni Sagrista
  *
  */
@@ -24,6 +27,7 @@ public class CamRecorder implements IObserver {
     private BufferedWriter os;
     private File f;
     private long startMs;
+    float dtini;
 
     public static void initialize() {
 	instance = new CamRecorder();
@@ -34,9 +38,13 @@ public class CamRecorder implements IObserver {
 	EventManager.instance.subscribe(this, Events.RECORD_CAMERA_CMD);
     }
 
-    public void update(Vector3d position, Vector3d direction, Vector3d up) {
+    public void update(float dt, Vector3d position, Vector3d direction, Vector3d up) {
 	if (recording && os != null) {
+	    if (dtini < 0) {
+		dtini = dt;
+	    }
 	    try {
+		os.append(Float.toString(dt - dtini)).append(sep);
 		os.append(Double.toString(position.x)).append(sep).append(Double.toString(position.y)).append(sep).append(Double.toString(position.z));
 		os.append(sep).append(Double.toString(direction.x)).append(sep).append(Double.toString(direction.y)).append(sep).append(Double.toString(direction.z));
 		os.append(sep).append(Double.toString(up.x)).append(sep).append(Double.toString(up.y)).append(sep).append(Double.toString(up.z));
@@ -73,6 +81,7 @@ public class CamRecorder implements IObserver {
 		    EventManager.instance.post(Events.JAVA_EXCEPTION, e);
 		}
 		startMs = System.currentTimeMillis();
+		dtini = -1;
 		EventManager.instance.post(Events.POST_NOTIFICATION, I18n.bundle.get("notif.camerarecord.start"));
 
 	    } else {
