@@ -84,7 +84,7 @@ public class MetadataBinaryIO {
 		    }
 
 		} catch (EOFException eof) {
-		    EventManager.getInstance().post(Events.JAVA_EXCEPTION, eof);
+		    EventManager.instance.post(Events.JAVA_EXCEPTION, eof);
 		}
 	    }
 
@@ -93,13 +93,13 @@ public class MetadataBinaryIO {
 	    if (root != null) {
 		root.resolveChildren(nodesMap);
 	    } else {
-		EventManager.getInstance().post(Events.JAVA_EXCEPTION, new RuntimeException("No root node in visualization-metadata"));
+		EventManager.instance.post(Events.JAVA_EXCEPTION, new RuntimeException("No root node in visualization-metadata"));
 	    }
 
 	    return root;
 
 	} catch (IOException e) {
-	    EventManager.getInstance().post(Events.JAVA_EXCEPTION, e);
+	    EventManager.instance.post(Events.JAVA_EXCEPTION, e);
 	}
 	return null;
     }
@@ -142,7 +142,7 @@ public class MetadataBinaryIO {
 	    out.close();
 
 	} catch (IOException e) {
-	    EventManager.getInstance().post(Events.JAVA_EXCEPTION, e);
+	    EventManager.instance.post(Events.JAVA_EXCEPTION, e);
 	}
 
     }

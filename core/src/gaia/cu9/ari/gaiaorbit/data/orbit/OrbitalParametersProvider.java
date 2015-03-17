@@ -51,7 +51,7 @@ public class OrbitalParametersProvider implements IOrbitDataProvider {
 		data.time.add(new Date());
 	    }
 	} catch (Exception e) {
-	    EventManager.getInstance().post(Events.JAVA_EXCEPTION, e);
+	    EventManager.instance.post(Events.JAVA_EXCEPTION, e);
 	}
     }
 

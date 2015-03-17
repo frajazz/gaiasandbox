@@ -179,7 +179,7 @@ public abstract class AbstractPositionEntity extends SceneGraphNode {
 
 	    return (T) instance;
 	} catch (Exception e) {
-	    EventManager.getInstance().post(Events.JAVA_EXCEPTION, e);
+	    EventManager.instance.post(Events.JAVA_EXCEPTION, e);
 	}
 	return null;
     }

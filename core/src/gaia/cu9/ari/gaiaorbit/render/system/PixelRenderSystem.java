@@ -29,7 +29,7 @@ public class PixelRenderSystem extends AbstractRenderSystem implements IObserver
 	}
 	this.renderer = new ImmediateModeRenderer20(8000000, false, true, 0, pointShader);
 
-	EventManager.getInstance().subscribe(this, Events.TRANSIT_COLOUR_CMD);
+	EventManager.instance.subscribe(this, Events.TRANSIT_COLOUR_CMD);
     }
 
     @Override

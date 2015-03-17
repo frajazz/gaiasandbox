@@ -31,7 +31,7 @@ public class HYGCSVLoader extends AbstractCatalogLoader implements ICatalogLoade
     public List<Star> loadCatalog() throws FileNotFoundException {
 	List<Star> stars = new ArrayList<Star>();
 	BufferedReader br = new BufferedReader(new InputStreamReader(data));
-	EventManager.getInstance().post(Events.POST_NOTIFICATION, this.getClass().getSimpleName(), I18n.bundle.format("notif.limitmag", GlobalConf.data.LIMIT_MAG_LOAD));
+	EventManager.instance.post(Events.POST_NOTIFICATION, this.getClass().getSimpleName(), I18n.bundle.format("notif.limitmag", GlobalConf.data.LIMIT_MAG_LOAD));
 
 	try {
 	    //Skip first line
@@ -49,7 +49,7 @@ public class HYGCSVLoader extends AbstractCatalogLoader implements ICatalogLoade
 	    e.printStackTrace();
 	}
 
-	EventManager.getInstance().post(Events.POST_NOTIFICATION, this.getClass().getSimpleName(), I18n.bundle.format("notif.catalog.init", stars.size()));
+	EventManager.instance.post(Events.POST_NOTIFICATION, this.getClass().getSimpleName(), I18n.bundle.format("notif.catalog.init", stars.size()));
 	return stars;
     }
 

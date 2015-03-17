@@ -46,8 +46,8 @@ public class SearchDialog extends Window {
 			    if (sg.containsNode(text.toLowerCase())) {
 				SceneGraphNode node = sg.getNode(text.toLowerCase());
 				if (node instanceof CelestialBody) {
-				    EventManager.getInstance().post(Events.CAMERA_MODE_CMD, CameraMode.Focus, true);
-				    EventManager.getInstance().post(Events.FOCUS_CHANGE_CMD, node, true);
+				    EventManager.instance.post(Events.CAMERA_MODE_CMD, CameraMode.Focus, true);
+				    EventManager.instance.post(Events.FOCUS_CHANGE_CMD, node, true);
 				    searchInput.selectAll();
 				}
 			    }

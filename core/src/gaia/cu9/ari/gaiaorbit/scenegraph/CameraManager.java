@@ -96,7 +96,7 @@ public class CameraManager implements ICamera, IObserver {
 
 	updateCurrentCamera();
 
-	EventManager.getInstance().subscribe(this, Events.CAMERA_MODE_CMD, Events.FOV_CHANGE_NOTIFICATION);
+	EventManager.instance.subscribe(this, Events.CAMERA_MODE_CMD, Events.FOV_CHANGE_NOTIFICATION);
     }
 
     public void updateCurrentCamera() {
@@ -171,7 +171,7 @@ public class CameraManager implements ICamera, IObserver {
 	velocity = (lastPos.sub(current.getPos()).len() * Constants.U_TO_KM) / (dt * Constants.S_TO_H);
 
 	// Post event with camera motion parameters
-	EventManager.getInstance().post(Events.CAMERA_MOTION_UPDATED, current.getPos(), velocity);
+	EventManager.instance.post(Events.CAMERA_MOTION_UPDATED, current.getPos(), velocity);
 
 	// Update last pos
 	lastPos.set(current.getPos());
@@ -198,7 +198,7 @@ public class CameraManager implements ICamera, IObserver {
 	    restoreState();
 
 	if (postEvent)
-	    EventManager.getInstance().post(Events.FOV_CHANGE_NOTIFICATION, this.getCamera().fieldOfView);
+	    EventManager.instance.post(Events.FOV_CHANGE_NOTIFICATION, this.getCamera().fieldOfView);
     }
 
     @Override

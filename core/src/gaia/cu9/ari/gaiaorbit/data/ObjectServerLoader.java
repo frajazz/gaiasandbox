@@ -124,7 +124,7 @@ public class ObjectServerLoader implements ISceneGraphNodeProvider {
 	AbstractOctreeWrapper octreeWrapper = null;
 
 	try {
-	    EventManager.getInstance().post(Events.POST_NOTIFICATION, this.getClass().getSimpleName(), I18n.bundle.format("notif.objectserver.gettingdata"));
+	    EventManager.instance.post(Events.POST_NOTIFICATION, this.getClass().getSimpleName(), I18n.bundle.format("notif.objectserver.gettingdata"));
 
 	    visid = GlobalConf.data.VISUALIZATION_ID;
 
@@ -203,7 +203,7 @@ public class ObjectServerLoader implements ISceneGraphNodeProvider {
 
 			    }
 			} catch (IOException e) {
-			    EventManager.getInstance().post(Events.JAVA_EXCEPTION, e);
+			    EventManager.instance.post(Events.JAVA_EXCEPTION, e);
 			}
 		    }
 
@@ -212,7 +212,7 @@ public class ObjectServerLoader implements ISceneGraphNodeProvider {
 		    if (root != null) {
 			root.resolveChildren(nodesMap);
 		    } else {
-			EventManager.getInstance().post(Events.JAVA_EXCEPTION, new RuntimeException("No root node in visualization-metadata"));
+			EventManager.instance.post(Events.JAVA_EXCEPTION, new RuntimeException("No root node in visualization-metadata"));
 		    }
 
 		}
@@ -249,7 +249,7 @@ public class ObjectServerLoader implements ISceneGraphNodeProvider {
 	    // Find out octant of sun
 	    OctreeNode<SceneGraphNode> candidate = root.getBestOctant(sun.pos);
 	    if (candidate == null) {
-		EventManager.getInstance().post(Events.JAVA_EXCEPTION, new RuntimeException("No octant candidate for the Sun found!"));
+		EventManager.instance.post(Events.JAVA_EXCEPTION, new RuntimeException("No octant candidate for the Sun found!"));
 	    } else {
 		sun.pageId = candidate.pageId;
 		sun.page = candidate;
@@ -259,15 +259,15 @@ public class ObjectServerLoader implements ISceneGraphNodeProvider {
 	    }
 
 	} catch (ConnectException e) {
-	    EventManager.getInstance().post(Events.POST_NOTIFICATION, I18n.bundle.get("notif.objectserver.notconnect"));
-	    EventManager.getInstance().post(Events.JAVA_EXCEPTION, e);
+	    EventManager.instance.post(Events.POST_NOTIFICATION, I18n.bundle.get("notif.objectserver.notconnect"));
+	    EventManager.instance.post(Events.JAVA_EXCEPTION, e);
 	} catch (IOException e) {
-	    EventManager.getInstance().post(Events.JAVA_EXCEPTION, e);
+	    EventManager.instance.post(Events.JAVA_EXCEPTION, e);
 	}
 
 	if (errors.num > 0l)
-	    EventManager.getInstance().post(Events.JAVA_EXCEPTION, new RuntimeException(I18n.bundle.format("error.loading.objects", errors)));
-	EventManager.getInstance().post(Events.POST_NOTIFICATION, this.getClass().getSimpleName(), I18n.bundle.format("notif.catalog.init", starid.num));
+	    EventManager.instance.post(Events.JAVA_EXCEPTION, new RuntimeException(I18n.bundle.format("error.loading.objects", errors)));
+	EventManager.instance.post(Events.POST_NOTIFICATION, this.getClass().getSimpleName(), I18n.bundle.format("notif.catalog.init", starid.num));
 
 	/**
 	 * INITIALIZE DAEMON LOADER THREAD
@@ -332,7 +332,7 @@ public class ObjectServerLoader implements ISceneGraphNodeProvider {
 	    }
 
 	} catch (Exception e) {
-	    //EventManager.getInstance().post(Events.JAVA_EXCEPTION, new RuntimeException("Error in star " + starid + ": Skipping it"));
+	    //EventManager.instance.post(Events.JAVA_EXCEPTION, new RuntimeException("Error in star " + starid + ": Skipping it"));
 	    errors.num++;
 	}
 	return null;
@@ -370,7 +370,7 @@ public class ObjectServerLoader implements ISceneGraphNodeProvider {
 				particleList.add(star);
 			}
 		    } catch (IOException e) {
-			EventManager.getInstance().post(Events.JAVA_EXCEPTION, e);
+			EventManager.instance.post(Events.JAVA_EXCEPTION, e);
 		    }
 		    block.__clearPayload();
 		}
@@ -436,7 +436,7 @@ public class ObjectServerLoader implements ISceneGraphNodeProvider {
 			}
 			sr.close();
 		    } catch (IOException e) {
-			EventManager.getInstance().post(Events.JAVA_EXCEPTION, e);
+			EventManager.instance.post(Events.JAVA_EXCEPTION, e);
 		    }
 
 		    block.__clearPayload();
@@ -506,7 +506,7 @@ public class ObjectServerLoader implements ISceneGraphNodeProvider {
 		    }
 		    sr.close();
 		} catch (IOException e) {
-		    EventManager.getInstance().post(Events.JAVA_EXCEPTION, e);
+		    EventManager.instance.post(Events.JAVA_EXCEPTION, e);
 		}
 
 		block.__clearPayload();
@@ -573,13 +573,13 @@ public class ObjectServerLoader implements ISceneGraphNodeProvider {
 
 		    // Load octants if any
 		    if (!toLoad.isEmpty()) {
-			EventManager.getInstance().post(Events.POST_NOTIFICATION, I18n.bundle.format("notif.loadingoctants", toLoad.size()), true);
+			EventManager.instance.post(Events.POST_NOTIFICATION, I18n.bundle.format("notif.loadingoctants", toLoad.size()), true);
 			try {
 			    ObjectServerLoader.loadOctants(toLoad, visid, errors, starid, octreeWrapper, true);
-			    EventManager.getInstance().post(Events.POST_NOTIFICATION, I18n.bundle.format("notif.loadingoctants.finished", toLoad.size()));
+			    EventManager.instance.post(Events.POST_NOTIFICATION, I18n.bundle.format("notif.loadingoctants.finished", toLoad.size()));
 			} catch (Exception e) {
-			    EventManager.getInstance().post(Events.JAVA_EXCEPTION, e);
-			    EventManager.getInstance().post(Events.POST_NOTIFICATION, I18n.bundle.get("notif.loadingoctants.fail"));
+			    EventManager.instance.post(Events.JAVA_EXCEPTION, e);
+			    EventManager.instance.post(Events.POST_NOTIFICATION, I18n.bundle.get("notif.loadingoctants.fail"));
 			}
 		    }
 		}
@@ -587,12 +587,12 @@ public class ObjectServerLoader implements ISceneGraphNodeProvider {
 		/** ----------- PROCESS LODS ----------- **/
 		while (!lodQueue.isEmpty()) {
 		    Integer lod = (Integer) (lodQueue.poll());
-		    EventManager.getInstance().post(Events.POST_NOTIFICATION, I18n.bundle.format("notif.loadinglod", lod));
+		    EventManager.instance.post(Events.POST_NOTIFICATION, I18n.bundle.format("notif.loadinglod", lod));
 		    try {
 			ObjectServerLoader.loadLod(lod, visid, errors, starid, octreeWrapper, true);
 		    } catch (Exception e) {
-			EventManager.getInstance().post(Events.JAVA_EXCEPTION, e);
-			EventManager.getInstance().post(Events.POST_NOTIFICATION, I18n.bundle.format("notif.loadinglod.fail", lod));
+			EventManager.instance.post(Events.JAVA_EXCEPTION, e);
+			EventManager.instance.post(Events.POST_NOTIFICATION, I18n.bundle.format("notif.loadinglod.fail", lod));
 			lodStatus[lod] = LoadStatus.LOADING_FAILED;
 		    }
 		}

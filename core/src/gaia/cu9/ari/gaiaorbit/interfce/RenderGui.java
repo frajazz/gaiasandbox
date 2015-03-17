@@ -67,7 +67,7 @@ public class RenderGui implements IGui, IObserver {
 	// Add to GUI
 	rebuildGui();
 
-	EventManager.getInstance().subscribe(this, Events.TIME_CHANGE_INFO);
+	EventManager.instance.subscribe(this, Events.TIME_CHANGE_INFO);
     }
 
     private void rebuildGui() {
@@ -94,7 +94,7 @@ public class RenderGui implements IGui, IObserver {
 	    try {
 		ui.draw();
 	    } catch (Exception e) {
-		EventManager.getInstance().post(Events.JAVA_EXCEPTION, e);
+		EventManager.instance.post(Events.JAVA_EXCEPTION, e);
 	    }
 	}
     }

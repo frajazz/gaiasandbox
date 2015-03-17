@@ -63,7 +63,7 @@ public class GlobalClock implements IObserver, ITimeFrameProvider {
 	time = date;
 	lastTime = new Date(time.getTime());
 	cal.setTime(time);
-	EventManager.getInstance().subscribe(this, Events.PACE_CHANGE_CMD, Events.PACE_DIVIDE_CMD, Events.PACE_DOUBLE_CMD, Events.TIME_CHANGE_CMD);
+	EventManager.instance.subscribe(this, Events.PACE_CHANGE_CMD, Events.PACE_DIVIDE_CMD, Events.PACE_DOUBLE_CMD, Events.TIME_CHANGE_CMD);
     }
 
     double msacum = 0d;
@@ -117,7 +117,7 @@ public class GlobalClock implements IObserver, ITimeFrameProvider {
 	    // Post event each 1/2 second
 	    lastUpdate += dt;
 	    if (lastUpdate > .5) {
-		EventManager.getInstance().post(Events.TIME_CHANGE_INFO, time);
+		EventManager.instance.post(Events.TIME_CHANGE_INFO, time);
 		lastUpdate = 0;
 	    }
 	} else if (time.getTime() - lastTime.getTime() != 0) {
@@ -139,15 +139,15 @@ public class GlobalClock implements IObserver, ITimeFrameProvider {
 	case PACE_CHANGE_CMD:
 	    // Update pace
 	    this.pace = (Double) data[0];
-	    EventManager.getInstance().post(Events.PACE_CHANGED_INFO, this.pace);
+	    EventManager.instance.post(Events.PACE_CHANGED_INFO, this.pace);
 	    break;
 	case PACE_DOUBLE_CMD:
 	    this.pace *= 2d;
-	    EventManager.getInstance().post(Events.PACE_CHANGED_INFO, this.pace);
+	    EventManager.instance.post(Events.PACE_CHANGED_INFO, this.pace);
 	    break;
 	case PACE_DIVIDE_CMD:
 	    this.pace /= 2d;
-	    EventManager.getInstance().post(Events.PACE_CHANGED_INFO, this.pace);
+	    EventManager.instance.post(Events.PACE_CHANGED_INFO, this.pace);
 	    break;
 	case TIME_CHANGE_CMD:
 	    // Update time

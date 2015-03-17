@@ -36,7 +36,7 @@ public abstract class AbstractSceneGraph implements ISceneGraph {
 
     @Override
     public void initialize(List<SceneGraphNode> nodes, ITimeFrameProvider time) {
-	EventManager.getInstance().post(Events.POST_NOTIFICATION, this.getClass().getSimpleName(), I18n.bundle.format("notif.sg.insert", nodes.size()));
+	EventManager.instance.post(Events.POST_NOTIFICATION, this.getClass().getSimpleName(), I18n.bundle.format("notif.sg.insert", nodes.size()));
 
 	// Set the reference
 	SceneGraphNode.sg = this;
@@ -86,7 +86,7 @@ public abstract class AbstractSceneGraph implements ISceneGraph {
 	    }
 	}
 
-	EventManager.getInstance().post(Events.POST_NOTIFICATION, this.getClass().getSimpleName(), I18n.bundle.format("notif.sg.init", root.numChildren));
+	EventManager.instance.post(Events.POST_NOTIFICATION, this.getClass().getSimpleName(), I18n.bundle.format("notif.sg.init", root.numChildren));
     }
 
     /**

@@ -91,7 +91,7 @@ public class ConstelBoundariesLoader<T extends SceneGraphNode> implements IScene
 		Gdx.app.error(this.getClass().getSimpleName(), e.getLocalizedMessage());
 	    }
 
-	    EventManager.getInstance().post(Events.POST_NOTIFICATION, this.getClass().getSimpleName(), I18n.bundle.format("notif.boundaries.init", n));
+	    EventManager.instance.post(Events.POST_NOTIFICATION, this.getClass().getSimpleName(), I18n.bundle.format("notif.boundaries.init", n));
 
 	} catch (Exception e) {
 	    Gdx.app.error(this.getClass().getSimpleName(), e.getLocalizedMessage());

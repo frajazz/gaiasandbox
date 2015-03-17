@@ -38,7 +38,7 @@ public class CameraInfoInterface extends Table implements IObserver {
 	padBottom(10);
 	pack();
 	this.lock = lock;
-	EventManager.getInstance().subscribe(this, Events.CAMERA_MOTION_UPDATED);
+	EventManager.instance.subscribe(this, Events.CAMERA_MOTION_UPDATED);
     }
 
     @Override

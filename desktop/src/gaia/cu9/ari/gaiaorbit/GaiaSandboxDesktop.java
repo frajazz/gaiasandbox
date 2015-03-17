@@ -89,7 +89,7 @@ public class GaiaSandboxDesktop implements IObserver {
 
     public GaiaSandboxDesktop() {
 	super();
-	EventManager.getInstance().subscribe(this, Events.SHOW_PREFERENCES_ACTION, Events.SHOW_ABOUT_ACTION, Events.SHOW_RUNSCRIPT_ACTION, Events.JAVA_EXCEPTION);
+	EventManager.instance.subscribe(this, Events.SHOW_PREFERENCES_ACTION, Events.SHOW_ABOUT_ACTION, Events.SHOW_RUNSCRIPT_ACTION, Events.JAVA_EXCEPTION);
     }
 
     private void init() {
@@ -129,7 +129,7 @@ public class GaiaSandboxDesktop implements IObserver {
 	switch (event) {
 	case SHOW_RUNSCRIPT_ACTION:
 	    // Exit fullscreen
-	    EventManager.getInstance().post(Events.FULLSCREEN_CMD, false);
+	    EventManager.instance.post(Events.FULLSCREEN_CMD, false);
 	    Gdx.app.postRunnable(new Runnable() {
 
 		@Override
@@ -143,7 +143,7 @@ public class GaiaSandboxDesktop implements IObserver {
 	    break;
 	case SHOW_PREFERENCES_ACTION:
 	    // Exit fullscreen
-	    EventManager.getInstance().post(Events.FULLSCREEN_CMD, false);
+	    EventManager.instance.post(Events.FULLSCREEN_CMD, false);
 	    Gdx.app.postRunnable(new Runnable() {
 
 		@Override
@@ -156,7 +156,7 @@ public class GaiaSandboxDesktop implements IObserver {
 	    break;
 	case SHOW_ABOUT_ACTION:
 	    // Exit fullscreen
-	    EventManager.getInstance().post(Events.FULLSCREEN_CMD, false);
+	    EventManager.instance.post(Events.FULLSCREEN_CMD, false);
 	    Gdx.app.postRunnable(new Runnable() {
 
 		@Override

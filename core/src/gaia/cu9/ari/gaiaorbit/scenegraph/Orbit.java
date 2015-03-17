@@ -174,7 +174,7 @@ public class Orbit extends LineObject {
 		Method m = Coordinates.class.getMethod(transformFunction);
 		this.transformFunction = (Matrix4d) m.invoke(null);
 	    } catch (Exception e) {
-		EventManager.getInstance().post(Events.JAVA_EXCEPTION, e);
+		EventManager.instance.post(Events.JAVA_EXCEPTION, e);
 	    }
 
 	}

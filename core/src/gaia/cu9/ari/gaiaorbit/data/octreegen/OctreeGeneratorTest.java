@@ -36,7 +36,7 @@ public class OctreeGeneratorTest implements IObserver {
 	    I18n.initialize("../android/assets/i18n/gsbundle_en_GB");
 
 	    // Add notif watch
-	    EventManager.getInstance().subscribe(new OctreeGeneratorTest(), Events.POST_NOTIFICATION, Events.JAVA_EXCEPTION);
+	    EventManager.instance.subscribe(new OctreeGeneratorTest(), Events.POST_NOTIFICATION, Events.JAVA_EXCEPTION);
 
 	    switch (operation) {
 	    case GENERATE_OCTREE:

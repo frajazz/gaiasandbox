@@ -143,7 +143,7 @@ public class FovCamera extends AbstractCamera implements IObserver {
 	fpstages[1] = fov2;
 	fpstages[2] = fov12;
 
-	EventManager.getInstance().subscribe(this, Events.GAIA_LOADED, Events.COMPUTE_GAIA_SCAN_CMD);
+	EventManager.instance.subscribe(this, Events.GAIA_LOADED, Events.COMPUTE_GAIA_SCAN_CMD);
     }
 
     public void update(float dt, ITimeFrameProvider time) {
@@ -195,7 +195,7 @@ public class FovCamera extends AbstractCamera implements IObserver {
 	    if (lastTime != 0 && currentTime - lastTime > MAX_OVERLAP_TIME) {
 		if (((GlobalClock) time).fps < 0) {
 		    ((GlobalClock) time).fps = 10;
-		    EventManager.getInstance().post(Events.POST_NOTIFICATION, this.getClass().getSimpleName(), I18n.bundle.get("notif.timeprovider.fixed"));
+		    EventManager.instance.post(Events.POST_NOTIFICATION, this.getClass().getSimpleName(), I18n.bundle.get("notif.timeprovider.fixed"));
 		}
 		for (long t = lastTime + MAX_OVERLAP_TIME; t < currentTime; t += MAX_OVERLAP_TIME) {
 		    interpolatedDirections.add(getDirections(new Date(t)));
@@ -203,7 +203,7 @@ public class FovCamera extends AbstractCamera implements IObserver {
 	    } else {
 		if (((GlobalClock) time).fps > 0) {
 		    ((GlobalClock) time).fps = -1;
-		    EventManager.getInstance().post(Events.POST_NOTIFICATION, this.getClass().getSimpleName(), I18n.bundle.get("notif.timeprovider.real"));
+		    EventManager.instance.post(Events.POST_NOTIFICATION, this.getClass().getSimpleName(), I18n.bundle.get("notif.timeprovider.real"));
 		}
 	    }
 	}

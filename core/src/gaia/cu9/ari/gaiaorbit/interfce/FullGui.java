@@ -166,7 +166,7 @@ public class FullGui implements IGui, IObserver {
      * Constructs the interface
      */
     public void doneLoading(AssetManager assetManager) {
-	EventManager.getInstance().post(Events.POST_NOTIFICATION, txt("notif.gui.init"));
+	EventManager.instance.post(Events.POST_NOTIFICATION, txt("notif.gui.init"));
 
 	skin = GlobalResources.skin;
 	format = new DecimalFormat("0.0###");
@@ -175,7 +175,7 @@ public class FullGui implements IGui, IObserver {
 	buildGui();
 
 	// We must subscribe to the desired events
-	EventManager.getInstance().subscribe(this, Events.FOV_CHANGED_CMD, Events.CAMERA_MODE_CMD, Events.TIME_CHANGE_INFO, Events.TOGGLE_TIME_CMD, Events.SHOW_TUTORIAL_ACTION, Events.SHOW_SEARCH_ACTION, Events.FOCUS_CHANGED, Events.TOGGLE_VISIBILITY_CMD, Events.PACE_CHANGED_INFO, Events.GUI_SCROLL_POSITION_CMD, Events.GUI_FOLD_CMD, Events.GUI_MOVE_CMD, Events.ROTATION_SPEED_CMD, Events.CAMERA_SPEED_CMD, Events.TURNING_SPEED_CMD, Events.TIME_CHANGE_CMD, Events.SPEED_LIMIT_CMD);
+	EventManager.instance.subscribe(this, Events.FOV_CHANGED_CMD, Events.CAMERA_MODE_CMD, Events.TIME_CHANGE_INFO, Events.TOGGLE_TIME_CMD, Events.SHOW_TUTORIAL_ACTION, Events.SHOW_SEARCH_ACTION, Events.FOCUS_CHANGED, Events.TOGGLE_VISIBILITY_CMD, Events.PACE_CHANGED_INFO, Events.GUI_SCROLL_POSITION_CMD, Events.GUI_FOLD_CMD, Events.GUI_MOVE_CMD, Events.ROTATION_SPEED_CMD, Events.CAMERA_SPEED_CMD, Events.TURNING_SPEED_CMD, Events.TIME_CHANGE_CMD, Events.SPEED_LIMIT_CMD);
     }
 
     private void buildGui() {
@@ -216,7 +216,7 @@ public class FullGui implements IGui, IObserver {
 	    @Override
 	    public boolean handle(Event event) {
 		if (event instanceof ChangeEvent) {
-		    EventManager.getInstance().post(Events.RECORD_CAMERA_CMD, recCamera.isChecked(), true);
+		    EventManager.instance.post(Events.RECORD_CAMERA_CMD, recCamera.isChecked(), true);
 		    return true;
 		}
 		return false;
@@ -246,10 +246,10 @@ public class FullGui implements IGui, IObserver {
 		    } catch (IllegalArgumentException e) {
 			// Foucs to one of our models
 			mode = CameraMode.Focus;
-			EventManager.getInstance().post(Events.FOCUS_CHANGE_CMD, selection, true);
+			EventManager.instance.post(Events.FOCUS_CHANGE_CMD, selection, true);
 		    }
 
-		    EventManager.getInstance().post(Events.CAMERA_MODE_CMD, mode);
+		    EventManager.instance.post(Events.CAMERA_MODE_CMD, mode);
 		    return true;
 		}
 		return false;
@@ -265,7 +265,7 @@ public class FullGui implements IGui, IObserver {
 	    public boolean handle(Event event) {
 		if (event instanceof ChangeEvent) {
 		    float value = MathUtilsd.clamp(fieldOfView.getValue(), Constants.MIN_FOV, Constants.MAX_FOV);
-		    EventManager.getInstance().post(Events.FOV_CHANGED_CMD, value);
+		    EventManager.instance.post(Events.FOV_CHANGED_CMD, value);
 		    fov.setText(Integer.toString((int) value) + "°");
 		    return true;
 		}
@@ -300,7 +300,7 @@ public class FullGui implements IGui, IObserver {
 	    public boolean handle(Event event) {
 		if (event instanceof ChangeEvent) {
 		    int idx = cameraSpeedLimit.getSelectedIndex();
-		    EventManager.getInstance().post(Events.SPEED_LIMIT_CMD, idx, true);
+		    EventManager.instance.post(Events.SPEED_LIMIT_CMD, idx, true);
 		    return true;
 		}
 		return false;
@@ -316,7 +316,7 @@ public class FullGui implements IGui, IObserver {
 	    @Override
 	    public boolean handle(Event event) {
 		if (event instanceof ChangeEvent) {
-		    EventManager.getInstance().post(Events.CAMERA_SPEED_CMD, cameraSpeed.getValue() / 10f, true);
+		    EventManager.instance.post(Events.CAMERA_SPEED_CMD, cameraSpeed.getValue() / 10f, true);
 		    speed.setText(Integer.toString((int) cameraSpeed.getValue()));
 		    return true;
 		}
@@ -334,7 +334,7 @@ public class FullGui implements IGui, IObserver {
 	    @Override
 	    public boolean handle(Event event) {
 		if (event instanceof ChangeEvent) {
-		    EventManager.getInstance().post(Events.ROTATION_SPEED_CMD, MathUtilsd.lint(rotateSpeed.getValue(), Constants.MIN_SLIDER, Constants.MAX_SLIDER, Constants.MIN_ROT_SPEED, Constants.MAX_ROT_SPEED), true);
+		    EventManager.instance.post(Events.ROTATION_SPEED_CMD, MathUtilsd.lint(rotateSpeed.getValue(), Constants.MIN_SLIDER, Constants.MAX_SLIDER, Constants.MIN_ROT_SPEED, Constants.MAX_ROT_SPEED), true);
 		    rotate.setText(Integer.toString((int) rotateSpeed.getValue()));
 		    return true;
 		}
@@ -352,7 +352,7 @@ public class FullGui implements IGui, IObserver {
 	    @Override
 	    public boolean handle(Event event) {
 		if (event instanceof ChangeEvent) {
-		    EventManager.getInstance().post(Events.TURNING_SPEED_CMD, MathUtilsd.lint(turnSpeed.getValue(), Constants.MIN_SLIDER, Constants.MAX_SLIDER, Constants.MIN_TURN_SPEED, Constants.MAX_TURN_SPEED), true);
+		    EventManager.instance.post(Events.TURNING_SPEED_CMD, MathUtilsd.lint(turnSpeed.getValue(), Constants.MIN_SLIDER, Constants.MAX_SLIDER, Constants.MIN_TURN_SPEED, Constants.MAX_TURN_SPEED), true);
 		    turn.setText(Integer.toString((int) turnSpeed.getValue()));
 		    return true;
 		}
@@ -370,7 +370,7 @@ public class FullGui implements IGui, IObserver {
 	    @Override
 	    public boolean handle(Event event) {
 		if (event instanceof ChangeEvent) {
-		    EventManager.getInstance().post(Events.FOCUS_LOCK_CMD, "Focus lock", focusLock.isChecked());
+		    EventManager.instance.post(Events.FOCUS_LOCK_CMD, "Focus lock", focusLock.isChecked());
 		    return true;
 		}
 		return false;
@@ -435,7 +435,7 @@ public class FullGui implements IGui, IObserver {
 			if (sg.containsNode(text.toLowerCase())) {
 			    SceneGraphNode node = sg.getNode(text.toLowerCase());
 			    if (node instanceof CelestialBody) {
-				EventManager.getInstance().post(Events.FOCUS_CHANGE_CMD, node, true);
+				EventManager.instance.post(Events.FOCUS_CHANGE_CMD, node, true);
 			    }
 			}
 			GaiaInputController.pressedKeys.remove(ie.getKeyCode());
@@ -448,7 +448,7 @@ public class FullGui implements IGui, IObserver {
 
 	treeToModel = new TwoWayHashmap<SceneGraphNode, Node>();
 
-	EventManager.getInstance().post(Events.POST_NOTIFICATION, txt("notif.sgtree.init"));
+	EventManager.instance.post(Events.POST_NOTIFICATION, txt("notif.sgtree.init"));
 
 	if (tree) {
 	    final Tree objectsTree = new Tree(skin, "bright");
@@ -469,8 +469,8 @@ public class FullGui implements IGui, IObserver {
 			    if (objectsTree.getSelection().hasItems()) {
 				Node n = objectsTree.getSelection().first();
 				SceneGraphNode sgn = treeToModel.getBackward(n);
-				EventManager.getInstance().post(Events.CAMERA_MODE_CMD, CameraMode.Focus);
-				EventManager.getInstance().post(Events.FOCUS_CHANGE_CMD, sgn, false);
+				EventManager.instance.post(Events.CAMERA_MODE_CMD, CameraMode.Focus);
+				EventManager.instance.post(Events.FOCUS_CHANGE_CMD, sgn, false);
 			    }
 
 			}
@@ -503,9 +503,9 @@ public class FullGui implements IGui, IObserver {
 			String name = ((com.badlogic.gdx.scenes.scene2d.ui.List<String>) actor).getSelected();
 			if (name != null) {
 			    // Change focus
-			    EventManager.getInstance().post(Events.FOCUS_CHANGE_CMD, sg.getNode(name), false);
+			    EventManager.instance.post(Events.FOCUS_CHANGE_CMD, sg.getNode(name), false);
 			    // Change camera mode to focus
-			    EventManager.getInstance().post(Events.CAMERA_MODE_CMD, CameraMode.Focus);
+			    EventManager.instance.post(Events.CAMERA_MODE_CMD, CameraMode.Focus);
 			}
 			return true;
 		    }
@@ -514,7 +514,7 @@ public class FullGui implements IGui, IObserver {
 	    });
 	    objectsList = focusList;
 	}
-	EventManager.getInstance().post(Events.POST_NOTIFICATION, txt("notif.sgtree.initialised"));
+	EventManager.instance.post(Events.POST_NOTIFICATION, txt("notif.sgtree.initialised"));
 
 	if (tree || list) {
 	    focusListScrollPane = new OwnScrollPane(objectsList, skin, "minimalist");
@@ -565,7 +565,7 @@ public class FullGui implements IGui, IObserver {
 		    @Override
 		    public boolean handle(Event event) {
 			if (event instanceof ChangeEvent) {
-			    EventManager.getInstance().post(Events.TOGGLE_VISIBILITY_CMD, name, true, ((Button) event.getListenerActor()).isChecked());
+			    EventManager.instance.post(Events.TOGGLE_VISIBILITY_CMD, name, true, ((Button) event.getListenerActor()).isChecked());
 			    return true;
 			}
 			return false;
@@ -606,7 +606,7 @@ public class FullGui implements IGui, IObserver {
 	    @Override
 	    public boolean handle(Event event) {
 		if (event instanceof ChangeEvent) {
-		    EventManager.getInstance().post(Events.STAR_BRIGHTNESS_CMD, MathUtilsd.lint(starBrightness.getValue(), Constants.MIN_SLIDER, Constants.MAX_SLIDER, Constants.MIN_STAR_BRIGHT, Constants.MAX_STAR_BRIGHT));
+		    EventManager.instance.post(Events.STAR_BRIGHTNESS_CMD, MathUtilsd.lint(starBrightness.getValue(), Constants.MIN_SLIDER, Constants.MAX_SLIDER, Constants.MIN_STAR_BRIGHT, Constants.MAX_STAR_BRIGHT));
 		    brightness.setText(Integer.toString((int) starBrightness.getValue()));
 		    return true;
 		}
@@ -627,7 +627,7 @@ public class FullGui implements IGui, IObserver {
 	    @Override
 	    public boolean handle(Event event) {
 		if (event instanceof ChangeEvent) {
-		    EventManager.getInstance().post(Events.AMBIENT_LIGHT_CMD, ambientLight.getValue() / 100f);
+		    EventManager.instance.post(Events.AMBIENT_LIGHT_CMD, ambientLight.getValue() / 100f);
 		    ambient.setText(Integer.toString((int) ambientLight.getValue()));
 		    return true;
 		}
@@ -648,7 +648,7 @@ public class FullGui implements IGui, IObserver {
 	    @Override
 	    public boolean handle(Event event) {
 		if (event instanceof ChangeEvent) {
-		    EventManager.getInstance().post(Events.BLOOM_CMD, bloomEffect.getValue() / 10f);
+		    EventManager.instance.post(Events.BLOOM_CMD, bloomEffect.getValue() / 10f);
 		    bloom.setText(Integer.toString((int) bloomEffect.getValue()));
 		    return true;
 		}
@@ -667,7 +667,7 @@ public class FullGui implements IGui, IObserver {
 	    @Override
 	    public boolean handle(Event event) {
 		if (event instanceof ChangeEvent) {
-		    EventManager.getInstance().post(Events.LENS_FLARE_CMD, lensFlare.isChecked());
+		    EventManager.instance.post(Events.LENS_FLARE_CMD, lensFlare.isChecked());
 		    return true;
 		}
 		return false;
@@ -694,7 +694,7 @@ public class FullGui implements IGui, IObserver {
 	    @Override
 	    public boolean handle(Event event) {
 		if (event instanceof ChangeEvent) {
-		    EventManager.getInstance().post(Events.COMPUTE_GAIA_SCAN_CMD, txt("gui.gaiascan.compute"), computeGaiaScan.isChecked());
+		    EventManager.instance.post(Events.COMPUTE_GAIA_SCAN_CMD, txt("gui.gaiascan.compute"), computeGaiaScan.isChecked());
 		    return true;
 		}
 		return false;
@@ -708,7 +708,7 @@ public class FullGui implements IGui, IObserver {
 	    @Override
 	    public boolean handle(Event event) {
 		if (event instanceof ChangeEvent) {
-		    EventManager.getInstance().post(Events.TRANSIT_COLOUR_CMD, txt("gui.gaiascan.transit"), transitColor.isChecked());
+		    EventManager.instance.post(Events.TRANSIT_COLOUR_CMD, txt("gui.gaiascan.transit"), transitColor.isChecked());
 		    return true;
 		}
 		return false;
@@ -722,7 +722,7 @@ public class FullGui implements IGui, IObserver {
 	    @Override
 	    public boolean handle(Event event) {
 		if (event instanceof ChangeEvent) {
-		    EventManager.getInstance().post(Events.ONLY_OBSERVED_STARS_CMD, txt("gui.gaiascan.only"), onlyObservedStars.isChecked());
+		    EventManager.instance.post(Events.ONLY_OBSERVED_STARS_CMD, txt("gui.gaiascan.only"), onlyObservedStars.isChecked());
 		    return true;
 		}
 		return false;
@@ -773,7 +773,7 @@ public class FullGui implements IGui, IObserver {
 	    @Override
 	    public boolean handle(Event event) {
 		if (event instanceof ChangeEvent) {
-		    EventManager.getInstance().post(Events.TOGGLE_TIME_CMD, playstop.isChecked(), true);
+		    EventManager.instance.post(Events.TOGGLE_TIME_CMD, playstop.isChecked(), true);
 		    return true;
 		}
 		return false;
@@ -792,7 +792,7 @@ public class FullGui implements IGui, IObserver {
 	    public boolean handle(Event event) {
 		if (event instanceof ChangeEvent) {
 		    // Plus pressed
-		    EventManager.getInstance().post(Events.PACE_DOUBLE_CMD);
+		    EventManager.instance.post(Events.PACE_DOUBLE_CMD);
 
 		    return true;
 		}
@@ -806,7 +806,7 @@ public class FullGui implements IGui, IObserver {
 	    public boolean handle(Event event) {
 		if (event instanceof ChangeEvent) {
 		    // Minus pressed
-		    EventManager.getInstance().post(Events.PACE_DIVIDE_CMD);
+		    EventManager.instance.post(Events.PACE_DIVIDE_CMD);
 		    return true;
 		}
 		return false;
@@ -824,7 +824,7 @@ public class FullGui implements IGui, IObserver {
 		    if (ie.getType() == Type.keyTyped) {
 			try {
 			    double pace = Double.parseDouble(inputPace.getText());
-			    EventManager.getInstance().post(Events.PACE_CHANGE_CMD, pace, true);
+			    EventManager.instance.post(Events.PACE_CHANGE_CMD, pace, true);
 			} catch (Exception e) {
 			    return false;
 			}
@@ -865,7 +865,7 @@ public class FullGui implements IGui, IObserver {
 	    @Override
 	    public boolean handle(Event event) {
 		if (event instanceof ChangeEvent) {
-		    EventManager.getInstance().post(Events.SHOW_PREFERENCES_ACTION);
+		    EventManager.instance.post(Events.SHOW_PREFERENCES_ACTION);
 		}
 		return false;
 	    }
@@ -876,7 +876,7 @@ public class FullGui implements IGui, IObserver {
 	    @Override
 	    public boolean handle(Event event) {
 		if (event instanceof ChangeEvent) {
-		    EventManager.getInstance().post(Events.SHOW_TUTORIAL_ACTION);
+		    EventManager.instance.post(Events.SHOW_TUTORIAL_ACTION);
 		}
 		return false;
 	    }
@@ -887,7 +887,7 @@ public class FullGui implements IGui, IObserver {
 	    @Override
 	    public boolean handle(Event event) {
 		if (event instanceof ChangeEvent) {
-		    EventManager.getInstance().post(Events.SHOW_ABOUT_ACTION);
+		    EventManager.instance.post(Events.SHOW_ABOUT_ACTION);
 		}
 		return false;
 	    }
@@ -898,7 +898,7 @@ public class FullGui implements IGui, IObserver {
 	    @Override
 	    public boolean handle(Event event) {
 		if (event instanceof ChangeEvent) {
-		    EventManager.getInstance().post(Events.SHOW_RUNSCRIPT_ACTION);
+		    EventManager.instance.post(Events.SHOW_RUNSCRIPT_ACTION);
 		}
 		return false;
 	    }
@@ -1197,7 +1197,7 @@ public class FullGui implements IGui, IObserver {
 	    }
 	    break;
 	case SHOW_TUTORIAL_ACTION:
-	    EventManager.getInstance().post(Events.RUN_SCRIPT_PATH, GlobalConf.program.TUTORIAL_SCRIPT_LOCATION);
+	    EventManager.instance.post(Events.RUN_SCRIPT_PATH, GlobalConf.program.TUTORIAL_SCRIPT_LOCATION);
 	    break;
 	case SHOW_SEARCH_ACTION:
 	    if (searchDialog == null) {

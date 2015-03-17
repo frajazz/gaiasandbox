@@ -43,7 +43,7 @@ public class HYGBinaryLoader extends AbstractCatalogLoader implements ICatalogLo
 	List<Star> stars = new ArrayList<Star>();
 	DataInputStream data_in = new DataInputStream(data);
 
-	EventManager.getInstance().post(Events.POST_NOTIFICATION, this.getClass().getSimpleName(), I18n.bundle.format("notif.limitmag", GlobalConf.data.LIMIT_MAG_LOAD));
+	EventManager.instance.post(Events.POST_NOTIFICATION, this.getClass().getSimpleName(), I18n.bundle.format("notif.limitmag", GlobalConf.data.LIMIT_MAG_LOAD));
 
 	try {
 	    // Read size of stars
@@ -78,7 +78,7 @@ public class HYGBinaryLoader extends AbstractCatalogLoader implements ICatalogLo
 	    Gdx.app.log(HYGBinaryLoader.class.getSimpleName(), e.getLocalizedMessage());
 	}
 
-	EventManager.getInstance().post(Events.POST_NOTIFICATION, this.getClass().getSimpleName(), I18n.bundle.format("notif.catalog.init", stars.size()));
+	EventManager.instance.post(Events.POST_NOTIFICATION, this.getClass().getSimpleName(), I18n.bundle.format("notif.catalog.init", stars.size()));
 	return stars;
     }
 

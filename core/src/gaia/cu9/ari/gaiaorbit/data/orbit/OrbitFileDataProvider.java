@@ -20,7 +20,7 @@ public class OrbitFileDataProvider implements IOrbitDataProvider {
 	FileDataLoader odl = new FileDataLoader();
 	try {
 	    data = odl.load(FileLocator.getStream(file));
-	    EventManager.getInstance().post(Events.ORBIT_DATA_LOADED, data, file);
+	    EventManager.instance.post(Events.ORBIT_DATA_LOADED, data, file);
 	} catch (Exception e) {
 	    Gdx.app.error(OrbitFileDataProvider.class.getName(), e.getMessage());
 	}

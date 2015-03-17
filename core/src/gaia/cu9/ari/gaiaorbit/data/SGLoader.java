@@ -37,7 +37,7 @@ public class SGLoader extends AsynchronousAssetLoader<ISceneGraph, SGLoader.SGLo
     @Override
     public void loadAsync(AssetManager manager, String fileName, FileHandle file, SGLoaderParameter parameter) {
 	sg = SceneGraphLoader.loadSceneGraph(file.read(), parameter.time, parameter.multithreading, parameter.maxThreads);
-	EventManager.getInstance().post(Events.POST_NOTIFICATION, I18n.bundle.get("notif.render.init"));
+	EventManager.instance.post(Events.POST_NOTIFICATION, I18n.bundle.get("notif.render.init"));
     }
 
     /**

@@ -47,7 +47,7 @@ public class ShaderQuadRenderSystem extends AbstractRenderSystem implements IObs
 	this.useStarColorTransit = useStarColorTransit;
 	init();
 	if (this.useStarColorTransit)
-	    EventManager.getInstance().subscribe(this, Events.TRANSIT_COLOUR_CMD);
+	    EventManager.instance.subscribe(this, Events.TRANSIT_COLOUR_CMD);
     }
 
     private void init() {

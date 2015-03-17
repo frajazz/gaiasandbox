@@ -73,7 +73,7 @@ import com.badlogic.gdx.graphics.glutils.FrameBuffer;
 public class GaiaSandbox implements ApplicationListener, IObserver {
     private static boolean LOADING = true;
 
-    private static GaiaSandbox instance;
+    public static GaiaSandbox instance;
     private static Thread mainThread;
 
     // Asset manager
@@ -118,10 +118,6 @@ public class GaiaSandbox implements ApplicationListener, IObserver {
 
     private ScreenshotCmd screenshot;
 
-    public static GaiaSandbox getInstance() {
-	return instance;
-    }
-
     /**
      * Creates a Gaia Sandbox instance.
      * @param openGLGUI This will paint the GUI in OpenGL. True for Desktop (if not Swing GUI) and Android.
@@ -145,7 +141,7 @@ public class GaiaSandbox implements ApplicationListener, IObserver {
 	boolean desktop = !mobile;
 
 	// Disable all kinds of input
-	EventManager.getInstance().post(Events.INPUT_ENABLED_CMD, false);
+	EventManager.instance.post(Events.INPUT_ENABLED_CMD, false);
 
 	if (!GlobalClock.initialized()) {
 	    // Initialize clock with a pace of 2 simulation hours/second
@@ -169,7 +165,7 @@ public class GaiaSandbox implements ApplicationListener, IObserver {
 		}
 	    } catch (Exception e) {
 		// Android
-		EventManager.getInstance().post(Events.JAVA_EXCEPTION, e);
+		EventManager.instance.post(Events.JAVA_EXCEPTION, e);
 	    }
 	}
 
@@ -235,7 +231,7 @@ public class GaiaSandbox implements ApplicationListener, IObserver {
 	loadingGui = new LoadingGui(GlobalConf.OPENGL_GUI, desktop ? 23 : 20);
 	loadingGui.initialize(manager);
 
-	EventManager.getInstance().post(Events.POST_NOTIFICATION, this.getClass().getSimpleName(), I18n.bundle.format("notif.glslversion", Gdx.gl.glGetString(GL20.GL_SHADING_LANGUAGE_VERSION)));
+	EventManager.instance.post(Events.POST_NOTIFICATION, this.getClass().getSimpleName(), I18n.bundle.format("notif.glslversion", Gdx.gl.glGetString(GL20.GL_SHADING_LANGUAGE_VERSION)));
     }
 
     /**
@@ -283,7 +279,7 @@ public class GaiaSandbox implements ApplicationListener, IObserver {
 	renderGui.doneLoading(manager);
 
 	// Publish visibility
-	EventManager.getInstance().post(Events.VISIBILITY_OF_COMPONENTS, new Object[] { SceneGraphRenderer.visible });
+	EventManager.instance.post(Events.VISIBILITY_OF_COMPONENTS, new Object[] { SceneGraphRenderer.visible });
 
 	inputController = new GaiaInputController(cam, gui);
 	Controllers.addListener(new GaiaControllerListener(cam, gui));
@@ -291,14 +287,14 @@ public class GaiaSandbox implements ApplicationListener, IObserver {
 
 	Gdx.input.setInputProcessor(inputMultiplexer);
 
-	EventManager.getInstance().post(Events.SCENE_GRAPH_LOADED, sg);
-	EventManager.getInstance().post(Events.CAMERA_MODE_CMD, CameraMode.Focus);
+	EventManager.instance.post(Events.SCENE_GRAPH_LOADED, sg);
+	EventManager.instance.post(Events.CAMERA_MODE_CMD, CameraMode.Focus);
 
 	AbstractPositionEntity focus = (AbstractPositionEntity) sg.getNode("Sol");
-	EventManager.getInstance().post(Events.FOCUS_CHANGE_CMD, focus, true);
+	EventManager.instance.post(Events.FOCUS_CHANGE_CMD, focus, true);
 	double dst = 2e5 * Constants.PC_TO_U;
 	Vector3d newCameraPos = focus.pos.cpy().add(0, 0, -dst);
-	EventManager.getInstance().post(Events.CAMERA_POS_CMD, newCameraPos.values());
+	EventManager.instance.post(Events.CAMERA_POS_CMD, newCameraPos.values());
 
 	// Update whole tree to reinitialize positions with the new camera position
 	GlobalClock.clock.update(0.00000001f);
@@ -306,25 +302,25 @@ public class GaiaSandbox implements ApplicationListener, IObserver {
 	GlobalClock.clock.update(0);
 
 	Vector3d newCameraDir = focus.pos.cpy().sub(newCameraPos);
-	EventManager.getInstance().post(Events.CAMERA_DIR_CMD, newCameraDir.values());
+	EventManager.instance.post(Events.CAMERA_DIR_CMD, newCameraDir.values());
 
 	// Initialize time in GUI
-	EventManager.getInstance().post(Events.TIME_CHANGE_INFO, GlobalClock.clock.time);
+	EventManager.instance.post(Events.TIME_CHANGE_INFO, GlobalClock.clock.time);
 
 	// Subscribe to events
-	EventManager.getInstance().subscribe(this, Events.TOGGLE_AMBIENT_LIGHT, Events.AMBIENT_LIGHT_CMD, Events.SCREENSHOT_CMD, Events.FULLSCREEN_CMD);
+	EventManager.instance.subscribe(this, Events.TOGGLE_AMBIENT_LIGHT, Events.AMBIENT_LIGHT_CMD, Events.SCREENSHOT_CMD, Events.FULLSCREEN_CMD);
 
 	// Run garbage collector before starting
 	System.gc();
 
 	// Re-enable input
-	EventManager.getInstance().post(Events.INPUT_ENABLED_CMD, true);
+	EventManager.instance.post(Events.INPUT_ENABLED_CMD, true);
 
 	initialized = true;
 
 	// Run tutorial
 	if (GlobalConf.program.DISPLAY_TUTORIAL) {
-	    EventManager.getInstance().post(Events.SHOW_TUTORIAL_ACTION);
+	    EventManager.instance.post(Events.SHOW_TUTORIAL_ACTION);
 	    GlobalConf.program.DISPLAY_TUTORIAL = false;
 	}
 
@@ -336,7 +332,7 @@ public class GaiaSandbox implements ApplicationListener, IObserver {
 	    if (!Constants.mobile)
 		GlobalConf.saveProperties(new File(System.getProperty("properties.file")).toURI().toURL());
 	} catch (MalformedURLException e) {
-	    EventManager.getInstance().post(Events.JAVA_EXCEPTION, e);
+	    EventManager.instance.post(Events.JAVA_EXCEPTION, e);
 	}
 	if (ClientCore.getInstance().isConnected()) {
 	    // Terminate connection
@@ -405,7 +401,7 @@ public class GaiaSandbox implements ApplicationListener, IObserver {
 		if (screenshot.active) {
 		    String file = renderToImage(cam, pp.getPostProcessBean(RenderType.screenshot), screenshot.width, screenshot.height, screenshot.folder, ScreenshotCmd.FILENAME);
 		    screenshot.active = false;
-		    EventManager.getInstance().post(Events.SCREENSHOT_INFO, file);
+		    EventManager.instance.post(Events.SCREENSHOT_INFO, file);
 		}
 
 		sgr.clearLists();
@@ -413,7 +409,7 @@ public class GaiaSandbox implements ApplicationListener, IObserver {
 
 	}
 
-	EventManager.getInstance().post(Events.FPS_INFO, Gdx.graphics.getFramesPerSecond());
+	EventManager.instance.post(Events.FPS_INFO, Gdx.graphics.getFramesPerSecond());
     }
 
     /**
@@ -440,7 +436,7 @@ public class GaiaSandbox implements ApplicationListener, IObserver {
 	GlobalClock.clock.update(dtScene);
 
 	// Update events
-	EventManager.getInstance().dispatchDelayedMessages();
+	EventManager.instance.dispatchDelayedMessages();
 
 	// Update cameras
 	cam.update(dt, GlobalClock.clock);
@@ -519,7 +515,7 @@ public class GaiaSandbox implements ApplicationListener, IObserver {
 	cam.updateAngleEdge(width, height);
 	cam.getViewport().update(width, height, false);
 
-	EventManager.getInstance().post(Events.SCREEN_RESIZE, width, height);
+	EventManager.instance.post(Events.SCREEN_RESIZE, width, height);
 
 	Gdx.app.debug("Resize", width + "x" + height + ", new Viewport: " + cam.getViewport().getScreenX() + "," + cam.getViewport().getScreenY() + "|" + cam.getViewport().getScreenWidth() + "," + cam.getViewport().getScreenHeight());
     }

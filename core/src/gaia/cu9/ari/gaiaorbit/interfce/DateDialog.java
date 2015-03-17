@@ -207,7 +207,7 @@ public class DateDialog extends CollapsibleWindow {
 			cal.set(Calendar.YEAR, y);
 
 			// Send time change command
-			EventManager.getInstance().post(Events.TIME_CHANGE_CMD, cal.getTime());
+			EventManager.instance.post(Events.TIME_CHANGE_CMD, cal.getTime());
 
 			me.remove();
 		    }

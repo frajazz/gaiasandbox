@@ -99,7 +99,7 @@ public class GlobalConf {
 	public boolean POSTPROCESS_LENS_FLARE;
 
 	public PostprocessConf() {
-	    EventManager.getInstance().subscribe(this, Events.BLOOM_CMD, Events.LENS_FLARE_CMD);
+	    EventManager.instance.subscribe(this, Events.BLOOM_CMD, Events.LENS_FLARE_CMD);
 	}
 
 	@Override
@@ -153,7 +153,7 @@ public class GlobalConf {
 	public float LIMIT_MAG_RUNTIME;
 
 	public RuntimeConf() {
-	    EventManager.getInstance().subscribe(this, Events.LIMIT_MAG_CMD, Events.INPUT_ENABLED_CMD, Events.TOGGLE_CLEANMODE, Events.TOGGLE_UPDATEPAUSE, Events.TOGGLE_TIME_CMD, Events.RECORD_CAMERA_CMD);
+	    EventManager.instance.subscribe(this, Events.LIMIT_MAG_CMD, Events.INPUT_ENABLED_CMD, Events.TOGGLE_CLEANMODE, Events.TOGGLE_UPDATEPAUSE, Events.TOGGLE_TIME_CMD, Events.RECORD_CAMERA_CMD);
 	}
 
 	@Override
@@ -188,7 +188,7 @@ public class GlobalConf {
 		break;
 	    case TOGGLE_UPDATEPAUSE:
 		UPDATE_PAUSE = !UPDATE_PAUSE;
-		EventManager.getInstance().post(Events.UPDATEPAUSE_CHANGED, UPDATE_PAUSE);
+		EventManager.instance.post(Events.UPDATEPAUSE_CHANGED, UPDATE_PAUSE);
 		break;
 	    case TOGGLE_TIME_CMD:
 		toggleTimeOn((Boolean) data[0]);
@@ -246,7 +246,7 @@ public class GlobalConf {
 	public boolean RENDER_OUTPUT;
 
 	public FrameConf() {
-	    EventManager.getInstance().subscribe(this, Events.CONFIG_RENDER_SYSTEM, Events.RENDER_SYSTEM_CMD);
+	    EventManager.instance.subscribe(this, Events.CONFIG_RENDER_SYSTEM, Events.RENDER_SYSTEM_CMD);
 	}
 
 	@Override
@@ -402,7 +402,7 @@ public class GlobalConf {
 	private DateFormat df;
 
 	public ProgramConf() {
-	    EventManager.getInstance().subscribe(this, Events.TOGGLE_STEREOSCOPIC);
+	    EventManager.instance.subscribe(this, Events.TOGGLE_STEREOSCOPIC);
 	}
 
 	@Override
@@ -432,7 +432,7 @@ public class GlobalConf {
 	    try {
 		LAST_CHECKED = p.getProperty("program.lastchecked").isEmpty() ? null : df.parse(p.getProperty("program.lastchecked"));
 	    } catch (ParseException e) {
-		EventManager.getInstance().post(Events.JAVA_EXCEPTION, e);
+		EventManager.instance.post(Events.JAVA_EXCEPTION, e);
 	    }
 	    LAST_VERSION = p.getProperty("program.lastversion");
 	    VERSION_CHECK_URL = p.getProperty("program.versioncheckurl");
@@ -475,7 +475,7 @@ public class GlobalConf {
 	public boolean COMPUTE_GAIA_SCAN;
 
 	public SceneConf() {
-	    EventManager.getInstance().subscribe(this, Events.FOCUS_LOCK_CMD, Events.STAR_BRIGHTNESS_CMD, Events.FOV_CHANGED_CMD, Events.CAMERA_SPEED_CMD, Events.ROTATION_SPEED_CMD, Events.TURNING_SPEED_CMD, Events.SPEED_LIMIT_CMD, Events.TRANSIT_COLOUR_CMD, Events.ONLY_OBSERVED_STARS_CMD, Events.COMPUTE_GAIA_SCAN_CMD);
+	    EventManager.instance.subscribe(this, Events.FOCUS_LOCK_CMD, Events.STAR_BRIGHTNESS_CMD, Events.FOV_CHANGED_CMD, Events.CAMERA_SPEED_CMD, Events.ROTATION_SPEED_CMD, Events.TURNING_SPEED_CMD, Events.SPEED_LIMIT_CMD, Events.TRANSIT_COLOUR_CMD, Events.ONLY_OBSERVED_STARS_CMD, Events.COMPUTE_GAIA_SCAN_CMD);
 	}
 
 	@Override
@@ -752,7 +752,7 @@ public class GlobalConf {
 
 	    initialized = true;
 	} catch (Exception e) {
-	    EventManager.getInstance().post(Events.JAVA_EXCEPTION, e);
+	    EventManager.instance.post(Events.JAVA_EXCEPTION, e);
 	}
 
     }
@@ -771,7 +771,7 @@ public class GlobalConf {
 	    }
 
 	} catch (Exception e) {
-	    EventManager.getInstance().post(Events.JAVA_EXCEPTION, e);
+	    EventManager.instance.post(Events.JAVA_EXCEPTION, e);
 	}
 
     }
@@ -785,9 +785,9 @@ public class GlobalConf {
 	    FileOutputStream fos = new FileOutputStream(propsFileURL.getFile());
 	    p.store(fos, null);
 	    fos.close();
-	    EventManager.getInstance().post(Events.POST_NOTIFICATION, "Configuration saved to " + propsFileURL);
+	    EventManager.instance.post(Events.POST_NOTIFICATION, "Configuration saved to " + propsFileURL);
 	} catch (Exception e) {
-	    EventManager.getInstance().post(Events.JAVA_EXCEPTION, e);
+	    EventManager.instance.post(Events.JAVA_EXCEPTION, e);
 	}
     }
 

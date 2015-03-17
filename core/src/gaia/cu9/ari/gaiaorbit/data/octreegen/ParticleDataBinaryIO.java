@@ -65,7 +65,7 @@ public class ParticleDataBinaryIO {
 	    data_out.close();
 	    out.close();
 	} catch (Exception e) {
-	    EventManager.getInstance().post(Events.JAVA_EXCEPTION, e);
+	    EventManager.instance.post(Events.JAVA_EXCEPTION, e);
 	}
     }
 
@@ -105,12 +105,12 @@ public class ParticleDataBinaryIO {
 			stars.add(s);
 		    }
 		} catch (EOFException eof) {
-		    EventManager.getInstance().post(Events.JAVA_EXCEPTION, eof);
+		    EventManager.instance.post(Events.JAVA_EXCEPTION, eof);
 		}
 	    }
 
 	} catch (IOException e) {
-	    EventManager.getInstance().post(Events.JAVA_EXCEPTION, e);
+	    EventManager.instance.post(Events.JAVA_EXCEPTION, e);
 	}
 
 	return stars;

@@ -93,7 +93,7 @@ public class ConstellationsLoader<T extends SceneGraphNode> implements ISceneGra
 		Gdx.app.error(this.getClass().getSimpleName(), e.getLocalizedMessage());
 	    }
 
-	    EventManager.getInstance().post(Events.POST_NOTIFICATION, this.getClass().getSimpleName(), I18n.bundle.format("notif.constellations.init", constellations.size()));
+	    EventManager.instance.post(Events.POST_NOTIFICATION, this.getClass().getSimpleName(), I18n.bundle.format("notif.constellations.init", constellations.size()));
 
 	} catch (Exception e) {
 	    Gdx.app.error(this.getClass().getSimpleName(), e.getLocalizedMessage());

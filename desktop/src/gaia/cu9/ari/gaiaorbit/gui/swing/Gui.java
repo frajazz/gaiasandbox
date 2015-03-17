@@ -240,7 +240,7 @@ public class Gui implements IObserver {
 		if (stringNode.containsKey(text.toLowerCase())) {
 		    SceneGraphNode node = stringNode.get(text.toLowerCase());
 		    if (node instanceof CelestialBody) {
-			EventManager.getInstance().post(Events.FOCUS_CHANGE_CMD, node, false);
+			EventManager.instance.post(Events.FOCUS_CHANGE_CMD, node, false);
 			selectNodeInTree(node);
 		    }
 		}
@@ -262,7 +262,7 @@ public class Gui implements IObserver {
 	playPause.addActionListener(new ActionListener() {
 	    @Override
 	    public void actionPerformed(ActionEvent e) {
-		EventManager.getInstance().post(Events.TOGGLE_TIME_CMD, playPause.isSelected(), true);
+		EventManager.instance.post(Events.TOGGLE_TIME_CMD, playPause.isSelected(), true);
 	    }
 	});
 
@@ -273,7 +273,7 @@ public class Gui implements IObserver {
 	pace.addChangeListener(new ChangeListener() {
 	    @Override
 	    public void stateChanged(ChangeEvent e) {
-		EventManager.getInstance().post(Events.PACE_CHANGE_CMD, ((Double) pace.getValue()).floatValue());
+		EventManager.instance.post(Events.PACE_CHANGE_CMD, ((Double) pace.getValue()).floatValue());
 	    }
 	});
 
@@ -294,7 +294,7 @@ public class Gui implements IObserver {
 		    dateCalendar.set(Calendar.SECOND, hourCalendar.get(Calendar.SECOND));
 
 		    Date d = new Date(dateCalendar.getTimeInMillis());
-		    EventManager.getInstance().post(Events.TIME_CHANGE_CMD, d);
+		    EventManager.instance.post(Events.TIME_CHANGE_CMD, d);
 		} else {
 		    updateTime[0] = true;
 		}
@@ -322,7 +322,7 @@ public class Gui implements IObserver {
 		    hourCalendar.set(Calendar.YEAR, dateCalendar.get(Calendar.YEAR));
 
 		    Date d = new Date(hourCalendar.getTimeInMillis());
-		    EventManager.getInstance().post(Events.TIME_CHANGE_CMD, d);
+		    EventManager.instance.post(Events.TIME_CHANGE_CMD, d);
 		} else {
 		    updateTime[1] = true;
 		}
@@ -356,7 +356,7 @@ public class Gui implements IObserver {
 	    @Override
 	    public void actionPerformed(ActionEvent e) {
 		CameraMode mode = (CameraMode) cameraMode.getSelectedItem();
-		EventManager.getInstance().post(Events.CAMERA_MODE_CMD, mode);
+		EventManager.instance.post(Events.CAMERA_MODE_CMD, mode);
 	    }
 	});
 
@@ -371,7 +371,7 @@ public class Gui implements IObserver {
 	fovSlider.addChangeListener(new ChangeListener() {
 	    @Override
 	    public void stateChanged(ChangeEvent e) {
-		EventManager.getInstance().post(Events.FOV_CHANGED_CMD, (float) fovSlider.getValue());
+		EventManager.instance.post(Events.FOV_CHANGED_CMD, (float) fovSlider.getValue());
 	    }
 	});
 
@@ -379,7 +379,7 @@ public class Gui implements IObserver {
 	lockCameraCheckbox.addActionListener(new ActionListener() {
 	    @Override
 	    public void actionPerformed(ActionEvent e) {
-		EventManager.getInstance().post(Events.FOCUS_LOCK_CMD, "Focus lock", lockCameraCheckbox.isSelected(), true);
+		EventManager.instance.post(Events.FOCUS_LOCK_CMD, "Focus lock", lockCameraCheckbox.isSelected(), true);
 	    }
 	});
 
@@ -400,7 +400,7 @@ public class Gui implements IObserver {
 	    wtb.addActionListener(new ActionListener() {
 		@Override
 		public void actionPerformed(ActionEvent e) {
-		    EventManager.getInstance().post(Events.TOGGLE_VISIBILITY_CMD, new Object[] { ct.name(), wtb.isSelected() });
+		    EventManager.instance.post(Events.TOGGLE_VISIBILITY_CMD, new Object[] { ct.name(), wtb.isSelected() });
 		}
 	    });
 	    visibilityPanel.add(wtb, idx % 2 == 0 ? "wrap" : "");
@@ -424,7 +424,7 @@ public class Gui implements IObserver {
 	    @Override
 	    public void stateChanged(ChangeEvent e) {
 		float mult = starBrightnessSlider.getValue() / 50f;
-		EventManager.getInstance().post(Events.STAR_BRIGHTNESS_CMD, mult);
+		EventManager.instance.post(Events.STAR_BRIGHTNESS_CMD, mult);
 	    }
 	});
 
@@ -440,7 +440,7 @@ public class Gui implements IObserver {
 	    @Override
 	    public void stateChanged(ChangeEvent e) {
 		float mult = ambientSlider.getValue() / 100f;
-		EventManager.getInstance().post(Events.AMBIENT_LIGHT_CMD, mult);
+		EventManager.instance.post(Events.AMBIENT_LIGHT_CMD, mult);
 	    }
 	});
 
@@ -456,7 +456,7 @@ public class Gui implements IObserver {
 	    @Override
 	    public void stateChanged(ChangeEvent e) {
 		float mult = bloomSlider.getValue() / 10f;
-		EventManager.getInstance().post(Events.BLOOM_CMD, mult);
+		EventManager.instance.post(Events.BLOOM_CMD, mult);
 	    }
 	});
 
@@ -476,7 +476,7 @@ public class Gui implements IObserver {
 	gaiaScanToggle.addChangeListener(new ChangeListener() {
 	    @Override
 	    public void stateChanged(ChangeEvent e) {
-		EventManager.getInstance().post(Events.COMPUTE_GAIA_SCAN_CMD, "Gaia scan", gaiaScanToggle.isSelected(), true);
+		EventManager.instance.post(Events.COMPUTE_GAIA_SCAN_CMD, "Gaia scan", gaiaScanToggle.isSelected(), true);
 	    }
 	});
 	colorScanToggle = new JCheckBox("Colour Gaia observations");
@@ -484,7 +484,7 @@ public class Gui implements IObserver {
 	colorScanToggle.addChangeListener(new ChangeListener() {
 	    @Override
 	    public void stateChanged(ChangeEvent e) {
-		EventManager.getInstance().post(Events.TRANSIT_COLOUR_CMD, "Transit colour", colorScanToggle.isSelected(), true);
+		EventManager.instance.post(Events.TRANSIT_COLOUR_CMD, "Transit colour", colorScanToggle.isSelected(), true);
 	    }
 	});
 	onlyObservedToggle = new JCheckBox("Display only Gaia observations");
@@ -492,7 +492,7 @@ public class Gui implements IObserver {
 	onlyObservedToggle.addChangeListener(new ChangeListener() {
 	    @Override
 	    public void stateChanged(ChangeEvent e) {
-		EventManager.getInstance().post(Events.ONLY_OBSERVED_STARS_CMD, "Only observed stars", onlyObservedToggle.isSelected(), true);
+		EventManager.instance.post(Events.ONLY_OBSERVED_STARS_CMD, "Only observed stars", onlyObservedToggle.isSelected(), true);
 	    }
 	});
 
@@ -530,12 +530,12 @@ public class Gui implements IObserver {
 	frame.add(mainPanel, BorderLayout.CENTER);
 	frame.setMinimumSize(new Dimension(450, 300));
 
-	EventManager.getInstance().subscribe(this, Events.FPS_INFO, Events.TOGGLE_TIME_CMD, Events.TIME_CHANGE_INFO, Events.CAMERA_MODE_CMD, Events.VISIBILITY_OF_COMPONENTS, Events.PACE_CHANGED_INFO, Events.FOCUS_LOCK_CMD, Events.FULLSCREEN_CMD, Events.FOCUS_CHANGED);
+	EventManager.instance.subscribe(this, Events.FPS_INFO, Events.TOGGLE_TIME_CMD, Events.TIME_CHANGE_INFO, Events.CAMERA_MODE_CMD, Events.VISIBILITY_OF_COMPONENTS, Events.PACE_CHANGED_INFO, Events.FOCUS_LOCK_CMD, Events.FULLSCREEN_CMD, Events.FOCUS_CHANGED);
     }
 
     private void mySingleClick(int row, TreePath path) {
 	SceneGraphNode node = treeToModel.getBackward((IconTreeNode) path.getLastPathComponent());
-	EventManager.getInstance().post(Events.FOCUS_CHANGE_CMD, node, false);
+	EventManager.instance.post(Events.FOCUS_CHANGE_CMD, node, false);
     }
 
     private void myDoubleClick(int row, TreePath path) {

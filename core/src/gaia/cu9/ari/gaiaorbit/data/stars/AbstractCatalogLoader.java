@@ -22,7 +22,7 @@ public abstract class AbstractCatalogLoader {
 	try {
 	    data = FileLocator.getStream(p.getProperty("file"));
 	} catch (FileNotFoundException e) {
-	    EventManager.getInstance().post(Events.JAVA_EXCEPTION, e);
+	    EventManager.instance.post(Events.JAVA_EXCEPTION, e);
 	}
     }
 

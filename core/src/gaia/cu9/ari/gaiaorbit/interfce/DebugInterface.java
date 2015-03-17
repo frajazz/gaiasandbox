@@ -16,24 +16,24 @@ public class DebugInterface extends Table implements IObserver {
 
     public DebugInterface(Skin skin, Object lock) {
 	super(skin);
-	debug1 = new OwnLabel("", skin, "hud");
+	debug1 = new OwnLabel("", skin, "hud-med");
 	add(debug1).right();
 	row();
 
-	debug2 = new OwnLabel("", skin, "hud");
+	debug2 = new OwnLabel("", skin, "hud-med");
 	add(debug2).right();
 	row();
 
-	debug3 = new OwnLabel("", skin, "hud");
+	debug3 = new OwnLabel("", skin, "hud-med");
 	add(debug3).right();
 	row();
 
-	fps = new OwnLabel("", skin, "hud");
+	fps = new OwnLabel("", skin, "hud-med");
 	add(fps).right();
 	row();
 	this.setVisible(GlobalConf.program.SHOW_DEBUG_INFO);
 	this.lock = lock;
-	EventManager.getInstance().subscribe(this, Events.DEBUG1, Events.DEBUG2, Events.DEBUG3, Events.FPS_INFO, Events.SHOW_DEBUG_CMD);
+	EventManager.instance.subscribe(this, Events.DEBUG1, Events.DEBUG2, Events.DEBUG3, Events.FPS_INFO, Events.SHOW_DEBUG_CMD);
     }
 
     @Override

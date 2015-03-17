@@ -37,8 +37,8 @@ public class EventScriptingInterface implements IScriptingInterface, IObserver {
     private LruCache<String, Texture> textures;
 
     public EventScriptingInterface() {
-	em = EventManager.getInstance();
-	manager = GaiaSandbox.getInstance().manager;
+	em = EventManager.instance;
+	manager = GaiaSandbox.instance.manager;
 	em.subscribe(this, Events.INPUT_EVENT);
     }
 
@@ -259,10 +259,10 @@ public class EventScriptingInterface implements IScriptingInterface, IObserver {
 
     @Override
     public void goToObject(String name, double distance) {
-	ISceneGraph sg = GaiaSandbox.getInstance().sg;
+	ISceneGraph sg = GaiaSandbox.instance.sg;
 	if (sg.containsNode(name)) {
 	    CelestialBody focus = sg.findFocus(name);
-	    NaturalCamera cam = GaiaSandbox.getInstance().cam.naturalCamera;
+	    NaturalCamera cam = GaiaSandbox.instance.cam.naturalCamera;
 
 	    // Post focus change
 	    if (!cam.isFocus(focus)) {
@@ -313,7 +313,7 @@ public class EventScriptingInterface implements IScriptingInterface, IObserver {
 
     @Override
     public double getDistanceTo(String objectName) {
-	ISceneGraph sg = GaiaSandbox.getInstance().sg;
+	ISceneGraph sg = GaiaSandbox.instance.sg;
 	if (sg.containsNode(objectName)) {
 	    SceneGraphNode object = sg.getNode(objectName);
 	    if (object instanceof AbstractPositionEntity) {
@@ -450,7 +450,7 @@ public class EventScriptingInterface implements IScriptingInterface, IObserver {
 
     @Override
     public float[] getPositionAndSizeGui(String name) {
-	IGui gui = GaiaSandbox.getInstance().gui;
+	IGui gui = GaiaSandbox.instance.gui;
 	Actor actor = gui.getGuiStage().getRoot().findActor(name);
 	if (actor != null) {
 	    float x = actor.getX();
@@ -477,7 +477,7 @@ public class EventScriptingInterface implements IScriptingInterface, IObserver {
     @Override
     public boolean waitFocus(String name, long timeoutMs) {
 	long iniTime = System.currentTimeMillis();
-	NaturalCamera cam = GaiaSandbox.getInstance().cam.naturalCamera;
+	NaturalCamera cam = GaiaSandbox.instance.cam.naturalCamera;
 	while (cam.focus == null || !cam.focus.name.equalsIgnoreCase(name)) {
 	    try {
 		Thread.sleep(100);

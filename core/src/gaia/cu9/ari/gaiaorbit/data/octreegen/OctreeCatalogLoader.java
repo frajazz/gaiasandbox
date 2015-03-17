@@ -27,7 +27,7 @@ public class OctreeCatalogLoader implements ICatalogLoader {
 
     @Override
     public List<? extends SceneGraphNode> loadCatalog() throws FileNotFoundException {
-	EventManager.getInstance().post(Events.POST_NOTIFICATION, this.getClass().getSimpleName(), I18n.bundle.format("notif.limitmag", GlobalConf.data.LIMIT_MAG_LOAD));
+	EventManager.instance.post(Events.POST_NOTIFICATION, this.getClass().getSimpleName(), I18n.bundle.format("notif.limitmag", GlobalConf.data.LIMIT_MAG_LOAD));
 
 	MetadataBinaryIO metadataReader = new MetadataBinaryIO();
 	OctreeNode<SceneGraphNode> root = (OctreeNode<SceneGraphNode>) metadataReader.readMetadata(FileLocator.getStream(metadata));
@@ -73,7 +73,7 @@ public class OctreeCatalogLoader implements ICatalogLoader {
 	// Find out octant of sun
 	OctreeNode<SceneGraphNode> candidate = root.getBestOctant(sun.pos);
 	if (candidate == null) {
-	    EventManager.getInstance().post(Events.JAVA_EXCEPTION, new RuntimeException("No octant candidate for the Sun found!"));
+	    EventManager.instance.post(Events.JAVA_EXCEPTION, new RuntimeException("No octant candidate for the Sun found!"));
 	} else {
 	    sun.pageId = candidate.pageId;
 	    sun.page = candidate;
@@ -82,7 +82,7 @@ public class OctreeCatalogLoader implements ICatalogLoader {
 	    candidate.add(sun);
 	}
 
-	EventManager.getInstance().post(Events.POST_NOTIFICATION, this.getClass().getSimpleName(), I18n.bundle.format("notif.catalog.init", particleList.size()));
+	EventManager.instance.post(Events.POST_NOTIFICATION, this.getClass().getSimpleName(), I18n.bundle.format("notif.catalog.init", particleList.size()));
 
 	return result;
     }

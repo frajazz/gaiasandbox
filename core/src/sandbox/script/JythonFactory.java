@@ -70,19 +70,19 @@ public class JythonFactory implements IObserver {
 	    @Override
 	    public ScriptRunnable put(String key, ScriptRunnable value) {
 		ScriptRunnable sr = super.put(key, value);
-		EventManager.getInstance().post(Events.NUM_RUNNING_SCRIPTS, this.size());
+		EventManager.instance.post(Events.NUM_RUNNING_SCRIPTS, this.size());
 		return sr;
 	    }
 
 	    @Override
 	    public ScriptRunnable remove(Object key) {
 		ScriptRunnable sr = super.remove(key);
-		EventManager.getInstance().post(Events.NUM_RUNNING_SCRIPTS, this.size());
+		EventManager.instance.post(Events.NUM_RUNNING_SCRIPTS, this.size());
 		return sr;
 	    }
 
 	});
-	EventManager.getInstance().subscribe(this, Events.RUN_SCRIPT_PYCODE, Events.RUN_SCRIPT_PATH, Events.CANCEL_SCRIPT_CMD);
+	EventManager.instance.subscribe(this, Events.RUN_SCRIPT_PYCODE, Events.RUN_SCRIPT_PATH, Events.CANCEL_SCRIPT_CMD);
     }
 
     public PyCode compileJythonScript(String script) throws Exception {
@@ -109,7 +109,7 @@ public class JythonFactory implements IObserver {
 		run.run();
 	    }
 	} else {
-	    EventManager.getInstance().post(Events.POST_NOTIFICATION, I18n.bundle.format("notif.script.max", maxScripts));
+	    EventManager.instance.post(Events.POST_NOTIFICATION, I18n.bundle.format("notif.script.max", maxScripts));
 	}
     }
 
@@ -123,7 +123,7 @@ public class JythonFactory implements IObserver {
 	try {
 	    runJythonScript(compileJythonScript(script), path, async);
 	} catch (Exception e) {
-	    EventManager.getInstance().post(Events.JAVA_EXCEPTION, e);
+	    EventManager.instance.post(Events.JAVA_EXCEPTION, e);
 	}
 
     }
@@ -226,7 +226,7 @@ public class JythonFactory implements IObserver {
 	public void run() {
 	    if (currentScripts.size() < maxScripts) {
 		if (currentScripts.containsKey(path)) {
-		    EventManager.getInstance().post(Events.POST_NOTIFICATION, I18n.bundle.format("notif.script.already", path));
+		    EventManager.instance.post(Events.POST_NOTIFICATION, I18n.bundle.format("notif.script.already", path));
 		    return;
 		}
 		currentScripts.put(path, this);
@@ -235,16 +235,16 @@ public class JythonFactory implements IObserver {
 		    interpreter.exec(code);
 		    cleanup();
 		} catch (Exception e) {
-		    EventManager.getInstance().post(Events.JAVA_EXCEPTION, e);
+		    EventManager.instance.post(Events.JAVA_EXCEPTION, e);
 		}
 	    }
 	}
 
 	public void cleanup() {
 	    // Re-enable input and remove objects, just in case
-	    EventManager.getInstance().post(Events.REMOVE_ALL_OBJECTS);
-	    EventManager.getInstance().post(Events.CLEAR_MESSAGES);
-	    EventManager.getInstance().post(Events.INPUT_ENABLED_CMD, true);
+	    EventManager.instance.post(Events.REMOVE_ALL_OBJECTS);
+	    EventManager.instance.post(Events.CLEAR_MESSAGES);
+	    EventManager.instance.post(Events.INPUT_ENABLED_CMD, true);
 	    currentScripts.remove(path);
 	}
 

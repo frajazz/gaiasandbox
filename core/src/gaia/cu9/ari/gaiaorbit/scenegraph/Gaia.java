@@ -52,7 +52,7 @@ public class Gaia extends ModelBody {
     @Override
     public void doneLoading(AssetManager manager) {
 	super.doneLoading(manager);
-	EventManager.getInstance().post(Events.GAIA_LOADED, this);
+	EventManager.instance.post(Events.GAIA_LOADED, this);
 
     }
 

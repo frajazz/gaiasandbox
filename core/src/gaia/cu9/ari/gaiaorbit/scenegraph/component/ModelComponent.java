@@ -108,7 +108,7 @@ public class ModelComponent {
 	    materials = pair.getSecond();
 	} else {
 	    // Data error!
-	    EventManager.getInstance().post(Events.JAVA_EXCEPTION, new DataFormatException("The 'model' element must contain either a 'type' or a 'model' attribute"));
+	    EventManager.instance.post(Events.JAVA_EXCEPTION, new DataFormatException("The 'model' element must contain either a 'type' or a 'model' attribute"));
 	}
 	// Clear base material
 	materials.get("base").clear();

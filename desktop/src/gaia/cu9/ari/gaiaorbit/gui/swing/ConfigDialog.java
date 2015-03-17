@@ -781,7 +781,7 @@ public class ConfigDialog extends I18nJFrame {
 
 		} catch (Exception e1) {
 		    connectionFailed();
-		    EventManager.getInstance().post(Events.JAVA_EXCEPTION, e1);
+		    EventManager.instance.post(Events.JAVA_EXCEPTION, e1);
 		}
 	    }
 	});
@@ -959,10 +959,10 @@ public class ConfigDialog extends I18nJFrame {
 		    try {
 			GlobalConf.saveProperties(new File(System.getProperty("properties.file")).toURI().toURL());
 		    } catch (MalformedURLException e1) {
-			EventManager.getInstance().post(Events.JAVA_EXCEPTION, e);
+			EventManager.instance.post(Events.JAVA_EXCEPTION, e);
 		    }
 
-		    EventManager.getInstance().post(Events.PROPERTIES_WRITTEN);
+		    EventManager.instance.post(Events.PROPERTIES_WRITTEN);
 
 		    if (startup) {
 			gsd.launchMainApp();

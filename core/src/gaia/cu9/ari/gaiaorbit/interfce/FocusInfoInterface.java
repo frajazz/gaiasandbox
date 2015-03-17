@@ -94,7 +94,7 @@ public class FocusInfoInterface extends Table implements IObserver {
 	pack();
 
 	pos = new Vector3d();
-	EventManager.getInstance().subscribe(this, Events.FOCUS_CHANGED, Events.FOCUS_INFO_UPDATED, Events.CAMERA_MOTION_UPDATED);
+	EventManager.instance.subscribe(this, Events.FOCUS_CHANGED, Events.FOCUS_INFO_UPDATED, Events.CAMERA_MOTION_UPDATED);
     }
 
     @Override
@@ -103,7 +103,7 @@ public class FocusInfoInterface extends Table implements IObserver {
 	case FOCUS_CHANGED:
 	    CelestialBody cb = null;
 	    if (data[0] instanceof String) {
-		cb = (CelestialBody) GaiaSandbox.getInstance().sg.getNode((String) data[0]);
+		cb = (CelestialBody) GaiaSandbox.instance.sg.getNode((String) data[0]);
 	    } else {
 		cb = (CelestialBody) data[0];
 	    }

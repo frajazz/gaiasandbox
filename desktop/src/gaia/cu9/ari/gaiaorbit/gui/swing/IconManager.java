@@ -20,11 +20,11 @@ public class IconManager {
     public static void initialise(File folder) {
 	if (folder.exists() && folder.isDirectory() && folder.canRead()) {
 	    icons = new HashMap<String, Icon>();
-	    EventManager.getInstance().post(Events.POST_NOTIFICATION, I18n.bundle.get("notif.icon.initialising"));
+	    EventManager.instance.post(Events.POST_NOTIFICATION, I18n.bundle.get("notif.icon.initialising"));
 
 	    initialiseDirectory(folder, "");
 
-	    EventManager.getInstance().post(Events.POST_NOTIFICATION, I18n.bundle.format("notif.icon.init", icons.size()));
+	    EventManager.instance.post(Events.POST_NOTIFICATION, I18n.bundle.format("notif.icon.init", icons.size()));
 	}
     }
 
@@ -41,7 +41,7 @@ public class IconManager {
 
 			icons.put(prefix + name.substring(0, name.lastIndexOf('.')), new ImageIcon(iconURL));
 		    } catch (Exception e) {
-			EventManager.getInstance().post(Events.JAVA_EXCEPTION, new RuntimeException(I18n.bundle.format("error.icon.loading", name), e));
+			EventManager.instance.post(Events.JAVA_EXCEPTION, new RuntimeException(I18n.bundle.format("error.icon.loading", name), e));
 		    }
 		}
 	    }

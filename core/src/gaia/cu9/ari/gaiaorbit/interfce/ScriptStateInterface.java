@@ -38,13 +38,13 @@ public class ScriptStateInterface extends Table implements IObserver {
 	    @Override
 	    public boolean handle(Event event) {
 		if (event instanceof ChangeEvent) {
-		    EventManager.getInstance().post(Events.CANCEL_SCRIPT_CMD);
+		    EventManager.instance.post(Events.CANCEL_SCRIPT_CMD);
 		}
 		return false;
 	    }
 	});
 
-	EventManager.getInstance().subscribe(this, Events.INPUT_ENABLED_CMD, Events.NUM_RUNNING_SCRIPTS);
+	EventManager.instance.subscribe(this, Events.INPUT_ENABLED_CMD, Events.NUM_RUNNING_SCRIPTS);
     }
 
     @Override

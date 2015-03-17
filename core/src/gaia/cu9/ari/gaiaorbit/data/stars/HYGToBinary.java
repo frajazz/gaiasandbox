@@ -34,7 +34,7 @@ public class HYGToBinary implements IObserver {
 
     public static void main(String[] args) {
 	HYGToBinary hyg = new HYGToBinary();
-	EventManager.getInstance().subscribe(hyg, Events.POST_NOTIFICATION);
+	EventManager.instance.subscribe(hyg, Events.POST_NOTIFICATION);
 
 	InputStream versionFile = HYGToBinary.class.getResourceAsStream("/version");
 	Properties vprops = new Properties();

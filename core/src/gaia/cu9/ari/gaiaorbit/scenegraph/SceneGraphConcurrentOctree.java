@@ -66,7 +66,7 @@ public class SceneGraphConcurrentOctree extends AbstractSceneGraph {
 	    tasks.add(new UpdaterTask<SceneGraphNode>(roulette, i, numThreads));
 	}
 
-	EventManager.getInstance().post(Events.POST_NOTIFICATION, this.getClass().getSimpleName(), I18n.bundle.format("notif.threadpool.init", numThreads));
+	EventManager.instance.post(Events.POST_NOTIFICATION, this.getClass().getSimpleName(), I18n.bundle.format("notif.threadpool.init", numThreads));
     }
 
     public void update(ITimeFrameProvider time, ICamera camera) {
@@ -104,7 +104,7 @@ public class SceneGraphConcurrentOctree extends AbstractSceneGraph {
 	}
 
 	// Debug thread number
-	EventManager.getInstance().post(Events.DEBUG2, "SG threads: " + getRouletteDebug());
+	EventManager.instance.post(Events.DEBUG2, "SG threads: " + getRouletteDebug());
 
 	// Clear roulette
 	roulette.clear();

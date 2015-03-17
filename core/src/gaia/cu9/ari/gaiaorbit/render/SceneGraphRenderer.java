@@ -307,7 +307,7 @@ public class SceneGraphRenderer extends AbstractRenderer implements IProcessRend
 	renderProcesses.add(modelAtmProc);
 	renderProcesses.add(shaderFrontProc);
 
-	EventManager.getInstance().subscribe(this, Events.TOGGLE_VISIBILITY_CMD);
+	EventManager.instance.subscribe(this, Events.TOGGLE_VISIBILITY_CMD);
 
     }
 
@@ -432,7 +432,7 @@ public class SceneGraphRenderer extends AbstractRenderer implements IProcessRend
 	    alphas[ct.ordinal()] = calculateAlpha(ct, now);
 	}
 
-	EventManager.getInstance().post(Events.DEBUG1, "quad: " + (render_lists.get(RenderGroup.SHADER).size() + render_lists.get(RenderGroup.SHADER_F).size()) + ", point: " + render_lists.get(RenderGroup.POINT).size());
+	EventManager.instance.post(Events.DEBUG1, "quad: " + (render_lists.get(RenderGroup.SHADER).size() + render_lists.get(RenderGroup.SHADER_F).size()) + ", point: " + render_lists.get(RenderGroup.POINT).size());
 
 	int size = renderProcesses.size();
 	for (int i = 0; i < size; i++) {

@@ -49,7 +49,7 @@ public class CustomInterface implements IObserver {
 	initSizes(skin);
 
 	this.lock = lock;
-	EventManager.getInstance().subscribe(this, Events.ADD_CUSTOM_IMAGE, Events.ADD_CUSTOM_MESSAGE, Events.REMOVE_OBJECTS, Events.REMOVE_ALL_OBJECTS, Events.ADD_CUSTOM_TEXT);
+	EventManager.instance.subscribe(this, Events.ADD_CUSTOM_IMAGE, Events.ADD_CUSTOM_MESSAGE, Events.REMOVE_OBJECTS, Events.REMOVE_ALL_OBJECTS, Events.ADD_CUSTOM_TEXT);
     }
 
     private void initSizes(Skin skin) {

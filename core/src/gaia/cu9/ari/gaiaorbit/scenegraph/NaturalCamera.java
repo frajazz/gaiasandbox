@@ -120,7 +120,7 @@ public class NaturalCamera extends AbstractCamera implements IObserver {
 	accelerometer = Gdx.input.isPeripheralAvailable(Peripheral.Accelerometer);
 
 	// Focus is changed from GUI
-	EventManager.getInstance().subscribe(this, Events.FOCUS_CHANGE_CMD, Events.FOV_CHANGED_CMD, Events.FOCUS_LOCK_CMD, Events.CAMERA_POS_CMD, Events.CAMERA_DIR_CMD, Events.CAMERA_UP_CMD, Events.CAMERA_FWD, Events.CAMERA_ROTATE, Events.CAMERA_PAN, Events.CAMERA_ROLL, Events.CAMERA_TURN, Events.CAMERA_STOP, Events.CAMERA_CENTER);
+	EventManager.instance.subscribe(this, Events.FOCUS_CHANGE_CMD, Events.FOV_CHANGED_CMD, Events.FOCUS_LOCK_CMD, Events.CAMERA_POS_CMD, Events.CAMERA_DIR_CMD, Events.CAMERA_UP_CMD, Events.CAMERA_FWD, Events.CAMERA_ROTATE, Events.CAMERA_PAN, Events.CAMERA_ROLL, Events.CAMERA_TURN, Events.CAMERA_STOP, Events.CAMERA_CENTER);
     }
 
     public void update(float dt, ITimeFrameProvider time) {
@@ -179,9 +179,9 @@ public class NaturalCamera extends AbstractCamera implements IObserver {
 		focus.transform.getTranslation(focusDirection);
 		focus = focusBak;
 
-		EventManager.getInstance().post(Events.FOCUS_INFO_UPDATED, focus.distToCamera - focus.getRadius(), ((AbstractPositionEntity) focus).viewAngle);
+		EventManager.instance.post(Events.FOCUS_INFO_UPDATED, focus.distToCamera - focus.getRadius(), ((AbstractPositionEntity) focus).viewAngle);
 	    } else {
-		EventManager.getInstance().post(Events.CAMERA_MODE_CMD, CameraMode.Free_Camera);
+		EventManager.instance.post(Events.CAMERA_MODE_CMD, CameraMode.Free_Camera);
 	    }
 	    break;
 	case Free_Camera:
@@ -548,7 +548,7 @@ public class NaturalCamera extends AbstractCamera implements IObserver {
 	if (focus != null) {
 	    this.focus = focus;
 	    // Create event to notify focus change
-	    EventManager.getInstance().post(Events.FOCUS_CHANGED, focus);
+	    EventManager.instance.post(Events.FOCUS_CHANGED, focus);
 	}
     }
 
@@ -589,7 +589,7 @@ public class NaturalCamera extends AbstractCamera implements IObserver {
 	    // Check the type of the parameter: CelestialBody or String
 	    CelestialBody focus = null;
 	    if (data[0] instanceof String) {
-		SceneGraphNode sgn = GaiaSandbox.getInstance().sg.getNode((String) data[0]);
+		SceneGraphNode sgn = GaiaSandbox.instance.sg.getNode((String) data[0]);
 		if (sgn instanceof CelestialBody) {
 		    focus = (CelestialBody) sgn;
 		    diverted = false;
@@ -606,7 +606,7 @@ public class NaturalCamera extends AbstractCamera implements IObserver {
 	    float fov = MathUtilsd.clamp((float) data[0], Constants.MIN_FOV, Constants.MAX_FOV);
 	    camera.fieldOfView = fov;
 	    if (parent.current == this) {
-		EventManager.getInstance().post(Events.FOV_CHANGE_NOTIFICATION, fov);
+		EventManager.instance.post(Events.FOV_CHANGE_NOTIFICATION, fov);
 	    }
 	    fovFactor = camera.fieldOfView / 40f;
 	    break;
