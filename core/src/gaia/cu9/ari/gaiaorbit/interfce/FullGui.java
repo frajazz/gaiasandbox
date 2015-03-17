@@ -738,6 +738,7 @@ public class FullGui implements IGui, IObserver {
 	playstop = new OwnImageButton(skin, "playstop");
 	playstop.setName("play stop");
 	playstop.setChecked(GlobalConf.runtime.TIME_ON);
+	playstop.setTooltip("Hello I'm a tooltip");
 	playstop.addListener(new EventListener() {
 	    @Override
 	    public boolean handle(Event event) {
