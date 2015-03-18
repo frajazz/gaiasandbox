@@ -72,6 +72,7 @@ public class CamRecorder implements IObserver {
 		    String line;
 		    if ((line = is.readLine()) != null) {
 			String[] tokens = line.split("\\s+");
+			// TODO use time to adapt FPS
 			float time = Parsers.parseFloat(tokens[0]);
 			position.set(Parsers.parseDouble(tokens[1]), Parsers.parseDouble(tokens[2]), Parsers.parseDouble(tokens[3]));
 			direction.set(Parsers.parseDouble(tokens[4]), Parsers.parseDouble(tokens[5]), Parsers.parseDouble(tokens[6]));
@@ -99,20 +100,22 @@ public class CamRecorder implements IObserver {
     public void notify(Events event, Object... data) {
 	switch (event) {
 	case RECORD_CAMERA_CMD:
+	    RecorderMode m = null;
 	    if (data[0] != null) {
 		if ((Boolean) data[0]) {
-		    mode = RecorderMode.RECORDING;
+		    m = RecorderMode.RECORDING;
 		} else {
-		    mode = RecorderMode.IDLE;
+		    m = RecorderMode.IDLE;
 		}
 	    } else {
-		mode = (mode == RecorderMode.RECORDING) ? RecorderMode.IDLE : RecorderMode.RECORDING;
+		m = (mode == RecorderMode.RECORDING) ? RecorderMode.IDLE : RecorderMode.RECORDING;
 	    }
 
-	    if (mode == RecorderMode.RECORDING) {
+	    if (m == RecorderMode.RECORDING) {
 		// We start recording, prepare buffer!
-		if (os != null) {
-		    throw new RuntimeException("Hey, the buffer is already set up! Can not start recording the camera!");
+		if (mode == RecorderMode.RECORDING) {
+		    EventManager.instance.post(Events.POST_NOTIFICATION, I18n.bundle.get("error.camerarecord.already"));
+		    return;
 		}
 		f = new File(System.getProperty("java.io.tmpdir"), System.currentTimeMillis() + "_gscamera.dat");
 		if (f.exists()) {
@@ -129,8 +132,12 @@ public class CamRecorder implements IObserver {
 		time = 0;
 		EventManager.instance.post(Events.POST_NOTIFICATION, I18n.bundle.get("notif.camerarecord.start"));
 
-	    } else if (mode == RecorderMode.IDLE) {
+	    } else if (m == RecorderMode.IDLE) {
 		// Flush and close
+		if (mode == RecorderMode.IDLE) {
+		    // No recording to cancel
+		    return;
+		}
 		try {
 		    os.close();
 		} catch (IOException e) {
