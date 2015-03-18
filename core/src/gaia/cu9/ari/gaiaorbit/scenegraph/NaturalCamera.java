@@ -199,6 +199,10 @@ public class NaturalCamera extends AbstractCamera implements IObserver {
 	    break;
 	}
 
+	// Camera recording
+	CamRecorder.instance.update(dt, pos, direction, up);
+
+	// Update actual camera
 	lastFwdTime += dt;
 	lastMode = m;
 
@@ -212,8 +216,6 @@ public class NaturalCamera extends AbstractCamera implements IObserver {
 
 	posinv.set(pos).scl(-1);
 
-	// Camera recording
-	CamRecorder.instance.update(dt, pos, direction, up);
     }
 
     /**

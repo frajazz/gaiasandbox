@@ -106,6 +106,9 @@ public enum Events {
     PACE_CHANGED_INFO,
     /** Issues the command to enable camera recording. Contains the boolean indicating the state (may be null) and a boolean indicating whether this comes from the interface. **/
     RECORD_CAMERA_CMD,
+
+    /** Issues the play command. Contains the path to the file to play **/
+    PLAY_CAMERA_CMD,
     /** 
      * Will be displayed in the notifications area (bottom left). Contains an array of strings with the messages and an optional boolean
      * indicating whether the message is permanent so should stay until the next message is received.

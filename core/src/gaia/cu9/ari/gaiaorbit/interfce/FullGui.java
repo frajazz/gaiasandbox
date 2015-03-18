@@ -93,7 +93,7 @@ public class FullGui implements IGui, IObserver {
     protected TextField inputPace, searchBox;
     protected Button plus, minus;
     protected ImageButton dateEdit;
-    protected OwnImageButton playstop, recCamera;
+    protected OwnImageButton playstop, recCamera, playCamera;
     protected OwnScrollPane focusListScrollPane;
     protected Slider fieldOfView, starBrightness, bloomEffect, ambientLight, cameraSpeed, turnSpeed, rotateSpeed;
     protected CheckBox focusLock, transitColor, onlyObservedStars, computeGaiaScan, lensFlare;
@@ -210,7 +210,7 @@ public class FullGui implements IGui, IObserver {
 	// Record camera button
 
 	recCamera = new OwnImageButton(skin, "rec");
-	recCamera.setName("rec");
+	recCamera.setName("recCam");
 	recCamera.setChecked(GlobalConf.runtime.RECORD_CAMERA);
 	recCamera.addListener(new EventListener() {
 	    @Override
@@ -225,6 +225,26 @@ public class FullGui implements IGui, IObserver {
 	Label recTooltip = new Label(txt("gui.tooltip.reccamera"), skin, "tooltip");
 	tooltips.add(recTooltip);
 	recCamera.addListener(new Tooltip<Label>(recTooltip));
+
+	// Play camera button
+
+	playCamera = new OwnImageButton(skin, "play");
+	playCamera.setName("playCam");
+	playCamera.setChecked(false);
+	playCamera.addListener(new EventListener() {
+	    @Override
+	    public boolean handle(Event event) {
+		if (event instanceof ChangeEvent) {
+		    String path = "/tmp/1426674173300_gscamera.dat";
+		    EventManager.instance.post(Events.PLAY_CAMERA_CMD, path);
+		    return true;
+		}
+		return false;
+	    }
+	});
+	Label playTooltip = new Label(txt("gui.tooltip.playcamera"), skin, "tooltip");
+	tooltips.add(playTooltip);
+	playCamera.addListener(new Tooltip<Label>(playTooltip));
 
 	Label modeLabel = new Label(txt("gui.camera.mode"), skin, "default");
 	int cameraModes = CameraMode.values().length;
@@ -381,6 +401,7 @@ public class FullGui implements IGui, IObserver {
 	camLabelGroup.space(HPADDING);
 	camLabelGroup.addActor(cameraLabel);
 	camLabelGroup.addActor(recCamera);
+	camLabelGroup.addActor(playCamera);
 	cameraGroup.addActor(camLabelGroup);
 
 	cameraGroup.addActor(modeLabel);
