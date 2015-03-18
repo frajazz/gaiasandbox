@@ -128,9 +128,10 @@ public class CamRecorder implements IObserver {
 		    EventManager.instance.post(Events.JAVA_EXCEPTION, e);
 		    return;
 		}
+		EventManager.instance.post(Events.POST_NOTIFICATION, I18n.bundle.get("notif.camerarecord.start"));
 		startMs = System.currentTimeMillis();
 		time = 0;
-		EventManager.instance.post(Events.POST_NOTIFICATION, I18n.bundle.get("notif.camerarecord.start"));
+		mode = RecorderMode.RECORDING;
 
 	    } else if (m == RecorderMode.IDLE) {
 		// Flush and close
@@ -149,6 +150,7 @@ public class CamRecorder implements IObserver {
 		float secs = elapsed / 1000f;
 		EventManager.instance.post(Events.POST_NOTIFICATION, I18n.bundle.format("notif.camerarecord.done", f.getAbsolutePath(), secs));
 		f = null;
+		mode = RecorderMode.IDLE;
 	    }
 	    break;
 	case PLAY_CAMERA_CMD:

@@ -39,12 +39,26 @@ public class GaiaControllerListener implements ControllerListener {
 
     @Override
     public boolean buttonDown(Controller controller, int buttonCode) {
-	return false;
+	switch (buttonCode) {
+	case LEFT_TRIGGER_BUTTON:
+	    cam.naturalCamera.setGamepadMultiplier(0.5);
+	    break;
+	case RIGHT_TRIGGER_BUTTON:
+	    cam.naturalCamera.setGamepadMultiplier(0.1);
+	    break;
+	}
+	return true;
     }
 
     @Override
     public boolean buttonUp(Controller controller, int buttonCode) {
-	return false;
+	switch (buttonCode) {
+	case LEFT_TRIGGER_BUTTON:
+	case RIGHT_TRIGGER_BUTTON:
+	    cam.naturalCamera.setGamepadMultiplier(1);
+	    break;
+	}
+	return true;
     }
 
     @Override
@@ -86,10 +100,6 @@ public class GaiaControllerListener implements ControllerListener {
 	case SPEED_AXIS:
 	    if (Math.abs(value) < 0.005)
 		value = 0;
-
-	    if (controller.getButton(LEFT_TRIGGER_BUTTON)) {
-		value *= 0.001;
-	    }
 	    cam.naturalCamera.setVelocity(-value);
 	    treated = true;
 	    break;

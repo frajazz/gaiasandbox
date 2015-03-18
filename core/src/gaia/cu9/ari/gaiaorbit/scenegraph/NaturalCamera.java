@@ -74,6 +74,7 @@ public class NaturalCamera extends AbstractCamera implements IObserver {
 
     /** Velocity module, in case it comes from a gamepad **/
     private double velocityGamepad = 0;
+    private double gamepadMultiplier = 1;
 
     Viewport viewport;
     boolean diverted = false;
@@ -284,6 +285,10 @@ public class NaturalCamera extends AbstractCamera implements IObserver {
 	}
     }
 
+    public void setGamepadMultiplier(double amount) {
+	gamepadMultiplier = amount;
+    }
+
     public void addAmountX(Vector3d vec, double amount) {
 	vec.x += amount;
     }
@@ -389,7 +394,7 @@ public class NaturalCamera extends AbstractCamera implements IObserver {
     protected void updatePosition(double dt, double multiplier) {
 	// Calculate velocity if coming from gamepad
 	if (velocityGamepad != 0) {
-	    vel.set(direction).nor().scl(velocityGamepad * multiplier);
+	    vel.set(direction).nor().scl(velocityGamepad * gamepadMultiplier * multiplier);
 	}
 
 	double forceLen = force.len();
