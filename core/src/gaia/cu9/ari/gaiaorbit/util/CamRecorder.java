@@ -159,7 +159,7 @@ public class CamRecorder implements IObserver {
 		EventManager.instance.post(Events.JAVA_EXCEPTION, e);
 		return;
 	    }
-	    EventManager.instance.post(Events.POST_NOTIFICATION, I18n.bundle.format("notif.cameraplay.start"), filepath);
+	    EventManager.instance.post(Events.POST_NOTIFICATION, I18n.bundle.format("notif.cameraplay.start", filepath));
 	    mode = RecorderMode.PLAYING;
 
 	    break;

@@ -235,8 +235,7 @@ public class FullGui implements IGui, IObserver {
 	    @Override
 	    public boolean handle(Event event) {
 		if (event instanceof ChangeEvent) {
-		    String path = "/tmp/1426674173300_gscamera.dat";
-		    EventManager.instance.post(Events.PLAY_CAMERA_CMD, path);
+		    EventManager.instance.post(Events.SHOW_PLAYCAMERA_ACTION);
 		    return true;
 		}
 		return false;

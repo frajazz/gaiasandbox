@@ -136,6 +136,7 @@ public enum Events {
     SHOW_TUTORIAL_ACTION,
     SHOW_PREFERENCES_ACTION,
     SHOW_RUNSCRIPT_ACTION,
+    SHOW_PLAYCAMERA_ACTION,
     /** Informs about the number of running scripts **/
     NUM_RUNNING_SCRIPTS,
     /** Cancels the next script **/
