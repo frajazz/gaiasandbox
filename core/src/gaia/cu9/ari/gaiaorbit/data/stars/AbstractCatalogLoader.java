@@ -1,8 +1,5 @@
 package gaia.cu9.ari.gaiaorbit.data.stars;
 
-import gaia.cu9.ari.gaiaorbit.data.FileLocator;
-import gaia.cu9.ari.gaiaorbit.event.EventManager;
-import gaia.cu9.ari.gaiaorbit.event.Events;
 import gaia.cu9.ari.gaiaorbit.scenegraph.CelestialBody;
 
 import java.io.FileNotFoundException;
@@ -16,18 +13,13 @@ import java.util.Properties;
  *
  */
 public abstract class AbstractCatalogLoader {
-    protected InputStream data;
+    protected String file;
 
     public void initialize(Properties p) {
-	try {
-	    data = FileLocator.getStream(p.getProperty("file"));
-	} catch (FileNotFoundException e) {
-	    EventManager.instance.post(Events.JAVA_EXCEPTION, e);
-	}
+	file = p.getProperty("file");
     }
 
     public List<? extends CelestialBody> loadCatalog(InputStream data) throws FileNotFoundException {
-	this.data = data;
 	return loadCatalog();
     }
 

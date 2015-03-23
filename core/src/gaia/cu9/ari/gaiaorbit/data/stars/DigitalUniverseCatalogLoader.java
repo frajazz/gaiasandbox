@@ -1,5 +1,8 @@
 package gaia.cu9.ari.gaiaorbit.data.stars;
 
+import gaia.cu9.ari.gaiaorbit.data.FileLocator;
+import gaia.cu9.ari.gaiaorbit.event.EventManager;
+import gaia.cu9.ari.gaiaorbit.event.Events;
 import gaia.cu9.ari.gaiaorbit.scenegraph.CelestialBody;
 import gaia.cu9.ari.gaiaorbit.scenegraph.Star;
 import gaia.cu9.ari.gaiaorbit.util.math.Vector3d;
@@ -8,6 +11,7 @@ import gaia.cu9.ari.gaiaorbit.util.parse.Parser;
 import java.io.BufferedReader;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.List;
@@ -25,6 +29,12 @@ public class DigitalUniverseCatalogLoader extends AbstractCatalogLoader implemen
     @Override
     public List<CelestialBody> loadCatalog() throws FileNotFoundException {
 	List<CelestialBody> stars = new ArrayList<CelestialBody>();
+	InputStream data = null;
+	try {
+	    data = FileLocator.getStream(file);
+	} catch (FileNotFoundException e) {
+	    EventManager.instance.post(Events.JAVA_EXCEPTION, e);
+	}
 	BufferedReader br = new BufferedReader(new InputStreamReader(data));
 
 	try {
@@ -41,6 +51,13 @@ public class DigitalUniverseCatalogLoader extends AbstractCatalogLoader implemen
 	    }
 	} catch (IOException e) {
 	    e.printStackTrace();
+	} finally {
+	    try {
+		br.close();
+	    } catch (IOException e) {
+		EventManager.instance.post(Events.JAVA_EXCEPTION, e);
+	    }
+
 	}
 	Gdx.app.log(this.getClass().getCanonicalName(), "Catalog initialized, " + stars.size() + " stars.");
 	return stars;

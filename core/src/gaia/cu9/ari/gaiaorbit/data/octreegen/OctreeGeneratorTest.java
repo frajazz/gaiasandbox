@@ -3,6 +3,7 @@ package gaia.cu9.ari.gaiaorbit.data.octreegen;
 import gaia.cu9.ari.gaiaorbit.data.FileLocator;
 import gaia.cu9.ari.gaiaorbit.data.stars.HYGBinaryLoader;
 import gaia.cu9.ari.gaiaorbit.data.stars.ICatalogLoader;
+import gaia.cu9.ari.gaiaorbit.data.stars.OctreeCatalogLoader;
 import gaia.cu9.ari.gaiaorbit.event.EventManager;
 import gaia.cu9.ari.gaiaorbit.event.Events;
 import gaia.cu9.ari.gaiaorbit.event.IObserver;
