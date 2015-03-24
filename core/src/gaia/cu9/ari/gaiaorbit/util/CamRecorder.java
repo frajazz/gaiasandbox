@@ -4,7 +4,7 @@ import gaia.cu9.ari.gaiaorbit.event.EventManager;
 import gaia.cu9.ari.gaiaorbit.event.Events;
 import gaia.cu9.ari.gaiaorbit.event.IObserver;
 import gaia.cu9.ari.gaiaorbit.util.math.Vector3d;
-import gaia.cu9.visualization.objectserver.utils.Parsers;
+import gaia.cu9.ari.gaiaorbit.util.parse.Parser;
 
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
@@ -73,10 +73,10 @@ public class CamRecorder implements IObserver {
 		    if ((line = is.readLine()) != null) {
 			String[] tokens = line.split("\\s+");
 			// TODO use time to adapt FPS
-			float time = Parsers.parseFloat(tokens[0]);
-			position.set(Parsers.parseDouble(tokens[1]), Parsers.parseDouble(tokens[2]), Parsers.parseDouble(tokens[3]));
-			direction.set(Parsers.parseDouble(tokens[4]), Parsers.parseDouble(tokens[5]), Parsers.parseDouble(tokens[6]));
-			up.set(Parsers.parseDouble(tokens[7]), Parsers.parseDouble(tokens[8]), Parsers.parseDouble(tokens[9]));
+			float time = Parser.parseFloat(tokens[0]);
+			position.set(Parser.parseDouble(tokens[1]), Parser.parseDouble(tokens[2]), Parser.parseDouble(tokens[3]));
+			direction.set(Parser.parseDouble(tokens[4]), Parser.parseDouble(tokens[5]), Parser.parseDouble(tokens[6]));
+			up.set(Parser.parseDouble(tokens[7]), Parser.parseDouble(tokens[8]), Parser.parseDouble(tokens[9]));
 		    } else {
 			// Finish off
 			is.close();
