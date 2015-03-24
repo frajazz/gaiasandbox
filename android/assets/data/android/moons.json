@@ -1,0 +1,46 @@
+{"objects" : [
+
+	{
+	"name" : "Moon",
+	"color" : [.7, .7, .7, 1.0],
+	"size" : 1737.4,
+	"ct" : Moons,
+
+	"absmag" : -1.0,
+	"appmag" : -12.74,
+	
+	"parent" : "Earth", 
+	"impl" : "gaia.cu9.ari.gaiaorbit.scenegraph.Planet",
+
+	"coordinates" : {
+				// This must implement gaia.cu9.ari.gaiaorbit.util.coord.IBodyCoordinates				
+				"impl" : "gaia.cu9.ari.gaiaorbit.util.coord.MoonAACoordinates"
+				},	
+		
+	"rotation" 		: {
+						// In hours
+						"period" : 655.718,
+						// Angle between equatorial plane and orbital plane
+						"axialtilt" : 1.542,
+						// Inclination of orbital plane with respect to ecliptic 
+						"inclination" : 5.145,
+						"ascendingnode" : 359.9949,
+						"meridianangle" : 38.3213
+						},
+						
+	"model"			: {
+						"args" : [true],
+						"type" : "sphere",
+						"params" : {
+									"quality" : 40,
+									"diameter" : 1.0,
+									"flip" : false
+									},
+						"texture" : {
+									"base" : "data/tex/moon.jpg",
+									"hires" : "data/tex/moon-4k.jpg",
+									"normal" : "data/tex/moon-normal.jpg"
+									}
+						}
+	}
+]}

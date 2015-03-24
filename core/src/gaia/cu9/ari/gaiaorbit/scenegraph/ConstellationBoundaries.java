@@ -50,7 +50,7 @@ public class ConstellationBoundaries extends LineObject {
     }
 
     @Override
-    public void updateLocalValues(ITimeFrameProvider time) {
+    public void updateLocalValues(ITimeFrameProvider time, ICamera camera) {
     }
 
 }

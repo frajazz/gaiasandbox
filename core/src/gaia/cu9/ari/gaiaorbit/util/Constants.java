@@ -131,10 +131,6 @@ public class Constants {
      * 
      */
     public static boolean mobile;
-    /** Minimum opacity value for pixel objects **/
-    public static float pointAlphaMin;
-    /** Maximum opacity value for pixel objects **/
-    public static float pointAlphaMax;
 
     static {
 	if (Gdx.app != null) {
@@ -142,9 +138,6 @@ public class Constants {
 	} else {
 	    mobile = false;
 	}
-
-	pointAlphaMin = mobile ? 0.3f : 0.05f;
-	pointAlphaMax = mobile ? 1f : 1f;
     }
 
 }

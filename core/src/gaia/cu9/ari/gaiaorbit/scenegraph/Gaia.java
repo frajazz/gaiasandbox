@@ -19,17 +19,17 @@ import com.badlogic.gdx.math.Quaternion;
 public class Gaia extends ModelBody {
 
     @Override
-    public float THRESHOLD_ANGLE_NONE() {
+    public double THRESHOLD_ANGLE_NONE() {
 	return super.THRESHOLD_ANGLE_POINT() / 5e7f;
     }
 
     @Override
-    public float THRESHOLD_ANGLE_POINT() {
+    public double THRESHOLD_ANGLE_POINT() {
 	return super.THRESHOLD_ANGLE_POINT() / 5e6f;
     }
 
     @Override
-    public float THRESHOLD_ANGLE_SHADER() {
+    public double THRESHOLD_ANGLE_QUAD() {
 	return super.THRESHOLD_ANGLE_POINT() / 5f;
     }
 
@@ -57,7 +57,7 @@ public class Gaia extends ModelBody {
     }
 
     @Override
-    public void updateLocalValues(ITimeFrameProvider time) {
+    public void updateLocalValues(ITimeFrameProvider time, ICamera camera) {
 	forceUpdatePosition(time, false);
     }
 

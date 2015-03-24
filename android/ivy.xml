@@ -9,5 +9,7 @@
   </configurations>
   <dependencies>
     <dependency org="com.badlogicgames.gdx" name="gdx-backend-android" rev="&gdx.version;" transitive="false"/>
+    <dependency org="com.badlogicgames.gdx" name="gdx-backend-android" rev="&gdx.version;" transitive="false"/>
+    <dependency org="com.badlogicgames.gdx" name="gdx-controllers-android" rev="&gdx.version;" transitive="false"/>
 </dependencies>
 </ivy-module>

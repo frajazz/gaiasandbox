@@ -3,7 +3,7 @@
 	{
 	"name" : "Equatorial grid",
 	"color" : [1.0, 0.0, 0.0, 0.5],
-	"size" : 1.2e12,
+	"size" : 0.1,
 	"ct" : Equatorial,
 
 	"parent" : "Universe", 
@@ -14,7 +14,7 @@
 	{
 	"name" : "Ecliptic grid",
 	"color" : [0.0, 1.0, 0.0, 0.5],
-	"size" : 1.3e12,
+	"size" : 0.12,
 	"ct" : Ecliptic,
 	"transformName" : equatorialToEcliptic,
 
@@ -26,7 +26,7 @@
 	{
 	"name" : "Galactic grid",
 	"color" : [0.3, 0.5, 1.0, 0.5],
-	"size" : 1.4e12,
+	"size" : 0.14,
 	"ct" : Galactic,
 	"transformName" : equatorialToGalactic,
 
@@ -60,7 +60,7 @@
 							"diameter" : 1.0
 							},
 				"texture" : {
-							"base" : "data/tex/milky_way.png"
+							"base" : "data/tex/milky_way_small.png"
 							}
 				}
 	},
@@ -69,7 +69,7 @@
 	{
 	"name" : "MW",
 	"color" : [1.0, 1.0, 1.0, 0.3],
-	"size" : 1.6e12,
+	"size" : 0.2,
 	"ct" : MilkyWay,
 	"transformName" : equatorialToGalactic,
 
@@ -93,7 +93,7 @@
 							"flip" : true
 							},
 				"texture" : {
-							"base" : "data/tex/mw.png"
+							"base" : "data/tex/mw_small.jpg"
 							}
 				}
 	}

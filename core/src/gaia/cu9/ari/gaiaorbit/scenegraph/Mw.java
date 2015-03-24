@@ -43,7 +43,8 @@ public class Mw extends AbstractPositionEntity implements IModelRenderable {
 	    try {
 		Method m = c.getMethod(transformName);
 		Matrix4d trf = (Matrix4d) m.invoke(null);
-		localTransform.set(trf.valuesf());
+		Matrix4 aux = new Matrix4(trf.valuesf());
+		localTransform.mul(aux);
 	    } catch (NoSuchMethodException | SecurityException | IllegalAccessException | IllegalArgumentException | InvocationTargetException e) {
 		Gdx.app.error(Mw.class.getName(), "Error getting/invoking method Coordinates." + transformName + "()");
 	    }
@@ -67,7 +68,7 @@ public class Mw extends AbstractPositionEntity implements IModelRenderable {
     }
 
     @Override
-    public void updateLocalValues(ITimeFrameProvider time) {
+    public void updateLocalValues(ITimeFrameProvider time, ICamera camera) {
     }
 
     @Override

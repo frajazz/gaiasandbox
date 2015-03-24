@@ -24,7 +24,6 @@ public class MobileGui implements IGui {
      */
     protected Stage ui;
 
-    protected CameraInfoInterface cameraInterface;
     protected FocusInfoInterface focusInterface;
     protected NotificationsInterface notificationsInterface;
     protected MessagesInterface messagesInterface;
@@ -61,11 +60,6 @@ public class MobileGui implements IGui {
 	focusInterface.setFillParent(true);
 	focusInterface.right().bottom();
 	focusInterface.pad(0, 0, 5, 5);
-
-	// CAMERA INFORMATION - BOTTOM CENTER
-	cameraInterface = new CameraInfoInterface(skin, sformat, lock);
-	cameraInterface.setFillParent(true);
-	cameraInterface.center().bottom();
 
 	// DEBUG INFO - TOP RIGHT
 	debugInterface = new DebugInterface(skin, lock);
@@ -109,9 +103,6 @@ public class MobileGui implements IGui {
 	    }
 	    if (focusInterface != null) {
 		ui.addActor(focusInterface);
-	    }
-	    if (cameraInterface != null) {
-		ui.addActor(cameraInterface);
 	    }
 	    if (inputInterface != null) {
 		ui.addActor(inputInterface);

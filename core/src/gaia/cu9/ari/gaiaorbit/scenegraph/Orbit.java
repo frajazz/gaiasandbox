@@ -99,7 +99,7 @@ public class Orbit extends LineObject {
     }
 
     @Override
-    public void updateLocalValues(ITimeFrameProvider time) {
+    public void updateLocalValues(ITimeFrameProvider time, ICamera camera) {
     }
 
     @Override

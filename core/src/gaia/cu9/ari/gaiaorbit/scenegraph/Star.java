@@ -47,17 +47,17 @@ public class Star extends CelestialBody {
     };
 
     @Override
-    public float THRESHOLD_ANGLE_NONE() {
+    public double THRESHOLD_ANGLE_NONE() {
 	return TH_ANGLE_NONE;
     }
 
     @Override
-    public float THRESHOLD_ANGLE_POINT() {
+    public double THRESHOLD_ANGLE_POINT() {
 	return TH_ANGLE_POINT;
     }
 
     @Override
-    public float THRESHOLD_ANGLE_SHADER() {
+    public double THRESHOLD_ANGLE_QUAD() {
 	return 0;
     }
 
@@ -222,7 +222,7 @@ public class Star extends CelestialBody {
 	    } else {
 		if (viewAngleApparent < THRESHOLD_ANGLE_POINT() * camera.getFovFactor()) {
 		    // Update opacity
-		    opacity *= MathUtilsd.lint(viewAngleApparent, 0, THRESHOLD_ANGLE_POINT(), Constants.pointAlphaMin, Constants.pointAlphaMax);
+		    opacity *= MathUtilsd.lint(viewAngleApparent, 0, THRESHOLD_ANGLE_POINT(), GlobalConf.scene.POINT_ALPHA_MIN, GlobalConf.scene.POINT_ALPHA_MAX);
 
 		    addToRender(this, RenderGroup.POINT);
 		} else {
@@ -309,7 +309,7 @@ public class Star extends CelestialBody {
     }
 
     @Override
-    public void updateLocalValues(ITimeFrameProvider time) {
+    public void updateLocalValues(ITimeFrameProvider time, ICamera camera) {
     }
 
     @Override

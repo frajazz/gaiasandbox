@@ -474,6 +474,13 @@ public class GlobalConf {
 	public boolean ONLY_OBSERVED_STARS;
 	public boolean COMPUTE_GAIA_SCAN;
 
+	public double STAR_TH_ANGLE_NONE;
+	public double STAR_TH_ANGLE_POINT;
+	public double STAR_TH_ANGLE_QUAD;
+
+	public float POINT_ALPHA_MIN;
+	public float POINT_ALPHA_MAX;
+
 	public SceneConf() {
 	    EventManager.instance.subscribe(this, Events.FOCUS_LOCK_CMD, Events.STAR_BRIGHTNESS_CMD, Events.FOV_CHANGED_CMD, Events.CAMERA_SPEED_CMD, Events.ROTATION_SPEED_CMD, Events.TURNING_SPEED_CMD, Events.SPEED_LIMIT_CMD, Events.TRANSIT_COLOUR_CMD, Events.ONLY_OBSERVED_STARS_CMD, Events.COMPUTE_GAIA_SCAN_CMD);
 	}
@@ -490,6 +497,11 @@ public class GlobalConf {
 	    p.setProperty("scene.camera.rotate.vel", Float.toString(ROTATION_SPEED));
 	    p.setProperty("scene.focuslock", Boolean.toString(FOCUS_LOCK));
 	    p.setProperty("scene.labelfactor", Float.toString(LABEL_NUMBER_FACTOR));
+	    p.setProperty("scene.star.thresholdangle.quad", Double.toString(Math.toDegrees(STAR_TH_ANGLE_QUAD)));
+	    p.setProperty("scene.star.thresholdangle.point", Double.toString(Math.toDegrees(STAR_TH_ANGLE_POINT)));
+	    p.setProperty("scene.star.thresholdangle.none", Double.toString(Math.toDegrees(STAR_TH_ANGLE_NONE)));
+	    p.setProperty("scene.point.alpha.min", Float.toString(POINT_ALPHA_MIN));
+	    p.setProperty("scene.point.alpha.max", Float.toString(POINT_ALPHA_MAX));
 	    // Visibility of components
 	    int idx = 0;
 	    ComponentType[] cts = ComponentType.values();
@@ -513,6 +525,11 @@ public class GlobalConf {
 	    TURNING_SPEED = Float.parseFloat(p.getProperty("scene.camera.turn.vel"));
 	    ROTATION_SPEED = Float.parseFloat(p.getProperty("scene.camera.rotate.vel"));
 	    LABEL_NUMBER_FACTOR = Float.parseFloat(p.getProperty("scene.labelfactor"));
+	    STAR_TH_ANGLE_QUAD = Math.toRadians(Double.parseDouble(p.getProperty("scene.star.thresholdangle.quad")));
+	    STAR_TH_ANGLE_POINT = Math.toRadians(Double.parseDouble(p.getProperty("scene.star.thresholdangle.point")));
+	    STAR_TH_ANGLE_NONE = Math.toRadians(Double.parseDouble(p.getProperty("scene.star.thresholdangle.none")));
+	    POINT_ALPHA_MIN = Float.parseFloat(p.getProperty("scene.point.alpha.min"));
+	    POINT_ALPHA_MAX = Float.parseFloat(p.getProperty("scene.point.alpha.max"));
 	    //Visibility of components
 	    ComponentType[] cts = ComponentType.values();
 	    VISIBILITY = new boolean[cts.length];

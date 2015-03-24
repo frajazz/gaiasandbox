@@ -52,19 +52,19 @@ public abstract class CelestialBody extends AbstractPositionEntity implements IL
     /**
      * Angle limit for rendering at all. If angle is smaller than this quantity, no rendering happens.
      */
-    public abstract float THRESHOLD_ANGLE_NONE();
+    public abstract double THRESHOLD_ANGLE_NONE();
 
     /**
      * Angle limit for rendering as shader. If angle is any bigger, we render as a model.
      */
-    public abstract float THRESHOLD_ANGLE_SHADER();
+    public abstract double THRESHOLD_ANGLE_QUAD();
 
     /**
      * Angle limit for rendering as point. If angle is any bigger, we render with shader.
      */
-    public abstract float THRESHOLD_ANGLE_POINT();
+    public abstract double THRESHOLD_ANGLE_POINT();
 
-    private float TH_OVER_FACTOR;
+    private double TH_OVER_FACTOR;
 
     /** Absolute magnitude, m = -2.5 log10(flux), with the flux at 10 pc **/
     public float absmag;
@@ -137,7 +137,7 @@ public abstract class CelestialBody extends AbstractPositionEntity implements IL
     float precomp = -1;
 
     /**
-     * Shader render, for planets, bodies and stars.
+     * Shader render, for planets and bodies, not stars.
      */
     @Override
     public void render(ShaderProgram shader, float alpha, boolean colorTransit, Mesh mesh, ICamera camera) {
@@ -178,10 +178,10 @@ public abstract class CelestialBody extends AbstractPositionEntity implements IL
     }
 
     public float getFuzzyRenderSize(ICamera camera) {
-	float size;
-	float thShaderOverlap = THRESHOLD_ANGLE_SHADER() * ModelBody.SHADER_MODEL_OVERLAP_FACTOR;
+	double size;
+	double thShaderOverlap = THRESHOLD_ANGLE_QUAD() * ModelBody.SHADER_MODEL_OVERLAP_FACTOR;
 	float tanThShaderOverlapDist = (float) Math.tan(thShaderOverlap) * distToCamera;
-	float thPointOverlap = THRESHOLD_ANGLE_POINT() * ModelBody.SHADER_MODEL_OVERLAP_FACTOR;
+	double thPointOverlap = THRESHOLD_ANGLE_POINT() * ModelBody.SHADER_MODEL_OVERLAP_FACTOR;
 	// Size stays the same until angle gets very small, in which case it starts to decrease
 	if (viewAngle < thPointOverlap) {
 	    // Angle is small, we interpolate the size until we get to the point
@@ -197,7 +197,7 @@ public abstract class CelestialBody extends AbstractPositionEntity implements IL
 	    size = this.size;
 	}
 	size /= camera.getFovFactor();
-	return size;
+	return (float) size;
     }
 
     /**
@@ -389,7 +389,7 @@ public abstract class CelestialBody extends AbstractPositionEntity implements IL
     @Override
     public float labelAlpha() {
 	// Increase the 2.5f to increase the range where the label is kind of transparent. 
-	return Math.max(0, Math.min(.95f, (viewAngle - TH_OVER_FACTOR) / (TH_OVER_FACTOR * 2.5f))) * compalpha;
+	return (float) Math.max(0, Math.min(.95f, (viewAngle - TH_OVER_FACTOR) / (TH_OVER_FACTOR * 2.5f))) * compalpha;
     }
 
     @Override

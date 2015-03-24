@@ -14,22 +14,22 @@ import com.badlogic.gdx.graphics.g3d.ModelBatch;
 
 public class Planet extends ModelBody implements IAtmosphereRenderable {
 
-    private static final float TH_ANGLE_NONE = ModelBody.TH_ANGLE_POINT / 1e5f;
-    private static final float TH_ANGLE_POINT = ModelBody.TH_ANGLE_POINT / 1e3f;
-    private static final float TH_ANGLE_SHADER = ModelBody.TH_ANGLE_POINT / 3f;
+    private static final double TH_ANGLE_NONE = ModelBody.TH_ANGLE_POINT / 1e5;
+    private static final double TH_ANGLE_POINT = ModelBody.TH_ANGLE_POINT / 1e3;
+    private static final double TH_ANGLE_SHADER = ModelBody.TH_ANGLE_POINT / 3.0;
 
     @Override
-    public float THRESHOLD_ANGLE_NONE() {
+    public double THRESHOLD_ANGLE_NONE() {
 	return TH_ANGLE_NONE;
     }
 
     @Override
-    public float THRESHOLD_ANGLE_POINT() {
+    public double THRESHOLD_ANGLE_POINT() {
 	return TH_ANGLE_POINT;
     }
 
     @Override
-    public float THRESHOLD_ANGLE_SHADER() {
+    public double THRESHOLD_ANGLE_QUAD() {
 	return TH_ANGLE_SHADER;
     }
 
@@ -85,7 +85,7 @@ public class Planet extends ModelBody implements IAtmosphereRenderable {
     }
 
     @Override
-    public void updateLocalValues(ITimeFrameProvider time) {
+    public void updateLocalValues(ITimeFrameProvider time, ICamera camera) {
 	forceUpdateLocalValues(time, false);
     }
 
