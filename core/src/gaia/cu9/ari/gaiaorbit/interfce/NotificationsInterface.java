@@ -33,6 +33,7 @@ public class NotificationsInterface extends Table implements IObserver {
     LinkedList<MessageBean> historical;
     boolean displaying = false;
     boolean consoleLog = true;
+    boolean permanent = false;
 
     /** Lock object for synchronization **/
     Object lock;
@@ -49,20 +50,25 @@ public class NotificationsInterface extends Table implements IObserver {
 	this.add(message).left();
 	this.historical = new LinkedList<MessageBean>();
 	this.df = DateFormat.getDateTimeInstance(DateFormat.MEDIUM, DateFormat.MEDIUM);
-	EventManager.getInstance().subscribe(this, Events.POST_NOTIFICATION, Events.FOCUS_CHANGED, Events.TOGGLE_TIME_CMD, Events.TOGGLE_VISIBILITY_CMD, Events.CAMERA_MODE_CMD, Events.PACE_CHANGED_INFO, Events.FOCUS_LOCK_CMD, Events.TOGGLE_AMBIENT_LIGHT, Events.FOV_CHANGE_NOTIFICATION, Events.JAVA_EXCEPTION, Events.ORBIT_DATA_LOADED, Events.SCREENSHOT_INFO, Events.COMPUTE_GAIA_SCAN_CMD, Events.ONLY_OBSERVED_STARS_CMD, Events.TRANSIT_COLOUR_CMD, Events.LIMIT_MAG_CMD, Events.TOGGLE_STEREOSCOPIC, Events.TOGGLE_CLEANMODE, Events.TOGGLE_GLOBALPAUSE);
+	EventManager.instance.subscribe(this, Events.POST_NOTIFICATION, Events.FOCUS_CHANGED, Events.TOGGLE_TIME_CMD, Events.TOGGLE_VISIBILITY_CMD, Events.CAMERA_MODE_CMD, Events.PACE_CHANGED_INFO, Events.FOCUS_LOCK_CMD, Events.TOGGLE_AMBIENT_LIGHT, Events.FOV_CHANGE_NOTIFICATION, Events.JAVA_EXCEPTION, Events.ORBIT_DATA_LOADED, Events.SCREENSHOT_INFO, Events.COMPUTE_GAIA_SCAN_CMD, Events.ONLY_OBSERVED_STARS_CMD, Events.TRANSIT_COLOUR_CMD, Events.LIMIT_MAG_CMD, Events.TOGGLE_STEREOSCOPIC, Events.TOGGLE_CLEANMODE);
     }
 
     private void addMessage(String msg) {
+	addMessage(msg, false);
+    }
+
+    private void addMessage(String msg, boolean permanent) {
 	this.historical.add(new MessageBean(msg));
 	this.message.setText(msg);
-	displaying = true;
+	this.displaying = true;
+	this.permanent = permanent;
 	if (consoleLog) {
 	    Gdx.app.log(df.format(new Date()), msg);
 	}
     }
 
     public void update() {
-	if (displaying) {
+	if (displaying && !permanent) {
 	    if (new Date().getTime() - historical.getLast().date.getTime() > msTimeout) {
 		displaying = false;
 		message.setText("");
@@ -76,19 +82,24 @@ public class NotificationsInterface extends Table implements IObserver {
 	    switch (event) {
 	    case POST_NOTIFICATION:
 		String message = "";
+		boolean perm = false;
 		for (int i = 0; i < data.length; i++) {
-		    message += (String) data[i];
-		    if (i < data.length - 1) {
-			message += " - ";
+		    if (i == data.length - 1 && data[i] instanceof Boolean) {
+			perm = (Boolean) data[i];
+		    } else {
+			message += (String) data[i];
+			if (i < data.length - 1 && !(i == data.length - 2 && data[data.length - 1] instanceof Boolean)) {
+			    message += " - ";
+			}
 		    }
 		}
-		addMessage(message);
+		addMessage(message, perm);
 		break;
 	    case FOCUS_CHANGED:
 		if (data[0] != null) {
 		    SceneGraphNode sgn = null;
 		    if (data[0] instanceof String) {
-			sgn = GaiaSandbox.getInstance().sg.getNode((String) data[0]);
+			sgn = GaiaSandbox.instance.sg.getNode((String) data[0]);
 		    } else {
 			sgn = (SceneGraphNode) data[0];
 		    }
@@ -141,7 +152,6 @@ public class NotificationsInterface extends Table implements IObserver {
 		break;
 	    case TOGGLE_STEREOSCOPIC:
 	    case TOGGLE_CLEANMODE:
-	    case TOGGLE_GLOBALPAUSE:
 		addMessage(I18n.bundle.format("notif.toggle", data[0]));
 	    }
 	}

@@ -147,7 +147,7 @@ public class ScriptDialog extends I18nJFrame {
 		    frame.dispose();
 		}
 		if (code != null) {
-		    EventManager.getInstance().post(Events.RUN_SCRIPT_PYCODE, code, GlobalConf.program.SCRIPT_LOCATION, async);
+		    EventManager.instance.post(Events.RUN_SCRIPT_PYCODE, code, GlobalConf.program.SCRIPT_LOCATION, async);
 		}
 	    }
 	});

@@ -36,7 +36,7 @@ public class EventManager implements IObserver {
     }
 
     /** Singleton pattern **/
-    private static final EventManager instance = new EventManager();
+    public static final EventManager instance = new EventManager();
 
     private static final long START = System.currentTimeMillis();
 
@@ -51,11 +51,6 @@ public class EventManager implements IObserver {
 
     /** The time frame to use if none is specified **/
     private TimeFrame defaultTimeFrame;
-
-    /** Returns the singleton instance of the message dispatcher. */
-    public static EventManager getInstance() {
-	return instance;
-    }
 
     public EventManager() {
 	this.pool = new Pool<Telegram>(20) {

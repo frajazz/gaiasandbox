@@ -11,13 +11,14 @@ import gaia.cu9.ari.gaiaorbit.util.coord.Coordinates;
 import gaia.cu9.ari.gaiaorbit.util.math.MathUtilsd;
 import gaia.cu9.ari.gaiaorbit.util.math.Matrix4d;
 import gaia.cu9.ari.gaiaorbit.util.math.Vector3d;
+import gaia.cu9.ari.gaiaorbit.util.time.ITimeFrameProvider;
 
 import java.lang.reflect.Method;
 import java.util.Date;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.assets.AssetManager;
-import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
+import com.badlogic.gdx.graphics.glutils.ImmediateModeRenderer20;
 
 public class Orbit extends LineObject {
 
@@ -118,9 +119,8 @@ public class Orbit extends LineObject {
     }
 
     @Override
-    public void render(ShapeRenderer renderer, float alpha) {
+    public void render(ImmediateModeRenderer20 renderer, float alpha) {
 	alpha *= this.alpha;
-	renderer.setColor(cc[0], cc[1], cc[2], alpha);
 
 	// Make origin Gaia
 	Vector3d parentPos = null;
@@ -141,7 +141,10 @@ public class Orbit extends LineObject {
 	    prev.mul(localTransformD);
 	    curr.mul(localTransformD);
 
-	    renderer.line((float) prev.x, (float) prev.y, (float) prev.z, (float) curr.x, (float) curr.y, (float) curr.z);
+	    renderer.color(cc[0], cc[1], cc[2], alpha);
+	    renderer.vertex((float) prev.x, (float) prev.y, (float) prev.z);
+	    renderer.color(cc[0], cc[1], cc[2], alpha);
+	    renderer.vertex((float) curr.x, (float) curr.y, (float) curr.z);
 	}
     }
 
@@ -171,7 +174,7 @@ public class Orbit extends LineObject {
 		Method m = Coordinates.class.getMethod(transformFunction);
 		this.transformFunction = (Matrix4d) m.invoke(null);
 	    } catch (Exception e) {
-		EventManager.getInstance().post(Events.JAVA_EXCEPTION, e);
+		EventManager.instance.post(Events.JAVA_EXCEPTION, e);
 	    }
 
 	}

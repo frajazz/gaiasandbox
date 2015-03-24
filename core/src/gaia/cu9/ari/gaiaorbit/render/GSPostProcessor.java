@@ -33,12 +33,12 @@ public class GSPostProcessor implements IPostProcessor, IObserver {
 
 	// Output AA info.
 	if (GlobalConf.postprocess.POSTPROCESS_ANTIALIAS == -1) {
-	    EventManager.getInstance().post(Events.POST_NOTIFICATION, this.getClass().getSimpleName(), I18n.bundle.format("notif.selected", "FXAA"));
+	    EventManager.instance.post(Events.POST_NOTIFICATION, this.getClass().getSimpleName(), I18n.bundle.format("notif.selected", "FXAA"));
 	} else if (GlobalConf.postprocess.POSTPROCESS_ANTIALIAS == -2) {
-	    EventManager.getInstance().post(Events.POST_NOTIFICATION, this.getClass().getSimpleName(), I18n.bundle.format("notif.selected", "NFAA"));
+	    EventManager.instance.post(Events.POST_NOTIFICATION, this.getClass().getSimpleName(), I18n.bundle.format("notif.selected", "NFAA"));
 	}
 
-	EventManager.getInstance().subscribe(this, Events.PROPERTIES_WRITTEN, Events.BLOOM_CMD, Events.LENS_FLARE_CMD);
+	EventManager.instance.subscribe(this, Events.PROPERTIES_WRITTEN, Events.BLOOM_CMD, Events.LENS_FLARE_CMD);
 
     }
 

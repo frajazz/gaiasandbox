@@ -17,6 +17,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.InputStream;
 
+import javax.swing.JFileChooser;
 import javax.swing.JFrame;
 import javax.swing.UIManager;
 import javax.swing.plaf.FontUIResource;
@@ -24,6 +25,10 @@ import javax.swing.plaf.FontUIResource;
 import sandbox.script.JythonFactory;
 
 import com.alee.laf.WebLookAndFeel;
+import com.alee.laf.filechooser.WebFileChooser;
+import com.alee.laf.filechooser.WebFileChooserPanel;
+import com.alee.laf.scroll.WebScrollPane;
+import com.alee.laf.splitpane.WebSplitPane;
 import com.badlogic.gdx.Files;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.backends.lwjgl.LwjglApplication;
@@ -89,7 +94,7 @@ public class GaiaSandboxDesktop implements IObserver {
 
     public GaiaSandboxDesktop() {
 	super();
-	EventManager.getInstance().subscribe(this, Events.SHOW_PREFERENCES_ACTION, Events.SHOW_ABOUT_ACTION, Events.SHOW_RUNSCRIPT_ACTION, Events.JAVA_EXCEPTION);
+	EventManager.instance.subscribe(this, Events.SHOW_PREFERENCES_ACTION, Events.SHOW_ABOUT_ACTION, Events.SHOW_RUNSCRIPT_ACTION, Events.JAVA_EXCEPTION, Events.SHOW_PLAYCAMERA_ACTION);
     }
 
     private void init() {
@@ -112,7 +117,7 @@ public class GaiaSandboxDesktop implements IObserver {
 	cfg.samples = MathUtilsd.clamp(GlobalConf.postprocess.POSTPROCESS_ANTIALIAS, 0, 16);
 	cfg.vSyncEnabled = GlobalConf.screen.VSYNC;
 	cfg.foregroundFPS = 400;
-	cfg.backgroundFPS = 30;
+	cfg.backgroundFPS = 10;
 	cfg.useGL30 = false;
 	cfg.addIcon("icon/ic_launcher.png", Files.FileType.Internal);
 
@@ -127,9 +132,35 @@ public class GaiaSandboxDesktop implements IObserver {
     @Override
     public void notify(Events event, Object... data) {
 	switch (event) {
+	case SHOW_PLAYCAMERA_ACTION:
+	    // Exit fullscreen
+	    EventManager.instance.post(Events.FULLSCREEN_CMD, false);
+	    Gdx.app.postRunnable(new Runnable() {
+
+		@Override
+		public void run() {
+		    // Show file dialog
+		    WebFileChooser fc = new WebFileChooser();
+		    fc.setCurrentDirectory(new File(System.getProperty("java.io.tmpdir")));
+		    WebSplitPane wsp = ((WebSplitPane) ((WebFileChooserPanel) fc.getComponents()[0]).getComponent(1));
+		    ((WebScrollPane) wsp.getComponent(1)).getVerticalScrollBar().setUnitIncrement(50);
+		    ((WebScrollPane) wsp.getComponent(2)).getVerticalScrollBar().setUnitIncrement(50);
+		    int returnVal = fc.showOpenDialog(fc);
+
+		    if (returnVal == JFileChooser.APPROVE_OPTION) {
+			File file = fc.getSelectedFile();
+			// Send command to play file
+			EventManager.instance.post(Events.PLAY_CAMERA_CMD, file.getAbsolutePath());
+		    } else {
+			// Cancelled
+		    }
+		}
+
+	    });
+	    break;
 	case SHOW_RUNSCRIPT_ACTION:
 	    // Exit fullscreen
-	    EventManager.getInstance().post(Events.FULLSCREEN_CMD, false);
+	    EventManager.instance.post(Events.FULLSCREEN_CMD, false);
 	    Gdx.app.postRunnable(new Runnable() {
 
 		@Override
@@ -143,7 +174,7 @@ public class GaiaSandboxDesktop implements IObserver {
 	    break;
 	case SHOW_PREFERENCES_ACTION:
 	    // Exit fullscreen
-	    EventManager.getInstance().post(Events.FULLSCREEN_CMD, false);
+	    EventManager.instance.post(Events.FULLSCREEN_CMD, false);
 	    Gdx.app.postRunnable(new Runnable() {
 
 		@Override
@@ -156,7 +187,7 @@ public class GaiaSandboxDesktop implements IObserver {
 	    break;
 	case SHOW_ABOUT_ACTION:
 	    // Exit fullscreen
-	    EventManager.getInstance().post(Events.FULLSCREEN_CMD, false);
+	    EventManager.instance.post(Events.FULLSCREEN_CMD, false);
 	    Gdx.app.postRunnable(new Runnable() {
 
 		@Override

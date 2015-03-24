@@ -103,7 +103,7 @@ public class MainMenuBar extends JMenuBar implements IObserver {
 	menuItem.addActionListener(new ActionListener() {
 	    @Override
 	    public void actionPerformed(ActionEvent e) {
-		EventManager.getInstance().post(Events.TOGGLE_TIME_CMD);
+		EventManager.instance.post(Events.TOGGLE_TIME_CMD);
 	    }
 	});
 	menu.add(menuItem);
@@ -118,7 +118,7 @@ public class MainMenuBar extends JMenuBar implements IObserver {
 	menuItem.addActionListener(new ActionListener() {
 	    @Override
 	    public void actionPerformed(ActionEvent e) {
-		EventManager.getInstance().post(Events.PACE_CHANGE_CMD, 0.00028f);
+		EventManager.instance.post(Events.PACE_CHANGE_CMD, 0.00028f);
 	    }
 	});
 	menu.add(menuItem);
@@ -133,7 +133,7 @@ public class MainMenuBar extends JMenuBar implements IObserver {
 	menuItem.addActionListener(new ActionListener() {
 	    @Override
 	    public void actionPerformed(ActionEvent e) {
-		EventManager.getInstance().post(Events.PACE_CHANGE_CMD, 0.00028f * 2f);
+		EventManager.instance.post(Events.PACE_CHANGE_CMD, 0.00028f * 2f);
 	    }
 	});
 	menu.add(menuItem);
@@ -181,7 +181,7 @@ public class MainMenuBar extends JMenuBar implements IObserver {
 			if (gui.stringNode.containsKey(text.toLowerCase())) {
 			    SceneGraphNode node = gui.stringNode.get(text.toLowerCase());
 			    if (node instanceof CelestialBody) {
-				EventManager.getInstance().post(Events.FOCUS_CHANGE_CMD, node, false);
+				EventManager.instance.post(Events.FOCUS_CHANGE_CMD, node, false);
 				gui.selectNodeInTree(node);
 			    }
 			}
@@ -263,7 +263,7 @@ public class MainMenuBar extends JMenuBar implements IObserver {
 	menuItem.addActionListener(new ActionListener() {
 	    @Override
 	    public void actionPerformed(ActionEvent e) {
-		EventManager.getInstance().post(Events.FULLSCREEN_CMD);
+		EventManager.instance.post(Events.FULLSCREEN_CMD);
 	    }
 	});
 	menu.add(menuItem);
@@ -280,7 +280,7 @@ public class MainMenuBar extends JMenuBar implements IObserver {
 	menuItem.addActionListener(new ActionListener() {
 	    @Override
 	    public void actionPerformed(ActionEvent e) {
-		EventManager.getInstance().post(Events.SCREENSHOT_CMD, GlobalConf.screenshot.SCREENSHOT_WIDTH, GlobalConf.screenshot.SCREENSHOT_HEIGHT, GlobalConf.screenshot.SCREENSHOT_FOLDER);
+		EventManager.instance.post(Events.SCREENSHOT_CMD, GlobalConf.screenshot.SCREENSHOT_WIDTH, GlobalConf.screenshot.SCREENSHOT_HEIGHT, GlobalConf.screenshot.SCREENSHOT_FOLDER);
 	    }
 	});
 	menu.add(menuItem);
@@ -355,7 +355,7 @@ public class MainMenuBar extends JMenuBar implements IObserver {
 	});
 	menu.add(menuItem);
 
-	EventManager.getInstance().subscribe(this, Events.SCREENSHOT_INFO);
+	EventManager.instance.subscribe(this, Events.SCREENSHOT_INFO);
     }
 
     // Exit app

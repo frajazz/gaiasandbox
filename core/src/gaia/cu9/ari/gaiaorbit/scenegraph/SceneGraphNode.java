@@ -3,10 +3,13 @@ package gaia.cu9.ari.gaiaorbit.scenegraph;
 import gaia.cu9.ari.gaiaorbit.render.IRenderable;
 import gaia.cu9.ari.gaiaorbit.render.SceneGraphRenderer;
 import gaia.cu9.ari.gaiaorbit.render.SceneGraphRenderer.ComponentType;
+import gaia.cu9.ari.gaiaorbit.scenegraph.octreewrapper.AbstractOctreeWrapper;
 import gaia.cu9.ari.gaiaorbit.util.concurrent.ThreadIndexer;
 import gaia.cu9.ari.gaiaorbit.util.math.Matrix4d;
 import gaia.cu9.ari.gaiaorbit.util.math.Vector2d;
 import gaia.cu9.ari.gaiaorbit.util.math.Vector3d;
+import gaia.cu9.ari.gaiaorbit.util.time.ITimeFrameProvider;
+import gaia.cu9.ari.gaiaorbit.util.tree.IPosition;
 
 import java.util.Iterator;
 import java.util.List;
@@ -25,7 +28,7 @@ import com.badlogic.gdx.utils.Pools;
  *
  * @param <T>
  */
-public class SceneGraphNode {
+public class SceneGraphNode implements ISceneGraphNode, IPosition {
     public static final String ROOT_NAME = "Universe";
 
     /** Static Thread local auxiliary Vector3d **/
@@ -221,9 +224,10 @@ public class SceneGraphNode {
     @SafeVarargs
     public final void add(SceneGraphNode... children) {
 	if (this.children == null) {
-	    initChildren(this.parent == null ? 100000 : children.length * 5, this.parent == null ? 1000 : children.length);
+	    initChildren(this.parent == null || this instanceof AbstractOctreeWrapper ? 300000 : children.length * 5, this.parent == null ? 1000 : children.length);
 	}
-	for (SceneGraphNode child : children) {
+	for (int i = 0; i < children.length; i++) {
+	    SceneGraphNode child = children[i];
 	    this.children.add(child);
 	    child.parent = this;
 	}
@@ -250,6 +254,27 @@ public class SceneGraphNode {
 	    while (ancestor != null) {
 		ancestor.numChildren++;
 		ancestor = ancestor.parent;
+	    }
+	}
+    }
+
+    /**
+     * Removes the given child from this node, if it exists.
+     * @param child
+     * @param updateAncestorCount
+     */
+    public final void removeChild(SceneGraphNode child, boolean updateAncestorCount) {
+	if (this.children.contains(child)) {
+	    this.children.remove(child);
+	    child.parent = null;
+	    numChildren--;
+	    if (updateAncestorCount) {
+		// Update num children in ancestors
+		SceneGraphNode ancestor = this.parent;
+		while (ancestor != null) {
+		    ancestor.numChildren--;
+		    ancestor = ancestor.parent;
+		}
 	    }
 	}
     }
@@ -283,7 +308,7 @@ public class SceneGraphNode {
      * Adds the given list of children as child nodes.
      * @param children
      */
-    public final void add(List<? extends SceneGraphNode> children) {
+    public void add(List<? extends SceneGraphNode> children) {
 	add(children.toArray(new SceneGraphNode[children.size()]));
     }
 
@@ -322,7 +347,9 @@ public class SceneGraphNode {
 	if (this.name != null && this.name.equals(name)) {
 	    return this;
 	} else if (children != null) {
-	    for (SceneGraphNode child : children) {
+	    int size = children.size();
+	    for (int i = 0; i < size; i++) {
+		SceneGraphNode child = children.get(i);
 		SceneGraphNode n = child.getNode(name);
 		if (n != null) {
 		    return n;
@@ -336,7 +363,9 @@ public class SceneGraphNode {
 	if (this.id != null && this.id.equals(id)) {
 	    return this;
 	} else if (children != null) {
-	    for (SceneGraphNode child : children) {
+	    int size = children.size();
+	    for (int i = 0; i < size; i++) {
+		SceneGraphNode child = children.get(i);
 		SceneGraphNode n = child.getNode(id);
 		if (n != null) {
 		    return n;
@@ -358,7 +387,8 @@ public class SceneGraphNode {
 	updateLocal(time, camera);
 
 	if (children != null) {
-	    for (int i = 0; i < children.size(); i++) {
+	    int size = children.size();
+	    for (int i = 0; i < size; i++) {
 		children.get(i).update(time, transform, camera);
 	    }
 	}
@@ -404,7 +434,9 @@ public class SceneGraphNode {
      */
     public void addFocusableObjects(List<CelestialBody> list) {
 	if (children != null) {
-	    for (SceneGraphNode child : children) {
+	    int size = children.size();
+	    for (int i = 0; i < size; i++) {
+		SceneGraphNode child = children.get(i);
 		child.addFocusableObjects(list);
 	    }
 	}
@@ -413,7 +445,9 @@ public class SceneGraphNode {
     public void addNodes(List<SceneGraphNode> nodes) {
 	nodes.add(this);
 	if (children != null) {
-	    for (SceneGraphNode child : children) {
+	    int size = children.size();
+	    for (int i = 0; i < size; i++) {
+		SceneGraphNode child = children.get(i);
 		child.addNodes(nodes);
 	    }
 	}
@@ -448,10 +482,13 @@ public class SceneGraphNode {
 	if (clazz.isInstance(this)) {
 	    n = 1;
 	}
-	if (children != null)
-	    for (SceneGraphNode child : children) {
+	if (children != null) {
+	    int size = children.size();
+	    for (int i = 0; i < size; i++) {
+		SceneGraphNode child = children.get(i);
 		n += child.getNumNodes(clazz);
 	    }
+	}
 	return n;
     }
 
@@ -459,10 +496,13 @@ public class SceneGraphNode {
 	if (clazz.isInstance(this)) {
 	    l.add(clazz.cast(this));
 	}
-	if (children != null)
-	    for (SceneGraphNode child : children) {
+	if (children != null) {
+	    int size = children.size();
+	    for (int i = 0; i < size; i++) {
+		SceneGraphNode child = children.get(i);
 		child.getNodes(clazz, l);
 	    }
+	}
     }
 
     public <T extends SceneGraphNode> T getLineCopy() {
@@ -516,9 +556,11 @@ public class SceneGraphNode {
      * @param nodes List of nodes to set the flag to. May be null.
      * @param computed The computed value.
      */
-    protected void setComputedFlag(List<SceneGraphNode> nodes, boolean computed) {
+    public void setComputedFlag(List<SceneGraphNode> nodes, boolean computed) {
 	if (nodes != null) {
-	    for (SceneGraphNode node : nodes) {
+	    int size = nodes.size();
+	    for (int i = 0; i < size; i++) {
+		SceneGraphNode node = nodes.get(i);
 		node.computed = computed;
 		setComputedFlag(node.children, computed);
 	    }
@@ -533,5 +575,30 @@ public class SceneGraphNode {
 
     protected boolean isInRender(IRenderable renderable, RenderGroup rg) {
 	return SceneGraphRenderer.render_lists.get(rg).contains(renderable, ThreadIndexer.inst.i());
+    }
+
+    public SceneGraphNode getFirstAncestorOfType(Class<? extends SceneGraphNode> clazz) {
+	if (this.getClass().isAssignableFrom(clazz))
+	    return this;
+	else if (parent != null) {
+	    return parent.getFirstAncestorOfType(clazz);
+	} else {
+	    return null;
+	}
+    }
+
+    @Override
+    public int getStarCount() {
+	return 0;
+    }
+
+    @Override
+    public Object getStars() {
+	return null;
+    }
+
+    @Override
+    public Vector3d getPosition() {
+	return null;
     }
 }

@@ -7,23 +7,27 @@ import gaia.cu9.ari.gaiaorbit.scenegraph.SceneGraphNode.RenderGroup;
 import java.util.List;
 
 import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
+import com.badlogic.gdx.graphics.glutils.ImmediateModeRenderer20;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer.ShapeType;
+import com.badlogic.gdx.math.Matrix4;
 
 public class LineRenderSystem extends AbstractRenderSystem {
 
-    private ShapeRenderer renderer;
+    private ImmediateModeRenderer20 renderer;
+    private final Matrix4 combinedMatrix = new Matrix4();
 
     public LineRenderSystem(RenderGroup rg, int priority, float[] alphas) {
 	super(rg, priority, alphas);
-	this.renderer = new ShapeRenderer(400000);
+	this.renderer = new ImmediateModeRenderer20(400000, false, true, 0);
     }
 
     @Override
     public void renderStud(List<IRenderable> renderables, ICamera camera) {
-	Gdx.gl.glLineWidth(1f);
-	renderer.setProjectionMatrix(camera.getCamera().combined);
-	renderer.begin(ShapeType.Line);
+	Gdx.gl.glLineWidth(2f);
+
+	combinedMatrix.set(camera.getCamera().combined);
+	renderer.begin(combinedMatrix, ShapeType.Line.getGlType());
+
 	int size = renderables.size();
 	for (int i = 0; i < size; i++) {
 	    IRenderable l = renderables.get(i);

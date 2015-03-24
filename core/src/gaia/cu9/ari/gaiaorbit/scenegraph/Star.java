@@ -10,7 +10,9 @@ import gaia.cu9.ari.gaiaorbit.util.color.ColourUtils;
 import gaia.cu9.ari.gaiaorbit.util.math.MathUtilsd;
 import gaia.cu9.ari.gaiaorbit.util.math.Vector2d;
 import gaia.cu9.ari.gaiaorbit.util.math.Vector3d;
+import gaia.cu9.ari.gaiaorbit.util.time.ITimeFrameProvider;
 import gaia.cu9.ari.gaiaorbit.util.time.TimeUtils;
+import gaia.cu9.ari.gaiaorbit.util.tree.OctreeNode;
 
 import java.util.Map;
 import java.util.Random;
@@ -34,6 +36,9 @@ import com.badlogic.gdx.graphics.g3d.attributes.TextureAttribute;
 import com.badlogic.gdx.math.Matrix4;
 
 public class Star extends CelestialBody {
+
+    private static final float TH_ANGLE_POINT = (float) Math.toRadians(2e-7f);
+    private static final float TH_ANGLE_NONE = 0;
     private static ThreadLocal<Random> rnd = new ThreadLocal<Random>() {
 	@Override
 	public Random initialValue() {
@@ -43,17 +48,17 @@ public class Star extends CelestialBody {
 
     @Override
     public double THRESHOLD_ANGLE_NONE() {
-	return GlobalConf.scene.STAR_TH_ANGLE_NONE;
+	return TH_ANGLE_NONE;
     }
 
     @Override
     public double THRESHOLD_ANGLE_POINT() {
-	return GlobalConf.scene.STAR_TH_ANGLE_POINT;
+	return TH_ANGLE_POINT;
     }
 
     @Override
     public double THRESHOLD_ANGLE_QUAD() {
-	return GlobalConf.scene.STAR_TH_ANGLE_QUAD;
+	return 0;
     }
 
     /** Has the model used to represent the star **/
@@ -64,6 +69,21 @@ public class Star extends CelestialBody {
     double radius;
     boolean randomName = false;
     double modelDistance;
+
+    /**
+     * Object server properties
+     */
+
+    /** The id of the octant it belongs to **/
+    public long pageId;
+    /** Its page **/
+    public OctreeNode<? extends SceneGraphNode> page;
+    /** Particle type
+     * 90 - real star
+     * 92 - virtual particle
+     */
+    public int type = 90;
+    public int nparticles = 1;
 
     public static void initModel() {
 	if (mc == null) {
@@ -98,6 +118,15 @@ public class Star extends CelestialBody {
 	this.parentName = ROOT_NAME;
     }
 
+    /**
+     * Creates a new star.
+     * @param pos Cartesian position, in equatorial coordinates and in internal units.
+     * @param appmag Apparent magnitude.
+     * @param absmag Absolute magnitude.
+     * @param colorbv The B-V color index.
+     * @param name The label or name.
+     * @param starid The star unique id.
+     */
     public Star(Vector3d pos, float appmag, float absmag, float colorbv, String name, long starid) {
 	this();
 	this.pos = pos;
@@ -148,7 +177,7 @@ public class Star extends CelestialBody {
     @Override
     public void update(ITimeFrameProvider time, final Transform parentTransform, ICamera camera, float opacity) {
 	if (appmag <= GlobalConf.runtime.LIMIT_MAG_RUNTIME) {
-	    this.opacity = opacity;
+	    this.opacity = opacity * (page != null ? page.opacity : 1);
 	    transform.position.set(parentTransform.position).add(pos);
 
 	    distToCamera = (float) transform.position.len();
@@ -167,7 +196,8 @@ public class Star extends CelestialBody {
 		}
 		// Compute nested
 		if (children != null) {
-		    for (int i = 0; i < children.size(); i++) {
+		    int size = children.size();
+		    for (int i = 0; i < size; i++) {
 			SceneGraphNode child = children.get(i);
 			child.update(time, parentTransform, camera);
 		    }
@@ -193,6 +223,7 @@ public class Star extends CelestialBody {
 		if (viewAngleApparent < THRESHOLD_ANGLE_POINT() * camera.getFovFactor()) {
 		    // Update opacity
 		    opacity *= MathUtilsd.lint(viewAngleApparent, 0, THRESHOLD_ANGLE_POINT(), GlobalConf.scene.POINT_ALPHA_MIN, GlobalConf.scene.POINT_ALPHA_MAX);
+
 		    addToRender(this, RenderGroup.POINT);
 		} else {
 		    addToRender(this, RenderGroup.POINT);
@@ -281,4 +312,13 @@ public class Star extends CelestialBody {
     public void updateLocalValues(ITimeFrameProvider time, ICamera camera) {
     }
 
+    @Override
+    public int getStarCount() {
+	return 1;
+    }
+
+    @Override
+    public Object getStars() {
+	return this;
+    }
 }

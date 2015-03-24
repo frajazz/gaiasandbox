@@ -1,15 +1,21 @@
 # This file contains the description of the data providers and their
 # parameters
 
-#data.providers=gaia.cu9.ari.gaiaorbit.data.HubCatalogLoader gaia.cu9.ari.gaiaorbit.data.JsonLoader gaia.cu9.ari.gaiaorbit.data.ConstellationsLoader gaia.cu9.ari.gaiaorbit.data.ConstelBoundariesLoader
-data.providers=gaia.cu9.ari.gaiaorbit.data.StarLoader  gaia.cu9.ari.gaiaorbit.data.JsonLoader gaia.cu9.ari.gaiaorbit.data.ConstellationsLoader
+data.providers=gaia.cu9.ari.gaiaorbit.data.HubCatalogLoader  gaia.cu9.ari.gaiaorbit.data.JsonLoader gaia.cu9.ari.gaiaorbit.data.ConstellationsLoader gaia.cu9.ari.gaiaorbit.data.ConstelBoundariesLoader
 
 # STAR LOADERS - loads a catalog of stars
 
-# Catalog loader class to use with the StarLoader: HYGCSVLoader or HYGBinLoader. The ObjectServerLoader is configured elsewere (see global conf file).
-gaia.cu9.ari.gaiaorbit.data.StarLoader.loader=gaia.cu9.ari.gaiaorbit.data.stars.HYGBinaryLoader
+# Catalog loader class to use with the StarLoader: HYGCSVLoader or HYGBinLoader. The ObjectServerLoader is configured elsewhere (see global conf file).
+#gaia.cu9.ari.gaiaorbit.data.HubCatalogLoader.StarLoader.loader=gaia.cu9.ari.gaiaorbit.data.stars.OctreeCatalogLoader
+gaia.cu9.ari.gaiaorbit.data.HubCatalogLoader.StarLoader.loader=gaia.cu9.ari.gaiaorbit.data.stars.HYGBinaryLoader
+#gaia.cu9.ari.gaiaorbit.data.HubCatalogLoader.StarLoader.loader=gaia.cu9.ari.gaiaorbit.data.stars.STILCatalogLoader
+
 # Catalog data file
-gaia.cu9.ari.gaiaorbit.data.StarLoader.file=data/android/hygxyz.bin
+#gaia.cu9.ari.gaiaorbit.data.HubCatalogLoader.StarLoader.file=/home/tsagrista/Workspaces/objectserver/data/hipparcos.vot.gz
+gaia.cu9.ari.gaiaorbit.data.HubCatalogLoader.StarLoader.file=data/android/hygxyz.bin
+#gaia.cu9.ari.gaiaorbit.data.HubCatalogLoader.StarLoader.particles=data/hyg_particles.bin
+# Metadata file
+#gaia.cu9.ari.gaiaorbit.data.HubCatalogLoader.StarLoader.metadata=data/hyg_metadata.bin
 
 # NON-STAR LOADERS - loads non-star entities (planets, satellites, moons, orbits...)
 

@@ -175,7 +175,7 @@ public class GaiaInputController extends GestureDetector {
 
     @Override
     public boolean touchUp(int screenX, int screenY, int pointer, int button) {
-	EventManager.getInstance().post(Events.INPUT_EVENT, button);
+	EventManager.instance.post(Events.INPUT_EVENT, button);
 	if (GlobalConf.runtime.INPUT_ENABLED) {
 	    touched &= -1 ^ (1 << pointer);
 	    if (cam.isNatural()) {
@@ -190,7 +190,7 @@ public class GaiaInputController extends GestureDetector {
 
 			if (!stopped && !focusRemoved) {
 			    // Select star, if any
-			    List<CelestialBody> l = GaiaSandbox.getInstance().getFocusableEntities();
+			    List<CelestialBody> l = GaiaSandbox.instance.getFocusableEntities();
 
 			    List<CelestialBody> hits = new ArrayList<CelestialBody>();
 
@@ -227,8 +227,8 @@ public class GaiaInputController extends GestureDetector {
 				Collections.sort(hits, comp);
 				// Get closest
 				CelestialBody hit = hits.get(hits.size() - 1);
-				EventManager.getInstance().post(Events.FOCUS_CHANGE_CMD, hit);
-				EventManager.getInstance().post(Events.CAMERA_MODE_CMD, CameraMode.Focus);
+				EventManager.instance.post(Events.FOCUS_CHANGE_CMD, hit);
+				EventManager.instance.post(Events.CAMERA_MODE_CMD, CameraMode.Focus);
 			    }
 			}
 		    }
@@ -304,7 +304,7 @@ public class GaiaInputController extends GestureDetector {
 
     @Override
     public boolean keyUp(int keycode) {
-	EventManager.getInstance().post(Events.INPUT_EVENT, keycode);
+	EventManager.instance.post(Events.INPUT_EVENT, keycode);
 	if (GlobalConf.runtime.INPUT_ENABLED) {
 	    // Use key mappings
 	    ProgramAction action = mappings.mappings.get(pressedKeys);
@@ -319,7 +319,7 @@ public class GaiaInputController extends GestureDetector {
 	    if (GlobalConf.OPENGL_GUI) {
 		Gdx.app.exit();
 	    } else {
-		EventManager.getInstance().post(Events.FULLSCREEN_CMD, false);
+		EventManager.instance.post(Events.FULLSCREEN_CMD, false);
 	    }
 	    pressedKeys.remove(keycode);
 	    return true;

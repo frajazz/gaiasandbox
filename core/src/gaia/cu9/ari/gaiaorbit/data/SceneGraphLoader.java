@@ -3,10 +3,12 @@ package gaia.cu9.ari.gaiaorbit.data;
 import gaia.cu9.ari.gaiaorbit.event.EventManager;
 import gaia.cu9.ari.gaiaorbit.event.Events;
 import gaia.cu9.ari.gaiaorbit.scenegraph.ISceneGraph;
-import gaia.cu9.ari.gaiaorbit.scenegraph.ITimeFrameProvider;
 import gaia.cu9.ari.gaiaorbit.scenegraph.SceneGraph;
 import gaia.cu9.ari.gaiaorbit.scenegraph.SceneGraphConcurrent;
+import gaia.cu9.ari.gaiaorbit.scenegraph.SceneGraphConcurrentOctree;
 import gaia.cu9.ari.gaiaorbit.scenegraph.SceneGraphNode;
+import gaia.cu9.ari.gaiaorbit.scenegraph.octreewrapper.AbstractOctreeWrapper;
+import gaia.cu9.ari.gaiaorbit.util.time.ITimeFrameProvider;
 
 import java.io.InputStream;
 import java.util.List;
@@ -28,9 +30,23 @@ public class SceneGraphLoader {
 
 	    List<SceneGraphNode> nodes = sgnpm.loadObjects();
 
-	    // Implement one or the other depending on multi-threading setting
+	    boolean hasOctree = false;
+	    for (SceneGraphNode node : nodes) {
+		if (node instanceof AbstractOctreeWrapper) {
+		    hasOctree = true;
+		    break;
+		}
+	    }
+
+	    // Implement one or the other depending on concurrency setting
 	    if (multithreading) {
-		sg = new SceneGraphConcurrent(maxThreads);
+		if (!hasOctree) {
+		    // No octree, local data
+		    sg = new SceneGraphConcurrent(maxThreads);
+		} else {
+		    // Object server, we use octree mode
+		    sg = new SceneGraphConcurrentOctree(maxThreads);
+		}
 	    } else {
 		sg = new SceneGraph();
 	    }
@@ -38,7 +54,7 @@ public class SceneGraphLoader {
 	    sg.initialize(nodes, time);
 
 	} catch (Exception e) {
-	    EventManager.getInstance().post(Events.JAVA_EXCEPTION, e);
+	    EventManager.instance.post(Events.JAVA_EXCEPTION, e);
 	}
 	return sg;
     }

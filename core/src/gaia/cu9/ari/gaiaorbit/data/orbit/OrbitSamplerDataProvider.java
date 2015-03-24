@@ -26,7 +26,7 @@ public class OrbitSamplerDataProvider implements IOrbitDataProvider, IObserver {
     public static void main(String[] args) {
 	OrbitSamplerDataProvider.writeData = true;
 	OrbitSamplerDataProvider me = new OrbitSamplerDataProvider();
-	EventManager.getInstance().subscribe(me, Events.JAVA_EXCEPTION, Events.POST_NOTIFICATION);
+	EventManager.instance.subscribe(me, Events.JAVA_EXCEPTION, Events.POST_NOTIFICATION);
 
 	Date now = new Date();
 	String[] bodies = new String[] { "Mercury", "Venus", "Earth", "Mars", "Jupiter", "Saturn", "Uranus", "Neptune", "Moon" };
@@ -92,11 +92,11 @@ public class OrbitSamplerDataProvider implements IOrbitDataProvider, IObserver {
 	    try {
 		OrbitDataWriter.writeOrbitData(writeDataPath + "orb." + bodyDesc.toString() + ".dat", data);
 	    } catch (IOException e) {
-		EventManager.getInstance().post(Events.JAVA_EXCEPTION, e);
+		EventManager.instance.post(Events.JAVA_EXCEPTION, e);
 	    }
 	}
 
-	EventManager.getInstance().post(Events.POST_NOTIFICATION, this.getClass().getSimpleName(), I18n.bundle.format("notif.orbitdataof.loaded", parameter.name, data.getNumPoints()));
+	EventManager.instance.post(Events.POST_NOTIFICATION, this.getClass().getSimpleName(), I18n.bundle.format("notif.orbitdataof.loaded", parameter.name, data.getNumPoints()));
 
     }
 

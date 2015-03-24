@@ -1,9 +1,9 @@
 package gaia.cu9.ari.gaiaorbit.scenegraph.component;
 
-import gaia.cu9.ari.gaiaorbit.scenegraph.ITimeFrameProvider;
 import gaia.cu9.ari.gaiaorbit.util.Constants;
 import gaia.cu9.ari.gaiaorbit.util.coord.AstroUtils;
 import gaia.cu9.ari.gaiaorbit.util.coord.Coordinates;
+import gaia.cu9.ari.gaiaorbit.util.time.ITimeFrameProvider;
 
 /**
  * Provides the information for the rotation of this body.

@@ -24,7 +24,7 @@ public class OrbitLintCoordinates implements IBodyCoordinates {
     @Override
     public void doneLoading(Object... params) {
 	if (params.length == 0) {
-	    EventManager.getInstance().post(Events.JAVA_EXCEPTION, new RuntimeException("OrbitLintCoordinates need the scene graph"));
+	    EventManager.instance.post(Events.JAVA_EXCEPTION, new RuntimeException("OrbitLintCoordinates need the scene graph"));
 	} else {
 	    transf = new Matrix4d();
 	    SceneGraphNode sgn = ((ISceneGraph) params[0]).getNode(orbitname);

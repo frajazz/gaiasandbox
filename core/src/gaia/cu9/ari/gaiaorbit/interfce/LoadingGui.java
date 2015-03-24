@@ -75,7 +75,7 @@ public class LoadingGui implements IGui, IObserver {
 
 	rebuildGui();
 	if (progress) {
-	    EventManager.getInstance().subscribe(this, Events.POST_NOTIFICATION, Events.TOGGLE_TIME_CMD, Events.TOGGLE_VISIBILITY_CMD, Events.CAMERA_MODE_CMD, Events.PACE_CHANGE_CMD, Events.FOCUS_LOCK_CMD, Events.TOGGLE_AMBIENT_LIGHT, Events.FOV_CHANGE_NOTIFICATION, Events.JAVA_EXCEPTION, Events.ORBIT_DATA_LOADED, Events.SCREENSHOT_INFO);
+	    EventManager.instance.subscribe(this, Events.POST_NOTIFICATION, Events.TOGGLE_TIME_CMD, Events.TOGGLE_VISIBILITY_CMD, Events.CAMERA_MODE_CMD, Events.PACE_CHANGE_CMD, Events.FOCUS_LOCK_CMD, Events.TOGGLE_AMBIENT_LIGHT, Events.FOV_CHANGE_NOTIFICATION, Events.JAVA_EXCEPTION, Events.ORBIT_DATA_LOADED, Events.SCREENSHOT_INFO);
 	}
     }
 
@@ -93,7 +93,7 @@ public class LoadingGui implements IGui, IObserver {
 
     @Override
     public void dispose() {
-	EventManager.getInstance().removeAllSubscriptions(this, notificationsInterface);
+	EventManager.instance.removeAllSubscriptions(this, notificationsInterface);
 	ui.dispose();
     }
 
@@ -108,7 +108,7 @@ public class LoadingGui implements IGui, IObserver {
 	    try {
 		ui.draw();
 	    } catch (Exception e) {
-		EventManager.getInstance().post(Events.JAVA_EXCEPTION, e);
+		EventManager.instance.post(Events.JAVA_EXCEPTION, e);
 	    }
 	}
     }

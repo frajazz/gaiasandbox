@@ -135,7 +135,8 @@ public class GaiaSandboxActivity extends AndroidApplication {
 
 		if (success) {
 		    // THIS WORKS
-		    SensorManager.remapCoordinateSystem(Rtmp, SensorManager.AXIS_Y, SensorManager.AXIS_MINUS_X, Rtmp);
+		    //SensorManager.remapCoordinateSystem(Rtmp, SensorManager.AXIS_Y, SensorManager.AXIS_MINUS_X, Rtmp);
+		    SensorManager.remapCoordinateSystem(Rtmp, SensorManager.AXIS_Z, SensorManager.AXIS_MINUS_X, Rtmp);
 		    matT.set(Rtmp).tra();
 
 		    // Synchronize

@@ -99,7 +99,7 @@ public class GlobalConf {
 	public boolean POSTPROCESS_LENS_FLARE;
 
 	public PostprocessConf() {
-	    EventManager.getInstance().subscribe(this, Events.BLOOM_CMD, Events.LENS_FLARE_CMD);
+	    EventManager.instance.subscribe(this, Events.BLOOM_CMD, Events.LENS_FLARE_CMD);
 	}
 
 	@Override
@@ -146,13 +146,14 @@ public class GlobalConf {
     public static class RuntimeConf implements IConf, IObserver {
 
 	public boolean CLEAN_MODE;
-	public boolean GLOBAL_PAUSE;
+	public boolean UPDATE_PAUSE;
 	public boolean TIME_ON;
 	public boolean INPUT_ENABLED;
+	public boolean RECORD_CAMERA;
 	public float LIMIT_MAG_RUNTIME;
 
 	public RuntimeConf() {
-	    EventManager.getInstance().subscribe(this, Events.LIMIT_MAG_CMD, Events.INPUT_ENABLED_CMD, Events.TOGGLE_CLEANMODE, Events.TOGGLE_GLOBALPAUSE, Events.TOGGLE_TIME_CMD);
+	    EventManager.instance.subscribe(this, Events.LIMIT_MAG_CMD, Events.INPUT_ENABLED_CMD, Events.TOGGLE_CLEANMODE, Events.TOGGLE_UPDATEPAUSE, Events.TOGGLE_TIME_CMD, Events.RECORD_CAMERA_CMD);
 	}
 
 	@Override
@@ -165,8 +166,9 @@ public class GlobalConf {
 	    // Input always enabled by default
 	    INPUT_ENABLED = true;
 	    LIMIT_MAG_RUNTIME = 20;
-	    GLOBAL_PAUSE = false;
+	    UPDATE_PAUSE = false;
 	    TIME_ON = false;
+	    RECORD_CAMERA = false;
 
 	}
 
@@ -184,11 +186,16 @@ public class GlobalConf {
 	    case TOGGLE_CLEANMODE:
 		CLEAN_MODE = !CLEAN_MODE;
 		break;
-	    case TOGGLE_GLOBALPAUSE:
-		GLOBAL_PAUSE = !GLOBAL_PAUSE;
+	    case TOGGLE_UPDATEPAUSE:
+		UPDATE_PAUSE = !UPDATE_PAUSE;
+		EventManager.instance.post(Events.UPDATEPAUSE_CHANGED, UPDATE_PAUSE);
 		break;
 	    case TOGGLE_TIME_CMD:
 		toggleTimeOn((Boolean) data[0]);
+		break;
+	    case RECORD_CAMERA_CMD:
+		toggleRecord((Boolean) data[0]);
+		break;
 	    }
 
 	}
@@ -201,6 +208,17 @@ public class GlobalConf {
 		TIME_ON = timeOn;
 	    } else {
 		TIME_ON = !TIME_ON;
+	    }
+	}
+
+	/**
+	 * Toggles the record camera
+	 */
+	public void toggleRecord(Boolean rec) {
+	    if (rec != null) {
+		RECORD_CAMERA = rec;
+	    } else {
+		RECORD_CAMERA = !RECORD_CAMERA;
 	    }
 	}
 
@@ -228,7 +246,7 @@ public class GlobalConf {
 	public boolean RENDER_OUTPUT;
 
 	public FrameConf() {
-	    EventManager.getInstance().subscribe(this, Events.CONFIG_RENDER_SYSTEM, Events.RENDER_SYSTEM_CMD);
+	    EventManager.instance.subscribe(this, Events.CONFIG_RENDER_SYSTEM, Events.RENDER_SYSTEM_CMD);
 	}
 
 	@Override
@@ -384,7 +402,7 @@ public class GlobalConf {
 	private DateFormat df;
 
 	public ProgramConf() {
-	    EventManager.getInstance().subscribe(this, Events.TOGGLE_STEREOSCOPIC);
+	    EventManager.instance.subscribe(this, Events.TOGGLE_STEREOSCOPIC);
 	}
 
 	@Override
@@ -414,7 +432,7 @@ public class GlobalConf {
 	    try {
 		LAST_CHECKED = p.getProperty("program.lastchecked").isEmpty() ? null : df.parse(p.getProperty("program.lastchecked"));
 	    } catch (ParseException e) {
-		EventManager.getInstance().post(Events.JAVA_EXCEPTION, e);
+		EventManager.instance.post(Events.JAVA_EXCEPTION, e);
 	    }
 	    LAST_VERSION = p.getProperty("program.lastversion");
 	    VERSION_CHECK_URL = p.getProperty("program.versioncheckurl");
@@ -464,7 +482,7 @@ public class GlobalConf {
 	public float POINT_ALPHA_MAX;
 
 	public SceneConf() {
-	    EventManager.getInstance().subscribe(this, Events.FOCUS_LOCK_CMD, Events.STAR_BRIGHTNESS_CMD, Events.FOV_CHANGED_CMD, Events.CAMERA_SPEED_CMD, Events.ROTATION_SPEED_CMD, Events.TURNING_SPEED_CMD, Events.SPEED_LIMIT_CMD, Events.TRANSIT_COLOUR_CMD, Events.ONLY_OBSERVED_STARS_CMD, Events.COMPUTE_GAIA_SCAN_CMD);
+	    EventManager.instance.subscribe(this, Events.FOCUS_LOCK_CMD, Events.STAR_BRIGHTNESS_CMD, Events.FOV_CHANGED_CMD, Events.CAMERA_SPEED_CMD, Events.ROTATION_SPEED_CMD, Events.TURNING_SPEED_CMD, Events.SPEED_LIMIT_CMD, Events.TRANSIT_COLOUR_CMD, Events.ONLY_OBSERVED_STARS_CMD, Events.COMPUTE_GAIA_SCAN_CMD);
 	}
 
 	@Override
@@ -543,19 +561,31 @@ public class GlobalConf {
 		CAMERA_SPEED_LIMIT = 1000 * 3e8 * Constants.M_TO_U;
 		break;
 	    case 5:
+		CAMERA_SPEED_LIMIT = 1 * Constants.AU_TO_U;
+		break;
 	    case 6:
-		// 1 pc/s and 2 pc/s
-		CAMERA_SPEED_LIMIT = (CAMERA_SPEED_LIMIT_IDX - 4) * Constants.PC_TO_U;
+		CAMERA_SPEED_LIMIT = 10 * Constants.AU_TO_U;
 		break;
 	    case 7:
+		CAMERA_SPEED_LIMIT = 1000 * Constants.AU_TO_U;
+		break;
+	    case 8:
+		CAMERA_SPEED_LIMIT = 10000 * Constants.AU_TO_U;
+		break;
+	    case 9:
+	    case 10:
+		// 1 pc/s and 2 pc/s
+		CAMERA_SPEED_LIMIT = (CAMERA_SPEED_LIMIT_IDX - 8) * Constants.PC_TO_U;
+		break;
+	    case 11:
 		// 10 pc/s
 		CAMERA_SPEED_LIMIT = 10 * Constants.PC_TO_U;
 		break;
-	    case 8:
+	    case 12:
 		// 1000 pc/s
 		CAMERA_SPEED_LIMIT = 1000 * Constants.PC_TO_U;
 		break;
-	    case 9:
+	    case 13:
 		// No limit
 		CAMERA_SPEED_LIMIT = -1;
 		break;
@@ -739,7 +769,7 @@ public class GlobalConf {
 
 	    initialized = true;
 	} catch (Exception e) {
-	    EventManager.getInstance().post(Events.JAVA_EXCEPTION, e);
+	    EventManager.instance.post(Events.JAVA_EXCEPTION, e);
 	}
 
     }
@@ -758,7 +788,7 @@ public class GlobalConf {
 	    }
 
 	} catch (Exception e) {
-	    EventManager.getInstance().post(Events.JAVA_EXCEPTION, e);
+	    EventManager.instance.post(Events.JAVA_EXCEPTION, e);
 	}
 
     }
@@ -772,9 +802,9 @@ public class GlobalConf {
 	    FileOutputStream fos = new FileOutputStream(propsFileURL.getFile());
 	    p.store(fos, null);
 	    fos.close();
-	    EventManager.getInstance().post(Events.POST_NOTIFICATION, "Configuration saved to " + propsFileURL);
+	    EventManager.instance.post(Events.POST_NOTIFICATION, "Configuration saved to " + propsFileURL);
 	} catch (Exception e) {
-	    EventManager.getInstance().post(Events.JAVA_EXCEPTION, e);
+	    EventManager.instance.post(Events.JAVA_EXCEPTION, e);
 	}
     }
 

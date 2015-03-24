@@ -9,6 +9,7 @@ import gaia.cu9.ari.gaiaorbit.util.Constants;
 import gaia.cu9.ari.gaiaorbit.util.I18n;
 import gaia.cu9.ari.gaiaorbit.util.coord.Coordinates;
 import gaia.cu9.ari.gaiaorbit.util.math.Vector3d;
+import gaia.cu9.ari.gaiaorbit.util.parse.Parser;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -71,8 +72,8 @@ public class ConstelBoundariesLoader<T extends SceneGraphNode> implements IScene
 
 			if ((type.equals("I") && LOAD_INTERPOLATED && interp % INTERPOLATED_MOD == 0) || type.equals("O")) {
 			    // Load the data
-			    double ra = Double.parseDouble(tokens[0].trim()) * 15d;
-			    double dec = Double.parseDouble(tokens[1].trim());
+			    double ra = Parser.parseDouble(tokens[0].trim()) * 15d;
+			    double dec = Parser.parseDouble(tokens[1].trim());
 
 			    double dist = 1 * Constants.AU_TO_U;
 
@@ -90,7 +91,7 @@ public class ConstelBoundariesLoader<T extends SceneGraphNode> implements IScene
 		Gdx.app.error(this.getClass().getSimpleName(), e.getLocalizedMessage());
 	    }
 
-	    EventManager.getInstance().post(Events.POST_NOTIFICATION, this.getClass().getSimpleName(), I18n.bundle.format("notif.boundaries.init", n));
+	    EventManager.instance.post(Events.POST_NOTIFICATION, this.getClass().getSimpleName(), I18n.bundle.format("notif.boundaries.init", n));
 
 	} catch (Exception e) {
 	    Gdx.app.error(this.getClass().getSimpleName(), e.getLocalizedMessage());

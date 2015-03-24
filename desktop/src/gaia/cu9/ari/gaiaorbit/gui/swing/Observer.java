@@ -14,7 +14,7 @@ public class Observer implements IObserver {
 
     public Observer(JSplash splash) {
 	this.splash = splash;
-	EventManager.getInstance().subscribe(this, Events.POST_NOTIFICATION, Events.ORBIT_DATA_LOADED);
+	EventManager.instance.subscribe(this, Events.POST_NOTIFICATION, Events.ORBIT_DATA_LOADED);
     }
 
     @Override

@@ -68,11 +68,11 @@ public class JsonLoader<T extends SceneGraphNode> implements ISceneGraphNodeProv
 
 		    child = child.next;
 		}
-		EventManager.getInstance().post(Events.POST_NOTIFICATION, this.getClass().getSimpleName(), I18n.bundle.format("notif.nodeloader", size, filePath));
+		EventManager.instance.post(Events.POST_NOTIFICATION, this.getClass().getSimpleName(), I18n.bundle.format("notif.nodeloader", size, filePath));
 	    }
 
 	} catch (Exception e) {
-	    EventManager.getInstance().post(Events.JAVA_EXCEPTION, e);
+	    EventManager.instance.post(Events.JAVA_EXCEPTION, e);
 	}
 
 	return bodies;

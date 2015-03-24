@@ -34,7 +34,7 @@ public class HYGToBinary implements IObserver {
 
     public static void main(String[] args) {
 	HYGToBinary hyg = new HYGToBinary();
-	EventManager.getInstance().subscribe(hyg, Events.POST_NOTIFICATION);
+	EventManager.instance.subscribe(hyg, Events.POST_NOTIFICATION);
 
 	InputStream versionFile = HYGToBinary.class.getResourceAsStream("/version");
 	Properties vprops = new Properties();
@@ -64,8 +64,8 @@ public class HYGToBinary implements IObserver {
 	    HYGCSVLoader csvLoader = new HYGCSVLoader();
 	    HYGBinaryLoader binLoader = new HYGBinaryLoader();
 
-	    List<CelestialBody> csvStars = csvLoader.loadStars(new FileInputStream(new File(csv)));
-	    List<CelestialBody> binStars = binLoader.loadStars(new FileInputStream(new File(bin)));
+	    List<? extends CelestialBody> csvStars = csvLoader.loadCatalog(new FileInputStream(new File(csv)));
+	    List<? extends CelestialBody> binStars = binLoader.loadCatalog(new FileInputStream(new File(bin)));
 
 	    if (csvStars.size() != binStars.size()) {
 		System.err.println("Different sizes");
@@ -91,7 +91,7 @@ public class HYGToBinary implements IObserver {
 	HYGCSVLoader cat = new HYGCSVLoader();
 	try {
 	    GlobalConf.data.LIMIT_MAG_LOAD = 6.3f;
-	    List<CelestialBody> stars = cat.loadStars(new FileInputStream(new File(fileIn)));
+	    List<? extends CelestialBody> stars = cat.loadCatalog(new FileInputStream(new File(fileIn)));
 
 	    // Write to binary
 	    File binFile = new File(fileOut);
@@ -129,7 +129,7 @@ public class HYGToBinary implements IObserver {
     public void loadBinaryFile(String fileIn) {
 	HYGBinaryLoader cat = new HYGBinaryLoader();
 	try {
-	    List<CelestialBody> stars = cat.loadStars(new FileInputStream(new File(fileIn)));
+	    List<? extends CelestialBody> stars = cat.loadCatalog(new FileInputStream(new File(fileIn)));
 
 	} catch (FileNotFoundException e) {
 	    e.printStackTrace();

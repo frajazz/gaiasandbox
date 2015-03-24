@@ -10,6 +10,7 @@ import gaia.cu9.ari.gaiaorbit.util.g3d.MeshPartBuilder2;
 import gaia.cu9.ari.gaiaorbit.util.g3d.ModelBuilder2;
 import gaia.cu9.ari.gaiaorbit.util.math.Matrix4d;
 import gaia.cu9.ari.gaiaorbit.util.math.Vector3d;
+import gaia.cu9.ari.gaiaorbit.util.time.ITimeFrameProvider;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
@@ -112,6 +113,7 @@ public class Grid extends AbstractPositionEntity implements IModelRenderable, IA
      */
     @Override
     public void render(ModelBatch modelBatch, float alpha) {
+	Gdx.gl.glLineWidth(1f);
 	mc.setTransparencyColor(alpha * cc[3] * opacity);
 	modelBatch.render(mc.instance, mc.env);
     }

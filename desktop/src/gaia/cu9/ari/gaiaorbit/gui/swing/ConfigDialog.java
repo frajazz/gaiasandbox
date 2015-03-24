@@ -639,6 +639,33 @@ public class ConfigDialog extends I18nJFrame {
 	tabbedPane.addTab(txt("gui.frameoutput.title"), IconManager.get("config/frameoutput"), imageOutputPanel);
 	tabbedPane.setMnemonicAt(5, KeyEvent.VK_6);
 
+	/**
+	 * ====== DATA TAB =======
+	 */
+	JPanel datasource = new JPanel(new MigLayout("", "[][grow,fill][]", ""));
+	datasource.setBorder(new TitledBorder(new MatteBorder(new Insets(thick, 0, 0, 0), bcol), txt("gui.data.source"), just, pos));
+
+	// LOCAL DATA OR OBJECT SERVER RADIO BUTTONS
+	final JRadioButton local = new JRadioButton(txt("gui.data.local"));
+	local.addActionListener(new ActionListener() {
+	    @Override
+	    public void actionPerformed(ActionEvent e) {
+		GlobalConf.data.DATA_SOURCE_LOCAL = local.isSelected();
+	    }
+	});
+	local.setSelected(true);
+
+	ButtonGroup dataButtons = new ButtonGroup();
+	dataButtons.add(local);
+
+	datasource.add(local, "span,wrap");
+
+	final JPanel dataPanel = new JPanel(new MigLayout("", "[grow,fill]", ""));
+	dataPanel.add(datasource, "wrap");
+
+	tabbedPane.addTab(txt("gui.data"), IconManager.get("config/data"), dataPanel);
+	tabbedPane.setMnemonicAt(6, KeyEvent.VK_7);
+
 	// Do not show again
 	final JCheckBox showAgain = new JCheckBox(txt("gui.notagain"));
 	showAgain.addChangeListener(new ChangeListener() {
@@ -659,10 +686,11 @@ public class ConfigDialog extends I18nJFrame {
 
 	okButton = new JButton(startup ? txt("gui.launchapp") : txt("gui.saveprefs"));
 	okButton.addActionListener(new ActionListener() {
-	    boolean goahead = true;
+	    boolean goahead;
 
 	    @Override
 	    public void actionPerformed(ActionEvent e) {
+		goahead = true;
 
 		if (goahead) {
 		    // Add all properties to GlobalConf.instance
@@ -718,10 +746,10 @@ public class ConfigDialog extends I18nJFrame {
 		    try {
 			GlobalConf.saveProperties(new File(System.getProperty("properties.file")).toURI().toURL());
 		    } catch (MalformedURLException e1) {
-			EventManager.getInstance().post(Events.JAVA_EXCEPTION, e);
+			EventManager.instance.post(Events.JAVA_EXCEPTION, e);
 		    }
 
-		    EventManager.getInstance().post(Events.PROPERTIES_WRITTEN);
+		    EventManager.instance.post(Events.PROPERTIES_WRITTEN);
 
 		    if (startup) {
 			gsd.launchMainApp();

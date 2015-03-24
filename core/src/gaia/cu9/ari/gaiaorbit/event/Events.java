@@ -76,7 +76,7 @@ public enum Events {
     /** Contains the distance [0] and the viewing angle [1] **/
     FOCUS_INFO_UPDATED,
 
-    /** Issues the command to toggle the time. Contains the boolean indicating the state (may be null) and a boolean indicating whether this coems from the interface. **/
+    /** Issues the command to toggle the time. Contains the boolean indicating the state (may be null) and a boolean indicating whether this comes from the interface. **/
     TOGGLE_TIME_CMD,
     /** Contains the name of the type, a boolean indicating if this comes from the interface and an optional boolean with the state **/
     TOGGLE_VISIBILITY_CMD,
@@ -104,7 +104,15 @@ public enum Events {
     PACE_DIVIDE_CMD,
     /** Contains the new pace **/
     PACE_CHANGED_INFO,
-    /** Will be displayed in the notifications area (bottom left). Contains an array of strings with the messages **/
+    /** Issues the command to enable camera recording. Contains the boolean indicating the state (may be null) and a boolean indicating whether this comes from the interface. **/
+    RECORD_CAMERA_CMD,
+
+    /** Issues the play command. Contains the path to the file to play **/
+    PLAY_CAMERA_CMD,
+    /** 
+     * Will be displayed in the notifications area (bottom left). Contains an array of strings with the messages and an optional boolean
+     * indicating whether the message is permanent so should stay until the next message is received.
+     **/
     POST_NOTIFICATION,
     /** Contains a string with the headline message, will be displayed in a big font in the center of the screen **/
     POST_HEADLINE_MESSAGE,
@@ -128,6 +136,7 @@ public enum Events {
     SHOW_TUTORIAL_ACTION,
     SHOW_PREFERENCES_ACTION,
     SHOW_RUNSCRIPT_ACTION,
+    SHOW_PLAYCAMERA_ACTION,
     /** Informs about the number of running scripts **/
     NUM_RUNNING_SCRIPTS,
     /** Cancels the next script **/
@@ -142,8 +151,10 @@ public enum Events {
     TOGGLE_STEREOSCOPIC,
     /** Toggles no GUI mode **/
     TOGGLE_CLEANMODE,
-    /** Toggles the pause of the update and render threads **/
-    TOGGLE_GLOBALPAUSE,
+    /** Toggles the pause of the update process **/
+    TOGGLE_UPDATEPAUSE,
+    /** Contains the new value **/
+    UPDATEPAUSE_CHANGED,
     /** Sets the vertical scroll position. Contains the scroll position in pixels **/
     GUI_SCROLL_POSITION_CMD,
     /** Maximizes or minimizes the GUI window. Contains a boolean with the fold state (true - minimize, false - maximize) **/

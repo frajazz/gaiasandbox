@@ -8,6 +8,7 @@ import gaia.cu9.ari.gaiaorbit.util.GlobalResources;
 import gaia.cu9.ari.gaiaorbit.util.coord.IBodyCoordinates;
 import gaia.cu9.ari.gaiaorbit.util.math.Vector2d;
 import gaia.cu9.ari.gaiaorbit.util.math.Vector3d;
+import gaia.cu9.ari.gaiaorbit.util.time.ITimeFrameProvider;
 
 import com.badlogic.gdx.assets.AssetManager;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
@@ -178,7 +179,7 @@ public abstract class AbstractPositionEntity extends SceneGraphNode {
 
 	    return (T) instance;
 	} catch (Exception e) {
-	    EventManager.getInstance().post(Events.JAVA_EXCEPTION, e);
+	    EventManager.instance.post(Events.JAVA_EXCEPTION, e);
 	}
 	return null;
     }
@@ -214,6 +215,11 @@ public abstract class AbstractPositionEntity extends SceneGraphNode {
 
     public void setCoordinates(IBodyCoordinates coord) {
 	coordinates = coord;
+    }
+
+    @Override
+    public Vector3d getPosition() {
+	return pos;
     }
 
 }

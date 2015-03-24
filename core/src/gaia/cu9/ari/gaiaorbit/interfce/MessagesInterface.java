@@ -37,7 +37,7 @@ public class MessagesInterface extends Table implements IObserver {
 	this.row();
 	this.add(subhead).left();
 	this.lock = lock;
-	EventManager.getInstance().subscribe(this, Events.POST_HEADLINE_MESSAGE, Events.CLEAR_HEADLINE_MESSAGE, Events.POST_SUBHEAD_MESSAGE, Events.CLEAR_SUBHEAD_MESSAGE, Events.CLEAR_MESSAGES);
+	EventManager.instance.subscribe(this, Events.POST_HEADLINE_MESSAGE, Events.CLEAR_HEADLINE_MESSAGE, Events.POST_SUBHEAD_MESSAGE, Events.CLEAR_SUBHEAD_MESSAGE, Events.CLEAR_MESSAGES);
     }
 
     @Override

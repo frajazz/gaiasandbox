@@ -7,6 +7,7 @@ import gaia.cu9.ari.gaiaorbit.util.Constants;
 import gaia.cu9.ari.gaiaorbit.util.GlobalConf;
 import gaia.cu9.ari.gaiaorbit.util.TwoWayHashmap;
 import gaia.cu9.ari.gaiaorbit.util.math.Vector3d;
+import gaia.cu9.ari.gaiaorbit.util.time.ITimeFrameProvider;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.assets.AssetManager;
@@ -95,7 +96,7 @@ public class CameraManager implements ICamera, IObserver {
 
 	updateCurrentCamera();
 
-	EventManager.getInstance().subscribe(this, Events.CAMERA_MODE_CMD, Events.FOV_CHANGE_NOTIFICATION);
+	EventManager.instance.subscribe(this, Events.CAMERA_MODE_CMD, Events.FOV_CHANGE_NOTIFICATION);
     }
 
     public void updateCurrentCamera() {
@@ -149,6 +150,11 @@ public class CameraManager implements ICamera, IObserver {
 	return current.getDirection();
     }
 
+    @Override
+    public Vector3d getUp() {
+	return current.getUp();
+    }
+
     /**
      * Update method.
      * @param dt Delta time in seconds.
@@ -165,7 +171,7 @@ public class CameraManager implements ICamera, IObserver {
 	velocity = (lastPos.sub(current.getPos()).len() * Constants.U_TO_KM) / (dt * Constants.S_TO_H);
 
 	// Post event with camera motion parameters
-	EventManager.getInstance().post(Events.CAMERA_MOTION_UPDATED, current.getPos(), velocity);
+	EventManager.instance.post(Events.CAMERA_MOTION_UPDATED, current.getPos(), velocity);
 
 	// Update last pos
 	lastPos.set(current.getPos());
@@ -192,7 +198,7 @@ public class CameraManager implements ICamera, IObserver {
 	    restoreState();
 
 	if (postEvent)
-	    EventManager.getInstance().post(Events.FOV_CHANGE_NOTIFICATION, this.getCamera().fieldOfView);
+	    EventManager.instance.post(Events.FOV_CHANGE_NOTIFICATION, this.getCamera().fieldOfView);
     }
 
     @Override
@@ -291,6 +297,11 @@ public class CameraManager implements ICamera, IObserver {
     @Override
     public void checkClosest(CelestialBody cb) {
 	current.checkClosest(cb);
+    }
+
+    @Override
+    public CelestialBody getFocus() {
+	return current.getFocus();
     }
 
 }

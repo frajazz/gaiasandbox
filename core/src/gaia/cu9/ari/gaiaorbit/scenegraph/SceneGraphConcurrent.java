@@ -3,13 +3,14 @@ package gaia.cu9.ari.gaiaorbit.scenegraph;
 import gaia.cu9.ari.gaiaorbit.event.EventManager;
 import gaia.cu9.ari.gaiaorbit.event.Events;
 import gaia.cu9.ari.gaiaorbit.util.I18n;
-import gaia.cu9.ari.gaiaorbit.util.concurrent.GaiaSandboxThreadFactory;
+import gaia.cu9.ari.gaiaorbit.util.concurrent.ThreadPoolManager;
 import gaia.cu9.ari.gaiaorbit.util.concurrent.UpdaterTask;
+import gaia.cu9.ari.gaiaorbit.util.time.ITimeFrameProvider;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
-import java.util.concurrent.Executors;
 import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 
@@ -23,14 +24,14 @@ import com.badlogic.gdx.Gdx;
  */
 public class SceneGraphConcurrent extends AbstractSceneGraph {
 
-    /** The executor service containing the pool **/
-    ThreadPoolExecutor pool;
-    private List<UpdaterTask> tasks;
-    int maxThreads;
+    private ThreadPoolExecutor pool;
+    private List<UpdaterTask<SceneGraphNode>> tasks;
+    int numThreads;
 
-    public SceneGraphConcurrent(int maxThreads) {
+    public SceneGraphConcurrent(int numThreads) {
 	super();
-	this.maxThreads = maxThreads;
+	this.numThreads = numThreads;
+
     }
 
     /** 
@@ -40,16 +41,15 @@ public class SceneGraphConcurrent extends AbstractSceneGraph {
     public void initialize(List<SceneGraphNode> nodes, ITimeFrameProvider time) {
 	super.initialize(nodes, time);
 
-	int threads = maxThreads <= 0 ? Runtime.getRuntime().availableProcessors() : maxThreads;
-
-	pool = (ThreadPoolExecutor) Executors.newFixedThreadPool(threads, new GaiaSandboxThreadFactory("sg-updater-"));
-
-	tasks = new ArrayList<UpdaterTask>(pool.getCorePoolSize());
+	pool = ThreadPoolManager.pool;
+	objectsPerThread = new int[numThreads];
+	tasks = new ArrayList<UpdaterTask<SceneGraphNode>>(pool.getCorePoolSize());
 
 	// First naive implementation, we only separate the first-level stars.
 	Iterator<SceneGraphNode> toUpdate = root.children.iterator();
-	int nodesPerThread = root.numChildren / pool.getCorePoolSize();
-	for (int i = 0; i < pool.getCorePoolSize(); i++) {
+	int nodesPerThread = root.numChildren / numThreads;
+
+	for (int i = 0; i < numThreads; i++) {
 	    List<SceneGraphNode> partialList = new ArrayList<SceneGraphNode>(nodesPerThread);
 	    int currentNumber = 0;
 	    while (toUpdate.hasNext() && currentNumber <= nodesPerThread) {
@@ -58,20 +58,32 @@ public class SceneGraphConcurrent extends AbstractSceneGraph {
 		partialList.add(node);
 	    }
 
-	    tasks.add(new UpdaterTask(partialList, time));
+	    tasks.add(new UpdaterTask<SceneGraphNode>(partialList));
+	    objectsPerThread[i] = currentNumber;
 	}
-	EventManager.getInstance().post(Events.POST_NOTIFICATION, this.getClass().getSimpleName(), I18n.bundle.format("notif.threadpool.init", threads));
+
+	EventManager.instance.post(Events.POST_NOTIFICATION, this.getClass().getSimpleName(), I18n.bundle.format("notif.threadpool.init", numThreads));
     }
 
     public void update(ITimeFrameProvider time, ICamera camera) {
 	super.update(time, camera);
 	root.transform.position.set(camera.getInversePos());
-	UpdaterTask.setCamera(camera);
+
+	// Update params
+	int size = tasks.size();
+	for (int i = 0; i < size; i++) {
+	    UpdaterTask<SceneGraphNode> task = tasks.get(i);
+	    task.setParameters(camera, time);
+	}
+
 	try {
 	    pool.invokeAll(tasks);
 	} catch (InterruptedException e) {
 	    Gdx.app.error(SceneGraphConcurrent.class.getName(), e.getLocalizedMessage());
 	}
+
+	// Debug thread number
+	EventManager.instance.post(Events.DEBUG2, "SG threads: " + Arrays.toString(objectsPerThread));
     }
 
     public void dispose() {

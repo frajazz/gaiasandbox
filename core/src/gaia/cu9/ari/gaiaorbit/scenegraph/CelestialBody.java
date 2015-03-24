@@ -7,10 +7,12 @@ import gaia.cu9.ari.gaiaorbit.scenegraph.component.RotationComponent;
 import gaia.cu9.ari.gaiaorbit.util.Constants;
 import gaia.cu9.ari.gaiaorbit.util.DecalUtils;
 import gaia.cu9.ari.gaiaorbit.util.GlobalConf;
+import gaia.cu9.ari.gaiaorbit.util.GlobalResources;
 import gaia.cu9.ari.gaiaorbit.util.color.ColourUtils;
 import gaia.cu9.ari.gaiaorbit.util.math.MathUtilsd;
 import gaia.cu9.ari.gaiaorbit.util.math.Vector2d;
 import gaia.cu9.ari.gaiaorbit.util.math.Vector3d;
+import gaia.cu9.ari.gaiaorbit.util.time.ITimeFrameProvider;
 
 import java.util.List;
 
@@ -84,6 +86,8 @@ public abstract class CelestialBody extends AbstractPositionEntity implements IL
     /** Last observations increase in ms **/
     public long lastTransitIncrease = 0;
 
+    public float compalpha;
+
     public CelestialBody() {
 	super();
 	TH_OVER_FACTOR = THRESHOLD_ANGLE_POINT() / GlobalConf.scene.LABEL_NUMBER_FACTOR;
@@ -137,6 +141,7 @@ public abstract class CelestialBody extends AbstractPositionEntity implements IL
      */
     @Override
     public void render(ShaderProgram shader, float alpha, boolean colorTransit, Mesh mesh, ICamera camera) {
+	compalpha = alpha;
 	Quaternion rotation = CelestialBody.rotation.get();
 	// Set rotation matrix so that the star faces us at all times
 	DecalUtils.setBillboardRotation(rotation, camera.getCamera().direction, camera.getCamera().up);
@@ -308,17 +313,7 @@ public abstract class CelestialBody extends AbstractPositionEntity implements IL
 	return visible;
     }
 
-    /**
-     * Computes whether a body with the given position is visible by a camera with the given direction
-     * and angle.
-     * @param pos The position of the body.
-     * @param coneAngle The cone angle of the camera.
-     * @param dir The direction.
-     * @return True if the body is visible.
-     */
-    protected boolean computeVisibleFov(Vector3d pos, float coneAngle, Vector3d dir) {
-	return MathUtilsd.acos(pos.dot(dir) / pos.len()) < coneAngle;
-    }
+    private static final double VIEW_ANGLE = 0.43633231;
 
     /**
      * Computes the visible value, which indicates whether this body is visible or not
@@ -339,7 +334,7 @@ public abstract class CelestialBody extends AbstractPositionEntity implements IL
 	    updateTransitNumber(visible && time.getDt() != 0, time, camera.getManager().fovCamera);
 	} else {
 	    // We are in Free, Focus, Fov1 or Fov2 mode
-	    visible = computeVisibleFov(transform.position, camera.getAngleEdge(), camera.getDirection());
+	    visible = viewAngle > VIEW_ANGLE || GlobalResources.isInView(transform.position, camera.getAngleEdge(), camera.getDirection());
 
 	    /** If time is running, check Gaia **/
 	    if (computeGaiaScan && time.getDt() != 0) {
@@ -383,7 +378,7 @@ public abstract class CelestialBody extends AbstractPositionEntity implements IL
 
     @Override
     public boolean renderLabel() {
-	return viewAngle > TH_OVER_FACTOR;
+	return name != null && viewAngle > TH_OVER_FACTOR;
     }
 
     @Override
@@ -394,7 +389,7 @@ public abstract class CelestialBody extends AbstractPositionEntity implements IL
     @Override
     public float labelAlpha() {
 	// Increase the 2.5f to increase the range where the label is kind of transparent. 
-	return (float) Math.max(0, Math.min(.95f, (viewAngle - TH_OVER_FACTOR) / (TH_OVER_FACTOR * 2.5f)));
+	return (float) Math.max(0, Math.min(.95f, (viewAngle - TH_OVER_FACTOR) / (TH_OVER_FACTOR * 2.5f))) * compalpha;
     }
 
     @Override

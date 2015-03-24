@@ -33,7 +33,9 @@ com.badlogic.gdx.scenes.scene2d.ui.TextButton$TextButtonStyle: {
 },
 com.badlogic.gdx.scenes.scene2d.ui.ImageButton$ImageButtonStyle: {
 	edit: { imageUp: edit-icon },
-	playstop: { imageUp: play-icon, imageChecked: pause-icon }
+	playstop: { imageUp: play-icon, imageChecked: pause-icon },
+	rec: { imageUp: rec-icon-gray, imageChecked: rec-icon-red },
+	play: { imageUp: play-icon, imageChecked: play-icon }
 },
 com.badlogic.gdx.scenes.scene2d.ui.ScrollPane$ScrollPaneStyle: {
 	default: { vScroll: default-round-down, hScrollKnob: default-round, background: default-rect, hScroll: default-round-down, vScrollKnob: default-round },
@@ -86,7 +88,9 @@ com.badlogic.gdx.scenes.scene2d.ui.Label$LabelStyle: {
 	hud:	 { font: ui-11, fontColor: white },
 	hud-med:	 { font: ui-11, fontColor: white },
 	hud-big:	 { font: ui-13, fontColor: white },
-	hud-header:	 { font: ui-15, fontColor: orange }
+	hud-header:	 { font: ui-15, fontColor: orange },
+	
+	tooltip: { font: ui-11, fontColor: white, background: tooltip-bg }
 },
 com.badlogic.gdx.scenes.scene2d.ui.TextField$TextFieldStyle: {
 	default: { selection: selection, background: textfield, font: ui-11, fontColor: black, messageFontColor: dark-gray, cursor: cursor },

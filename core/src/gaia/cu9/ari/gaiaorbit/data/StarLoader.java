@@ -1,7 +1,7 @@
 package gaia.cu9.ari.gaiaorbit.data;
 
 import gaia.cu9.ari.gaiaorbit.data.stars.ICatalogLoader;
-import gaia.cu9.ari.gaiaorbit.scenegraph.CelestialBody;
+import gaia.cu9.ari.gaiaorbit.scenegraph.SceneGraphNode;
 
 import java.util.List;
 import java.util.Properties;
@@ -15,7 +15,6 @@ import com.badlogic.gdx.Gdx;
  *
  */
 public class StarLoader implements ISceneGraphNodeProvider {
-    private String dataPath;
     private ICatalogLoader loader;
 
     /**
@@ -30,7 +29,7 @@ public class StarLoader implements ISceneGraphNodeProvider {
 	try {
 	    Class<?> loaderClass = Class.forName(properties.getProperty("loader"));
 	    loader = (ICatalogLoader) loaderClass.newInstance();
-	    dataPath = properties.getProperty("file");
+	    loader.initialize(properties);
 
 	} catch (Exception e) {
 	    Gdx.app.error(this.getClass().getSimpleName(), e.getLocalizedMessage());
@@ -38,18 +37,18 @@ public class StarLoader implements ISceneGraphNodeProvider {
     }
 
     @Override
-    public List<CelestialBody> loadObjects() {
-	List<CelestialBody> stars = null;
+    public List<? extends SceneGraphNode> loadObjects() {
+	List<? extends SceneGraphNode> nodes = null;
 	try {
-	    stars = loader.loadStars(FileLocator.getStream(dataPath));
-	    for (CelestialBody s : stars) {
+	    nodes = loader.loadCatalog();
+	    for (SceneGraphNode s : nodes) {
 		s.initialize();
 	    }
 
 	} catch (Exception e) {
 	    Gdx.app.error(this.getClass().getSimpleName(), e.getLocalizedMessage());
 	}
-	return stars;
+	return nodes;
     }
 
 }

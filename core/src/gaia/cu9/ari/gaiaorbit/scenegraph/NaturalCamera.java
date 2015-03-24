@@ -5,10 +5,12 @@ import gaia.cu9.ari.gaiaorbit.event.EventManager;
 import gaia.cu9.ari.gaiaorbit.event.Events;
 import gaia.cu9.ari.gaiaorbit.event.IObserver;
 import gaia.cu9.ari.gaiaorbit.scenegraph.CameraManager.CameraMode;
+import gaia.cu9.ari.gaiaorbit.util.CamRecorder;
 import gaia.cu9.ari.gaiaorbit.util.Constants;
 import gaia.cu9.ari.gaiaorbit.util.GlobalConf;
 import gaia.cu9.ari.gaiaorbit.util.math.MathUtilsd;
 import gaia.cu9.ari.gaiaorbit.util.math.Vector3d;
+import gaia.cu9.ari.gaiaorbit.util.time.ITimeFrameProvider;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input.Peripheral;
@@ -70,6 +72,10 @@ public class NaturalCamera extends AbstractCamera implements IObserver {
 
     private Vector3d desired;
 
+    /** Velocity module, in case it comes from a gamepad **/
+    private double velocityGamepad = 0;
+    private double gamepadMultiplier = 1;
+
     Viewport viewport;
     boolean diverted = false;
 
@@ -116,7 +122,7 @@ public class NaturalCamera extends AbstractCamera implements IObserver {
 	accelerometer = Gdx.input.isPeripheralAvailable(Peripheral.Accelerometer);
 
 	// Focus is changed from GUI
-	EventManager.getInstance().subscribe(this, Events.FOCUS_CHANGE_CMD, Events.FOV_CHANGED_CMD, Events.FOCUS_LOCK_CMD, Events.CAMERA_POS_CMD, Events.CAMERA_DIR_CMD, Events.CAMERA_UP_CMD, Events.CAMERA_FWD, Events.CAMERA_ROTATE, Events.CAMERA_PAN, Events.CAMERA_ROLL, Events.CAMERA_TURN, Events.CAMERA_STOP, Events.CAMERA_CENTER);
+	EventManager.instance.subscribe(this, Events.FOCUS_CHANGE_CMD, Events.FOV_CHANGED_CMD, Events.FOCUS_LOCK_CMD, Events.CAMERA_POS_CMD, Events.CAMERA_DIR_CMD, Events.CAMERA_UP_CMD, Events.CAMERA_FWD, Events.CAMERA_ROTATE, Events.CAMERA_PAN, Events.CAMERA_ROLL, Events.CAMERA_TURN, Events.CAMERA_STOP, Events.CAMERA_CENTER);
     }
 
     public void update(float dt, ITimeFrameProvider time) {
@@ -178,9 +184,10 @@ public class NaturalCamera extends AbstractCamera implements IObserver {
 		// Update focus direction
 		focus.transform.getTranslation(focusDirection);
 		focus = focusBak;
-		EventManager.getInstance().post(Events.FOCUS_INFO_UPDATED, focus.distToCamera - focus.getRadius(), ((AbstractPositionEntity) focus).viewAngle);
+
+		EventManager.instance.post(Events.FOCUS_INFO_UPDATED, focus.distToCamera - focus.getRadius(), ((AbstractPositionEntity) focus).viewAngle);
 	    } else {
-		EventManager.getInstance().post(Events.CAMERA_MODE_CMD, CameraMode.Free_Camera);
+		EventManager.instance.post(Events.CAMERA_MODE_CMD, CameraMode.Free_Camera);
 	    }
 	    break;
 	case Free_Camera:
@@ -189,11 +196,16 @@ public class NaturalCamera extends AbstractCamera implements IObserver {
 	    // Update direction with pitch, yaw, roll
 	    updateRotationFree(dt, GlobalConf.scene.TURNING_SPEED);
 	    updateRoll(dt, GlobalConf.scene.TURNING_SPEED);
+	    updateLateral(dt, translateUnits);
 	    break;
 	default:
 	    break;
 	}
 
+	// Camera recording
+	CamRecorder.instance.update(dt, pos, direction, up);
+
+	// Update actual camera
 	lastFwdTime += dt;
 	lastMode = m;
 
@@ -211,6 +223,7 @@ public class NaturalCamera extends AbstractCamera implements IObserver {
 	camera.update();
 
 	posinv.set(pos).scl(-1);
+
     }
 
     /**
@@ -231,7 +244,16 @@ public class NaturalCamera extends AbstractCamera implements IObserver {
 
 	desired.nor().scl(amount * tu * 10);
 	force.add(desired);
+	// We reset the time counter
 	lastFwdTime = 0;
+    }
+
+    /**
+     * Sets the gamepad velocity as it comes from the joystick sensor. 
+     * @param amount The amount in [-1, 1].
+     */
+    public void setVelocity(double amount) {
+	velocityGamepad = amount;
     }
 
     /**
@@ -270,6 +292,10 @@ public class NaturalCamera extends AbstractCamera implements IObserver {
 	}
     }
 
+    public void setGamepadMultiplier(double amount) {
+	gamepadMultiplier = amount;
+    }
+
     public void addAmountX(Vector3d vec, double amount) {
 	vec.x += amount;
     }
@@ -279,9 +305,19 @@ public class NaturalCamera extends AbstractCamera implements IObserver {
 	addAmountX(yaw, amount);
     }
 
+    public void setYaw(double amount) {
+	yaw.x = 0;
+	yaw.y = amount;
+    }
+
     /** Adds the given amount to the camera pitch acceleration **/
     public void addPitch(double amount) {
 	addAmountX(pitch, amount);
+    }
+
+    public void setPitch(double amount) {
+	pitch.x = 0;
+	pitch.y = amount;
     }
 
     /** Adds the given amount to the camera roll acceleration **/
@@ -289,14 +325,29 @@ public class NaturalCamera extends AbstractCamera implements IObserver {
 	addAmountX(roll, amount);
     }
 
+    public void setRoll(double amount) {
+	roll.x = 0;
+	roll.y = amount;
+    }
+
     /** Adds the given amount to camera horizontal rotation around the focus acceleration **/
     public void addHorizontalRotation(double amount) {
 	addAmountX(hor, amount);
     }
 
+    public void setHorizontalRotation(double amount) {
+	hor.x = 0;
+	hor.y = amount;
+    }
+
     /** Adds the given amount to camera vertical rotation around the focus acceleration **/
     public void addVerticalRotation(double amount) {
 	addAmountX(vert, amount);
+    }
+
+    public void setVerticalRotation(double amount) {
+	vert.x = 0;
+	vert.y = amount;
     }
 
     /**
@@ -319,6 +370,22 @@ public class NaturalCamera extends AbstractCamera implements IObserver {
      * Stops the camera movement.
      * @return True if the camera had any movement at all and it has been stopped. False if camera was already still.
      */
+    public boolean stopTotalMovement() {
+	boolean stopped = (vel.len2() != 0 || yaw.y != 0 || pitch.y != 0 || roll.y != 0 || vert.y != 0 || hor.y != 0);
+	force.scl(0f);
+	vel.scl(0f);
+	yaw.scl(0f);
+	pitch.scl(0f);
+	roll.scl(0f);
+	hor.scl(0f);
+	vert.scl(0f);
+	return stopped;
+    }
+
+    /**
+     * Stops the camera movement.
+     * @return True if the camera had any movement at all and it has been stopped. False if camera was already still.
+     */
     public boolean stopForwardMovement() {
 	boolean stopped = (vel.len2() != 0);
 	force.scl(0f);
@@ -332,6 +399,11 @@ public class NaturalCamera extends AbstractCamera implements IObserver {
      * @param multiplier
      */
     protected void updatePosition(double dt, double multiplier) {
+	// Calculate velocity if coming from gamepad
+	if (velocityGamepad != 0) {
+	    vel.set(direction).nor().scl(velocityGamepad * gamepadMultiplier * multiplier);
+	}
+
 	double forceLen = force.len();
 	double velocity = vel.len();
 
@@ -339,7 +411,7 @@ public class NaturalCamera extends AbstractCamera implements IObserver {
 	friction.set(force).nor().scl(-forceLen * dt * (lastFwdTime > 0.5 ? (lastFwdTime - 0.5) * 1000 : 1));
 	force.add(friction);
 
-	if (lastFwdTime > 1.2) {
+	if (lastFwdTime > 1.2 && velocityGamepad == 0) {
 	    stopForwardMovement();
 	}
 
@@ -431,6 +503,14 @@ public class NaturalCamera extends AbstractCamera implements IObserver {
 	hor.x = 0f;
     }
 
+    private void updateLateral(float dt, double translateUnits) {
+	// Pan with hor
+	aux1.set(direction).crs(up).nor();
+	aux1.scl(hor.y * dt * translateUnits);
+	translate(aux1);
+
+    }
+
     /**
      * Updates the given accel/vel/pos of the angle using dt.
      * @param angle
@@ -486,7 +566,7 @@ public class NaturalCamera extends AbstractCamera implements IObserver {
 	if (focus != null) {
 	    this.focus = focus;
 	    // Create event to notify focus change
-	    EventManager.getInstance().post(Events.FOCUS_CHANGED, focus);
+	    EventManager.instance.post(Events.FOCUS_CHANGED, focus);
 	}
     }
 
@@ -527,7 +607,7 @@ public class NaturalCamera extends AbstractCamera implements IObserver {
 	    // Check the type of the parameter: CelestialBody or String
 	    CelestialBody focus = null;
 	    if (data[0] instanceof String) {
-		SceneGraphNode sgn = GaiaSandbox.getInstance().sg.getNode((String) data[0]);
+		SceneGraphNode sgn = GaiaSandbox.instance.sg.getNode((String) data[0]);
 		if (sgn instanceof CelestialBody) {
 		    focus = (CelestialBody) sgn;
 		    diverted = false;
@@ -544,7 +624,7 @@ public class NaturalCamera extends AbstractCamera implements IObserver {
 	    float fov = MathUtilsd.clamp((float) data[0], Constants.MIN_FOV, Constants.MAX_FOV);
 	    camera.fieldOfView = fov;
 	    if (parent.current == this) {
-		EventManager.getInstance().post(Events.FOV_CHANGE_NOTIFICATION, fov);
+		EventManager.instance.post(Events.FOV_CHANGE_NOTIFICATION, fov);
 	    }
 	    fovFactor = camera.fieldOfView / 40f;
 	    break;
@@ -574,7 +654,7 @@ public class NaturalCamera extends AbstractCamera implements IObserver {
 	    addRoll((double) data[0]);
 	    break;
 	case CAMERA_STOP:
-	    stopMovement();
+	    stopTotalMovement();
 	    break;
 	case CAMERA_CENTER:
 	    diverted = false;
@@ -670,6 +750,11 @@ public class NaturalCamera extends AbstractCamera implements IObserver {
     }
 
     @Override
+    public Vector3d getUp() {
+	return up;
+    }
+
+    @Override
     public Vector3d[] getDirections() {
 	return new Vector3d[] { direction };
     }
@@ -713,5 +798,10 @@ public class NaturalCamera extends AbstractCamera implements IObserver {
 		closest = cb;
 	    }
 	}
+    }
+
+    @Override
+    public CelestialBody getFocus() {
+	return getMode().equals(CameraMode.Focus) ? focus : null;
     }
 }

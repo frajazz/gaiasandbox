@@ -1,6 +1,8 @@
 package gaia.cu9.ari.gaiaorbit.util;
 
 import gaia.cu9.ari.gaiaorbit.util.coord.AstroUtils;
+import gaia.cu9.ari.gaiaorbit.util.math.MathUtilsd;
+import gaia.cu9.ari.gaiaorbit.util.math.Vector3d;
 
 import java.text.DecimalFormat;
 import java.text.NumberFormat;
@@ -117,6 +119,66 @@ public class GlobalResources {
 	for (int i = 0; i < array.length; i++)
 	    res[i] = (float) array[i];
 	return res;
+    }
+
+    /**
+     * Computes whether a body with the given position is visible by a camera with the given direction
+     * and angle. Coordinates are assumed to be in the camera-origin system.
+     * @param point The position of the body in the reference system of the camera (i.e. camera is at origin).
+     * @param coneAngle The cone angle of the camera.
+     * @param dir The direction.
+     * @return True if the body is visible.
+     */
+    public static boolean isInView(Vector3d point, float coneAngle, Vector3d dir) {
+	return MathUtilsd.acos(point.dot(dir) / point.len()) < coneAngle;
+    }
+
+    /**
+     * Computes whether any of the given points is visible by a camera with the given direction
+     * and the given cone angle. Coordinates are assumed to be in the camera-origin system.
+     * @param points The array of points to check.
+     * @param coneAngle The cone angle of the camera (field of view).
+     * @param dir The direction.
+     * @return True if any of the points is in the camera view cone.
+     */
+    public static boolean isAnyInView(Vector3d[] points, float coneAngle, Vector3d dir) {
+	boolean inview = false;
+	int size = points.length;
+	for (int i = 0; i < size; i++) {
+	    inview = inview || MathUtilsd.acos(points[i].dot(dir) / points[i].len()) < coneAngle;
+	}
+	return inview;
+    }
+
+    /**
+     * Compares a given buffer with another buffer.
+     * @param buf Buffer to compare against
+     * @param compareTo Buffer to compare to (content should be ASCII lowercase if possible)
+     * @return True if the buffers compare favourably, false otherwise
+     */
+    public static boolean equal(String buf, char[] compareTo, boolean ignoreCase) {
+	if (buf == null || compareTo == null || buf.length() == 0)
+	    return false;
+	char a, b;
+	int len = Math.min(buf.length(), compareTo.length);
+	if (ignoreCase) {
+	    for (int i = 0; i < len; i++) {
+		a = buf.charAt(i);
+		b = compareTo[i];
+		if (a == b || (a - 32) == b)
+		    continue; // test a == a or A == a;
+		return false;
+	    }
+	} else {
+	    for (int i = 0; i < len; i++) {
+		a = buf.charAt(i);
+		b = compareTo[i];
+		if (a == b)
+		    continue; // test a == a
+		return false;
+	    }
+	}
+	return true;
     }
 
 }

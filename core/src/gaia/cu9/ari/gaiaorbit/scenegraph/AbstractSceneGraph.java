@@ -2,11 +2,11 @@ package gaia.cu9.ari.gaiaorbit.scenegraph;
 
 import gaia.cu9.ari.gaiaorbit.event.EventManager;
 import gaia.cu9.ari.gaiaorbit.event.Events;
-import gaia.cu9.ari.gaiaorbit.render.IRenderable;
+import gaia.cu9.ari.gaiaorbit.scenegraph.octreewrapper.AbstractOctreeWrapper;
 import gaia.cu9.ari.gaiaorbit.util.I18n;
+import gaia.cu9.ari.gaiaorbit.util.time.ITimeFrameProvider;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 
@@ -18,22 +18,25 @@ public abstract class AbstractSceneGraph implements ISceneGraph {
 
     /** The root of the tree **/
     public SceneGraphNode root;
-    /** Updated every frame with the visible entities **/
-    public List<IRenderable> toRender;
     /** Quick lookup map. Name to node. **/
     HashMap<String, SceneGraphNode> stringToNode;
     /** Star id map **/
     LongMap<Star> starMap;
+    /** Number of objects per thread **/
+    int[] objectsPerThread;
 
     public AbstractSceneGraph() {
 	// Id = -1 for root
 	root = new SceneGraphNode(-1);
 	root.name = SceneGraphNode.ROOT_NAME;
+
+	// Objects per thread
+	objectsPerThread = new int[1];
     }
 
     @Override
     public void initialize(List<SceneGraphNode> nodes, ITimeFrameProvider time) {
-	EventManager.getInstance().post(Events.POST_NOTIFICATION, this.getClass().getSimpleName(), I18n.bundle.format("notif.sg.insert", nodes.size()));
+	EventManager.instance.post(Events.POST_NOTIFICATION, this.getClass().getSimpleName(), I18n.bundle.format("notif.sg.insert", nodes.size()));
 
 	// Set the reference
 	SceneGraphNode.sg = this;
@@ -46,10 +49,29 @@ public abstract class AbstractSceneGraph implements ISceneGraph {
 	    if (node.name != null && !node.name.isEmpty()) {
 		stringToNode.put(node.name, node);
 		stringToNode.put(node.name.toLowerCase(), node);
+
+		// Unwrap octree objects
+		if (node instanceof AbstractOctreeWrapper) {
+		    AbstractOctreeWrapper ow = (AbstractOctreeWrapper) node;
+		    for (SceneGraphNode ownode : ow.children) {
+			if (ownode.name != null && !ownode.name.isEmpty()) {
+			    stringToNode.put(ownode.name, ownode);
+			    stringToNode.put(ownode.name.toLowerCase(), ownode);
+			}
+		    }
+		}
 	    }
-	    if (node instanceof Star) {
-		Star s = (Star) node;
+
+	    // Star map
+	    if (node.getStarCount() == 1) {
+		Star s = (Star) node.getStars();
 		starMap.put(s.id, s);
+	    } else if (node.getStarCount() > 1) {
+		List<AbstractPositionEntity> stars = (List<AbstractPositionEntity>) node.getStars();
+		for (AbstractPositionEntity s : stars) {
+		    if (s instanceof Star)
+			starMap.put(s.id, (Star) s);
+		}
 	    }
 	}
 
@@ -64,9 +86,7 @@ public abstract class AbstractSceneGraph implements ISceneGraph {
 	    }
 	}
 
-	toRender = Collections.synchronizedList(new ArrayList<IRenderable>(nodes.size()));
-
-	EventManager.getInstance().post(Events.POST_NOTIFICATION, this.getClass().getSimpleName(), I18n.bundle.format("notif.sg.init", root.numChildren));
+	EventManager.instance.post(Events.POST_NOTIFICATION, this.getClass().getSimpleName(), I18n.bundle.format("notif.sg.init", root.numChildren));
     }
 
     /**
@@ -74,7 +94,6 @@ public abstract class AbstractSceneGraph implements ISceneGraph {
      */
     @Override
     public void update(ITimeFrameProvider time, ICamera camera) {
-	toRender.clear();
     }
 
     public HashMap<String, SceneGraphNode> getStringToNodeMap() {
@@ -134,11 +153,6 @@ public abstract class AbstractSceneGraph implements ISceneGraph {
     @Override
     public SceneGraphNode getRoot() {
 	return root;
-    }
-
-    @Override
-    public List<IRenderable> getToRenderList() {
-	return toRender;
     }
 
     @Override

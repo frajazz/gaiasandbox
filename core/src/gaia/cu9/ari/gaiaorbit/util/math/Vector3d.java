@@ -544,4 +544,22 @@ public class Vector3d implements Serializable {
 	return this.add(v.scl(s));
     }
 
+    /**
+     * Returns a vector3 representation of this vector by casting the
+     * doubles to floats. This creates a new object.
+     * @return
+     */
+    public Vector3 toVector3() {
+	return new Vector3((float) x, (float) y, (float) z);
+    }
+
+    /**
+     * Returns set v to this vector by casting
+     * doubles to floats.
+     * @return
+     */
+    public Vector3 setVector3(Vector3 v) {
+	return v.set((float) x, (float) y, (float) z);
+    }
+
 }

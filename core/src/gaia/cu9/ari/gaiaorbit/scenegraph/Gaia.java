@@ -8,6 +8,7 @@ import gaia.cu9.ari.gaiaorbit.util.gaia.Attitude;
 import gaia.cu9.ari.gaiaorbit.util.gaia.Nsl37AttitudeServer;
 import gaia.cu9.ari.gaiaorbit.util.math.Quaterniond;
 import gaia.cu9.ari.gaiaorbit.util.math.Vector3d;
+import gaia.cu9.ari.gaiaorbit.util.time.ITimeFrameProvider;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.assets.AssetManager;
@@ -51,7 +52,7 @@ public class Gaia extends ModelBody {
     @Override
     public void doneLoading(AssetManager manager) {
 	super.doneLoading(manager);
-	EventManager.getInstance().post(Events.GAIA_LOADED, this);
+	EventManager.instance.post(Events.GAIA_LOADED, this);
 
     }
 

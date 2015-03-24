@@ -85,7 +85,7 @@ public class NodeLoader<T extends SceneGraphNode> implements ISceneGraphNodeProv
 				    Method m = clazz.getMethod("set" + GlobalResources.propertyToMethodName(key), valueClass);
 				    m.invoke(instance, val);
 				} catch (NoSuchMethodException e) {
-				    EventManager.getInstance().post(Events.JAVA_EXCEPTION, e);
+				    EventManager.instance.post(Events.JAVA_EXCEPTION, e);
 				}
 			    }
 			}
@@ -100,7 +100,7 @@ public class NodeLoader<T extends SceneGraphNode> implements ISceneGraphNodeProv
 
 		}
 
-		EventManager.getInstance().post(Events.POST_NOTIFICATION, this.getClass().getSimpleName(), I18n.bundle.format("notif.nodeloader", pnames.length, filePath));
+		EventManager.instance.post(Events.POST_NOTIFICATION, this.getClass().getSimpleName(), I18n.bundle.format("notif.nodeloader", pnames.length, filePath));
 
 	    }
 	} catch (InvocationTargetException e) {

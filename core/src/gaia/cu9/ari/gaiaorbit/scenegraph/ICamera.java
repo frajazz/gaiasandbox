@@ -2,6 +2,7 @@ package gaia.cu9.ari.gaiaorbit.scenegraph;
 
 import gaia.cu9.ari.gaiaorbit.scenegraph.CameraManager.CameraMode;
 import gaia.cu9.ari.gaiaorbit.util.math.Vector3d;
+import gaia.cu9.ari.gaiaorbit.util.time.ITimeFrameProvider;
 
 import com.badlogic.gdx.graphics.PerspectiveCamera;
 import com.badlogic.gdx.utils.viewport.Viewport;
@@ -29,6 +30,8 @@ public interface ICamera {
     public Vector3d getInversePos();
 
     public Vector3d getDirection();
+
+    public Vector3d getUp();
 
     public Vector3d[] getDirections();
 
@@ -74,6 +77,12 @@ public interface ICamera {
      * @return True if the velocity is bigger than a certain high value.
      */
     public boolean superVelocity();
+
+    /**
+     * Returns the foucs if any.
+     * @return The foucs object if it is in focus mode. Null otherwise.
+     */
+    public CelestialBody getFocus();
 
     /**
      * Checks if this body is the current focus.

@@ -2,6 +2,7 @@ package gaia.cu9.ari.gaiaorbit.interfce;
 
 import gaia.cu9.ari.gaiaorbit.event.EventManager;
 import gaia.cu9.ari.gaiaorbit.event.Events;
+import gaia.cu9.ari.gaiaorbit.scenegraph.CameraManager.CameraMode;
 import gaia.cu9.ari.gaiaorbit.scenegraph.CelestialBody;
 import gaia.cu9.ari.gaiaorbit.scenegraph.ISceneGraph;
 import gaia.cu9.ari.gaiaorbit.scenegraph.SceneGraphNode;
@@ -45,7 +46,8 @@ public class SearchDialog extends Window {
 			    if (sg.containsNode(text.toLowerCase())) {
 				SceneGraphNode node = sg.getNode(text.toLowerCase());
 				if (node instanceof CelestialBody) {
-				    EventManager.getInstance().post(Events.FOCUS_CHANGE_CMD, node, true);
+				    EventManager.instance.post(Events.CAMERA_MODE_CMD, CameraMode.Focus, true);
+				    EventManager.instance.post(Events.FOCUS_CHANGE_CMD, node, true);
 				    searchInput.selectAll();
 				}
 			    }

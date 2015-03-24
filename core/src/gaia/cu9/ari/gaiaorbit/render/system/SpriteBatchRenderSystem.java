@@ -40,7 +40,9 @@ public class SpriteBatchRenderSystem extends AbstractRenderSystem {
     public void renderStud(List<IRenderable> renderables, ICamera camera) {
 	batch.begin();
 	float labelAlpha = alphas[ComponentType.Labels.ordinal()];
-	for (IRenderable s : renderables) {
+	int size = renderables.size();
+	for (int i = 0; i < size; i++) {
+	    IRenderable s = renderables.get(i);
 	    if (shaderProgram == null) {
 		// Render sprite
 		s.render(batch, camera, alphas[s.getComponentType().ordinal()]);

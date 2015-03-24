@@ -66,4 +66,5 @@ public abstract class AbstractRenderSystem implements IRenderSystem {
     public int compareTo(IRenderSystem o) {
 	return Integer.compare(priority, o.getPriority());
     }
+
 }

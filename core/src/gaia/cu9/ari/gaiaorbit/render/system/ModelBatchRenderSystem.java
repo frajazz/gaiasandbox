@@ -39,7 +39,9 @@ public class ModelBatchRenderSystem extends AbstractRenderSystem {
 	Collections.sort(renderables, comp);
 	if (mustRender()) {
 	    batch.begin(camera.getCamera());
-	    for (IRenderable s : renderables) {
+	    int size = renderables.size();
+	    for (int i = 0; i < size; i++) {
+		IRenderable s = renderables.get(i);
 		if (!addByte) {
 		    s.render(batch, getAlpha(s));
 		} else {

@@ -1,11 +1,12 @@
 <?xml version="1.0"?>
 <!DOCTYPE ivy-module [
-    <!ENTITY gdx.version "1.5.0">
+    <!ENTITY gdx.version "1.5.5">
 ]>
 <ivy-module version="2.0">
   <info organisation="gaia.cu9.ari.gaiaorbit" module="gaiasandbox"/>
   <dependencies>
     <dependency org="com.badlogicgames.gdx" name="gdx" rev="&gdx.version;" conf="default"/>
+    <dependency org="com.badlogicgames.gdx" name="gdx-controllers" rev="&gdx.version;" conf="default"/>
     <dependency org="org.python" name="jython-standalone" rev="2.5.4-rc1" conf="default"/>
   </dependencies>
 </ivy-module>

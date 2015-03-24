@@ -11,7 +11,7 @@ public class MultiThreadIndexer extends ThreadIndexer {
 
     @Override
     public int i() {
-	return ((GSThread) Thread.currentThread()).index;
+	return Thread.currentThread() instanceof GSThread ? ((GSThread) Thread.currentThread()).index : 0;
     }
 
 }

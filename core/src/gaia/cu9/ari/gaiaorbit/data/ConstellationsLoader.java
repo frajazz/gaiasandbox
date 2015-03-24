@@ -6,6 +6,7 @@ import gaia.cu9.ari.gaiaorbit.render.SceneGraphRenderer.ComponentType;
 import gaia.cu9.ari.gaiaorbit.scenegraph.Constellation;
 import gaia.cu9.ari.gaiaorbit.scenegraph.SceneGraphNode;
 import gaia.cu9.ari.gaiaorbit.util.I18n;
+import gaia.cu9.ari.gaiaorbit.util.parse.Parser;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -68,7 +69,7 @@ public class ConstellationsLoader<T extends SceneGraphNode> implements ISceneGra
 			    lastid = -1;
 			} else {
 
-			    long newid = Long.parseLong(tokens[1].trim());
+			    long newid = Parser.parseLong(tokens[1].trim());
 			    if (lastid > 0) {
 				partial.add(new long[] { lastid, newid });
 			    }
@@ -92,7 +93,7 @@ public class ConstellationsLoader<T extends SceneGraphNode> implements ISceneGra
 		Gdx.app.error(this.getClass().getSimpleName(), e.getLocalizedMessage());
 	    }
 
-	    EventManager.getInstance().post(Events.POST_NOTIFICATION, this.getClass().getSimpleName(), I18n.bundle.format("notif.constellations.init", constellations.size()));
+	    EventManager.instance.post(Events.POST_NOTIFICATION, this.getClass().getSimpleName(), I18n.bundle.format("notif.constellations.init", constellations.size()));
 
 	} catch (Exception e) {
 	    Gdx.app.error(this.getClass().getSimpleName(), e.getLocalizedMessage());

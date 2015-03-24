@@ -39,7 +39,7 @@ public class PixelBloomRenderSystem extends AbstractRenderSystem implements IObs
 	if (!pointShader.isCompiled()) {
 	    Gdx.app.error(this.getClass().getName(), "Point shader compilation failed:\n" + pointShader.getLog());
 	}
-	this.renderer = new ImmediateModeRenderer20(1500000, false, true, 0, pointShader);
+	this.renderer = new ImmediateModeRenderer20(8000000, false, true, 0, pointShader);
 
 	// Init bloom
 	pp = new PostProcessor(true, true, true);
@@ -48,7 +48,7 @@ public class PixelBloomRenderSystem extends AbstractRenderSystem implements IObs
 	bloom.setBaseIntesity(1f);
 	bloom.setBaseSaturation(1f);
 	bloom.setBloomIntesity(4f);
-	bloom.setBloomSaturation(0.4f);
+	bloom.setBloomSaturation(2f);
 	bloom.setBlurPasses(1);
 	bloom.setBlurAmount(0.0f);
 	bloom.setBlurType(BlurType.Gaussian5x5b);
@@ -59,7 +59,7 @@ public class PixelBloomRenderSystem extends AbstractRenderSystem implements IObs
 	screen_fb = new FrameBuffer(Format.RGB888, Gdx.graphics.getWidth(), Gdx.graphics.getHeight(), true);
 	frame_fb = new FrameBuffer(Format.RGB888, GlobalConf.screenshot.SCREENSHOT_WIDTH, GlobalConf.screen.SCREEN_HEIGHT, true);
 
-	EventManager.getInstance().subscribe(this, Events.TRANSIT_COLOUR_CMD, Events.SCREEN_RESIZE, Events.TOGGLE_STEREOSCOPIC);
+	EventManager.instance.subscribe(this, Events.TRANSIT_COLOUR_CMD, Events.SCREEN_RESIZE, Events.TOGGLE_STEREOSCOPIC);
     }
 
     @Override
