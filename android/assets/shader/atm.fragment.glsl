@@ -5,6 +5,8 @@ precision mediump float;
 #define LOWP 
 #endif
 
+#define exposure 1.5
+
 uniform vec3 v3LightPos;
 uniform float g;
 uniform float g2;
@@ -24,5 +26,8 @@ void main(void) {
     float fMiePhase = 1.5 * ((1.0 - g2) / (2.0 + g2)) * (1.0 + fCos2) / pow (1.0 + g2 - 2.0 * g * fCos, 1.5);
 
     gl_FragColor.rgb = (fRayleighPhase * frontColor.rgb + fMiePhase * frontSecondaryColor.rgb);
+    gl_FragColor.rgb = vec3(1.0) - exp(gl_FragColor.rgb * -exposure);
+    
+    
     gl_FragColor.a = fAlpha * (gl_FragColor.b + fColorOpacity * length (gl_FragColor));
 }
