@@ -224,12 +224,7 @@ public interface IScriptingInterface {
      */
     public void setTurningCameraSpeed(float speed);
 
-    /**com.badlogic.gdx.graphics.g2d.BitmapFont: { ui-10: { file: ui-10.fnt } },
-    com.badlogic.gdx.graphics.g2d.BitmapFont: { ui-11: { file: ui-11.fnt } },
-    com.badlogic.gdx.graphics.g2d.BitmapFont: { ui-12: { file: ui-12.fnt } },
-    com.badlogic.gdx.graphics.g2d.BitmapFont: { ui-13: { file: ui-13.fnt } },
-    com.badlogic.gdx.graphics.g2d.BitmapFont: { ui-15: { file: ui-15.fnt } },
-    com.badlogic.gdx.graphics.g2d.BitmapFont: { ui-23: { file: ui-23.fnt } },
+    /**
      * Adds a forward movement to the camera with the given value. If value is 
      * negative the movement is backwards.
      * @param value The magnitude of the movement, between 0 and 1.
