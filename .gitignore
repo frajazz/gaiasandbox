@@ -54,9 +54,3 @@ releases/
 # Python pickled_dict #
 #######################
 pickled_dict
-
-# OTHER BRANCH STUFF #
-#####################
-android/
-core/
-desktop/
