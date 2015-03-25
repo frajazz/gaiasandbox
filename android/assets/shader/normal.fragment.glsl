@@ -48,6 +48,8 @@ vec3 g_tangent = vec3(1.0, 0.0, 0.0);
 ////////////////////////////////////////////////////////////////////////////////////
 ////////// TEXCOORD0 ATTRIBUTE - FRAGMENT
 ///////////////////////////////////////////////////////////////////////////////////
+#define exposure 1.5
+
 varying vec2 v_texCoord0;
 
 // Uniforms which are always available
@@ -245,5 +247,5 @@ void main() {
     #endif // shadowMapFlag
 
     gl_FragColor.rgb += selfShadow * spec * specular;
-    gl_FragColor.rgb += v_atmosphereColor;
+    gl_FragColor.rgb += (vec3(1.0) - exp(v_atmosphereColor * -exposure));
 }
