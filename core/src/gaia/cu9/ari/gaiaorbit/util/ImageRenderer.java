@@ -40,6 +40,10 @@ public class ImageRenderer {
 	return file;
     }
 
+    public static Pixmap renderToPixmap(int w, int h) {
+	return getScreenshot(0, 0, w, h, true);
+    }
+
     public static String writePixmapToImage(String absoluteLocation, String baseFileName, Pixmap pixmap) {
 	FileHandle fh = getTarget(absoluteLocation, baseFileName);
 	PixmapIO.writePNG(fh, pixmap);

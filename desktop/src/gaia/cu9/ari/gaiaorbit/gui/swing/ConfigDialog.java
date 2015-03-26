@@ -1,5 +1,6 @@
 package gaia.cu9.ari.gaiaorbit.gui.swing;
 
+import gaia.cu9.ari.gaiaorbit.GaiaSandbox;
 import gaia.cu9.ari.gaiaorbit.GaiaSandboxDesktop;
 import gaia.cu9.ari.gaiaorbit.event.EventManager;
 import gaia.cu9.ari.gaiaorbit.event.Events;
@@ -740,6 +741,12 @@ public class ConfigDialog extends I18nJFrame {
 		    GlobalConf.frame.RENDER_WIDTH = ((Integer) frameWidthField.getValue());
 		    GlobalConf.frame.RENDER_HEIGHT = ((Integer) frameHeightField.getValue());
 		    GlobalConf.frame.RENDER_OUTPUT = frameCb.isSelected();
+		    if (!GlobalConf.frame.RENDER_OUTPUT) {
+			// Stopped? flush!
+			if (GaiaSandbox.instance != null) {
+			    GaiaSandbox.instance.flushImageBuffer();
+			}
+		    }
 		    GlobalConf.frame.RENDER_TARGET_FPS = ((Integer) targetFPS.getValue());
 
 		    // Save configuration

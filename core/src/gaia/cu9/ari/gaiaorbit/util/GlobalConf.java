@@ -151,6 +151,7 @@ public class GlobalConf {
 	public boolean INPUT_ENABLED;
 	public boolean RECORD_CAMERA;
 	public float LIMIT_MAG_RUNTIME;
+	public int OUTPUT_FRAME_BUFFER_SIZE = 250;
 
 	public RuntimeConf() {
 	    EventManager.instance.subscribe(this, Events.LIMIT_MAG_CMD, Events.INPUT_ENABLED_CMD, Events.TOGGLE_CLEANMODE, Events.TOGGLE_UPDATEPAUSE, Events.TOGGLE_TIME_CMD, Events.RECORD_CAMERA_CMD);
