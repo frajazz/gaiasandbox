@@ -303,6 +303,7 @@ public class GaiaSandbox implements ApplicationListener, IObserver {
 	// Update whole tree to reinitialize positions with the new camera position
 	GlobalClock.clock.update(0.00000001f);
 	sg.update(GlobalClock.clock, cam);
+	sgr.clearLists();
 	GlobalClock.clock.update(0);
 
 	Vector3d newCameraDir = focus.pos.cpy().sub(newCameraPos);
