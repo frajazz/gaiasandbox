@@ -258,6 +258,7 @@ people behind the following technologies/resources:
 - [libgdx-contribs-postprocessing](https://github.com/manuelbua/libgdx-contribs/tree/master/postprocessing)
 - [HYG catalog](http://www.astronexus.com/hyg)
 - [WebLaF](http://weblookandfeel.com/)
+- Mark Taylor's [STIL](http://www.star.bristol.ac.uk/~mbt/stil/) library.
 - And several online resources without which this would have not been possible
 
 If you think I missed someone, please let me know.
