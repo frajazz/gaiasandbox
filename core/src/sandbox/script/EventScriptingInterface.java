@@ -249,7 +249,7 @@ public class EventScriptingInterface implements IScriptingInterface, IObserver {
 
     @Override
     public void setFrameOutput(boolean active) {
-	em.post(Events.RENDER_SYSTEM_CMD, active);
+	em.post(Events.FRAME_OUTPUT_CMD, active);
     }
 
     @Override

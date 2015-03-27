@@ -1,5 +1,6 @@
 package gaia.cu9.ari.gaiaorbit.util;
 
+import gaia.cu9.ari.gaiaorbit.GaiaSandbox;
 import gaia.cu9.ari.gaiaorbit.event.EventManager;
 import gaia.cu9.ari.gaiaorbit.event.Events;
 import gaia.cu9.ari.gaiaorbit.event.IObserver;
@@ -256,10 +257,10 @@ public class GlobalConf {
 	/** Should we write the simulation time to the images? **/
 	public boolean RENDER_SCREENSHOT_TIME;
 	/** Whether the frame system is activated or not **/
-	public boolean RENDER_OUTPUT;
+	public boolean RENDER_OUTPUT = false;
 
 	public FrameConf() {
-	    EventManager.instance.subscribe(this, Events.CONFIG_RENDER_SYSTEM, Events.RENDER_SYSTEM_CMD);
+	    EventManager.instance.subscribe(this, Events.CONFIG_RENDER_SYSTEM, Events.FRAME_OUTPUT_CMD);
 	}
 
 	@Override
@@ -270,7 +271,6 @@ public class GlobalConf {
 	    p.setProperty("graphics.render.folder", RENDER_FOLDER);
 	    p.setProperty("graphics.render.filename", RENDER_FILE_NAME);
 	    p.setProperty("graphics.render.time", Boolean.toString(RENDER_SCREENSHOT_TIME));
-	    p.setProperty("graphics.render.output", Boolean.toString(RENDER_OUTPUT));
 	}
 
 	@Override
@@ -281,7 +281,6 @@ public class GlobalConf {
 	    RENDER_FOLDER = p.getProperty("graphics.render.folder");
 	    RENDER_FILE_NAME = p.getProperty("graphics.render.filename");
 	    RENDER_SCREENSHOT_TIME = Boolean.parseBoolean(p.getProperty("graphics.render.time"));
-	    RENDER_OUTPUT = Boolean.parseBoolean(p.getProperty("graphics.render.output"));
 	}
 
 	@Override
@@ -294,12 +293,18 @@ public class GlobalConf {
 		RENDER_FOLDER = (String) data[3];
 		RENDER_FILE_NAME = (String) data[4];
 		break;
-	    case RENDER_SYSTEM_CMD:
-		RENDER_OUTPUT = (Boolean) data[0];
-		break;
+	    case FRAME_OUTPUT_CMD:
+		if (data.length > 0) {
+		    RENDER_OUTPUT = (Boolean) data[0];
+		} else {
+		    RENDER_OUTPUT = !RENDER_OUTPUT;
+		}
+		// Flush buffer if needed
+		if (!RENDER_OUTPUT && GaiaSandbox.instance != null) {
+		    GaiaSandbox.instance.frameRenderer.flush();
+		}
 	    }
 	}
-
     }
 
     /**

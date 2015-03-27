@@ -67,7 +67,7 @@ public class MobileGui implements IGui {
 	debugInterface.right().top();
 
 	// NOTIFICATIONS INTERFACE - BOTTOM LEFT
-	notificationsInterface = new NotificationsInterface(skin, lock);
+	notificationsInterface = new NotificationsInterface(skin, lock, true);
 	notificationsInterface.setFillParent(true);
 	notificationsInterface.left().bottom();
 	notificationsInterface.pad(0, 5, 5, 0);

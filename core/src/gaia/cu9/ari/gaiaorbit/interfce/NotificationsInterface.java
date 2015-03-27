@@ -26,31 +26,66 @@ import com.badlogic.gdx.scenes.scene2d.ui.Table;
  *
  */
 public class NotificationsInterface extends Table implements IObserver {
-    private static final long DEFAULT_TIMEOUT = 4000;
+    private static final long DEFAULT_TIMEOUT = 5000;
     DateFormat df;
     long msTimeout;
-    Label message;
+    Label message1;
+    Label message2;
     LinkedList<MessageBean> historical;
     boolean displaying = false;
     boolean consoleLog = true;
     boolean permanent = false;
+    boolean multiple = false;
+    boolean writeDates = true;
 
     /** Lock object for synchronization **/
     Object lock;
 
-    public NotificationsInterface(Skin skin, Object lock) {
-	this(DEFAULT_TIMEOUT, skin);
-	this.lock = lock;
+    /**
+     * Initializes the notifications interface.
+     * @param skin The skin.
+     * @param lock The lock object.
+     * @param multiple Allow multiple messages?
+     * @param writeDates Write dates with messages?
+     */
+    public NotificationsInterface(Skin skin, Object lock, boolean multiple, boolean writeDates) {
+	this(skin, lock, multiple);
+	this.writeDates = writeDates;
     }
 
-    public NotificationsInterface(long msTimeout, Skin skin) {
+    /**
+     * Initializes the notifications interface.
+     * @param skin The skin.
+     * @param lock The lock object.
+     * @param multiple Allow multiple messages?
+     */
+    public NotificationsInterface(Skin skin, Object lock, boolean multiple) {
+	this(DEFAULT_TIMEOUT, skin, multiple);
+	this.lock = lock;
+
+    }
+
+    /**
+     * Initializes the notifications interface.
+     * @param msTimeout The timeout in ms.
+     * @param skin The skin.
+     */
+    public NotificationsInterface(long msTimeout, Skin skin, boolean multiple) {
 	super(skin);
 	this.msTimeout = msTimeout;
-	message = new OwnLabel("", skin, "hud-med");
-	this.add(message).left();
+	this.multiple = multiple;
+
+	// Create second message if necessary
+	if (multiple) {
+	    message2 = new OwnLabel("", skin, "hud-med");
+	    this.add(message2).left().row();
+	}
+	//Create message
+	message1 = new OwnLabel("", skin, "hud-med");
+	this.add(message1).left();
 	this.historical = new LinkedList<MessageBean>();
-	this.df = DateFormat.getDateTimeInstance(DateFormat.MEDIUM, DateFormat.MEDIUM);
-	EventManager.instance.subscribe(this, Events.POST_NOTIFICATION, Events.FOCUS_CHANGED, Events.TOGGLE_TIME_CMD, Events.TOGGLE_VISIBILITY_CMD, Events.CAMERA_MODE_CMD, Events.PACE_CHANGED_INFO, Events.FOCUS_LOCK_CMD, Events.TOGGLE_AMBIENT_LIGHT, Events.FOV_CHANGE_NOTIFICATION, Events.JAVA_EXCEPTION, Events.ORBIT_DATA_LOADED, Events.SCREENSHOT_INFO, Events.COMPUTE_GAIA_SCAN_CMD, Events.ONLY_OBSERVED_STARS_CMD, Events.TRANSIT_COLOUR_CMD, Events.LIMIT_MAG_CMD, Events.TOGGLE_STEREOSCOPIC, Events.TOGGLE_CLEANMODE);
+	this.df = DateFormat.getTimeInstance(DateFormat.MEDIUM);
+	EventManager.instance.subscribe(this, Events.POST_NOTIFICATION, Events.FOCUS_CHANGED, Events.TOGGLE_TIME_CMD, Events.TOGGLE_VISIBILITY_CMD, Events.CAMERA_MODE_CMD, Events.PACE_CHANGED_INFO, Events.FOCUS_LOCK_CMD, Events.TOGGLE_AMBIENT_LIGHT, Events.FOV_CHANGE_NOTIFICATION, Events.JAVA_EXCEPTION, Events.ORBIT_DATA_LOADED, Events.SCREENSHOT_INFO, Events.COMPUTE_GAIA_SCAN_CMD, Events.ONLY_OBSERVED_STARS_CMD, Events.TRANSIT_COLOUR_CMD, Events.LIMIT_MAG_CMD, Events.TOGGLE_STEREOSCOPIC, Events.TOGGLE_CLEANMODE, Events.FRAME_OUTPUT_CMD);
     }
 
     private void addMessage(String msg) {
@@ -58,21 +93,38 @@ public class NotificationsInterface extends Table implements IObserver {
     }
 
     private void addMessage(String msg, boolean permanent) {
-	this.historical.add(new MessageBean(msg));
-	this.message.setText(msg);
+	MessageBean messageBean = new MessageBean(msg);
+
+	if (multiple && !historical.isEmpty() && !historical.getLast().finished(msTimeout)) {
+	    // Move current up
+	    this.message2.setText(this.message1.getText());
+	}
+	// Set 1
+	this.message1.setText(formatMessage(messageBean));
+
+	this.historical.add(messageBean);
 	this.displaying = true;
 	this.permanent = permanent;
 	if (consoleLog) {
-	    Gdx.app.log(df.format(new Date()), msg);
+	    Gdx.app.log(df.format(messageBean.date), msg);
 	}
+    }
+
+    private String formatMessage(MessageBean msgBean) {
+	return (writeDates ? df.format(msgBean.date) + " - " : "") + msgBean.msg;
     }
 
     public void update() {
 	if (displaying && !permanent) {
-	    if (new Date().getTime() - historical.getLast().date.getTime() > msTimeout) {
-		displaying = false;
-		message.setText("");
+	    if (multiple && historical.size() > 1 && historical.get(historical.size() - 2).finished(msTimeout)) {
+		message2.setText("");
 	    }
+
+	    if (historical.getLast().finished(msTimeout)) {
+		displaying = false;
+		message1.setText("");
+	    }
+
 	}
     }
 
@@ -153,6 +205,19 @@ public class NotificationsInterface extends Table implements IObserver {
 	    case TOGGLE_STEREOSCOPIC:
 	    case TOGGLE_CLEANMODE:
 		addMessage(I18n.bundle.format("notif.toggle", data[0]));
+		break;
+	    case FRAME_OUTPUT_CMD:
+		if (data.length == 0) {
+		    addMessage(I18n.bundle.format("notif.toggle", I18n.bundle.get("element.frameoutput")));
+		} else {
+		    boolean activated = (Boolean) data[0];
+		    if (activated) {
+			addMessage(I18n.bundle.format("notif.activated", I18n.bundle.get("element.frameoutput")));
+		    } else {
+			addMessage(I18n.bundle.format("notif.deactivated", I18n.bundle.get("element.frameoutput")));
+		    }
+		}
+		break;
 	    }
 	}
     }
@@ -172,6 +237,16 @@ public class NotificationsInterface extends Table implements IObserver {
 	public MessageBean(String msg) {
 	    this.msg = msg;
 	    this.date = new Date();
+	}
+
+	/** Has the message finished given the timeout? **/
+	public boolean finished(long timeout) {
+	    return new Date().getTime() - date.getTime() > timeout;
+	}
+
+	@Override
+	public String toString() {
+	    return formatMessage(this);
 	}
     }
 

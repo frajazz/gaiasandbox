@@ -1,6 +1,5 @@
 package gaia.cu9.ari.gaiaorbit.gui.swing;
 
-import gaia.cu9.ari.gaiaorbit.GaiaSandbox;
 import gaia.cu9.ari.gaiaorbit.GaiaSandboxDesktop;
 import gaia.cu9.ari.gaiaorbit.event.EventManager;
 import gaia.cu9.ari.gaiaorbit.event.Events;
@@ -210,7 +209,7 @@ public class ConfigDialog extends I18nJFrame {
 	if (selectedMode != null)
 	    fullScreenResolutions.setSelectedItem(selectedMode);
 
-	// Get native resolution
+	// Get current resolution
 	DisplayMode nativeMode = LwjglApplicationConfiguration.getDesktopDisplayMode();
 
 	// Windowed mode resolutions
@@ -601,20 +600,7 @@ public class ConfigDialog extends I18nJFrame {
 	final JSpinner targetFPS = new JSpinner(new SpinnerNumberModel(GlobalConf.frame.RENDER_TARGET_FPS, 1, 60, 1));
 
 	// FRAME OUTPUT CHECKBOX
-	final JCheckBox frameCb = new JCheckBox(txt("gui.frameoutput.enable"));
-	frameCb.addChangeListener(new ChangeListener() {
-	    @Override
-	    public void stateChanged(ChangeEvent e) {
-		JCheckBox cb = (JCheckBox) e.getSource();
-		boolean selected = cb.isSelected();
-		enableComponents(selected, frameLocation, frameWidthField, frameHeightField, targetFPS, frameFileName);
-	    }
-	});
-	frameCb.setSelected(GlobalConf.frame.RENDER_OUTPUT);
-	enableComponents(frameCb.isSelected(), frameLocation, frameWidthField, frameHeightField, targetFPS, frameFileName);
-
 	imageOutput.add(frameInfo, "span");
-	imageOutput.add(frameCb, "span");
 	imageOutput.add(new JLabel(txt("gui.frameoutput.location") + ":"));
 	imageOutput.add(frameLocation, "wrap");
 	imageOutput.add(new JLabel(txt("gui.frameoutput.prefix") + ":"));
@@ -729,13 +715,6 @@ public class ConfigDialog extends I18nJFrame {
 		    }
 		    GlobalConf.frame.RENDER_WIDTH = ((Integer) frameWidthField.getValue());
 		    GlobalConf.frame.RENDER_HEIGHT = ((Integer) frameHeightField.getValue());
-		    GlobalConf.frame.RENDER_OUTPUT = frameCb.isSelected();
-		    if (!GlobalConf.frame.RENDER_OUTPUT) {
-			// Stopped? flush!
-			if (GaiaSandbox.instance != null) {
-			    GaiaSandbox.instance.flushImageBuffer();
-			}
-		    }
 		    GlobalConf.frame.RENDER_TARGET_FPS = ((Integer) targetFPS.getValue());
 
 		    // Save configuration

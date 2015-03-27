@@ -17,7 +17,6 @@ import gaia.cu9.ari.gaiaorbit.interfce.LoadingGui;
 import gaia.cu9.ari.gaiaorbit.interfce.MobileGui;
 import gaia.cu9.ari.gaiaorbit.interfce.RenderGui;
 import gaia.cu9.ari.gaiaorbit.render.AbstractRenderer;
-import gaia.cu9.ari.gaiaorbit.render.BufferedFrame;
 import gaia.cu9.ari.gaiaorbit.render.GSPostProcessor;
 import gaia.cu9.ari.gaiaorbit.render.IPostProcessor;
 import gaia.cu9.ari.gaiaorbit.render.IPostProcessor.PostProcessBean;
@@ -37,19 +36,20 @@ import gaia.cu9.ari.gaiaorbit.util.Constants;
 import gaia.cu9.ari.gaiaorbit.util.GlobalConf;
 import gaia.cu9.ari.gaiaorbit.util.GlobalResources;
 import gaia.cu9.ari.gaiaorbit.util.I18n;
-import gaia.cu9.ari.gaiaorbit.util.ImageRenderer;
 import gaia.cu9.ari.gaiaorbit.util.ModelCache;
 import gaia.cu9.ari.gaiaorbit.util.concurrent.ThreadIndexer;
 import gaia.cu9.ari.gaiaorbit.util.concurrent.ThreadPoolManager;
 import gaia.cu9.ari.gaiaorbit.util.math.MathUtilsd;
 import gaia.cu9.ari.gaiaorbit.util.math.Vector3d;
+import gaia.cu9.ari.gaiaorbit.util.screenshot.BasicFileImageRenderer;
+import gaia.cu9.ari.gaiaorbit.util.screenshot.BufferedFileImageRenderer;
+import gaia.cu9.ari.gaiaorbit.util.screenshot.IFileImageRenderer;
 import gaia.cu9.ari.gaiaorbit.util.time.GlobalClock;
 import gaia.cu9.ari.gaiaorbit.util.tree.OctreeNode;
 
 import java.io.File;
 import java.io.FileInputStream;
 import java.net.MalformedURLException;
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Set;
@@ -66,8 +66,6 @@ import com.badlogic.gdx.files.FileHandle;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.Pixmap.Format;
 import com.badlogic.gdx.graphics.glutils.FrameBuffer;
-import com.badlogic.gdx.utils.Pool;
-import com.badlogic.gdx.utils.Pools;
 
 /**
  * The main class. Holds all the entities manages the update/draw cycle as well as the image rendering.
@@ -92,12 +90,6 @@ public class GaiaSandbox implements ApplicationListener, IObserver {
     public ISceneGraph sg;
     private SceneGraphRenderer sgr;
     private IPostProcessor pp;
-
-    /**
-     * Output frame buffer and BufferedFrame pool
-     */
-    public List<BufferedFrame> outputFrameBuffer;
-    public Pool<BufferedFrame> bfPool;
 
     /**
      * The user interface
@@ -126,6 +118,7 @@ public class GaiaSandbox implements ApplicationListener, IObserver {
 
     }
 
+    public IFileImageRenderer frameRenderer, screenshotRenderer;
     private ScreenshotCmd screenshot;
 
     /**
@@ -195,6 +188,10 @@ public class GaiaSandbox implements ApplicationListener, IObserver {
 	// Initialize camera recorder
 	CamRecorder.initialize();
 
+	// Init frame/screenshot renderer
+	frameRenderer = new BufferedFileImageRenderer(GlobalConf.runtime.OUTPUT_FRAME_BUFFER_SIZE);
+	screenshotRenderer = new BasicFileImageRenderer();
+
 	// Initialize asset manager
 	FileHandleResolver resolver = new InternalFileHandleResolver();
 	manager = new AssetManager(resolver);
@@ -206,10 +203,6 @@ public class GaiaSandbox implements ApplicationListener, IObserver {
 
 	// Initialize Cameras
 	cam = new CameraManager(manager, CameraMode.Focus);
-
-	// Init buffered frame
-	outputFrameBuffer = new ArrayList<BufferedFrame>(GlobalConf.runtime.OUTPUT_FRAME_BUFFER_SIZE);
-	bfPool = Pools.get(BufferedFrame.class, GlobalConf.runtime.OUTPUT_FRAME_BUFFER_SIZE);
 
 	if (sg == null) {
 	    // Set asset manager to asset bean
@@ -352,7 +345,7 @@ public class GaiaSandbox implements ApplicationListener, IObserver {
 	} catch (MalformedURLException e) {
 	    EventManager.instance.post(Events.JAVA_EXCEPTION, e);
 	}
-	flushImageBuffer();
+	frameRenderer.flush();
 	gui.dispose();
 	renderGui.dispose();
 	if (sg != null) {
@@ -391,6 +384,18 @@ public class GaiaSandbox implements ApplicationListener, IObserver {
 		 * RENDER
 		 */
 
+		/* FRAME OUTPUT */
+		if (GlobalConf.frame.RENDER_OUTPUT) {
+		    renderToImage(cam, pp.getPostProcessBean(RenderType.frame), GlobalConf.frame.RENDER_WIDTH, GlobalConf.frame.RENDER_HEIGHT, GlobalConf.frame.RENDER_FOLDER, GlobalConf.frame.RENDER_FILE_NAME, frameRenderer);
+		}
+
+		/* SCREENSHOT OUTPUT */
+		if (screenshot.active) {
+		    String file = renderToImage(cam, pp.getPostProcessBean(RenderType.screenshot), screenshot.width, screenshot.height, screenshot.folder, ScreenshotCmd.FILENAME, screenshotRenderer);
+		    screenshot.active = false;
+		    EventManager.instance.post(Events.SCREENSHOT_INFO, file);
+		}
+
 		/* SCREEN OUTPUT */
 		if (GlobalConf.screen.SCREEN_OUTPUT) {
 		    /** RENDER THE SCENE **/
@@ -404,18 +409,6 @@ public class GaiaSandbox implements ApplicationListener, IObserver {
 			gui.getGuiStage().getViewport().apply();
 			gui.render();
 		    }
-		}
-
-		/* FRAME OUTPUT */
-		if (GlobalConf.frame.RENDER_OUTPUT) {
-		    renderToImage(cam, pp.getPostProcessBean(RenderType.frame), GlobalConf.frame.RENDER_WIDTH, GlobalConf.frame.RENDER_HEIGHT, GlobalConf.frame.RENDER_FOLDER, GlobalConf.frame.RENDER_FILE_NAME, false);
-		}
-
-		/* SCREENSHOT OUTPUT */
-		if (screenshot.active) {
-		    String file = renderToImage(cam, pp.getPostProcessBean(RenderType.screenshot), screenshot.width, screenshot.height, screenshot.folder, ScreenshotCmd.FILENAME, false);
-		    screenshot.active = false;
-		    EventManager.instance.post(Events.SCREENSHOT_INFO, file);
 		}
 
 		sgr.clearLists();
@@ -472,10 +465,10 @@ public class GaiaSandbox implements ApplicationListener, IObserver {
      * @param height The height of the image.
      * @param folder The folder to save the image to.
      * @param filename The file name prefix.
-     * @param buffer Whether to buffer images or not.
+     * @param synchronous Whether to write the image synchronously so that the function blocks until it finishes.
      * @return
      */
-    public String renderToImage(ICamera camera, PostProcessBean ppb, int width, int height, String folder, String filename, boolean buffer) {
+    public String renderToImage(ICamera camera, PostProcessBean ppb, int width, int height, String folder, String filename, IFileImageRenderer renderer) {
 	setViewportSize(width, height, camera);
 	FrameBuffer m_fbo = new FrameBuffer(Format.RGBA8888, width, height, true);
 	// TODO That's a dirty trick, we should find a better way (i.e. making buildEnabledEffectsList() method public)
@@ -502,40 +495,11 @@ public class GaiaSandbox implements ApplicationListener, IObserver {
 	    renderGui.render();
 	}
 
-	String res = null;
-	if (buffer) {
-	    if (outputFrameBuffer.size() >= GlobalConf.runtime.OUTPUT_FRAME_BUFFER_SIZE) {
-		flushImageBuffer();
-	    }
+	String res = renderer.saveScreenshot(folder, filename, camera.getViewport().getScreenWidth(), camera.getViewport().getScreenHeight(), false);
 
-	    synchronized (outputFrameBuffer) {
-		BufferedFrame bf = bfPool.obtain();
-		bf.pixmap = ImageRenderer.renderToPixmap(camera.getViewport().getScreenWidth(), camera.getViewport().getScreenHeight());
-		bf.folder = folder;
-		bf.filename = filename;
-
-		outputFrameBuffer.add(bf);
-	    }
-	    res = "buffer";
-	} else {
-	    // Screenshot while the frame buffer is on
-	    res = ImageRenderer.renderToImageGl20(folder, filename, camera.getViewport().getScreenWidth(), camera.getViewport().getScreenHeight());
-	}
 	m_fbo.end();
 	m_fbo.dispose();
 	return res;
-    }
-
-    public void flushImageBuffer() {
-	synchronized (outputFrameBuffer) {
-	    int size = outputFrameBuffer.size();
-	    for (int i = 0; i < size; i++) {
-		BufferedFrame bf = outputFrameBuffer.get(i);
-		ImageRenderer.writePixmapToImage(bf.folder, bf.filename, bf.pixmap);
-		bfPool.free(bf);
-	    }
-	    outputFrameBuffer.clear();
-	}
     }
 
     /**
@@ -577,7 +541,7 @@ public class GaiaSandbox implements ApplicationListener, IObserver {
 
     @Override
     public void pause() {
-	flushImageBuffer();
+	frameRenderer.flush();
     }
 
     @Override

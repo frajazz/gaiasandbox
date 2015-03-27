@@ -1,4 +1,4 @@
-package gaia.cu9.ari.gaiaorbit.util;
+package gaia.cu9.ari.gaiaorbit.util.screenshot;
 
 import java.io.File;
 import java.nio.ByteBuffer;

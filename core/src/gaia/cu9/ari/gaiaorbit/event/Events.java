@@ -109,6 +109,10 @@ public enum Events {
 
     /** Issues the play command. Contains the path to the file to play **/
     PLAY_CAMERA_CMD,
+
+    /** Issues the frame output command. Contains an optional boolean with the state. Otherwise, the state is toggled **/
+    FRAME_OUTPUT_CMD,
+
     /** 
      * Will be displayed in the notifications area (bottom left). Contains an array of strings with the messages and an optional boolean
      * indicating whether the message is permanent so should stay until the next message is received.
@@ -147,11 +151,11 @@ public enum Events {
     /** Issued when the viewport size changed. Contains the new width and height **/
     VIEWPORT_RESIZE,
 
-    /** Stereoscopic vision, side by side rendering **/
+    /** Stereoscopic vision, side by side rendering. Contains the localized name. **/
     TOGGLE_STEREOSCOPIC,
-    /** Toggles no GUI mode **/
+    /** Toggles no GUI mode. Contains the localized name. **/
     TOGGLE_CLEANMODE,
-    /** Toggles the pause of the update process **/
+    /** Toggles the pause of the update process. Contains the localized name. **/
     TOGGLE_UPDATEPAUSE,
     /** Contains the new value **/
     UPDATEPAUSE_CHANGED,
@@ -279,8 +283,6 @@ public enum Events {
 
     /** Configures the render system. Contains width, height, fps, folder and file **/
     CONFIG_RENDER_SYSTEM,
-    /** Contains a boolean with the state of the render system. True - on, false - off. **/
-    RENDER_SYSTEM_CMD,
 
     /** Contains the Gaia object [0] **/
     GAIA_LOADED;

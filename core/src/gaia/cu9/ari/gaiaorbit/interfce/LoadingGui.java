@@ -69,7 +69,7 @@ public class LoadingGui implements IGui, IObserver {
 	    center.row();
 
 	    // MESSAGE INTERFACE - BOTTOM LEFT
-	    notificationsInterface = new NotificationsInterface(skin, lock);
+	    notificationsInterface = new NotificationsInterface(skin, lock, false, false);
 	    center.add(notificationsInterface);
 	}
 

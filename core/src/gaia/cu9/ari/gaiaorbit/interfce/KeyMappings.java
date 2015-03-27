@@ -217,8 +217,16 @@ public class KeyMappings {
 	    }
 	}), Keys.F5);
 
+	// F6 -> toggle frame output
+	addMapping(new ProgramAction(txt("action.toggle", txt("element.frameoutput")), new Runnable() {
+	    @Override
+	    public void run() {
+		EventManager.instance.post(Events.FRAME_OUTPUT_CMD);
+	    }
+	}), Keys.F6);
+
 	// U -> toggle UI collapse/expand
-	addMapping(new ProgramAction(txt("action.uitoggle"), new Runnable() {
+	addMapping(new ProgramAction(txt("action.toggle", txt("element.controls")), new Runnable() {
 	    @Override
 	    public void run() {
 		EventManager.instance.post(Events.GUI_FOLD_CMD);
@@ -241,7 +249,7 @@ public class KeyMappings {
 	}
 
 	// CTRL + D -> Toggle debug information
-	addMapping(new ProgramAction(txt("action.debugtoggle"), new Runnable() {
+	addMapping(new ProgramAction(txt("action.toggle", txt("element.debugmode")), new Runnable() {
 	    @Override
 	    public void run() {
 		EventManager.instance.post(Events.SHOW_DEBUG_CMD);
@@ -257,7 +265,7 @@ public class KeyMappings {
 	}), Keys.CONTROL_LEFT, Keys.F);
 
 	// CTRL + S -> Toggle stereoscopic mode
-	addMapping(new ProgramAction(txt("action.stereotoggle"), new Runnable() {
+	addMapping(new ProgramAction(txt("action.toggle", txt("element.stereomode")), new Runnable() {
 	    @Override
 	    public void run() {
 		EventManager.instance.post(Events.TOGGLE_STEREOSCOPIC, txt("notif.stereoscopic"));
@@ -265,7 +273,7 @@ public class KeyMappings {
 	}), Keys.CONTROL_LEFT, Keys.S);
 
 	// CTRL + U -> Toggle clean (no GUI) mode
-	addMapping(new ProgramAction(txt("action.cleanmodetoggle"), new Runnable() {
+	addMapping(new ProgramAction(txt("action.toggle", txt("element.cleanmode")), new Runnable() {
 	    @Override
 	    public void run() {
 		EventManager.instance.post(Events.TOGGLE_CLEANMODE, txt("notif.cleanmode"));
