@@ -187,7 +187,7 @@ public class GaiaSandbox implements ApplicationListener, IObserver {
 
 	if (GlobalConf.performance.MULTITHREADING)
 	    // Initialize thread pool manager
-	    ThreadPoolManager.initialize(GlobalConf.performance.NUMBER_THREADS);
+	    ThreadPoolManager.initialize(GlobalConf.performance.NUMBER_THREADS());
 
 	// Initialize thread indexer
 	ThreadIndexer.initialize();
@@ -214,7 +214,7 @@ public class GaiaSandbox implements ApplicationListener, IObserver {
 	if (sg == null) {
 	    // Set asset manager to asset bean
 	    AssetBean.setAssetManager(manager);
-	    manager.load(GlobalConf.data.DATA_SG_FILE, ISceneGraph.class, new SGLoaderParameter(GlobalClock.clock, GlobalConf.performance.MULTITHREADING, GlobalConf.performance.NUMBER_THREADS));
+	    manager.load(GlobalConf.data.DATA_SG_FILE, ISceneGraph.class, new SGLoaderParameter(GlobalClock.clock, GlobalConf.performance.MULTITHREADING, GlobalConf.performance.NUMBER_THREADS()));
 	}
 
 	// Initialize timestamp for screenshots

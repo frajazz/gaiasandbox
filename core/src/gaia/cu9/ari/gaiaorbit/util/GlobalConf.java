@@ -89,6 +89,18 @@ public class GlobalConf {
 	    NUMBER_THREADS = Integer.parseInt((propNumthreads == null || propNumthreads.isEmpty()) ? "0" : propNumthreads);
 	}
 
+	/**
+	 * Returns the actual number of threads. It accounts for the number of threads being 0 or less,
+	 * "let the program decide" option, in which case the number of processors is returned.
+	 * @return
+	 */
+	public int NUMBER_THREADS() {
+	    if (NUMBER_THREADS <= 0)
+		return Runtime.getRuntime().availableProcessors();
+	    else
+		return NUMBER_THREADS;
+	}
+
     }
 
     public static class PostprocessConf implements IConf, IObserver {
