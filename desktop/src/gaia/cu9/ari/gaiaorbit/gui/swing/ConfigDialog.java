@@ -211,18 +211,7 @@ public class ConfigDialog extends I18nJFrame {
 	    fullScreenResolutions.setSelectedItem(selectedMode);
 
 	// Get native resolution
-	int maxw = 0, maxh = 0;
-	DisplayMode nativeMode = null;
-	for (DisplayMode dm : LwjglApplicationConfiguration.getDisplayModes()) {
-	    if (dm.width > maxw) {
-		nativeMode = dm;
-		maxw = dm.width;
-	    }
-	    if (dm.height > maxh) {
-		nativeMode = dm;
-		maxh = dm.height;
-	    }
-	}
+	DisplayMode nativeMode = LwjglApplicationConfiguration.getDesktopDisplayMode();
 
 	// Windowed mode resolutions
 	JPanel windowedResolutions = new JPanel(new MigLayout("", "[][grow,fill][][grow,fill]", "[][]4[][]"));
