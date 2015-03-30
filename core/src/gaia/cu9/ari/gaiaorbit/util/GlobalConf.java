@@ -165,11 +165,9 @@ public class GlobalConf {
 	public boolean RECORD_CAMERA;
 	public float LIMIT_MAG_RUNTIME;
 	public int OUTPUT_FRAME_BUFFER_SIZE = 250;
-	/** This controls the side of the images in the stereoscopic mode **/
-	public boolean CROSSEYE_MODE = false;
 
 	public RuntimeConf() {
-	    EventManager.instance.subscribe(this, Events.LIMIT_MAG_CMD, Events.INPUT_ENABLED_CMD, Events.TOGGLE_CLEANMODE, Events.TOGGLE_UPDATEPAUSE, Events.TOGGLE_TIME_CMD, Events.RECORD_CAMERA_CMD, Events.SWITCH_STEREOSCOPIC_IMAGES);
+	    EventManager.instance.subscribe(this, Events.LIMIT_MAG_CMD, Events.INPUT_ENABLED_CMD, Events.TOGGLE_CLEANMODE, Events.TOGGLE_UPDATEPAUSE, Events.TOGGLE_TIME_CMD, Events.RECORD_CAMERA_CMD);
 	}
 
 	@Override
@@ -211,9 +209,6 @@ public class GlobalConf {
 		break;
 	    case RECORD_CAMERA_CMD:
 		toggleRecord((Boolean) data[0]);
-		break;
-	    case SWITCH_STEREOSCOPIC_IMAGES:
-		CROSSEYE_MODE = !CROSSEYE_MODE;
 		break;
 	    }
 
@@ -408,6 +403,16 @@ public class GlobalConf {
     }
 
     public static class ProgramConf implements IConf, IObserver {
+
+	public static enum StereoProfile {
+	    /** Left image -> left eye, no distortion **/
+	    VR_HEADSET,
+	    /** Left image -> left eye, distortion **/
+	    HD_3DTV,
+	    /** Left image -> right eye, no distortion **/
+	    CROSSEYE
+	}
+
 	public boolean DISPLAY_TUTORIAL;
 	public String TUTORIAL_SCRIPT_LOCATION;
 	public boolean SHOW_CONFIG_DIALOG;
@@ -421,11 +426,13 @@ public class GlobalConf {
 	public boolean STEREOSCOPIC_MODE;
 	/** Eye separation in stereoscopic mode in meters **/
 	public float STEREOSCOPIC_EYE_SEPARATION_M = 1;
+	/** This controls the side of the images in the stereoscopic mode **/
+	public StereoProfile STEREO_PROFILE = StereoProfile.VR_HEADSET;
 
 	private DateFormat df;
 
 	public ProgramConf() {
-	    EventManager.instance.subscribe(this, Events.TOGGLE_STEREOSCOPIC);
+	    EventManager.instance.subscribe(this, Events.TOGGLE_STEREOSCOPIC, Events.TOGGLE_STEREO_PROFILE);
 	}
 
 	@Override
@@ -441,6 +448,7 @@ public class GlobalConf {
 	    p.setProperty("program.scriptlocation", SCRIPT_LOCATION);
 	    p.setProperty("program.locale", LOCALE);
 	    p.setProperty("program.stereoscopic", Boolean.toString(STEREOSCOPIC_MODE));
+	    p.setProperty("program.stereoscopic.profile", Integer.toString(STEREO_PROFILE.ordinal()));
 	}
 
 	@Override
@@ -463,6 +471,7 @@ public class GlobalConf {
 	    SCRIPT_LOCATION = p.getProperty("program.scriptlocation").isEmpty() ? System.getProperty("user.dir") : p.getProperty("program.scriptlocation");
 
 	    STEREOSCOPIC_MODE = Boolean.parseBoolean(p.getProperty("program.stereoscopic"));
+	    STEREO_PROFILE = StereoProfile.values()[Integer.parseInt(p.getProperty("program.stereoscopic.profile"))];
 	}
 
 	public String getLastCheckedString() {
@@ -474,6 +483,12 @@ public class GlobalConf {
 	    switch (event) {
 	    case TOGGLE_STEREOSCOPIC:
 		STEREOSCOPIC_MODE = !STEREOSCOPIC_MODE;
+		break;
+	    case TOGGLE_STEREO_PROFILE:
+		int idx = STEREO_PROFILE.ordinal();
+		StereoProfile[] vals = StereoProfile.values();
+		idx = (idx + 1) % vals.length;
+		STEREO_PROFILE = vals[idx];
 		break;
 	    }
 	}

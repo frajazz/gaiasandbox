@@ -272,11 +272,11 @@ public class KeyMappings {
 	    }
 	}), Keys.CONTROL_LEFT, Keys.S);
 
-	// CTRL + SHIFT + S -> Switch stereoscopic mode images
-	addMapping(new ProgramAction(txt("action.toggle", txt("action.switchstereoimages")), new Runnable() {
+	// CTRL + SHIFT + S -> Switch stereoscopic profile
+	addMapping(new ProgramAction(txt("action.switchstereoprofile"), new Runnable() {
 	    @Override
 	    public void run() {
-		EventManager.instance.post(Events.SWITCH_STEREOSCOPIC_IMAGES);
+		EventManager.instance.post(Events.TOGGLE_STEREO_PROFILE);
 	    }
 	}), Keys.CONTROL_LEFT, Keys.SHIFT_LEFT, Keys.S);
 

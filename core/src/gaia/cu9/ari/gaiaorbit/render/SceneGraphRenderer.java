@@ -17,6 +17,7 @@ import gaia.cu9.ari.gaiaorbit.scenegraph.NaturalCamera;
 import gaia.cu9.ari.gaiaorbit.scenegraph.SceneGraphNode.RenderGroup;
 import gaia.cu9.ari.gaiaorbit.util.Constants;
 import gaia.cu9.ari.gaiaorbit.util.GlobalConf;
+import gaia.cu9.ari.gaiaorbit.util.GlobalConf.ProgramConf.StereoProfile;
 import gaia.cu9.ari.gaiaorbit.util.GlobalResources;
 import gaia.cu9.ari.gaiaorbit.util.I18n;
 import gaia.cu9.ari.gaiaorbit.util.ds.Multilist;
@@ -47,6 +48,8 @@ import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.Pool;
 import com.badlogic.gdx.utils.Pools;
+import com.badlogic.gdx.utils.viewport.ExtendViewport;
+import com.badlogic.gdx.utils.viewport.StretchViewport;
 import com.badlogic.gdx.utils.viewport.Viewport;
 
 /**
@@ -140,6 +143,11 @@ public class SceneGraphRenderer extends AbstractRenderer implements IProcessRend
     private SpriteBatch spriteBatch, fontBatch;
 
     private List<IRenderSystem> renderProcesses;
+
+    /** Viewport to use in steoeroscopic mode **/
+    private Viewport stretchViewport;
+    /** Viewport to use in normal mode **/
+    private Viewport extendViewport;
 
     public SceneGraphRenderer() {
 	super();
@@ -307,16 +315,15 @@ public class SceneGraphRenderer extends AbstractRenderer implements IProcessRend
 	renderProcesses.add(modelAtmProc);
 	renderProcesses.add(shaderFrontProc);
 
+	// INIT VIEWPORTS
+	stretchViewport = new StretchViewport(Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
+	extendViewport = new ExtendViewport(200, 200);
+
 	EventManager.instance.subscribe(this, Events.TOGGLE_VISIBILITY_CMD);
 
     }
 
-    @Override
-    public void render(ICamera camera, FrameBuffer fb, PostProcessBean ppb, float alpha) {
-	render(camera, fb, ppb);
-    }
-
-    public void render(ICamera camera, FrameBuffer fb, PostProcessBean ppb) {
+    public void render(ICamera camera, int rw, int rh, FrameBuffer fb, PostProcessBean ppb) {
 
 	boolean postproc = ppb.capture();
 	if (postproc) {
@@ -344,13 +351,13 @@ public class SceneGraphRenderer extends AbstractRenderer implements IProcessRend
 
 	} else {
 	    /** NORMAL MODE **/
-
 	    if (GlobalConf.program.STEREOSCOPIC_MODE) {
 		boolean movecam = camera.getMode() == CameraMode.Free_Camera || camera.getMode() == CameraMode.Focus;
+		boolean stretch = GlobalConf.program.STEREO_PROFILE == StereoProfile.HD_3DTV;
+		boolean crosseye = GlobalConf.program.STEREO_PROFILE == StereoProfile.CROSSEYE;
+
 		// Side by side rendering
-		Viewport vp = camera.getViewport();
-		int w = fb != null ? fb.getWidth() : vp.getScreenWidth();
-		int h = fb != null ? fb.getHeight() : vp.getScreenHeight();
+		Viewport vp = stretch ? stretchViewport : extendViewport;
 
 		PerspectiveCamera cam = camera.getCamera();
 		Pool<Vector3> vectorPool = Pools.get(Vector3.class);
@@ -366,17 +373,21 @@ public class SceneGraphRenderer extends AbstractRenderer implements IProcessRend
 		side.crs(cam.up).nor().scl(separation);
 		Vector3 backup = vectorPool.obtain().set(cam.position);
 
+		camera.setViewport(vp);
+		vp.setCamera(camera.getCamera());
+		vp.setWorldSize(stretch ? rw : rw / 2, rh);
+
 		/** LEFT EYE **/
-		if (!GlobalConf.runtime.CROSSEYE_MODE) {
+
+		if (!crosseye) {
 		    // Mobile, left eye goes to left image
-		    vp.setScreenBounds(0, 0, w / 2, h);
+		    vp.setScreenBounds(0, 0, rw / 2, rh);
 		} else {
 		    // Desktop, left eye goes to right image
-		    vp.setScreenBounds(w / 2, 0, w / 2, h);
+		    vp.setScreenBounds(rw / 2, 0, rw / 2, rh);
 		}
-
-		vp.setWorldSize(w / 2, h);
 		vp.apply(false);
+
 		// Camera to left
 		if (movecam) {
 		    cam.position.sub(side);
@@ -385,16 +396,15 @@ public class SceneGraphRenderer extends AbstractRenderer implements IProcessRend
 		renderScene(camera, rc);
 
 		/** RIGHT EYE **/
-		if (!GlobalConf.runtime.CROSSEYE_MODE) {
+		if (!crosseye) {
 		    // Mobile, right eye goes to right image
-		    vp.setScreenBounds(w / 2, 0, w / 2, h);
+		    vp.setScreenBounds(rw / 2, 0, rw / 2, rh);
 		} else {
 		    // Desktop, right eye goes to left image
-		    vp.setScreenBounds(0, 0, w / 2, h);
+		    vp.setScreenBounds(0, 0, rw / 2, rh);
 		}
-
-		vp.setWorldSize(w / 2, h);
 		vp.apply(false);
+
 		// Camera to right
 		if (movecam) {
 		    cam.position.set(backup).add(side);
@@ -404,12 +414,16 @@ public class SceneGraphRenderer extends AbstractRenderer implements IProcessRend
 
 		// Restore cam.position and viewport size
 		cam.position.set(backup);
-		vp.setScreenBounds(0, 0, w, h);
+		vp.setScreenBounds(0, 0, rw, rh);
 
 		vectorPool.free(side);
 		vectorPool.free(backup);
 
 	    } else {
+		camera.setViewport(extendViewport);
+		extendViewport.setCamera(camera.getCamera());
+		extendViewport.setWorldSize(rw, rh);
+		extendViewport.apply(false);
 		renderScene(camera, rc);
 	    }
 	}
@@ -481,7 +495,6 @@ public class SceneGraphRenderer extends AbstractRenderer implements IProcessRend
 		times[idx] = new Date().getTime();
 	    }
 	    break;
-
 	}
     }
 
@@ -497,6 +510,11 @@ public class SceneGraphRenderer extends AbstractRenderer implements IProcessRend
 	} else {
 	    return visible[type.ordinal()] ? MathUtilsd.lint(diff, 0, GlobalConf.scene.OBJECT_FADE_MS, 0, 1) : MathUtilsd.lint(diff, 0, GlobalConf.scene.OBJECT_FADE_MS, 1, 0);
 	}
+    }
+
+    public void resize(int w, int h) {
+	extendViewport.update(w, h);
+	stretchViewport.update(w, h);
     }
 
 }

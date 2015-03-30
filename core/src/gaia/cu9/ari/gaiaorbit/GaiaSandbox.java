@@ -263,6 +263,7 @@ public class GaiaSandbox implements ApplicationListener, IObserver {
 	AbstractRenderer.initialize(sg);
 	sgr = new SceneGraphRenderer();
 	sgr.initialize(manager);
+	sgr.resize(Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
 
 	// First time, set assets
 	List<SceneGraphNode> nodes = sg.getNodes();
@@ -399,10 +400,8 @@ public class GaiaSandbox implements ApplicationListener, IObserver {
 		/* SCREEN OUTPUT */
 		if (GlobalConf.screen.SCREEN_OUTPUT) {
 		    /** RENDER THE SCENE **/
-		    // Set viewport
-		    setViewportSize(Gdx.graphics.getWidth(), Gdx.graphics.getHeight(), cam);
 		    preRenderScene();
-		    sgr.render(cam, null, pp.getPostProcessBean(RenderType.screen));
+		    sgr.render(cam, Gdx.graphics.getWidth(), Gdx.graphics.getHeight(), null, pp.getPostProcessBean(RenderType.screen));
 
 		    if (!GlobalConf.runtime.CLEAN_MODE) {
 			// Render the GUI, setting the viewport
@@ -469,7 +468,6 @@ public class GaiaSandbox implements ApplicationListener, IObserver {
      * @return
      */
     public String renderToImage(ICamera camera, PostProcessBean ppb, int width, int height, String folder, String filename, IFileImageRenderer renderer) {
-	setViewportSize(width, height, camera);
 	FrameBuffer m_fbo = new FrameBuffer(Format.RGBA8888, width, height, true);
 	// TODO That's a dirty trick, we should find a better way (i.e. making buildEnabledEffectsList() method public)
 	boolean postprocessing = ppb.pp.captureNoClear();
@@ -482,7 +480,7 @@ public class GaiaSandbox implements ApplicationListener, IObserver {
 
 	// this is the main render function
 	preRenderScene();
-	sgr.render(camera, postprocessing ? m_fbo : null, ppb);
+	sgr.render(camera, width, height, postprocessing ? m_fbo : null, ppb);
 
 	if (postprocessing) {
 	    // If post processing is active, we have to start now again because
@@ -502,15 +500,6 @@ public class GaiaSandbox implements ApplicationListener, IObserver {
 	return res;
     }
 
-    /**
-     * Sets the viewport size to w and h
-     * @param w New viewport width
-     * @param h New viewport height
-     */
-    private void setViewportSize(int width, int height, ICamera camera) {
-	camera.getViewport().update(width, height);
-    }
-
     @Override
     public void resize(int width, int height) {
 	if (!initialized) {
@@ -518,14 +507,12 @@ public class GaiaSandbox implements ApplicationListener, IObserver {
 	} else {
 	    pp.resize(width, height);
 	    gui.resize(width, height);
+	    sgr.resize(width, height);
 	}
 
 	cam.updateAngleEdge(width, height);
-	cam.getViewport().update(width, height, false);
 
 	EventManager.instance.post(Events.SCREEN_RESIZE, width, height);
-
-	Gdx.app.debug("Resize", width + "x" + height + ", new Viewport: " + cam.getViewport().getScreenX() + "," + cam.getViewport().getScreenY() + "|" + cam.getViewport().getScreenWidth() + "," + cam.getViewport().getScreenHeight());
     }
 
     /**

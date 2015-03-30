@@ -25,6 +25,8 @@ public interface ICamera {
 
     public Viewport getViewport();
 
+    public void setViewport(Viewport viewport);
+
     public Vector3d getPos();
 
     public Vector3d getInversePos();

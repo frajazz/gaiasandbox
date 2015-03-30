@@ -13,9 +13,15 @@ import com.badlogic.gdx.graphics.glutils.FrameBuffer;
  */
 public interface IProcessRenderer {
 
-    public void render(ICamera camera, FrameBuffer fb, PostProcessBean ppb, float alpha);
-
-    public void render(ICamera camera, FrameBuffer fb, PostProcessBean ppb);
+    /**
+     * Renders the scene.
+     * @param camera The camera to use.
+     * @param rw The render width.
+     * @param rh The render height
+     * @param fb The frame buffer, if any
+     * @param ppb The post process bean
+     */
+    public void render(ICamera camera, int rw, int rh, FrameBuffer fb, PostProcessBean ppb);
 
     public void initialize(AssetManager assetManager);
 

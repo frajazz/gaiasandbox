@@ -271,6 +271,11 @@ public class FovCamera extends AbstractCamera implements IObserver {
     }
 
     @Override
+    public void setViewport(Viewport viewport) {
+	// Viewports are managed by the camera!
+    }
+
+    @Override
     public Vector3d getDirection() {
 	return directions[parent.mode.ordinal() - 2];
     }

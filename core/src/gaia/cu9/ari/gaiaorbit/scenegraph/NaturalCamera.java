@@ -16,7 +16,6 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input.Peripheral;
 import com.badlogic.gdx.assets.AssetManager;
 import com.badlogic.gdx.graphics.PerspectiveCamera;
-import com.badlogic.gdx.utils.viewport.ExtendViewport;
 import com.badlogic.gdx.utils.viewport.Viewport;
 
 /**
@@ -117,7 +116,7 @@ public class NaturalCamera extends AbstractCamera implements IObserver {
 	aux3 = new Vector3d();
 	state = new Vector3d();
 
-	viewport = new ExtendViewport(200, 200, camera);
+	//viewport = new ExtendViewport(200, 200, camera);
 
 	accelerometer = Gdx.input.isPeripheralAvailable(Peripheral.Accelerometer);
 
@@ -742,6 +741,11 @@ public class NaturalCamera extends AbstractCamera implements IObserver {
     @Override
     public Viewport getViewport() {
 	return viewport;
+    }
+
+    @Override
+    public void setViewport(Viewport viewport) {
+	this.viewport = viewport;
     }
 
     @Override

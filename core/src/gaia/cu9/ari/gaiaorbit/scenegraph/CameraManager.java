@@ -136,6 +136,11 @@ public class CameraManager implements ICamera, IObserver {
     }
 
     @Override
+    public void setViewport(Viewport viewport) {
+	current.setViewport(viewport);
+    }
+
+    @Override
     public Vector3d getPos() {
 	return current.getPos();
     }
