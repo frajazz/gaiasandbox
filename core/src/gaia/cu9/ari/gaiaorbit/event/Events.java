@@ -153,6 +153,8 @@ public enum Events {
 
     /** Stereoscopic vision, side by side rendering. Contains the localized name. **/
     TOGGLE_STEREOSCOPIC,
+    /** Switches stereoscopic mode images, left to right and right to left **/
+    SWITCH_STEREOSCOPIC_IMAGES,
     /** Toggles no GUI mode. Contains the localized name. **/
     TOGGLE_CLEANMODE,
     /** Toggles the pause of the update process. Contains the localized name. **/

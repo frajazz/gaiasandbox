@@ -165,9 +165,11 @@ public class GlobalConf {
 	public boolean RECORD_CAMERA;
 	public float LIMIT_MAG_RUNTIME;
 	public int OUTPUT_FRAME_BUFFER_SIZE = 250;
+	/** This controls the side of the images in the stereoscopic mode **/
+	public boolean CROSSEYE_MODE = false;
 
 	public RuntimeConf() {
-	    EventManager.instance.subscribe(this, Events.LIMIT_MAG_CMD, Events.INPUT_ENABLED_CMD, Events.TOGGLE_CLEANMODE, Events.TOGGLE_UPDATEPAUSE, Events.TOGGLE_TIME_CMD, Events.RECORD_CAMERA_CMD);
+	    EventManager.instance.subscribe(this, Events.LIMIT_MAG_CMD, Events.INPUT_ENABLED_CMD, Events.TOGGLE_CLEANMODE, Events.TOGGLE_UPDATEPAUSE, Events.TOGGLE_TIME_CMD, Events.RECORD_CAMERA_CMD, Events.SWITCH_STEREOSCOPIC_IMAGES);
 	}
 
 	@Override
@@ -209,6 +211,9 @@ public class GlobalConf {
 		break;
 	    case RECORD_CAMERA_CMD:
 		toggleRecord((Boolean) data[0]);
+		break;
+	    case SWITCH_STEREOSCOPIC_IMAGES:
+		CROSSEYE_MODE = !CROSSEYE_MODE;
 		break;
 	    }
 

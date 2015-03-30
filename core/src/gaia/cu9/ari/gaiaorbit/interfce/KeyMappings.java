@@ -272,6 +272,14 @@ public class KeyMappings {
 	    }
 	}), Keys.CONTROL_LEFT, Keys.S);
 
+	// CTRL + SHIFT + S -> Switch stereoscopic mode images
+	addMapping(new ProgramAction(txt("action.toggle", txt("action.switchstereoimages")), new Runnable() {
+	    @Override
+	    public void run() {
+		EventManager.instance.post(Events.SWITCH_STEREOSCOPIC_IMAGES);
+	    }
+	}), Keys.CONTROL_LEFT, Keys.SHIFT_LEFT, Keys.S);
+
 	// CTRL + U -> Toggle clean (no GUI) mode
 	addMapping(new ProgramAction(txt("action.toggle", txt("element.cleanmode")), new Runnable() {
 	    @Override

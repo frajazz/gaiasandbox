@@ -367,7 +367,7 @@ public class SceneGraphRenderer extends AbstractRenderer implements IProcessRend
 		Vector3 backup = vectorPool.obtain().set(cam.position);
 
 		/** LEFT EYE **/
-		if (Constants.mobile) {
+		if (!GlobalConf.runtime.CROSSEYE_MODE) {
 		    // Mobile, left eye goes to left image
 		    vp.setScreenBounds(0, 0, w / 2, h);
 		} else {
@@ -385,7 +385,7 @@ public class SceneGraphRenderer extends AbstractRenderer implements IProcessRend
 		renderScene(camera, rc);
 
 		/** RIGHT EYE **/
-		if (Constants.mobile) {
+		if (!GlobalConf.runtime.CROSSEYE_MODE) {
 		    // Mobile, right eye goes to right image
 		    vp.setScreenBounds(w / 2, 0, w / 2, h);
 		} else {
