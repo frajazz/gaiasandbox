@@ -7,9 +7,12 @@ import gaia.cu9.ari.gaiaorbit.render.IRenderable;
 import gaia.cu9.ari.gaiaorbit.scenegraph.ICamera;
 import gaia.cu9.ari.gaiaorbit.scenegraph.SceneGraphNode.RenderGroup;
 import gaia.cu9.ari.gaiaorbit.util.GlobalConf;
+import gaia.cu9.ari.gaiaorbit.util.GlobalConf.ProgramConf.StereoProfile;
 import gaia.cu9.ari.gaiaorbit.util.GlobalResources;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Pixmap.Format;
@@ -27,9 +30,9 @@ public class PixelBloomRenderSystem extends AbstractRenderSystem implements IObs
 
     ImmediateModeRenderer20 renderer;
     boolean starColorTransit = false;
-    PostProcessor pp;
-    FrameBuffer screen_fb;
-    FrameBuffer frame_fb;
+    Map<String, PostProcessor> ppmap;
+    Map<String, FrameBuffer> fbmap;
+    int fbkey = 0;
 
     public PixelBloomRenderSystem(RenderGroup rg, int priority, float[] alphas) {
 	super(rg, priority, alphas);
@@ -41,41 +44,36 @@ public class PixelBloomRenderSystem extends AbstractRenderSystem implements IObs
 	}
 	this.renderer = new ImmediateModeRenderer20(8000000, false, true, 0, pointShader);
 
-	// Init bloom
-	pp = new PostProcessor(true, true, true);
-	Bloom bloom = new Bloom(Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
-	bloom.setThreshold(0.0f);
-	bloom.setBaseIntesity(1f);
-	bloom.setBaseSaturation(1f);
-	bloom.setBloomIntesity(4f);
-	bloom.setBloomSaturation(2f);
-	bloom.setBlurPasses(1);
-	bloom.setBlurAmount(0.0f);
-	bloom.setBlurType(BlurType.Gaussian5x5b);
-	pp.addEffect(bloom);
-	pp.setEnabled(true);
+	// Initialize post processors
+	ppmap = new HashMap<String, PostProcessor>();
+	getPostProcessor(Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
+	getPostProcessor(GlobalConf.screenshot.SCREENSHOT_WIDTH, GlobalConf.screen.SCREEN_HEIGHT);
+	getPostProcessor(GlobalConf.frame.RENDER_WIDTH, GlobalConf.frame.RENDER_HEIGHT);
 
-	// Own frame buffer
-	screen_fb = new FrameBuffer(Format.RGB888, Gdx.graphics.getWidth(), Gdx.graphics.getHeight(), true);
-	frame_fb = new FrameBuffer(Format.RGB888, GlobalConf.screenshot.SCREENSHOT_WIDTH, GlobalConf.screen.SCREEN_HEIGHT, true);
+	// Initialize frame buffers
+	fbmap = new HashMap<String, FrameBuffer>();
+	getFrameBuffer(Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
+	getFrameBuffer(GlobalConf.screenshot.SCREENSHOT_WIDTH, GlobalConf.screen.SCREEN_HEIGHT);
+	getFrameBuffer(GlobalConf.frame.RENDER_WIDTH, GlobalConf.frame.RENDER_HEIGHT);
 
 	EventManager.instance.subscribe(this, Events.TRANSIT_COLOUR_CMD, Events.SCREEN_RESIZE, Events.TOGGLE_STEREOSCOPIC);
     }
 
     @Override
     public void renderStud(List<IRenderable> renderables, ICamera camera) {
+	// Gather buffer and bloom post processor
+	FrameBuffer our_fb = getFrameBuffer(rc.w, rc.h);
+	PostProcessor pp = getPostProcessor(rc.w, rc.h);
+
+	// Stop current post processing buffer if any
 	if (rc.ppb != null) {
 	    rc.ppb.captureEnd();
 	}
-	FrameBuffer our_fb = screen_fb;
-	if (rc.fb != null) {
-	    if (rc.fb.getWidth() != frame_fb.getWidth() || rc.fb.getHeight() != frame_fb.getHeight()) {
-		frame_fb = new FrameBuffer(Format.RGB888, rc.fb.getWidth(), rc.fb.getHeight(), true);
-	    }
-	    our_fb = frame_fb;
-	}
 
+	// Capture bloom
 	pp.capture();
+
+	// Render stars normally
 	renderer.begin(camera.getCamera().combined, ShapeType.Point.getGlType());
 	int size = renderables.size();
 	for (int i = 0; i < size; i++) {
@@ -83,19 +81,45 @@ public class PixelBloomRenderSystem extends AbstractRenderSystem implements IObs
 	    s.render(renderer, alphas[s.getComponentType().ordinal()], starColorTransit);
 	}
 	renderer.end();
+
+	// Render bloom to our frame buffer
 	pp.render(our_fb);
 
+	// Fetch stars_with_bloom texture
 	Texture tex = our_fb.getColorBufferTexture();
 
+	// Restart current post processing if any
 	if (rc.ppb != null) {
-	    rc.ppb.capture();
+	    rc.ppb.captureNoClear();
 	}
+
+	/** DRAW TO CURRENT BUFFER **/
 
 	Viewport vp = camera.getCurrent().getViewport();
 
+	float outWidth = vp.getWorldWidth();
+	float outHeight = vp.getWorldHeight();
+	int width = rc.w;
+	int height = rc.h;
+	int screenX = vp.getScreenX();
+	int screenY = vp.getScreenY();
+	if (rc.ppb != null) {
+	    outWidth = Gdx.graphics.getWidth();
+	    outHeight = Gdx.graphics.getHeight();
+	}
+	if (GlobalConf.program.STEREOSCOPIC_MODE && rc.ppb != null && screenX > 0) {
+	    screenX = Gdx.graphics.getWidth() / 2;
+	}
+	if (GlobalConf.program.STEREOSCOPIC_MODE && (GlobalConf.program.STEREO_PROFILE == StereoProfile.HD_3DTV || rc.ppb != null)) {
+	    width *= 2;
+	}
+
 	GlobalResources.spriteBatch.begin();
-	GlobalResources.spriteBatch.draw(tex, vp.getScreenX(), vp.getScreenY(), 0, 0, our_fb.getWidth(), our_fb.getHeight(), 1, 1, 0, 0, 0, our_fb.getWidth(), our_fb.getHeight(), false, true);
+	GlobalResources.spriteBatch.draw(tex, screenX, screenY, 0, 0, outWidth, outHeight, 1, 1, 0, 0, 0, width, height, false, true);
 	GlobalResources.spriteBatch.end();
+
+	// Apply previous viewport
+	vp.apply();
 
     }
 
@@ -106,17 +130,52 @@ public class PixelBloomRenderSystem extends AbstractRenderSystem implements IObs
 	    starColorTransit = (boolean) data[1];
 	    break;
 	case SCREEN_RESIZE:
-	    screen_fb = new FrameBuffer(Format.RGB888, (Integer) data[0], (Integer) data[1], true);
+	    getFrameBuffer((Integer) data[0], (Integer) data[1]);
 	    break;
 	case TOGGLE_STEREOSCOPIC:
 	    // Update size
 	    if (GlobalConf.program.STEREOSCOPIC_MODE) {
-		screen_fb = new FrameBuffer(Format.RGB888, Gdx.graphics.getWidth() / 2, Gdx.graphics.getHeight(), true);
-	    } else {
-		screen_fb = new FrameBuffer(Format.RGB888, Gdx.graphics.getWidth(), Gdx.graphics.getHeight(), true);
+		getFrameBuffer(Gdx.graphics.getWidth() / 2, Gdx.graphics.getHeight());
 	    }
 	    break;
 	}
+    }
+
+    private FrameBuffer getFrameBuffer(int w, int h) {
+	String key = getKeyFb(w, h);
+	if (!fbmap.containsKey(key)) {
+	    FrameBuffer fb = new FrameBuffer(Format.RGB888, w, h, true);
+	    fbmap.put(key, fb);
+	}
+	return fbmap.get(key);
+    }
+
+    private PostProcessor getPostProcessor(int w, int h) {
+	String key = getKey(w, h);
+	if (!ppmap.containsKey(key)) {
+	    PostProcessor pp = new PostProcessor(w, h, true, true, true);
+	    Bloom bloom = new Bloom(w, h);
+	    bloom.setThreshold(0.0f);
+	    bloom.setBaseIntesity(1f);
+	    bloom.setBaseSaturation(1f);
+	    bloom.setBloomIntesity(4f);
+	    bloom.setBloomSaturation(2f);
+	    bloom.setBlurPasses(1);
+	    bloom.setBlurAmount(0.0f);
+	    bloom.setBlurType(BlurType.Gaussian5x5b);
+	    pp.addEffect(bloom);
+	    pp.setEnabled(true);
+	    ppmap.put(key, pp);
+	}
+	return ppmap.get(key);
+    }
+
+    private String getKey(int w, int h) {
+	return w + "x" + h;
+    }
+
+    private String getKeyFb(int w, int h) {
+	return w + "x" + h + "_" + (++fbkey % 2);
     }
 
 }

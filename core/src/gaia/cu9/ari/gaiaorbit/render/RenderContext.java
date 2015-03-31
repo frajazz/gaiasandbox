@@ -10,4 +10,6 @@ public class RenderContext {
     /** In case this is not null, we are using the screenshot or frame output feature **/
     public FrameBuffer fb;
 
+    public int w, h;
+
 }

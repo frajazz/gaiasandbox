@@ -8,7 +8,7 @@ import gaia.cu9.ari.gaiaorbit.render.system.AbstractRenderSystem;
 import gaia.cu9.ari.gaiaorbit.render.system.IRenderSystem;
 import gaia.cu9.ari.gaiaorbit.render.system.LineRenderSystem;
 import gaia.cu9.ari.gaiaorbit.render.system.ModelBatchRenderSystem;
-import gaia.cu9.ari.gaiaorbit.render.system.PixelRenderSystem;
+import gaia.cu9.ari.gaiaorbit.render.system.PixelBloomRenderSystem;
 import gaia.cu9.ari.gaiaorbit.render.system.ShaderQuadRenderSystem;
 import gaia.cu9.ari.gaiaorbit.render.system.SpriteBatchRenderSystem;
 import gaia.cu9.ari.gaiaorbit.scenegraph.CameraManager.CameraMode;
@@ -240,7 +240,7 @@ public class SceneGraphRenderer extends AbstractRenderer implements IProcessRend
 	int priority = 1;
 
 	// POINTS
-	AbstractRenderSystem pixelProc = new PixelRenderSystem(RenderGroup.POINT, priority++, alphas);
+	AbstractRenderSystem pixelProc = new PixelBloomRenderSystem(RenderGroup.POINT, priority++, alphas);
 	pixelProc.setPreRunnable(blendNoDepthRunnable);
 
 	// MODEL BACK
@@ -325,6 +325,7 @@ public class SceneGraphRenderer extends AbstractRenderer implements IProcessRend
 
     public void render(ICamera camera, int rw, int rh, FrameBuffer fb, PostProcessBean ppb) {
 
+	// Prepare render context
 	boolean postproc = ppb.capture();
 	if (postproc) {
 	    rc.ppb = ppb;
@@ -332,6 +333,8 @@ public class SceneGraphRenderer extends AbstractRenderer implements IProcessRend
 	    rc.ppb = null;
 	}
 	rc.fb = fb;
+	rc.w = rw;
+	rc.h = rh;
 
 	if (camera.getNCameras() > 1) {
 
@@ -352,12 +355,15 @@ public class SceneGraphRenderer extends AbstractRenderer implements IProcessRend
 	} else {
 	    /** NORMAL MODE **/
 	    if (GlobalConf.program.STEREOSCOPIC_MODE) {
+		// Update rc
+		rc.w = rw / 2;
+
 		boolean movecam = camera.getMode() == CameraMode.Free_Camera || camera.getMode() == CameraMode.Focus;
 		boolean stretch = GlobalConf.program.STEREO_PROFILE == StereoProfile.HD_3DTV;
 		boolean crosseye = GlobalConf.program.STEREO_PROFILE == StereoProfile.CROSSEYE;
 
 		// Side by side rendering
-		Viewport vp = stretch ? stretchViewport : extendViewport;
+		Viewport viewport = stretch ? stretchViewport : extendViewport;
 
 		PerspectiveCamera cam = camera.getCamera();
 		Pool<Vector3> vectorPool = Pools.get(Vector3.class);
@@ -373,48 +379,46 @@ public class SceneGraphRenderer extends AbstractRenderer implements IProcessRend
 		side.crs(cam.up).nor().scl(separation);
 		Vector3 backup = vectorPool.obtain().set(cam.position);
 
-		camera.setViewport(vp);
-		vp.setCamera(camera.getCamera());
-		vp.setWorldSize(stretch ? rw : rw / 2, rh);
+		camera.setViewport(viewport);
+		viewport.setCamera(camera.getCamera());
+		viewport.setWorldSize(stretch ? rw : rw / 2, rh);
 
 		/** LEFT EYE **/
 
-		if (!crosseye) {
-		    // Mobile, left eye goes to left image
-		    vp.setScreenBounds(0, 0, rw / 2, rh);
-		} else {
-		    // Desktop, left eye goes to right image
-		    vp.setScreenBounds(rw / 2, 0, rw / 2, rh);
-		}
-		vp.apply(false);
+		viewport.setScreenBounds(0, 0, rw / 2, rh);
+		viewport.apply();
 
 		// Camera to left
 		if (movecam) {
-		    cam.position.sub(side);
+		    if (crosseye) {
+			cam.position.add(side);
+		    } else {
+			cam.position.sub(side);
+		    }
 		    cam.update();
 		}
+
 		renderScene(camera, rc);
 
 		/** RIGHT EYE **/
-		if (!crosseye) {
-		    // Mobile, right eye goes to right image
-		    vp.setScreenBounds(rw / 2, 0, rw / 2, rh);
-		} else {
-		    // Desktop, right eye goes to left image
-		    vp.setScreenBounds(0, 0, rw / 2, rh);
-		}
-		vp.apply(false);
+		viewport.setScreenBounds(rw / 2, 0, rw / 2, rh);
+		viewport.apply();
 
 		// Camera to right
 		if (movecam) {
-		    cam.position.set(backup).add(side);
+		    cam.position.set(backup);
+		    if (crosseye) {
+			cam.position.sub(side);
+		    } else {
+			cam.position.add(side);
+		    }
 		    cam.update();
 		}
 		renderScene(camera, rc);
 
 		// Restore cam.position and viewport size
 		cam.position.set(backup);
-		vp.setScreenBounds(0, 0, rw, rh);
+		viewport.setScreenBounds(0, 0, rw, rh);
 
 		vectorPool.free(side);
 		vectorPool.free(backup);
@@ -423,6 +427,7 @@ public class SceneGraphRenderer extends AbstractRenderer implements IProcessRend
 		camera.setViewport(extendViewport);
 		extendViewport.setCamera(camera.getCamera());
 		extendViewport.setWorldSize(rw, rh);
+		extendViewport.setScreenSize(rw, rh);
 		extendViewport.apply(false);
 		renderScene(camera, rc);
 	    }
