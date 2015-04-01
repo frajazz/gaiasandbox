@@ -77,7 +77,7 @@ public class AtmosphereComponent {
 	float m_fScaleDepth = .20f;
 	float m_fScale = 1.0f / (m_fAtmosphereHeight);
 	float m_fScaleOverScaleDepth = m_fScale / m_fScaleDepth;
-	int m_nSamples = 9;
+	int m_nSamples = 11;
 
 	double[] m_fWavelength = wavelengths;
 	float[] m_fWavelength4 = new float[3];
