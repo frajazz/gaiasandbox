@@ -17,9 +17,9 @@ public interface IProcessRenderer {
      * Renders the scene.
      * @param camera The camera to use.
      * @param rw The render width.
-     * @param rh The render height
-     * @param fb The frame buffer, if any
-     * @param ppb The post process bean
+     * @param rh The render height.
+     * @param fb The frame buffer to write to, if any.
+     * @param ppb The post process bean.
      */
     public void render(ICamera camera, int rw, int rh, FrameBuffer fb, PostProcessBean ppb);
 

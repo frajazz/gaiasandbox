@@ -8,7 +8,7 @@ import gaia.cu9.ari.gaiaorbit.render.system.AbstractRenderSystem;
 import gaia.cu9.ari.gaiaorbit.render.system.IRenderSystem;
 import gaia.cu9.ari.gaiaorbit.render.system.LineRenderSystem;
 import gaia.cu9.ari.gaiaorbit.render.system.ModelBatchRenderSystem;
-import gaia.cu9.ari.gaiaorbit.render.system.PixelRenderSystem;
+import gaia.cu9.ari.gaiaorbit.render.system.PixelBloomRenderSystem;
 import gaia.cu9.ari.gaiaorbit.render.system.ShaderQuadRenderSystem;
 import gaia.cu9.ari.gaiaorbit.render.system.SpriteBatchRenderSystem;
 import gaia.cu9.ari.gaiaorbit.scenegraph.CameraManager.CameraMode;
@@ -240,7 +240,7 @@ public class SceneGraphRenderer extends AbstractRenderer implements IProcessRend
 	int priority = 1;
 
 	// POINTS
-	AbstractRenderSystem pixelProc = new PixelRenderSystem(RenderGroup.POINT, priority++, alphas);
+	AbstractRenderSystem pixelProc = new PixelBloomRenderSystem(RenderGroup.POINT, priority++, alphas);
 	pixelProc.setPreRunnable(blendNoDepthRunnable);
 
 	// MODEL BACK
@@ -307,7 +307,7 @@ public class SceneGraphRenderer extends AbstractRenderer implements IProcessRend
 	renderProcesses.add(pixelProc);
 	renderProcesses.add(modelBackProc);
 	renderProcesses.add(annotationsProc);
-	renderProcesses.add(shaderBackProc);
+	//renderProcesses.add(shaderBackProc);
 	renderProcesses.add(lineProc);
 	renderProcesses.add(modelFrontProc);
 	renderProcesses.add(modelStarsProc);
@@ -323,6 +323,7 @@ public class SceneGraphRenderer extends AbstractRenderer implements IProcessRend
 
     }
 
+    @Override
     public void render(ICamera camera, int rw, int rh, FrameBuffer fb, PostProcessBean ppb) {
 
 	// Prepare render context
@@ -428,18 +429,18 @@ public class SceneGraphRenderer extends AbstractRenderer implements IProcessRend
 		extendViewport.setCamera(camera.getCamera());
 		extendViewport.setWorldSize(rw, rh);
 		extendViewport.setScreenSize(rw, rh);
-		extendViewport.apply(false);
+		extendViewport.apply();
 		renderScene(camera, rc);
 	    }
 	}
 	ppb.render(fb);
 
 	// Render camera
-	if (fb != null) {
+	if (fb != null && postproc) {
 	    fb.begin();
 	}
 	camera.render();
-	if (fb != null) {
+	if (fb != null && postproc) {
 	    fb.end();
 	}
     }

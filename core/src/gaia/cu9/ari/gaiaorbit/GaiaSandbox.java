@@ -51,7 +51,9 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.net.MalformedURLException;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import com.badlogic.gdx.Application;
@@ -90,6 +92,9 @@ public class GaiaSandbox implements ApplicationListener, IObserver {
     public ISceneGraph sg;
     private SceneGraphRenderer sgr;
     private IPostProcessor pp;
+
+    // Frame buffer map
+    private Map<String, FrameBuffer> fbmap;
 
     /**
      * The user interface
@@ -142,6 +147,8 @@ public class GaiaSandbox implements ApplicationListener, IObserver {
 
 	boolean mobile = Constants.mobile;
 	boolean desktop = !mobile;
+
+	fbmap = new HashMap<String, FrameBuffer>();
 
 	// Disable all kinds of input
 	EventManager.instance.post(Events.INPUT_ENABLED_CMD, false);
@@ -468,19 +475,20 @@ public class GaiaSandbox implements ApplicationListener, IObserver {
      * @return
      */
     public String renderToImage(ICamera camera, PostProcessBean ppb, int width, int height, String folder, String filename, IFileImageRenderer renderer) {
-	FrameBuffer m_fbo = new FrameBuffer(Format.RGBA8888, width, height, true);
+	FrameBuffer m_fbo = getFrameBuffer(width, height);
 	// TODO That's a dirty trick, we should find a better way (i.e. making buildEnabledEffectsList() method public)
 	boolean postprocessing = ppb.pp.captureNoClear();
 	ppb.pp.captureEnd();
 	if (!postprocessing) {
 	    // If post processing is not active, we must start the buffer now.
-	    // Otherwise, it is started in the renderScene().
+	    // Otherwise, it is used in the render method to write the results of the pp.
 	    m_fbo.begin();
 	}
 
 	// this is the main render function
 	preRenderScene();
-	sgr.render(camera, width, height, postprocessing ? m_fbo : null, ppb);
+	//sgr.render(camera, width, height, postprocessing ? m_fbo : null, ppb);
+	sgr.render(camera, width, height, m_fbo, ppb);
 
 	if (postprocessing) {
 	    // If post processing is active, we have to start now again because
@@ -489,14 +497,13 @@ public class GaiaSandbox implements ApplicationListener, IObserver {
 	}
 	if (GlobalConf.frame.RENDER_SCREENSHOT_TIME) {
 	    // Timestamp
-	    renderGui.resize(camera.getViewport().getScreenWidth(), camera.getViewport().getScreenHeight());
+	    renderGui.resize(width, height);
 	    renderGui.render();
 	}
 
-	String res = renderer.saveScreenshot(folder, filename, camera.getViewport().getScreenWidth(), camera.getViewport().getScreenHeight(), false);
+	String res = renderer.saveScreenshot(folder, filename, width, height, false);
 
 	m_fbo.end();
-	m_fbo.dispose();
 	return res;
     }
 
@@ -546,6 +553,19 @@ public class GaiaSandbox implements ApplicationListener, IObserver {
 
     public CelestialBody findFocusByName(String name) {
 	return sg.findFocus(name);
+    }
+
+    private FrameBuffer getFrameBuffer(int w, int h) {
+	String key = getKey(w, h);
+	if (!fbmap.containsKey(key)) {
+	    FrameBuffer fb = new FrameBuffer(Format.RGB888, w, h, true);
+	    fbmap.put(key, fb);
+	}
+	return fbmap.get(key);
+    }
+
+    private String getKey(int w, int h) {
+	return w + "x" + h;
     }
 
     @Override

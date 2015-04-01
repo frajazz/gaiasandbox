@@ -61,18 +61,73 @@ public class PixelBloomRenderSystem extends AbstractRenderSystem implements IObs
 
     @Override
     public void renderStud(List<IRenderable> renderables, ICamera camera) {
-	// Gather buffer and bloom post processor
-	FrameBuffer our_fb = getFrameBuffer(rc.w, rc.h);
-	PostProcessor pp = getPostProcessor(rc.w, rc.h);
+	/** Render to image or render to screen? **/
+	if (rc.fb == null) {
+	    /** Render to screen, use bloom **/
+	    // Gather buffer and bloom post processor
+	    FrameBuffer our_fb = getFrameBuffer(rc.w, rc.h);
+	    PostProcessor pp = getPostProcessor(rc.w, rc.h);
 
-	// Stop current post processing buffer if any
-	if (rc.ppb != null) {
-	    rc.ppb.captureEnd();
+	    // Stop current post processing buffer if any
+	    if (rc.ppb != null) {
+		rc.ppb.captureEnd();
+	    }
+
+	    // Capture bloom
+	    pp.capture();
+
+	    renderPixels(renderables, camera);
+
+	    // Render bloom to our frame buffer
+	    pp.render(our_fb);
+
+	    // Fetch stars_with_bloom texture
+	    Texture tex = our_fb.getColorBufferTexture();
+
+	    // Restart current post processing if any
+	    if (rc.ppb != null) {
+		rc.ppb.captureNoClear();
+	    }
+
+	    /** DRAW TO CURRENT BUFFER **/
+
+	    Viewport vp = camera.getCurrent().getViewport();
+
+	    float outWidth = vp.getWorldWidth();
+	    float outHeight = vp.getWorldHeight();
+	    int width = rc.w;
+	    int height = rc.h;
+	    int screenX = vp.getScreenX();
+	    int screenY = vp.getScreenY();
+	    int sw = Gdx.graphics.getWidth();
+	    int sh = Gdx.graphics.getHeight();
+
+	    if (rc.ppb != null) {
+		// Render to screen
+		outWidth = Math.max(sw, outWidth);
+		outHeight = Math.max(sh, outHeight);
+	    }
+	    if (GlobalConf.program.STEREOSCOPIC_MODE && rc.ppb != null && screenX > 0) {
+		screenX = Gdx.graphics.getWidth() / 2;
+	    }
+	    if (GlobalConf.program.STEREOSCOPIC_MODE && (GlobalConf.program.STEREO_PROFILE == StereoProfile.HD_3DTV || rc.ppb != null)) {
+		width *= 2;
+	    }
+
+	    GlobalResources.spriteBatch.begin();
+	    GlobalResources.spriteBatch.draw(tex, screenX, screenY, 0, 0, outWidth, outHeight, 1, 1, 0, 0, 0, width, height, false, true);
+	    GlobalResources.spriteBatch.end();
+	    // Apply previous viewport
+	    if (GlobalConf.program.STEREOSCOPIC_MODE)
+		vp.apply();
+	} else {
+	    /** Render to image, use regular render method **/
+	    renderPixels(renderables, camera);
 	}
 
-	// Capture bloom
-	pp.capture();
+    }
 
+    private void renderPixels(List<IRenderable> renderables, ICamera camera) {
 	// Render stars normally
 	renderer.begin(camera.getCamera().combined, ShapeType.Point.getGlType());
 	int size = renderables.size();
@@ -81,46 +136,6 @@ public class PixelBloomRenderSystem extends AbstractRenderSystem implements IObs
 	    s.render(renderer, alphas[s.getComponentType().ordinal()], starColorTransit);
 	}
 	renderer.end();
-
-	// Render bloom to our frame buffer
-	pp.render(our_fb);
-
-	// Fetch stars_with_bloom texture
-	Texture tex = our_fb.getColorBufferTexture();
-
-	// Restart current post processing if any
-	if (rc.ppb != null) {
-	    rc.ppb.captureNoClear();
-	}
-
-	/** DRAW TO CURRENT BUFFER **/
-
-	Viewport vp = camera.getCurrent().getViewport();
-
-	float outWidth = vp.getWorldWidth();
-	float outHeight = vp.getWorldHeight();
-	int width = rc.w;
-	int height = rc.h;
-	int screenX = vp.getScreenX();
-	int screenY = vp.getScreenY();
-	if (rc.ppb != null) {
-	    outWidth = Gdx.graphics.getWidth();
-	    outHeight = Gdx.graphics.getHeight();
-	}
-	if (GlobalConf.program.STEREOSCOPIC_MODE && rc.ppb != null && screenX > 0) {
-	    screenX = Gdx.graphics.getWidth() / 2;
-	}
-	if (GlobalConf.program.STEREOSCOPIC_MODE && (GlobalConf.program.STEREO_PROFILE == StereoProfile.HD_3DTV || rc.ppb != null)) {
-	    width *= 2;
-	}
-
-	GlobalResources.spriteBatch.begin();
-	GlobalResources.spriteBatch.draw(tex, screenX, screenY, 0, 0, outWidth, outHeight, 1, 1, 0, 0, 0, width, height, false, true);
-	GlobalResources.spriteBatch.end();
-
-	// Apply previous viewport
-	vp.apply();
-
     }
 
     @Override
@@ -142,7 +157,7 @@ public class PixelBloomRenderSystem extends AbstractRenderSystem implements IObs
     }
 
     private FrameBuffer getFrameBuffer(int w, int h) {
-	String key = getKeyFb(w, h);
+	String key = getKey(w, h);
 	if (!fbmap.containsKey(key)) {
 	    FrameBuffer fb = new FrameBuffer(Format.RGB888, w, h, true);
 	    fbmap.put(key, fb);
@@ -172,10 +187,6 @@ public class PixelBloomRenderSystem extends AbstractRenderSystem implements IObs
 
     private String getKey(int w, int h) {
 	return w + "x" + h;
-    }
-
-    private String getKeyFb(int w, int h) {
-	return w + "x" + h + "_" + (++fbkey % 2);
     }
 
 }
