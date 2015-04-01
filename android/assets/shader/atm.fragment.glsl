@@ -5,7 +5,7 @@ precision mediump float;
 #define LOWP 
 #endif
 
-#define exposure 1.5
+#define exposure 1.0
 
 uniform vec3 v3LightPos;
 uniform float g;

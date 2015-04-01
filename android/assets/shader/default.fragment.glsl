@@ -11,6 +11,7 @@ precision mediump float;
 
 // Ground atmospheric scattering
 varying vec3 v_atmosphereColor;
+#define exposure 5.0
 
 #if defined(specularTextureFlag) || defined(specularColorFlag)
 #define specularFlag
@@ -181,6 +182,7 @@ void main() {
 		gl_FragColor.a = 1.0;
 	#endif
 		
-	gl_FragColor.rgb += v_atmosphereColor * 0.7;
+	// Ground atmospheric scattering
+	gl_FragColor.rgb += (vec3(1.0) - exp(v_atmosphereColor.rgb * -exposure));
 
 }

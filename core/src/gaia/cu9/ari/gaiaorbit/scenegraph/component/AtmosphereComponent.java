@@ -74,10 +74,10 @@ public class AtmosphereComponent {
 	m_fInnerRadius = planetSize / 2f;
 	m_fOuterRadius = this.size;
 	m_fAtmosphereHeight = m_fOuterRadius - m_fInnerRadius;
-	float m_fScaleDepth = .25f;
+	float m_fScaleDepth = .20f;
 	float m_fScale = 1.0f / (m_fAtmosphereHeight);
 	float m_fScaleOverScaleDepth = m_fScale / m_fScaleDepth;
-	int m_nSamples = 7;
+	int m_nSamples = 9;
 
 	double[] m_fWavelength = wavelengths;
 	float[] m_fWavelength4 = new float[3];
@@ -108,7 +108,7 @@ public class AtmosphereComponent {
 	mat.set(new AtmosphereAttribute(AtmosphereAttribute.ScaleOverScaleDepth, m_fScaleOverScaleDepth));
 
 	mat.set(new AtmosphereAttribute(AtmosphereAttribute.nSamples, m_nSamples));
-	mat.set(new AtmosphereAttribute(AtmosphereAttribute.fSamples, m_nSamples));
+	mat.set(new AtmosphereAttribute(AtmosphereAttribute.fSamples, (float) m_nSamples));
 
 	mat.set(new AtmosphereAttribute(AtmosphereAttribute.G, m_g));
 	mat.set(new AtmosphereAttribute(AtmosphereAttribute.G2, m_g * m_g));
@@ -140,7 +140,7 @@ public class AtmosphereComponent {
 
 	if (!ground && camHeightGr < m_fAtmosphereHeight) {
 	    // Camera inside atmosphere
-	    m_ESun = Math.max(15, atmFactor * 35f);
+	    m_ESun = Math.max(15f, atmFactor * 35f);
 	}
 
 	float colorOpacity = Math.min(1.5f, Math.max(0f, atmFactor * 3));

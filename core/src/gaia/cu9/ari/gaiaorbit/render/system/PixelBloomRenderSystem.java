@@ -158,9 +158,9 @@ public class PixelBloomRenderSystem extends AbstractRenderSystem implements IObs
 	    bloom.setThreshold(0.0f);
 	    bloom.setBaseIntesity(1f);
 	    bloom.setBaseSaturation(1f);
-	    bloom.setBloomIntesity(4f);
+	    bloom.setBloomIntesity(4.5f);
 	    bloom.setBloomSaturation(2f);
-	    bloom.setBlurPasses(1);
+	    bloom.setBlurPasses(2);
 	    bloom.setBlurAmount(0.0f);
 	    bloom.setBlurType(BlurType.Gaussian5x5b);
 	    pp.addEffect(bloom);
