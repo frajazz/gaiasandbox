@@ -5,6 +5,7 @@ import gaia.cu9.ari.gaiaorbit.event.Events;
 import gaia.cu9.ari.gaiaorbit.event.IObserver;
 import gaia.cu9.ari.gaiaorbit.util.math.Vector3d;
 import gaia.cu9.ari.gaiaorbit.util.parse.Parser;
+import gaia.cu9.ari.gaiaorbit.util.time.GlobalClock;
 
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
@@ -13,6 +14,9 @@ import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.text.DateFormat;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 
 /** 
  * Contains the logic to record the camera state at each frame. The format is as follows:
@@ -39,13 +43,16 @@ public class CamRecorder implements IObserver {
     private File f;
     private long startMs;
     float time;
+    private DateFormat df;
 
     public static void initialize() {
 	instance = new CamRecorder();
+
     }
 
     public CamRecorder() {
 	this.mode = RecorderMode.IDLE;
+	df = new SimpleDateFormat("yyyy-MM-dd_HH:mm:ss");
 	EventManager.instance.subscribe(this, Events.RECORD_CAMERA_CMD, Events.PLAY_CAMERA_CMD);
     }
 
@@ -67,16 +74,24 @@ public class CamRecorder implements IObserver {
 	    break;
 	case PLAYING:
 	    if (is != null) {
-
 		try {
 		    String line;
 		    if ((line = is.readLine()) != null) {
 			String[] tokens = line.split("\\s+");
-			// TODO use time to adapt FPS
-			float time = Parser.parseFloat(tokens[0]);
-			position.set(Parser.parseDouble(tokens[1]), Parser.parseDouble(tokens[2]), Parser.parseDouble(tokens[3]));
-			direction.set(Parser.parseDouble(tokens[4]), Parser.parseDouble(tokens[5]), Parser.parseDouble(tokens[6]));
-			up.set(Parser.parseDouble(tokens[7]), Parser.parseDouble(tokens[8]), Parser.parseDouble(tokens[9]));
+			if (tokens.length != 0 && tokens[0].equals("settime")) {
+			    try {
+				EventManager.instance.post(Events.TIME_CHANGE_CMD, df.parse(tokens[1]));
+			    } catch (ParseException e) {
+				EventManager.instance.post(Events.JAVA_EXCEPTION, e);
+			    }
+
+			} else {
+			    // TODO use time to adapt FPS
+			    float time = Parser.parseFloat(tokens[0]);
+			    position.set(Parser.parseDouble(tokens[1]), Parser.parseDouble(tokens[2]), Parser.parseDouble(tokens[3]));
+			    direction.set(Parser.parseDouble(tokens[4]), Parser.parseDouble(tokens[5]), Parser.parseDouble(tokens[6]));
+			    up.set(Parser.parseDouble(tokens[7]), Parser.parseDouble(tokens[8]), Parser.parseDouble(tokens[9]));
+			}
 		    } else {
 			// Finish off
 			is.close();
@@ -127,6 +142,12 @@ public class CamRecorder implements IObserver {
 		} catch (IOException e) {
 		    EventManager.instance.post(Events.JAVA_EXCEPTION, e);
 		    return;
+		}
+		try {
+		    // Write time command
+		    os.append("settime").append(sep).append(df.format(GlobalClock.clock.getTime())).append("\n");
+		} catch (Exception e) {
+		    EventManager.instance.post(Events.JAVA_EXCEPTION, e);
 		}
 		EventManager.instance.post(Events.POST_NOTIFICATION, I18n.bundle.get("notif.camerarecord.start"));
 		startMs = System.currentTimeMillis();
