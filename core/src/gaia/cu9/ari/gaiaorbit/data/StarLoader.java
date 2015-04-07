@@ -2,7 +2,9 @@ package gaia.cu9.ari.gaiaorbit.data;
 
 import gaia.cu9.ari.gaiaorbit.data.stars.ICatalogLoader;
 import gaia.cu9.ari.gaiaorbit.scenegraph.SceneGraphNode;
+import gaia.cu9.ari.gaiaorbit.util.PrefixedProperties;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Properties;
 
@@ -15,7 +17,7 @@ import com.badlogic.gdx.Gdx;
  *
  */
 public class StarLoader implements ISceneGraphNodeProvider {
-    private ICatalogLoader loader;
+    private ICatalogLoader[] loaders;
 
     /**
      * Creates and initialized the catalog
@@ -27,9 +29,13 @@ public class StarLoader implements ISceneGraphNodeProvider {
     @Override
     public void initialize(Properties properties) {
 	try {
-	    Class<?> loaderClass = Class.forName(properties.getProperty("loader"));
-	    loader = (ICatalogLoader) loaderClass.newInstance();
-	    loader.initialize(properties);
+	    String[] classes = properties.getProperty("loader").split("\\s+");
+	    loaders = new ICatalogLoader[classes.length];
+	    for (int i = 0; i < classes.length; i++) {
+		loaders[i] = (ICatalogLoader) Class.forName(classes[i]).newInstance();
+		PrefixedProperties props = new PrefixedProperties(properties, loaders[i].getClass().getSimpleName() + ".");
+		loaders[i].initialize(props);
+	    }
 
 	} catch (Exception e) {
 	    Gdx.app.error(this.getClass().getSimpleName(), e.getLocalizedMessage());
@@ -38,9 +44,11 @@ public class StarLoader implements ISceneGraphNodeProvider {
 
     @Override
     public List<? extends SceneGraphNode> loadObjects() {
-	List<? extends SceneGraphNode> nodes = null;
+	List<SceneGraphNode> nodes = new ArrayList<SceneGraphNode>();
 	try {
-	    nodes = loader.loadCatalog();
+	    for (ICatalogLoader loader : loaders) {
+		nodes.addAll(loader.loadCatalog());
+	    }
 	    for (SceneGraphNode s : nodes) {
 		s.initialize();
 	    }

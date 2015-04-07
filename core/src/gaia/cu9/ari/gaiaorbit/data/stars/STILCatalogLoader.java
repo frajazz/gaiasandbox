@@ -7,7 +7,6 @@ import gaia.cu9.ari.gaiaorbit.scenegraph.Star;
 import gaia.cu9.ari.gaiaorbit.util.Constants;
 import gaia.cu9.ari.gaiaorbit.util.GlobalConf;
 import gaia.cu9.ari.gaiaorbit.util.I18n;
-import gaia.cu9.ari.gaiaorbit.util.math.Vector3d;
 import gaia.cu9.ari.gaiaorbit.util.units.Position;
 import gaia.cu9.ari.gaiaorbit.util.units.Position.PositionType;
 
@@ -130,12 +129,14 @@ public class STILCatalogLoader extends AbstractCatalogLoader implements ICatalog
 
 	    /** COLOR **/
 	    ColumnInfo colc = null;
-	    int coli;
+	    int coli = -1;
 	    if (ucds.containsKey("phot.color;em.opt.B;em.opt.V")) {
 		// B-V
 		colc = ucds.get("phot.color;em.opt.B;em.opt.V");
 	    }
-	    coli = ucdsi.get(colc.getUCD());
+	    if (colc != null) {
+		coli = ucdsi.get(colc.getUCD());
+	    }
 
 	    /** NAME **/
 	    ColumnInfo idstrc = null;
@@ -161,7 +162,8 @@ public class STILCatalogLoader extends AbstractCatalogLoader implements ICatalog
 
 		float mag = ((Number) row[magi]).floatValue();
 		float absmag = ((Number) row[abmagi]).floatValue();
-		float color = ((Number) row[coli]).floatValue();
+
+		float color = coli > 0 ? ((Number) row[coli]).floatValue() : 0.656f;
 
 		starid++;
 
@@ -172,11 +174,6 @@ public class STILCatalogLoader extends AbstractCatalogLoader implements ICatalog
 		s.initialize();
 		result.add(s);
 	    }
-
-	    /** ADD SUN MANUALLY **/
-	    Star sun = new Star(new Vector3d(0, 0, 0), 4.83f, 4.83f, 0.656f, "Sol", ++starid);
-	    sun.initialize();
-	    result.add(sun);
 
 	} catch (Exception e) {
 	    EventManager.instance.post(Events.JAVA_EXCEPTION, e);

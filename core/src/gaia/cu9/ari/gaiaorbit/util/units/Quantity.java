@@ -22,7 +22,9 @@ public class Quantity {
 	    /** Astronomical units **/
 	    AU(149597870700d),
 	    /** Parsecs **/
-	    PC(3.08567758e16);
+	    PC(3.08567758e16),
+	    /** Megaparsecs **/
+	    MPC(3.08567758e22);
 
 	    final double m;
 

@@ -7,12 +7,13 @@ data.providers=gaia.cu9.ari.gaiaorbit.data.HubCatalogLoader  gaia.cu9.ari.gaiaor
 
 # Catalog loader class to use with the StarLoader: HYGCSVLoader or HYGBinLoader. The ObjectServerLoader is configured elsewhere (see global conf file).
 #gaia.cu9.ari.gaiaorbit.data.HubCatalogLoader.StarLoader.loader=gaia.cu9.ari.gaiaorbit.data.stars.OctreeCatalogLoader
-gaia.cu9.ari.gaiaorbit.data.HubCatalogLoader.StarLoader.loader=gaia.cu9.ari.gaiaorbit.data.stars.HYGBinaryLoader
-#gaia.cu9.ari.gaiaorbit.data.HubCatalogLoader.StarLoader.loader=gaia.cu9.ari.gaiaorbit.data.stars.STILCatalogLoader
+#gaia.cu9.ari.gaiaorbit.data.HubCatalogLoader.StarLoader.loader=gaia.cu9.ari.gaiaorbit.data.stars.HYGBinaryLoader
+gaia.cu9.ari.gaiaorbit.data.HubCatalogLoader.StarLoader.loader=gaia.cu9.ari.gaiaorbit.data.stars.STILCatalogLoader gaia.cu9.ari.gaiaorbit.data.stars.HYGBinaryLoader
 
 # Catalog data file
+gaia.cu9.ari.gaiaorbit.data.HubCatalogLoader.StarLoader.STILCatalogLoader.file=/home/tsagrista/Gaia/data/GAMA/GAMA.vot
 #gaia.cu9.ari.gaiaorbit.data.HubCatalogLoader.StarLoader.file=/home/tsagrista/Workspaces/objectserver/data/hipparcos.vot.gz
-gaia.cu9.ari.gaiaorbit.data.HubCatalogLoader.StarLoader.file=data/hygxyz.bin
+gaia.cu9.ari.gaiaorbit.data.HubCatalogLoader.StarLoader.HYGBinaryLoader.file=data/hygxyz.bin
 #gaia.cu9.ari.gaiaorbit.data.HubCatalogLoader.StarLoader.particles=data/hyg_particles.bin
 # Metadata file
 #gaia.cu9.ari.gaiaorbit.data.HubCatalogLoader.StarLoader.metadata=data/hyg_metadata.bin
