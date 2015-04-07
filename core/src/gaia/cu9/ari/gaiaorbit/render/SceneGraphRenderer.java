@@ -9,6 +9,7 @@ import gaia.cu9.ari.gaiaorbit.render.system.IRenderSystem;
 import gaia.cu9.ari.gaiaorbit.render.system.LineRenderSystem;
 import gaia.cu9.ari.gaiaorbit.render.system.ModelBatchRenderSystem;
 import gaia.cu9.ari.gaiaorbit.render.system.PixelBloomRenderSystem;
+import gaia.cu9.ari.gaiaorbit.render.system.PixelRenderSystem;
 import gaia.cu9.ari.gaiaorbit.render.system.ShaderQuadRenderSystem;
 import gaia.cu9.ari.gaiaorbit.render.system.SpriteBatchRenderSystem;
 import gaia.cu9.ari.gaiaorbit.scenegraph.CameraManager.CameraMode;
@@ -132,6 +133,8 @@ public class SceneGraphRenderer extends AbstractRenderer implements IProcessRend
     /** Alpha values for each type **/
     public static float[] alphas;
 
+    public AbstractRenderSystem[] pixelRenderSystems;
+
     private ShaderProgram starShader, fontShader;
 
     private RenderContext rc;
@@ -148,6 +151,8 @@ public class SceneGraphRenderer extends AbstractRenderer implements IProcessRend
     private Viewport stretchViewport;
     /** Viewport to use in normal mode **/
     private Viewport extendViewport;
+
+    Runnable blendNoDepthRunnable, blendDepthRunnable;
 
     public SceneGraphRenderer() {
 	super();
@@ -217,10 +222,11 @@ public class SceneGraphRenderer extends AbstractRenderer implements IProcessRend
 	 * =======  INITIALIZE RENDER COMPONENTS  =======
 	 * 
 	 **/
+	pixelRenderSystems = new AbstractRenderSystem[2];
 
 	renderProcesses = new ArrayList<IRenderSystem>();
 
-	Runnable blendNoDepthRunnable = new Runnable() {
+	blendNoDepthRunnable = new Runnable() {
 	    @Override
 	    public void run() {
 		Gdx.gl.glEnable(GL20.GL_BLEND);
@@ -228,7 +234,7 @@ public class SceneGraphRenderer extends AbstractRenderer implements IProcessRend
 		Gdx.gl.glDepthMask(false);
 	    }
 	};
-	Runnable blendDepthRunnable = new Runnable() {
+	blendDepthRunnable = new Runnable() {
 	    @Override
 	    public void run() {
 		Gdx.gl.glEnable(GL20.GL_BLEND);
@@ -240,8 +246,7 @@ public class SceneGraphRenderer extends AbstractRenderer implements IProcessRend
 	int priority = 1;
 
 	// POINTS
-	AbstractRenderSystem pixelProc = new PixelBloomRenderSystem(RenderGroup.POINT, priority++, alphas);
-	pixelProc.setPreRunnable(blendNoDepthRunnable);
+	AbstractRenderSystem pixelProc = getPixelRenderSystem();
 
 	// MODEL BACK
 	AbstractRenderSystem modelBackProc = new ModelBatchRenderSystem(RenderGroup.MODEL_B, priority++, alphas, modelBatchB, false);
@@ -319,7 +324,7 @@ public class SceneGraphRenderer extends AbstractRenderer implements IProcessRend
 	stretchViewport = new StretchViewport(Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
 	extendViewport = new ExtendViewport(200, 200);
 
-	EventManager.instance.subscribe(this, Events.TOGGLE_VISIBILITY_CMD);
+	EventManager.instance.subscribe(this, Events.TOGGLE_VISIBILITY_CMD, Events.PIXEL_RENDERER_UPDATE);
 
     }
 
@@ -501,6 +506,14 @@ public class SceneGraphRenderer extends AbstractRenderer implements IProcessRend
 		times[idx] = new Date().getTime();
 	    }
 	    break;
+	case PIXEL_RENDERER_UPDATE:
+	    Gdx.app.postRunnable(new Runnable() {
+		@Override
+		public void run() {
+		    updatePixelRenderSystem();
+		}
+	    });
+	    break;
 	}
     }
 
@@ -521,6 +534,36 @@ public class SceneGraphRenderer extends AbstractRenderer implements IProcessRend
     public void resize(int w, int h) {
 	extendViewport.update(w, h);
 	stretchViewport.update(w, h);
+    }
+
+    private AbstractRenderSystem getPixelRenderSystem() {
+	AbstractRenderSystem sys = null;
+	int pxidx = GlobalConf.scene.PIXEL_RENDERER;
+	if (pixelRenderSystems[pxidx] == null) {
+	    if (GlobalConf.scene.isBloomPixelRenderer()) {
+		sys = new PixelBloomRenderSystem(RenderGroup.POINT, 0, alphas);
+		sys.setPreRunnable(blendNoDepthRunnable);
+	    } else {
+		sys = new PixelRenderSystem(RenderGroup.POINT, 0, alphas);
+		sys.setPreRunnable(blendNoDepthRunnable);
+	    }
+	    pixelRenderSystems[pxidx] = sys;
+	} else {
+	    sys = pixelRenderSystems[pxidx];
+	}
+	return sys;
+    }
+
+    private void updatePixelRenderSystem() {
+	if (renderProcesses != null && !renderProcesses.isEmpty()) {
+	    IRenderSystem sys = renderProcesses.get(0);
+	    if ((sys instanceof PixelBloomRenderSystem && !GlobalConf.scene.isBloomPixelRenderer()) ||
+		    (sys instanceof PixelRenderSystem && !GlobalConf.scene.isNormalPixelRenderer())) {
+		IRenderSystem newsys = getPixelRenderSystem();
+		renderProcesses.remove(sys);
+		renderProcesses.add(0, newsys);
+	    }
+	}
     }
 
 }

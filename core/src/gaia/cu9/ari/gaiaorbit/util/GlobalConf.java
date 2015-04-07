@@ -260,7 +260,7 @@ public class GlobalConf {
 	public boolean RENDER_OUTPUT = false;
 
 	public FrameConf() {
-	    EventManager.instance.subscribe(this, Events.CONFIG_RENDER_SYSTEM, Events.FRAME_OUTPUT_CMD);
+	    EventManager.instance.subscribe(this, Events.CONFIG_PIXEL_RENDERER, Events.FRAME_OUTPUT_CMD);
 	}
 
 	@Override
@@ -286,7 +286,7 @@ public class GlobalConf {
 	@Override
 	public void notify(Events event, Object... data) {
 	    switch (event) {
-	    case CONFIG_RENDER_SYSTEM:
+	    case CONFIG_PIXEL_RENDERER:
 		RENDER_WIDTH = (int) data[0];
 		RENDER_HEIGHT = (int) data[1];
 		RENDER_TARGET_FPS = (int) data[2];
@@ -511,6 +511,8 @@ public class GlobalConf {
 	public boolean STAR_COLOR_TRANSIT;
 	public boolean ONLY_OBSERVED_STARS;
 	public boolean COMPUTE_GAIA_SCAN;
+	/** The pixel render system: 0 - normal, 1 - bloom **/
+	public int PIXEL_RENDERER;
 
 	public double STAR_TH_ANGLE_NONE;
 	public double STAR_TH_ANGLE_POINT;
@@ -520,7 +522,7 @@ public class GlobalConf {
 	public float POINT_ALPHA_MAX;
 
 	public SceneConf() {
-	    EventManager.instance.subscribe(this, Events.FOCUS_LOCK_CMD, Events.STAR_BRIGHTNESS_CMD, Events.FOV_CHANGED_CMD, Events.CAMERA_SPEED_CMD, Events.ROTATION_SPEED_CMD, Events.TURNING_SPEED_CMD, Events.SPEED_LIMIT_CMD, Events.TRANSIT_COLOUR_CMD, Events.ONLY_OBSERVED_STARS_CMD, Events.COMPUTE_GAIA_SCAN_CMD);
+	    EventManager.instance.subscribe(this, Events.FOCUS_LOCK_CMD, Events.STAR_BRIGHTNESS_CMD, Events.FOV_CHANGED_CMD, Events.CAMERA_SPEED_CMD, Events.ROTATION_SPEED_CMD, Events.TURNING_SPEED_CMD, Events.SPEED_LIMIT_CMD, Events.TRANSIT_COLOUR_CMD, Events.ONLY_OBSERVED_STARS_CMD, Events.COMPUTE_GAIA_SCAN_CMD, Events.PIXEL_RENDERER_CMD);
 	}
 
 	@Override
@@ -540,6 +542,7 @@ public class GlobalConf {
 	    p.setProperty("scene.star.thresholdangle.none", Double.toString(Math.toDegrees(STAR_TH_ANGLE_NONE)));
 	    p.setProperty("scene.point.alpha.min", Float.toString(POINT_ALPHA_MIN));
 	    p.setProperty("scene.point.alpha.max", Float.toString(POINT_ALPHA_MAX));
+	    p.setProperty("scene.renderer.pixel", Integer.toString(PIXEL_RENDERER));
 	    // Visibility of components
 	    int idx = 0;
 	    ComponentType[] cts = ComponentType.values();
@@ -568,6 +571,7 @@ public class GlobalConf {
 	    STAR_TH_ANGLE_NONE = Math.toRadians(Double.parseDouble(p.getProperty("scene.star.thresholdangle.none")));
 	    POINT_ALPHA_MIN = Float.parseFloat(p.getProperty("scene.point.alpha.min"));
 	    POINT_ALPHA_MAX = Float.parseFloat(p.getProperty("scene.point.alpha.max"));
+	    PIXEL_RENDERER = Integer.parseInt(p.getProperty("scene.renderer.pixel"));
 	    //Visibility of components
 	    ComponentType[] cts = ComponentType.values();
 	    VISIBILITY = new boolean[cts.length];
@@ -666,8 +670,19 @@ public class GlobalConf {
 		CAMERA_SPEED_LIMIT_IDX = (Integer) data[0];
 		updateSpeedLimit();
 		break;
+	    case PIXEL_RENDERER_CMD:
+		PIXEL_RENDERER = (Integer) data[0];
+		break;
 	    }
 
+	}
+
+	public boolean isNormalPixelRenderer() {
+	    return PIXEL_RENDERER == 0;
+	}
+
+	public boolean isBloomPixelRenderer() {
+	    return PIXEL_RENDERER == 1;
 	}
 
     }

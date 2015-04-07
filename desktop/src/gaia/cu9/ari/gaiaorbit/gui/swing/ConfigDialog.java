@@ -179,9 +179,6 @@ public class ConfigDialog extends I18nJFrame {
 
 	/** TABBED PANEL **/
 
-	//	JTabbedPane tabbedPane = new JTabbedPane();
-	//	tabbedPane.setTabPlacement(WebTabbedPane.LEFT);
-
 	final JXTabbedPane tabbedPane = new JXTabbedPane(JTabbedPane.LEFT);
 	AbstractTabRenderer renderer = (AbstractTabRenderer) tabbedPane.getTabRenderer();
 	renderer.setPrototypeText("123456789012345678");
@@ -193,7 +190,7 @@ public class ConfigDialog extends I18nJFrame {
 
 	/** RESOLUTION **/
 	JPanel mode = new JPanel(new MigLayout("fillx", "[grow,fill][grow,fill]", ""));
-	mode.setBorder(new TitledBorder(new MatteBorder(new Insets(thick, 0, 0, 0), bcol), txt("gui.resolutionmode"), just, pos));
+	//mode.setBorder(new TitledBorder(new MatteBorder(new Insets(thick, 0, 0, 0), bcol), txt("gui.resolutionmode"), just, pos));
 
 	// Full screen mode resolutions
 	DisplayMode[] modes = LwjglApplicationConfiguration.getDisplayModes();
@@ -257,9 +254,9 @@ public class ConfigDialog extends I18nJFrame {
 
 	/** GRAPHICS **/
 	JPanel graphics = new JPanel(new MigLayout("", "[][]", ""));
-	graphics.setBorder(new TitledBorder(new MatteBorder(new Insets(thick, 0, 0, 0), bcol), txt("gui.graphicssettings"), just, pos));
+	//graphics.setBorder(new TitledBorder(new MatteBorder(new Insets(thick, 0, 0, 0), bcol), txt("gui.graphicssettings"), just, pos));
 
-	// MSAA
+	// AA
 	JTextArea msaaInfo = new JTextArea(txt("gui.aa.info")) {
 	    @Override
 	    public void setBorder(Border border) {
@@ -270,17 +267,24 @@ public class ConfigDialog extends I18nJFrame {
 	msaaInfo.setForeground(darkgreen);
 	msaaInfo.setEditable(false);
 
-	ThreadComboBoxBean[] msaas = new ThreadComboBoxBean[] { new ThreadComboBoxBean(txt("gui.aa.no"), 0), new ThreadComboBoxBean(txt("gui.aa.fxaa"), -1), new ThreadComboBoxBean(txt("gui.aa.nfaa"), -2), new ThreadComboBoxBean(txt("gui.aa.msaa", 2), 2), new ThreadComboBoxBean(txt("gui.aa.msaa", 4), 4), new ThreadComboBoxBean(txt("gui.aa.msaa", 8), 8), new ThreadComboBoxBean(txt("gui.aa.msaa", 16), 16) };
-	final JComboBox<ThreadComboBoxBean> msaa = new JComboBox<ThreadComboBoxBean>(msaas);
-	msaa.setSelectedItem(msaas[idxAa(2, GlobalConf.postprocess.POSTPROCESS_ANTIALIAS)]);
+	ThreadComboBoxBean[] aas = new ThreadComboBoxBean[] { new ThreadComboBoxBean(txt("gui.aa.no"), 0), new ThreadComboBoxBean(txt("gui.aa.fxaa"), -1), new ThreadComboBoxBean(txt("gui.aa.nfaa"), -2), new ThreadComboBoxBean(txt("gui.aa.msaa", 2), 2), new ThreadComboBoxBean(txt("gui.aa.msaa", 4), 4), new ThreadComboBoxBean(txt("gui.aa.msaa", 8), 8), new ThreadComboBoxBean(txt("gui.aa.msaa", 16), 16) };
+	final JComboBox<ThreadComboBoxBean> msaa = new JComboBox<ThreadComboBoxBean>(aas);
+	msaa.setSelectedItem(aas[idxAa(2, GlobalConf.postprocess.POSTPROCESS_ANTIALIAS)]);
 
 	// Vsync
 	final JCheckBox vsync = new JCheckBox(txt("gui.vsync"), GlobalConf.screen.VSYNC);
 
+	// Pixel renderer
+	ThreadComboBoxBean[] pixelRenderers = new ThreadComboBoxBean[] { new ThreadComboBoxBean(txt("gui.pixrenderer.normal"), 0), new ThreadComboBoxBean(txt("gui.pixrenderer.bloom"), 1) };
+	final JComboBox<ThreadComboBoxBean> pixelRenderer = new JComboBox<ThreadComboBoxBean>(pixelRenderers);
+	pixelRenderer.setSelectedItem(pixelRenderers[GlobalConf.scene.PIXEL_RENDERER]);
+
 	graphics.add(msaaInfo, "span,wrap");
 	graphics.add(new JLabel(txt("gui.aa") + ":"));
 	graphics.add(msaa);
-	graphics.add(vsync, "span");
+	graphics.add(vsync, "wrap");
+	graphics.add(new JLabel(txt("gui.pixrenderer") + ":"));
+	graphics.add(pixelRenderer, "span");
 
 	/** NOTICE **/
 	JPanel notice = new JPanel(new MigLayout("", "[]", ""));
@@ -288,9 +292,15 @@ public class ConfigDialog extends I18nJFrame {
 	noticeText.setForeground(darkgreen);
 	notice.add(noticeText);
 
+	/** SUB TABBED PANE **/
+	JTabbedPane graphicsTabbedPane = new JTabbedPane();
+	graphicsTabbedPane.setTabPlacement(JTabbedPane.TOP);
+
+	graphicsTabbedPane.addTab(txt("gui.resolutionmode"), mode);
+	graphicsTabbedPane.addTab(txt("gui.graphicssettings"), graphics);
+
 	JPanel graphicsPanel = new JPanel(new MigLayout("", "[grow,fill][]", ""));
-	graphicsPanel.add(mode, "wrap");
-	graphicsPanel.add(graphics, "wrap");
+	graphicsPanel.add(graphicsTabbedPane, "wrap");
 	if (!startup) {
 	    graphicsPanel.add(notice, "wrap");
 	}
@@ -685,6 +695,14 @@ public class ConfigDialog extends I18nJFrame {
 		    ThreadComboBoxBean bean = (ThreadComboBoxBean) msaa.getSelectedItem();
 		    GlobalConf.postprocess.POSTPROCESS_ANTIALIAS = bean.value;
 		    GlobalConf.screen.VSYNC = vsync.isSelected();
+
+		    bean = (ThreadComboBoxBean) pixelRenderer.getSelectedItem();
+		    int oldPx = GlobalConf.scene.PIXEL_RENDERER;
+		    GlobalConf.scene.PIXEL_RENDERER = bean.value;
+		    if (oldPx != bean.value) {
+			// Issue command
+			EventManager.instance.post(Events.PIXEL_RENDERER_UPDATE);
+		    }
 
 		    // Interface
 		    LangComboBoxBean lbean = (LangComboBoxBean) lang.getSelectedItem();

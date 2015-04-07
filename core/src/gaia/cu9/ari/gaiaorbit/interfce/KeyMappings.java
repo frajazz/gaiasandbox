@@ -73,7 +73,7 @@ public class KeyMappings {
 	    }
 	}), Keys.O);
 
-	// P -> Toggle orbits
+	// P -> Toggle planets
 	addMapping(new ProgramAction(txt("action.toggle", txt("element.planets")), new Runnable() {
 	    @Override
 	    public void run() {
@@ -287,6 +287,15 @@ public class KeyMappings {
 		EventManager.instance.post(Events.TOGGLE_CLEANMODE, txt("notif.cleanmode"));
 	    }
 	}), Keys.CONTROL_LEFT, Keys.U);
+
+	// CTRL + P -> Change pixel renderer
+	addMapping(new ProgramAction(txt("action.toggle", txt("element.pixelrenderer")), new Runnable() {
+	    @Override
+	    public void run() {
+		EventManager.instance.post(Events.PIXEL_RENDERER_CMD, (GlobalConf.scene.PIXEL_RENDERER + 1) % 2);
+		EventManager.instance.post(Events.PIXEL_RENDERER_UPDATE);
+	    }
+	}), Keys.CONTROL_LEFT, Keys.P);
 
     }
 

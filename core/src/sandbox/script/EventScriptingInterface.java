@@ -244,7 +244,7 @@ public class EventScriptingInterface implements IScriptingInterface, IObserver {
 	assert height > 0 : "Height must be positive";
 	assert fps > 0 : "FPS must be positive";
 	assert folder != null && namePrefix != null : "Folder and file name prefix must not be null";
-	em.post(Events.CONFIG_RENDER_SYSTEM, width, height, fps, folder, namePrefix);
+	em.post(Events.CONFIG_PIXEL_RENDERER, width, height, fps, folder, namePrefix);
     }
 
     @Override

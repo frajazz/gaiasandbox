@@ -283,9 +283,13 @@ public enum Events {
     /** Passes the OrbitData and the file name **/
     ORBIT_DATA_LOADED,
 
-    /** Configures the render system. Contains width, height, fps, folder and file **/
-    CONFIG_RENDER_SYSTEM,
+    /** Contains the index of the new renderer **/
+    PIXEL_RENDERER_CMD,
+    /** Configures the render system. Contains width, height, FPS, folder and file **/
+    CONFIG_PIXEL_RENDERER,
 
     /** Contains the Gaia object [0] **/
-    GAIA_LOADED;
+    GAIA_LOADED,
+    /** Issues the command to update the pixel render system. Contains no parameters. **/
+    PIXEL_RENDERER_UPDATE;
 }
