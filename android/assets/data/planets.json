@@ -170,7 +170,7 @@
 						"axialtilt" : 25.19,
 						// Inclination of orbit plane with respect to ecliptic
 						"inclination" : 1.850,
-						"ascendingnode" : 47.68143,
+						//"ascendingnode" : 47.68143,
 						"meridianangle" : 176.630
 						},
 						
@@ -178,7 +178,7 @@
 						"args" : [true],
 						"type" : "sphere",
 						"params" : {
-									"quality" : 150,
+									"quality" : 160,
 									"diameter" : 1.0,
 									"flip" : false
 									},
@@ -186,6 +186,19 @@
 									"base" : "data/tex/mars.jpg",
 									"hires" : "data/tex/mars-2k.jpg",
 									"normal" : "data/tex/mars-normal.jpg"
+									}
+						},
+	"atmosphere" 	: {
+						"size" : 3490.0,
+						"wavelengths" : [0.600, 0.7, 0.7],
+						"m_Kr" : 0.0025,
+						"m_Km" : 0.001,
+						
+						"params" : {
+									"quality" : 160,
+									// Atmosphere diameters are always 2
+									"diameter" : 2.0,
+									"flip" : true
 									}
 						}
 	},
