@@ -8,7 +8,7 @@ import gaia.cu9.ari.gaiaorbit.scenegraph.ICamera;
 import gaia.cu9.ari.gaiaorbit.scenegraph.SceneGraphNode.RenderGroup;
 import gaia.cu9.ari.gaiaorbit.util.Constants;
 import gaia.cu9.ari.gaiaorbit.util.GlobalConf;
-import gaia.cu9.ari.gaiaorbit.util.comp.QuadComparator;
+import gaia.cu9.ari.gaiaorbit.util.comp.DistToCameraComparator;
 import gaia.cu9.ari.gaiaorbit.util.time.TimeUtils;
 
 import java.util.Collections;
@@ -52,7 +52,7 @@ public class ShaderQuadRenderSystem extends AbstractRenderSystem implements IObs
 
     private void init() {
 	// Init comparator
-	comp = new QuadComparator<IRenderable>();
+	comp = new DistToCameraComparator<IRenderable>();
 	// Init vertices
 	float[] vertices = new float[20];
 	fillVertices(vertices);

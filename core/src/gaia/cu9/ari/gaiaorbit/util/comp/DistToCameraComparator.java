@@ -5,12 +5,12 @@ import gaia.cu9.ari.gaiaorbit.scenegraph.AbstractPositionEntity;
 import java.util.Comparator;
 
 /**
- * Compares quads. Further quads go first, nearer quads go last.
+ * Compares entities. Further entities go first, nearer entities go last.
  * @author Toni Sagrista
  *
  * @param <IRenderable>
  */
-public class QuadComparator<T> implements Comparator<T> {
+public class DistToCameraComparator<T> implements Comparator<T> {
 
     @Override
     public int compare(T o1, T o2) {

@@ -11,7 +11,7 @@ import gaia.cu9.ari.gaiaorbit.scenegraph.NaturalCamera;
 import gaia.cu9.ari.gaiaorbit.scenegraph.Star;
 import gaia.cu9.ari.gaiaorbit.util.Constants;
 import gaia.cu9.ari.gaiaorbit.util.GlobalConf;
-import gaia.cu9.ari.gaiaorbit.util.comp.QuadComparator;
+import gaia.cu9.ari.gaiaorbit.util.comp.DistToCameraComparator;
 import gaia.cu9.ari.gaiaorbit.util.math.Vector3d;
 
 import java.util.ArrayList;
@@ -140,7 +140,7 @@ public class GaiaInputController extends GestureDetector {
 	this.gestureListener.controller = this;
 	this.cam = camera;
 	this.aux = new Vector3d();
-	this.comp = new QuadComparator<CelestialBody>();
+	this.comp = new DistToCameraComparator<CelestialBody>();
 	// 1% of width
 	this.MOVE_PX_DIST = !Constants.mobile ? (float) Math.max(5, Gdx.graphics.getWidth() * 0.01) : (float) Math.max(80, Gdx.graphics.getWidth() * 0.05);
 	this.MAX_PX_DIST = !Constants.mobile ? 5 : 150;

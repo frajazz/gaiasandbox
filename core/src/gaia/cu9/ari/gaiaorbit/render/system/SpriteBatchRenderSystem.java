@@ -4,7 +4,10 @@ import gaia.cu9.ari.gaiaorbit.render.IRenderable;
 import gaia.cu9.ari.gaiaorbit.render.SceneGraphRenderer.ComponentType;
 import gaia.cu9.ari.gaiaorbit.scenegraph.ICamera;
 import gaia.cu9.ari.gaiaorbit.scenegraph.SceneGraphNode.RenderGroup;
+import gaia.cu9.ari.gaiaorbit.util.comp.DistToCameraComparator;
 
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 
 import com.badlogic.gdx.Gdx;
@@ -19,15 +22,18 @@ public class SpriteBatchRenderSystem extends AbstractRenderSystem {
     private SpriteBatch batch;
     private ShaderProgram shaderProgram;
     private BitmapFont bitmapFont;
+    private Comparator<IRenderable> comp;
 
     public SpriteBatchRenderSystem(RenderGroup rg, int priority, float[] alphas, SpriteBatch batch) {
 	super(rg, priority, alphas);
 	this.batch = batch;
+
+	// Init comparator
+	comp = new DistToCameraComparator<IRenderable>();
     }
 
     public SpriteBatchRenderSystem(RenderGroup rg, int priority, float[] alphas, SpriteBatch batch, ShaderProgram shaderProgram) {
-	super(rg, priority, alphas);
-	this.batch = batch;
+	this(rg, priority, alphas, batch);
 	this.shaderProgram = shaderProgram;
 	// Init font
 	Texture texture = new Texture(Gdx.files.internal("font/dffont.png"), true);
@@ -38,6 +44,7 @@ public class SpriteBatchRenderSystem extends AbstractRenderSystem {
 
     @Override
     public void renderStud(List<IRenderable> renderables, ICamera camera) {
+	Collections.sort(renderables, comp);
 	batch.begin();
 	float labelAlpha = alphas[ComponentType.Labels.ordinal()];
 	int size = renderables.size();
