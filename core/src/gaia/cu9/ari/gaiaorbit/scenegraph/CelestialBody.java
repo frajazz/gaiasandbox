@@ -172,11 +172,6 @@ public abstract class CelestialBody extends AbstractPositionEntity implements IL
 	mesh.render(shader, GL20.GL_TRIANGLES, 0, 6);
     }
 
-    @Override
-    public boolean hasAtmosphere() {
-	return false;
-    }
-
     public float getFuzzyRenderSize(ICamera camera) {
 	double size;
 	double thShaderOverlap = THRESHOLD_ANGLE_QUAD() * ModelBody.SHADER_MODEL_OVERLAP_FACTOR;
@@ -426,6 +421,11 @@ public abstract class CelestialBody extends AbstractPositionEntity implements IL
     public void labelDepthBuffer() {
 	Gdx.gl.glEnable(GL20.GL_DEPTH_TEST);
 	Gdx.gl.glDepthMask(true);
+    }
+
+    @Override
+    public boolean hasAtmosphere() {
+	return false;
     }
 
 }

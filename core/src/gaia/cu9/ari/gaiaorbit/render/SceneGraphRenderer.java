@@ -75,6 +75,7 @@ public class SceneGraphRenderer extends AbstractRenderer implements IProcessRend
 	Constellations("Constellations"),
 	Boundaries("Boundaries"),
 	MilkyWay("Milky way"),
+	Galaxies("Galaxies"),
 	Others("Others");
 
 	private static Map<String, ComponentType> namesMap = new HashMap<String, ComponentType>();

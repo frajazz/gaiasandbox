@@ -3,6 +3,7 @@ package gaia.cu9.ari.gaiaorbit.data.stars;
 import gaia.cu9.ari.gaiaorbit.event.EventManager;
 import gaia.cu9.ari.gaiaorbit.event.Events;
 import gaia.cu9.ari.gaiaorbit.scenegraph.CelestialBody;
+import gaia.cu9.ari.gaiaorbit.scenegraph.Particle;
 import gaia.cu9.ari.gaiaorbit.scenegraph.Star;
 import gaia.cu9.ari.gaiaorbit.util.Constants;
 import gaia.cu9.ari.gaiaorbit.util.GlobalConf;
@@ -32,7 +33,7 @@ public class STILCatalogLoader extends AbstractCatalogLoader implements ICatalog
     public List<? extends CelestialBody> loadCatalog() throws FileNotFoundException {
 	long starid = 0;
 
-	List<Star> result = new ArrayList<Star>();
+	List<CelestialBody> result = new ArrayList<CelestialBody>();
 	StarTableFactory factory = new StarTableFactory();
 	EventManager.instance.post(Events.POST_NOTIFICATION, this.getClass().getSimpleName(), I18n.bundle.format("notif.limitmag", GlobalConf.data.LIMIT_MAG_LOAD));
 
@@ -158,6 +159,7 @@ public class STILCatalogLoader extends AbstractCatalogLoader implements ICatalog
 		double b = ((Number) row[bi]).doubleValue();
 		double c = ((Number) row[ci]).doubleValue();
 		Position p = new Position(a, ac.getUnitString(), b, bc.getUnitString(), c, cc.getUnitString(), type);
+		double dist = p.gsposition.len();
 		p.gsposition.scl(Constants.PC_TO_U);
 
 		float mag = ((Number) row[magi]).floatValue();
@@ -170,7 +172,13 @@ public class STILCatalogLoader extends AbstractCatalogLoader implements ICatalog
 		String idstr = (idstrc == null || !idstrc.getContentClass().isAssignableFrom(String.class)) ? "star_" + starid : (String) row[idstri];
 		Long id = (idc == null || !idc.getContentClass().isAssignableFrom(Number.class)) ? starid : ((Number) row[idi]).longValue();
 
-		Star s = new Star(p.gsposition, mag, absmag, color, idstr, id);
+		CelestialBody s = null;
+		if (dist > 2.2e5) {
+		    // Galaxy
+		    s = new Particle(p.gsposition, mag, absmag, color, idstr, id);
+		} else {
+		    s = new Star(p.gsposition, mag, absmag, color, idstr, id);
+		}
 		s.initialize();
 		result.add(s);
 	    }

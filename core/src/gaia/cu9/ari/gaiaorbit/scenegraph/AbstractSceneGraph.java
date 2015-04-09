@@ -21,7 +21,7 @@ public abstract class AbstractSceneGraph implements ISceneGraph {
     /** Quick lookup map. Name to node. **/
     HashMap<String, SceneGraphNode> stringToNode;
     /** Star id map **/
-    LongMap<Star> starMap;
+    LongMap<CelestialBody> starMap;
     /** Number of objects per thread **/
     int[] objectsPerThread;
 
@@ -44,7 +44,7 @@ public abstract class AbstractSceneGraph implements ISceneGraph {
 	// Initialize stringToNode and starMap maps
 	stringToNode = new HashMap<String, SceneGraphNode>(nodes.size() * 2);
 	stringToNode.put(root.name, root);
-	starMap = new LongMap<Star>();
+	starMap = new LongMap<CelestialBody>();
 	for (SceneGraphNode node : nodes) {
 	    if (node.name != null && !node.name.isEmpty()) {
 		stringToNode.put(node.name, node);
@@ -64,7 +64,7 @@ public abstract class AbstractSceneGraph implements ISceneGraph {
 
 	    // Star map
 	    if (node.getStarCount() == 1) {
-		Star s = (Star) node.getStars();
+		CelestialBody s = (CelestialBody) node.getStars();
 		starMap.put(s.id, s);
 	    } else if (node.getStarCount() > 1) {
 		List<AbstractPositionEntity> stars = (List<AbstractPositionEntity>) node.getStars();
@@ -156,7 +156,7 @@ public abstract class AbstractSceneGraph implements ISceneGraph {
     }
 
     @Override
-    public LongMap<Star> getStarMap() {
+    public LongMap<CelestialBody> getStarMap() {
 	return starMap;
     }
 

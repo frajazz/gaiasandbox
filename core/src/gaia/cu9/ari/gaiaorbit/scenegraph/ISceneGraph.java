@@ -24,7 +24,7 @@ public interface ISceneGraph extends Serializable {
 
     public HashMap<String, SceneGraphNode> getStringToNodeMap();
 
-    public LongMap<Star> getStarMap();
+    public LongMap<CelestialBody> getStarMap();
 
     public List<SceneGraphNode> getNodes();
 

@@ -104,19 +104,6 @@ public class Planet extends ModelBody implements IAtmosphereRenderable {
 	}
     }
 
-    @Override
-    public void render(Object... params) {
-	Object first = params[0];
-	if (!(first instanceof ModelBatch) || params.length == 2) {
-	    super.render(params);
-	} else {
-	    // TODO fix this hack of byte parameter
-	    if (params.length > 2)
-		// Atmosphere rendering
-		render((ModelBatch) first, (Float) params[1], (Byte) params[2]);
-	}
-    }
-
     /**
      * Renders model
      */
@@ -132,6 +119,19 @@ public class Planet extends ModelBody implements IAtmosphereRenderable {
 	}
 	mc.setTransparency(alpha * opacity);
 	modelBatch.render(mc.instance, mc.env);
+    }
+
+    @Override
+    public void render(Object... params) {
+	Object first = params[0];
+	if (!(first instanceof ModelBatch) || params.length == 2) {
+	    super.render(params);
+	} else {
+	    // TODO fix this hack of byte parameter
+	    if (params.length > 2)
+		// Atmosphere rendering
+		render((ModelBatch) first, (Float) params[1], (Byte) params[2]);
+	}
     }
 
     /**
