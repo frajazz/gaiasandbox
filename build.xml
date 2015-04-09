@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<project default="compile" basedir="." name="Build and package the GaiaSandbox with libraries in sub-folder">
+<project default="build" basedir="." name="Build and package the GaiaSandbox with libraries in sub-folder">
   <!-- PROPERTIES -->
   <property environment="env"/>
 
@@ -127,14 +127,19 @@
       <fileset dir="${gs-android.dir}/assets/scripts"/>
     </copy>
     
-    <!-- Copy script, README and LICENSE -->
+    <!-- Copy scripts, README, LICENSE and AUTHORS -->
     <copy todir="${dist}">
       <fileset dir="${gs-desktop.dir}/exe"/>
     </copy>
     <copy file="${base.dir}/README.md" todir="${dist}"/>
+    <copy file="${base.dir}/LICENSE" todir="${dist}"/>
+    <copy file="${base.dir}/AUTHORS" todir="${dist}"/>
+    <copy file="${gs-android.dir}/assets/icon/ic_launcher.png" todir="${dist}"/>
+    <copy file="${gs-android.dir}/assets/icon/ic_launcher.ico" todir="${dist}"/>
+    <copy file="${gs-android.dir}/assets/icon/ic_launcher.svg" todir="${dist}"/>
     
     <!-- Make run.sh executable -->
-    <chmod file="${dist}/run.sh" perm="+x"/>
+    <chmod file="${dist}/gaiasandbox" perm="+x"/>
     
     <!-- Replace version in readme file -->
     <loadfile property="version.contents" srcFile="${gs.dir}/bin/version"/>

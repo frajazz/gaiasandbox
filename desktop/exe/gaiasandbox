@@ -4,8 +4,17 @@
 #
 # invokation: run.sh
 #
-DIR=`dirname "$0"`
-LIB_PATH="$DIR/gaiasandbox.jar"
+
+SOURCE="${BASH_SOURCE[0]}"
+while [ -h "$SOURCE" ]; do # resolve $SOURCE until the file is no longer a symlink
+  DIR="$( cd -P "$( dirname "$SOURCE" )" && pwd )"
+  SOURCE="$(readlink "$SOURCE")"
+  [[ $SOURCE != /* ]] && SOURCE="$DIR/$SOURCE" # if $SOURCE was a relative symlink, we need to resolve it relative to the path where the symlink file was located
+done
+
+
+GSDIR="$( cd -P "$( dirname "$SOURCE" )" && pwd )"
+LIB_PATH="$GSDIR/gaiasandbox.jar"
 
 #
 # Choose java - use JAVA_HOME, if set.
@@ -20,7 +29,7 @@ fi
 # Settings.
 #
 # Properties file
-OPTS="$OPTS -Dproperties.file=$DIR/conf/global.properties"
+OPTS="$OPTS -Dproperties.file=$GSDIR/conf/global.properties"
 
 # Memory
 OPTS="$OPTS -Xmx512m"
@@ -36,6 +45,12 @@ OPTS="$OPTS -XX:+UseParallelGC"
 #
 # Run.
 #
+
+OLDDIR="$( pwd )"
+
+cd $GSDIR
 CMD="$JAVA $OPTS -cp $LIB_PATH gaia.cu9.ari.gaiaorbit.GaiaSandboxDesktop $@"
 echo "$CMD"
 $CMD
+
+cd $OLDDIR
