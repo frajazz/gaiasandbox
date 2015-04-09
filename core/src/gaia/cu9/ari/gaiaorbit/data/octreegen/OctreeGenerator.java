@@ -1,6 +1,6 @@
 package gaia.cu9.ari.gaiaorbit.data.octreegen;
 
-import gaia.cu9.ari.gaiaorbit.scenegraph.Star;
+import gaia.cu9.ari.gaiaorbit.scenegraph.Particle;
 import gaia.cu9.ari.gaiaorbit.util.Constants;
 import gaia.cu9.ari.gaiaorbit.util.math.BoundingBoxd;
 import gaia.cu9.ari.gaiaorbit.util.math.Longref;
@@ -17,7 +17,7 @@ public class OctreeGenerator {
     /** Maximum distance in parsecs **/
     private static final double MAX_DISTANCE_CAP = 3e4;
 
-    IAggregationAlgorithm<Star> aggregation;
+    IAggregationAlgorithm<Particle> aggregation;
     Longref pageid;
 
     public OctreeGenerator(Class<? extends IAggregationAlgorithm> clazz) {
@@ -29,13 +29,13 @@ public class OctreeGenerator {
 	this.pageid = new Longref(0l);
     }
 
-    public OctreeNode<Star> generateOctree(List<Star> catalog) {
+    public OctreeNode<Particle> generateOctree(List<Particle> catalog) {
 
 	double maxdist = Double.MIN_VALUE;
-	Iterator<Star> it = catalog.iterator();
-	Star furthest = null;
+	Iterator<Particle> it = catalog.iterator();
+	Particle furthest = null;
 	while (it.hasNext()) {
-	    Star s = it.next();
+	    Particle s = it.next();
 	    double dist = s.pos.len();
 	    if (dist * Constants.U_TO_PC > MAX_DISTANCE_CAP) {
 		// Remove star
@@ -46,29 +46,27 @@ public class OctreeGenerator {
 	    }
 	}
 
-	OctreeNode<Star> root = null;
+	OctreeNode<Particle> root = null;
 	if (SUN_CENTRE) {
 	    /** THE CENTRE OF THE OCTREE IS THE SUN **/
 	    double halfSize = Math.max(Math.max(furthest.pos.x, furthest.pos.y), furthest.pos.z);
-	    root = new OctreeNode<Star>(nextPageId(), 0, 0, 0, halfSize, halfSize, halfSize, 0);
+	    root = new OctreeNode<Particle>(nextPageId(), 0, 0, 0, halfSize, halfSize, halfSize, 0);
 	} else {
 	    /** THE CENTRE OF THE OCTREE MAY BE ANYWHERE **/
 	    double volume = Double.MIN_VALUE;
-	    Star other = null;
 	    BoundingBoxd aux = new BoundingBoxd();
 	    BoundingBoxd box = new BoundingBoxd();
 	    // Lets try to maximize the volume
-	    for (Star s : catalog) {
+	    for (Particle s : catalog) {
 		aux.set(furthest.pos, s.pos);
 		double vol = aux.getVolume();
 		if (vol > volume) {
 		    volume = vol;
-		    other = s;
 		    box.set(aux);
 		}
 	    }
 	    double halfSize = Math.max(Math.max(box.getDepth(), box.getHeight()), box.getWidth()) / 2d;
-	    root = new OctreeNode<Star>(nextPageId(), box.getCenterX(), box.getCenterY(), box.getCenterZ(), halfSize, halfSize, halfSize, 0);
+	    root = new OctreeNode<Particle>(nextPageId(), box.getCenterX(), box.getCenterY(), box.getCenterZ(), halfSize, halfSize, halfSize, 0);
 	}
 
 	treatOctant(root, catalog, catalog.size());
@@ -77,7 +75,7 @@ public class OctreeGenerator {
 	return root;
     }
 
-    private void treatOctant(OctreeNode<Star> octant, List<Star> catalog, int maxLevelObjs) {
+    private void treatOctant(OctreeNode<Particle> octant, List<Particle> catalog, int maxLevelObjs) {
 	boolean leaf = aggregation.sample(catalog, octant, maxLevelObjs);
 
 	if (!leaf) {
@@ -87,28 +85,28 @@ public class OctreeGenerator {
 	    double hsz = octant.size.z / 4d;
 
 	    /** CREATE OCTANTS **/
-	    OctreeNode<Star>[] nodes = new OctreeNode[8];
+	    OctreeNode<Particle>[] nodes = new OctreeNode[8];
 	    // Front - top - left
-	    nodes[0] = new OctreeNode<Star>(nextPageId(), octant.centre.x - hsx, octant.centre.y + hsy, octant.centre.z - hsz, hsx, hsy, hsz, octant.depth + 1);
+	    nodes[0] = new OctreeNode<Particle>(nextPageId(), octant.centre.x - hsx, octant.centre.y + hsy, octant.centre.z - hsz, hsx, hsy, hsz, octant.depth + 1);
 	    // Front - top - right
-	    nodes[1] = new OctreeNode<Star>(nextPageId(), octant.centre.x + hsx, octant.centre.y + hsy, octant.centre.z - hsz, hsx, hsy, hsz, octant.depth + 1);
+	    nodes[1] = new OctreeNode<Particle>(nextPageId(), octant.centre.x + hsx, octant.centre.y + hsy, octant.centre.z - hsz, hsx, hsy, hsz, octant.depth + 1);
 	    // Front - bottom - left
-	    nodes[2] = new OctreeNode<Star>(nextPageId(), octant.centre.x - hsx, octant.centre.y - hsy, octant.centre.z - hsz, hsx, hsy, hsz, octant.depth + 1);
+	    nodes[2] = new OctreeNode<Particle>(nextPageId(), octant.centre.x - hsx, octant.centre.y - hsy, octant.centre.z - hsz, hsx, hsy, hsz, octant.depth + 1);
 	    // Front - bottom - right
-	    nodes[3] = new OctreeNode<Star>(nextPageId(), octant.centre.x + hsx, octant.centre.y - hsy, octant.centre.z - hsz, hsx, hsy, hsz, octant.depth + 1);
+	    nodes[3] = new OctreeNode<Particle>(nextPageId(), octant.centre.x + hsx, octant.centre.y - hsy, octant.centre.z - hsz, hsx, hsy, hsz, octant.depth + 1);
 	    // Back - top - left
-	    nodes[4] = new OctreeNode<Star>(nextPageId(), octant.centre.x - hsx, octant.centre.y + hsy, octant.centre.z + hsz, hsx, hsy, hsz, octant.depth + 1);
+	    nodes[4] = new OctreeNode<Particle>(nextPageId(), octant.centre.x - hsx, octant.centre.y + hsy, octant.centre.z + hsz, hsx, hsy, hsz, octant.depth + 1);
 	    // Back - top - right
-	    nodes[5] = new OctreeNode<Star>(nextPageId(), octant.centre.x + hsx, octant.centre.y + hsy, octant.centre.z + hsz, hsx, hsy, hsz, octant.depth + 1);
+	    nodes[5] = new OctreeNode<Particle>(nextPageId(), octant.centre.x + hsx, octant.centre.y + hsy, octant.centre.z + hsz, hsx, hsy, hsz, octant.depth + 1);
 	    // Back - bottom - left
-	    nodes[6] = new OctreeNode<Star>(nextPageId(), octant.centre.x - hsx, octant.centre.y - hsy, octant.centre.z + hsz, hsx, hsy, hsz, octant.depth + 1);
+	    nodes[6] = new OctreeNode<Particle>(nextPageId(), octant.centre.x - hsx, octant.centre.y - hsy, octant.centre.z + hsz, hsx, hsy, hsz, octant.depth + 1);
 	    // Back - bottom - right
-	    nodes[7] = new OctreeNode<Star>(nextPageId(), octant.centre.x + hsx, octant.centre.y - hsy, octant.centre.z + hsz, hsx, hsy, hsz, octant.depth + 1);
+	    nodes[7] = new OctreeNode<Particle>(nextPageId(), octant.centre.x + hsx, octant.centre.y - hsy, octant.centre.z + hsz, hsx, hsy, hsz, octant.depth + 1);
 
 	    /** INTERSECT CATALOG WITH OCTANTS **/
 
 	    int maxSublevelObjs = 0;
-	    List<Star>[] lists = new List[8];
+	    List<Particle>[] lists = new List[8];
 	    for (int i = 0; i < 8; i++) {
 		lists[i] = intersect(catalog, nodes[i]);
 		if (lists[i].size() > maxSublevelObjs) {
@@ -134,9 +132,9 @@ public class OctreeGenerator {
      * @param box
      * @return
      */
-    private List<Star> intersect(List<Star> stars, OctreeNode<Star> box) {
-	List<Star> result = new ArrayList<Star>();
-	for (Star star : stars) {
+    private List<Particle> intersect(List<Particle> stars, OctreeNode<Particle> box) {
+	List<Particle> result = new ArrayList<Particle>();
+	for (Particle star : stars) {
 	    if (box.box.contains(star.pos)) {
 		result.add(star);
 	    }

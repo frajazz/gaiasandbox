@@ -1,6 +1,6 @@
 package gaia.cu9.ari.gaiaorbit.data.octreegen;
 
-import gaia.cu9.ari.gaiaorbit.scenegraph.Star;
+import gaia.cu9.ari.gaiaorbit.scenegraph.Particle;
 import gaia.cu9.ari.gaiaorbit.util.math.Vector3d;
 import gaia.cu9.ari.gaiaorbit.util.tree.OctreeNode;
 
@@ -8,13 +8,13 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 
-public class BrightestStars implements IAggregationAlgorithm<Star> {
+public class BrightestStars implements IAggregationAlgorithm<Particle> {
     private static final int MAX_DEPTH = 6;
     // Maximum number of objects in the densest node of this level
     private static final int MAX_PART = 40000;
     // Minimum number of objects under which we do not need to break the octree further
     private static final int MIN_PART = 1500;
-    Comparator<Star> comp;
+    Comparator<Particle> comp;
     long starId;
 
     public BrightestStars() {
@@ -23,7 +23,7 @@ public class BrightestStars implements IAggregationAlgorithm<Star> {
     }
 
     @Override
-    public boolean sample(List<Star> inputStars, OctreeNode<Star> octant, int maxObjs) {
+    public boolean sample(List<Particle> inputStars, OctreeNode<Particle> octant, int maxObjs) {
 	// Calculate nObjects for this octant based on maxObjs and the MAX_PART
 	int nInput = inputStars.size();
 	int nObjects = Math.round(nInput * ((float) MAX_PART / (float) maxObjs));
@@ -31,7 +31,7 @@ public class BrightestStars implements IAggregationAlgorithm<Star> {
 	if (nInput < MIN_PART || nInput < nObjects || octant.depth >= MAX_DEPTH) {
 	    // Downright use all stars
 	    octant.addAll(inputStars);
-	    for (Star s : inputStars) {
+	    for (Particle s : inputStars) {
 		s.page = octant;
 		s.pageId = octant.pageId;
 	    }
@@ -40,8 +40,8 @@ public class BrightestStars implements IAggregationAlgorithm<Star> {
 	    // Extract sample
 	    Collections.sort(inputStars, comp);
 	    for (int i = 0; i < nObjects; i++) {
-		Star s = inputStars.get(i);
-		Star virtual = getVirtualCopy(s);
+		Particle s = inputStars.get(i);
+		Particle virtual = getVirtualCopy(s);
 		virtual.type = 92;
 		virtual.nparticles = inputStars.size() / nObjects;
 
@@ -55,16 +55,16 @@ public class BrightestStars implements IAggregationAlgorithm<Star> {
 
     }
 
-    public class StarBrightnessComparator implements Comparator<Star> {
+    public class StarBrightnessComparator implements Comparator<Particle> {
 	@Override
-	public int compare(Star o1, Star o2) {
+	public int compare(Particle o1, Particle o2) {
 	    return Float.compare(o1.absmag, o2.absmag);
 	}
 
     }
 
-    private Star getVirtualCopy(Star s) {
-	Star copy = new Star();
+    private Particle getVirtualCopy(Particle s) {
+	Particle copy = new Particle();
 	copy.name = s.name;
 	copy.absmag = s.absmag;
 	copy.appmag = s.appmag;

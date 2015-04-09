@@ -1,13 +1,13 @@
 package gaia.cu9.ari.gaiaorbit.data.octreegen;
 
-import gaia.cu9.ari.gaiaorbit.scenegraph.Star;
+import gaia.cu9.ari.gaiaorbit.scenegraph.Particle;
 import gaia.cu9.ari.gaiaorbit.util.math.Vector3d;
 import gaia.cu9.ari.gaiaorbit.util.tree.OctreeNode;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public class MagnitudeCut implements IAggregationAlgorithm<Star> {
+public class MagnitudeCut implements IAggregationAlgorithm<Particle> {
 
     private static final float START_MAG = 7;
     long starId;
@@ -17,24 +17,24 @@ public class MagnitudeCut implements IAggregationAlgorithm<Star> {
     }
 
     @Override
-    public boolean sample(List<Star> inputStars, OctreeNode<Star> octant, int maxObjs) {
+    public boolean sample(List<Particle> inputStars, OctreeNode<Particle> octant, int maxObjs) {
 	float limitMag = START_MAG + octant.depth * 2;
-	List<Star> candidates = new ArrayList<Star>(10000);
-	for (Star s : inputStars) {
+	List<Particle> candidates = new ArrayList<Particle>(10000);
+	for (Particle s : inputStars) {
 	    if (s.appmag < limitMag) {
 		candidates.add(s);
 	    }
 	}
 	boolean leaf = candidates.size() == inputStars.size();
 
-	for (Star s : candidates) {
+	for (Particle s : candidates) {
 	    if (leaf) {
 		octant.add(s);
 		s.page = octant;
 		s.pageId = octant.pageId;
 	    } else {
 		// New virtual star
-		Star virtual = getVirtualCopy(s);
+		Particle virtual = getVirtualCopy(s);
 		virtual.type = 92;
 		virtual.nparticles = inputStars.size() / candidates.size();
 
@@ -47,8 +47,8 @@ public class MagnitudeCut implements IAggregationAlgorithm<Star> {
 	return leaf;
     }
 
-    private Star getVirtualCopy(Star s) {
-	Star copy = new Star();
+    private Particle getVirtualCopy(Particle s) {
+	Particle copy = new Particle();
 	copy.name = s.name;
 	copy.absmag = s.absmag;
 	copy.appmag = s.appmag;

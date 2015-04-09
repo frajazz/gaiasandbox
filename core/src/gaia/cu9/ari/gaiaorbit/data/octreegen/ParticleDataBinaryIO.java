@@ -3,6 +3,7 @@ package gaia.cu9.ari.gaiaorbit.data.octreegen;
 import gaia.cu9.ari.gaiaorbit.event.EventManager;
 import gaia.cu9.ari.gaiaorbit.event.Events;
 import gaia.cu9.ari.gaiaorbit.scenegraph.CelestialBody;
+import gaia.cu9.ari.gaiaorbit.scenegraph.Particle;
 import gaia.cu9.ari.gaiaorbit.scenegraph.Star;
 import gaia.cu9.ari.gaiaorbit.util.GlobalConf;
 import gaia.cu9.ari.gaiaorbit.util.coord.Coordinates;
@@ -40,7 +41,7 @@ import java.util.List;
  */
 public class ParticleDataBinaryIO {
 
-    public void writeParticles(List<Star> particles, OutputStream out) {
+    public void writeParticles(List<Particle> particles, OutputStream out) {
 
 	try {
 	    // Wrap the FileOutputStream with a DataOutputStream
@@ -48,7 +49,7 @@ public class ParticleDataBinaryIO {
 
 	    // Size of stars
 	    data_out.writeInt(particles.size());
-	    for (Star s : particles) {
+	    for (Particle s : particles) {
 		// name_length, name, appmag, absmag, colorbv, ra, dec, dist
 		data_out.writeInt(s.name.length());
 		data_out.writeChars(s.name);

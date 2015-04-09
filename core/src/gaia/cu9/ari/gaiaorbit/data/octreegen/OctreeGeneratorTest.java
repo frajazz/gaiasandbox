@@ -7,8 +7,8 @@ import gaia.cu9.ari.gaiaorbit.data.stars.OctreeCatalogLoader;
 import gaia.cu9.ari.gaiaorbit.event.EventManager;
 import gaia.cu9.ari.gaiaorbit.event.Events;
 import gaia.cu9.ari.gaiaorbit.event.IObserver;
+import gaia.cu9.ari.gaiaorbit.scenegraph.Particle;
 import gaia.cu9.ari.gaiaorbit.scenegraph.SceneGraphNode;
-import gaia.cu9.ari.gaiaorbit.scenegraph.Star;
 import gaia.cu9.ari.gaiaorbit.scenegraph.octreewrapper.AbstractOctreeWrapper;
 import gaia.cu9.ari.gaiaorbit.util.GlobalConf;
 import gaia.cu9.ari.gaiaorbit.util.I18n;
@@ -61,8 +61,8 @@ public class OctreeGeneratorTest implements IObserver {
 
 	HYGBinaryLoader starLoader = new HYGBinaryLoader();
 
-	List<Star> list = (List<Star>) starLoader.loadCatalog(new FileInputStream(new File("../android/assets/data/hygxyz.bin")));
-	OctreeNode<Star> octree = og.generateOctree(list);
+	List<Particle> list = (List<Particle>) starLoader.loadCatalog(new FileInputStream(new File("../android/assets/data/hygxyz.bin")));
+	OctreeNode<Particle> octree = og.generateOctree(list);
 
 	// Put all new particles in list
 	list.clear();
