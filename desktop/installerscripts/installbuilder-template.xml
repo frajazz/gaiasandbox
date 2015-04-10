@@ -82,7 +82,7 @@
                     <description>Program Files</description>
                     <destination>${installdir}</destination>
                     <name>programfileslinux</name>
-                    <platforms>linux</platforms>
+                    <platforms>linux linux-x64 osx</platforms>
                     <distributionFileList>
                         <distributionFile>
                             <origin>@gs-release-folder@/ic_launcher.svg</origin>
@@ -101,21 +101,10 @@
                     </distributionFileList>
                 </folder>
                 <folder>
-                    <description>Program Files</description>
-                    <destination>${installdir}</destination>
-                    <name>programfilesosx</name>
-                    <platforms>osx</platforms>
-                    <distributionFileList>
-                        <distributionFile>
-                            <origin>@gs-release-folder@/ic_launcher.svg</origin>
-                        </distributionFile>
-                    </distributionFileList>
-                </folder>
-                <folder>
                     <description>shortcut linux</description>
                     <destination>${env(HOME)}/.local/share/applications</destination>
                     <name>shortcutlinux</name>
-                    <platforms>linux-x64</platforms>
+                    <platforms>linux linux-x64</platforms>
                     <shortcutList>
                         <shortcut>
                             <comment>Gaia Sandbox 3D astronomy software to observe the galaxy and beyond</comment>
@@ -123,7 +112,7 @@
                             <icon>${installdir}/ic_launcher.svg</icon>
                             <name>gaiasandbox</name>
                             <path>${installdir}</path>
-                            <platforms>linux-x64</platforms>
+                            <platforms>all</platforms>
                             <runAsAdmin>0</runAsAdmin>
                             <runInTerminal>0</runInTerminal>
                             <windowsExec>${installdir}/run.bat</windowsExec>
