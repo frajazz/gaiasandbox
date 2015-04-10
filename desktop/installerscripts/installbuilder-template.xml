@@ -49,7 +49,7 @@
                             <origin>@gs-release-folder@/README.md</origin>
                         </distributionFile>
                         <distributionFile>
-                            <origin>@gs-release-folder@/run.bat</origin>
+                            <origin>@gs-release-folder@/gaiasandbox.bat</origin>
                         </distributionFile>
                         <distributionFile>
                             <origin>@gs-release-folder@/ic_launcher.ico</origin>
@@ -115,7 +115,7 @@
                             <platforms>all</platforms>
                             <runAsAdmin>0</runAsAdmin>
                             <runInTerminal>0</runInTerminal>
-                            <windowsExec>${installdir}/run.bat</windowsExec>
+                            <windowsExec>${installdir}/gaiasandbox.bat</windowsExec>
                             <windowsExecArgs></windowsExecArgs>
                             <windowsIcon>${installdir}/ic_launcher.ico</windowsIcon>
                             <windowsPath>${installdir}</windowsPath>
