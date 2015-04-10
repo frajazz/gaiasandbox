@@ -176,7 +176,8 @@ people behind the following technologies/resources:
 - [WebLaF](http://weblookandfeel.com/)
 - Mark Taylor's [STIL](http://www.star.bristol.ac.uk/~mbt/stil/) library
 - The [Jython Project](http://www.jython.org/)
-- Bitrock's [InstallBuilder](http://installbuilder.bitrock.com/) for providing a free open source license to their awesome InstallBuilder 9.
+- [Install4j](http://www.ej-technologies.com/products/install4j/overview.html) (multi-platform installer builder), for providing a free open source license
+- Bitrock's [InstallBuilder](http://installbuilder.bitrock.com/) for providing a free open source license.
 - And several online resources without which this would have not been possible
 
 If you think I missed someone, please let me know.
