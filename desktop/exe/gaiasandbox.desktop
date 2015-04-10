@@ -1,8 +1,0 @@
-[Desktop Entry]
-Comment=Gaia Sandbox 3D astronomy software
-Terminal=false
-Name=Gaia Sandbox
-Exec=$GAIA_SANDBOX_HOME/gaiasandbox
-Icon=$GAIA_SANDBOX_HOME/ic_launcher.svg
-Type=Application
-Categories=Education;Science;
