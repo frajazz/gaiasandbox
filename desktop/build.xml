@@ -3,7 +3,7 @@
   <!-- PROPERTIES -->
   <property environment="env"/>
   <property name="lib" value="lib"/>
-  <property name="base.dir" value="./"/>
+  <property name="gs-desktop.dir" value="${basedir}"/>
   <property name="gs.dir" value="../core"/>
   <property name="debuglevel" value="source,lines,vars"/>
   <property name="target" value="1.7"/>
@@ -13,10 +13,10 @@
   <!-- BUILD -->
   <target depends="init,resolve" name="compile">
     <echo message="${ant.project.name}: ${ant.file}"/>
-    <javac debug="true" debuglevel="${debuglevel}" destdir="${base.dir}/bin" includeantruntime="false" source="${source}" target="${target}">
-      <src path="${base.dir}/src"/>
+    <javac debug="true" debuglevel="${debuglevel}" destdir="${gs-desktop.dir}/bin" includeantruntime="false" source="${source}" target="${target}">
+      <src path="${gs-desktop.dir}/src"/>
       <classpath>
-	    <fileset dir="${base.dir}/${lib}">  
+	    <fileset dir="${gs-desktop.dir}/${lib}">  
         	<include name="**/*.jar" />  
         </fileset>  
         <pathelement location="${gs.dir}/bin"/>
@@ -29,10 +29,10 @@
   </target>
   <!-- INIT -->
   <target name="init">
-    <mkdir dir="${base.dir}/bin"/>
+    <mkdir dir="${gs-desktop.dir}/bin"/>
   </target>
   <!-- CLEANS THE BIN FOLDERS -->
   <target name="clean">
-    <delete dir="${base.dir}/bin"/>
+    <delete dir="${gs-desktop.dir}/bin"/>
   </target>
 </project>

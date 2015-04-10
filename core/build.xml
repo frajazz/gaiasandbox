@@ -3,7 +3,7 @@
   <!-- PROPERTIES -->
   <property environment="env"/>
   <property name="lib" value="lib"/>
-  <property name="base.dir" value="./"/>
+  <property name="gs.dir" value="${basedir}"/>
   <property name="debuglevel" value="source,lines,vars"/>
   <property name="target" value="1.7"/>
   <property name="source" value="1.7"/>
@@ -12,10 +12,10 @@
   <!-- BUILD -->
   <target depends="init,resolve" name="compile">
     <echo message="${ant.project.name}: ${ant.file}"/>
-    <javac debug="true" debuglevel="${debuglevel}" destdir="${base.dir}/bin" includeantruntime="false" source="${source}" target="${target}">
-      <src path="${base.dir}/src"/>
+    <javac debug="true" debuglevel="${debuglevel}" destdir="${gs.dir}/bin" includeantruntime="false" source="${source}" target="${target}">
+      <src path="${gs.dir}/src"/>
       <classpath>
-	    <fileset dir="${base.dir}/${lib}">  
+	    <fileset dir="${gs.dir}/${lib}">  
         	<include name="**/*.jar" />  
         </fileset>  
       </classpath>
@@ -27,10 +27,10 @@
   </target>
   <!-- INIT -->
   <target name="init">
-    <mkdir dir="${base.dir}/bin"/>
+    <mkdir dir="${gs.dir}/bin"/>
   </target>
   <!-- CLEANS THE BIN FOLDERS -->
   <target name="clean">
-    <delete dir="${base.dir}/bin"/>
+    <delete dir="${gs.dir}/bin"/>
   </target>
 </project>

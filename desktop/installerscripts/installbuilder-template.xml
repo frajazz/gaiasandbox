@@ -1,12 +1,12 @@
 <project>
     <shortName>gaiasandbox</shortName>
     <fullName>Gaia Sandbox</fullName>
-    <version>0.705b</version>
-    <readmeFile>../../releases/gaiasandbox-0.704b.7a5b6fb/README.md</readmeFile>
-    <licenseFile>../../releases/gaiasandbox-0.704b.7a5b6fb/LICENSE</licenseFile>
-    <logoImage>../../android/assets/icon/ic_launcher_s.png</logoImage>
-    <splashImage>../../android/assets/img/splash/splash-s.png</splashImage>
-    <wmImage>../../android/assets/icon/ic_launcher.png</wmImage>
+    <version>@version-tag@</version>
+    <readmeFile>@gs-release-folder@/README.md</readmeFile>
+    <licenseFile>@gs-release-folder@/LICENSE</licenseFile>
+    <logoImage>@gs-git-folder@/android/assets/icon/ic_launcher_s.png</logoImage>
+    <splashImage>@gs-git-folder@/android/assets/img/splash/splash-s.png</splashImage>
+    <wmImage>@gs-git-folder@/android/assets/icon/ic_launcher.png</wmImage>
     <componentList>
         <component>
             <name>default</name>
@@ -22,43 +22,43 @@
                     <platforms>all</platforms>
                     <distributionFileList>
                         <distributionDirectory>
-                            <origin>../../releases/gaiasandbox-0.704b.7a5b6fb/conf</origin>
+                            <origin>@gs-release-folder@/conf</origin>
                         </distributionDirectory>
                         <distributionDirectory>
-                            <origin>../../releases/gaiasandbox-0.704b.7a5b6fb/data</origin>
+                            <origin>@gs-release-folder@/data</origin>
                         </distributionDirectory>
                         <distributionDirectory>
-                            <origin>../../releases/gaiasandbox-0.704b.7a5b6fb/lib</origin>
+                            <origin>@gs-release-folder@/lib</origin>
                         </distributionDirectory>
                         <distributionDirectory>
-                            <origin>../../releases/gaiasandbox-0.704b.7a5b6fb/scripts</origin>
+                            <origin>@gs-release-folder@/scripts</origin>
                         </distributionDirectory>
                         <distributionFile>
-                            <origin>../../releases/gaiasandbox-0.704b.7a5b6fb/AUTHORS</origin>
+                            <origin>@gs-release-folder@/AUTHORS</origin>
                         </distributionFile>
                         <distributionFile>
-                            <origin>../../releases/gaiasandbox-0.704b.7a5b6fb/gaiasandbox</origin>
+                            <origin>@gs-release-folder@/gaiasandbox</origin>
                         </distributionFile>
                         <distributionFile>
-                            <origin>../../releases/gaiasandbox-0.704b.7a5b6fb/gaiasandbox.jar</origin>
+                            <origin>@gs-release-folder@/gaiasandbox.jar</origin>
                         </distributionFile>
                         <distributionFile>
-                            <origin>../../releases/gaiasandbox-0.704b.7a5b6fb/LICENSE</origin>
+                            <origin>@gs-release-folder@/LICENSE</origin>
                         </distributionFile>
                         <distributionFile>
-                            <origin>../../releases/gaiasandbox-0.704b.7a5b6fb/README.md</origin>
+                            <origin>@gs-release-folder@/README.md</origin>
                         </distributionFile>
                         <distributionFile>
-                            <origin>../../releases/gaiasandbox-0.704b.7a5b6fb/run.bat</origin>
+                            <origin>@gs-release-folder@/run.bat</origin>
                         </distributionFile>
                         <distributionFile>
-                            <origin>../../releases/gaiasandbox-0.704b.7a5b6fb/ic_launcher.ico</origin>
+                            <origin>@gs-release-folder@/ic_launcher.ico</origin>
                         </distributionFile>
                         <distributionFile>
-                            <origin>../../releases/gaiasandbox-0.704b.7a5b6fb/ic_launcher.png</origin>
+                            <origin>@gs-release-folder@/ic_launcher.png</origin>
                         </distributionFile>
                         <distributionFile>
-                            <origin>../../releases/gaiasandbox-0.704b.7a5b6fb/ic_launcher.svg</origin>
+                            <origin>@gs-release-folder@/ic_launcher.svg</origin>
                         </distributionFile>
                     </distributionFileList>
                     <shortcutList>
@@ -144,15 +144,15 @@
     </preInstallationActionList>
     <enableRollback>1</enableRollback>
     <enableTimestamp>1</enableTimestamp>
-    <outputDirectory>../../releases</outputDirectory>
+    <outputDirectory>@gs-git-folder@/releases</outputDirectory>
     <saveRelativePaths>1</saveRelativePaths>
     <vendor>ARI - Universität Heidelberg</vendor>
-    <windowsExecutableIcon>../../android/assets/icon/ic_launcher.ico</windowsExecutableIcon>
-    <windowsUninstallerExecutableIcon>../../android/assets/icon/ic_launcher.ico</windowsUninstallerExecutableIcon>
+    <windowsExecutableIcon>@gs-git-folder@/android/assets/icon/ic_launcher.ico</windowsExecutableIcon>
+    <windowsUninstallerExecutableIcon>@gs-git-folder@/android/assets/icon/ic_launcher.ico</windowsUninstallerExecutableIcon>
     <licenseFileList>
         <licenseFile>
             <code>en</code>
-            <file>../../releases/gaiasandbox-0.704b.7a5b6fb/LICENSE</file>
+            <file>@gs-release-folder@/LICENSE</file>
         </licenseFile>
     </licenseFileList>
     <parameterList>
