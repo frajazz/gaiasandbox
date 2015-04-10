@@ -16,21 +16,31 @@
   <property name="source" value="1.7"/>
   
 
-
-  <!-- packages the app into a tgz file -->
-  <target name="package" depends="build" description="Tars and gzips the release and copies it to the releases directory together with the InstallBuilder templates">
-    
-    <!-- Package the app into a tgz -->
-    <delete file="${dist}.tgz"/>
-    <tar destfile="${dist}.tgz" basedir="${dist}" compression="gzip"/>
-    
+  <target name="installbuilder-script" description="Copies and prepares the InstallBuilder script">
     <!-- Copy InstallBuilder templates -->
     <copy file="${gs-desktop.dir}/installerscripts/installbuilder-template.xml" tofile="${releases.dir}/installbuilder-${repository.tag}.${repository.version}.xml">
 	</copy>
 	<replace file="${releases.dir}/installbuilder-${repository.tag}.${repository.version}.xml" token="@gs-release-folder@" value="${dist}" />
 	<replace file="${releases.dir}/installbuilder-${repository.tag}.${repository.version}.xml" token="@gs-git-folder@" value="${base.dir}" />
 	<replace file="${releases.dir}/installbuilder-${repository.tag}.${repository.version}.xml" token="@version-tag@" value="${repository.tag}.${repository.version}" />
+  </target>
+  
+  <target name="install4j-script" description="Copies and prepares the Install4j script">
+    <!-- Copy install4j templates -->
+    <copy file="${gs-desktop.dir}/installerscripts/template.install4j" tofile="${releases.dir}/gaiasandbox-${repository.tag}.${repository.version}.install4j">
+	</copy>
+	<replace file="${releases.dir}/gaiasandbox-${repository.tag}.${repository.version}.install4j" token="@gs-release-folder@" value="${dist}" />
+	<replace file="${releases.dir}/gaiasandbox-${repository.tag}.${repository.version}.install4j" token="@gs-git-folder@" value="${base.dir}" />
+	<replace file="${releases.dir}/gaiasandbox-${repository.tag}.${repository.version}.install4j" token="@version-tag@" value="${repository.tag}.${repository.version}" />
+  </target>
+  
+
+  <!-- packages the app into a tgz file -->
+  <target name="package" depends="build, installbuilder-script, install4j-script" description="Tars and gzips the release and copies it to the releases directory together with the InstallBuilder templates">
     
+    <!-- Package the app into a tgz -->
+    <delete file="${dist}.tgz"/>
+    <tar destfile="${dist}.tgz" basedir="${dist}" compression="gzip"/>
     
   </target>
  

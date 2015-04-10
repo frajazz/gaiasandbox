@@ -1,0 +1,6 @@
+# List of generated media files. The columns are tab-separated:
+# id | media file type | display name | media file path
+25	windows	Windows	/home/tsagrista/git/gaiasandbox/desktop/installerscripts/media/GaiaSandbox_windows-x64_0_705b.exe
+26	macos	Mac OS X Single Bundle	/home/tsagrista/git/gaiasandbox/desktop/installerscripts/media/GaiaSandbox_macos_0_705b.dmg
+28	unix	Unix Installer	/home/tsagrista/git/gaiasandbox/desktop/installerscripts/media/GaiaSandbox_unix_0_705b.sh
+30	unix	Linux Deb Archive	/home/tsagrista/git/gaiasandbox/desktop/installerscripts/media/GaiaSandbox_linux_0_705b.deb

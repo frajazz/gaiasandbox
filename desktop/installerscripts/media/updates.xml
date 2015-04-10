@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<updateDescriptor baseUrl="">
+  <entry targetMediaFileId="25" updatableVersionMin="" updatableVersionMax="" fileName="GaiaSandbox_windows-x64_0_705b.exe" newVersion="0.705b" newMediaFileId="25" fileSize="61570048" bundledJre="" archive="false">
+    <comment language="en" />
+  </entry>
+  <entry targetMediaFileId="26" updatableVersionMin="" updatableVersionMax="" fileName="GaiaSandbox_macos_0_705b.dmg" newVersion="0.705b" newMediaFileId="26" fileSize="61227143" bundledJre="" archive="false">
+    <comment language="en" />
+  </entry>
+  <entry targetMediaFileId="28" updatableVersionMin="" updatableVersionMax="" fileName="GaiaSandbox_unix_0_705b.sh" newVersion="0.705b" newMediaFileId="28" fileSize="60711881" bundledJre="" archive="false">
+    <comment language="en" />
+  </entry>
+  <entry targetMediaFileId="30" updatableVersionMin="" updatableVersionMax="" fileName="GaiaSandbox_linux_0_705b.deb" newVersion="0.705b" newMediaFileId="30" fileSize="60599264" bundledJre="" archive="true">
+    <comment language="en" />
+  </entry>
+</updateDescriptor>
