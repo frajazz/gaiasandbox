@@ -117,8 +117,7 @@ public class GaiaSandboxDesktop implements IObserver {
 	cfg.samples = MathUtilsd.clamp(GlobalConf.postprocess.POSTPROCESS_ANTIALIAS, 0, 16);
 	cfg.vSyncEnabled = GlobalConf.screen.VSYNC;
 	cfg.foregroundFPS = 400;
-	cfg.backgroundFPS = 400;
-	cfg.useGL30 = false;
+	cfg.backgroundFPS = 30;
 	cfg.addIcon("icon/ic_launcher.png", Files.FileType.Internal);
 
 	System.out.println("Display mode set to " + cfg.width + "x" + cfg.height + ", fullscreen: " + cfg.fullscreen);
