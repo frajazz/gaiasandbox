@@ -1,3 +1,4 @@
 *.jar
 !gdx-backend-lwjgl-natives.jar
 !gdx-natives.jar
+!gdx-controllers-desktop-natives.jar

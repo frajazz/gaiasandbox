@@ -255,7 +255,7 @@
   <!-- RUN the Gaia Sandbox from compiled code -->
   <target name="run" depends="compile">
     <java fork="true" classname="gaia.cu9.ari.gaiaorbit.GaiaSandboxDesktop" dir="${gs-desktop.dir}">
-      <sysproperty key="properties.file" value="../${gs-android.dir}/assets/conf/global.properties"/>
+      <sysproperty key="properties.file" value="${gs-android.dir}/assets/conf/global.properties"/>
       <classpath>
         <fileset dir="${gs.dir}/${lib}">  
         	<include name="**/*.jar" />  
