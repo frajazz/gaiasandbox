@@ -190,7 +190,7 @@ public class ConfigDialog extends I18nJFrame {
 
 	/** RESOLUTION **/
 	JPanel mode = new JPanel(new MigLayout("fillx", "[grow,fill][grow,fill]", ""));
-	//mode.setBorder(new TitledBorder(new MatteBorder(new Insets(thick, 0, 0, 0), bcol), txt("gui.resolutionmode"), just, pos));
+	mode.setBorder(new TitledBorder(new MatteBorder(new Insets(thick, 0, 0, 0), bcol), txt("gui.resolutionmode"), just, pos));
 
 	// Full screen mode resolutions
 	DisplayMode[] modes = LwjglApplicationConfiguration.getDisplayModes();
@@ -254,7 +254,7 @@ public class ConfigDialog extends I18nJFrame {
 
 	/** GRAPHICS **/
 	JPanel graphics = new JPanel(new MigLayout("", "[][]", ""));
-	//graphics.setBorder(new TitledBorder(new MatteBorder(new Insets(thick, 0, 0, 0), bcol), txt("gui.graphicssettings"), just, pos));
+	graphics.setBorder(new TitledBorder(new MatteBorder(new Insets(thick, 0, 0, 0), bcol), txt("gui.graphicssettings"), just, pos));
 
 	// AA
 	JTextArea msaaInfo = new JTextArea(txt("gui.aa.info")) {
@@ -293,14 +293,16 @@ public class ConfigDialog extends I18nJFrame {
 	notice.add(noticeText);
 
 	/** SUB TABBED PANE **/
-	JTabbedPane graphicsTabbedPane = new JTabbedPane();
-	graphicsTabbedPane.setTabPlacement(JTabbedPane.TOP);
-
-	graphicsTabbedPane.addTab(txt("gui.resolutionmode"), mode);
-	graphicsTabbedPane.addTab(txt("gui.graphicssettings"), graphics);
+//	JTabbedPane graphicsTabbedPane = new JTabbedPane();
+//	graphicsTabbedPane.setTabPlacement(JTabbedPane.TOP);
+//
+//	graphicsTabbedPane.addTab(txt("gui.resolutionmode"), mode);
+//	graphicsTabbedPane.addTab(txt("gui.graphicssettings"), graphics);
 
 	JPanel graphicsPanel = new JPanel(new MigLayout("", "[grow,fill][]", ""));
-	graphicsPanel.add(graphicsTabbedPane, "wrap");
+	//graphicsPanel.add(graphicsTabbedPane, "wrap");
+	graphicsPanel.add(mode, "wrap");
+	graphicsPanel.add(graphics, "wrap");
 	if (!startup) {
 	    graphicsPanel.add(notice, "wrap");
 	}
