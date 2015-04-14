@@ -69,8 +69,8 @@
 	<target name="package-ci" depends="build" description="Creates the package">
     
 	    <!-- Package the app into a tgz -->
-	    <delete file="${dist}.tgz"/>
-	    <tar destfile="${dist}.tgz" basedir="${dist}" compression="gzip">
+	    <delete file="${dist.name}.tgz"/>
+	    <tar destfile="${dist.name}.tgz" basedir="${dist.dir}" compression="gzip">
 	        <tarfileset dir="${dist.dir}" prefix="${dist.name}">
       			<include name="**" /> 
     		</tarfileset>
