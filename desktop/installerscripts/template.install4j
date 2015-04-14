@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <install4j version="6.0.2" transformSequenceNumber="5">
   <directoryPresets config="./" />
-  <application name="Gaia Sandbox" distributionSourceDir="" applicationId="8310-5272-6362-8592" mediaDir="./" mediaFilePattern="${compiler:sys.shortName}_${compiler:sys.platform}_${compiler:sys.version}" compression="9" lzmaCompression="true" pack200Compression="false" excludeSignedFromPacking="true" commonExternalFiles="false" createMd5Sums="true" shrinkRuntime="true" shortName="GaiaSandbox" publisher="ARI - ZAH - Universität Heidelberg" publisherWeb="http://www.zah.uni-heidelberg.de/gaia2/outreach/gaiasandbox/" version="@version-tag@" allPathsRelative="true" backupOnSave="false" autoSave="false" convertDotsToUnderscores="true" macSignature="????" macVolumeId="c3380c949a34b4f7" javaMinVersion="1.7" javaMaxVersion="" allowBetaVM="false" jdkMode="runtimeJre" jdkName="">
+  <application name="Gaia Sandbox" distributionSourceDir="" applicationId="8310-5272-6362-8592" mediaDir="./" mediaFilePattern="${compiler:sys.shortName}_${compiler:sys.platform}_${compiler:sys.version}" compression="9" lzmaCompression="false" pack200Compression="false" excludeSignedFromPacking="true" commonExternalFiles="false" createMd5Sums="true" shrinkRuntime="true" shortName="GaiaSandbox" publisher="ARI - ZAH - Universität Heidelberg" publisherWeb="http://www.zah.uni-heidelberg.de/gaia2/outreach/gaiasandbox/" version="@version-tag@" allPathsRelative="true" backupOnSave="false" autoSave="false" convertDotsToUnderscores="true" macSignature="????" macVolumeId="c3380c949a34b4f7" javaMinVersion="1.7" javaMaxVersion="" allowBetaVM="false" jdkMode="runtimeJre" jdkName="">
     <languages skipLanguageSelection="false" languageSelectionInPrincipalLanguage="false">
       <principalLanguage id="en" customLocalizationFile="" />
       <additionalLanguages />
@@ -494,10 +494,7 @@
       <excludedBeans />
       <overriddenPrincipalLanguage id="en" customLocalizationFile="" />
       <exclude>
-        <entry location="ic_launcher.png" fileType="regular" />
-        <entry location="gaiasandbox" fileType="regular" />
         <entry location="ic_launcher.ico" fileType="regular" />
-        <entry location="ic_launcher.svg" fileType="regular" />
         <entry location="data/hyg_particles.bin" fileType="regular" />
         <entry location="data/hyg_metadata.bin" fileType="regular" />
         <entry location="data/dummyversion" fileType="regular" />
@@ -518,10 +515,8 @@
       <excludedBeans />
       <overriddenPrincipalLanguage id="en" customLocalizationFile="" />
       <exclude>
-        <entry location="gaiasandbox" fileType="regular" />
         <entry location="ic_launcher.ico" fileType="regular" />
         <entry location="gaiasandbox.bat" fileType="regular" />
-        <entry location="ic_launcher.svg" fileType="regular" />
         <entry location="data/hyg_particles.bin" fileType="regular" />
         <entry location="data/hyg_metadata.bin" fileType="regular" />
         <entry location="data/dummyversion" fileType="regular" />
@@ -534,10 +529,10 @@
       <preInstallScript mode="1" file="">
         <content />
       </preInstallScript>
-      <postInstallScript mode="1" file="">
+      <postInstallScript mode="2" file="@gs-git-folder@/desktop/exe/create-shortcut-linux.sh">
         <content />
       </postInstallScript>
-      <preUninstallScript mode="1" file="">
+      <preUninstallScript mode="2" file="@gs-git-folder@/desktop/exe/remove-shortcut-linux.sh">
         <content />
       </preUninstallScript>
       <postUninstallScript mode="1" file="">
@@ -549,10 +544,8 @@
       <excludedBeans />
       <overriddenPrincipalLanguage id="en" customLocalizationFile="" />
       <exclude>
-        <entry location="gaiasandbox" fileType="regular" />
         <entry location="ic_launcher.ico" fileType="regular" />
         <entry location="gaiasandbox.bat" fileType="regular" />
-        <entry location="ic_launcher.svg" fileType="regular" />
         <entry location="data/hyg_particles.bin" fileType="regular" />
         <entry location="data/hyg_metadata.bin" fileType="regular" />
         <entry location="data/dummyversion" fileType="regular" />
@@ -565,10 +558,10 @@
       <preInstallScript mode="1" file="">
         <content />
       </preInstallScript>
-      <postInstallScript mode="1" file="">
+      <postInstallScript mode="2" file="@gs-git-folder@/desktop/exe/create-shortcut-linux.sh">
         <content />
       </postInstallScript>
-      <preUninstallScript mode="1" file="">
+      <preUninstallScript mode="2" file="@gs-git-folder@/desktop/exe/remove-shortcut-linux.sh">
         <content />
       </preUninstallScript>
       <postUninstallScript mode="1" file="">
