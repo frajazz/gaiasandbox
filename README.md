@@ -156,7 +156,7 @@ provided in your operating system.
 
 ###2.2 Running from code
 
-In order to run from code you will need [ant}(http://ant.apache.org/)
+In order to run from code you will need [ant](http://ant.apache.org/)
 and [ivy](http://ant.apache.org/ivy/). You can probably get
 ant and ivy from your Linux distribution package manager. For example, in Ubuntu 
 press `Ctrl+Alt+T` and type in:
