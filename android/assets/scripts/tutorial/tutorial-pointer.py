@@ -20,19 +20,6 @@ version = gs.getVersionNumber()
 
 
 """ 
-Adds arrow to screen.
-id - The id of the arrow.
-x - x coordinate of bottom-left corner in pixels, from left to right.
-y - y coordinate of bottom-left corner in pixels, from bottom to top.
-"""
-def arrow(id, x, y):
-    w = gs.getScreenWidth()
-    h = gs.getScreenHeight()
-
-    gs.displayImageObject(id, "scripts/tutorial/arrow-left.png", x / w, y / h, 1.0, 1.0, 0.0, 1.0)
-
-
-""" 
 Adds a small arrow to screen.
 id - The id of the arrow.
 x - x coordinate of bottom-left corner in pixels, from left to right.
@@ -47,17 +34,6 @@ def arrow_small(id, x, y, *args):
         gs.displayImageObject(id, "scripts/tutorial/arrow-left-s.png", x / w, y / h, args[0], args[1], args[2], args[3])
     else:
         gs.displayImageObject(id, "scripts/tutorial/arrow-left-s.png", x / w, y / h, 1.0, 1.0, 0.0, 1.0)
-
-"""
-Adds a message in the given position and with the given color
-x - x coordinate of bottom-left corner in pixels, from left to right.
-y - y coordinate of bottom-left corner in pixels, from bottom to top.
-"""
-def message(id, msg, x, y, color, size):
-    w = gs.getScreenWidth()
-    h = gs.getScreenHeight()
-
-    gs.displayMessageObject(id, msg, x / w, y / h, color[0], color[1], color[2], color[3], size)
 
 
 """
