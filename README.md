@@ -44,11 +44,105 @@ at least OpenGL 2.0.
 - **Hardware** - 
 Specific system requirements are yet to be determined.
 
-###1.2 Installation (package)
+###1.2 Installation and uninstallation
 
-The Gaia Sandbox application does not require a 'formal'
-installation, as it is ready to be executed out of the box. Just uncompress the package anywhere in your drive
-and you are good to go.
+Depending on your system and your personal preferences the installation
+procedure may vary. Below is a description of the various installation methods
+available.
+
+####1.2.1 Windows
+
+Two windows installers are available for 32 and 64-bit systems.
+
+- `gaiasandbox_windows_[version].exe` - 32 bit installer.
+- `gaiasandbox_windows-x64_[version].exe` - 64 bit installer.
+
+To install the Gaia Sandbox, just double click on the installer and 
+then follow the on-screen instructions. You will need to choose the 
+directory where the application is to be installed.
+
+In order to **uninstall** the application you can use the Windows Control Panel or
+you can use the provided uninstaller in the Gaia Sandbox folder.
+
+####1.2.2 Linux
+
+We provide 3 packages for linux systems. `deb`, `rpm` and a linux installer.
+
+#####1.2.2.1 DEB
+
+This is the package for Debian-based distros (Debian, Ubuntu, Mint, SteamOS, etc.).
+Download the `gaiasandbox_linux_[version].deb` file and run the
+following command. You will need root privileges to install a `deb` package in 
+your system.
+
+```
+sudo dpkg -i gaiasandbox_linux_[version].deb
+```
+
+This will install the application in the `/opt/gaiasandbox/` folder
+and it will create the necessary shortcuts.
+
+In order to **uninstall**, just type:
+
+```
+sudo apt-get remove gaiasandbox
+```
+
+#####1.2.2.2 RPM
+
+This is the package for RPM-based distributions (Red Hat, Fedora, Mandriva, SUSE, CentOS, etc.)
+Download the `gaiasandbox_linux_[version].rpm` file and run the
+following command. You will need root privileges to install a `rpm` package in 
+your system.
+
+```
+sudo yum install gaiasandbox_linux_[version].rpm
+```
+
+This will install the application in the `/opt/gaiasandbox/` folder
+and it will create the necessary shortcuts.
+
+In order to **uninstall**, just type:
+
+```
+sudo yum remove gaiasandbox-x86
+```
+
+#####1.2.2.3 Linux installer
+
+We also provide a Linux installer which will trigger a graphical interface
+where you can choose the installation location and some other settings.
+Download the file `gaiasandbox_unix_[version].sh` to your disk.
+Then run the following to start the installation.
+
+```
+./gaiasandbox_unix_[version].sh
+```
+
+Follow the on-screen instructions to proceed with the installation.
+
+In order to **uninstall**, just run the `uninstall` file in the
+installation folder.
+
+####1.2.3 OS X - Mac
+
+For OS X we provide a `gaiasandbox_macos_0_704b_d327966.dmg` file
+which is installed by unpacking into the Applications folder. Once unpacked, the
+installer will come up, just follow its instructions. 
+
+####1.2.4 Compressed (TGZ) package
+
+A `gaiasandbox-[version].tgz` package file is also provided. It will work
+in all systems but you need to unpack it yourself and create the desired
+shortcuts.
+In **Windows**, use an archiver software (7zip, iZarc, etc.) to unpack it.
+
+In **Linux** and **OS X**, you can use:
+```
+tar zxvf gaiasandbox-[version].tgz -C gaiasandbox/
+```
+
+
 
 
 ######################################################
@@ -57,33 +151,8 @@ and you are good to go.
 
 ###2.1 Running the Gaia Sandbox
 
-In order to run the program follow the instructions of your operating
-system below.
-
-####2.1.1 Linux
-Open the terminal, untar and uncompress the downloaded archive,
-give execution permissions to the run.sh file if necessary and then run it.
-	
-```
-mkdir gaiasandbox/
-tar zxvf gaiasandbox-[version].tgz -C gaiasandbox/
-cd gaiasandbox/
-chmod +x run.sh
-run.sh
-```
-
-####2.1.2 Windows
-In order to run the application on Windows, open a terminal window (write
-'cmd' in the start menu search box) and run the run.bat file.
-	
-```
-cd path_to_gaiasandbox_folder
-run.bat
-```
-
-####2.1.3 MacOS
-To run the application on MacOS systems, follow the same procedure
-described in section *3.1.1 - Linux* section.
+In order to run the program just click on the shortcut
+provided in your operating system.
 
 ###2.2 Running from code
 
