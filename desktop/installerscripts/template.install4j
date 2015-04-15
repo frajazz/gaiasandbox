@@ -529,10 +529,10 @@
       <preInstallScript mode="1" file="">
         <content />
       </preInstallScript>
-      <postInstallScript mode="2" file="@gs-git-folder@/desktop/exe/create-shortcut-linux.sh">
+      <postInstallScript mode="2" file="@gs-git-folder@/desktop/exe/create-shortcut-deb.sh">
         <content />
       </postInstallScript>
-      <preUninstallScript mode="2" file="@gs-git-folder@/desktop/exe/remove-shortcut-linux.sh">
+      <preUninstallScript mode="2" file="@gs-git-folder@/desktop/exe/remove-shortcut-deb.sh">
         <content />
       </preUninstallScript>
       <postUninstallScript mode="1" file="">
@@ -558,10 +558,10 @@
       <preInstallScript mode="1" file="">
         <content />
       </preInstallScript>
-      <postInstallScript mode="2" file="@gs-git-folder@/desktop/exe/create-shortcut-linux.sh">
+      <postInstallScript mode="2" file="@gs-git-folder@/desktop/exe/create-shortcut-rpm.sh">
         <content />
       </postInstallScript>
-      <preUninstallScript mode="2" file="@gs-git-folder@/desktop/exe/remove-shortcut-linux.sh">
+      <preUninstallScript mode="2" file="@gs-git-folder@/desktop/exe/remove-shortcut-rpm.sh">
         <content />
       </preUninstallScript>
       <postUninstallScript mode="1" file="">
