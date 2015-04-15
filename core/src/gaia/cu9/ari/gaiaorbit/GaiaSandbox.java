@@ -339,7 +339,7 @@ public class GaiaSandbox implements ApplicationListener, IObserver {
 
 	// Run tutorial
 	if (GlobalConf.program.DISPLAY_TUTORIAL) {
-	    EventManager.instance.post(Events.SHOW_TUTORIAL_ACTION);
+	    EventManager.instance.post(Events.RUN_SCRIPT_PATH, "scripts/tutorial/tutorial-pointer.py");
 	    GlobalConf.program.DISPLAY_TUTORIAL = false;
 	}
 
