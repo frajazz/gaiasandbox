@@ -135,7 +135,7 @@ installer will come up, just follow its instructions.
 A `gaiasandbox-[version].tgz` package file is also provided. It will work
 in all systems but you need to unpack it yourself and create the desired
 shortcuts.
-In **Windows**, use an archiver software (7zip, iZarc, etc.) to unpack it.
+In **Windows**, use an archiver software (7zip, iZArc, etc.) to unpack it.
 
 In **Linux** and **OS X**, you can use:
 ```
