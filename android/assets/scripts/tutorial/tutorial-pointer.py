@@ -59,6 +59,8 @@ gs.preloadTextures("scripts/tutorial/arrow-left-s.png")
 gs.maximizeInterfaceWindow()
 gs.setGuiPosition(0, 1)
 
+sleep(1.5)
+
 
 # Modes
 posize = gs.getPositionAndSizeGui("tutorial")

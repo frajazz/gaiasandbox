@@ -869,7 +869,7 @@ public class ConfigDialog extends I18nJFrame {
 		    // Ok!
 		    JsonValue json = (JsonValue) result;
 
-		    JsonValue last = json.get(1);
+		    JsonValue last = json.get(0);
 		    String version = last.getString("name");
 		    if (version.matches("^(\\D{1})?\\d+.\\d+(\\D{1})?$")) {
 			GlobalConf.program.LAST_VERSION = new String(version);
