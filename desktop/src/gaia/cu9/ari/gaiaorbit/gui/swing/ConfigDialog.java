@@ -293,11 +293,11 @@ public class ConfigDialog extends I18nJFrame {
 	notice.add(noticeText);
 
 	/** SUB TABBED PANE **/
-//	JTabbedPane graphicsTabbedPane = new JTabbedPane();
-//	graphicsTabbedPane.setTabPlacement(JTabbedPane.TOP);
-//
-//	graphicsTabbedPane.addTab(txt("gui.resolutionmode"), mode);
-//	graphicsTabbedPane.addTab(txt("gui.graphicssettings"), graphics);
+	//	JTabbedPane graphicsTabbedPane = new JTabbedPane();
+	//	graphicsTabbedPane.setTabPlacement(JTabbedPane.TOP);
+	//
+	//	graphicsTabbedPane.addTab(txt("gui.resolutionmode"), mode);
+	//	graphicsTabbedPane.addTab(txt("gui.graphicssettings"), graphics);
 
 	JPanel graphicsPanel = new JPanel(new MigLayout("", "[grow,fill][]", ""));
 	//graphicsPanel.add(graphicsTabbedPane, "wrap");
@@ -869,7 +869,7 @@ public class ConfigDialog extends I18nJFrame {
 		    // Ok!
 		    JsonValue json = (JsonValue) result;
 
-		    JsonValue last = json.get(json.size - 1);
+		    JsonValue last = json.get(1);
 		    String version = last.getString("name");
 		    if (version.matches("^(\\D{1})?\\d+.\\d+(\\D{1})?$")) {
 			GlobalConf.program.LAST_VERSION = new String(version);
