@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <install4j version="6.0.2" transformSequenceNumber="5">
   <directoryPresets config="./" />
-  <application name="Gaia Sandbox" distributionSourceDir="" applicationId="8310-5272-6362-8592" mediaDir="./" mediaFilePattern="${compiler:sys.shortName}_${compiler:sys.platform}_${compiler:sys.version}" compression="9" lzmaCompression="false" pack200Compression="false" excludeSignedFromPacking="true" commonExternalFiles="false" createMd5Sums="true" shrinkRuntime="true" shortName="GaiaSandbox" publisher="ARI - ZAH - Universität Heidelberg" publisherWeb="http://www.zah.uni-heidelberg.de/gaia2/outreach/gaiasandbox/" version="@version-tag@" allPathsRelative="true" backupOnSave="false" autoSave="false" convertDotsToUnderscores="true" macSignature="????" macVolumeId="c3380c949a34b4f7" javaMinVersion="1.7" javaMaxVersion="" allowBetaVM="false" jdkMode="runtimeJre" jdkName="">
+  <application name="Gaia Sandbox" distributionSourceDir="" applicationId="8310-5272-6362-8592" mediaDir="./" mediaFilePattern="${compiler:sys.shortName}_${compiler:sys.platform}_${compiler:sys.version}" compression="9" lzmaCompression="false" pack200Compression="false" excludeSignedFromPacking="true" commonExternalFiles="false" createMd5Sums="true" shrinkRuntime="true" shortName="gaiasandbox" publisher="ARI - ZAH - Universität Heidelberg" publisherWeb="http://www.zah.uni-heidelberg.de/gaia2/outreach/gaiasandbox/" version="@version-tag@" allPathsRelative="true" backupOnSave="false" autoSave="false" convertDotsToUnderscores="true" macSignature="????" macVolumeId="c3380c949a34b4f7" javaMinVersion="1.7" javaMaxVersion="" allowBetaVM="false" jdkMode="runtimeJre" jdkName="">
     <languages skipLanguageSelection="false" languageSelectionInPrincipalLanguage="false">
       <principalLanguage id="en" customLocalizationFile="" />
       <additionalLanguages />
@@ -22,7 +22,7 @@
       <mountPoint id="24" root="" location="" mode="755" />
     </mountPoints>
     <entries>
-      <dirEntry mountPoint="24" file="@gs-release-folder@" overwriteMode="4" shared="false" fileMode="644" uninstallMode="0" overrideFileMode="false" overrideOverwriteMode="false" overrideUninstallMode="false" entryMode="direct" subDirectory="gaiasandbox-0.704b.ab669cc" excludeSuffixes="" dirMode="755" overrideDirMode="false">
+      <dirEntry mountPoint="24" file="@gs-release-folder@" overwriteMode="4" shared="false" fileMode="644" uninstallMode="0" overrideFileMode="false" overrideOverwriteMode="false" overrideUninstallMode="false" entryMode="direct" subDirectory="" excludeSuffixes="" dirMode="755" overrideDirMode="false">
         <exclude />
       </dirEntry>
     </entries>
@@ -446,6 +446,7 @@
         <entry location="data/dummyversion" fileType="regular" />
         <entry location="gaiasandbox.bat" fileType="regular" />
         <entry location="ic_launcher.svg" fileType="regular" />
+        <entry location="gs.desktop" fileType="regular" />
       </exclude>
       <variables />
       <autoUpdate useMinUpdatableVersion="false" minUpdatableVersion="" useMaxUpdatableVersion="false" maxUpdatableVersion="">
@@ -467,6 +468,7 @@
         <entry location="data/dummyversion" fileType="regular" />
         <entry location="gaiasandbox.bat" fileType="regular" />
         <entry location="ic_launcher.svg" fileType="regular" />
+        <entry location="gs.desktop" fileType="regular" />
       </exclude>
       <variables />
       <autoUpdate useMinUpdatableVersion="false" minUpdatableVersion="" useMaxUpdatableVersion="false" maxUpdatableVersion="">
@@ -479,7 +481,14 @@
     <macos name="Mac OS X Single Bundle" id="26" customizedId="" mediaFileName="" installDir="${compiler:sys.fullName}" overridePrincipalLanguage="false" jreBitType="all" runPostProcessor="false" postProcessor="" failOnPostProcessorError="false" useLegacyMediaFileIds="false" legacyMediaFileIds="" includedJRE="" manualJREEntry="false" bundleType="1" jreURL="" jreShared="false" directDownload="false" installOnlyIfNecessary="false" appleJre="false" requiredVmIdPrefix="" customInstallBaseDir="" contentFilesType="1" downloadURL="" installerName="${i18n:InstallerName(${compiler:sys.fullName})}" volumeName="${compiler:sys.shortName}" compressDmg="false" launcherId="22">
       <excludedBeans />
       <overriddenPrincipalLanguage id="en" customLocalizationFile="" />
-      <exclude />
+      <exclude>
+        <entry location="ic_launcher.ico" fileType="regular" />
+        <entry location="gaiasandbox.bat" fileType="regular" />
+        <entry location="data/hyg_particles.bin" fileType="regular" />
+        <entry location="data/hyg_metadata.bin" fileType="regular" />
+        <entry location="data/dummyversion" fileType="regular" />
+        <entry location="gs.desktop" fileType="regular" />
+      </exclude>
       <variables />
       <autoUpdate useMinUpdatableVersion="false" minUpdatableVersion="" useMaxUpdatableVersion="false" maxUpdatableVersion="">
         <commentFiles />
@@ -495,6 +504,7 @@
       <overriddenPrincipalLanguage id="en" customLocalizationFile="" />
       <exclude>
         <entry location="ic_launcher.ico" fileType="regular" />
+        <entry location="gaiasandbox.bat" fileType="regular" />
         <entry location="data/hyg_particles.bin" fileType="regular" />
         <entry location="data/hyg_metadata.bin" fileType="regular" />
         <entry location="data/dummyversion" fileType="regular" />
