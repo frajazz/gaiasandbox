@@ -10,7 +10,7 @@
 	<classpathentry kind="lib" path="lib/miglayout-core-4.2.jar"/>
 	<classpathentry kind="lib" path="lib/miglayout-swing-4.2.jar"/>
 	<classpathentry kind="lib" path="lib/weblaf-core-1.28.jar"/>
-	<classpathentry kind="lib" path="lib/weblaf-ui-1.28.jar"/>
+	<classpathentry kind="lib" path="lib/weblaf-ui-1.28.jar" sourcepath="/home/tsagrista/Programs/Libraries/WebLaF/weblaf-src-1.28.jar"/>
 	<classpathentry kind="lib" path="lib/xstream-1.4.7.jar"/>
 	<classpathentry kind="lib" path="lib/gdx-controllers-desktop-natives.jar"/>
 	<classpathentry kind="lib" path="lib/gdx-1.5.5.jar"/>
