@@ -66,6 +66,10 @@ public class Star extends Particle {
 
     double modelDistance;
 
+    public Star() {
+	this.parentName = ROOT_NAME;
+    }
+
     public Star(Vector3d pos, float appmag, float absmag, float colorbv, String name, long starid) {
 	super(pos, appmag, absmag, colorbv, name, starid);
     }
