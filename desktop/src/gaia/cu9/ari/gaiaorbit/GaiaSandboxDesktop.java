@@ -15,7 +15,10 @@ import gaia.cu9.ari.gaiaorbit.util.math.MathUtilsd;
 import java.awt.Font;
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.IOException;
 import java.io.InputStream;
+import java.nio.channels.FileChannel;
 
 import javax.swing.JFileChooser;
 import javax.swing.JFrame;
@@ -51,7 +54,21 @@ public class GaiaSandboxDesktop implements IObserver {
 	    //UIManager.setLookAndFeel("com.sun.java.swing.plaf.nimbus.NimbusLookAndFeel");
 	    setUIFont(new javax.swing.plaf.FontUIResource("SansSerif", Font.PLAIN, 10));
 
-	    File confFile = new File(System.getProperty("properties.file"));
+	    String props = System.getProperty("properties.file");
+	    if (props == null || props.isEmpty()) {
+		// Use user folder
+		File userFolder = new File(System.getProperty("user.home") + File.separator + ".gaiasandbox" + File.separator);
+		userFolder.mkdirs();
+		File userFolderConf = new File(userFolder, "global.properties");
+
+		if (!userFolderConf.exists()) {
+		    copyFile(new File("conf" + File.separator + "global.properties"), userFolderConf);
+		}
+		props = userFolderConf.getAbsolutePath();
+		System.setProperty("properties.file", props);
+	    }
+
+	    File confFile = new File(props);
 	    FileInputStream fis = new FileInputStream(confFile);
 	    // This should work for the normal execution
 	    InputStream version = GaiaSandboxDesktop.class.getResourceAsStream("/version");
@@ -204,4 +221,24 @@ public class GaiaSandboxDesktop implements IObserver {
 
     }
 
+    public static void copyFile(File sourceFile, File destFile) throws IOException {
+	if (!destFile.exists()) {
+	    destFile.createNewFile();
+	}
+
+	FileChannel source = null;
+	FileChannel destination = null;
+	try {
+	    source = new FileInputStream(sourceFile).getChannel();
+	    destination = new FileOutputStream(destFile).getChannel();
+	    destination.transferFrom(source, 0, source.size());
+	} finally {
+	    if (source != null) {
+		source.close();
+	    }
+	    if (destination != null) {
+		destination.close();
+	    }
+	}
+    }
 }
