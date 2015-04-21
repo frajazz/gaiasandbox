@@ -12,6 +12,7 @@ import com.bitfire.postprocessing.PostProcessor;
 import com.bitfire.postprocessing.effects.Bloom;
 import com.bitfire.postprocessing.effects.Fxaa;
 import com.bitfire.postprocessing.effects.LensFlare2;
+import com.bitfire.postprocessing.effects.MotionBlur;
 import com.bitfire.postprocessing.effects.Nfaa;
 import com.bitfire.utils.ShaderLoader;
 
@@ -70,6 +71,27 @@ public class GSPostProcessor implements IPostProcessor, IObserver {
 	PostProcessBean ppb = new PostProcessBean();
 	ppb.pp = new PostProcessor(width, height, true, false, true);
 
+	// BLOOM
+	ppb.bloom = new Bloom((int) (width * bloomFboScale), (int) (height * bloomFboScale));
+	ppb.bloom.setBloomIntesity(GlobalConf.postprocess.POSTPROCESS_BLOOM_INTENSITY);
+	ppb.bloom.setThreshold(0f);
+	ppb.bloom.setEnabled(GlobalConf.postprocess.POSTPROCESS_BLOOM_INTENSITY > 0);
+	ppb.pp.addEffect(ppb.bloom);
+
+	// ANTIALIAS
+	if (GlobalConf.postprocess.POSTPROCESS_ANTIALIAS == -1) {
+	    ppb.antialiasing = new Fxaa(width, height);
+	} else {
+	    ppb.antialiasing = new Nfaa(width, height);
+	}
+	ppb.antialiasing.setEnabled(GlobalConf.postprocess.POSTPROCESS_ANTIALIAS < 0);
+	ppb.pp.addEffect(ppb.antialiasing);
+
+	// MOTION BLUR
+	ppb.motionblur = new MotionBlur();
+	ppb.motionblur.setBlurOpacity(0.4f);
+	ppb.pp.addEffect(ppb.motionblur);
+
 	// LENS FLARE
 	ppb.lens = new LensFlare2((int) (width * lensFboScale), (int) (height * lensFboScale));
 	ppb.lens.setGhosts(14);
@@ -83,23 +105,6 @@ public class GSPostProcessor implements IPostProcessor, IObserver {
 	ppb.lens.setBlurPasses(2);
 	ppb.lens.setEnabled(GlobalConf.postprocess.POSTPROCESS_LENS_FLARE);
 	ppb.pp.addEffect(ppb.lens);
-
-	// BLOOM
-	ppb.bloom = new Bloom((int) (width * bloomFboScale), (int) (height * bloomFboScale));
-	ppb.bloom.setBloomIntesity(GlobalConf.postprocess.POSTPROCESS_BLOOM_INTENSITY);
-	ppb.bloom.setThreshold(0f);
-	ppb.bloom.setEnabled(GlobalConf.postprocess.POSTPROCESS_BLOOM_INTENSITY > 0);
-	ppb.pp.addEffect(ppb.bloom);
-
-	// ANTIALIAS
-
-	if (GlobalConf.postprocess.POSTPROCESS_ANTIALIAS == -1) {
-	    ppb.antialiasing = new Fxaa(width, height);
-	} else {
-	    ppb.antialiasing = new Nfaa(width, height);
-	}
-	ppb.antialiasing.setEnabled(GlobalConf.postprocess.POSTPROCESS_ANTIALIAS < 0);
-	ppb.pp.addEffect(ppb.antialiasing);
 
 	return ppb;
     }

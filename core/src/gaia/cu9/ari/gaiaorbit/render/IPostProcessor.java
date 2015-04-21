@@ -5,7 +5,7 @@ import com.bitfire.postprocessing.PostProcessor;
 import com.bitfire.postprocessing.effects.Antialiasing;
 import com.bitfire.postprocessing.effects.Bloom;
 import com.bitfire.postprocessing.effects.LensFlare2;
-import com.bitfire.postprocessing.effects.Zoomer;
+import com.bitfire.postprocessing.effects.MotionBlur;
 
 public interface IPostProcessor {
     public class PostProcessBean {
@@ -13,7 +13,7 @@ public interface IPostProcessor {
 	public Bloom bloom;
 	public Antialiasing antialiasing;
 	public LensFlare2 lens;
-	public Zoomer zoomer;
+	public MotionBlur motionblur;
 
 	public boolean capture() {
 	    return pp.capture();
