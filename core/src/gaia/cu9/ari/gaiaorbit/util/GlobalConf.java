@@ -108,17 +108,19 @@ public class GlobalConf {
 
 	public int POSTPROCESS_ANTIALIAS;
 	public float POSTPROCESS_BLOOM_INTENSITY;
+	public float POSTPROCESS_MOTION_BLUR;
 	/** This should be no smaller than 1 and no bigger than 5. The bigger the more stars with labels **/
 	public boolean POSTPROCESS_LENS_FLARE;
 
 	public PostprocessConf() {
-	    EventManager.instance.subscribe(this, Events.BLOOM_CMD, Events.LENS_FLARE_CMD);
+	    EventManager.instance.subscribe(this, Events.BLOOM_CMD, Events.LENS_FLARE_CMD, Events.MOTION_BLUR_CMD);
 	}
 
 	@Override
 	public void persist(Properties p) {
 	    p.setProperty("postprocess.antialiasing", Integer.toString(POSTPROCESS_ANTIALIAS));
 	    p.setProperty("postprocess.bloom.intensity", Float.toString(POSTPROCESS_BLOOM_INTENSITY));
+	    p.setProperty("postprocess.motionblur", Float.toString(POSTPROCESS_MOTION_BLUR));
 	    p.setProperty("postprocess.lensflare", Boolean.toString(POSTPROCESS_LENS_FLARE));
 
 	}
@@ -134,6 +136,7 @@ public class GlobalConf {
 	     */
 	    POSTPROCESS_ANTIALIAS = Integer.parseInt(p.getProperty("postprocess.antialiasing"));
 	    POSTPROCESS_BLOOM_INTENSITY = Float.parseFloat(p.getProperty("postprocess.bloom.intensity"));
+	    POSTPROCESS_MOTION_BLUR = Float.parseFloat(p.getProperty("postprocess.motionblur"));
 	    POSTPROCESS_LENS_FLARE = Boolean.parseBoolean(p.getProperty("postprocess.lensflare"));
 	}
 
@@ -146,6 +149,8 @@ public class GlobalConf {
 	    case LENS_FLARE_CMD:
 		POSTPROCESS_LENS_FLARE = (Boolean) data[0];
 		break;
+	    case MOTION_BLUR_CMD:
+		POSTPROCESS_MOTION_BLUR = (float) data[0];
 	    }
 	}
 

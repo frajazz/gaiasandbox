@@ -87,16 +87,16 @@ public class FullGui implements IGui, IObserver {
     /**
      * The gaia text field
      */
-    protected OwnLabel fov, brightness, bloom, ambient, speed, turn, rotate, date;
+    protected OwnLabel fov, speed, turn, rotate, date;
     protected Actor objectsList;
     protected SelectBox<String> cameraMode, cameraSpeedLimit;
     protected TextField inputPace, searchBox;
     protected Button plus, minus;
     protected ImageButton dateEdit;
-    protected OwnImageButton playstop, recCamera, playCamera;
+    protected OwnImageButton playstop, recCamera, playCamera, visualEffects;
     protected OwnScrollPane focusListScrollPane;
-    protected Slider fieldOfView, starBrightness, bloomEffect, ambientLight, cameraSpeed, turnSpeed, rotateSpeed;
-    protected CheckBox focusLock, transitColor, onlyObservedStars, computeGaiaScan, lensFlare;
+    protected Slider fieldOfView, cameraSpeed, turnSpeed, rotateSpeed;
+    protected CheckBox focusLock, transitColor, onlyObservedStars, computeGaiaScan;
 
     protected CollapsibleWindow options;
     protected VerticalGroup mainVertical;
@@ -105,6 +105,7 @@ public class FullGui implements IGui, IObserver {
 
     protected SearchDialog searchDialog;
     protected DateDialog dateDialog;
+    protected VisualEffectsWindow visualEffectsWindow;
 
     protected Container<FocusInfoInterface> fi;
     protected FocusInfoInterface focusInterface;
@@ -617,92 +618,34 @@ public class FullGui implements IGui, IObserver {
 	/** ----LIGHTING GROUP---- **/
 	VerticalGroup lightingGroup = new VerticalGroup().align(Align.left);
 	Label lightingLabel = new Label(txt("gui.lighting"), skin, "header");
-	Label brightnessLabel = new Label(txt("gui.starbrightness"), skin, "default");
-	brightness = new OwnLabel(Integer.toString((int) (MathUtilsd.lint(GlobalConf.scene.STAR_BRIGHTNESS, Constants.MIN_STAR_BRIGHT, Constants.MAX_STAR_BRIGHT, Constants.MIN_SLIDER, Constants.MAX_SLIDER))), skin);
-	starBrightness = new Slider(Constants.MIN_SLIDER, Constants.MAX_SLIDER, 1, false, skin);
-	starBrightness.setName("star brightness");
-	starBrightness.setValue(MathUtilsd.lint(GlobalConf.scene.STAR_BRIGHTNESS, Constants.MIN_STAR_BRIGHT, Constants.MAX_STAR_BRIGHT, Constants.MIN_SLIDER, Constants.MAX_SLIDER));
-	starBrightness.addListener(new EventListener() {
+
+	// Lighting button
+	visualEffects = new OwnImageButton(skin, "eye");
+	visualEffects.setName("visual effects");
+	visualEffects.setChecked(false);
+	visualEffects.addListener(new EventListener() {
 	    @Override
 	    public boolean handle(Event event) {
 		if (event instanceof ChangeEvent) {
-		    EventManager.instance.post(Events.STAR_BRIGHTNESS_CMD, MathUtilsd.lint(starBrightness.getValue(), Constants.MIN_SLIDER, Constants.MAX_SLIDER, Constants.MIN_STAR_BRIGHT, Constants.MAX_STAR_BRIGHT));
-		    brightness.setText(Integer.toString((int) starBrightness.getValue()));
+		    if (visualEffectsWindow == null) {
+			visualEffectsWindow = new VisualEffectsWindow(gui, skin);
+		    }
+		    visualEffectsWindow.display();
 		    return true;
 		}
 		return false;
 	    }
 	});
-	HorizontalGroup brightnessGroup = new HorizontalGroup();
-	brightnessGroup.space(3);
-	brightnessGroup.addActor(starBrightness);
-	brightnessGroup.addActor(brightness);
+	Label effectsTooltip = new Label(txt("gui.tooltip.visualeffects"), skin, "tooltip");
+	tooltips.add(effectsTooltip);
+	visualEffects.addListener(new Tooltip<Label>(effectsTooltip));
 
-	Label ambientLightLabel = new Label(txt("gui.light.ambient"), skin, "default");
-	ambient = new OwnLabel(Integer.toString((int) (GlobalConf.scene.AMBIENT_LIGHT * 100)), skin);
-	ambientLight = new Slider(Constants.MIN_SLIDER, Constants.MAX_SLIDER, 1, false, skin);
-	ambientLight.setName("ambient light");
-	ambientLight.setValue(GlobalConf.scene.AMBIENT_LIGHT * 100);
-	ambientLight.addListener(new EventListener() {
-	    @Override
-	    public boolean handle(Event event) {
-		if (event instanceof ChangeEvent) {
-		    EventManager.instance.post(Events.AMBIENT_LIGHT_CMD, ambientLight.getValue() / 100f);
-		    ambient.setText(Integer.toString((int) ambientLight.getValue()));
-		    return true;
-		}
-		return false;
-	    }
-	});
-	HorizontalGroup ambientGroup = new HorizontalGroup();
-	ambientGroup.space(3);
-	ambientGroup.addActor(ambientLight);
-	ambientGroup.addActor(ambient);
+	HorizontalGroup lightingLabelGroup = new HorizontalGroup();
+	lightingLabelGroup.space(HPADDING);
+	lightingLabelGroup.addActor(lightingLabel);
+	lightingLabelGroup.addActor(visualEffects);
 
-	Label bloomLabel = new Label(txt("gui.bloom"), skin, "default");
-	bloom = new OwnLabel(Integer.toString((int) (GlobalConf.postprocess.POSTPROCESS_BLOOM_INTENSITY * 10)), skin);
-	bloomEffect = new Slider(Constants.MIN_SLIDER, Constants.MAX_SLIDER, 1, false, skin);
-	bloomEffect.setName("bloom effect");
-	bloomEffect.setValue(GlobalConf.postprocess.POSTPROCESS_BLOOM_INTENSITY * 10f);
-	bloomEffect.addListener(new EventListener() {
-	    @Override
-	    public boolean handle(Event event) {
-		if (event instanceof ChangeEvent) {
-		    EventManager.instance.post(Events.BLOOM_CMD, bloomEffect.getValue() / 10f);
-		    bloom.setText(Integer.toString((int) bloomEffect.getValue()));
-		    return true;
-		}
-		return false;
-	    }
-	});
-
-	HorizontalGroup bloomGroup = new HorizontalGroup();
-	bloomGroup.space(3);
-	bloomGroup.addActor(bloomEffect);
-	bloomGroup.addActor(bloom);
-
-	lensFlare = new CheckBox(txt("gui.lensflare"), skin);
-	lensFlare.setName("lens flare");
-	lensFlare.addListener(new EventListener() {
-	    @Override
-	    public boolean handle(Event event) {
-		if (event instanceof ChangeEvent) {
-		    EventManager.instance.post(Events.LENS_FLARE_CMD, lensFlare.isChecked());
-		    return true;
-		}
-		return false;
-	    }
-	});
-	lensFlare.setChecked(GlobalConf.postprocess.POSTPROCESS_LENS_FLARE);
-
-	lightingGroup.addActor(lightingLabel);
-	lightingGroup.addActor(brightnessLabel);
-	lightingGroup.addActor(brightnessGroup);
-	lightingGroup.addActor(ambientLightLabel);
-	lightingGroup.addActor(ambientGroup);
-	lightingGroup.addActor(bloomLabel);
-	lightingGroup.addActor(bloomGroup);
-	lightingGroup.addActor(lensFlare);
+	lightingGroup.addActor(lightingLabelGroup);
 
 	/** ----GAIA SCAN GROUP---- **/
 	VerticalGroup optionsGroup = new VerticalGroup().align(Align.left);

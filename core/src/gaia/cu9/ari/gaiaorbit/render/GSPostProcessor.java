@@ -39,7 +39,7 @@ public class GSPostProcessor implements IPostProcessor, IObserver {
 	    EventManager.instance.post(Events.POST_NOTIFICATION, this.getClass().getSimpleName(), I18n.bundle.format("notif.selected", "NFAA"));
 	}
 
-	EventManager.instance.subscribe(this, Events.PROPERTIES_WRITTEN, Events.BLOOM_CMD, Events.LENS_FLARE_CMD);
+	EventManager.instance.subscribe(this, Events.PROPERTIES_WRITTEN, Events.BLOOM_CMD, Events.LENS_FLARE_CMD, Events.MOTION_BLUR_CMD);
 
     }
 
@@ -89,7 +89,7 @@ public class GSPostProcessor implements IPostProcessor, IObserver {
 
 	// MOTION BLUR
 	ppb.motionblur = new MotionBlur();
-	ppb.motionblur.setBlurOpacity(0.4f);
+	ppb.motionblur.setBlurOpacity(GlobalConf.postprocess.POSTPROCESS_MOTION_BLUR);
 	ppb.pp.addEffect(ppb.motionblur);
 
 	// LENS FLARE
@@ -176,7 +176,19 @@ public class GSPostProcessor implements IPostProcessor, IObserver {
 	    //		pps[i].zoomer.setBlurStrength(strength);
 	    //	    }
 	    break;
-
+	case MOTION_BLUR_CMD:
+	    Gdx.app.postRunnable(new Runnable() {
+		@Override
+		public void run() {
+		    float opacity = (float) data[0];
+		    for (int i = 0; i < RenderType.values().length; i++) {
+			PostProcessBean ppb = pps[i];
+			ppb.motionblur.setBlurOpacity(opacity);
+			ppb.motionblur.setEnabled(opacity > 0);
+		    }
+		}
+	    });
+	    break;
 	}
 
     }

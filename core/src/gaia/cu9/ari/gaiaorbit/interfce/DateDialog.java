@@ -36,7 +36,7 @@ public class DateDialog extends CollapsibleWindow {
     private final Color defaultColor;
 
     public DateDialog(IGui gui, Skin skin) {
-	super("Pick a date", skin);
+	super(I18n.bundle.get("gui.pickdate"), skin);
 	this.me = this;
 	this.gui = gui;
 

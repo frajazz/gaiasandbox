@@ -96,6 +96,8 @@ public enum Events {
     LENS_FLARE_CMD,
     /** Contains the intensity value between 0 and 1 **/
     BLOOM_CMD,
+    /** Contains the opacity of motion blur between 0 and 1 **/
+    MOTION_BLUR_CMD,
     /** Contains a float with the pace **/
     PACE_CHANGE_CMD,
     /** Double the pace **/
