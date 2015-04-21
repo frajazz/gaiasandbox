@@ -37,7 +37,7 @@ public class Tooltip<T extends Actor> implements EventListener {
 		};
 		// Set timer
 		timer.schedule(tt, TOOLTIP_DELAY_MS);
-	    } else if (ie.getType().equals(Type.exit)) {
+	    } else if (ie.getType().equals(Type.exit) || ie.getType().equals(Type.touchDown) || ie.getType().equals(Type.touchUp)) {
 		// Remove
 		if (tt != null) {
 		    tt.cancel();
