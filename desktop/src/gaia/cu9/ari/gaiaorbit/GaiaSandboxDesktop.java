@@ -85,7 +85,7 @@ public class GaiaSandboxDesktop implements IObserver {
 	    I18n.initialize("../android/assets/i18n/gsbundle");
 
 	    // Initialize icons
-	    IconManager.initialise(new File("data/ui/"));
+	    IconManager.initialise(new File("./data/ui/"));
 
 	    // Initialize key mappings
 	    KeyMappings.initialize();
@@ -133,7 +133,7 @@ public class GaiaSandboxDesktop implements IObserver {
 	cfg.height = GlobalConf.screen.getScreenHeight();
 	cfg.samples = MathUtilsd.clamp(GlobalConf.postprocess.POSTPROCESS_ANTIALIAS, 0, 16);
 	cfg.vSyncEnabled = GlobalConf.screen.VSYNC;
-	cfg.foregroundFPS = 400;
+	cfg.foregroundFPS = 0;
 	cfg.backgroundFPS = 30;
 	cfg.addIcon("icon/ic_launcher.png", Files.FileType.Internal);
 

@@ -23,6 +23,7 @@ import com.badlogic.gdx.utils.JsonValue.ValueType;
 
 /**
  * Implements the loading of scene graph nodes using libgdx's json library.
+ * It loads entities in the JSON format described in <a href="https://github.com/ari-zah/gaiasandbox/wiki/Non-particle-data-loading">this link</a>.
  * @author Toni Sagrista
  *
  * @param <T>
