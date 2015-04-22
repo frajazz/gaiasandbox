@@ -350,7 +350,7 @@ minus-icon
   index: -1 
 disabled-icon
   rotate: false
-  xy: 79, 0
+  xy: 203, 21
   size: 8, 8
   orig: 8, 8
   offset: 0, 0
@@ -365,6 +365,20 @@ detach-icon
 detach-disabled-icon
   rotate: false
   xy: 229, 7
+  size: 8, 8
+  orig: 8, 8
+  offset: 0, 0
+  index: -1 
+window-expand
+  rotate: false
+  xy: 238, 7
+  size: 8, 8
+  orig: 8, 8
+  offset: 0, 0
+  index: -1 
+window-collapse
+  rotate: false
+  xy: 247, 7
   size: 8, 8
   orig: 8, 8
   offset: 0, 0

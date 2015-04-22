@@ -16,12 +16,14 @@
 
 package gaia.cu9.ari.gaiaorbit.util.scene2d;
 
+import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.scenes.scene2d.ui.Window;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
+import com.badlogic.gdx.scenes.scene2d.utils.Drawable;
 
 /** A {@code CollapsableWindow} can be expanded/collapsed with a single click on the title bar.
  * 
@@ -32,10 +34,16 @@ public class CollapsibleWindow extends Window {
     private float expandHeight;
     private Vector2 vec2;
     Actor me;
+    Skin skin;
+
+    String expandIcon = "window-expand";
+    String collapseIcon = "window-collapse";
 
     public CollapsibleWindow(String title, Skin skin) {
 	super(title, skin);
 	this.me = this;
+	this.skin = skin;
+
 	vec2 = new Vector2();
 	addListener(new ClickListener() {
 	    private float startx, starty;
@@ -61,6 +69,23 @@ public class CollapsibleWindow extends Window {
 	    }
 
 	});
+
+    }
+
+    protected void drawBackground(Batch batch, float parentAlpha, float x, float y) {
+	float width = getWidth(), height = getHeight();
+	float padTop = getPadTop();
+
+	super.drawBackground(batch, parentAlpha, x, y);
+
+	x += width - 8 - getPadRight();
+	y += height - getPadTop() / 2;
+	y -= (padTop - 8) / 2;
+
+	Drawable icon = collapsed ? skin.getDrawable(expandIcon) : skin.getDrawable(collapseIcon);
+
+	icon.draw(batch, x, y, 8, 8);
+
     }
 
     public void expand() {
