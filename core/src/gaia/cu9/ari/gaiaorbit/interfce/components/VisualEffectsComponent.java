@@ -1,44 +1,35 @@
-package gaia.cu9.ari.gaiaorbit.interfce;
+package gaia.cu9.ari.gaiaorbit.interfce.components;
 
 import gaia.cu9.ari.gaiaorbit.event.EventManager;
 import gaia.cu9.ari.gaiaorbit.event.Events;
 import gaia.cu9.ari.gaiaorbit.util.Constants;
 import gaia.cu9.ari.gaiaorbit.util.GlobalConf;
-import gaia.cu9.ari.gaiaorbit.util.I18n;
 import gaia.cu9.ari.gaiaorbit.util.math.MathUtilsd;
-import gaia.cu9.ari.gaiaorbit.util.scene2d.CollapsibleWindow;
 import gaia.cu9.ari.gaiaorbit.util.scene2d.OwnLabel;
-import gaia.cu9.ari.gaiaorbit.util.scene2d.OwnTextButton;
 
 import com.badlogic.gdx.scenes.scene2d.Event;
 import com.badlogic.gdx.scenes.scene2d.EventListener;
+import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.CheckBox;
 import com.badlogic.gdx.scenes.scene2d.ui.HorizontalGroup;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.scenes.scene2d.ui.Slider;
-import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
 import com.badlogic.gdx.scenes.scene2d.ui.VerticalGroup;
-import com.badlogic.gdx.scenes.scene2d.ui.Window;
 import com.badlogic.gdx.scenes.scene2d.utils.Align;
 import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener.ChangeEvent;
 
-public class VisualEffectsWindow extends CollapsibleWindow {
-
-    private final Window me;
-    private final IGui gui;
+public class VisualEffectsComponent extends GuiComponent {
 
     protected Slider starBrightness, bloomEffect, ambientLight, motionBlur;
     protected OwnLabel brightness, bloom, ambient, motion;
     protected CheckBox lensFlare;
 
-    public VisualEffectsWindow(IGui gui, Skin skin) {
-	super(I18n.bundle.get("gui.visualeffects"), skin);
-	this.me = this;
-	this.gui = gui;
+    public VisualEffectsComponent(Skin skin, Stage stage) {
+	super(skin, stage);
+    }
 
-	/** CONTROLS **/
-
+    public void initialize() {
 	/** Star brightness **/
 	Label brightnessLabel = new Label(txt("gui.starbrightness"), skin, "default");
 	brightness = new OwnLabel(Integer.toString((int) (MathUtilsd.lint(GlobalConf.scene.STAR_BRIGHTNESS, Constants.MIN_STAR_BRIGHT, Constants.MAX_STAR_BRIGHT, Constants.MIN_SLIDER, Constants.MAX_SLIDER))), skin);
@@ -155,47 +146,7 @@ public class VisualEffectsWindow extends CollapsibleWindow {
 	lightingGroup.addActor(motionGroup);
 	lightingGroup.addActor(lensFlare);
 
-	add(lightingGroup).left().row();
-
-	/** BUTTONS **/
-	HorizontalGroup buttonGroup = new HorizontalGroup();
-	TextButton close = new OwnTextButton(I18n.bundle.get("gui.close"), skin, "default");
-	close.setName("close");
-	close.addListener(new EventListener() {
-	    @Override
-	    public boolean handle(Event event) {
-		if (event instanceof ChangeEvent) {
-		    me.remove();
-		    return true;
-		}
-
-		return false;
-	    }
-
-	});
-	buttonGroup.addActor(close);
-	close.setSize(70, 20);
-	buttonGroup.align(Align.right).space(10);
-
-	add(buttonGroup).colspan(2).pad(5, 0, 0, 0).bottom().right();
-	setTitleAlignment(Align.left);
-
-	pack();
-
-	this.setPosition(gui.getGuiStage().getWidth() / 2f - this.getWidth() / 2f, gui.getGuiStage().getHeight() / 2f - this.getHeight() / 2f);
-    }
-
-    public void display() {
-	if (!gui.getGuiStage().getActors().contains(me, true))
-	    gui.getGuiStage().addActor(this);
-    }
-
-    private String txt(String key) {
-	return I18n.bundle.get(key);
-    }
-
-    private String txt(String key, Object... params) {
-	return I18n.bundle.format(key, params);
+	component = lightingGroup;
     }
 
 }

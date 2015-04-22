@@ -289,6 +289,8 @@ public enum Events {
     PIXEL_RENDERER_CMD,
     /** Configures the render system. Contains width, height, FPS, folder and file **/
     CONFIG_PIXEL_RENDERER,
+    /** Forces recalculation of main GUI window size **/
+    RECALCULATE_OPTIONS_SIZE,
 
     /** Contains the Gaia object [0] **/
     GAIA_LOADED,

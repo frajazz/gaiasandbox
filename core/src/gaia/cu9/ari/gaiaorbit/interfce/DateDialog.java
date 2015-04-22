@@ -17,6 +17,7 @@ import com.badlogic.gdx.scenes.scene2d.Event;
 import com.badlogic.gdx.scenes.scene2d.EventListener;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.InputEvent.Type;
+import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.HorizontalGroup;
 import com.badlogic.gdx.scenes.scene2d.ui.SelectBox;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
@@ -28,17 +29,17 @@ import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener.ChangeEvent;
 
 public class DateDialog extends CollapsibleWindow {
     private final Window me;
-    private final IGui gui;
+    private final Stage stage;
 
     private final TextField day, year, hour, min, sec;
     private final SelectBox<String> month;
     private final TextButton setNow;
     private final Color defaultColor;
 
-    public DateDialog(IGui gui, Skin skin) {
+    public DateDialog(Stage stage, Skin skin) {
 	super(I18n.bundle.get("gui.pickdate"), skin);
 	this.me = this;
-	this.gui = gui;
+	this.stage = stage;
 
 	/** SET NOW **/
 	setNow = new OwnTextButton("Set current time", skin);
@@ -246,7 +247,7 @@ public class DateDialog extends CollapsibleWindow {
 
 	defaultColor = day.getColor().cpy();
 
-	this.setPosition(gui.getGuiStage().getWidth() / 2f - this.getWidth() / 2f, gui.getGuiStage().getHeight() / 2f - this.getHeight() / 2f);
+	this.setPosition(stage.getWidth() / 2f - this.getWidth() / 2f, stage.getHeight() / 2f - this.getHeight() / 2f);
     }
 
     /**
@@ -293,8 +294,8 @@ public class DateDialog extends CollapsibleWindow {
     }
 
     public void display() {
-	if (!gui.getGuiStage().getActors().contains(me, true))
-	    gui.getGuiStage().addActor(this);
+	if (!stage.getActors().contains(me, true))
+	    stage.addActor(this);
     }
 
 }

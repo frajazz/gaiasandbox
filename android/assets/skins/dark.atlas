@@ -334,3 +334,38 @@ eye-icon
   orig: 16, 16
   offset: 0, 0
   index: -1  
+plus-icon
+  rotate: false
+  xy: 29, 0
+  size: 8, 8
+  orig: 8, 8
+  offset: 0, 0
+  index: -1 
+minus-icon
+  rotate: false
+  xy: 29, 8
+  size: 8, 8
+  orig: 8, 8
+  offset: 0, 0
+  index: -1 
+disabled-icon
+  rotate: false
+  xy: 79, 0
+  size: 8, 8
+  orig: 8, 8
+  offset: 0, 0
+  index: -1 
+detach-icon
+  rotate: false
+  xy: 220, 7
+  size: 8, 8
+  orig: 8, 8
+  offset: 0, 0
+  index: -1 
+detach-disabled-icon
+  rotate: false
+  xy: 229, 7
+  size: 8, 8
+  orig: 8, 8
+  offset: 0, 0
+  index: -1 

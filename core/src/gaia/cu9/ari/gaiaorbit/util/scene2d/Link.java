@@ -1,4 +1,4 @@
-package gaia.cu9.ari.gaiaorbit.interfce;
+package gaia.cu9.ari.gaiaorbit.util.scene2d;
 
 import gaia.cu9.ari.gaiaorbit.util.GlobalResources;
 
@@ -61,7 +61,7 @@ public class Link extends Label {
 		    if (type == Type.touchUp && ((InputEvent) event).getButton() == Buttons.LEFT) {
 			Gdx.net.openURI(linkto);
 		    } else if (type == Type.enter) {
-			Gdx.input.setCursorImage(GlobalResources.linkCursor, 0, 0);
+			Gdx.input.setCursorImage(GlobalResources.linkCursor, 4, 0);
 		    } else if (type == Type.exit) {
 			Gdx.input.setCursorImage(null, 0, 0);
 		    }
