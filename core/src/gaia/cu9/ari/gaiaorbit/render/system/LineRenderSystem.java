@@ -23,7 +23,7 @@ public class LineRenderSystem extends AbstractRenderSystem {
 
     @Override
     public void renderStud(List<IRenderable> renderables, ICamera camera) {
-	Gdx.gl.glLineWidth(2f);
+	Gdx.gl.glLineWidth(1f);
 
 	combinedMatrix.set(camera.getCamera().combined);
 	renderer.begin(combinedMatrix, ShapeType.Line.getGlType());
