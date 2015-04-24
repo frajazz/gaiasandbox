@@ -72,11 +72,6 @@ public class VBOPixelRenderSystem extends AbstractRenderSystem implements IObser
 	if (!initialized) {
 	    int size = renderables.size();
 	    for (int i = 0; i < size; i++) {
-		/**
-		IRenderable s = renderables.get(i);
-		s.render(renderer, alphas[s.getComponentType().ordinal()], starColorTransit);
-		**/
-
 		// 2 FPS gain
 		CelestialBody cb = (CelestialBody) renderables.get(i);
 		float[] col = starColorTransit ? cb.ccTransit : cb.cc;

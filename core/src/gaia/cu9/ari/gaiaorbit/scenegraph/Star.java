@@ -5,7 +5,6 @@ import gaia.cu9.ari.gaiaorbit.scenegraph.component.ModelComponent;
 import gaia.cu9.ari.gaiaorbit.util.GlobalConf;
 import gaia.cu9.ari.gaiaorbit.util.ModelCache;
 import gaia.cu9.ari.gaiaorbit.util.Pair;
-import gaia.cu9.ari.gaiaorbit.util.math.MathUtilsd;
 import gaia.cu9.ari.gaiaorbit.util.math.Vector3d;
 import gaia.cu9.ari.gaiaorbit.util.time.TimeUtils;
 
@@ -92,19 +91,26 @@ public class Star extends Particle {
 		// Only shader for FovCamera
 		addToRender(this, RenderGroup.SHADER);
 	    } else {
-		if (viewAngleApparent < THRESHOLD_ANGLE_POINT() * camera.getFovFactor()) {
-		    // Update opacity
-		    opacity *= MathUtilsd.lint(viewAngleApparent, 0, THRESHOLD_ANGLE_POINT(), GlobalConf.scene.POINT_ALPHA_MIN, GlobalConf.scene.POINT_ALPHA_MAX);
-
-		    addToRender(this, RenderGroup.POINT);
-		} else {
-		    addToRender(this, RenderGroup.POINT);
+		if (viewAngleApparent >= THRESHOLD_ANGLE_POINT() * camera.getFovFactor()) {
 		    addToRender(this, RenderGroup.SHADER);
 		    if (distToCamera < modelDistance) {
 			camera.checkClosest(this);
 			addToRender(this, RenderGroup.MODEL_S);
 		    }
 		}
+		//		if (viewAngleApparent > THRESHOLD_ANGLE_POINT() * camera.getFovFactor()) {
+		//		    // Update opacity
+		//		    opacity *= MathUtilsd.lint(viewAngleApparent, 0, THRESHOLD_ANGLE_POINT(), GlobalConf.scene.POINT_ALPHA_MIN, GlobalConf.scene.POINT_ALPHA_MAX);
+		//
+		//		    addToRender(this, RenderGroup.POINT);
+		//		} else {
+		//		    addToRender(this, RenderGroup.POINT);
+		//		    addToRender(this, RenderGroup.SHADER);
+		//		    if (distToCamera < modelDistance) {
+		//			camera.checkClosest(this);
+		//			addToRender(this, RenderGroup.MODEL_S);
+		//		    }
+		//		}
 	    }
 	    if (renderLabel()) {
 		addToRender(this, RenderGroup.LABEL);
