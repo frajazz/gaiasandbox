@@ -808,4 +808,5 @@ public class NaturalCamera extends AbstractCamera implements IObserver {
     public CelestialBody getFocus() {
 	return getMode().equals(CameraMode.Focus) ? focus : null;
     }
+
 }

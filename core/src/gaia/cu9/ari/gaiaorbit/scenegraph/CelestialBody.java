@@ -7,7 +7,6 @@ import gaia.cu9.ari.gaiaorbit.scenegraph.component.RotationComponent;
 import gaia.cu9.ari.gaiaorbit.util.Constants;
 import gaia.cu9.ari.gaiaorbit.util.DecalUtils;
 import gaia.cu9.ari.gaiaorbit.util.GlobalConf;
-import gaia.cu9.ari.gaiaorbit.util.GlobalResources;
 import gaia.cu9.ari.gaiaorbit.util.color.ColourUtils;
 import gaia.cu9.ari.gaiaorbit.util.math.MathUtilsd;
 import gaia.cu9.ari.gaiaorbit.util.math.Vector2d;
@@ -260,68 +259,6 @@ public abstract class CelestialBody extends AbstractPositionEntity implements IL
 	copy.flux = this.flux;
 	copy.rc = this.rc;
 	return (T) copy;
-    }
-
-    /**
-     * Returns true if a body with the given position is observed in any of the given directions using the given cone angle
-     * @param pos The position of the body.
-     * @param coneAngle The whole observation angle
-     * @param dirs The directions
-     * @return True if the body is observed. False otherwise.
-     */
-    protected boolean computeVisibleFovs(Vector3d pos, FovCamera fcamera) {
-	boolean visible = false;
-	float coneAngle = fcamera.angleEdgeRad;
-	Vector3d[] dirs = null;
-	double poslen = pos.len();
-	if (GlobalConf.scene.COMPUTE_GAIA_SCAN && !fcamera.interpolatedDirections.isEmpty()) {
-	    // We need to interpolate...
-	    for (Vector3d[] interpolatedDirection : fcamera.interpolatedDirections) {
-		visible = visible ||
-			MathUtilsd.acos(pos.dot(interpolatedDirection[0]) / poslen) < coneAngle ||
-			MathUtilsd.acos(pos.dot(interpolatedDirection[1]) / poslen) < coneAngle;
-		if (visible)
-		    return true;
-	    }
-	}
-	dirs = fcamera.directions;
-	visible = visible ||
-		MathUtilsd.acos(pos.dot(dirs[0]) / poslen) < coneAngle ||
-		MathUtilsd.acos(pos.dot(dirs[1]) / poslen) < coneAngle;
-	return visible;
-    }
-
-    private static final double VIEW_ANGLE = 0.43633231;
-
-    /**
-     * Computes the visible value, which indicates whether this body is visible or not
-     * in the given time with the given camera.
-     * If updateGaia is true, it also detects if this body is observed by Gaia and updates 
-     * its number of observations and its observation mode colour.
-     * @param time The current time frame.
-     * @param camera The camera.
-     * @param computeGaiaScan Detect if Gaia observes this body 
-     * @return
-     */
-    protected boolean computeVisible(ITimeFrameProvider time, ICamera camera, boolean computeGaiaScan) {
-	boolean visible = false;
-	if (camera.getNCameras() > 1) {
-	    // This means we are in Fov1&Fov2 mode
-	    visible = computeVisibleFovs(pos, camera.getManager().fovCamera);
-
-	    updateTransitNumber(visible && time.getDt() != 0, time, camera.getManager().fovCamera);
-	} else {
-	    // We are in Free, Focus, Fov1 or Fov2 mode
-	    visible = viewAngle > VIEW_ANGLE || GlobalResources.isInView(transform.position, camera.getAngleEdge(), camera.getDirection());
-
-	    /** If time is running, check Gaia **/
-	    if (computeGaiaScan && time.getDt() != 0) {
-		boolean visibleByGaia = computeVisibleFovs(pos, camera.getManager().fovCamera);
-
-		updateTransitNumber(visibleByGaia, time, camera.getManager().fovCamera);
-	    }
-	}
-	return visible && !(GlobalConf.scene.ONLY_OBSERVED_STARS && transits == 0);
     }
 
     /**

@@ -382,4 +382,20 @@ public class FovCamera extends AbstractCamera implements IObserver {
 	return null;
     }
 
+    @Override
+    public boolean isVisible(ITimeFrameProvider time, CelestialBody cb, boolean computeGaiaScan) {
+	switch (parent.mode) {
+	case Gaia_FOV1:
+	case Gaia_FOV2:
+	    return super.isVisible(time, cb, computeGaiaScan);
+	case Gaia_FOV1and2:
+	    boolean visible = computeVisibleFovs(cb.pos, this, cb.distToCamera);
+
+	    cb.updateTransitNumber(visible && time.getDt() != 0, time, this);
+	    return visible && !(GlobalConf.scene.ONLY_OBSERVED_STARS && cb.transits == 0);
+	default:
+	    return false;
+	}
+    }
+
 }

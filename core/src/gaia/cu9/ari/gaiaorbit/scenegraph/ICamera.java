@@ -99,4 +99,6 @@ public interface ICamera {
      * @param cb The body to check
      */
     public void checkClosest(CelestialBody cb);
+
+    public boolean isVisible(ITimeFrameProvider time, CelestialBody cb, boolean computeGaiaScan);
 }

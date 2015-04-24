@@ -134,7 +134,7 @@ public class Particle extends CelestialBody implements IPointRenderable {
 
 	    distToCamera = (float) transform.position.len();
 	    addToRender(this, RenderGroup.POINT);
-	    boolean visible = computeVisible(time, camera, GlobalConf.scene.COMPUTE_GAIA_SCAN) || camera.isFocus(this);
+	    boolean visible = camera.isVisible(time, this, GlobalConf.scene.COMPUTE_GAIA_SCAN) || camera.isFocus(this);
 	    if (visible && !copy) {
 		viewAngle = ((float) radius / distToCamera) / camera.getFovFactor();
 		viewAngleApparent = viewAngle * GlobalConf.scene.STAR_BRIGHTNESS;
@@ -176,15 +176,6 @@ public class Particle extends CelestialBody implements IPointRenderable {
 	    if (viewAngleApparent >= THRESHOLD_ANGLE_POINT() * camera.getFovFactor()) {
 		addToRender(this, RenderGroup.SHADER);
 	    }
-	    //		if (viewAngleApparent < THRESHOLD_ANGLE_POINT() * camera.getFovFactor()) {
-	    //		    // Update opacity
-	    //		    opacity *= MathUtilsd.lint(viewAngleApparent, 0, THRESHOLD_ANGLE_POINT(), GlobalConf.scene.POINT_ALPHA_MIN, GlobalConf.scene.POINT_ALPHA_MAX);
-	    //
-	    //		    addToRender(this, RenderGroup.POINT);
-	    //		} else {
-	    //		    addToRender(this, RenderGroup.POINT);
-	    //		    addToRender(this, RenderGroup.SHADER);
-	    //		}
 	}
 	if (renderLabel()) {
 	    addToRender(this, RenderGroup.LABEL);
