@@ -23,7 +23,7 @@ import com.bitfire.postprocessing.PostProcessor;
 import com.bitfire.postprocessing.effects.Bloom;
 import com.bitfire.postprocessing.filters.Blur.BlurType;
 
-public class PixelBloomRenderSystem extends VBOPixelRenderSystem implements IObserver {
+public class PixelBloomRenderSystem extends PixelRenderSystem implements IObserver {
 
     Map<String, PostProcessor> ppmap;
     Map<String, FrameBuffer> fbmap;
