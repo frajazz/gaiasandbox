@@ -24,6 +24,7 @@ import com.badlogic.gdx.graphics.Texture.TextureFilter;
 import com.badlogic.gdx.graphics.VertexAttribute;
 import com.badlogic.gdx.graphics.VertexAttributes.Usage;
 import com.badlogic.gdx.graphics.glutils.ShaderProgram;
+import com.badlogic.gdx.math.Matrix4;
 import com.badlogic.gdx.math.Quaternion;
 
 public class ShaderQuadRenderSystem extends AbstractRenderSystem implements IObserver {
@@ -33,6 +34,7 @@ public class ShaderQuadRenderSystem extends AbstractRenderSystem implements IObs
     private boolean useStarColorTransit;
     private boolean starColorTransit = false;
     private Texture noise;
+    private Matrix4 transform;
     private Quaternion quaternion;
 
     /**
@@ -86,6 +88,7 @@ public class ShaderQuadRenderSystem extends AbstractRenderSystem implements IObs
 	mesh.setIndices(indices);
 
 	quaternion = new Quaternion();
+	transform = new Matrix4();
     }
 
     private void fillVertices(float[] vertices) {
@@ -136,6 +139,9 @@ public class ShaderQuadRenderSystem extends AbstractRenderSystem implements IObs
 	DecalUtils.setBillboardRotation(quaternion, camera.getCamera().direction, camera.getCamera().up);
 
 	shaderProgram.begin();
+
+	shaderProgram.setUniformf("u_quaternion", quaternion.x, quaternion.y, quaternion.z, quaternion.w);
+
 	if (!Constants.mobile) {
 	    // Global uniforms
 	    shaderProgram.setUniformf("u_time", TimeUtils.getRunningTimeSecs());
@@ -146,7 +152,7 @@ public class ShaderQuadRenderSystem extends AbstractRenderSystem implements IObs
 	int size = renderables.size();
 	for (int i = 0; i < size; i++) {
 	    IRenderable s = renderables.get(i);
-	    s.render(shaderProgram, alphas[s.getComponentType().ordinal()], starColorTransit, mesh, quaternion, camera);
+	    s.render(shaderProgram, alphas[s.getComponentType().ordinal()], starColorTransit, mesh, camera);
 	}
 	shaderProgram.end();
 

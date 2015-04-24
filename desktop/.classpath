@@ -13,7 +13,7 @@
 	<classpathentry kind="lib" path="lib/weblaf-ui-1.28.jar" sourcepath="/home/tsagrista/Programs/Libraries/WebLaF/weblaf-src-1.28.jar"/>
 	<classpathentry kind="lib" path="lib/xstream-1.4.7.jar"/>
 	<classpathentry kind="lib" path="lib/gdx-controllers-desktop-natives.jar"/>
-	<classpathentry kind="lib" path="lib/gdx-1.5.5.jar"/>
+	<classpathentry kind="lib" path="lib/gdx-1.5.5.jar" sourcepath="/home/tsagrista/Programs/Libraries/libgdx-1.5.5/sources/gdx-sources.jar"/>
 	<classpathentry kind="lib" path="lib/gdx-backend-lwjgl-1.5.5.jar" sourcepath="/home/tsagrista/Programs/Libraries/libgdx-1.5.5/sources/gdx-backend-lwjgl-sources.jar"/>
 	<classpathentry kind="lib" path="lib/gdx-controllers-desktop-1.5.5.jar"/>
 	<classpathentry kind="lib" path="lib/lwjgl-2.9.3.jar"/>

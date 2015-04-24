@@ -23,7 +23,6 @@ import com.badlogic.gdx.graphics.g3d.ModelBatch;
 import com.badlogic.gdx.graphics.glutils.ShaderProgram;
 import com.badlogic.gdx.math.Matrix4;
 import com.badlogic.gdx.math.Quaternion;
-import com.badlogic.gdx.math.Vector3;
 
 /**
  * These are entities that have a model and is always loaded.
@@ -106,7 +105,7 @@ public abstract class CelestialBody extends AbstractPositionEntity implements IL
 	Object first = params[0];
 	if (first instanceof ShaderProgram) {
 	    // QUAD - SHADER
-	    render((ShaderProgram) first, (Float) params[1], (Boolean) params[2], (Mesh) params[3], (Quaternion) params[4], (ICamera) params[5]);
+	    render((ShaderProgram) first, (Float) params[1], (Boolean) params[2], (Mesh) params[3], (ICamera) params[4]);
 	} else if (first instanceof SpriteBatch) {
 	    // LABEL
 	    render((SpriteBatch) first, (ShaderProgram) params[1], (BitmapFont) params[2], (ICamera) params[3], (Float) params[4]);
@@ -122,18 +121,14 @@ public abstract class CelestialBody extends AbstractPositionEntity implements IL
      * Shader render, for planets and bodies, not stars.
      */
     @Override
-    public void render(ShaderProgram shader, float alpha, boolean colorTransit, Mesh mesh, Quaternion rotation, ICamera camera) {
+    public void render(ShaderProgram shader, float alpha, boolean colorTransit, Mesh mesh, ICamera camera) {
 	compalpha = alpha;
 
 	float size = getFuzzyRenderSize(camera);
 
-	Vector3 selectedPos = auxVector3f.get();
-	transform.getTranslationf(selectedPos);
-
 	//transf.set(camera.getCamera().combined).translate((float) selectedPos.x, (float) selectedPos.y, (float) selectedPos.z).rotate(rotation).scale(size, size, size);
 	shader.setUniformMatrix("u_projTrans", camera.getCamera().combined);
-	shader.setUniformf("u_pos", selectedPos);
-	shader.setUniformf("u_quaternion", rotation.x, rotation.y, rotation.z, rotation.w);
+	shader.setUniformf("u_pos", transform.getTranslationf(auxVector3f.get()));
 	shader.setUniformf("u_size", size);
 
 	float[] col = ccPale;
