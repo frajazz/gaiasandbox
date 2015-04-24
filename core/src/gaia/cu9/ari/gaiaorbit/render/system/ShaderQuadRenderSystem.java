@@ -23,6 +23,7 @@ import com.badlogic.gdx.graphics.Texture.TextureFilter;
 import com.badlogic.gdx.graphics.VertexAttribute;
 import com.badlogic.gdx.graphics.VertexAttributes.Usage;
 import com.badlogic.gdx.graphics.glutils.ShaderProgram;
+import com.badlogic.gdx.math.Vector3;
 
 public class ShaderQuadRenderSystem extends AbstractRenderSystem implements IObserver {
 
@@ -31,6 +32,7 @@ public class ShaderQuadRenderSystem extends AbstractRenderSystem implements IObs
     private boolean useStarColorTransit;
     private boolean starColorTransit = false;
     private Texture noise;
+    private Vector3 aux;
 
     /**
      * Creates a new shader quad render component.
@@ -81,6 +83,8 @@ public class ShaderQuadRenderSystem extends AbstractRenderSystem implements IObs
 	    indices[i + 5] = j;
 	}
 	mesh.setIndices(indices);
+
+	aux = new Vector3();
     }
 
     private void fillVertices(float[] vertices) {

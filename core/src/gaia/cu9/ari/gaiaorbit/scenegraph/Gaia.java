@@ -18,19 +18,23 @@ import com.badlogic.gdx.math.Quaternion;
 
 public class Gaia extends ModelBody {
 
+    private static final double TH_ANGLE_NONE = ModelBody.TH_ANGLE_POINT / 1e11;
+    private static final double TH_ANGLE_POINT = ModelBody.TH_ANGLE_POINT / 1e10;
+    private static final double TH_ANGLE_SHADER = ModelBody.TH_ANGLE_POINT / 3.0;
+
     @Override
     public double THRESHOLD_ANGLE_NONE() {
-	return super.THRESHOLD_ANGLE_POINT() / 5e7f;
+	return TH_ANGLE_NONE;
     }
 
     @Override
     public double THRESHOLD_ANGLE_POINT() {
-	return super.THRESHOLD_ANGLE_POINT() / 5e6f;
+	return TH_ANGLE_POINT;
     }
 
     @Override
     public double THRESHOLD_ANGLE_QUAD() {
-	return super.THRESHOLD_ANGLE_POINT() / 5f;
+	return TH_ANGLE_SHADER;
     }
 
     public Vector3d unrotatedPos;

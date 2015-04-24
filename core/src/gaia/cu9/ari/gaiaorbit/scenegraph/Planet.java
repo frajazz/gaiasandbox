@@ -14,8 +14,8 @@ import com.badlogic.gdx.graphics.g3d.ModelBatch;
 
 public class Planet extends ModelBody implements IAtmosphereRenderable {
 
-    private static final double TH_ANGLE_NONE = ModelBody.TH_ANGLE_POINT / 1e5;
-    private static final double TH_ANGLE_POINT = ModelBody.TH_ANGLE_POINT / 1e3;
+    private static final double TH_ANGLE_NONE = ModelBody.TH_ANGLE_POINT / 1e6;
+    private static final double TH_ANGLE_POINT = ModelBody.TH_ANGLE_POINT / 1e5;
     private static final double TH_ANGLE_SHADER = ModelBody.TH_ANGLE_POINT / 3.0;
 
     @Override

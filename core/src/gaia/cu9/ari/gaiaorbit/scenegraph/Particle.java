@@ -1,10 +1,10 @@
 package gaia.cu9.ari.gaiaorbit.scenegraph;
 
+import gaia.cu9.ari.gaiaorbit.render.IPointRenderable;
 import gaia.cu9.ari.gaiaorbit.render.SceneGraphRenderer.ComponentType;
 import gaia.cu9.ari.gaiaorbit.util.Constants;
 import gaia.cu9.ari.gaiaorbit.util.GlobalConf;
 import gaia.cu9.ari.gaiaorbit.util.color.ColourUtils;
-import gaia.cu9.ari.gaiaorbit.util.math.MathUtilsd;
 import gaia.cu9.ari.gaiaorbit.util.math.Vector2d;
 import gaia.cu9.ari.gaiaorbit.util.math.Vector3d;
 import gaia.cu9.ari.gaiaorbit.util.time.ITimeFrameProvider;
@@ -14,13 +14,15 @@ import java.util.Random;
 
 import com.badlogic.gdx.assets.AssetManager;
 import com.badlogic.gdx.graphics.g3d.ModelBatch;
+import com.badlogic.gdx.graphics.glutils.ImmediateModeRenderer;
+import com.badlogic.gdx.math.Vector3;
 
 /**
  * A point particle which may represent a star, a galaxy, etc.
  * @author Toni Sagrista
  *
  */
-public class Particle extends CelestialBody {
+public class Particle extends CelestialBody implements IPointRenderable {
 
     private static final float TH_ANGLE_POINT = (float) Math.toRadians(2e-7f);
     private static final float TH_ANGLE_NONE = 0;
@@ -131,11 +133,12 @@ public class Particle extends CelestialBody {
 	    transform.position.set(parentTransform.position).add(pos);
 
 	    distToCamera = (float) transform.position.len();
+	    addToRender(this, RenderGroup.POINT);
 	    boolean visible = computeVisible(time, camera, GlobalConf.scene.COMPUTE_GAIA_SCAN) || camera.isFocus(this);
-
 	    if (visible && !copy) {
-		viewAngle = (float) Math.atan((getRadius()) / distToCamera) / camera.getFovFactor();
-		viewAngleApparent = (float) Math.atan((getRadius() * GlobalConf.scene.STAR_BRIGHTNESS) / distToCamera) / camera.getFovFactor();
+		viewAngle = ((float) radius / distToCamera) / camera.getFovFactor();
+		viewAngleApparent = viewAngle * GlobalConf.scene.STAR_BRIGHTNESS;
+
 		addToRenderLists(camera);
 	    }
 
@@ -165,26 +168,50 @@ public class Particle extends CelestialBody {
 
     @Override
     protected void addToRenderLists(ICamera camera) {
-	if (viewAngleApparent >= THRESHOLD_ANGLE_NONE() * camera.getFovFactor()) {
-	    if (camera.getCurrent() instanceof FovCamera) {
-		// Only shader for FovCamera
-		addToRender(this, RenderGroup.SHADER);
-	    } else {
-		if (viewAngleApparent < THRESHOLD_ANGLE_POINT() * camera.getFovFactor()) {
-		    // Update opacity
-		    opacity *= MathUtilsd.lint(viewAngleApparent, 0, THRESHOLD_ANGLE_POINT(), GlobalConf.scene.POINT_ALPHA_MIN, GlobalConf.scene.POINT_ALPHA_MAX);
+	if (camera.getCurrent() instanceof FovCamera) {
+	    // Only shader for FovCamera
+	    addToRender(this, RenderGroup.SHADER);
+	} else {
 
-		    addToRender(this, RenderGroup.POINT);
-		} else {
-		    addToRender(this, RenderGroup.POINT);
-		    addToRender(this, RenderGroup.SHADER);
-		}
+	    if (viewAngleApparent >= THRESHOLD_ANGLE_POINT() * camera.getFovFactor()) {
+		addToRender(this, RenderGroup.SHADER);
 	    }
-	    if (renderLabel()) {
-		addToRender(this, RenderGroup.LABEL);
-	    }
+	    //		if (viewAngleApparent < THRESHOLD_ANGLE_POINT() * camera.getFovFactor()) {
+	    //		    // Update opacity
+	    //		    opacity *= MathUtilsd.lint(viewAngleApparent, 0, THRESHOLD_ANGLE_POINT(), GlobalConf.scene.POINT_ALPHA_MIN, GlobalConf.scene.POINT_ALPHA_MAX);
+	    //
+	    //		    addToRender(this, RenderGroup.POINT);
+	    //		} else {
+	    //		    addToRender(this, RenderGroup.POINT);
+	    //		    addToRender(this, RenderGroup.SHADER);
+	    //		}
+	}
+	if (renderLabel()) {
+	    addToRender(this, RenderGroup.LABEL);
 	}
 
+    }
+
+    public void render(Object... params) {
+	Object first = params[0];
+	if (first instanceof ImmediateModeRenderer) {
+	    // POINT
+	    render((ImmediateModeRenderer) first, (Float) params[1], (Boolean) params[2]);
+	} else {
+	    super.render(params);
+	}
+    }
+
+    /**
+     * Point rendering.
+     */
+    @Override
+    public void render(ImmediateModeRenderer renderer, float alpha, boolean colorTransit) {
+	float[] col = colorTransit ? ccTransit : cc;
+	renderer.color(col[0], col[1], col[2], opacity * alpha);
+	Vector3 aux = auxVector3f.get();
+	transform.getTranslationf(aux);
+	renderer.vertex(aux.x, aux.y, aux.z);
     }
 
     @Override

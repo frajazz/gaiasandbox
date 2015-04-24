@@ -2,7 +2,7 @@ package gaia.cu9.ari.gaiaorbit.scenegraph;
 
 import gaia.cu9.ari.gaiaorbit.render.ILabelRenderable;
 import gaia.cu9.ari.gaiaorbit.render.IModelRenderable;
-import gaia.cu9.ari.gaiaorbit.render.IPointRenderable;
+import gaia.cu9.ari.gaiaorbit.render.IQuadRenderable;
 import gaia.cu9.ari.gaiaorbit.scenegraph.component.RotationComponent;
 import gaia.cu9.ari.gaiaorbit.util.Constants;
 import gaia.cu9.ari.gaiaorbit.util.DecalUtils;
@@ -22,18 +22,16 @@ import com.badlogic.gdx.graphics.Mesh;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g3d.ModelBatch;
-import com.badlogic.gdx.graphics.glutils.ImmediateModeRenderer;
 import com.badlogic.gdx.graphics.glutils.ShaderProgram;
 import com.badlogic.gdx.math.Matrix4;
 import com.badlogic.gdx.math.Quaternion;
-import com.badlogic.gdx.math.Vector3;
 
 /**
  * These are entities that have a model and is always loaded.
  * @author Toni Sagrista
  *
  */
-public abstract class CelestialBody extends AbstractPositionEntity implements ILabelRenderable, IPointRenderable, IModelRenderable {
+public abstract class CelestialBody extends AbstractPositionEntity implements ILabelRenderable, IQuadRenderable, IModelRenderable {
     private static float[] labelColour = new float[] { 1, 1, 1, 1 };
 
     protected static ThreadLocal<Quaternion> rotation = new ThreadLocal<Quaternion>() {
@@ -107,10 +105,7 @@ public abstract class CelestialBody extends AbstractPositionEntity implements IL
     @Override
     public void render(Object... params) {
 	Object first = params[0];
-	if (first instanceof ImmediateModeRenderer) {
-	    // POINT
-	    render((ImmediateModeRenderer) first, (Float) params[1], (Boolean) params[2]);
-	} else if (first instanceof ShaderProgram) {
+	if (first instanceof ShaderProgram) {
 	    // QUAD - SHADER
 	    render((ShaderProgram) first, (Float) params[1], (Boolean) params[2], (Mesh) params[3], (ICamera) params[4]);
 	} else if (first instanceof SpriteBatch) {
@@ -120,18 +115,6 @@ public abstract class CelestialBody extends AbstractPositionEntity implements IL
 	    // Normal model
 	    render((ModelBatch) first, (Float) params[1]);
 	}
-    }
-
-    /**
-     * Point rendering.
-     */
-    @Override
-    public void render(ImmediateModeRenderer renderer, float alpha, boolean colorTransit) {
-	float[] col = colorTransit ? ccTransit : cc;
-	renderer.color(col[0], col[1], col[2], opacity * alpha);
-	Vector3 aux = auxVector3f.get();
-	transform.getTranslationf(aux);
-	renderer.vertex(aux.x, aux.y, aux.z);
     }
 
     float precomp = -1;

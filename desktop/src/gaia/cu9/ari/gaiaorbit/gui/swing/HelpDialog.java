@@ -67,7 +67,7 @@ public class HelpDialog extends I18nJFrame {
 	frame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
 
 	// Build content
-	frame.setLayout(new BorderLayout(0, 0));
+	frame.setLayout(new BorderLayout());
 
 	/** BODY **/
 	JPanel body = new JPanel(new MigLayout("", "[grow,fill][]", ""));
@@ -217,6 +217,15 @@ public class HelpDialog extends I18nJFrame {
 	aux.setFont(boldFont);
 	opengl.add(aux);
 	opengl.add(new JLabel(Gdx.gl.glGetString(GL20.GL_SHADING_LANGUAGE_VERSION)), "wrap");
+	aux = new JLabel(txt("gui.help.glextensions"));
+	aux.setFont(boldFont);
+	opengl.add(aux);
+	String glExtensionsString = Gdx.gl.glGetString(GL20.GL_EXTENSIONS).replace(' ', '\n');
+	JTextArea glExtensions = new JTextArea(glExtensionsString);
+	JScrollPane glExtensionsScroll = new JScrollPane(glExtensions);
+	glExtensionsScroll.setPreferredSize(new Dimension(300, 80));
+	glExtensions.setEditable(false);
+	opengl.add(glExtensionsScroll, "wrap");
 
 	JPanel systemPanel = new JPanel(new MigLayout("", "[grow,fill][]", ""));
 	systemPanel.add(build, "wrap");
@@ -308,10 +317,10 @@ public class HelpDialog extends I18nJFrame {
 	tabbedPane.addTab(txt("gui.help.about"), aboutPanel);
 	tabbedPane.addTab(txt("gui.help.system"), systemPanel);
 
-	body.add(tabbedPane);
+	body.add(tabbedPane, "wrap");
 
 	/** BUTTONS **/
-	JPanel buttons = new JPanel(new MigLayout("", "push[][]", ""));
+	JPanel buttons = new JPanel(new MigLayout("", "push[]", ""));
 
 	okButton = new JButton("Ok");
 	okButton.addActionListener(new ActionListener() {
@@ -328,8 +337,10 @@ public class HelpDialog extends I18nJFrame {
 
 	buttons.add(okButton);
 
-	frame.add(body, BorderLayout.NORTH);
+	frame.add(body, BorderLayout.CENTER);
 	frame.add(buttons, BorderLayout.SOUTH);
+
+	frame.pack();
 
     }
 
