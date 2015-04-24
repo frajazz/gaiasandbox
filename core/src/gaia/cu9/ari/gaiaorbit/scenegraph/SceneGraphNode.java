@@ -47,6 +47,14 @@ public class SceneGraphNode implements ISceneGraphNode, IPosition {
 	}
     };
 
+    /** Static Thread local auxiliary Vector3f **/
+    protected static ThreadLocal<Vector3> aux2Vector3f = new ThreadLocal<Vector3>() {
+	@Override
+	protected Vector3 initialValue() {
+	    return new Vector3();
+	}
+    };
+
     /** Static Thread local auxiliary Vector2d **/
     protected static ThreadLocal<Vector2d> auxVector2d = new ThreadLocal<Vector2d>() {
 	@Override

@@ -7,6 +7,7 @@ import gaia.cu9.ari.gaiaorbit.render.IRenderable;
 import gaia.cu9.ari.gaiaorbit.scenegraph.ICamera;
 import gaia.cu9.ari.gaiaorbit.scenegraph.SceneGraphNode.RenderGroup;
 import gaia.cu9.ari.gaiaorbit.util.Constants;
+import gaia.cu9.ari.gaiaorbit.util.DecalUtils;
 import gaia.cu9.ari.gaiaorbit.util.GlobalConf;
 import gaia.cu9.ari.gaiaorbit.util.comp.DistToCameraComparator;
 import gaia.cu9.ari.gaiaorbit.util.time.TimeUtils;
@@ -23,7 +24,7 @@ import com.badlogic.gdx.graphics.Texture.TextureFilter;
 import com.badlogic.gdx.graphics.VertexAttribute;
 import com.badlogic.gdx.graphics.VertexAttributes.Usage;
 import com.badlogic.gdx.graphics.glutils.ShaderProgram;
-import com.badlogic.gdx.math.Vector3;
+import com.badlogic.gdx.math.Quaternion;
 
 public class ShaderQuadRenderSystem extends AbstractRenderSystem implements IObserver {
 
@@ -32,7 +33,7 @@ public class ShaderQuadRenderSystem extends AbstractRenderSystem implements IObs
     private boolean useStarColorTransit;
     private boolean starColorTransit = false;
     private Texture noise;
-    private Vector3 aux;
+    private Quaternion quaternion;
 
     /**
      * Creates a new shader quad render component.
@@ -84,7 +85,7 @@ public class ShaderQuadRenderSystem extends AbstractRenderSystem implements IObs
 	}
 	mesh.setIndices(indices);
 
-	aux = new Vector3();
+	quaternion = new Quaternion();
     }
 
     private void fillVertices(float[] vertices) {
@@ -130,6 +131,10 @@ public class ShaderQuadRenderSystem extends AbstractRenderSystem implements IObs
     @Override
     public void renderStud(List<IRenderable> renderables, ICamera camera) {
 	Collections.sort(renderables, comp);
+
+	// Calculate billobard rotation quaternion ONCE
+	DecalUtils.setBillboardRotation(quaternion, camera.getCamera().direction, camera.getCamera().up);
+
 	shaderProgram.begin();
 	if (!Constants.mobile) {
 	    // Global uniforms
@@ -141,7 +146,7 @@ public class ShaderQuadRenderSystem extends AbstractRenderSystem implements IObs
 	int size = renderables.size();
 	for (int i = 0; i < size; i++) {
 	    IRenderable s = renderables.get(i);
-	    s.render(shaderProgram, alphas[s.getComponentType().ordinal()], starColorTransit, mesh, camera);
+	    s.render(shaderProgram, alphas[s.getComponentType().ordinal()], starColorTransit, mesh, quaternion, camera);
 	}
 	shaderProgram.end();
 
