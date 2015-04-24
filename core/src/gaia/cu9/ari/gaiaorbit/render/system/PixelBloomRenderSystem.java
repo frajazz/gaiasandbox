@@ -18,31 +18,19 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Pixmap.Format;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.glutils.FrameBuffer;
-import com.badlogic.gdx.graphics.glutils.ImmediateModeRenderer20;
-import com.badlogic.gdx.graphics.glutils.ShaderProgram;
-import com.badlogic.gdx.graphics.glutils.ShapeRenderer.ShapeType;
 import com.badlogic.gdx.utils.viewport.Viewport;
 import com.bitfire.postprocessing.PostProcessor;
 import com.bitfire.postprocessing.effects.Bloom;
 import com.bitfire.postprocessing.filters.Blur.BlurType;
 
-public class PixelBloomRenderSystem extends AbstractRenderSystem implements IObserver {
+public class PixelBloomRenderSystem extends VBOPixelRenderSystem implements IObserver {
 
-    ImmediateModeRenderer20 renderer;
-    boolean starColorTransit = false;
     Map<String, PostProcessor> ppmap;
     Map<String, FrameBuffer> fbmap;
     int fbkey = 0;
 
     public PixelBloomRenderSystem(RenderGroup rg, int priority, float[] alphas) {
 	super(rg, priority, alphas);
-
-	// Initialise renderer
-	ShaderProgram pointShader = new ShaderProgram(Gdx.files.internal("shader/point.vertex.glsl"), Gdx.files.internal("shader/point.fragment.glsl"));
-	if (!pointShader.isCompiled()) {
-	    Gdx.app.error(this.getClass().getName(), "Point shader compilation failed:\n" + pointShader.getLog());
-	}
-	this.renderer = new ImmediateModeRenderer20(3000000, false, true, 0, pointShader);
 
 	// Initialize post processors
 	ppmap = new HashMap<String, PostProcessor>();
@@ -56,7 +44,7 @@ public class PixelBloomRenderSystem extends AbstractRenderSystem implements IObs
 	getFrameBuffer(GlobalConf.screenshot.SCREENSHOT_WIDTH, GlobalConf.screen.SCREEN_HEIGHT);
 	getFrameBuffer(GlobalConf.frame.RENDER_WIDTH, GlobalConf.frame.RENDER_HEIGHT);
 
-	EventManager.instance.subscribe(this, Events.TRANSIT_COLOUR_CMD, Events.SCREEN_RESIZE, Events.TOGGLE_STEREOSCOPIC);
+	EventManager.instance.subscribe(this, Events.SCREEN_RESIZE, Events.TOGGLE_STEREOSCOPIC);
     }
 
     @Override
@@ -76,7 +64,7 @@ public class PixelBloomRenderSystem extends AbstractRenderSystem implements IObs
 	    // Capture bloom
 	    pp.capture();
 
-	    renderPixels(renderables, camera);
+	    super.renderStud(renderables, camera);
 
 	    // Render bloom to our frame buffer
 	    pp.render(our_fb);
@@ -122,28 +110,14 @@ public class PixelBloomRenderSystem extends AbstractRenderSystem implements IObs
 		vp.apply();
 	} else {
 	    /** Render to image, use regular render method **/
-	    renderPixels(renderables, camera);
+	    super.renderStud(renderables, camera);
 	}
 
-    }
-
-    private void renderPixels(List<IRenderable> renderables, ICamera camera) {
-	// Render stars normally
-	renderer.begin(camera.getCamera().combined, ShapeType.Point.getGlType());
-	int size = renderables.size();
-	for (int i = 0; i < size; i++) {
-	    IRenderable s = renderables.get(i);
-	    s.render(renderer, alphas[s.getComponentType().ordinal()], starColorTransit);
-	}
-	renderer.end();
     }
 
     @Override
     public void notify(Events event, Object... data) {
 	switch (event) {
-	case TRANSIT_COLOUR_CMD:
-	    starColorTransit = (boolean) data[1];
-	    break;
 	case SCREEN_RESIZE:
 	    getFrameBuffer((Integer) data[0], (Integer) data[1]);
 	    break;

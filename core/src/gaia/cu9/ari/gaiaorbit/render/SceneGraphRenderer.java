@@ -9,7 +9,6 @@ import gaia.cu9.ari.gaiaorbit.render.system.IRenderSystem;
 import gaia.cu9.ari.gaiaorbit.render.system.LineRenderSystem;
 import gaia.cu9.ari.gaiaorbit.render.system.ModelBatchRenderSystem;
 import gaia.cu9.ari.gaiaorbit.render.system.PixelBloomRenderSystem;
-import gaia.cu9.ari.gaiaorbit.render.system.PixelRenderSystem;
 import gaia.cu9.ari.gaiaorbit.render.system.ShaderQuadRenderSystem;
 import gaia.cu9.ari.gaiaorbit.render.system.SpriteBatchRenderSystem;
 import gaia.cu9.ari.gaiaorbit.render.system.VBOPixelRenderSystem;
@@ -512,6 +511,7 @@ public class SceneGraphRenderer extends AbstractRenderer implements IProcessRend
 	    Gdx.app.postRunnable(new Runnable() {
 		@Override
 		public void run() {
+		    AbstractRenderSystem.POINT_UPDATE_FLAG = true;
 		    updatePixelRenderSystem();
 		}
 	    });
@@ -560,7 +560,7 @@ public class SceneGraphRenderer extends AbstractRenderer implements IProcessRend
 	if (renderProcesses != null && !renderProcesses.isEmpty()) {
 	    IRenderSystem sys = renderProcesses.get(0);
 	    if ((sys instanceof PixelBloomRenderSystem && !GlobalConf.scene.isBloomPixelRenderer()) ||
-		    (sys instanceof PixelRenderSystem && !GlobalConf.scene.isNormalPixelRenderer())) {
+		    (sys instanceof VBOPixelRenderSystem && !GlobalConf.scene.isNormalPixelRenderer())) {
 		IRenderSystem newsys = getPixelRenderSystem();
 		renderProcesses.remove(sys);
 		renderProcesses.add(0, newsys);
