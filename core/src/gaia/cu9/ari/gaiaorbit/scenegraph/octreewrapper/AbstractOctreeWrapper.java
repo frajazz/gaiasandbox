@@ -3,6 +3,7 @@ package gaia.cu9.ari.gaiaorbit.scenegraph.octreewrapper;
 import gaia.cu9.ari.gaiaorbit.event.EventManager;
 import gaia.cu9.ari.gaiaorbit.event.Events;
 import gaia.cu9.ari.gaiaorbit.render.SceneGraphRenderer.ComponentType;
+import gaia.cu9.ari.gaiaorbit.render.system.AbstractRenderSystem;
 import gaia.cu9.ari.gaiaorbit.scenegraph.CelestialBody;
 import gaia.cu9.ari.gaiaorbit.scenegraph.ICamera;
 import gaia.cu9.ari.gaiaorbit.scenegraph.SceneGraphNode;
@@ -31,6 +32,8 @@ public abstract class AbstractOctreeWrapper extends SceneGraphNode implements It
     /** Roulette list with the objects to process **/
     protected List<SceneGraphNode> roulette;
     public Map<SceneGraphNode, OctreeNode<SceneGraphNode>> parenthood;
+    /** The number of objects added to render in the last frame **/
+    private int lastNumberObjects = 0;
     /**
      * Is this just a copy?
      */
@@ -104,6 +107,13 @@ public abstract class AbstractOctreeWrapper extends SceneGraphNode implements It
 	if (!copy) {
 	    // Compute observed octants and fill roulette list
 	    root.update(transform, camera, roulette, 1f);
+
+	    if (roulette.size() != lastNumberObjects) {
+		// Need to update the points in renderer
+		AbstractRenderSystem.POINT_UPDATE_FLAG = true;
+		lastNumberObjects = roulette.size();
+	    }
+
 	    updateLocal(time, camera);
 
 	    // Call the update method of all entities in the roulette list. This is implemented in the subclass.

@@ -324,6 +324,7 @@ public class OctreeNode<T extends IPosition> implements ILineRenderable {
      * @param cam The current camera.
      * @param roulette List where the nodes to be processed are to be added.
      * @param opacity The opacity to set.
+     * @return Whether new objects have been added since last frame
      */
     public void update(Transform parentTransform, ICamera cam, List<T> roulette, float opacity) {
 	parentTransform.getTranslation(transform);
@@ -336,7 +337,7 @@ public class OctreeNode<T extends IPosition> implements ILineRenderable {
 
 	    // Compute distance and view angle
 	    distToCamera = auxD1.set(centre).add(cam.getInversePos()).len();
-	    viewAngle = Math.atan(radius / distToCamera) / cam.getFovFactor();
+	    viewAngle = (radius / distToCamera) / cam.getFovFactor();
 
 	    if (viewAngle < ANGLE_THRESHOLD_1) {
 		// Stay in current level
@@ -360,6 +361,7 @@ public class OctreeNode<T extends IPosition> implements ILineRenderable {
 	    } else {
 		// View angle between th1 and th2
 		addObjectsTo(roulette);
+
 		if (childrenCount > 0) {
 		    // Opacity = this?  1 - alpha : children? alpha
 		    double alpha = MathUtilsd.lint(viewAngle, ANGLE_THRESHOLD_1, ANGLE_THRESHOLD_2, 0d, 1d);
@@ -372,7 +374,6 @@ public class OctreeNode<T extends IPosition> implements ILineRenderable {
 			}
 		    }
 		}
-
 	    }
 	}
     }

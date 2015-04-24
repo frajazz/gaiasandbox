@@ -9,6 +9,8 @@ import java.util.Comparator;
 import java.util.List;
 
 public abstract class AbstractRenderSystem implements IRenderSystem {
+    /** When this is true, new point information is available, so new data is streamed to the GPU **/
+    public static boolean POINT_UPDATE_FLAG = true;
 
     private RenderGroup group;
     protected int priority;

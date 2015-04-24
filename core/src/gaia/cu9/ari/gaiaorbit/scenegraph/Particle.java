@@ -15,7 +15,6 @@ import java.util.Random;
 import com.badlogic.gdx.assets.AssetManager;
 import com.badlogic.gdx.graphics.g3d.ModelBatch;
 import com.badlogic.gdx.graphics.glutils.ImmediateModeRenderer;
-import com.badlogic.gdx.math.Vector3;
 
 /**
  * A point particle which may represent a star, a galaxy, etc.
@@ -129,9 +128,7 @@ public class Particle extends CelestialBody implements IPointRenderable {
     @Override
     public void update(ITimeFrameProvider time, final Transform parentTransform, ICamera camera, float opacity) {
 	if (appmag <= GlobalConf.runtime.LIMIT_MAG_RUNTIME) {
-	    this.opacity = opacity * (page != null ? page.opacity : 1);
 	    transform.position.set(parentTransform.position).add(pos);
-
 	    distToCamera = (float) transform.position.len();
 	    addToRender(this, RenderGroup.POINT);
 	    boolean visible = camera.isVisible(time, this, GlobalConf.scene.COMPUTE_GAIA_SCAN) || camera.isFocus(this);
@@ -191,18 +188,6 @@ public class Particle extends CelestialBody implements IPointRenderable {
 	} else {
 	    super.render(params);
 	}
-    }
-
-    /**
-     * Point rendering.
-     */
-    @Override
-    public void render(ImmediateModeRenderer renderer, float alpha, boolean colorTransit) {
-	float[] col = colorTransit ? ccTransit : cc;
-	renderer.color(col[0], col[1], col[2], opacity * alpha);
-	Vector3 aux = auxVector3f.get();
-	transform.getTranslationf(aux);
-	renderer.vertex(aux.x, aux.y, aux.z);
     }
 
     @Override

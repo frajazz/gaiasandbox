@@ -23,14 +23,12 @@ import com.badlogic.gdx.utils.Array;
 
 public class VBOPixelRenderSystem extends AbstractRenderSystem implements IObserver {
 
-    boolean initialized = false;
     boolean starColorTransit = false;
     Vector3 aux;
     ShaderProgram pointShader;
 
     public int vertexIdx;
     public final Mesh mesh;
-    private int numVertices;
     private final int vertexSize;
     private final int colorOffset;
     private final int additionalOffset;
@@ -69,7 +67,10 @@ public class VBOPixelRenderSystem extends AbstractRenderSystem implements IObser
 
     @Override
     public void renderStud(List<IRenderable> renderables, ICamera camera) {
-	if (!initialized) {
+	if (POINT_UPDATE_FLAG) {
+	    // Reset variables
+	    vertexIdx = 0;
+
 	    int size = renderables.size();
 	    for (int i = 0; i < size; i++) {
 		// 2 FPS gain
@@ -91,9 +92,9 @@ public class VBOPixelRenderSystem extends AbstractRenderSystem implements IObser
 		vertices[idx + 2] = aux.z;
 
 		vertexIdx += vertexSize;
-		numVertices++;
 	    }
-	    initialized = true;
+	    // Put flag down
+	    POINT_UPDATE_FLAG = false;
 	}
 
 	pointShader.begin();
