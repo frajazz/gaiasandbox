@@ -5,6 +5,7 @@ import gaia.cu9.ari.gaiaorbit.event.EventManager;
 import gaia.cu9.ari.gaiaorbit.event.Events;
 import gaia.cu9.ari.gaiaorbit.event.IObserver;
 import gaia.cu9.ari.gaiaorbit.render.SceneGraphRenderer.ComponentType;
+import gaia.cu9.ari.gaiaorbit.render.system.AbstractRenderSystem;
 import gaia.cu9.ari.gaiaorbit.util.math.MathUtilsd;
 
 import java.io.FileOutputStream;
@@ -196,6 +197,7 @@ public class GlobalConf {
 	    switch (event) {
 	    case LIMIT_MAG_CMD:
 		LIMIT_MAG_RUNTIME = (float) data[0];
+		AbstractRenderSystem.POINT_UPDATE_FLAG = true;
 		break;
 
 	    case INPUT_ENABLED_CMD:
