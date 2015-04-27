@@ -196,12 +196,9 @@ public abstract class AbstractPositionEntity extends SceneGraphNode {
 	return distToCamera;
     }
 
-    protected void renderLabel(SpriteBatch batch, ShaderProgram shader, BitmapFont font, ICamera camera, float alpha, String label, Vector3d pos, float scale, float size, float[] colour) {
+    protected void renderLabel(SpriteBatch batch, ShaderProgram shader, BitmapFont font, ICamera camera, String label, Vector3d pos, float scale, float size, float[] colour) {
 	// The smoothing scale must be set according to the distance
 	shader.setUniformf("scale", scale / camera.getFovFactor());
-
-	// Linear interpolation of angle [0, 1]
-	shader.setUniformf("avalue", alpha);
 
 	double len = pos.len();
 	Vector3d p = pos.clamp(0, len - size);

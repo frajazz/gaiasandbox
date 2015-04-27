@@ -46,7 +46,6 @@ public class SpriteBatchRenderSystem extends AbstractRenderSystem {
     public void renderStud(List<IRenderable> renderables, ICamera camera) {
 	Collections.sort(renderables, comp);
 	batch.begin();
-	float labelAlpha = alphas[ComponentType.Labels.ordinal()];
 	int size = renderables.size();
 	for (int i = 0; i < size; i++) {
 	    IRenderable s = renderables.get(i);
@@ -55,7 +54,9 @@ public class SpriteBatchRenderSystem extends AbstractRenderSystem {
 		s.render(batch, camera, alphas[s.getComponentType().ordinal()]);
 	    } else {
 		// Render font
-		s.render(batch, shaderProgram, bitmapFont, camera, labelAlpha);
+		shaderProgram.setUniformf("a_labelAlpha", alphas[ComponentType.Labels.ordinal()]);
+		shaderProgram.setUniformf("a_componentAlpha", alphas[s.getComponentType().ordinal()]);
+		s.render(batch, shaderProgram, bitmapFont, camera);
 	    }
 	}
 	batch.end();

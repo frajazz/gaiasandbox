@@ -26,21 +26,14 @@ public interface ILabelRenderable extends IRenderable {
      * @param shader
      * @param font
      * @param camera
-     * @param alpha
      */
-    public void render(SpriteBatch batch, ShaderProgram shader, BitmapFont font, ICamera camera, float alpha);
+    public void render(SpriteBatch batch, ShaderProgram shader, BitmapFont font, ICamera camera);
 
     /**
      * Returns an array with the label colour in the fashion [r, g, b, a].
      * @return Array with the colour.
      */
     public float[] labelColour();
-
-    /**
-     * Returns the label opacity value between 0 and 1.
-     * @return The opacity.
-     */
-    public float labelAlpha();
 
     /**
      * Returns the label size.

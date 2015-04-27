@@ -60,7 +60,7 @@ public abstract class CelestialBody extends AbstractPositionEntity implements IL
      */
     public abstract double THRESHOLD_ANGLE_POINT();
 
-    private double TH_OVER_FACTOR;
+    public double TH_OVER_FACTOR;
 
     /** Absolute magnitude, m = -2.5 log10(flux), with the flux at 10 pc **/
     public float absmag;
@@ -108,7 +108,7 @@ public abstract class CelestialBody extends AbstractPositionEntity implements IL
 	    render((ShaderProgram) first, (Float) params[1], (Boolean) params[2], (Mesh) params[3], (ICamera) params[4]);
 	} else if (first instanceof SpriteBatch) {
 	    // LABEL
-	    render((SpriteBatch) first, (ShaderProgram) params[1], (BitmapFont) params[2], (ICamera) params[3], (Float) params[4]);
+	    render((SpriteBatch) first, (ShaderProgram) params[1], (BitmapFont) params[2], (ICamera) params[3]);
 	} else if (first instanceof ModelBatch) {
 	    // Normal model
 	    render((ModelBatch) first, (Float) params[1]);
@@ -175,10 +175,12 @@ public abstract class CelestialBody extends AbstractPositionEntity implements IL
      * Label rendering.
      */
     @Override
-    public void render(SpriteBatch batch, ShaderProgram shader, BitmapFont font, ICamera camera, float alpha) {
+    public void render(SpriteBatch batch, ShaderProgram shader, BitmapFont font, ICamera camera) {
 	Vector3d pos = auxVector3d.get();
 	labelPosition(pos);
-	renderLabel(batch, shader, font, camera, alpha * labelAlpha(), label(), pos, labelScale(), labelSize(), labelColour());
+	shader.setUniformf("a_viewAngle", viewAngle);
+	shader.setUniformf("a_thOverFactor", (float) TH_OVER_FACTOR);
+	renderLabel(batch, shader, font, camera, label(), pos, labelScale(), labelSize(), labelColour());
     }
 
     protected void setColor2Data() {
@@ -293,12 +295,6 @@ public abstract class CelestialBody extends AbstractPositionEntity implements IL
     @Override
     public float[] labelColour() {
 	return labelColour;
-    }
-
-    @Override
-    public float labelAlpha() {
-	// Increase the 2.5f to increase the range where the label is kind of transparent. 
-	return (float) Math.max(0, Math.min(.95f, (viewAngle - TH_OVER_FACTOR) / (TH_OVER_FACTOR * 2.5f))) * compalpha;
     }
 
     @Override

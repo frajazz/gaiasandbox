@@ -72,7 +72,7 @@ public class Constellation extends LineObject implements ILabelRenderable {
 	if (params[0] instanceof ImmediateModeRenderer20) {
 	    super.render(params);
 	} else if (params[0] instanceof SpriteBatch) {
-	    render((SpriteBatch) params[0], (ShaderProgram) params[1], (BitmapFont) params[2], (ICamera) params[3], (Float) params[4]);
+	    render((SpriteBatch) params[0], (ShaderProgram) params[1], (BitmapFont) params[2], (ICamera) params[3]);
 	}
     }
 
@@ -99,10 +99,12 @@ public class Constellation extends LineObject implements ILabelRenderable {
      * Label rendering.
      */
     @Override
-    public void render(SpriteBatch batch, ShaderProgram shader, BitmapFont font, ICamera camera, float alpha) {
+    public void render(SpriteBatch batch, ShaderProgram shader, BitmapFont font, ICamera camera) {
 	Vector3d pos = auxVector3d.get();
 	labelPosition(pos);
-	renderLabel(batch, shader, font, camera, alpha * labelAlpha(), label(), pos, labelScale(), labelSize(), labelColour());
+	shader.setUniformf("a_viewAngle", 90f);
+	shader.setUniformf("a_thOverFactor", 1f);
+	renderLabel(batch, shader, font, camera, label(), pos, labelScale(), labelSize(), labelColour());
     }
 
     @Override
@@ -121,11 +123,6 @@ public class Constellation extends LineObject implements ILabelRenderable {
     @Override
     public float[] labelColour() {
 	return cc;
-    }
-
-    @Override
-    public float labelAlpha() {
-	return .9f * constalpha;
     }
 
     @Override

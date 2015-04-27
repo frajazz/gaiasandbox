@@ -9,9 +9,9 @@ import gaia.cu9.ari.gaiaorbit.render.system.IRenderSystem;
 import gaia.cu9.ari.gaiaorbit.render.system.LineRenderSystem;
 import gaia.cu9.ari.gaiaorbit.render.system.ModelBatchRenderSystem;
 import gaia.cu9.ari.gaiaorbit.render.system.PixelBloomRenderSystem;
+import gaia.cu9.ari.gaiaorbit.render.system.PixelRenderSystem;
 import gaia.cu9.ari.gaiaorbit.render.system.ShaderQuadRenderSystem;
 import gaia.cu9.ari.gaiaorbit.render.system.SpriteBatchRenderSystem;
-import gaia.cu9.ari.gaiaorbit.render.system.PixelRenderSystem;
 import gaia.cu9.ari.gaiaorbit.scenegraph.CameraManager.CameraMode;
 import gaia.cu9.ari.gaiaorbit.scenegraph.ICamera;
 import gaia.cu9.ari.gaiaorbit.scenegraph.NaturalCamera;
@@ -167,7 +167,7 @@ public class SceneGraphRenderer extends AbstractRenderer implements IProcessRend
 	    Gdx.app.error(this.getClass().getName(), "Star shader compilation failed:\n" + starShader.getLog());
 	}
 
-	fontShader = new ShaderProgram(Gdx.files.internal("shader/simple.vertex.glsl"), Gdx.files.internal("shader/font.fragment.glsl"));
+	fontShader = new ShaderProgram(Gdx.files.internal("shader/font.vertex.glsl"), Gdx.files.internal("shader/font.fragment.glsl"));
 	if (!fontShader.isCompiled()) {
 	    Gdx.app.error(this.getClass().getName(), "Font shader compilation failed:\n" + fontShader.getLog());
 	}

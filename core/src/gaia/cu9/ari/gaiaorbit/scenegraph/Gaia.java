@@ -101,12 +101,12 @@ public class Gaia extends ModelBody {
 
     @Override
     protected float labelMax() {
-	return 2.5e-7f;
+	return 2.5e-8f;
     }
 
     @Override
     protected float labelFactor() {
-	return 2e4f;
+	return 2e5f;
     }
 
     @Override
