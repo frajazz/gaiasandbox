@@ -1,0 +1,39 @@
+#ifdef GL_ES
+precision mediump float;
+precision mediump int;
+#endif
+
+varying vec2 v_texCoords;
+
+uniform vec2 u_viewportInverse;
+uniform sampler2D u_texture0;
+uniform float u_fade;
+
+vec4 fuzzy(sampler2D texture, vec2 texCoords, vec2 viewportInv) {
+    vec3 rgbN = texture2D(texture,
+        		    texCoords.xy + (vec2(0.0, -1.0) * viewportInv)).xyz;
+    vec3 rgbS = texture2D(texture,
+        		    texCoords.xy + (vec2(0.0, +1.0) * viewportInv)).xyz;
+    vec3 rgbE = texture2D(texture,
+            		    texCoords.xy + (vec2(+1.0, +0.0) * viewportInv)).xyz;
+    vec3 rgbW = texture2D(texture,
+            		    texCoords.xy + (vec2(-1.0, +0.0) * viewportInv)).xyz;
+    
+    vec3 rgbNW = texture2D(texture,
+		    texCoords.xy + (vec2(-1.0, -1.0) * viewportInv)).xyz;
+    vec3 rgbNE = texture2D(texture,
+		    texCoords.xy + (vec2(+1.0, -1.0) * viewportInv)).xyz;
+    vec3 rgbSW = texture2D(texture,
+		    texCoords.xy + (vec2(-1.0, +1.0) * viewportInv)).xyz;
+    vec3 rgbSE = texture2D(texture,
+		    texCoords.xy + (vec2(+1.0, +1.0) * viewportInv)).xyz;
+    vec3 rgbM = texture2D(texture, texCoords.xy).xyz;
+    
+    
+    
+    return vec4((rgbN + rgbS + rgbE + rgbW) / u_fade + (rgbNW + rgbNE + rgbSW + rgbSE) / (u_fade + 2.0) + rgbM, 1.0);
+}
+
+void main() {
+	gl_FragColor = fuzzy(u_texture0, v_texCoords, u_viewportInverse);
+}

@@ -9,6 +9,7 @@ import gaia.cu9.ari.gaiaorbit.scenegraph.SceneGraphNode.RenderGroup;
 import gaia.cu9.ari.gaiaorbit.util.GlobalConf;
 import gaia.cu9.ari.gaiaorbit.util.GlobalConf.ProgramConf.StereoProfile;
 import gaia.cu9.ari.gaiaorbit.util.GlobalResources;
+import gaia.cu9.ari.gaiaorbit.util.postprocessing.effects.Fuzzy;
 
 import java.util.HashMap;
 import java.util.List;
@@ -143,17 +144,27 @@ public class PixelBloomRenderSystem extends PixelRenderSystem implements IObserv
 	String key = getKey(w, h);
 	if (!ppmap.containsKey(key)) {
 	    PostProcessor pp = new PostProcessor(w, h, true, true, true);
+
+	    // Bloom
 	    Bloom bloom = new Bloom(w, h);
 	    bloom.setThreshold(0.0f);
 	    bloom.setBaseIntesity(1f);
-	    bloom.setBaseSaturation(1f);
-	    bloom.setBloomIntesity(4.5f);
-	    bloom.setBloomSaturation(2f);
-	    bloom.setBlurPasses(2);
-	    bloom.setBlurAmount(0.0f);
+	    bloom.setBaseSaturation(.9f);
+	    bloom.setBloomIntesity(6f);
+	    bloom.setBloomSaturation(.5f);
+	    bloom.setBlurPasses(1);
+	    bloom.setBlurAmount(10.0f);
 	    bloom.setBlurType(BlurType.Gaussian5x5b);
+	    bloom.setEnabled(false);
 	    pp.addEffect(bloom);
+
+	    // Fuzzy
+	    Fuzzy fuzzy = new Fuzzy(w, h, 3f);
+	    pp.addEffect(fuzzy);
+
+	    // Enable post processor
 	    pp.setEnabled(true);
+
 	    ppmap.put(key, pp);
 	}
 	return ppmap.get(key);
