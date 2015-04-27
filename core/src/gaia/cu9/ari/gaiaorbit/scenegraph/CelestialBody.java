@@ -126,8 +126,6 @@ public abstract class CelestialBody extends AbstractPositionEntity implements IL
 
 	float size = getFuzzyRenderSize(camera);
 
-	//transf.set(camera.getCamera().combined).translate((float) selectedPos.x, (float) selectedPos.y, (float) selectedPos.z).rotate(rotation).scale(size, size, size);
-	shader.setUniformMatrix("u_projTrans", camera.getCamera().combined);
 	shader.setUniformf("u_pos", transform.getTranslationf(auxVector3f.get()));
 	shader.setUniformf("u_size", size);
 

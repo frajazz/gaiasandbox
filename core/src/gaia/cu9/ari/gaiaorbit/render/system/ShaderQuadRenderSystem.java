@@ -140,6 +140,8 @@ public class ShaderQuadRenderSystem extends AbstractRenderSystem implements IObs
 
 	shaderProgram.begin();
 
+	// General uniforms
+	shaderProgram.setUniformMatrix("u_projTrans", camera.getCamera().combined);
 	shaderProgram.setUniformf("u_quaternion", quaternion.x, quaternion.y, quaternion.z, quaternion.w);
 
 	if (!Constants.mobile) {
@@ -149,6 +151,7 @@ public class ShaderQuadRenderSystem extends AbstractRenderSystem implements IObs
 	    noise.bind(0);
 	    shaderProgram.setUniformi("u_noiseTexture", 0);
 	}
+
 	int size = renderables.size();
 	for (int i = 0; i < size; i++) {
 	    IRenderable s = renderables.get(i);
