@@ -28,11 +28,18 @@ void main() {
     
     //viewAngleApparent = (float) Math.atan((getRadius() * GlobalConf.scene.STAR_BRIGHTNESS) / distToCamera) / camera.getFovFactor();
     float viewAngleApparent = atan((a_size * u_starBrightness) / length(pos)) / u_fovFactor;
+    
+    
+    
     // opacity *= MathUtilsd.lint(viewAngleApparent, 0, THRESHOLD_ANGLE_POINT(), GlobalConf.scene.POINT_ALPHA_MIN, GlobalConf.scene.POINT_ALPHA_MAX);
     float opacity = lint(viewAngleApparent, 0, a_thAnglePoint, u_pointAlphaMin, u_pointAlphaMax);
     
     gl_Position = u_projModelView * vec4(pos, 0.0);
-    v_col = vec4(a_color.rgb, opacity * u_alpha);
     
+    if(viewAngleApparent > a_thAnglePoint * 2.0){
+	v_col = vec4(0.0);
+    }else{
+	v_col = vec4(a_color.rgb, opacity * u_alpha);
+    }
     gl_PointSize = 1.0;
 }

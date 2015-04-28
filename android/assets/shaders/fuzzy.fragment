@@ -29,9 +29,9 @@ vec4 fuzzy(sampler2D texture, vec2 texCoords, vec2 viewportInv) {
 		    texCoords.xy + (vec2(+1.0, +1.0) * viewportInv)).xyz;
     vec3 rgbM = texture2D(texture, texCoords.xy).xyz;
     
+    float fade_2 = u_fade + 2.0;
     
-    
-    return vec4((rgbN + rgbS + rgbE + rgbW) / u_fade + (rgbNW + rgbNE + rgbSW + rgbSE) / (u_fade + 2.0) + rgbM, 1.0);
+    return vec4((rgbN + rgbS + rgbE + rgbW) / u_fade + (rgbNW + rgbNE + rgbSW + rgbSE) / fade_2 + rgbM, 1.0);
 }
 
 void main() {
