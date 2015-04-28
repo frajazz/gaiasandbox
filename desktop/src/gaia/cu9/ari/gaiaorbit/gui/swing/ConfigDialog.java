@@ -275,7 +275,7 @@ public class ConfigDialog extends I18nJFrame {
 	final JCheckBox vsync = new JCheckBox(txt("gui.vsync"), GlobalConf.screen.VSYNC);
 
 	// Pixel renderer
-	ThreadComboBoxBean[] pixelRenderers = new ThreadComboBoxBean[] { new ThreadComboBoxBean(txt("gui.pixrenderer.normal"), 0), new ThreadComboBoxBean(txt("gui.pixrenderer.bloom"), 1) };
+	ThreadComboBoxBean[] pixelRenderers = new ThreadComboBoxBean[] { new ThreadComboBoxBean(txt("gui.pixrenderer.normal"), 0), new ThreadComboBoxBean(txt("gui.pixrenderer.bloom"), 1), new ThreadComboBoxBean(txt("gui.pixrenderer.fuzzy"), 2) };
 	final JComboBox<ThreadComboBoxBean> pixelRenderer = new JComboBox<ThreadComboBoxBean>(pixelRenderers);
 	pixelRenderer.setSelectedItem(pixelRenderers[GlobalConf.scene.PIXEL_RENDERER]);
 

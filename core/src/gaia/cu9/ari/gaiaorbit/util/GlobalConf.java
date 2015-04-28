@@ -549,7 +549,7 @@ public class GlobalConf {
 	    p.setProperty("scene.star.thresholdangle.none", Double.toString(Math.toDegrees(STAR_TH_ANGLE_NONE)));
 	    p.setProperty("scene.point.alpha.min", Float.toString(POINT_ALPHA_MIN));
 	    p.setProperty("scene.point.alpha.max", Float.toString(POINT_ALPHA_MAX));
-	    p.setProperty("scene.renderer.pixel", Integer.toString(PIXEL_RENDERER));
+	    p.setProperty("scene.renderer.star", Integer.toString(PIXEL_RENDERER));
 	    // Visibility of components
 	    int idx = 0;
 	    ComponentType[] cts = ComponentType.values();
@@ -578,7 +578,7 @@ public class GlobalConf {
 	    STAR_TH_ANGLE_NONE = Math.toRadians(Double.parseDouble(p.getProperty("scene.star.thresholdangle.none")));
 	    POINT_ALPHA_MIN = Float.parseFloat(p.getProperty("scene.point.alpha.min"));
 	    POINT_ALPHA_MAX = Float.parseFloat(p.getProperty("scene.point.alpha.max"));
-	    PIXEL_RENDERER = Integer.parseInt(p.getProperty("scene.renderer.pixel"));
+	    PIXEL_RENDERER = Integer.parseInt(p.getProperty("scene.renderer.star"));
 	    //Visibility of components
 	    ComponentType[] cts = ComponentType.values();
 	    VISIBILITY = new boolean[cts.length];
@@ -690,6 +690,10 @@ public class GlobalConf {
 
 	public boolean isBloomPixelRenderer() {
 	    return PIXEL_RENDERER == 1;
+	}
+
+	public boolean isFuzzyPixelRenderer() {
+	    return PIXEL_RENDERER == 2;
 	}
 
     }

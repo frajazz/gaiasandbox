@@ -9,6 +9,7 @@ import gaia.cu9.ari.gaiaorbit.render.system.IRenderSystem;
 import gaia.cu9.ari.gaiaorbit.render.system.LineRenderSystem;
 import gaia.cu9.ari.gaiaorbit.render.system.ModelBatchRenderSystem;
 import gaia.cu9.ari.gaiaorbit.render.system.PixelBloomRenderSystem;
+import gaia.cu9.ari.gaiaorbit.render.system.PixelFuzzyRenderSystem;
 import gaia.cu9.ari.gaiaorbit.render.system.PixelRenderSystem;
 import gaia.cu9.ari.gaiaorbit.render.system.ShaderQuadRenderSystem;
 import gaia.cu9.ari.gaiaorbit.render.system.SpriteBatchRenderSystem;
@@ -223,7 +224,7 @@ public class SceneGraphRenderer extends AbstractRenderer implements IProcessRend
 	 * =======  INITIALIZE RENDER COMPONENTS  =======
 	 * 
 	 **/
-	pixelRenderSystems = new AbstractRenderSystem[2];
+	pixelRenderSystems = new AbstractRenderSystem[3];
 
 	renderProcesses = new ArrayList<IRenderSystem>();
 
@@ -545,6 +546,9 @@ public class SceneGraphRenderer extends AbstractRenderer implements IProcessRend
 	    if (GlobalConf.scene.isBloomPixelRenderer()) {
 		sys = new PixelBloomRenderSystem(RenderGroup.POINT, 0, alphas);
 		sys.setPreRunnable(blendNoDepthRunnable);
+	    } else if (GlobalConf.scene.isFuzzyPixelRenderer()) {
+		sys = new PixelFuzzyRenderSystem(RenderGroup.POINT, 0, alphas);
+		sys.setPreRunnable(blendNoDepthRunnable);
 	    } else {
 		sys = new PixelRenderSystem(RenderGroup.POINT, 0, alphas);
 		sys.setPreRunnable(blendNoDepthRunnable);
@@ -560,7 +564,8 @@ public class SceneGraphRenderer extends AbstractRenderer implements IProcessRend
 	if (renderProcesses != null && !renderProcesses.isEmpty()) {
 	    IRenderSystem sys = renderProcesses.get(0);
 	    if ((sys instanceof PixelBloomRenderSystem && !GlobalConf.scene.isBloomPixelRenderer()) ||
-		    (sys instanceof PixelRenderSystem && !GlobalConf.scene.isNormalPixelRenderer())) {
+		    (sys instanceof PixelRenderSystem && !GlobalConf.scene.isNormalPixelRenderer()) ||
+		    (sys instanceof PixelFuzzyRenderSystem && !GlobalConf.scene.isFuzzyPixelRenderer())) {
 		IRenderSystem newsys = getPixelRenderSystem();
 		renderProcesses.remove(sys);
 		renderProcesses.add(0, newsys);

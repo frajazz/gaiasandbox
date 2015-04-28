@@ -292,7 +292,7 @@ public class KeyMappings {
 	addMapping(new ProgramAction(txt("action.toggle", txt("element.pixelrenderer")), new Runnable() {
 	    @Override
 	    public void run() {
-		EventManager.instance.post(Events.PIXEL_RENDERER_CMD, (GlobalConf.scene.PIXEL_RENDERER + 1) % 2);
+		EventManager.instance.post(Events.PIXEL_RENDERER_CMD, (GlobalConf.scene.PIXEL_RENDERER + 1) % 3);
 		EventManager.instance.post(Events.PIXEL_RENDERER_UPDATE);
 	    }
 	}), Keys.CONTROL_LEFT, Keys.P);
