@@ -71,21 +71,18 @@ public abstract class ModelBody extends CelestialBody {
     @Override
     protected void addToRenderLists(ICamera camera) {
 	camera.checkClosest(this);
-	if (viewAngle >= THRESHOLD_ANGLE_NONE() * camera.getFovFactor()) {
-	    if (viewAngle >= THRESHOLD_ANGLE_POINT() * camera.getFovFactor()) {
-		double shaderCamera = THRESHOLD_ANGLE_QUAD() * camera.getFovFactor();
-		double shaderCameraOverlap = shaderCamera * ModelBody.SHADER_MODEL_OVERLAP_FACTOR;
-		if (viewAngle < shaderCameraOverlap) {
-		    addToRender(this, RenderGroup.SHADER_F);
-		}
-		if (viewAngle > shaderCamera) {
-		    addToRender(this, RenderGroup.MODEL_F);
-		}
+	if (viewAngle >= THRESHOLD_ANGLE_POINT() * camera.getFovFactor()) {
+	    if (viewAngle < THRESHOLD_ANGLE_QUAD() * camera.getFovFactor()) {
+		addToRender(this, RenderGroup.SHADER_F);
+	    } else {
+		addToRender(this, RenderGroup.MODEL_F);
 	    }
+
 	    if (renderLabel()) {
 		addToRender(this, RenderGroup.LABEL);
 	    }
 	}
+
     }
 
     @Override

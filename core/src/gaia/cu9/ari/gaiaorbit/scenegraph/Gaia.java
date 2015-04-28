@@ -18,8 +18,8 @@ import com.badlogic.gdx.math.Quaternion;
 
 public class Gaia extends ModelBody {
 
-    private static final double TH_ANGLE_NONE = ModelBody.TH_ANGLE_POINT / 1e11;
-    private static final double TH_ANGLE_POINT = ModelBody.TH_ANGLE_POINT / 1e10;
+    private static final double TH_ANGLE_NONE = ModelBody.TH_ANGLE_POINT / 1e18;
+    private static final double TH_ANGLE_POINT = ModelBody.TH_ANGLE_POINT / 1e17;
     private static final double TH_ANGLE_SHADER = ModelBody.TH_ANGLE_POINT / 3.0;
 
     @Override

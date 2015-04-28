@@ -122,8 +122,7 @@ public class Particle extends CelestialBody implements IPointRenderable {
     }
 
     /**
-     * Re-implementation of update method of {@link CelestialBody} and {@link SceneGraphNode} 
-     * that ignores the stars that are behind the camera.
+     * Re-implementation of update method of {@link CelestialBody} and {@link SceneGraphNode}.
      */
     @Override
     public void update(ITimeFrameProvider time, final Transform parentTransform, ICamera camera, float opacity) {
@@ -238,7 +237,7 @@ public class Particle extends CelestialBody implements IPointRenderable {
 	if (viewAngle > Constants.TH_ANGLE_DOWN / camera.getFovFactor()) {
 	    double dist = distToCamera;
 	    if (viewAngle > Constants.TH_ANGLE_UP / camera.getFovFactor()) {
-		dist = getRadius() / Constants.TAN_TH_ANGLE_UP;
+		dist = (float) radius / Constants.TAN_TH_ANGLE_UP;
 	    }
 	    computedSize = dist * Constants.TAN_TH_ANGLE_DOWN * Constants.STAR_SIZE_FACTOR_INV;
 

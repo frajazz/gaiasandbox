@@ -7,7 +7,6 @@ import gaia.cu9.ari.gaiaorbit.scenegraph.component.RotationComponent;
 import gaia.cu9.ari.gaiaorbit.util.Constants;
 import gaia.cu9.ari.gaiaorbit.util.GlobalConf;
 import gaia.cu9.ari.gaiaorbit.util.color.ColourUtils;
-import gaia.cu9.ari.gaiaorbit.util.math.MathUtilsd;
 import gaia.cu9.ari.gaiaorbit.util.math.Vector2d;
 import gaia.cu9.ari.gaiaorbit.util.math.Vector3d;
 import gaia.cu9.ari.gaiaorbit.util.time.ITimeFrameProvider;
@@ -149,26 +148,17 @@ public abstract class CelestialBody extends AbstractPositionEntity implements IL
     }
 
     public float getFuzzyRenderSize(ICamera camera) {
-	double size;
-	double thShaderOverlap = THRESHOLD_ANGLE_QUAD() * ModelBody.SHADER_MODEL_OVERLAP_FACTOR;
-	float tanThShaderOverlapDist = (float) Math.tan(thShaderOverlap) * distToCamera;
-	double thPointOverlap = THRESHOLD_ANGLE_POINT() * ModelBody.SHADER_MODEL_OVERLAP_FACTOR;
-	// Size stays the same until angle gets very small, in which case it starts to decrease
-	if (viewAngle < thPointOverlap) {
-	    // Angle is small, we interpolate the size until we get to the point
-	    size = MathUtilsd.lint(viewAngle,
-		    THRESHOLD_ANGLE_POINT(),
-		    thPointOverlap,
-		    tanThShaderOverlapDist / 5,
-		    tanThShaderOverlapDist);
-	} else if (viewAngle < thShaderOverlap) {
-	    // Constant size
-	    size = tanThShaderOverlapDist;
-	} else {
-	    size = this.size;
+	float thAngleQuad = (float) THRESHOLD_ANGLE_QUAD() * camera.getFovFactor();
+	double size = 0f;
+	if (viewAngle >= THRESHOLD_ANGLE_POINT() * camera.getFovFactor()) {
+	    if (viewAngle < thAngleQuad) {
+		float tanThShaderOverlapDist = (float) Math.tan(thAngleQuad) * distToCamera;
+		size = tanThShaderOverlapDist;
+	    } else {
+		size = this.size;
+	    }
 	}
-	size /= camera.getFovFactor();
-	return (float) size;
+	return (float) size / camera.getFovFactor();
     }
 
     /**
