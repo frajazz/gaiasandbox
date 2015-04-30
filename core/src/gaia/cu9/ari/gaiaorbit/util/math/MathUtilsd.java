@@ -494,4 +494,30 @@ public final class MathUtilsd {
 	return (float) (y0 + (y1 - y0) * (x - rx0) / (rx1 - rx0));
     }
 
+    static Vector3d aux0, aux1, aux2, aux3, aux4;
+    static {
+	aux0 = new Vector3d();
+	aux1 = new Vector3d();
+	aux2 = new Vector3d();
+	aux3 = new Vector3d();
+	aux4 = new Vector3d();
+    }
+
+    /**
+     * Gets the distance from the point x0 to the line denoted by x1-x2.<br/>
+     * Check <a href="http://mathworld.wolfram.com/Point-LineDistance3-Dimensional.html">this link</a>.
+     * @param x1 The first segment delimiter.
+     * @param x2 The second segment delimiter.
+     * @param x0 The point.
+     * @return The euclidean distance between x1x2 and x0.
+     */
+    public static double distancePointLine(double x1, double y1, double z1, double x2, double y2, double z2, double x0, double y0, double z0) {
+
+	// d = mod((x0-x1).crs(x0-x2)) / mod(x2-x1)
+	aux0.set(x0, y0, z0);
+	aux1.set(x1, y1, z1);
+	aux2.set(x2, y2, z2);
+
+	return aux3.set(aux0).sub(aux1).crs(aux4.set(aux0).sub(aux2)).len() / aux3.set(aux2).sub(aux1).len();
+    }
 }

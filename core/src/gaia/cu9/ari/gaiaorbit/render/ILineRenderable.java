@@ -1,6 +1,7 @@
 package gaia.cu9.ari.gaiaorbit.render;
 
-import com.badlogic.gdx.graphics.glutils.ImmediateModeRenderer20;
+import gaia.cu9.ari.gaiaorbit.render.system.LineRenderSystem;
+import gaia.cu9.ari.gaiaorbit.scenegraph.ICamera;
 
 /**
  * Interface to implement by all entities that are to be rendered as lines.
@@ -9,6 +10,6 @@ import com.badlogic.gdx.graphics.glutils.ImmediateModeRenderer20;
  */
 public interface ILineRenderable extends IRenderable {
 
-    public void render(ImmediateModeRenderer20 renderer, float alpha);
+    public void render(LineRenderSystem renderer, ICamera camera, float alpha);
 
 }

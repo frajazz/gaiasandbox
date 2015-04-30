@@ -27,7 +27,7 @@ public class OrbitalParametersProvider implements IOrbitDataProvider {
 	    double f = params.e * params.semimajoraxis;
 	    double b = Math.sqrt(Math.pow(a, 2) - Math.pow(f, 2));
 
-	    int nsamples = Math.min(Math.max(180, (int) a), 10000);
+	    int nsamples = Math.min(Math.max(180, (int) (a * 0.01)), 500);
 	    double step = 360d / nsamples;
 	    Vector3d[] samples = new Vector3d[nsamples + 1];
 	    int i = 0;
@@ -50,6 +50,7 @@ public class OrbitalParametersProvider implements IOrbitDataProvider {
 		data.z.add(point.z);
 		data.time.add(new Date());
 	    }
+	    EventManager.instance.post(Events.ORBIT_DATA_LOADED, data, parameter.name);
 	} catch (Exception e) {
 	    EventManager.instance.post(Events.JAVA_EXCEPTION, e);
 	}

@@ -4,7 +4,7 @@
 	<classpathentry kind="src" path="src"/>
 	<classpathentry kind="lib" path="lib/jython-standalone-2.5.4-rc1.jar"/>
 	<classpathentry kind="lib" path="lib/stil.jar" sourcepath="/home/tsagrista/Programs/Libraries/STIL/stil_src.zip"/>
-	<classpathentry kind="lib" path="lib/gdx-1.5.5.jar" sourcepath="/home/tsagrista/Programs/Libraries/libgdx-1.5.5/sources/gdx-sources.jar"/>
+	<classpathentry kind="lib" path="lib/gdx-1.5.5.jar" sourcepath="/home/tsagrista/Programs/Libraries/libgdx/libgdx-1.5.0/sources/gdx-sources.jar"/>
 	<classpathentry kind="lib" path="lib/gdx-controllers-1.5.5.jar"/>
 	<classpathentry kind="lib" path="lib/postprocessing.jar" sourcepath="/libgdx-contribs-postprocessing"/>
 	<classpathentry kind="output" path="bin"/>

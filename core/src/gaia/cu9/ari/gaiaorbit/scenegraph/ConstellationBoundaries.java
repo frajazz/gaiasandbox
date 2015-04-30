@@ -1,11 +1,10 @@
 package gaia.cu9.ari.gaiaorbit.scenegraph;
 
+import gaia.cu9.ari.gaiaorbit.render.system.LineRenderSystem;
 import gaia.cu9.ari.gaiaorbit.util.math.Vector3d;
 import gaia.cu9.ari.gaiaorbit.util.time.ITimeFrameProvider;
 
 import java.util.List;
-
-import com.badlogic.gdx.graphics.glutils.ImmediateModeRenderer20;
 
 public class ConstellationBoundaries extends LineObject {
     float alpha = .8f;
@@ -19,7 +18,7 @@ public class ConstellationBoundaries extends LineObject {
     }
 
     @Override
-    public void render(ImmediateModeRenderer20 renderer, float alpha) {
+    public void render(LineRenderSystem renderer, ICamera camera, float alpha) {
 	alpha *= this.alpha;
 	// This is so that the shape renderer does not mess up the z-buffer
 	for (List<Vector3d> points : boundaries) {
@@ -27,11 +26,7 @@ public class ConstellationBoundaries extends LineObject {
 	    Vector3d previous = null;
 	    for (Vector3d point : points) {
 		if (previous != null) {
-		    renderer.color(cc[0], cc[1], cc[2], alpha);
-		    renderer.vertex((float) previous.x, (float) previous.y, (float) previous.z);
-		    renderer.color(cc[0], cc[1], cc[2], alpha);
-		    renderer.vertex((float) point.x, (float) point.y, (float) point.z);
-
+		    renderer.addLine((float) previous.x, (float) previous.y, (float) previous.z, (float) point.x, (float) point.y, (float) point.z, cc[0], cc[1], cc[2], alpha);
 		}
 		previous = point;
 	    }

@@ -21,36 +21,37 @@ import com.badlogic.gdx.graphics.glutils.ShapeRenderer.ShapeType;
 import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.utils.Array;
 
-public class PixelRenderSystem extends AbstractRenderSystem implements IObserver {
+public class PixelRenderSystem extends ImmediateRenderSystem implements IObserver {
 
     boolean starColorTransit = false;
     Vector3 aux;
-    ShaderProgram pointShader;
-
-    public int vertexIdx;
-    public final Mesh mesh;
-    private final int vertexSize;
-    private final int colorOffset;
-    private final int additionalOffset;
-    public final float[] vertices;
+    int additionalOffset;
 
     public PixelRenderSystem(RenderGroup rg, int priority, float[] alphas) {
 	super(rg, priority, alphas);
 
-	// Initialise renderer
-	pointShader = new ShaderProgram(Gdx.files.internal("shader/point.vertex.glsl"), Gdx.files.internal("shader/point.fragment.glsl"));
-	if (!pointShader.isCompiled()) {
-	    Gdx.app.error(this.getClass().getName(), "Point shader compilation failed:\n" + pointShader.getLog());
-	}
-	pointShader.begin();
-	pointShader.setUniformf("u_pointAlphaMin", GlobalConf.scene.POINT_ALPHA_MIN);
-	pointShader.setUniformf("u_pointAlphaMax", GlobalConf.scene.POINT_ALPHA_MAX);
-	pointShader.end();
+	EventManager.instance.subscribe(this, Events.TRANSIT_COLOUR_CMD);
+    }
 
+    @Override
+    protected void initShaderProgram() {
+	// Initialise renderer
+	shaderProgram = new ShaderProgram(Gdx.files.internal("shader/point.vertex.glsl"), Gdx.files.internal("shader/point.fragment.glsl"));
+	if (!shaderProgram.isCompiled()) {
+	    Gdx.app.error(this.getClass().getName(), "Point shader compilation failed:\n" + shaderProgram.getLog());
+	}
+	shaderProgram.begin();
+	shaderProgram.setUniformf("u_pointAlphaMin", GlobalConf.scene.POINT_ALPHA_MIN);
+	shaderProgram.setUniformf("u_pointAlphaMax", GlobalConf.scene.POINT_ALPHA_MAX);
+	shaderProgram.end();
+    }
+
+    @Override
+    protected void initVertices() {
 	aux = new Vector3();
 
 	/** Init renderer **/
-	int maxVertices = 3000000;
+	maxVertices = 3000000;
 
 	VertexAttribute[] attribs = buildVertexAttributes();
 	mesh = new Mesh(false, maxVertices, 0, attribs);
@@ -61,8 +62,6 @@ public class PixelRenderSystem extends AbstractRenderSystem implements IObserver
 		: 0;
 	additionalOffset = mesh.getVertexAttribute(Usage.Generic) != null ? mesh.getVertexAttribute(Usage.Generic).offset / 4
 		: 0;
-
-	EventManager.instance.subscribe(this, Events.TRANSIT_COLOUR_CMD);
     }
 
     @Override
@@ -70,6 +69,7 @@ public class PixelRenderSystem extends AbstractRenderSystem implements IObserver
 	if (POINT_UPDATE_FLAG) {
 	    // Reset variables
 	    vertexIdx = 0;
+	    numVertices = 0;
 
 	    int size = renderables.size();
 	    for (int i = 0; i < size; i++) {
@@ -97,19 +97,19 @@ public class PixelRenderSystem extends AbstractRenderSystem implements IObserver
 	    POINT_UPDATE_FLAG = false;
 	}
 
-	pointShader.begin();
-	pointShader.setUniformMatrix("u_projModelView", camera.getCamera().combined);
-	pointShader.setUniformf("u_camPos", camera.getCurrent().getPos().setVector3(aux));
-	pointShader.setUniformf("u_fovFactor", camera.getFovFactor());
-	pointShader.setUniformf("u_alpha", alphas[0]);
-	pointShader.setUniformf("u_starBrightness", GlobalConf.scene.STAR_BRIGHTNESS);
+	shaderProgram.begin();
+	shaderProgram.setUniformMatrix("u_projModelView", camera.getCamera().combined);
+	shaderProgram.setUniformf("u_camPos", camera.getCurrent().getPos().setVector3(aux));
+	shaderProgram.setUniformf("u_fovFactor", camera.getFovFactor());
+	shaderProgram.setUniformf("u_alpha", alphas[0]);
+	shaderProgram.setUniformf("u_starBrightness", GlobalConf.scene.STAR_BRIGHTNESS);
 	mesh.setVertices(vertices, 0, vertexIdx);
-	mesh.render(pointShader, ShapeType.Point.getGlType());
-	pointShader.end();
+	mesh.render(shaderProgram, ShapeType.Point.getGlType());
+	shaderProgram.end();
 
     }
 
-    private VertexAttribute[] buildVertexAttributes() {
+    protected VertexAttribute[] buildVertexAttributes() {
 	Array<VertexAttribute> attribs = new Array<VertexAttribute>();
 	attribs.add(new VertexAttribute(Usage.Position, 3, ShaderProgram.POSITION_ATTRIBUTE));
 	attribs.add(new VertexAttribute(Usage.ColorPacked, 4, ShaderProgram.COLOR_ATTRIBUTE));
@@ -128,5 +128,4 @@ public class PixelRenderSystem extends AbstractRenderSystem implements IObserver
 	}
 
     }
-
 }

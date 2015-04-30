@@ -941,6 +941,12 @@ public class Matrix4d implements Serializable {
 	return new float[] { (float) val[M03], (float) val[M13], (float) val[M23] };
     }
 
+    public void getTranslationf(float[] vec) {
+	vec[0] = (float) val[M03];
+	vec[1] = (float) val[M13];
+	vec[2] = (float) val[M23];
+    }
+
     public Vector3d addTranslationTo(Vector3d position) {
 	position.x += val[M03];
 	position.y += val[M13];

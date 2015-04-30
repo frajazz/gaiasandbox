@@ -2,6 +2,7 @@
 precision mediump float;
 #endif
 
+// v_texCoords are UV coordinates in [0..1]
 varying vec2 v_texCoords;
 
 uniform sampler2D u_noiseTexture;

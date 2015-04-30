@@ -518,8 +518,10 @@ public class GlobalConf {
 	public boolean STAR_COLOR_TRANSIT;
 	public boolean ONLY_OBSERVED_STARS;
 	public boolean COMPUTE_GAIA_SCAN;
-	/** The pixel render system: 0 - normal, 1 - bloom **/
+	/** The pixel render system: 0 - normal, 1 - bloom, 2 - fuzzy **/
 	public int PIXEL_RENDERER;
+	/** The line render system: 0 - normal, 1 - shader **/
+	public int LINE_RENDERER;
 
 	public double STAR_TH_ANGLE_NONE;
 	public double STAR_TH_ANGLE_POINT;
@@ -550,6 +552,7 @@ public class GlobalConf {
 	    p.setProperty("scene.point.alpha.min", Float.toString(POINT_ALPHA_MIN));
 	    p.setProperty("scene.point.alpha.max", Float.toString(POINT_ALPHA_MAX));
 	    p.setProperty("scene.renderer.star", Integer.toString(PIXEL_RENDERER));
+	    p.setProperty("scene.renderer.line", Integer.toString(LINE_RENDERER));
 	    // Visibility of components
 	    int idx = 0;
 	    ComponentType[] cts = ComponentType.values();
@@ -579,6 +582,7 @@ public class GlobalConf {
 	    POINT_ALPHA_MIN = Float.parseFloat(p.getProperty("scene.point.alpha.min"));
 	    POINT_ALPHA_MAX = Float.parseFloat(p.getProperty("scene.point.alpha.max"));
 	    PIXEL_RENDERER = Integer.parseInt(p.getProperty("scene.renderer.star"));
+	    LINE_RENDERER = Integer.parseInt(p.getProperty("scene.renderer.line"));
 	    //Visibility of components
 	    ComponentType[] cts = ComponentType.values();
 	    VISIBILITY = new boolean[cts.length];
@@ -696,6 +700,13 @@ public class GlobalConf {
 	    return PIXEL_RENDERER == 2;
 	}
 
+	public boolean isNormalLineRenderer() {
+	    return LINE_RENDERER == 0;
+	}
+
+	public boolean isQuadLineRenderer() {
+	    return LINE_RENDERER == 1;
+	}
     }
 
     public static class VersionConf implements IConf {

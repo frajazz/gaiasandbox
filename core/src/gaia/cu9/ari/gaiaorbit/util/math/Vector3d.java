@@ -530,6 +530,12 @@ public class Vector3d implements Serializable {
 	return new float[] { (float) x, (float) y, (float) z };
     }
 
+    public void valuesf(float[] vec) {
+	vec[0] = (float) x;
+	vec[1] = (float) y;
+	vec[2] = (float) z;
+    }
+
     /**
      * Scales a given vector with a scalar and add the result to this one, i.e.
      * <code>this = this + s*v</code>.

@@ -6,12 +6,13 @@ import gaia.cu9.ari.gaiaorbit.event.IObserver;
 import gaia.cu9.ari.gaiaorbit.render.IPostProcessor.PostProcessBean;
 import gaia.cu9.ari.gaiaorbit.render.system.AbstractRenderSystem;
 import gaia.cu9.ari.gaiaorbit.render.system.IRenderSystem;
+import gaia.cu9.ari.gaiaorbit.render.system.LineQuadRenderSystem;
 import gaia.cu9.ari.gaiaorbit.render.system.LineRenderSystem;
 import gaia.cu9.ari.gaiaorbit.render.system.ModelBatchRenderSystem;
 import gaia.cu9.ari.gaiaorbit.render.system.PixelBloomRenderSystem;
 import gaia.cu9.ari.gaiaorbit.render.system.PixelFuzzyRenderSystem;
 import gaia.cu9.ari.gaiaorbit.render.system.PixelRenderSystem;
-import gaia.cu9.ari.gaiaorbit.render.system.ShaderQuadRenderSystem;
+import gaia.cu9.ari.gaiaorbit.render.system.QuadRenderSystem;
 import gaia.cu9.ari.gaiaorbit.render.system.SpriteBatchRenderSystem;
 import gaia.cu9.ari.gaiaorbit.scenegraph.CameraManager.CameraMode;
 import gaia.cu9.ari.gaiaorbit.scenegraph.ICamera;
@@ -273,12 +274,11 @@ public class SceneGraphRenderer extends AbstractRenderer implements IProcessRend
 	});
 
 	// SHADER STARS
-	AbstractRenderSystem shaderBackProc = new ShaderQuadRenderSystem(RenderGroup.SHADER, priority++, alphas, starShader, true);
+	AbstractRenderSystem shaderBackProc = new QuadRenderSystem(RenderGroup.SHADER, priority++, alphas, starShader, true);
 	shaderBackProc.setPreRunnable(blendNoDepthRunnable);
 
 	// LINES
-	AbstractRenderSystem lineProc = new LineRenderSystem(RenderGroup.LINE, priority++, alphas);
-	lineProc.setPreRunnable(blendDepthRunnable);
+	AbstractRenderSystem lineProc = getLineRenderSystem();
 
 	// MODEL FRONT
 	AbstractRenderSystem modelFrontProc = new ModelBatchRenderSystem(RenderGroup.MODEL_F, priority++, alphas, modelBatchF, false);
@@ -307,7 +307,7 @@ public class SceneGraphRenderer extends AbstractRenderer implements IProcessRend
 	modelAtmProc.setPreRunnable(blendDepthRunnable);
 
 	// SHADER SSO
-	AbstractRenderSystem shaderFrontProc = new ShaderQuadRenderSystem(RenderGroup.SHADER_F, priority++, alphas, starShader, false);
+	AbstractRenderSystem shaderFrontProc = new QuadRenderSystem(RenderGroup.SHADER_F, priority++, alphas, starShader, false);
 	shaderFrontProc.setPreRunnable(blendDepthRunnable);
 
 	// Add components to set
@@ -315,9 +315,9 @@ public class SceneGraphRenderer extends AbstractRenderer implements IProcessRend
 	renderProcesses.add(modelBackProc);
 	renderProcesses.add(annotationsProc);
 	renderProcesses.add(shaderBackProc);
-	renderProcesses.add(lineProc);
 	renderProcesses.add(modelFrontProc);
 	renderProcesses.add(modelStarsProc);
+	renderProcesses.add(lineProc);
 	renderProcesses.add(labelsProc);
 	renderProcesses.add(modelAtmProc);
 	renderProcesses.add(shaderFrontProc);
@@ -537,6 +537,20 @@ public class SceneGraphRenderer extends AbstractRenderer implements IProcessRend
     public void resize(int w, int h) {
 	extendViewport.update(w, h);
 	stretchViewport.update(w, h);
+    }
+
+    private AbstractRenderSystem getLineRenderSystem() {
+	AbstractRenderSystem sys = null;
+	if (GlobalConf.scene.isNormalLineRenderer()) {
+	    // Normal
+	    sys = new LineRenderSystem(RenderGroup.LINE, 0, alphas);
+	    sys.setPreRunnable(blendDepthRunnable);
+	} else {
+	    // Quad
+	    sys = new LineQuadRenderSystem(RenderGroup.LINE, 0, alphas);
+	    sys.setPreRunnable(blendDepthRunnable);
+	}
+	return sys;
     }
 
     private AbstractRenderSystem getPixelRenderSystem() {

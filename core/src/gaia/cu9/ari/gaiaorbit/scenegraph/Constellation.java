@@ -1,6 +1,8 @@
 package gaia.cu9.ari.gaiaorbit.scenegraph;
 
 import gaia.cu9.ari.gaiaorbit.render.ILabelRenderable;
+import gaia.cu9.ari.gaiaorbit.render.system.ImmediateRenderSystem;
+import gaia.cu9.ari.gaiaorbit.render.system.LineRenderSystem;
 import gaia.cu9.ari.gaiaorbit.util.Constants;
 import gaia.cu9.ari.gaiaorbit.util.math.Vector3d;
 import gaia.cu9.ari.gaiaorbit.util.time.ITimeFrameProvider;
@@ -12,7 +14,6 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
-import com.badlogic.gdx.graphics.glutils.ImmediateModeRenderer20;
 import com.badlogic.gdx.graphics.glutils.ShaderProgram;
 
 /**
@@ -69,7 +70,7 @@ public class Constellation extends LineObject implements ILabelRenderable {
 
     @Override
     public void render(Object... params) {
-	if (params[0] instanceof ImmediateModeRenderer20) {
+	if (params[0] instanceof ImmediateRenderSystem) {
 	    super.render(params);
 	} else if (params[0] instanceof SpriteBatch) {
 	    render((SpriteBatch) params[0], (ShaderProgram) params[1], (BitmapFont) params[2], (ICamera) params[3]);
@@ -80,17 +81,16 @@ public class Constellation extends LineObject implements ILabelRenderable {
      * Line rendering.
      */
     @Override
-    public void render(ImmediateModeRenderer20 renderer, float alpha) {
+    public void render(LineRenderSystem renderer, ICamera camera, float alpha) {
 	constalpha = alpha;
 	alpha *= this.alpha;
 	// This is so that the shape renderer does not mess up the z-buffer
 	for (AbstractPositionEntity[] pair : stars) {
 	    double[] p1 = pair[0].transform.getTranslation();
 	    double[] p2 = pair[1].transform.getTranslation();
-	    renderer.color(cc[0], cc[1], cc[2], alpha);
-	    renderer.vertex((float) p1[0], (float) p1[1], (float) p1[2]);
-	    renderer.color(cc[0], cc[1], cc[2], alpha);
-	    renderer.vertex((float) p2[0], (float) p2[1], (float) p2[2]);
+
+	    renderer.addLine((float) p1[0], (float) p1[1], (float) p1[2], (float) p2[0], (float) p2[1], (float) p2[2], cc[0], cc[1], cc[2], alpha);
+
 	}
 
     }

@@ -279,12 +279,20 @@ public class ConfigDialog extends I18nJFrame {
 	final JComboBox<ThreadComboBoxBean> pixelRenderer = new JComboBox<ThreadComboBoxBean>(pixelRenderers);
 	pixelRenderer.setSelectedItem(pixelRenderers[GlobalConf.scene.PIXEL_RENDERER]);
 
+	// Line renderer
+	ThreadComboBoxBean[] lineRenderers = new ThreadComboBoxBean[] { new ThreadComboBoxBean(txt("gui.linerenderer.normal"), 0), new ThreadComboBoxBean(txt("gui.linerenderer.quad"), 1) };
+	final JComboBox<ThreadComboBoxBean> lineRenderer = new JComboBox<ThreadComboBoxBean>(lineRenderers);
+	lineRenderer.setSelectedItem(lineRenderers[GlobalConf.scene.LINE_RENDERER]);
+
+	// AA
 	graphics.add(msaaInfo, "span,wrap");
 	graphics.add(new JLabel(txt("gui.aa") + ":"));
 	graphics.add(msaa);
 	graphics.add(vsync, "wrap");
 	graphics.add(new JLabel(txt("gui.pixrenderer") + ":"));
-	graphics.add(pixelRenderer, "span");
+	graphics.add(pixelRenderer, "span,wrap");
+	graphics.add(new JLabel(txt("gui.linerenderer") + ":"));
+	graphics.add(lineRenderer, "span");
 
 	/** NOTICE **/
 	JPanel notice = new JPanel(new MigLayout("", "[]", ""));
@@ -698,6 +706,7 @@ public class ConfigDialog extends I18nJFrame {
 		    GlobalConf.postprocess.POSTPROCESS_ANTIALIAS = bean.value;
 		    GlobalConf.screen.VSYNC = vsync.isSelected();
 
+		    // Pixel renderer
 		    bean = (ThreadComboBoxBean) pixelRenderer.getSelectedItem();
 		    int oldPx = GlobalConf.scene.PIXEL_RENDERER;
 		    GlobalConf.scene.PIXEL_RENDERER = bean.value;
@@ -705,6 +714,10 @@ public class ConfigDialog extends I18nJFrame {
 			// Issue command
 			EventManager.instance.post(Events.PIXEL_RENDERER_UPDATE);
 		    }
+
+		    // Line renderer
+		    bean = (ThreadComboBoxBean) lineRenderer.getSelectedItem();
+		    GlobalConf.scene.LINE_RENDERER = bean.value;
 
 		    // Interface
 		    LangComboBoxBean lbean = (LangComboBoxBean) lang.getSelectedItem();

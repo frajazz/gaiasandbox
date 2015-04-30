@@ -2,6 +2,7 @@ package gaia.cu9.ari.gaiaorbit.util.tree;
 
 import gaia.cu9.ari.gaiaorbit.render.ILineRenderable;
 import gaia.cu9.ari.gaiaorbit.render.SceneGraphRenderer.ComponentType;
+import gaia.cu9.ari.gaiaorbit.render.system.LineRenderSystem;
 import gaia.cu9.ari.gaiaorbit.scenegraph.ICamera;
 import gaia.cu9.ari.gaiaorbit.scenegraph.Transform;
 import gaia.cu9.ari.gaiaorbit.util.GlobalResources;
@@ -507,7 +508,7 @@ public class OctreeNode<T extends IPosition> implements ILineRenderable {
     com.badlogic.gdx.graphics.Color col = new com.badlogic.gdx.graphics.Color();
 
     @Override
-    public void render(ImmediateModeRenderer20 sr, float alpha) {
+    public void render(LineRenderSystem sr, ICamera camera, float alpha) {
 	float maxDepth = OctreeNode.maxDepth * 2;
 	// Color depends on depth
 	Color col = new Color(Color.HSBtoRGB((float) depth / (float) maxDepth, 1f, 0.5f));
@@ -586,10 +587,8 @@ public class OctreeNode<T extends IPosition> implements ILineRenderable {
     }
 
     /** Draws a line **/
-    private void line(ImmediateModeRenderer20 sr, double x1, double y1, double z1, double x2, double y2, double z2, com.badlogic.gdx.graphics.Color col) {
-	sr.color(col);
-	sr.vertex((float) x1, (float) y1, (float) z1);
-	sr.color(col);
-	sr.vertex((float) x2, (float) y2, (float) z2);
+    private void line(LineRenderSystem sr, double x1, double y1, double z1, double x2, double y2, double z2, com.badlogic.gdx.graphics.Color col) {
+	sr.addLine((float) x1, (float) y1, (float) z1, (float) x2, (float) y2, (float) z2, col);
     }
+
 }

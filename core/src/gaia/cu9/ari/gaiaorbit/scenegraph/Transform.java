@@ -122,6 +122,14 @@ public class Transform {
 	}
     }
 
+    public void getTranslationf(float[] vec) {
+	if (position != null) {
+	    position.valuesf(vec);
+	} else if (transform != null) {
+	    transform.getTranslationf(vec);
+	}
+    }
+
     @Override
     public String toString() {
 	if (position != null) {

@@ -5,6 +5,7 @@ import gaia.cu9.ari.gaiaorbit.data.orbit.OrbitData;
 import gaia.cu9.ari.gaiaorbit.data.orbit.OrbitDataLoader;
 import gaia.cu9.ari.gaiaorbit.event.EventManager;
 import gaia.cu9.ari.gaiaorbit.event.Events;
+import gaia.cu9.ari.gaiaorbit.render.system.LineRenderSystem;
 import gaia.cu9.ari.gaiaorbit.scenegraph.component.OrbitComponent;
 import gaia.cu9.ari.gaiaorbit.util.Constants;
 import gaia.cu9.ari.gaiaorbit.util.coord.Coordinates;
@@ -18,16 +19,15 @@ import java.util.Date;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.assets.AssetManager;
-import com.badlogic.gdx.graphics.glutils.ImmediateModeRenderer20;
 
 public class Orbit extends LineObject {
 
     /** Threshold angle **/
-    protected static final float ANGLE_LIMIT = (float) Math.toRadians(.3);
+    protected static final float ANGLE_LIMIT = (float) Math.toRadians(1.5);
     /**
      * Special overlap factor
      */
-    protected static final float SHADER_MODEL_OVERLAP_FACTOR = 50f;
+    protected static final float SHADER_MODEL_OVERLAP_FACTOR = 20f;
 
     public OrbitData orbitData;
     protected Vector3d prev, curr;
@@ -52,7 +52,7 @@ public class Orbit extends LineObject {
 	    IOrbitDataProvider provider;
 	    try {
 		provider = providerClass.newInstance();
-		provider.load(oc.source, new OrbitDataLoader.OrbitDataLoaderParameter(providerClass, oc));
+		provider.load(oc.source, new OrbitDataLoader.OrbitDataLoaderParameter(name, providerClass, oc));
 		orbitData = provider.getData();
 	    } catch (Exception e) {
 		Gdx.app.error(getClass().getSimpleName(), e.getMessage());
@@ -119,7 +119,7 @@ public class Orbit extends LineObject {
     }
 
     @Override
-    public void render(ImmediateModeRenderer20 renderer, float alpha) {
+    public void render(LineRenderSystem renderer, ICamera camera, float alpha) {
 	alpha *= this.alpha;
 
 	// Make origin Gaia
@@ -141,10 +141,8 @@ public class Orbit extends LineObject {
 	    prev.mul(localTransformD);
 	    curr.mul(localTransformD);
 
-	    renderer.color(cc[0], cc[1], cc[2], alpha);
-	    renderer.vertex((float) prev.x, (float) prev.y, (float) prev.z);
-	    renderer.color(cc[0], cc[1], cc[2], alpha);
-	    renderer.vertex((float) curr.x, (float) curr.y, (float) curr.z);
+	    renderer.addLine((float) prev.x, (float) prev.y, (float) prev.z, (float) curr.x, (float) curr.y, (float) curr.z, cc[0], cc[1], cc[2], alpha);
+
 	}
     }
 

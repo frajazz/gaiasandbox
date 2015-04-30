@@ -24,17 +24,15 @@ import com.badlogic.gdx.graphics.Texture.TextureFilter;
 import com.badlogic.gdx.graphics.VertexAttribute;
 import com.badlogic.gdx.graphics.VertexAttributes.Usage;
 import com.badlogic.gdx.graphics.glutils.ShaderProgram;
-import com.badlogic.gdx.math.Matrix4;
 import com.badlogic.gdx.math.Quaternion;
 
-public class ShaderQuadRenderSystem extends AbstractRenderSystem implements IObserver {
+public class QuadRenderSystem extends AbstractRenderSystem implements IObserver {
 
     private ShaderProgram shaderProgram;
     private Mesh mesh;
     private boolean useStarColorTransit;
     private boolean starColorTransit = false;
     private Texture noise;
-    private Matrix4 transform;
     private Quaternion quaternion;
 
     /**
@@ -46,7 +44,7 @@ public class ShaderQuadRenderSystem extends AbstractRenderSystem implements IObs
      * @param mesh The mesh.
      * @param useStarColorTransit Whether to use the star color transit or not.
      */
-    public ShaderQuadRenderSystem(RenderGroup rg, int priority, float[] alphas, ShaderProgram shaderProgram, boolean useStarColorTransit) {
+    public QuadRenderSystem(RenderGroup rg, int priority, float[] alphas, ShaderProgram shaderProgram, boolean useStarColorTransit) {
 	super(rg, priority, alphas);
 	this.shaderProgram = shaderProgram;
 	this.useStarColorTransit = useStarColorTransit;
@@ -88,7 +86,6 @@ public class ShaderQuadRenderSystem extends AbstractRenderSystem implements IObs
 	mesh.setIndices(indices);
 
 	quaternion = new Quaternion();
-	transform = new Matrix4();
     }
 
     private void fillVertices(float[] vertices) {
@@ -104,7 +101,7 @@ public class ShaderQuadRenderSystem extends AbstractRenderSystem implements IObs
 	final float v2 = 0;
 
 	float color = Color.WHITE.toFloatBits();
-	;
+
 	int idx = 0;
 	vertices[idx++] = x;
 	vertices[idx++] = y;
