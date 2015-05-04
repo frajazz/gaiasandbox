@@ -10,6 +10,8 @@
 
 - New pixel renderer [\#22](https://github.com/ari-zah/gaiasandbox/issues/22)
 
+- Add controller support [\#21](https://github.com/ari-zah/gaiasandbox/issues/21)
+
 - Motion blur effect [\#20](https://github.com/ari-zah/gaiasandbox/issues/20)
 
 - Interface overhaul [\#19](https://github.com/ari-zah/gaiasandbox/issues/19)
