@@ -101,6 +101,7 @@ public abstract class PixelPostProcessRenderSystem extends PixelRenderSystem imp
 	    }
 
 	    GlobalResources.spriteBatch.begin();
+	    GlobalResources.spriteBatch.setColor(1f, 1f, 1f, 1f);
 	    GlobalResources.spriteBatch.draw(tex, screenX, screenY, 0, 0, outWidth, outHeight, 1, 1, 0, 0, 0, width, height, false, true);
 	    GlobalResources.spriteBatch.end();
 	    // Apply previous viewport
