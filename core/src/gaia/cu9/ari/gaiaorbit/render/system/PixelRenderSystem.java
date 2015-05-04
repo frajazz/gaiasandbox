@@ -75,7 +75,7 @@ public class PixelRenderSystem extends ImmediateRenderSystem implements IObserve
 	    for (int i = 0; i < size; i++) {
 		// 2 FPS gain
 		CelestialBody cb = (CelestialBody) renderables.get(i);
-		float[] col = starColorTransit ? cb.ccTransit : cb.cc;
+		float[] col = starColorTransit ? cb.ccTransit : cb.ccPale;
 		// COLOR
 		vertices[vertexIdx + colorOffset] = Color.toFloatBits(col[0], col[1], col[2], 1.0f);
 
