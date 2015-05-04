@@ -6,15 +6,17 @@
 
 **Implemented enhancements:**
 
+- Big performance improvement in star rendering [\#23](https://github.com/ari-zah/gaiasandbox/issues/23)
+
 - New pixel renderer [\#22](https://github.com/ari-zah/gaiasandbox/issues/22)
 
 - Motion blur effect [\#20](https://github.com/ari-zah/gaiasandbox/issues/20)
 
 - Interface overhaul [\#19](https://github.com/ari-zah/gaiasandbox/issues/19)
 
-**Closed issues:**
-
 - Better looking lines [\#18](https://github.com/ari-zah/gaiasandbox/issues/18)
+
+**Closed issues:**
 
 - deprecated [\#17](https://github.com/ari-zah/gaiasandbox/issues/17)
 
@@ -48,6 +50,8 @@
 
 - Add interface tab to configuration [\#8](https://github.com/ari-zah/gaiasandbox/issues/8)
 
+- Internationalize the application [\#5](https://github.com/ari-zah/gaiasandbox/issues/5)
+
 - Move node data format to JSON [\#1](https://github.com/ari-zah/gaiasandbox/issues/1)
 
 **Fixed bugs:**
@@ -55,10 +59,6 @@
 - Investigate VM crash [\#4](https://github.com/ari-zah/gaiasandbox/issues/4)
 
 - Decide fate of desktop/doc/gaiasandbox\_manual.tex [\#3](https://github.com/ari-zah/gaiasandbox/issues/3)
-
-**Closed issues:**
-
-- Internationalize the application [\#5](https://github.com/ari-zah/gaiasandbox/issues/5)
 
 ## [0.703b](https://github.com/ari-zah/gaiasandbox/tree/0.703b) (2014-12-17)
 
