@@ -10,6 +10,7 @@ import gaia.cu9.ari.gaiaorbit.gui.swing.ScriptDialog;
 import gaia.cu9.ari.gaiaorbit.interfce.KeyMappings;
 import gaia.cu9.ari.gaiaorbit.util.GlobalConf;
 import gaia.cu9.ari.gaiaorbit.util.I18n;
+import gaia.cu9.ari.gaiaorbit.util.Logger;
 import gaia.cu9.ari.gaiaorbit.util.math.MathUtilsd;
 
 import java.awt.Font;
@@ -48,6 +49,7 @@ public class GaiaSandboxDesktop implements IObserver {
     public static void main(String[] args) {
 
         try {
+            gsd = new GaiaSandboxDesktop();
 
             UIManager.setLookAndFeel("com.alee.laf.WebLookAndFeel");
             WebLookAndFeel.setAllowLinuxTransparency(false);
@@ -55,7 +57,7 @@ public class GaiaSandboxDesktop implements IObserver {
 
             String props = System.getProperty("properties.file");
             if (props == null || props.isEmpty()) {
-                props = initConfigFile(true);
+                props = initConfigFile(false);
             }
 
             File confFile = new File(props);
@@ -66,8 +68,29 @@ public class GaiaSandboxDesktop implements IObserver {
                 // In case of running in 'developer' mode
                 version = new FileInputStream(new File("../android/assets/data/dummyversion"));
             }
-            GlobalConf.initialize(fis, version);
-            fis.close();
+            try {
+                GlobalConf.initialize(fis, version);
+            } catch (Exception e) {
+                // Retry
+                FileInputStream fis2 = null;
+                try {
+                    confFile = new File(initConfigFile(true));
+                    fis2 = new FileInputStream(confFile);
+
+                    GlobalConf.initialize(fis2, version);
+                } catch (Exception e1) {
+                    // Total error!
+                    Logger.error(e1);
+                    return;
+                } finally {
+                    if (fis2 != null)
+                        fis2.close();
+
+                }
+                Logger.info("Overwritten outated configuration file in " + confFile.getAbsolutePath());
+            } finally {
+                fis.close();
+            }
 
             // Initialize i18n
             I18n.initialize("./data/i18n/gsbundle");
@@ -80,7 +103,6 @@ public class GaiaSandboxDesktop implements IObserver {
             // Initialize key mappings
             KeyMappings.initialize();
 
-            gsd = new GaiaSandboxDesktop();
             gsd.init();
         } catch (Exception e) {
             e.printStackTrace(System.err);
@@ -101,7 +123,7 @@ public class GaiaSandboxDesktop implements IObserver {
 
     public GaiaSandboxDesktop() {
         super();
-        EventManager.instance.subscribe(this, Events.SHOW_PREFERENCES_ACTION, Events.SHOW_ABOUT_ACTION, Events.SHOW_RUNSCRIPT_ACTION, Events.JAVA_EXCEPTION, Events.SHOW_PLAYCAMERA_ACTION);
+        EventManager.instance.subscribe(this, Events.SHOW_PREFERENCES_ACTION, Events.SHOW_ABOUT_ACTION, Events.SHOW_RUNSCRIPT_ACTION, Events.JAVA_EXCEPTION, Events.SHOW_PLAYCAMERA_ACTION, Events.POST_NOTIFICATION);
     }
 
     private void init() {
@@ -206,6 +228,9 @@ public class GaiaSandboxDesktop implements IObserver {
             break;
         case JAVA_EXCEPTION:
             ((Throwable) data[0]).printStackTrace(System.err);
+            break;
+        case POST_NOTIFICATION:
+            System.out.println((String) data[0]);
             break;
         }
 

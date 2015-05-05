@@ -781,79 +781,77 @@ public class GlobalConf {
     /**
      * Initializes the properties
      */
-    public static void initialize(InputStream propsFile, InputStream versionFile) {
-        try {
-            if (configurations == null) {
-                configurations = new ArrayList<IConf>();
-            }
+    public static void initialize(InputStream propsFile, InputStream versionFile) throws Exception {
 
-            if (version == null) {
-                version = new VersionConf();
-
-                Properties versionProps = new Properties();
-                versionProps.load(versionFile);
-                version.initialize(versionProps);
-            }
-
-            if (frame == null) {
-                frame = new FrameConf();
-                configurations.add(frame);
-            }
-
-            if (screen == null) {
-                screen = new ScreenConf();
-                configurations.add(screen);
-            }
-
-            if (program == null) {
-                program = new ProgramConf();
-                configurations.add(program);
-            }
-
-            if (scene == null) {
-                scene = new SceneConf();
-                configurations.add(scene);
-            }
-
-            if (data == null) {
-                data = new DataConf();
-                configurations.add(data);
-            }
-
-            if (runtime == null) {
-                runtime = new RuntimeConf();
-                configurations.add(runtime);
-            }
-
-            if (screenshot == null) {
-                screenshot = new ScreenshotConf();
-                configurations.add(screenshot);
-            }
-
-            if (postprocess == null) {
-                postprocess = new PostprocessConf();
-                configurations.add(postprocess);
-            }
-
-            if (performance == null) {
-                performance = new PerformanceConf();
-                configurations.add(performance);
-            }
-
-            initialize(propsFile);
-
-            initialized = true;
-        } catch (Exception e) {
-            Logger.error(e);
+        if (configurations == null) {
+            configurations = new ArrayList<IConf>();
         }
+
+        if (version == null) {
+            version = new VersionConf();
+
+            Properties versionProps = new Properties();
+            versionProps.load(versionFile);
+            version.initialize(versionProps);
+        }
+
+        if (frame == null) {
+            frame = new FrameConf();
+            configurations.add(frame);
+        }
+
+        if (screen == null) {
+            screen = new ScreenConf();
+            configurations.add(screen);
+        }
+
+        if (program == null) {
+            program = new ProgramConf();
+            configurations.add(program);
+        }
+
+        if (scene == null) {
+            scene = new SceneConf();
+            configurations.add(scene);
+        }
+
+        if (data == null) {
+            data = new DataConf();
+            configurations.add(data);
+        }
+
+        if (runtime == null) {
+            runtime = new RuntimeConf();
+            configurations.add(runtime);
+        }
+
+        if (screenshot == null) {
+            screenshot = new ScreenshotConf();
+            configurations.add(screenshot);
+        }
+
+        if (postprocess == null) {
+            postprocess = new PostprocessConf();
+            configurations.add(postprocess);
+        }
+
+        if (performance == null) {
+            performance = new PerformanceConf();
+            configurations.add(performance);
+        }
+
+        initialize(propsFile);
+
+        initialized = true;
 
     }
 
     /**
      * Runs the initialize method in all the configurations using the given properties file stream.
      * @param propsFile An input stream sourced in the configuration file.
+     * @throws Exception 
      */
-    public static void initialize(InputStream propsFile) {
+    public static void initialize(InputStream propsFile) throws Exception {
         p = new CommentedProperties();
         try {
             p.load(propsFile);
@@ -864,6 +862,7 @@ public class GlobalConf {
 
         } catch (Exception e) {
             Logger.error(e);
+            throw (e);
         }
 
     }
