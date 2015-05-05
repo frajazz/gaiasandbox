@@ -51,21 +51,11 @@ public class GaiaSandboxDesktop implements IObserver {
 
             UIManager.setLookAndFeel("com.alee.laf.WebLookAndFeel");
             WebLookAndFeel.setAllowLinuxTransparency(false);
-            //UIManager.setLookAndFeel("com.sun.java.swing.plaf.nimbus.NimbusLookAndFeel");
             setUIFont(new javax.swing.plaf.FontUIResource("SansSerif", Font.PLAIN, 10));
 
             String props = System.getProperty("properties.file");
             if (props == null || props.isEmpty()) {
-                // Use user folder
-                File userFolder = new File(System.getProperty("user.home") + File.separator + ".gaiasandbox" + File.separator);
-                userFolder.mkdirs();
-                File userFolderConf = new File(userFolder, "global.properties");
-
-                if (!userFolderConf.exists()) {
-                    copyFile(new File("conf" + File.separator + "global.properties"), userFolderConf);
-                }
-                props = userFolderConf.getAbsolutePath();
-                System.setProperty("properties.file", props);
+                props = initConfigFile(true);
             }
 
             File confFile = new File(props);
@@ -221,10 +211,32 @@ public class GaiaSandboxDesktop implements IObserver {
 
     }
 
-    public static void copyFile(File sourceFile, File destFile) throws IOException {
-        if (!destFile.exists()) {
-            destFile.createNewFile();
+    private static String initConfigFile(boolean ow) throws IOException {
+        // Use user folder
+        File userFolder = new File(System.getProperty("user.home") + File.separator + ".gaiasandbox" + File.separator);
+        userFolder.mkdirs();
+        File userFolderConfFile = new File(userFolder, "global.properties");
+
+        if (ow || !userFolderConfFile.exists()) {
+            // Copy file
+            copyFile(new File("conf" + File.separator + "global.properties"), userFolderConfFile, ow);
         }
+        String props = userFolderConfFile.getAbsolutePath();
+        System.setProperty("properties.file", props);
+        return props;
+    }
+
+    private static void copyFile(File sourceFile, File destFile, boolean ow) throws IOException {
+        if (destFile.exists()) {
+            if (ow) {
+                // Overwrite, delete file
+                destFile.delete();
+            } else {
+                return;
+            }
+        }
+        // Create new
+        destFile.createNewFile();
 
         FileChannel source = null;
         FileChannel destination = null;
