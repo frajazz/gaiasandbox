@@ -2,6 +2,7 @@ package gaia.cu9.ari.gaiaorbit.scenegraph;
 
 import gaia.cu9.ari.gaiaorbit.scenegraph.component.ModelComponent;
 import gaia.cu9.ari.gaiaorbit.util.GlobalConf;
+import gaia.cu9.ari.gaiaorbit.util.math.MathUtilsd;
 import gaia.cu9.ari.gaiaorbit.util.math.Matrix4d;
 import gaia.cu9.ari.gaiaorbit.util.time.ITimeFrameProvider;
 
@@ -71,7 +72,9 @@ public abstract class ModelBody extends CelestialBody {
     @Override
     protected void addToRenderLists(ICamera camera) {
         camera.checkClosest(this);
-        if (viewAngle >= THRESHOLD_ANGLE_POINT() * camera.getFovFactor()) {
+        float thPoint = (float) (THRESHOLD_ANGLE_POINT() * camera.getFovFactor());
+        if (viewAngle >= thPoint) {
+            opacity = MathUtilsd.lint(viewAngle, thPoint, thPoint * 4, 0, 1);
             if (viewAngle < THRESHOLD_ANGLE_QUAD() * camera.getFovFactor()) {
                 addToRender(this, RenderGroup.SHADER_F);
             } else {
