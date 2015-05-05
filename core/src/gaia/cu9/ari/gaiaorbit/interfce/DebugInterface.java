@@ -15,61 +15,61 @@ public class DebugInterface extends Table implements IObserver {
     private Object lock;
 
     public DebugInterface(Skin skin, Object lock) {
-	super(skin);
-	debug1 = new OwnLabel("", skin, "hud-med");
-	add(debug1).right();
-	row();
+        super(skin);
+        debug1 = new OwnLabel("", skin, "hud-med");
+        add(debug1).right();
+        row();
 
-	debug2 = new OwnLabel("", skin, "hud-med");
-	add(debug2).right();
-	row();
+        debug2 = new OwnLabel("", skin, "hud-med");
+        add(debug2).right();
+        row();
 
-	debug3 = new OwnLabel("", skin, "hud-med");
-	add(debug3).right();
-	row();
+        debug3 = new OwnLabel("", skin, "hud-med");
+        add(debug3).right();
+        row();
 
-	fps = new OwnLabel("", skin, "hud-med");
-	add(fps).right();
-	row();
-	this.setVisible(GlobalConf.program.SHOW_DEBUG_INFO);
-	this.lock = lock;
-	EventManager.instance.subscribe(this, Events.DEBUG1, Events.DEBUG2, Events.DEBUG3, Events.FPS_INFO, Events.SHOW_DEBUG_CMD);
+        fps = new OwnLabel("", skin, "hud-med");
+        add(fps).right();
+        row();
+        this.setVisible(GlobalConf.program.SHOW_DEBUG_INFO);
+        this.lock = lock;
+        EventManager.instance.subscribe(this, Events.DEBUG1, Events.DEBUG2, Events.DEBUG3, Events.FPS_INFO, Events.SHOW_DEBUG_CMD);
     }
 
     @Override
     public void notify(Events event, Object... data) {
-	synchronized (lock) {
-	    switch (event) {
-	    case DEBUG1:
-		if (data.length > 0 && data[0] != null)
-		    debug1.setText((String) data[0]);
-		break;
+        synchronized (lock) {
+            switch (event) {
+            case DEBUG1:
+                if (data.length > 0 && data[0] != null)
+                    debug1.setText((String) data[0]);
+                break;
 
-	    case DEBUG2:
-		if (data.length > 0 && data[0] != null)
-		    debug2.setText((String) data[0]);
-		break;
+            case DEBUG2:
+                if (data.length > 0 && data[0] != null)
+                    debug2.setText((String) data[0]);
+                break;
 
-	    case DEBUG3:
-		if (data.length > 0 && data[0] != null)
-		    debug3.setText((String) data[0]);
-		break;
-	    case FPS_INFO:
-		if (data.length > 0 && data[0] != null)
-		    fps.setText((Integer) data[0] + " FPS");
-		break;
-	    case SHOW_DEBUG_CMD:
-		boolean shw;
-		if (data.length >= 1) {
-		    shw = (boolean) data[0];
-		} else {
-		    shw = !this.isVisible();
-		}
-		GlobalConf.program.SHOW_DEBUG_INFO = shw;
-		this.setVisible(GlobalConf.program.SHOW_DEBUG_INFO);
-		break;
-	    }
-	}
+            case DEBUG3:
+                if (data.length > 0 && data[0] != null)
+                    debug3.setText((String) data[0]);
+                break;
+            case FPS_INFO:
+                if (data.length > 0 && data[0] != null)
+                    fps.setText((Integer) data[0] + " FPS");
+                break;
+            case SHOW_DEBUG_CMD:
+                boolean shw;
+                if (data.length >= 1) {
+                    shw = (boolean) data[0];
+                } else {
+                    shw = !this.isVisible();
+                }
+                GlobalConf.program.SHOW_DEBUG_INFO = shw;
+                this.setVisible(GlobalConf.program.SHOW_DEBUG_INFO);
+                break;
+            }
+        }
     }
 
 }

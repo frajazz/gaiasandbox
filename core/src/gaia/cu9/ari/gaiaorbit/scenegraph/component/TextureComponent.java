@@ -26,9 +26,9 @@ public class TextureComponent {
     /** Default texture parameters **/
     protected static final TextureParameter textureParams;
     static {
-	textureParams = new TextureParameter();
-	textureParams.magFilter = TextureFilter.Linear;
-	textureParams.minFilter = TextureFilter.Linear;
+        textureParams = new TextureParameter();
+        textureParams.magFilter = TextureFilter.Linear;
+        textureParams.minFilter = TextureFilter.Linear;
     }
     /**
      * Above this angle the hi-resolution texture is loaded and applied (if any)
@@ -44,16 +44,16 @@ public class TextureComponent {
     }
 
     public void initialize() {
-	if (base != null)
-	    AssetBean.addAsset(base, Texture.class, textureParams);
-	if (normal != null)
-	    AssetBean.addAsset(normal, Texture.class, textureParams);
-	if (specular != null)
-	    AssetBean.addAsset(specular, Texture.class, textureParams);
-	if (night != null)
-	    AssetBean.addAsset(night, Texture.class, textureParams);
-	if (ring != null)
-	    AssetBean.addAsset(ring, Texture.class, textureParams);
+        if (base != null)
+            AssetBean.addAsset(base, Texture.class, textureParams);
+        if (normal != null)
+            AssetBean.addAsset(normal, Texture.class, textureParams);
+        if (specular != null)
+            AssetBean.addAsset(specular, Texture.class, textureParams);
+        if (night != null)
+            AssetBean.addAsset(night, Texture.class, textureParams);
+        if (ring != null)
+            AssetBean.addAsset(ring, Texture.class, textureParams);
     }
 
     /**
@@ -64,33 +64,33 @@ public class TextureComponent {
      * @param camera
      */
     public void updateTexture(final AssetManager manager, ModelInstance instance, float viewAngle, ICamera camera) {
-	if (!hiresTexFlag && viewAngle > HIRES_ANGLE_THRESHOLD * camera.getFovFactor() && hires != null) {
-	    // LOAD hi-res texture
-	    manager.load(hires, Texture.class, textureParams);
-	    hiresTexFlag = true;
-	} else if (hiresTexFlag && viewAngle <= HIRES_ANGLE_THRESHOLD * camera.getFovFactor() && hi_resTex != null) {
-	    // UNLOAD hi-res texture loaded
-	    for (Material mat : instance.materials) {
-		mat.set(new TextureAttribute(TextureAttribute.Diffuse, lo_resTex));
-	    }
-	    Gdx.app.postRunnable(new Runnable() {
-		@Override
-		public void run() {
-		    manager.unload(hires);
-		}
-	    });
+        if (!hiresTexFlag && viewAngle > HIRES_ANGLE_THRESHOLD * camera.getFovFactor() && hires != null) {
+            // LOAD hi-res texture
+            manager.load(hires, Texture.class, textureParams);
+            hiresTexFlag = true;
+        } else if (hiresTexFlag && viewAngle <= HIRES_ANGLE_THRESHOLD * camera.getFovFactor() && hi_resTex != null) {
+            // UNLOAD hi-res texture loaded
+            for (Material mat : instance.materials) {
+                mat.set(new TextureAttribute(TextureAttribute.Diffuse, lo_resTex));
+            }
+            Gdx.app.postRunnable(new Runnable() {
+                @Override
+                public void run() {
+                    manager.unload(hires);
+                }
+            });
 
-	    hi_resTex = null;
-	    hiresTexFlag = false;
-	} else if (hiresTexFlag && hi_resTex == null) {
-	    // Check the loading, add the texture if loaded
-	    if (manager.isLoaded(hires)) {
-		hi_resTex = manager.get(hires, Texture.class);
-		for (Material mat : instance.materials) {
-		    mat.set(new TextureAttribute(TextureAttribute.Diffuse, hi_resTex));
-		}
-	    }
-	}
+            hi_resTex = null;
+            hiresTexFlag = false;
+        } else if (hiresTexFlag && hi_resTex == null) {
+            // Check the loading, add the texture if loaded
+            if (manager.isLoaded(hires)) {
+                hi_resTex = manager.get(hires, Texture.class);
+                for (Material mat : instance.materials) {
+                    mat.set(new TextureAttribute(TextureAttribute.Diffuse, hi_resTex));
+                }
+            }
+        }
     }
 
     /**
@@ -100,57 +100,57 @@ public class TextureComponent {
      * @param cc Plain color used if there is no texture.
      */
     public void initMaterial(AssetManager manager, Map<String, Material> materials, float[] cc) {
-	Material material = materials.get("base");
-	if (base != null) {
-	    lo_resTex = manager.get(base, Texture.class);
-	    material.set(new TextureAttribute(TextureAttribute.Diffuse, lo_resTex));
-	} else {
-	    // If there is no diffuse texture, we add a colour
-	    material.set(new ColorAttribute(ColorAttribute.Diffuse, cc[0], cc[1], cc[2], cc[3]));
-	}
-	if (normal != null) {
-	    Texture tex = manager.get(normal, Texture.class);
-	    material.set(new TextureAttribute(TextureAttribute.Normal, tex));
-	}
-	if (specular != null) {
-	    Texture tex = manager.get(specular, Texture.class);
-	    material.set(new TextureAttribute(TextureAttribute.Specular, tex));
-	}
-	if (night != null) {
-	    Texture tex = manager.get(night, Texture.class);
-	    material.set(new TextureAttribute(TextureAttribute.Emissive, tex));
-	}
-	if (materials.containsKey("ring")) {
-	    // Ring material
-	    Material ringMat = materials.get("ring");
-	    Texture tex = manager.get(ring, Texture.class);
-	    ringMat.set(new TextureAttribute(TextureAttribute.Diffuse, tex));
-	    ringMat.set(new BlendingAttribute(GL20.GL_SRC_ALPHA, GL20.GL_ONE_MINUS_SRC_ALPHA));
-	}
+        Material material = materials.get("base");
+        if (base != null) {
+            lo_resTex = manager.get(base, Texture.class);
+            material.set(new TextureAttribute(TextureAttribute.Diffuse, lo_resTex));
+        } else {
+            // If there is no diffuse texture, we add a colour
+            material.set(new ColorAttribute(ColorAttribute.Diffuse, cc[0], cc[1], cc[2], cc[3]));
+        }
+        if (normal != null) {
+            Texture tex = manager.get(normal, Texture.class);
+            material.set(new TextureAttribute(TextureAttribute.Normal, tex));
+        }
+        if (specular != null) {
+            Texture tex = manager.get(specular, Texture.class);
+            material.set(new TextureAttribute(TextureAttribute.Specular, tex));
+        }
+        if (night != null) {
+            Texture tex = manager.get(night, Texture.class);
+            material.set(new TextureAttribute(TextureAttribute.Emissive, tex));
+        }
+        if (materials.containsKey("ring")) {
+            // Ring material
+            Material ringMat = materials.get("ring");
+            Texture tex = manager.get(ring, Texture.class);
+            ringMat.set(new TextureAttribute(TextureAttribute.Diffuse, tex));
+            ringMat.set(new BlendingAttribute(GL20.GL_SRC_ALPHA, GL20.GL_ONE_MINUS_SRC_ALPHA));
+        }
     }
 
     public void setBase(String base) {
-	this.base = base;
+        this.base = base;
     }
 
     public void setHires(String hires) {
-	this.hires = hires;
+        this.hires = hires;
     }
 
     public void setSpecular(String specular) {
-	this.specular = specular;
+        this.specular = specular;
     }
 
     public void setNormal(String normal) {
-	this.normal = normal;
+        this.normal = normal;
     }
 
     public void setNight(String night) {
-	this.night = night;
+        this.night = night;
     }
 
     public void setRing(String ring) {
-	this.ring = ring;
+        this.ring = ring;
     }
 
 }

@@ -42,26 +42,26 @@ import javax.swing.JLabel;
 public class LinkLabel extends JLabel {
 
     class OpenUrlAction implements ActionListener {
-	URI uri;
+        URI uri;
 
-	public OpenUrlAction(URI uri) {
-	    this.uri = uri;
-	}
+        public OpenUrlAction(URI uri) {
+            this.uri = uri;
+        }
 
-	@Override
-	public void actionPerformed(ActionEvent e) {
-	    open(uri);
-	}
+        @Override
+        public void actionPerformed(ActionEvent e) {
+            open(uri);
+        }
     }
 
     private static void open(URI uri) {
-	if (Desktop.isDesktopSupported()) {
-	    try {
-		Desktop.getDesktop().browse(uri);
-	    } catch (IOException e) { /* TODO: error handling */
-	    }
-	} else { /* TODO: error handling */
-	}
+        if (Desktop.isDesktopSupported()) {
+            try {
+                Desktop.getDesktop().browse(uri);
+            } catch (IOException e) { /* TODO: error handling */
+            }
+        } else { /* TODO: error handling */
+        }
     }
 
     /**
@@ -74,21 +74,21 @@ public class LinkLabel extends JLabel {
      * Creates a new LinkLabel with the given text and link.
      */
     public LinkLabel(String displayText, String link) {
-	super(displayText);
-	URI uri = null;
-	try {
-	    uri = new URI(link);
-	} catch (URISyntaxException e) {
-	    e.printStackTrace();
-	}
-	setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
+        super(displayText);
+        URI uri = null;
+        try {
+            uri = new URI(link);
+        } catch (URISyntaxException e) {
+            e.printStackTrace();
+        }
+        setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
 
-	enableEvents(MouseEvent.MOUSE_EVENT_MASK);
-	this.addActionListener(new OpenUrlAction(uri));
+        enableEvents(MouseEvent.MOUSE_EVENT_MASK);
+        this.addActionListener(new OpenUrlAction(uri));
     }
 
     public LinkLabel(String text) {
-	this(text, text);
+        this(text, text);
     }
 
     /**
@@ -96,8 +96,8 @@ public class LinkLabel extends JLabel {
      */
 
     public void setText(String text) {
-	super.setText("<html><font color=\"#0000CF\"><u>" + text + "</u></font></html>"); //$NON-NLS-1$ //$NON-NLS-2$
-	this.text = text;
+        super.setText("<html><font color=\"#0000CF\"><u>" + text + "</u></font></html>"); //$NON-NLS-1$ //$NON-NLS-2$
+        this.text = text;
     }
 
     /**
@@ -105,7 +105,7 @@ public class LinkLabel extends JLabel {
      */
 
     public String getNormalText() {
-	return text;
+        return text;
     }
 
     /**
@@ -113,9 +113,9 @@ public class LinkLabel extends JLabel {
      */
 
     protected void processMouseEvent(MouseEvent evt) {
-	super.processMouseEvent(evt);
-	if (evt.getID() == MouseEvent.MOUSE_CLICKED)
-	    fireActionPerformed(new ActionEvent(this, ActionEvent.ACTION_PERFORMED, getNormalText()));
+        super.processMouseEvent(evt);
+        if (evt.getID() == MouseEvent.MOUSE_CLICKED)
+            fireActionPerformed(new ActionEvent(this, ActionEvent.ACTION_PERFORMED, getNormalText()));
     }
 
     /**
@@ -124,7 +124,7 @@ public class LinkLabel extends JLabel {
      */
 
     public void addActionListener(ActionListener listener) {
-	listenerList.add(ActionListener.class, listener);
+        listenerList.add(ActionListener.class, listener);
     }
 
     /**
@@ -133,7 +133,7 @@ public class LinkLabel extends JLabel {
      */
 
     public void removeActionListener(ActionListener listener) {
-	listenerList.remove(ActionListener.class, listener);
+        listenerList.remove(ActionListener.class, listener);
     }
 
     /**
@@ -141,13 +141,13 @@ public class LinkLabel extends JLabel {
      */
 
     protected void fireActionPerformed(ActionEvent evt) {
-	Object[] listeners = listenerList.getListenerList();
-	for (int i = 0; i < listeners.length; i += 2) {
-	    if (listeners[i] == ActionListener.class) {
-		ActionListener listener = (ActionListener) listeners[i + 1];
-		listener.actionPerformed(evt);
-	    }
-	}
+        Object[] listeners = listenerList.getListenerList();
+        for (int i = 0; i < listeners.length; i += 2) {
+            if (listeners[i] == ActionListener.class) {
+                ActionListener listener = (ActionListener) listeners[i + 1];
+                listener.actionPerformed(evt);
+            }
+        }
     }
 
 }

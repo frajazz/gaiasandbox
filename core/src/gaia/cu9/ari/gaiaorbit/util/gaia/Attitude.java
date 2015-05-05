@@ -99,5 +99,5 @@ public interface Attitude {
      *         [rad/s]
      */
     public double[] getAlAcRates(FOV fov, double alFieldAngle,
-	    double acFieldAngle);
+            double acFieldAngle);
 }

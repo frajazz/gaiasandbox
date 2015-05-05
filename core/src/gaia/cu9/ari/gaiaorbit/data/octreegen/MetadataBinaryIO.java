@@ -1,8 +1,7 @@
 package gaia.cu9.ari.gaiaorbit.data.octreegen;
 
-import gaia.cu9.ari.gaiaorbit.event.EventManager;
-import gaia.cu9.ari.gaiaorbit.event.Events;
 import gaia.cu9.ari.gaiaorbit.scenegraph.SceneGraphNode;
+import gaia.cu9.ari.gaiaorbit.util.Logger;
 import gaia.cu9.ari.gaiaorbit.util.Pair;
 import gaia.cu9.ari.gaiaorbit.util.tree.OctreeNode;
 
@@ -46,62 +45,62 @@ public class MetadataBinaryIO {
      * @return
      */
     public OctreeNode<? extends SceneGraphNode> readMetadata(InputStream in) {
-	nodesMap = new HashMap<Long, Pair<OctreeNode<SceneGraphNode>, long[]>>();
+        nodesMap = new HashMap<Long, Pair<OctreeNode<SceneGraphNode>, long[]>>();
 
-	DataInputStream data_in = new DataInputStream(in);
-	try {
-	    OctreeNode<SceneGraphNode> root = null;
-	    // Read size of stars
-	    int size = data_in.readInt();
-	    int maxDepth = 0;
+        DataInputStream data_in = new DataInputStream(in);
+        try {
+            OctreeNode<SceneGraphNode> root = null;
+            // Read size of stars
+            int size = data_in.readInt();
+            int maxDepth = 0;
 
-	    for (int idx = 0; idx < size; idx++) {
-		try {
-		    // name_length, name, appmag, absmag, colorbv, ra, dec, dist	
-		    long pageId = data_in.readLong();
-		    double x = data_in.readDouble();
-		    double y = data_in.readDouble();
-		    double z = data_in.readDouble();
-		    double hsx = data_in.readDouble() / 2d;
-		    double hsy = data_in.readDouble() / 2d;
-		    double hsz = data_in.readDouble() / 2d;
-		    long[] childrenIds = new long[8];
-		    for (int i = 0; i < 8; i++) {
-			childrenIds[i] = data_in.readLong();
-		    }
-		    int depth = data_in.readInt();
-		    int nObjects = data_in.readInt();
-		    int ownObjects = data_in.readInt();
-		    int childrenCount = data_in.readInt();
+            for (int idx = 0; idx < size; idx++) {
+                try {
+                    // name_length, name, appmag, absmag, colorbv, ra, dec, dist	
+                    long pageId = data_in.readLong();
+                    double x = data_in.readDouble();
+                    double y = data_in.readDouble();
+                    double z = data_in.readDouble();
+                    double hsx = data_in.readDouble() / 2d;
+                    double hsy = data_in.readDouble() / 2d;
+                    double hsz = data_in.readDouble() / 2d;
+                    long[] childrenIds = new long[8];
+                    for (int i = 0; i < 8; i++) {
+                        childrenIds[i] = data_in.readLong();
+                    }
+                    int depth = data_in.readInt();
+                    int nObjects = data_in.readInt();
+                    int ownObjects = data_in.readInt();
+                    int childrenCount = data_in.readInt();
 
-		    maxDepth = Math.max(maxDepth, depth);
+                    maxDepth = Math.max(maxDepth, depth);
 
-		    OctreeNode<SceneGraphNode> node = new OctreeNode<SceneGraphNode>(pageId, x, y, z, hsx, hsy, hsz, childrenCount, nObjects, ownObjects, depth);
-		    nodesMap.put(pageId, new Pair<OctreeNode<SceneGraphNode>, long[]>(node, childrenIds));
+                    OctreeNode<SceneGraphNode> node = new OctreeNode<SceneGraphNode>(pageId, x, y, z, hsx, hsy, hsz, childrenCount, nObjects, ownObjects, depth);
+                    nodesMap.put(pageId, new Pair<OctreeNode<SceneGraphNode>, long[]>(node, childrenIds));
 
-		    if (depth == 0) {
-			root = node;
-		    }
+                    if (depth == 0) {
+                        root = node;
+                    }
 
-		} catch (EOFException eof) {
-		    EventManager.instance.post(Events.JAVA_EXCEPTION, eof);
-		}
-	    }
+                } catch (EOFException eof) {
+                    Logger.error(eof);
+                }
+            }
 
-	    OctreeNode.maxDepth = maxDepth;
-	    // All data has arrived
-	    if (root != null) {
-		root.resolveChildren(nodesMap);
-	    } else {
-		EventManager.instance.post(Events.JAVA_EXCEPTION, new RuntimeException("No root node in visualization-metadata"));
-	    }
+            OctreeNode.maxDepth = maxDepth;
+            // All data has arrived
+            if (root != null) {
+                root.resolveChildren(nodesMap);
+            } else {
+                Logger.error(new RuntimeException("No root node in visualization-metadata"));
+            }
 
-	    return root;
+            return root;
 
-	} catch (IOException e) {
-	    EventManager.instance.post(Events.JAVA_EXCEPTION, e);
-	}
-	return null;
+        } catch (IOException e) {
+            Logger.error(e);
+        }
+        return null;
     }
 
     /**
@@ -111,49 +110,49 @@ public class MetadataBinaryIO {
      * @param out
      */
     public void writeMetadata(OctreeNode<?> root, OutputStream out) {
-	List<OctreeNode<?>> nodes = new ArrayList<OctreeNode<?>>();
-	toList(root, nodes);
+        List<OctreeNode<?>> nodes = new ArrayList<OctreeNode<?>>();
+        toList(root, nodes);
 
-	// Wrap the FileOutputStream with a DataOutputStream
-	DataOutputStream data_out = new DataOutputStream(out);
+        // Wrap the FileOutputStream with a DataOutputStream
+        DataOutputStream data_out = new DataOutputStream(out);
 
-	try {
-	    // Number of nodes
-	    data_out.writeInt(nodes.size());
+        try {
+            // Number of nodes
+            data_out.writeInt(nodes.size());
 
-	    for (OctreeNode<?> node : nodes) {
-		data_out.writeLong(node.pageId);
-		data_out.writeDouble(node.centre.x);
-		data_out.writeDouble(node.centre.y);
-		data_out.writeDouble(node.centre.z);
-		data_out.writeDouble(node.size.x);
-		data_out.writeDouble(node.size.y);
-		data_out.writeDouble(node.size.z);
-		for (int i = 0; i < 8; i++) {
-		    data_out.writeLong(node.children[i] != null ? node.children[i].pageId : -1l);
-		}
-		data_out.writeInt(node.depth);
-		data_out.writeInt(node.nObjects);
-		data_out.writeInt(node.ownObjects);
-		data_out.writeInt(node.childrenCount);
-	    }
+            for (OctreeNode<?> node : nodes) {
+                data_out.writeLong(node.pageId);
+                data_out.writeDouble(node.centre.x);
+                data_out.writeDouble(node.centre.y);
+                data_out.writeDouble(node.centre.z);
+                data_out.writeDouble(node.size.x);
+                data_out.writeDouble(node.size.y);
+                data_out.writeDouble(node.size.z);
+                for (int i = 0; i < 8; i++) {
+                    data_out.writeLong(node.children[i] != null ? node.children[i].pageId : -1l);
+                }
+                data_out.writeInt(node.depth);
+                data_out.writeInt(node.nObjects);
+                data_out.writeInt(node.ownObjects);
+                data_out.writeInt(node.childrenCount);
+            }
 
-	    data_out.close();
-	    out.close();
+            data_out.close();
+            out.close();
 
-	} catch (IOException e) {
-	    EventManager.instance.post(Events.JAVA_EXCEPTION, e);
-	}
+        } catch (IOException e) {
+            Logger.error(e);
+        }
 
     }
 
     public void toList(OctreeNode<?> node, List<OctreeNode<?>> nodes) {
-	nodes.add(node);
-	for (OctreeNode<?> child : node.children) {
-	    if (child != null) {
-		toList(child, nodes);
-	    }
-	}
+        nodes.add(node);
+        for (OctreeNode<?> child : node.children) {
+            if (child != null) {
+                toList(child, nodes);
+            }
+        }
     }
 
 }

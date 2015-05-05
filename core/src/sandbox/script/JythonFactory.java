@@ -43,10 +43,10 @@ public class JythonFactory implements IObserver {
      * @return The factory instance.
      */
     public synchronized static JythonFactory getInstance() {
-	if (instance == null) {
-	    instance = new JythonFactory();
-	}
-	return instance;
+        if (instance == null) {
+            instance = new JythonFactory();
+        }
+        return instance;
     }
 
     /**
@@ -54,43 +54,43 @@ public class JythonFactory implements IObserver {
      * @return
      */
     public synchronized static void initialize() {
-	if (instance == null) {
-	    instance = new JythonFactory();
-	}
+        if (instance == null) {
+            instance = new JythonFactory();
+        }
     }
 
     /**
      * Only initialize the executor service and the interpreter.
      */
     private JythonFactory() {
-	//	executor = Executors.newCachedThreadPool(new JythonThreadFactory());
-	interpreter = PythonInterpreter.threadLocalStateInterpreter(null);
-	currentScripts = Collections.synchronizedMap(new LinkedHashMap<String, ScriptRunnable>() {
+        //	executor = Executors.newCachedThreadPool(new JythonThreadFactory());
+        interpreter = PythonInterpreter.threadLocalStateInterpreter(null);
+        currentScripts = Collections.synchronizedMap(new LinkedHashMap<String, ScriptRunnable>() {
 
-	    @Override
-	    public ScriptRunnable put(String key, ScriptRunnable value) {
-		ScriptRunnable sr = super.put(key, value);
-		EventManager.instance.post(Events.NUM_RUNNING_SCRIPTS, this.size());
-		return sr;
-	    }
+            @Override
+            public ScriptRunnable put(String key, ScriptRunnable value) {
+                ScriptRunnable sr = super.put(key, value);
+                EventManager.instance.post(Events.NUM_RUNNING_SCRIPTS, this.size());
+                return sr;
+            }
 
-	    @Override
-	    public ScriptRunnable remove(Object key) {
-		ScriptRunnable sr = super.remove(key);
-		EventManager.instance.post(Events.NUM_RUNNING_SCRIPTS, this.size());
-		return sr;
-	    }
+            @Override
+            public ScriptRunnable remove(Object key) {
+                ScriptRunnable sr = super.remove(key);
+                EventManager.instance.post(Events.NUM_RUNNING_SCRIPTS, this.size());
+                return sr;
+            }
 
-	});
-	EventManager.instance.subscribe(this, Events.RUN_SCRIPT_PYCODE, Events.RUN_SCRIPT_PATH, Events.CANCEL_SCRIPT_CMD);
+        });
+        EventManager.instance.subscribe(this, Events.RUN_SCRIPT_PYCODE, Events.RUN_SCRIPT_PATH, Events.CANCEL_SCRIPT_CMD);
     }
 
     public PyCode compileJythonScript(String script) throws Exception {
-	return interpreter.compile(script);
+        return interpreter.compile(script);
     }
 
     public PyCode compileJythonScript(File script) throws Exception {
-	return interpreter.compile(new FileReader(script));
+        return interpreter.compile(new FileReader(script));
     }
 
     /**
@@ -100,17 +100,17 @@ public class JythonFactory implements IObserver {
      * true, the execution is asynchronous and the call returns immediately.
      */
     public void runJythonScript(final PyCode code, String path, boolean async) {
-	if (currentScripts.size() < maxScripts) {
-	    Thread run = new ScriptRunnable(code, path);
+        if (currentScripts.size() < maxScripts) {
+            Thread run = new ScriptRunnable(code, path);
 
-	    if (async) {
-		run.start();
-	    } else {
-		run.run();
-	    }
-	} else {
-	    EventManager.instance.post(Events.POST_NOTIFICATION, I18n.bundle.format("notif.script.max", maxScripts));
-	}
+            if (async) {
+                run.start();
+            } else {
+                run.run();
+            }
+        } else {
+            EventManager.instance.post(Events.POST_NOTIFICATION, I18n.bundle.format("notif.script.max", maxScripts));
+        }
     }
 
     /**
@@ -120,39 +120,39 @@ public class JythonFactory implements IObserver {
      * true, the execution is asynchronous and the call returns immediately.
      */
     public void runJythonScript(final String script, String path, boolean async) {
-	try {
-	    runJythonScript(compileJythonScript(script), path, async);
-	} catch (Exception e) {
-	    EventManager.instance.post(Events.JAVA_EXCEPTION, e);
-	}
+        try {
+            runJythonScript(compileJythonScript(script), path, async);
+        } catch (Exception e) {
+            EventManager.instance.post(Events.JAVA_EXCEPTION, e);
+        }
 
     }
 
     @Override
     public void notify(Events event, Object... data) {
-	switch (event) {
-	case RUN_SCRIPT_PYCODE:
-	    PyCode code = (PyCode) data[0];
-	    String path = (String) data[1];
-	    boolean async = true;
-	    if (data.length > 1)
-		async = (Boolean) data[2];
-	    runJythonScript(code, path, async);
-	    break;
-	case RUN_SCRIPT_PATH:
-	    path = (String) data[0];
-	    FileHandle file = Gdx.files.internal(path);
-	    String string = file.readString();
-	    async = true;
-	    if (data.length > 1)
-		async = (Boolean) data[1];
-	    runJythonScript(string, path, async);
-	    break;
-	case CANCEL_SCRIPT_CMD:
-	    String pathToCancel = currentScripts.keySet().iterator().next();
-	    cancelScript(pathToCancel);
-	    break;
-	}
+        switch (event) {
+        case RUN_SCRIPT_PYCODE:
+            PyCode code = (PyCode) data[0];
+            String path = (String) data[1];
+            boolean async = true;
+            if (data.length > 1)
+                async = (Boolean) data[2];
+            runJythonScript(code, path, async);
+            break;
+        case RUN_SCRIPT_PATH:
+            path = (String) data[0];
+            FileHandle file = Gdx.files.internal(path);
+            String string = file.readString();
+            async = true;
+            if (data.length > 1)
+                async = (Boolean) data[1];
+            runJythonScript(string, path, async);
+            break;
+        case CANCEL_SCRIPT_CMD:
+            String pathToCancel = currentScripts.keySet().iterator().next();
+            cancelScript(pathToCancel);
+            break;
+        }
 
     }
 
@@ -160,33 +160,33 @@ public class JythonFactory implements IObserver {
      * The default thread factory
      */
     static class JythonThreadFactory implements ThreadFactory {
-	private static final AtomicInteger poolNumber = new AtomicInteger(1);
-	private final ThreadGroup group;
-	private final AtomicInteger threadNumber = new AtomicInteger(1);
-	private final String namePrefix;
+        private static final AtomicInteger poolNumber = new AtomicInteger(1);
+        private final ThreadGroup group;
+        private final AtomicInteger threadNumber = new AtomicInteger(1);
+        private final String namePrefix;
 
-	JythonThreadFactory() {
-	    SecurityManager s = System.getSecurityManager();
-	    group = (s != null) ? s.getThreadGroup() :
-		    Thread.currentThread().getThreadGroup();
-	    namePrefix = "scripting-thread-" +
-		    poolNumber.getAndIncrement();
-	}
+        JythonThreadFactory() {
+            SecurityManager s = System.getSecurityManager();
+            group = (s != null) ? s.getThreadGroup() :
+                    Thread.currentThread().getThreadGroup();
+            namePrefix = "scripting-thread-" +
+                    poolNumber.getAndIncrement();
+        }
 
-	public Thread newThread(Runnable r) {
-	    Thread t = new Thread(group, r,
-		    namePrefix + threadNumber.getAndIncrement(),
-		    0);
-	    if (t.isDaemon())
-		t.setDaemon(false);
-	    if (t.getPriority() != Thread.NORM_PRIORITY)
-		t.setPriority(Thread.NORM_PRIORITY);
-	    return t;
-	}
+        public Thread newThread(Runnable r) {
+            Thread t = new Thread(group, r,
+                    namePrefix + threadNumber.getAndIncrement(),
+                    0);
+            if (t.isDaemon())
+                t.setDaemon(false);
+            if (t.getPriority() != Thread.NORM_PRIORITY)
+                t.setPriority(Thread.NORM_PRIORITY);
+            return t;
+        }
     }
 
     public int getNumRunningScripts() {
-	return currentScripts.size();
+        return currentScripts.size();
     }
 
     /**
@@ -194,17 +194,17 @@ public class JythonFactory implements IObserver {
      * @param path The path.
      */
     public void cancelScript(String path) {
-	if (currentScripts.containsKey(path)) {
-	    ScriptRunnable sr = currentScripts.get(path);
-	    try {
-		// TODO Figure a better way than this to stop the script
-		sr.stop();
-	    } catch (Exception e) {
+        if (currentScripts.containsKey(path)) {
+            ScriptRunnable sr = currentScripts.get(path);
+            try {
+                // TODO Figure a better way than this to stop the script
+                sr.stop();
+            } catch (Exception e) {
 
-	    }
-	    sr.interpreter.cleanup();
-	    sr.cleanup();
-	}
+            }
+            sr.interpreter.cleanup();
+            sr.cleanup();
+        }
     }
 
     /**
@@ -213,40 +213,40 @@ public class JythonFactory implements IObserver {
      *
      */
     private class ScriptRunnable extends Thread {
-	final PyCode code;
-	final String path;
-	PythonInterpreter interpreter;
+        final PyCode code;
+        final String path;
+        PythonInterpreter interpreter;
 
-	public ScriptRunnable(PyCode code, String path) {
-	    this.code = code;
-	    this.path = path;
-	}
+        public ScriptRunnable(PyCode code, String path) {
+            this.code = code;
+            this.path = path;
+        }
 
-	@Override
-	public void run() {
-	    if (currentScripts.size() < maxScripts) {
-		if (currentScripts.containsKey(path)) {
-		    EventManager.instance.post(Events.POST_NOTIFICATION, I18n.bundle.format("notif.script.already", path));
-		    return;
-		}
-		currentScripts.put(path, this);
-		try {
-		    interpreter = PythonInterpreter.threadLocalStateInterpreter(null);
-		    interpreter.exec(code);
-		    cleanup();
-		} catch (Exception e) {
-		    EventManager.instance.post(Events.JAVA_EXCEPTION, e);
-		}
-	    }
-	}
+        @Override
+        public void run() {
+            if (currentScripts.size() < maxScripts) {
+                if (currentScripts.containsKey(path)) {
+                    EventManager.instance.post(Events.POST_NOTIFICATION, I18n.bundle.format("notif.script.already", path));
+                    return;
+                }
+                currentScripts.put(path, this);
+                try {
+                    interpreter = PythonInterpreter.threadLocalStateInterpreter(null);
+                    interpreter.exec(code);
+                    cleanup();
+                } catch (Exception e) {
+                    EventManager.instance.post(Events.JAVA_EXCEPTION, e);
+                }
+            }
+        }
 
-	public void cleanup() {
-	    // Re-enable input and remove objects, just in case
-	    EventManager.instance.post(Events.REMOVE_ALL_OBJECTS);
-	    EventManager.instance.post(Events.CLEAR_MESSAGES);
-	    EventManager.instance.post(Events.INPUT_ENABLED_CMD, true);
-	    currentScripts.remove(path);
-	}
+        public void cleanup() {
+            // Re-enable input and remove objects, just in case
+            EventManager.instance.post(Events.REMOVE_ALL_OBJECTS);
+            EventManager.instance.post(Events.CLEAR_MESSAGES);
+            EventManager.instance.post(Events.INPUT_ENABLED_CMD, true);
+            currentScripts.remove(path);
+        }
 
     }
 }

@@ -6,6 +6,7 @@ import gaia.cu9.ari.gaiaorbit.event.IObserver;
 import gaia.cu9.ari.gaiaorbit.render.SceneGraphRenderer.ComponentType;
 import gaia.cu9.ari.gaiaorbit.scenegraph.ISceneGraph;
 import gaia.cu9.ari.gaiaorbit.util.GlobalResources;
+import gaia.cu9.ari.gaiaorbit.util.Logger;
 import gaia.cu9.ari.gaiaorbit.util.scene2d.OwnLabel;
 
 import java.text.DateFormat;
@@ -42,81 +43,81 @@ public class RenderGui implements IGui, IObserver {
 
     @Override
     public void initialize(AssetManager assetManager) {
-	ui = new Stage(new ScreenViewport(), GlobalResources.spriteBatch);
-	df = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss");
-	lock = new Object();
+        ui = new Stage(new ScreenViewport(), GlobalResources.spriteBatch);
+        df = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss");
+        lock = new Object();
     }
 
     @Override
     public void doneLoading(AssetManager assetManager) {
-	skin = GlobalResources.skin;
+        skin = GlobalResources.skin;
 
-	mainTable = new Table(skin);
-	time = new OwnLabel("", skin, "ui-13");
-	mainTable.add(time);
-	mainTable.setFillParent(true);
-	mainTable.right().bottom();
-	mainTable.pad(5);
+        mainTable = new Table(skin);
+        time = new OwnLabel("", skin, "ui-13");
+        mainTable.add(time);
+        mainTable.setFillParent(true);
+        mainTable.right().bottom();
+        mainTable.pad(5);
 
-	// MESSAGES INTERFACE - LOW CENTER
-	messagesInterface = new MessagesInterface(skin, lock);
-	messagesInterface.setFillParent(true);
-	messagesInterface.left().bottom();
-	messagesInterface.pad(0, 300, 150, 0);
+        // MESSAGES INTERFACE - LOW CENTER
+        messagesInterface = new MessagesInterface(skin, lock);
+        messagesInterface.setFillParent(true);
+        messagesInterface.left().bottom();
+        messagesInterface.pad(0, 300, 150, 0);
 
-	// Add to GUI
-	rebuildGui();
+        // Add to GUI
+        rebuildGui();
 
-	EventManager.instance.subscribe(this, Events.TIME_CHANGE_INFO);
+        EventManager.instance.subscribe(this, Events.TIME_CHANGE_INFO);
     }
 
     private void rebuildGui() {
-	if (ui != null) {
-	    ui.clear();
-	    ui.addActor(mainTable);
-	    ui.addActor(messagesInterface);
-	}
+        if (ui != null) {
+            ui.clear();
+            ui.addActor(mainTable);
+            ui.addActor(messagesInterface);
+        }
     }
 
     @Override
     public void dispose() {
-	ui.dispose();
+        ui.dispose();
     }
 
     @Override
     public void update(float dt) {
-	ui.act();
+        ui.act();
     }
 
     @Override
     public void render() {
-	synchronized (lock) {
-	    try {
-		ui.draw();
-	    } catch (Exception e) {
-		EventManager.instance.post(Events.JAVA_EXCEPTION, e);
-	    }
-	}
+        synchronized (lock) {
+            try {
+                ui.draw();
+            } catch (Exception e) {
+                Logger.error(e);
+            }
+        }
     }
 
     @Override
     public void resize(int width, int height) {
-	ui.getViewport().update(width, height, true);
+        ui.getViewport().update(width, height, true);
     }
 
     @Override
     public boolean cancelTouchFocus() {
-	if (ui.getKeyboardFocus() != null || ui.getScrollFocus() != null) {
-	    ui.setScrollFocus(null);
-	    ui.setKeyboardFocus(null);
-	    return true;
-	}
-	return false;
+        if (ui.getKeyboardFocus() != null || ui.getScrollFocus() != null) {
+            ui.setScrollFocus(null);
+            ui.setKeyboardFocus(null);
+            return true;
+        }
+        return false;
     }
 
     @Override
     public Stage getGuiStage() {
-	return ui;
+        return ui;
     }
 
     @Override
@@ -130,17 +131,17 @@ public class RenderGui implements IGui, IObserver {
 
     @Override
     public void notify(Events event, Object... data) {
-	synchronized (lock) {
-	    switch (event) {
-	    case TIME_CHANGE_INFO:
-		time.setText(df.format((Date) data[0]));
-		break;
-	    }
-	}
+        synchronized (lock) {
+            switch (event) {
+            case TIME_CHANGE_INFO:
+                time.setText(df.format((Date) data[0]));
+                break;
+            }
+        }
     }
 
     @Override
     public Actor findActor(String name) {
-	return ui.getRoot().findActor(name);
+        return ui.getRoot().findActor(name);
     }
 }

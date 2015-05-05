@@ -13,29 +13,29 @@ public class GaiaSandboxThreadFactory implements ThreadFactory {
     private final String namePrefix;
 
     public GaiaSandboxThreadFactory() {
-	SecurityManager s = System.getSecurityManager();
-	group = (s != null) ? s.getThreadGroup() :
-		Thread.currentThread().getThreadGroup();
-	namePrefix = "pool-" +
-		poolNumber.getAndIncrement() + "-thread-";
+        SecurityManager s = System.getSecurityManager();
+        group = (s != null) ? s.getThreadGroup() :
+                Thread.currentThread().getThreadGroup();
+        namePrefix = "pool-" +
+                poolNumber.getAndIncrement() + "-thread-";
     }
 
     public Thread newThread(Runnable r) {
-	Thread t = new GSThread(group, r,
-		namePrefix + threadNumber.get(), threadNumber.getAndIncrement());
-	if (t.isDaemon())
-	    t.setDaemon(false);
-	if (t.getPriority() != Thread.MAX_PRIORITY)
-	    t.setPriority(Thread.MAX_PRIORITY);
-	return t;
+        Thread t = new GSThread(group, r,
+                namePrefix + threadNumber.get(), threadNumber.getAndIncrement());
+        if (t.isDaemon())
+            t.setDaemon(false);
+        if (t.getPriority() != Thread.MAX_PRIORITY)
+            t.setPriority(Thread.MAX_PRIORITY);
+        return t;
     }
 
     public class GSThread extends Thread {
-	public int index;
+        public int index;
 
-	public GSThread(ThreadGroup group, Runnable r, String name, int index) {
-	    super(group, r, name);
-	    this.index = index;
-	}
+        public GSThread(ThreadGroup group, Runnable r, String name, int index) {
+            super(group, r, name);
+            this.index = index;
+        }
     }
 }

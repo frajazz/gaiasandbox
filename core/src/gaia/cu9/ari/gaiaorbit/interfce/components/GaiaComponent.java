@@ -18,59 +18,59 @@ public class GaiaComponent extends GuiComponent {
     protected CheckBox transitColor, onlyObservedStars, computeGaiaScan;
 
     public GaiaComponent(Skin skin, Stage stage) {
-	super(skin, stage);
+        super(skin, stage);
     }
 
     @Override
     public void initialize() {
-	computeGaiaScan = new CheckBox(txt("gui.gaiascan.enable"), skin);
-	computeGaiaScan.setName("compute gaia scan");
-	computeGaiaScan.addListener(new EventListener() {
-	    @Override
-	    public boolean handle(Event event) {
-		if (event instanceof ChangeEvent) {
-		    EventManager.instance.post(Events.COMPUTE_GAIA_SCAN_CMD, txt("gui.gaiascan.compute"), computeGaiaScan.isChecked());
-		    return true;
-		}
-		return false;
-	    }
-	});
-	computeGaiaScan.setChecked(GlobalConf.scene.COMPUTE_GAIA_SCAN);
+        computeGaiaScan = new CheckBox(txt("gui.gaiascan.enable"), skin);
+        computeGaiaScan.setName("compute gaia scan");
+        computeGaiaScan.addListener(new EventListener() {
+            @Override
+            public boolean handle(Event event) {
+                if (event instanceof ChangeEvent) {
+                    EventManager.instance.post(Events.COMPUTE_GAIA_SCAN_CMD, txt("gui.gaiascan.compute"), computeGaiaScan.isChecked());
+                    return true;
+                }
+                return false;
+            }
+        });
+        computeGaiaScan.setChecked(GlobalConf.scene.COMPUTE_GAIA_SCAN);
 
-	transitColor = new CheckBox(txt("gui.gaiascan.colour"), skin);
-	transitColor.setName("transit color");
-	transitColor.addListener(new EventListener() {
-	    @Override
-	    public boolean handle(Event event) {
-		if (event instanceof ChangeEvent) {
-		    EventManager.instance.post(Events.TRANSIT_COLOUR_CMD, txt("gui.gaiascan.transit"), transitColor.isChecked());
-		    return true;
-		}
-		return false;
-	    }
-	});
-	transitColor.setChecked(GlobalConf.scene.STAR_COLOR_TRANSIT);
+        transitColor = new CheckBox(txt("gui.gaiascan.colour"), skin);
+        transitColor.setName("transit color");
+        transitColor.addListener(new EventListener() {
+            @Override
+            public boolean handle(Event event) {
+                if (event instanceof ChangeEvent) {
+                    EventManager.instance.post(Events.TRANSIT_COLOUR_CMD, txt("gui.gaiascan.transit"), transitColor.isChecked());
+                    return true;
+                }
+                return false;
+            }
+        });
+        transitColor.setChecked(GlobalConf.scene.STAR_COLOR_TRANSIT);
 
-	onlyObservedStars = new CheckBox(txt("gui.gaiascan.onlyobserved"), skin);
-	onlyObservedStars.setName("only observed stars");
-	onlyObservedStars.addListener(new EventListener() {
-	    @Override
-	    public boolean handle(Event event) {
-		if (event instanceof ChangeEvent) {
-		    EventManager.instance.post(Events.ONLY_OBSERVED_STARS_CMD, txt("gui.gaiascan.only"), onlyObservedStars.isChecked());
-		    return true;
-		}
-		return false;
-	    }
-	});
-	onlyObservedStars.setChecked(GlobalConf.scene.ONLY_OBSERVED_STARS);
+        onlyObservedStars = new CheckBox(txt("gui.gaiascan.onlyobserved"), skin);
+        onlyObservedStars.setName("only observed stars");
+        onlyObservedStars.addListener(new EventListener() {
+            @Override
+            public boolean handle(Event event) {
+                if (event instanceof ChangeEvent) {
+                    EventManager.instance.post(Events.ONLY_OBSERVED_STARS_CMD, txt("gui.gaiascan.only"), onlyObservedStars.isChecked());
+                    return true;
+                }
+                return false;
+            }
+        });
+        onlyObservedStars.setChecked(GlobalConf.scene.ONLY_OBSERVED_STARS);
 
-	VerticalGroup gaiaGroup = new VerticalGroup().align(Align.left);
-	gaiaGroup.addActor(computeGaiaScan);
-	gaiaGroup.addActor(transitColor);
-	gaiaGroup.addActor(onlyObservedStars);
+        VerticalGroup gaiaGroup = new VerticalGroup().align(Align.left);
+        gaiaGroup.addActor(computeGaiaScan);
+        gaiaGroup.addActor(transitColor);
+        gaiaGroup.addActor(onlyObservedStars);
 
-	component = gaiaGroup;
+        component = gaiaGroup;
 
     }
 

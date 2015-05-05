@@ -22,51 +22,51 @@ public abstract class AbstractRenderSystem implements IRenderSystem {
     private Runnable preRunnables, postRunnables;
 
     protected AbstractRenderSystem(RenderGroup rg, int priority, float[] alphas) {
-	super();
-	this.group = rg;
-	this.priority = priority;
-	this.alphas = alphas;
+        super();
+        this.group = rg;
+        this.priority = priority;
+        this.alphas = alphas;
     }
 
     @Override
     public RenderGroup getRenderGroup() {
-	return group;
+        return group;
     }
 
     @Override
     public int getPriority() {
-	return priority;
+        return priority;
     }
 
     @Override
     public void render(List<IRenderable> renderables, ICamera camera, RenderContext rc) {
-	if (!renderables.isEmpty()) {
-	    this.rc = rc;
-	    run(preRunnables);
-	    renderStud(renderables, camera);
-	    run(postRunnables);
-	}
+        if (!renderables.isEmpty()) {
+            this.rc = rc;
+            run(preRunnables);
+            renderStud(renderables, camera);
+            run(postRunnables);
+        }
     }
 
     public abstract void renderStud(List<IRenderable> renderables, ICamera camera);
 
     public void setPreRunnable(Runnable r) {
-	preRunnables = r;
+        preRunnables = r;
     }
 
     public void setPostRunnable(Runnable r) {
-	postRunnables = r;
+        postRunnables = r;
     }
 
     private void run(Runnable runnable) {
-	if (runnable != null) {
-	    runnable.run();
-	}
+        if (runnable != null) {
+            runnable.run();
+        }
     }
 
     @Override
     public int compareTo(IRenderSystem o) {
-	return Integer.compare(priority, o.getPriority());
+        return Integer.compare(priority, o.getPriority());
     }
 
 }

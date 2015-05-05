@@ -20,8 +20,8 @@ public class RingCreator extends ModelCreator {
     float innerRadius, outerRadius, startAngle, endAngle;
 
     public RingCreator() {
-	super();
-	this.name = "Ring";
+        super();
+        this.name = "Ring";
     }
 
     /**
@@ -32,7 +32,7 @@ public class RingCreator extends ModelCreator {
      * @return
      */
     public RingCreator create(int divisions, float innerRadius, float outerRadius, boolean flipNormals) {
-	return create(divisions, innerRadius, outerRadius, flipNormals, 0, 360);
+        return create(divisions, innerRadius, outerRadius, flipNormals, 0, 360);
     }
 
     /**
@@ -43,84 +43,84 @@ public class RingCreator extends ModelCreator {
      * @return
      */
     public RingCreator create(int divisions, float innerRadius, float outerRadius, boolean flipNormals, float startAngle, float endAngle) {
-	this.innerRadius = innerRadius;
-	this.outerRadius = outerRadius;
-	this.startAngle = startAngle;
-	this.endAngle = endAngle;
-	float angleStep = (endAngle - startAngle) / divisions;
+        this.innerRadius = innerRadius;
+        this.outerRadius = outerRadius;
+        this.startAngle = startAngle;
+        this.endAngle = endAngle;
+        float angleStep = (endAngle - startAngle) / divisions;
 
-	float angle = startAngle;
-	// Previous indices
-	int prev1 = addVertex(new Vector3(1, 0, 0).scl(innerRadius).rotate(angle, 0, 1, 0), angle);
-	int prev2 = addVertex(new Vector3(1, 0, 0).scl(outerRadius).rotate(angle, 0, 1, 0), angle);
-	for (angle = startAngle + angleStep; angle <= endAngle; angle += angleStep) {
-	    int i1 = addVertex(new Vector3(1, 0, 0).scl(innerRadius).rotate(angle, 0, 1, 0), angle);
-	    int i2 = addVertex(new Vector3(1, 0, 0).scl(outerRadius).rotate(angle, 0, 1, 0), angle);
+        float angle = startAngle;
+        // Previous indices
+        int prev1 = addVertex(new Vector3(1, 0, 0).scl(innerRadius).rotate(angle, 0, 1, 0), angle);
+        int prev2 = addVertex(new Vector3(1, 0, 0).scl(outerRadius).rotate(angle, 0, 1, 0), angle);
+        for (angle = startAngle + angleStep; angle <= endAngle; angle += angleStep) {
+            int i1 = addVertex(new Vector3(1, 0, 0).scl(innerRadius).rotate(angle, 0, 1, 0), angle);
+            int i2 = addVertex(new Vector3(1, 0, 0).scl(outerRadius).rotate(angle, 0, 1, 0), angle);
 
-	    // Add faces
-	    addFace(faces, flipNormals, prev1, prev2, i2, i1);
+            // Add faces
+            addFace(faces, flipNormals, prev1, prev2, i2, i1);
 
-	    prev1 = i1;
-	    prev2 = i2;
+            prev1 = i1;
+            prev2 = i2;
 
-	}
-	addNormals();
-	return this;
+        }
+        addNormals();
+        return this;
     }
 
     protected int addVertex(Vector3 p, float angle) {
-	addUV(p, angle);
-	vertices.add(p);
+        addUV(p, angle);
+        vertices.add(p);
 
-	return index++;
+        return index++;
     }
 
     protected void addUV(Vector3 p, float angle) {
-	float u = MathUtilsd.lint(angle, startAngle, endAngle, 0, 1);
-	float v = equals(p.len(), innerRadius) ? 0 : 1f;
+        float u = MathUtilsd.lint(angle, startAngle, endAngle, 0, 1);
+        float v = equals(p.len(), innerRadius) ? 0 : 1f;
 
-	uv.add(new Vector2(u, v));
+        uv.add(new Vector2(u, v));
 
     }
 
     private boolean equals(float one, float two) {
-	return Math.abs(one - two) < 0.0001f;
+        return Math.abs(one - two) < 0.0001f;
     }
 
     protected void addNormals() {
-	// Each face has only one normal
+        // Each face has only one normal
 
-	for (IFace face : faces) {
-	    // Calculate face normal, shared amongst all vertices
-	    Vector3 a = vertices.get(face.v()[1] - 1).cpy().sub(vertices.get(face.v()[0] - 1));
-	    Vector3 b = vertices.get(face.v()[2] - 1).cpy().sub(vertices.get(face.v()[1] - 1));
-	    normals.add(a.crs(b).nor());
+        for (IFace face : faces) {
+            // Calculate face normal, shared amongst all vertices
+            Vector3 a = vertices.get(face.v()[1] - 1).cpy().sub(vertices.get(face.v()[0] - 1));
+            Vector3 b = vertices.get(face.v()[2] - 1).cpy().sub(vertices.get(face.v()[1] - 1));
+            normals.add(a.crs(b).nor());
 
-	    // Add index to face
-	    int idx = normals.size();
-	    face.setNormals(idx, idx, idx, idx);
-	}
+            // Add index to face
+            int idx = normals.size();
+            face.setNormals(idx, idx, idx, idx);
+        }
     }
 
     public static void main(String[] args) {
-	boolean flipNormals = false;
-	float inner = 1f, outer = 3f;
-	int divisions = 10;
-	RingCreator rc = new RingCreator();
-	rc.create(divisions, inner, outer, flipNormals);
-	try {
-	    File file = File.createTempFile("ring_" + inner + "_" + outer + "_" + divisions + "_", ".obj");
-	    OutputStream os = new FileOutputStream(file);
-	    rc.dumpObj(os);
-	    os.flush();
-	    os.close();
-	    System.out.println("Vertices: " + rc.vertices.size());
-	    System.out.println("Normals: " + rc.normals.size());
-	    System.out.println("Faces: " + rc.faces.size());
-	    System.out.println("Model written in: " + file.getAbsolutePath());
-	} catch (IOException e) {
-	    e.printStackTrace();
-	}
+        boolean flipNormals = false;
+        float inner = 1f, outer = 3f;
+        int divisions = 10;
+        RingCreator rc = new RingCreator();
+        rc.create(divisions, inner, outer, flipNormals);
+        try {
+            File file = File.createTempFile("ring_" + inner + "_" + outer + "_" + divisions + "_", ".obj");
+            OutputStream os = new FileOutputStream(file);
+            rc.dumpObj(os);
+            os.flush();
+            os.close();
+            System.out.println("Vertices: " + rc.vertices.size());
+            System.out.println("Normals: " + rc.normals.size());
+            System.out.println("Faces: " + rc.faces.size());
+            System.out.println("Model written in: " + file.getAbsolutePath());
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
 }

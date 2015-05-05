@@ -30,62 +30,62 @@ public class MilkyWay extends Blob implements IModelRenderable, ILabelRenderable
     Matrix4 coordinateSystem;
 
     public MilkyWay() {
-	super();
-	localTransform = new Matrix4();
+        super();
+        localTransform = new Matrix4();
 
-	lowAngle = (float) Math.toRadians(60);
-	highAngle = (float) Math.toRadians(75.51);
+        lowAngle = (float) Math.toRadians(60);
+        highAngle = (float) Math.toRadians(75.51);
     }
 
     public void initialize() {
-	mc.initialize();
-	mc.env.set(new ColorAttribute(ColorAttribute.AmbientLight, cc[0], cc[1], cc[2], 1));
+        mc.initialize();
+        mc.env.set(new ColorAttribute(ColorAttribute.AmbientLight, cc[0], cc[1], cc[2], 1));
     }
 
     @Override
     public void doneLoading(AssetManager manager) {
-	super.doneLoading(manager);
+        super.doneLoading(manager);
 
-	// Set static coordinates to position
-	coordinates.getEquatorialCartesianCoordinates(null, pos);
+        // Set static coordinates to position
+        coordinates.getEquatorialCartesianCoordinates(null, pos);
 
-	// Initialize transform
-	if (transformName != null) {
-	    coordinateSystem = new Matrix4();
-	    Class<Coordinates> c = Coordinates.class;
-	    try {
-		Method m = c.getMethod(transformName);
-		Matrix4d trf = (Matrix4d) m.invoke(null);
-		coordinateSystem.set(trf.valuesf());
-	    } catch (NoSuchMethodException | SecurityException | IllegalAccessException | IllegalArgumentException | InvocationTargetException e) {
-		Gdx.app.error(Mw.class.getName(), "Error getting/invoking method Coordinates." + transformName + "()");
-	    }
-	} else {
-	    // Equatorial, nothing
-	}
-	// Model
-	mc.doneLoading(manager, localTransform, null);
+        // Initialize transform
+        if (transformName != null) {
+            coordinateSystem = new Matrix4();
+            Class<Coordinates> c = Coordinates.class;
+            try {
+                Method m = c.getMethod(transformName);
+                Matrix4d trf = (Matrix4d) m.invoke(null);
+                coordinateSystem.set(trf.valuesf());
+            } catch (NoSuchMethodException | SecurityException | IllegalAccessException | IllegalArgumentException | InvocationTargetException e) {
+                Gdx.app.error(Mw.class.getName(), "Error getting/invoking method Coordinates." + transformName + "()");
+            }
+        } else {
+            // Equatorial, nothing
+        }
+        // Model
+        mc.doneLoading(manager, localTransform, null);
     }
 
     @Override
     protected void addToRenderLists(ICamera camera) {
-	if (viewAngle <= highAngle) {
-	    addToRender(this, RenderGroup.MODEL_F);
-	    if (renderLabel()) {
-		addToRender(this, RenderGroup.LABEL);
-	    }
-	}
+        if (viewAngle <= highAngle) {
+            addToRender(this, RenderGroup.MODEL_F);
+            if (renderLabel()) {
+                addToRender(this, RenderGroup.LABEL);
+            }
+        }
     }
 
     @Override
     public void updateLocal(ITimeFrameProvider time, ICamera camera) {
-	super.updateLocal(time, camera);
-	// Directional light comes from camera
-	if (mc != null) {
-	    float[] camdir = camera.getDirection().valuesf();
-	    mc.dlight.direction.set(-camdir[0], -camdir[1], -camdir[2]);
-	}
-	updateLocalTransform();
+        super.updateLocal(time, camera);
+        // Directional light comes from camera
+        if (mc != null) {
+            float[] camdir = camera.getDirection().valuesf();
+            mc.dlight.direction.set(-camdir[0], -camdir[1], -camdir[2]);
+        }
+        updateLocalTransform();
     }
 
     /**
@@ -93,21 +93,21 @@ public class MilkyWay extends Blob implements IModelRenderable, ILabelRenderable
      * Override if your model contains more than just the position and size.
      */
     protected void updateLocalTransform() {
-	// Scale + Rotate + Tilt + Translate 
-	float[] trans = transform.getMatrix().getTranslationf();
-	localTransform.idt().translate(trans[0], trans[1], trans[2]).scl(size);
-	localTransform.mul(coordinateSystem);
+        // Scale + Rotate + Tilt + Translate 
+        float[] trans = transform.getMatrix().getTranslationf();
+        localTransform.idt().translate(trans[0], trans[1], trans[2]).scl(size);
+        localTransform.mul(coordinateSystem);
     }
 
     @Override
     public void render(Object... params) {
-	if (params[0] instanceof ModelBatch) {
-	    // Render model
-	    render((ModelBatch) params[0], (Float) params[1]);
-	    // Render label?
-	} else if (params[0] instanceof SpriteBatch) {
-	    render((SpriteBatch) params[0], (ShaderProgram) params[1], (BitmapFont) params[2], (ICamera) params[3]);
-	}
+        if (params[0] instanceof ModelBatch) {
+            // Render model
+            render((ModelBatch) params[0], (Float) params[1]);
+            // Render label?
+        } else if (params[0] instanceof SpriteBatch) {
+            render((SpriteBatch) params[0], (ShaderProgram) params[1], (BitmapFont) params[2], (ICamera) params[3]);
+        }
     }
 
     /**
@@ -115,8 +115,8 @@ public class MilkyWay extends Blob implements IModelRenderable, ILabelRenderable
      */
     @Override
     public void render(ModelBatch modelBatch, float alpha) {
-	mc.setTransparency(alpha * cc[3] * opacity);
-	modelBatch.render(mc.instance, mc.env);
+        mc.setTransparency(alpha * cc[3] * opacity);
+        modelBatch.render(mc.instance, mc.env);
     }
 
     /**
@@ -124,29 +124,29 @@ public class MilkyWay extends Blob implements IModelRenderable, ILabelRenderable
      */
     @Override
     public void render(SpriteBatch batch, ShaderProgram shader, BitmapFont font, ICamera camera) {
-	Vector3d pos = auxVector3d.get();
-	labelPosition(pos);
-	shader.setUniformf("a_viewAngle", 90f);
-	shader.setUniformf("a_thOverFactor", 1f);
-	renderLabel(batch, shader, font, camera, label(), pos, labelScale(), labelSize(), labelColour());
+        Vector3d pos = auxVector3d.get();
+        labelPosition(pos);
+        shader.setUniformf("a_viewAngle", 90f);
+        shader.setUniformf("a_thOverFactor", 1f);
+        renderLabel(batch, shader, font, camera, label(), pos, labelScale(), labelSize(), labelColour());
     }
 
     @Override
     public boolean hasAtmosphere() {
-	return false;
+        return false;
     }
 
     public void setTransformName(String transformName) {
-	this.transformName = transformName;
+        this.transformName = transformName;
     }
 
     public void setModel(String model) {
-	this.model = model;
+        this.model = model;
     }
 
     @Override
     public boolean renderLabel() {
-	return true;
+        return true;
     }
 
     /**
@@ -154,46 +154,46 @@ public class MilkyWay extends Blob implements IModelRenderable, ILabelRenderable
      * @param size
      */
     public void setSize(Double size) {
-	this.size = (float) (size * Constants.KM_TO_U);
+        this.size = (float) (size * Constants.KM_TO_U);
     }
 
     @Override
     public float[] labelColour() {
-	return labelColour;
+        return labelColour;
     }
 
     @Override
     public float labelSize() {
-	return distToCamera * 3e-3f;
+        return distToCamera * 3e-3f;
     }
 
     @Override
     public float labelScale() {
-	return 3f;
+        return 3f;
     }
 
     @Override
     public void labelPosition(Vector3d out) {
-	transform.getTranslation(out);
+        transform.getTranslation(out);
     }
 
     @Override
     public String label() {
-	return name;
+        return name;
     }
 
     @Override
     public void labelDepthBuffer() {
-	Gdx.gl.glDisable(GL20.GL_DEPTH_TEST);
-	Gdx.gl.glDepthMask(false);
+        Gdx.gl.glDisable(GL20.GL_DEPTH_TEST);
+        Gdx.gl.glDepthMask(false);
     }
 
     public void setModel(ModelComponent mc) {
-	this.mc = mc;
+        this.mc = mc;
     }
 
     public void setLabelcolor(double[] labelcolor) {
-	this.labelColour = GlobalResources.toFloatArray(labelcolor);
+        this.labelColour = GlobalResources.toFloatArray(labelcolor);
 
     }
 

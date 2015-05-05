@@ -27,41 +27,41 @@ public class MessagesInterface extends Table implements IObserver {
     Map<Integer, Widget> customElements;
 
     public MessagesInterface(Skin skin, Object lock) {
-	super(skin);
-	customElements = new HashMap<Integer, Widget>();
+        super(skin);
+        customElements = new HashMap<Integer, Widget>();
 
-	headline = new OwnLabel("", skin, "headline");
-	headline.setColor(1, 1, 0, 1);
-	subhead = new OwnLabel("", skin, "subhead");
-	this.add(headline).left();
-	this.row();
-	this.add(subhead).left();
-	this.lock = lock;
-	EventManager.instance.subscribe(this, Events.POST_HEADLINE_MESSAGE, Events.CLEAR_HEADLINE_MESSAGE, Events.POST_SUBHEAD_MESSAGE, Events.CLEAR_SUBHEAD_MESSAGE, Events.CLEAR_MESSAGES);
+        headline = new OwnLabel("", skin, "headline");
+        headline.setColor(1, 1, 0, 1);
+        subhead = new OwnLabel("", skin, "subhead");
+        this.add(headline).left();
+        this.row();
+        this.add(subhead).left();
+        this.lock = lock;
+        EventManager.instance.subscribe(this, Events.POST_HEADLINE_MESSAGE, Events.CLEAR_HEADLINE_MESSAGE, Events.POST_SUBHEAD_MESSAGE, Events.CLEAR_SUBHEAD_MESSAGE, Events.CLEAR_MESSAGES);
     }
 
     @Override
     public void notify(Events event, Object... data) {
-	synchronized (lock) {
-	    switch (event) {
-	    case POST_HEADLINE_MESSAGE:
-		headline.setText((String) data[0]);
-		break;
-	    case CLEAR_HEADLINE_MESSAGE:
-		headline.setText("");
-		break;
-	    case POST_SUBHEAD_MESSAGE:
-		subhead.setText((String) data[0]);
-		break;
-	    case CLEAR_SUBHEAD_MESSAGE:
-		subhead.setText("");
-		break;
-	    case CLEAR_MESSAGES:
-		headline.setText("");
-		subhead.setText("");
-		break;
-	    }
-	}
+        synchronized (lock) {
+            switch (event) {
+            case POST_HEADLINE_MESSAGE:
+                headline.setText((String) data[0]);
+                break;
+            case CLEAR_HEADLINE_MESSAGE:
+                headline.setText("");
+                break;
+            case POST_SUBHEAD_MESSAGE:
+                subhead.setText((String) data[0]);
+                break;
+            case CLEAR_SUBHEAD_MESSAGE:
+                subhead.setText("");
+                break;
+            case CLEAR_MESSAGES:
+                headline.setText("");
+                subhead.setText("");
+                break;
+            }
+        }
     }
 
 }

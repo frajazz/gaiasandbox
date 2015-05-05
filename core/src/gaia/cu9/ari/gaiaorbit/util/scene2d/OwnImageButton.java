@@ -22,59 +22,59 @@ public class OwnImageButton extends ImageButton {
     OwnImageButton me;
 
     public OwnImageButton(Skin skin) {
-	super(skin);
-	this.me = this;
-	initialize();
+        super(skin);
+        this.me = this;
+        initialize();
     }
 
     public OwnImageButton(Skin skin, String styleName) {
-	super(skin, styleName);
-	this.me = this;
-	initialize();
+        super(skin, styleName);
+        this.me = this;
+        initialize();
     }
 
     public OwnImageButton(ImageButtonStyle style) {
-	super(style);
-	this.me = this;
-	initialize();
+        super(style);
+        this.me = this;
+        initialize();
     }
 
     public void setCheckedNoFire(boolean isChecked) {
-	// Remove listeners
+        // Remove listeners
 
-	for (EventListener listener : this.getListeners()) {
-	    listeners.add(listener);
-	}
-	this.clearListeners();
-	// Check
-	this.setChecked(isChecked);
-	// Add listeners
-	for (EventListener listener : listeners) {
-	    this.addListener(listener);
-	}
-	listeners.clear();
+        for (EventListener listener : this.getListeners()) {
+            listeners.add(listener);
+        }
+        this.clearListeners();
+        // Check
+        this.setChecked(isChecked);
+        // Add listeners
+        for (EventListener listener : listeners) {
+            this.addListener(listener);
+        }
+        listeners.clear();
     }
 
     private void initialize() {
-	listeners = new DelayedRemovalArray();
-	this.addListener(new EventListener() {
-	    @Override
-	    public boolean handle(Event event) {
-		if (event instanceof InputEvent) {
-		    Type type = ((InputEvent) event).getType();
-		    if (type == Type.enter) {
-			if (!me.isDisabled())
-			    Gdx.input.setCursorImage(GlobalResources.linkCursor, 4, 0);
-			return true;
-		    } else if (type == Type.exit) {
-			Gdx.input.setCursorImage(null, 0, 0);
-			return true;
-		    }
+        listeners = new DelayedRemovalArray();
+        this.addListener(new EventListener() {
+            @Override
+            public boolean handle(Event event) {
+                if (event instanceof InputEvent) {
+                    Type type = ((InputEvent) event).getType();
+                    if (type == Type.enter) {
+                        if (!me.isDisabled())
+                            Gdx.input.setCursorImage(GlobalResources.linkCursor, 4, 0);
+                        return true;
+                    } else if (type == Type.exit) {
+                        Gdx.input.setCursorImage(null, 0, 0);
+                        return true;
+                    }
 
-		}
-		return false;
-	    }
-	});
+                }
+                return false;
+            }
+        });
     }
 
 }

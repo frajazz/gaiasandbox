@@ -14,12 +14,12 @@ public class SceneGraphNodeGroup {
     public List<SceneGraphNode> nodes;
 
     public SceneGraphNodeGroup() {
-	super();
+        super();
     }
 
     public SceneGraphNodeGroup(List<SceneGraphNode> nodes) {
-	this();
-	this.nodes = nodes;
+        this();
+        this.nodes = nodes;
     }
 
 }

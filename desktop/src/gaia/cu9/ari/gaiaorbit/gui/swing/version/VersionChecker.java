@@ -13,30 +13,30 @@ public class VersionChecker implements Runnable {
     private String stringUrl;
 
     public VersionChecker(String stringUrl) {
-	this.stringUrl = stringUrl;
+        this.stringUrl = stringUrl;
     }
 
     @Override
     public Object run() {
-	Object result = null;
-	try {
-	    URL url = new URL(stringUrl);
-	    InputStream is = url.openStream();
-	    /* Now read the retrieved document from the stream. */
-	    JsonReader reader = new JsonReader();
-	    result = reader.parse(is);
-	    is.close();
+        Object result = null;
+        try {
+            URL url = new URL(stringUrl);
+            InputStream is = url.openStream();
+            /* Now read the retrieved document from the stream. */
+            JsonReader reader = new JsonReader();
+            result = reader.parse(is);
+            is.close();
 
-	} catch (MalformedURLException e) {
-	    result = e.getLocalizedMessage();
-	} catch (IOException e) {
-	    result = e.getLocalizedMessage();
-	}
-	return result;
+        } catch (MalformedURLException e) {
+            result = e.getLocalizedMessage();
+        } catch (IOException e) {
+            result = e.getLocalizedMessage();
+        }
+        return result;
     }
 
     static String convertStreamToString(java.io.InputStream is) {
-	java.util.Scanner s = new java.util.Scanner(is).useDelimiter("\\A");
-	return s.hasNext() ? s.next() : "";
+        java.util.Scanner s = new java.util.Scanner(is).useDelimiter("\\A");
+        return s.hasNext() ? s.next() : "";
     }
 }

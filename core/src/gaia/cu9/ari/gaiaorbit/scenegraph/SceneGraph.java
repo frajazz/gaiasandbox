@@ -10,18 +10,18 @@ import gaia.cu9.ari.gaiaorbit.util.time.ITimeFrameProvider;
 public class SceneGraph extends AbstractSceneGraph {
 
     public SceneGraph() {
-	super();
+        super();
     }
 
     public void update(ITimeFrameProvider time, ICamera camera) {
-	super.update(time, camera);
-	root.transform.position.set(camera.getInversePos());
-	root.update(time, null, camera);
-	objectsPerThread[0] = root.numChildren;
+        super.update(time, camera);
+        root.transform.position.set(camera.getInversePos());
+        root.update(time, null, camera);
+        objectsPerThread[0] = root.numChildren;
     }
 
     public void dispose() {
-	super.dispose();
+        super.dispose();
     }
 
 }

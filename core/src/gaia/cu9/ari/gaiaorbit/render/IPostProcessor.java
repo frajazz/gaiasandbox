@@ -9,42 +9,42 @@ import com.bitfire.postprocessing.effects.MotionBlur;
 
 public interface IPostProcessor {
     public class PostProcessBean {
-	public PostProcessor pp;
-	public Bloom bloom;
-	public Antialiasing antialiasing;
-	public LensFlare2 lens;
-	public MotionBlur motionblur;
+        public PostProcessor pp;
+        public Bloom bloom;
+        public Antialiasing antialiasing;
+        public LensFlare2 lens;
+        public MotionBlur motionblur;
 
-	public boolean capture() {
-	    return pp.capture();
-	}
+        public boolean capture() {
+            return pp.capture();
+        }
 
-	public boolean captureNoClear() {
-	    return pp.captureNoClear();
-	}
+        public boolean captureNoClear() {
+            return pp.captureNoClear();
+        }
 
-	public void render() {
-	    pp.render();
-	}
+        public void render() {
+            pp.render();
+        }
 
-	public FrameBuffer captureEnd() {
-	    return pp.captureEnd();
-	}
+        public FrameBuffer captureEnd() {
+            return pp.captureEnd();
+        }
 
-	public void render(FrameBuffer dest) {
-	    pp.render(dest);
-	}
+        public void render(FrameBuffer dest) {
+            pp.render(dest);
+        }
 
     }
 
     public enum RenderType {
-	screen(0), screenshot(1), frame(2);
+        screen(0), screenshot(1), frame(2);
 
-	int index;
+        int index;
 
-	private RenderType(int index) {
-	    this.index = index;
-	}
+        private RenderType(int index) {
+            this.index = index;
+        }
 
     }
 

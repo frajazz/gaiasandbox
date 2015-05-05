@@ -12,50 +12,53 @@ import com.badlogic.gdx.assets.AssetManager;
  * @author Toni Sagrista
  *
  */
+@SuppressWarnings({ "rawtypes", "unchecked" })
 public class AssetBean {
     private static AssetManager assetManager;
     private static Set<AssetBean> assetDescriptors;
-    static {
-	assetDescriptors = new HashSet<AssetBean>();
-    }
-
-    public static void addAsset(String assetName, Class assetClass) {
-	if (assetManager == null) {
-	    assetDescriptors.add(new AssetBean(assetName, assetClass));
-	} else {
-	    assetManager.load(assetName, assetClass);
-	}
-    }
-
-    public static void addAsset(String assetName, Class assetClass, AssetLoaderParameters params) {
-	if (assetManager == null) {
-	    assetDescriptors.add(new AssetBean(assetName, assetClass, params));
-	} else {
-	    assetManager.load(assetName, assetClass, params);
-	}
-    }
-
-    public static Set<AssetBean> getAssets() {
-	return assetDescriptors;
-    }
-
-    public static void setAssetManager(AssetManager manager) {
-	AssetBean.assetManager = manager;
-    }
 
     private String assetName;
+
     private Class assetClass;
     private AssetLoaderParameters assetParams = null;
 
+    static {
+        assetDescriptors = new HashSet<AssetBean>();
+    }
+
+    public static void addAsset(String assetName, Class assetClass) {
+        if (assetManager == null) {
+            assetDescriptors.add(new AssetBean(assetName, assetClass));
+        } else {
+            assetManager.load(assetName, assetClass);
+        }
+    }
+
+    public static void addAsset(String assetName, Class assetClass, AssetLoaderParameters params) {
+        if (assetManager == null) {
+            assetDescriptors.add(new AssetBean(assetName, assetClass, params));
+        } else {
+            assetManager.load(assetName, assetClass, params);
+        }
+    }
+
+    public static Set<AssetBean> getAssets() {
+        return assetDescriptors;
+    }
+
+    public static void setAssetManager(AssetManager manager) {
+        AssetBean.assetManager = manager;
+    }
+
     private AssetBean(String assetName, Class assetClass) {
-	super();
-	this.assetName = assetName;
-	this.assetClass = assetClass;
+        super();
+        this.assetName = assetName;
+        this.assetClass = assetClass;
     }
 
     private AssetBean(String assetName, Class assetClass, AssetLoaderParameters params) {
-	this(assetName, assetClass);
-	this.assetParams = params;
+        this(assetName, assetClass);
+        this.assetParams = params;
     }
 
     /**
@@ -63,10 +66,10 @@ public class AssetBean {
      * @param manager
      */
     public void load(AssetManager manager) {
-	if (assetParams != null) {
-	    manager.load(assetName, assetClass, assetParams);
-	} else {
-	    manager.load(assetName, assetClass);
-	}
+        if (assetParams != null) {
+            manager.load(assetName, assetClass, assetParams);
+        } else {
+            manager.load(assetName, assetClass);
+        }
     }
 }

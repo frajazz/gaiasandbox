@@ -26,52 +26,52 @@ public final class FuzzyFilter extends Filter<FuzzyFilter> {
     private float fade;
 
     public enum Param implements Parameter {
-	// @formatter:off
-	Texture("u_texture0", 0), ViewportInverse("u_viewportInverse", 2), Fade("u_fade", 0);
-	// @formatter:on
+        // @formatter:off
+        Texture("u_texture0", 0), ViewportInverse("u_viewportInverse", 2), Fade("u_fade", 0);
+        // @formatter:on
 
-	private String mnemonic;
-	private int elementSize;
+        private String mnemonic;
+        private int elementSize;
 
-	private Param(String mnemonic, int arrayElementSize) {
-	    this.mnemonic = mnemonic;
-	    this.elementSize = arrayElementSize;
-	}
+        private Param(String mnemonic, int arrayElementSize) {
+            this.mnemonic = mnemonic;
+            this.elementSize = arrayElementSize;
+        }
 
-	@Override
-	public String mnemonic() {
-	    return this.mnemonic;
-	}
+        @Override
+        public String mnemonic() {
+            return this.mnemonic;
+        }
 
-	@Override
-	public int arrayElementSize() {
-	    return this.elementSize;
-	}
+        @Override
+        public int arrayElementSize() {
+            return this.elementSize;
+        }
     }
 
     public FuzzyFilter(Vector2 viewportSize, float fade) {
-	super(ShaderLoader.fromFile("screenspace", "fuzzy"));
+        super(ShaderLoader.fromFile("screenspace", "fuzzy"));
 
-	this.viewportInverse = viewportSize;
-	this.viewportInverse.x = 1f / this.viewportInverse.x;
-	this.viewportInverse.y = 1f / this.viewportInverse.y;
+        this.viewportInverse = viewportSize;
+        this.viewportInverse.x = 1f / this.viewportInverse.x;
+        this.viewportInverse.y = 1f / this.viewportInverse.y;
 
-	this.fade = fade;
+        this.fade = fade;
 
-	rebind();
+        rebind();
     }
 
     public FuzzyFilter(int viewportWidth, int viewportHeight) {
-	this(new Vector2(viewportWidth, viewportHeight), 3f);
+        this(new Vector2(viewportWidth, viewportHeight), 3f);
     }
 
     public FuzzyFilter(int viewportWidth, int viewportHeight, float fade) {
-	this(new Vector2(viewportWidth, viewportHeight), fade);
+        this(new Vector2(viewportWidth, viewportHeight), fade);
     }
 
     public void setViewportSize(float width, float height) {
-	this.viewportInverse.set(1f / width, 1f / height);
-	setParam(Param.ViewportInverse, this.viewportInverse);
+        this.viewportInverse.set(1f / width, 1f / height);
+        setParam(Param.ViewportInverse, this.viewportInverse);
     }
 
     /**
@@ -80,21 +80,21 @@ public final class FuzzyFilter extends Filter<FuzzyFilter> {
      * @param fade
      */
     public void setFade(float fade) {
-	this.fade = fade;
-	setParam(Param.Fade, this.fade);
+        this.fade = fade;
+        setParam(Param.Fade, this.fade);
     }
 
     @Override
     public void rebind() {
-	// reimplement super to batch every parameter
-	setParams(Param.Texture, u_texture0);
-	setParams(Param.ViewportInverse, this.viewportInverse);
-	setParams(Param.Fade, this.fade);
-	endParams();
+        // reimplement super to batch every parameter
+        setParams(Param.Texture, u_texture0);
+        setParams(Param.ViewportInverse, this.viewportInverse);
+        setParams(Param.Fade, this.fade);
+        endParams();
     }
 
     @Override
     protected void onBeforeRender() {
-	inputTexture.bind(u_texture0);
+        inputTexture.bind(u_texture0);
     }
 }

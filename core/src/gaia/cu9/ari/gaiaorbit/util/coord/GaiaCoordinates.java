@@ -13,21 +13,21 @@ public class GaiaCoordinates implements IBodyCoordinates {
 
     @Override
     public void doneLoading(Object... params) {
-	orbit = (HeliotropicOrbit) ((ISceneGraph) params[0]).getNode("Gaia orbit");
-	data = orbit.orbitData;
+        orbit = (HeliotropicOrbit) ((ISceneGraph) params[0]).getNode("Gaia orbit");
+        data = orbit.orbitData;
     }
 
     @Override
     public Vector3d getEclipticSphericalCoordinates(Date date, Vector3d out) {
-	return null;
+        return null;
     }
 
     @Override
     public Vector3d getEquatorialCartesianCoordinates(Date date, Vector3d out) {
-	data.loadPoint(out, date);
-	// Rotate by solar longitude, and convert to equatorial.
-	out.rotate(AstroUtils.getSunLongitude(date) + 180, 0, 1, 0).mul(Coordinates.equatorialToEcliptic());
-	return out;
+        data.loadPoint(out, date);
+        // Rotate by solar longitude, and convert to equatorial.
+        out.rotate(AstroUtils.getSunLongitude(date) + 180, 0, 1, 0).mul(Coordinates.equatorialToEcliptic());
+        return out;
     }
 
 }

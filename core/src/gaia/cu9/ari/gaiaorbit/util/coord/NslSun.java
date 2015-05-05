@@ -71,8 +71,8 @@ public class NslSun {
      * @param julianDate The julian date.
      */
     public void setTime(double julianDate) {
-	long tNs = (long) ((julianDate - AstroUtils.JD_J2000) * AstroUtils.DAY_TO_NS);
-	setTime(tNs);
+        long tNs = (long) ((julianDate - AstroUtils.JD_J2000) * AstroUtils.DAY_TO_NS);
+        setTime(tNs);
     }
 
     /**
@@ -84,56 +84,56 @@ public class NslSun {
      *            time in [ns] since the time origin
      */
     public void setTime(long tNs) {
-	final double daysFromJ2000 = (double) tNs * AstroUtils.NS_TO_DAY;
+        final double daysFromJ2000 = (double) tNs * AstroUtils.NS_TO_DAY;
 
-	// Mean apparent Sun longitude:
-	final double xl = NOMINALSUN_MEANLONGITUDE_J2000
-		- ABERRATION_CONSTANT_J2000 / 3600.0
-		+ NOMINALSUN_MEANLONGITUDERATE_J2000
-		* daysFromJ2000;
+        // Mean apparent Sun longitude:
+        final double xl = NOMINALSUN_MEANLONGITUDE_J2000
+                - ABERRATION_CONSTANT_J2000 / 3600.0
+                + NOMINALSUN_MEANLONGITUDERATE_J2000
+                * daysFromJ2000;
 
-	// Mean Sun anomaly:
-	final double xm = NOMINALSUN_ORBITALMEANANOMALY_J2000
-		+ NOMINALSUN_ORBITALMEANANOMALYRATE_J2000
-		* daysFromJ2000;
+        // Mean Sun anomaly:
+        final double xm = NOMINALSUN_ORBITALMEANANOMALY_J2000
+                + NOMINALSUN_ORBITALMEANANOMALYRATE_J2000
+                * daysFromJ2000;
 
-	final double sm = Math.sin(Math.toRadians(xm));
-	final double cm = Math.cos(Math.toRadians(xm));
+        final double sm = Math.sin(Math.toRadians(xm));
+        final double cm = Math.cos(Math.toRadians(xm));
 
-	// Longitude accurate to O(e^3)
-	final double lon = xl + sm * (d2e + d5_2e2 * cm);
+        // Longitude accurate to O(e^3)
+        final double lon = xl + sm * (d2e + d5_2e2 * cm);
 
-	this.sLonDot = Math
-		.toRadians(NOMINALSUN_MEANLONGITUDERATE_J2000
-			+ NOMINALSUN_ORBITALMEANANOMALYRATE_J2000
-			* Math.toRadians(d2e * cm + d5_2e2
-				* (cm * cm - sm * sm)));
+        this.sLonDot = Math
+                .toRadians(NOMINALSUN_MEANLONGITUDERATE_J2000
+                        + NOMINALSUN_ORBITALMEANANOMALYRATE_J2000
+                        * Math.toRadians(d2e * cm + d5_2e2
+                                * (cm * cm - sm * sm)));
 
-	this.sLon = Math.toRadians(lon);
-	this.sLonMod4Pi = Math.toRadians(lon % (2. * 360.0));
-	this.sineLon = Math.sin(this.sLonMod4Pi);
-	this.cosineLon = Math.cos(this.sLonMod4Pi);
+        this.sLon = Math.toRadians(lon);
+        this.sLonMod4Pi = Math.toRadians(lon % (2. * 360.0));
+        this.sineLon = Math.sin(this.sLonMod4Pi);
+        this.cosineLon = Math.cos(this.sLonMod4Pi);
     }
 
     /**
      * @return solar longitude in [rad]
      */
     public double getSolarLongitude() {
-	return this.sLon;
+        return this.sLon;
     }
 
     /**
      * @return solar longitude in [rad], modulo 4*PI
      */
     public double getSolarLongitudeMod4Pi() {
-	return this.sLonMod4Pi;
+        return this.sLonMod4Pi;
     }
 
     /**
      * @return time derivative of solar longitude in [rad/day]
      */
     public double getSolarLongitudeDot() {
-	return sLonDot;
+        return sLonDot;
     }
 
     /**
@@ -141,8 +141,8 @@ public class NslSun {
      * @return The output vector containing the solar direction as a unit 3-vector in BCRS.
      */
     public Vector3d getSolarDirection(Vector3d out) {
-	return out.set(cosineLon, sineLon * cosineObliquity, sineLon
-		* sineObliquity);
+        return out.set(cosineLon, sineLon * cosineObliquity, sineLon
+                * sineObliquity);
     }
 
     /**
@@ -159,15 +159,15 @@ public class NslSun {
      * @return attitude quaternion
      */
     public Quaterniond heliotropicToQuaternion(long t, double xi, double nu,
-	    double Omega) {
-	setTime(t);
-	double sLon = getSolarLongitude();
-	Quaterniond q = new Quaterniond(xAxis, obliquity_deg);
-	q.mul(new Quaterniond(zAxis, Math.toDegrees(sLon)));
-	q.mul(new Quaterniond(xAxis, Math.toDegrees(nu - piHalf)));
-	q.mul(new Quaterniond(yAxis, Math.toDegrees(piHalf - xi)));
-	q.mul(new Quaterniond(zAxis, Math.toDegrees(Omega)));
-	return q;
+            double Omega) {
+        setTime(t);
+        double sLon = getSolarLongitude();
+        Quaterniond q = new Quaterniond(xAxis, obliquity_deg);
+        q.mul(new Quaterniond(zAxis, Math.toDegrees(sLon)));
+        q.mul(new Quaterniond(xAxis, Math.toDegrees(nu - piHalf)));
+        q.mul(new Quaterniond(yAxis, Math.toDegrees(piHalf - xi)));
+        q.mul(new Quaterniond(zAxis, Math.toDegrees(Omega)));
+        return q;
     }
 
     /**
@@ -180,14 +180,14 @@ public class NslSun {
      * @return angle in base interval [rad]
      */
     public double angleBase(double x, int nRev) {
-	double x1 = x;
-	double base = (double) nRev * 2.0 * Math.PI;
-	while (x1 >= base) {
-	    x1 -= base;
-	}
-	while (x1 < 0.0) {
-	    x1 += base;
-	}
-	return x1;
+        double x1 = x;
+        double base = (double) nRev * 2.0 * Math.PI;
+        while (x1 >= base) {
+            x1 -= base;
+        }
+        while (x1 < 0.0) {
+            x1 += base;
+        }
+        return x1;
     }
 }

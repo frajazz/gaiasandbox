@@ -6,12 +6,12 @@ import com.badlogic.gdx.utils.NumberUtils;
 
 public class Vector3Attribute extends Attribute {
     public Vector3Attribute(long type) {
-	super(type);
+        super(type);
     }
 
     public Vector3Attribute(long type, Vector3 value) {
-	super(type);
-	this.value = value;
+        super(type);
+        this.value = value;
     }
 
     public Vector3 value;
@@ -30,13 +30,18 @@ public class Vector3Attribute extends Attribute {
 
     @Override
     public Attribute copy() {
-	return new Vector3Attribute(type, value);
+        return new Vector3Attribute(type, value);
     }
 
     @Override
     public int hashCode() {
-	int result = (int) type;
-	result = 977 * result + NumberUtils.floatToRawIntBits(value.x) + NumberUtils.floatToRawIntBits(value.y) + NumberUtils.floatToRawIntBits(value.z);
-	return result;
+        int result = (int) type;
+        result = 977 * result + NumberUtils.floatToRawIntBits(value.x) + NumberUtils.floatToRawIntBits(value.y) + NumberUtils.floatToRawIntBits(value.z);
+        return result;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        return super.equals(obj);
     }
 }

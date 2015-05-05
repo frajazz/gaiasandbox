@@ -16,184 +16,184 @@ public class TextConsole extends TextScreen implements ConsoleAPI {
     private ScreenAPI screenAPI = null;
 
     public TextConsole() {
-	super();
-	currentLine = 0;
-	currentPos = 0;
-	screenAPI = getScreenAPI();
+        super();
+        currentLine = 0;
+        currentPos = 0;
+        screenAPI = getScreenAPI();
     }
 
     public TextConsole(int maxLines,
-	    int maxChars,
-	    Color foregroundColor,
-	    Color backgroundColor,
-	    int fontSize) {
-	super(maxLines, maxChars, foregroundColor, backgroundColor, fontSize);
-	currentLine = 0;
-	currentPos = 0;
-	screenAPI = getScreenAPI();
+            int maxChars,
+            Color foregroundColor,
+            Color backgroundColor,
+            int fontSize) {
+        super(maxLines, maxChars, foregroundColor, backgroundColor, fontSize);
+        currentLine = 0;
+        currentPos = 0;
+        screenAPI = getScreenAPI();
     }
 
     @Override
     public ConsoleAPI getConsoleAPI() {
-	return this;
+        return this;
     }
 
     @Override
     protected boolean onKeyPressed(KeyEvent e) {
-	boolean consumed = false;
+        boolean consumed = false;
 
-	if (e.getKeyCode() == KeyEvent.VK_LEFT) {
-	    currentPos--;
+        if (e.getKeyCode() == KeyEvent.VK_LEFT) {
+            currentPos--;
 
-	    if (currentPos < 0) {
-		currentPos = (screenAPI.getMaxChars() - 1);
-	    }
+            if (currentPos < 0) {
+                currentPos = (screenAPI.getMaxChars() - 1);
+            }
 
-	    consumed = true;
-	} else if (e.getKeyCode() == KeyEvent.VK_RIGHT) {
-	    currentPos++;
+            consumed = true;
+        } else if (e.getKeyCode() == KeyEvent.VK_RIGHT) {
+            currentPos++;
 
-	    if (currentPos == screenAPI.getMaxChars()) {
-		currentPos = 0;
-	    }
+            if (currentPos == screenAPI.getMaxChars()) {
+                currentPos = 0;
+            }
 
-	    consumed = true;
-	} else if (e.getKeyCode() == KeyEvent.VK_UP) {
-	    currentLine--;
+            consumed = true;
+        } else if (e.getKeyCode() == KeyEvent.VK_UP) {
+            currentLine--;
 
-	    if (currentLine < 0) {
-		currentLine = (screenAPI.getMaxLines() - 1);
-	    }
+            if (currentLine < 0) {
+                currentLine = (screenAPI.getMaxLines() - 1);
+            }
 
-	    consumed = true;
-	} else if (e.getKeyCode() == KeyEvent.VK_DOWN) {
-	    currentLine++;
+            consumed = true;
+        } else if (e.getKeyCode() == KeyEvent.VK_DOWN) {
+            currentLine++;
 
-	    if (currentLine == screenAPI.getMaxLines()) {
-		currentLine = 0;
-	    }
+            if (currentLine == screenAPI.getMaxLines()) {
+                currentLine = 0;
+            }
 
-	    consumed = true;
-	} else if (e.getKeyCode() == KeyEvent.VK_BACK_SPACE) {
-	    /*
-	     * Needs improvement
-	     */
-	    currentPos--;
+            consumed = true;
+        } else if (e.getKeyCode() == KeyEvent.VK_BACK_SPACE) {
+            /*
+             * Needs improvement
+             */
+            currentPos--;
 
-	    setCharAt(currentLine, currentPos, ' ');
+            setCharAt(currentLine, currentPos, ' ');
 
-	    if (currentPos < 0) {
-		currentPos = (screenAPI.getMaxChars() - 1);
-	    }
+            if (currentPos < 0) {
+                currentPos = (screenAPI.getMaxChars() - 1);
+            }
 
-	    consumed = true;
-	} else if (Character.isLetterOrDigit(e.getKeyChar())
-		|| e.getKeyChar() == ' ') {
-	    /*
-	     * Process normal characters
-	     * Needs improvement
-	     */
+            consumed = true;
+        } else if (Character.isLetterOrDigit(e.getKeyChar())
+                || e.getKeyChar() == ' ') {
+            /*
+             * Process normal characters
+             * Needs improvement
+             */
 
-	    setCharAt(currentLine, currentPos, e.getKeyChar());
+            setCharAt(currentLine, currentPos, e.getKeyChar());
 
-	    currentPos++;
+            currentPos++;
 
-	    if (currentPos == screenAPI.getMaxChars()) {
-		currentPos = 0;
-	    }
+            if (currentPos == screenAPI.getMaxChars()) {
+                currentPos = 0;
+            }
 
-	    consumed = true;
-	}
+            consumed = true;
+        }
 
-	screenAPI.refresh();
+        screenAPI.refresh();
 
-	return consumed;
+        return consumed;
     }
 
     @Override
     public AttributeSet prepareCharacter(int line, int pos) {
-	if (line == currentLine && pos == currentPos) {
-	    SimpleAttributeSet saset = new SimpleAttributeSet();
+        if (line == currentLine && pos == currentPos) {
+            SimpleAttributeSet saset = new SimpleAttributeSet();
 
-	    saset.addAttribute(StyleConstants.Foreground, screenAPI.getBackgroundColors()[line][pos]);
-	    saset.addAttribute(StyleConstants.Background, screenAPI.getForegroundColors()[line][pos]);
+            saset.addAttribute(StyleConstants.Foreground, screenAPI.getBackgroundColors()[line][pos]);
+            saset.addAttribute(StyleConstants.Background, screenAPI.getForegroundColors()[line][pos]);
 
-	    return saset;
-	} else {
-	    return super.prepareCharacter(line, pos);
-	}
+            return saset;
+        } else {
+            return super.prepareCharacter(line, pos);
+        }
     }
 
     @Override
     public void setCharAt(int line, int pos, char chr, Color foregroundColor, Color backgroundColor) {
-	if (line < 0 || line >= screenAPI.getMaxLines()) {
-	    throw new IndexOutOfBoundsException("Invalid line: " + line + ".");
-	}
+        if (line < 0 || line >= screenAPI.getMaxLines()) {
+            throw new IndexOutOfBoundsException("Invalid line: " + line + ".");
+        }
 
-	if (pos < 0 || pos >= screenAPI.getMaxChars()) {
-	    throw new IndexOutOfBoundsException("Invalid position: " + pos + ".");
-	}
+        if (pos < 0 || pos >= screenAPI.getMaxChars()) {
+            throw new IndexOutOfBoundsException("Invalid position: " + pos + ".");
+        }
 
-	screenAPI.getCharacters()[line][pos] = chr;
+        screenAPI.getCharacters()[line][pos] = chr;
 
-	screenAPI.getForegroundColors()[line][pos] = foregroundColor;
-	screenAPI.getBackgroundColors()[line][pos] = backgroundColor;
+        screenAPI.getForegroundColors()[line][pos] = foregroundColor;
+        screenAPI.getBackgroundColors()[line][pos] = backgroundColor;
     }
 
     @Override
     public void setCharAt(int line, int pos, char chr, Color foregroundColor) {
-	setCharAt(line, pos, chr, foregroundColor, screenAPI.getBackgroundColor());
+        setCharAt(line, pos, chr, foregroundColor, screenAPI.getBackgroundColor());
     }
 
     @Override
     public void setCharAt(int line, int pos, char chr) {
-	setCharAt(line, pos, chr, screenAPI.getForegroundColor());
+        setCharAt(line, pos, chr, screenAPI.getForegroundColor());
     }
 
     @Override
     public void setStringAt(int line, int pos, String str, Color foregroundColor, Color backgroundColor) {
-	for (int i = 0; i < str.length(); i++) {
-	    if (pos >= screenAPI.getMaxChars()) {
-		pos = 0;
-		line++;
-	    }
+        for (int i = 0; i < str.length(); i++) {
+            if (pos >= screenAPI.getMaxChars()) {
+                pos = 0;
+                line++;
+            }
 
-	    setCharAt(line, pos++, str.charAt(i), foregroundColor, backgroundColor);
-	}
+            setCharAt(line, pos++, str.charAt(i), foregroundColor, backgroundColor);
+        }
     }
 
     @Override
     public void setStringAt(int line, int pos, String str, Color foregroundColor) {
-	setStringAt(line, pos, str, foregroundColor, screenAPI.getBackgroundColor());
+        setStringAt(line, pos, str, foregroundColor, screenAPI.getBackgroundColor());
     }
 
     @Override
     public void setStringAt(int line, int pos, String str) {
-	setStringAt(line, pos, str, screenAPI.getForegroundColor());
+        setStringAt(line, pos, str, screenAPI.getForegroundColor());
     }
 
     @Override
     public char getCharAt(int line, int pos) {
-	return screenAPI.getCharacters()[line][pos];
+        return screenAPI.getCharacters()[line][pos];
     }
 
     @Override
     public Color getBackgroundAt(int line, int pos) {
-	return screenAPI.getBackgroundColors()[line][pos];
+        return screenAPI.getBackgroundColors()[line][pos];
     }
 
     @Override
     public Color getForegroundAt(int line, int pos) {
-	return screenAPI.getForegroundColors()[line][pos];
+        return screenAPI.getForegroundColors()[line][pos];
     }
 
     @Override
     public void setBackgroundAt(int line, int pos, Color color) {
-	screenAPI.getBackgroundColors()[line][pos] = color;
+        screenAPI.getBackgroundColors()[line][pos] = color;
     }
 
     @Override
     public void setForegroundAt(int line, int pos, Color color) {
-	screenAPI.getForegroundColors()[line][pos] = color;
+        screenAPI.getForegroundColors()[line][pos] = color;
     }
 }

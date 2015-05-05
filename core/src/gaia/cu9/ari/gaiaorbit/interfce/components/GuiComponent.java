@@ -23,8 +23,8 @@ public abstract class GuiComponent {
     protected Stage stage;
 
     public GuiComponent(Skin skin, Stage stage) {
-	this.skin = skin;
-	this.stage = stage;
+        this.skin = skin;
+        this.stage = stage;
     }
 
     /**
@@ -33,14 +33,14 @@ public abstract class GuiComponent {
     public abstract void initialize();
 
     public Actor getActor() {
-	return component;
+        return component;
     }
 
     protected String txt(String key) {
-	return I18n.bundle.get(key);
+        return I18n.bundle.get(key);
     }
 
     protected String txt(String key, Object... params) {
-	return I18n.bundle.format(key, params);
+        return I18n.bundle.format(key, params);
     }
 }

@@ -29,41 +29,41 @@ public final class Fuzzy extends PostProcessorEffect {
     private FuzzyFilter fuzzyFilter = null;
 
     public Fuzzy(int viewportWidth, int viewportHeight) {
-	setup(viewportWidth, viewportHeight);
+        setup(viewportWidth, viewportHeight);
     }
 
     public Fuzzy(int viewportWidth, int viewportHeight, float fade) {
-	setup(viewportWidth, viewportHeight, fade);
+        setup(viewportWidth, viewportHeight, fade);
     }
 
     private void setup(int viewportWidth, int viewportHeight) {
-	fuzzyFilter = new FuzzyFilter(viewportWidth, viewportHeight);
+        fuzzyFilter = new FuzzyFilter(viewportWidth, viewportHeight);
     }
 
     private void setup(int viewportWidth, int viewportHeight, float fade) {
-	fuzzyFilter = new FuzzyFilter(viewportWidth, viewportHeight, fade);
+        fuzzyFilter = new FuzzyFilter(viewportWidth, viewportHeight, fade);
     }
 
     public void setFade(float fade) {
-	fuzzyFilter.setFade(fade);
+        fuzzyFilter.setFade(fade);
     }
 
     @Override
     public void dispose() {
-	if (fuzzyFilter != null) {
-	    fuzzyFilter.dispose();
-	    fuzzyFilter = null;
-	}
+        if (fuzzyFilter != null) {
+            fuzzyFilter.dispose();
+            fuzzyFilter = null;
+        }
     }
 
     @Override
     public void rebind() {
-	fuzzyFilter.rebind();
+        fuzzyFilter.rebind();
     }
 
     @Override
     public void render(FrameBuffer src, FrameBuffer dest) {
-	restoreViewport(dest);
-	fuzzyFilter.setInput(src).setOutput(dest).render();
+        restoreViewport(dest);
+        fuzzyFilter.setInput(src).setOutput(dest).render();
     }
 }

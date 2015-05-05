@@ -9,21 +9,21 @@ public class BufferedFrame implements Poolable {
     public String folder, filename;
 
     public BufferedFrame() {
-	super();
+        super();
     }
 
     public BufferedFrame(Pixmap pixmap, String folder, String file) {
-	super();
-	this.pixmap = pixmap;
-	this.folder = folder;
-	this.filename = file;
+        super();
+        this.pixmap = pixmap;
+        this.folder = folder;
+        this.filename = file;
     }
 
     @Override
     public void reset() {
-	pixmap = null;
-	folder = null;
-	filename = null;
+        pixmap = null;
+        folder = null;
+        filename = null;
     }
 
 }

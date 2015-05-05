@@ -38,15 +38,15 @@ public class GlobalClock implements IObserver, ITimeFrameProvider {
      * @param pace The pace of the clock in [simulation hours/real seconds]
      */
     public static void initialize(double pace) {
-	clock = new GlobalClock(pace, new Date());
+        clock = new GlobalClock(pace, new Date());
     }
 
     public static void initialize(double pace, Date date) {
-	clock = new GlobalClock(pace, date);
+        clock = new GlobalClock(pace, date);
     }
 
     public static boolean initialized() {
-	return clock != null;
+        return clock != null;
     }
 
     /**
@@ -55,107 +55,107 @@ public class GlobalClock implements IObserver, ITimeFrameProvider {
      * @param date The date with which to initialize the clock
      */
     public GlobalClock(double pace, Date date) {
-	super();
-	// Now
-	cal = new GregorianCalendar();
-	this.pace = pace;
-	hdiff = 0d;
-	time = date;
-	lastTime = new Date(time.getTime());
-	cal.setTime(time);
-	EventManager.instance.subscribe(this, Events.PACE_CHANGE_CMD, Events.PACE_DIVIDE_CMD, Events.PACE_DOUBLE_CMD, Events.TIME_CHANGE_CMD);
+        super();
+        // Now
+        cal = new GregorianCalendar();
+        this.pace = pace;
+        hdiff = 0d;
+        time = date;
+        lastTime = new Date(time.getTime());
+        cal.setTime(time);
+        EventManager.instance.subscribe(this, Events.PACE_CHANGE_CMD, Events.PACE_DIVIDE_CMD, Events.PACE_DOUBLE_CMD, Events.TIME_CHANGE_CMD);
     }
 
     double msacum = 0d;
 
     public void update(double dt) {
-	if (dt != 0) {
-	    // In case we are in constant rate mode
-	    if (fps > 0) {
-		dt = 1 / fps;
-	    }
+        if (dt != 0) {
+            // In case we are in constant rate mode
+            if (fps > 0) {
+                dt = 1 / fps;
+            }
 
-	    int days = 0;
-	    int hours = 0;
-	    int mins = 0;
-	    int secs = 0;
-	    int millisecs = 0;
+            int days = 0;
+            int hours = 0;
+            int mins = 0;
+            int secs = 0;
+            int millisecs = 0;
 
-	    int sign = (int) Math.signum(pace);
-	    double h = Math.abs(dt * pace);
-	    hdiff = h * sign;
+            int sign = (int) Math.signum(pace);
+            double h = Math.abs(dt * pace);
+            hdiff = h * sign;
 
-	    days = (int) (h / 24);
-	    h = (h / 24 - days) * 24;
-	    hours = (int) h;
+            days = (int) (h / 24);
+            h = (h / 24 - days) * 24;
+            hours = (int) h;
 
-	    double m = (h - Math.floor(h)) * 60;
-	    mins = (int) m;
+            double m = (h - Math.floor(h)) * 60;
+            mins = (int) m;
 
-	    double s = (m - Math.floor(m)) * 60;
-	    secs = (int) s;
+            double s = (m - Math.floor(m)) * 60;
+            secs = (int) s;
 
-	    double ms = (s - Math.floor(s)) * 1000;
-	    millisecs = (int) Math.round(ms);
-	    if (days == 0 && hours == 0 && mins == 0 && secs == 0 && millisecs == 0) {
-		msacum += ms;
-		millisecs = (int) Math.round(msacum);
-		if (millisecs > 0) {
-		    msacum = 0;
-		}
-	    }
+            double ms = (s - Math.floor(s)) * 1000;
+            millisecs = (int) Math.round(ms);
+            if (days == 0 && hours == 0 && mins == 0 && secs == 0 && millisecs == 0) {
+                msacum += ms;
+                millisecs = (int) Math.round(msacum);
+                if (millisecs > 0) {
+                    msacum = 0;
+                }
+            }
 
-	    cal.add(Calendar.DAY_OF_YEAR, days * sign);
-	    cal.add(Calendar.HOUR, hours * sign);
-	    cal.add(Calendar.MINUTE, mins * sign);
-	    cal.add(Calendar.SECOND, secs * sign);
-	    cal.add(Calendar.MILLISECOND, millisecs * sign);
+            cal.add(Calendar.DAY_OF_YEAR, days * sign);
+            cal.add(Calendar.HOUR, hours * sign);
+            cal.add(Calendar.MINUTE, mins * sign);
+            cal.add(Calendar.SECOND, secs * sign);
+            cal.add(Calendar.MILLISECOND, millisecs * sign);
 
-	    lastTime.setTime(time.getTime());
-	    time.setTime(cal.getTimeInMillis());
+            lastTime.setTime(time.getTime());
+            time.setTime(cal.getTimeInMillis());
 
-	    // Post event each 1/2 second
-	    lastUpdate += dt;
-	    if (lastUpdate > .5) {
-		EventManager.instance.post(Events.TIME_CHANGE_INFO, time);
-		lastUpdate = 0;
-	    }
-	} else if (time.getTime() - lastTime.getTime() != 0) {
-	    hdiff = (time.getTime() - lastTime.getTime()) * MS_TO_HOUR;
-	    lastTime.setTime(time.getTime());
-	} else {
-	    hdiff = 0d;
-	}
+            // Post event each 1/2 second
+            lastUpdate += dt;
+            if (lastUpdate > .5) {
+                EventManager.instance.post(Events.TIME_CHANGE_INFO, time);
+                lastUpdate = 0;
+            }
+        } else if (time.getTime() - lastTime.getTime() != 0) {
+            hdiff = (time.getTime() - lastTime.getTime()) * MS_TO_HOUR;
+            lastTime.setTime(time.getTime());
+        } else {
+            hdiff = 0d;
+        }
     }
 
     @Override
     public Date getTime() {
-	return time;
+        return time;
     }
 
     @Override
     public void notify(Events event, Object... data) {
-	switch (event) {
-	case PACE_CHANGE_CMD:
-	    // Update pace
-	    this.pace = (Double) data[0];
-	    EventManager.instance.post(Events.PACE_CHANGED_INFO, this.pace);
-	    break;
-	case PACE_DOUBLE_CMD:
-	    this.pace *= 2d;
-	    EventManager.instance.post(Events.PACE_CHANGED_INFO, this.pace);
-	    break;
-	case PACE_DIVIDE_CMD:
-	    this.pace /= 2d;
-	    EventManager.instance.post(Events.PACE_CHANGED_INFO, this.pace);
-	    break;
-	case TIME_CHANGE_CMD:
-	    // Update time
-	    long newt = ((Date) data[0]).getTime();
-	    this.time.setTime(newt);
-	    this.cal.setTimeInMillis(newt);
-	    break;
-	}
+        switch (event) {
+        case PACE_CHANGE_CMD:
+            // Update pace
+            this.pace = (Double) data[0];
+            EventManager.instance.post(Events.PACE_CHANGED_INFO, this.pace);
+            break;
+        case PACE_DOUBLE_CMD:
+            this.pace *= 2d;
+            EventManager.instance.post(Events.PACE_CHANGED_INFO, this.pace);
+            break;
+        case PACE_DIVIDE_CMD:
+            this.pace /= 2d;
+            EventManager.instance.post(Events.PACE_CHANGED_INFO, this.pace);
+            break;
+        case TIME_CHANGE_CMD:
+            // Update time
+            long newt = ((Date) data[0]).getTime();
+            this.time.setTime(newt);
+            this.cal.setTimeInMillis(newt);
+            break;
+        }
 
     }
 
@@ -164,12 +164,12 @@ public class GlobalClock implements IObserver, ITimeFrameProvider {
      */
     @Override
     public double getDt() {
-	return hdiff;
+        return hdiff;
     }
 
     @Override
     public double getPace() {
-	return pace;
+        return pace;
     }
 
 }

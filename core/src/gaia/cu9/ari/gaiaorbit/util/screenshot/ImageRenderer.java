@@ -33,21 +33,21 @@ public class ImageRenderer {
      * @param antialias
      */
     public static String renderToImageGl20(String absoluteLocation, String baseFileName, int w, int h) {
-	Pixmap pixmap = getScreenshot(0, 0, w, h, true);
+        Pixmap pixmap = getScreenshot(0, 0, w, h, true);
 
-	String file = writePixmapToImage(absoluteLocation, baseFileName, pixmap);
-	pixmap.dispose();
-	return file;
+        String file = writePixmapToImage(absoluteLocation, baseFileName, pixmap);
+        pixmap.dispose();
+        return file;
     }
 
     public static Pixmap renderToPixmap(int w, int h) {
-	return getScreenshot(0, 0, w, h, true);
+        return getScreenshot(0, 0, w, h, true);
     }
 
     public static String writePixmapToImage(String absoluteLocation, String baseFileName, Pixmap pixmap) {
-	FileHandle fh = getTarget(absoluteLocation, baseFileName);
-	PixmapIO.writePNG(fh, pixmap);
-	return fh.path();
+        FileHandle fh = getTarget(absoluteLocation, baseFileName);
+        PixmapIO.writePNG(fh, pixmap);
+        return fh.path();
     }
 
     /**
@@ -60,75 +60,75 @@ public class ImageRenderer {
      */
     public static void renderToImageGl10(String absoluteLocation, String baseFileName, final Graphics g) {
 
-	final Pixmap pixmap = ScreenUtils.getFrameBufferPixmap(0, 0, g.getWidth(), g.getHeight());
-	ByteBuffer pixels = pixmap.getPixels();
-	int w = g.getWidth();
-	int h = g.getHeight();
-	final int numBytes = w * h * 4;
-	byte[] lines = new byte[numBytes];
-	final int numBytesPerLine = w * 4;
-	for (int i = 0; i < h; i++) {
-	    pixels.position((h - i - 1) * numBytesPerLine);
-	    pixels.get(lines, i * numBytesPerLine, numBytesPerLine);
-	}
-	pixels.clear();
-	pixels.put(lines);
+        final Pixmap pixmap = ScreenUtils.getFrameBufferPixmap(0, 0, g.getWidth(), g.getHeight());
+        ByteBuffer pixels = pixmap.getPixels();
+        int w = g.getWidth();
+        int h = g.getHeight();
+        final int numBytes = w * h * 4;
+        byte[] lines = new byte[numBytes];
+        final int numBytesPerLine = w * 4;
+        for (int i = 0; i < h; i++) {
+            pixels.position((h - i - 1) * numBytesPerLine);
+            pixels.get(lines, i * numBytesPerLine, numBytesPerLine);
+        }
+        pixels.clear();
+        pixels.put(lines);
 
-	PixmapIO.writePNG(getTarget(absoluteLocation, baseFileName), pixmap);
-	pixmap.dispose();
+        PixmapIO.writePNG(getTarget(absoluteLocation, baseFileName), pixmap);
+        pixmap.dispose();
     }
 
     private static Pixmap getScreenshot(int x, int y, int w, int h, boolean flipY) {
-	Gdx.gl.glPixelStorei(GL20.GL_PACK_ALIGNMENT, 1);
+        Gdx.gl.glPixelStorei(GL20.GL_PACK_ALIGNMENT, 1);
 
-	final Pixmap pixmap = new Pixmap(w, h, Format.RGBA8888);
-	ByteBuffer pixels = pixmap.getPixels();
-	Gdx.gl.glReadPixels(x, y, w, h, GL20.GL_RGBA, GL20.GL_UNSIGNED_BYTE, pixels);
+        final Pixmap pixmap = new Pixmap(w, h, Format.RGBA8888);
+        ByteBuffer pixels = pixmap.getPixels();
+        Gdx.gl.glReadPixels(x, y, w, h, GL20.GL_RGBA, GL20.GL_UNSIGNED_BYTE, pixels);
 
-	final int numBytes = w * h * 4;
-	byte[] lines = new byte[numBytes];
-	if (flipY) {
-	    final int numBytesPerLine = w * 4;
-	    for (int i = 0; i < h; i++) {
-		pixels.position((h - i - 1) * numBytesPerLine);
-		pixels.get(lines, i * numBytesPerLine, numBytesPerLine);
+        final int numBytes = w * h * 4;
+        byte[] lines = new byte[numBytes];
+        if (flipY) {
+            final int numBytesPerLine = w * 4;
+            for (int i = 0; i < h; i++) {
+                pixels.position((h - i - 1) * numBytesPerLine);
+                pixels.get(lines, i * numBytesPerLine, numBytesPerLine);
 
-		for (int j = 3; j < w * 4; j += 4) {
-		    lines[j + i * w * 4] = (byte) 255;
-		}
-	    }
-	    pixels.clear();
-	    pixels.put(lines);
-	}
-	else {
-	    pixels.clear();
-	    pixels.get(lines);
-	}
+                for (int j = 3; j < w * 4; j += 4) {
+                    lines[j + i * w * 4] = (byte) 255;
+                }
+            }
+            pixels.clear();
+            pixels.put(lines);
+        }
+        else {
+            pixels.clear();
+            pixels.get(lines);
+        }
 
-	return pixmap;
+        return pixmap;
     }
 
     private static FileHandle getTarget(String absoluteLocation, String baseFileName) {
-	FileHandle fh = Gdx.files.absolute(absoluteLocation + File.separator + baseFileName + getNextSeqNumSuffix() + ".png");
-	while (fh.exists()) {
-	    fh = Gdx.files.absolute(absoluteLocation + File.separator + baseFileName + getNextSeqNumSuffix() + ".png");
-	}
-	return fh;
+        FileHandle fh = Gdx.files.absolute(absoluteLocation + File.separator + baseFileName + getNextSeqNumSuffix() + ".png");
+        while (fh.exists()) {
+            fh = Gdx.files.absolute(absoluteLocation + File.separator + baseFileName + getNextSeqNumSuffix() + ".png");
+        }
+        return fh;
     }
 
     private static String getNextSeqNumSuffix() {
-	return "_" + intToString(sequenceNumber++, 5);
+        return "_" + intToString(sequenceNumber++, 5);
     }
 
     private static String intToString(int num, int digits) {
-	assert digits > 0 : "Invalid number of digits";
+        assert digits > 0 : "Invalid number of digits";
 
-	// create variable length array of zeros
-	char[] zeros = new char[digits];
-	Arrays.fill(zeros, '0');
-	// format number as String
-	DecimalFormat df = new DecimalFormat(String.valueOf(zeros));
+        // create variable length array of zeros
+        char[] zeros = new char[digits];
+        Arrays.fill(zeros, '0');
+        // format number as String
+        DecimalFormat df = new DecimalFormat(String.valueOf(zeros));
 
-	return df.format(num);
+        return df.format(num);
     }
 }

@@ -14,7 +14,7 @@ public class DistToCameraComparator<T> implements Comparator<T> {
 
     @Override
     public int compare(T o1, T o2) {
-	return -Float.compare(((AbstractPositionEntity) o1).distToCamera, ((AbstractPositionEntity) o2).distToCamera);
+        return -Float.compare(((AbstractPositionEntity) o1).distToCamera, ((AbstractPositionEntity) o2).distToCamera);
     }
 
 }

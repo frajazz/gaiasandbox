@@ -15,7 +15,7 @@ public class HeliotropicOrbit extends Orbit {
     double angle;
 
     public HeliotropicOrbit() {
-	super();
+        super();
     }
 
     /**
@@ -23,7 +23,7 @@ public class HeliotropicOrbit extends Orbit {
      * Override if your model contains more than just the position and size.
      */
     protected void updateLocalTransform(Date date) {
-	angle = AstroUtils.getSunLongitude(date);
-	localTransformD.set(transform.getMatrix()).mul(Coordinates.equatorialToEcliptic()).rotate(0, 1, 0, angle + 180);
+        angle = AstroUtils.getSunLongitude(date);
+        localTransformD.set(transform.getMatrix()).mul(Coordinates.equatorialToEcliptic()).rotate(0, 1, 0, angle + 180);
     }
 }

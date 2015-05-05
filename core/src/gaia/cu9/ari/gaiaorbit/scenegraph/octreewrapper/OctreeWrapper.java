@@ -17,25 +17,25 @@ import java.util.ArrayList;
 public class OctreeWrapper extends AbstractOctreeWrapper {
 
     public OctreeWrapper() {
-	super();
+        super();
     }
 
     public OctreeWrapper(String parentName, OctreeNode<SceneGraphNode> root) {
-	super(parentName, root);
-	roulette = new ArrayList<SceneGraphNode>(root.nObjects);
+        super(parentName, root);
+        roulette = new ArrayList<SceneGraphNode>(root.nObjects);
     }
 
     @Override
     protected void updateOctreeObjects(ITimeFrameProvider time, Transform parentTransform, ICamera camera) {
-	int size = roulette.size();
-	for (int i = 0; i < size; i++) {
-	    roulette.get(i).update(time, parentTransform, camera);
-	}
+        int size = roulette.size();
+        for (int i = 0; i < size; i++) {
+            roulette.get(i).update(time, parentTransform, camera);
+        }
     }
 
     @Override
     protected String getRouletteDebug() {
-	return "[" + roulette.size() + "]";
+        return "[" + roulette.size() + "]";
     }
 
 }

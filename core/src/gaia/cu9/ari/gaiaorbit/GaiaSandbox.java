@@ -36,6 +36,7 @@ import gaia.cu9.ari.gaiaorbit.util.Constants;
 import gaia.cu9.ari.gaiaorbit.util.GlobalConf;
 import gaia.cu9.ari.gaiaorbit.util.GlobalResources;
 import gaia.cu9.ari.gaiaorbit.util.I18n;
+import gaia.cu9.ari.gaiaorbit.util.Logger;
 import gaia.cu9.ari.gaiaorbit.util.ModelCache;
 import gaia.cu9.ari.gaiaorbit.util.concurrent.ThreadIndexer;
 import gaia.cu9.ari.gaiaorbit.util.concurrent.ThreadPoolManager;
@@ -105,21 +106,21 @@ public class GaiaSandbox implements ApplicationListener, IObserver {
 
     /** Command to take screenshot **/
     private class ScreenshotCmd {
-	public static final String FILENAME = "screenshot";
-	public String folder;
-	public int width, height;
-	public boolean active = false;
+        public static final String FILENAME = "screenshot";
+        public String folder;
+        public int width, height;
+        public boolean active = false;
 
-	public ScreenshotCmd() {
-	    super();
-	}
+        public ScreenshotCmd() {
+            super();
+        }
 
-	public void takeScreenshot(int width, int height, String folder) {
-	    this.folder = folder;
-	    this.width = width;
-	    this.height = height;
-	    this.active = true;
-	}
+        public void takeScreenshot(int width, int height, String folder) {
+            this.folder = folder;
+            this.width = width;
+            this.height = height;
+            this.active = true;
+        }
 
     }
 
@@ -131,124 +132,124 @@ public class GaiaSandbox implements ApplicationListener, IObserver {
      * @param openGLGUI This will paint the GUI in OpenGL. True for Desktop (if not Swing GUI) and Android.
      */
     public GaiaSandbox(boolean openGLGUI) {
-	super();
-	GlobalConf.OPENGL_GUI = openGLGUI;
-	instance = this;
+        super();
+        GlobalConf.OPENGL_GUI = openGLGUI;
+        instance = this;
     }
 
     public void setSceneGraph(ISceneGraph sg) {
-	this.sg = sg;
+        this.sg = sg;
     }
 
     @Override
     public void create() {
-	Gdx.app.setLogLevel(Application.LOG_INFO);
-	Thread.currentThread().setPriority(Thread.MAX_PRIORITY);
+        Gdx.app.setLogLevel(Application.LOG_INFO);
+        Thread.currentThread().setPriority(Thread.MAX_PRIORITY);
 
-	boolean mobile = Constants.mobile;
-	boolean desktop = !mobile;
+        boolean mobile = Constants.mobile;
+        boolean desktop = !mobile;
 
-	fbmap = new HashMap<String, FrameBuffer>();
+        fbmap = new HashMap<String, FrameBuffer>();
 
-	// Disable all kinds of input
-	EventManager.instance.post(Events.INPUT_ENABLED_CMD, false);
+        // Disable all kinds of input
+        EventManager.instance.post(Events.INPUT_ENABLED_CMD, false);
 
-	if (!GlobalClock.initialized()) {
-	    // Initialize clock with a pace of 2 simulation hours/second
-	    GlobalClock.initialize(0.01, new Date());
-	}
+        if (!GlobalClock.initialized()) {
+            // Initialize clock with a pace of 2 simulation hours/second
+            GlobalClock.initialize(0.01, new Date());
+        }
 
-	if (!GlobalConf.initialized()) {
-	    // Initialize the configuration if needed
-	    try {
-		if (mobile) {
-		    GlobalConf.initialize(Gdx.files.internal("conf/android/global.properties").read(), this.getClass().getResourceAsStream("/version"));
-		} else {
-		    File confFile = new File(System.getProperty("properties.file"));
-		    FileInputStream fis = new FileInputStream(confFile);
-		    FileHandle versionfile = Gdx.files.internal("version");
-		    if (!versionfile.exists()) {
-			versionfile = Gdx.files.internal("data/dummyversion");
-		    }
-		    GlobalConf.initialize(fis, versionfile.read());
-		    fis.close();
-		}
-	    } catch (Exception e) {
-		// Android
-		EventManager.instance.post(Events.JAVA_EXCEPTION, e);
-	    }
-	}
+        if (!GlobalConf.initialized()) {
+            // Initialize the configuration if needed
+            try {
+                if (mobile) {
+                    GlobalConf.initialize(Gdx.files.internal("conf/android/global.properties").read(), this.getClass().getResourceAsStream("/version"));
+                } else {
+                    File confFile = new File(System.getProperty("properties.file"));
+                    FileInputStream fis = new FileInputStream(confFile);
+                    FileHandle versionfile = Gdx.files.internal("version");
+                    if (!versionfile.exists()) {
+                        versionfile = Gdx.files.internal("data/dummyversion");
+                    }
+                    GlobalConf.initialize(fis, versionfile.read());
+                    fis.close();
+                }
+            } catch (Exception e) {
+                // Android
+                Logger.error(e);
+            }
+        }
 
-	// Precompute some math functions
-	MathUtilsd.initialize();
+        // Precompute some math functions
+        MathUtilsd.initialize();
 
-	// Initialize i18n
-	I18n.initialize();
+        // Initialize i18n
+        I18n.initialize();
 
-	if (GlobalConf.performance.MULTITHREADING)
-	    // Initialize thread pool manager
-	    ThreadPoolManager.initialize(GlobalConf.performance.NUMBER_THREADS());
+        if (GlobalConf.performance.MULTITHREADING)
+            // Initialize thread pool manager
+            ThreadPoolManager.initialize(GlobalConf.performance.NUMBER_THREADS());
 
-	// Initialize thread indexer
-	ThreadIndexer.initialize();
+        // Initialize thread indexer
+        ThreadIndexer.initialize();
 
-	// Initialize camera recorder
-	CamRecorder.initialize();
+        // Initialize camera recorder
+        CamRecorder.initialize();
 
-	// Init frame/screenshot renderer
-	frameRenderer = new BufferedFileImageRenderer(GlobalConf.runtime.OUTPUT_FRAME_BUFFER_SIZE);
-	screenshotRenderer = new BasicFileImageRenderer();
+        // Init frame/screenshot renderer
+        frameRenderer = new BufferedFileImageRenderer(GlobalConf.runtime.OUTPUT_FRAME_BUFFER_SIZE);
+        screenshotRenderer = new BasicFileImageRenderer();
 
-	// Initialize asset manager
-	FileHandleResolver resolver = new InternalFileHandleResolver();
-	manager = new AssetManager(resolver);
-	manager.setLoader(ISceneGraph.class, new SGLoader(resolver));
-	manager.setLoader(OrbitData.class, new OrbitDataLoader(resolver));
+        // Initialize asset manager
+        FileHandleResolver resolver = new InternalFileHandleResolver();
+        manager = new AssetManager(resolver);
+        manager.setLoader(ISceneGraph.class, new SGLoader(resolver));
+        manager.setLoader(OrbitData.class, new OrbitDataLoader(resolver));
 
-	// Init global resources
-	GlobalResources.initialize(manager);
+        // Init global resources
+        GlobalResources.initialize(manager);
 
-	// Initialize Cameras
-	cam = new CameraManager(manager, CameraMode.Focus);
+        // Initialize Cameras
+        cam = new CameraManager(manager, CameraMode.Focus);
 
-	if (sg == null) {
-	    // Set asset manager to asset bean
-	    AssetBean.setAssetManager(manager);
-	    manager.load(GlobalConf.data.DATA_SG_FILE, ISceneGraph.class, new SGLoaderParameter(GlobalClock.clock, GlobalConf.performance.MULTITHREADING, GlobalConf.performance.NUMBER_THREADS()));
-	}
+        if (sg == null) {
+            // Set asset manager to asset bean
+            AssetBean.setAssetManager(manager);
+            manager.load(GlobalConf.data.DATA_SG_FILE, ISceneGraph.class, new SGLoaderParameter(GlobalClock.clock, GlobalConf.performance.MULTITHREADING, GlobalConf.performance.NUMBER_THREADS()));
+        }
 
-	// Initialize timestamp for screenshots
-	renderGui = new RenderGui();
-	renderGui.initialize(manager);
+        // Initialize timestamp for screenshots
+        renderGui = new RenderGui();
+        renderGui.initialize(manager);
 
-	if (GlobalConf.OPENGL_GUI) {
-	    // Load scene graph
-	    if (desktop) {
-		// Full GUI for desktop
-		gui = new FullGui();
-	    } else {
-		// Reduced GUI for android/iOS/...
-		gui = new MobileGui();
-	    }
-	} else {
-	    // Only the HUD
-	    gui = new HUDGui();
-	}
-	gui.initialize(manager);
+        if (GlobalConf.OPENGL_GUI) {
+            // Load scene graph
+            if (desktop) {
+                // Full GUI for desktop
+                gui = new FullGui();
+            } else {
+                // Reduced GUI for android/iOS/...
+                gui = new MobileGui();
+            }
+        } else {
+            // Only the HUD
+            gui = new HUDGui();
+        }
+        gui.initialize(manager);
 
-	// Tell the asset manager to load all the assets
-	Set<AssetBean> assets = AssetBean.getAssets();
-	for (AssetBean ab : assets) {
-	    ab.load(manager);
-	}
+        // Tell the asset manager to load all the assets
+        Set<AssetBean> assets = AssetBean.getAssets();
+        for (AssetBean ab : assets) {
+            ab.load(manager);
+        }
 
-	screenshot = new ScreenshotCmd();
+        screenshot = new ScreenshotCmd();
 
-	// Initialize loading screen
-	loadingGui = new LoadingGui(GlobalConf.OPENGL_GUI, desktop ? 23 : 20);
-	loadingGui.initialize(manager);
+        // Initialize loading screen
+        loadingGui = new LoadingGui(GlobalConf.OPENGL_GUI, desktop ? 23 : 20);
+        loadingGui.initialize(manager);
 
-	EventManager.instance.post(Events.POST_NOTIFICATION, this.getClass().getSimpleName(), I18n.bundle.format("notif.glslversion", Gdx.gl.glGetString(GL20.GL_SHADING_LANGUAGE_VERSION)));
+        Logger.info(this.getClass().getSimpleName(), I18n.bundle.format("notif.glslversion", Gdx.gl.glGetString(GL20.GL_SHADING_LANGUAGE_VERSION)));
     }
 
     /**
@@ -256,173 +257,170 @@ public class GaiaSandbox implements ApplicationListener, IObserver {
      * removes the Loading message
      */
     private void doneLoading() {
-	loadingGui.dispose();
-	loadingGui = null;
+        loadingGui.dispose();
+        loadingGui = null;
 
-	pp = new GSPostProcessor();
+        pp = new GSPostProcessor();
 
-	GlobalResources.doneLoading(manager);
+        GlobalResources.doneLoading(manager);
 
-	if (manager.isLoaded(GlobalConf.data.DATA_SG_FILE)) {
-	    sg = manager.get(GlobalConf.data.DATA_SG_FILE);
-	}
+        if (manager.isLoaded(GlobalConf.data.DATA_SG_FILE)) {
+            sg = manager.get(GlobalConf.data.DATA_SG_FILE);
+        }
 
-	AbstractRenderer.initialize(sg);
-	sgr = new SceneGraphRenderer();
-	sgr.initialize(manager);
-	sgr.resize(Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
+        AbstractRenderer.initialize(sg);
+        sgr = new SceneGraphRenderer();
+        sgr.initialize(manager);
+        sgr.resize(Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
 
-	// First time, set assets
-	List<SceneGraphNode> nodes = sg.getNodes();
-	for (SceneGraphNode sgn : nodes) {
-	    sgn.doneLoading(manager);
-	}
-	// Update whole tree to initialize positions
-	OctreeNode.LOAD_ACTIVE = false;
-	GlobalClock.clock.update(0.000000001f);
-	sg.update(GlobalClock.clock, cam);
-	GlobalClock.clock.update(0);
-	OctreeNode.LOAD_ACTIVE = true;
+        // First time, set assets
+        List<SceneGraphNode> nodes = sg.getNodes();
+        for (SceneGraphNode sgn : nodes) {
+            sgn.doneLoading(manager);
+        }
+        // Update whole tree to initialize positions
+        OctreeNode.LOAD_ACTIVE = false;
+        GlobalClock.clock.update(0.000000001f);
+        sg.update(GlobalClock.clock, cam);
+        GlobalClock.clock.update(0);
+        OctreeNode.LOAD_ACTIVE = true;
 
-	// Initialize  input handlers
-	InputMultiplexer inputMultiplexer = new InputMultiplexer();
-	if (GlobalConf.OPENGL_GUI) {
-	    // Only for the Full GUI
-	    gui.setSceneGraph(sg);
-	    gui.setVisibilityToggles(ComponentType.values(), SceneGraphRenderer.visible);
-	    inputMultiplexer.addProcessor(gui.getGuiStage());
-	}
-	// Initialize the GUI
-	gui.doneLoading(manager);
-	renderGui.doneLoading(manager);
+        // Initialize  input handlers
+        InputMultiplexer inputMultiplexer = new InputMultiplexer();
+        if (GlobalConf.OPENGL_GUI) {
+            // Only for the Full GUI
+            gui.setSceneGraph(sg);
+            gui.setVisibilityToggles(ComponentType.values(), SceneGraphRenderer.visible);
+            inputMultiplexer.addProcessor(gui.getGuiStage());
+        }
+        // Initialize the GUI
+        gui.doneLoading(manager);
+        renderGui.doneLoading(manager);
 
-	// Publish visibility
-	EventManager.instance.post(Events.VISIBILITY_OF_COMPONENTS, new Object[] { SceneGraphRenderer.visible });
+        // Publish visibility
+        EventManager.instance.post(Events.VISIBILITY_OF_COMPONENTS, new Object[] { SceneGraphRenderer.visible });
 
-	inputController = new GaiaInputController(cam, gui);
-	Controllers.addListener(new GaiaControllerListener(cam, gui));
-	inputMultiplexer.addProcessor(inputController);
+        inputController = new GaiaInputController(cam, gui);
+        Controllers.addListener(new GaiaControllerListener(cam, gui));
+        inputMultiplexer.addProcessor(inputController);
 
-	Gdx.input.setInputProcessor(inputMultiplexer);
+        Gdx.input.setInputProcessor(inputMultiplexer);
 
-	EventManager.instance.post(Events.SCENE_GRAPH_LOADED, sg);
-	EventManager.instance.post(Events.CAMERA_MODE_CMD, CameraMode.Focus);
+        EventManager.instance.post(Events.SCENE_GRAPH_LOADED, sg);
+        EventManager.instance.post(Events.CAMERA_MODE_CMD, CameraMode.Focus);
 
-	AbstractPositionEntity focus = (AbstractPositionEntity) sg.getNode("Earth");
-	EventManager.instance.post(Events.FOCUS_CHANGE_CMD, focus, true);
-	float dst = focus.size * 3;
-	Vector3d newCameraPos = focus.pos.cpy().add(0, 0, -dst);
-	EventManager.instance.post(Events.CAMERA_POS_CMD, newCameraPos.values());
+        AbstractPositionEntity focus = (AbstractPositionEntity) sg.getNode("Earth");
+        EventManager.instance.post(Events.FOCUS_CHANGE_CMD, focus, true);
+        float dst = focus.size * 3;
+        Vector3d newCameraPos = focus.pos.cpy().add(0, 0, -dst);
+        EventManager.instance.post(Events.CAMERA_POS_CMD, newCameraPos.values());
 
-	// Update whole tree to reinitialize positions with the new camera position
-	GlobalClock.clock.update(0.00000001f);
-	sg.update(GlobalClock.clock, cam);
-	sgr.clearLists();
-	GlobalClock.clock.update(0);
+        // Update whole tree to reinitialize positions with the new camera position
+        GlobalClock.clock.update(0.00000001f);
+        sg.update(GlobalClock.clock, cam);
+        sgr.clearLists();
+        GlobalClock.clock.update(0);
 
-	Vector3d newCameraDir = focus.pos.cpy().sub(newCameraPos);
-	EventManager.instance.post(Events.CAMERA_DIR_CMD, newCameraDir.values());
+        Vector3d newCameraDir = focus.pos.cpy().sub(newCameraPos);
+        EventManager.instance.post(Events.CAMERA_DIR_CMD, newCameraDir.values());
 
-	// Initialize time in GUI
-	EventManager.instance.post(Events.TIME_CHANGE_INFO, GlobalClock.clock.time);
+        // Initialize time in GUI
+        EventManager.instance.post(Events.TIME_CHANGE_INFO, GlobalClock.clock.time);
 
-	// Subscribe to events
-	EventManager.instance.subscribe(this, Events.TOGGLE_AMBIENT_LIGHT, Events.AMBIENT_LIGHT_CMD, Events.SCREENSHOT_CMD, Events.FULLSCREEN_CMD);
+        // Subscribe to events
+        EventManager.instance.subscribe(this, Events.TOGGLE_AMBIENT_LIGHT, Events.AMBIENT_LIGHT_CMD, Events.SCREENSHOT_CMD, Events.FULLSCREEN_CMD);
 
-	// Run garbage collector before starting
-	System.gc();
+        // Re-enable input
+        EventManager.instance.post(Events.INPUT_ENABLED_CMD, true);
 
-	// Re-enable input
-	EventManager.instance.post(Events.INPUT_ENABLED_CMD, true);
+        initialized = true;
 
-	initialized = true;
-
-	// Run tutorial
-	if (GlobalConf.program.DISPLAY_TUTORIAL) {
-	    EventManager.instance.post(Events.RUN_SCRIPT_PATH, "scripts/tutorial/tutorial-pointer.py");
-	    GlobalConf.program.DISPLAY_TUTORIAL = false;
-	}
+        // Run tutorial
+        if (GlobalConf.program.DISPLAY_TUTORIAL) {
+            EventManager.instance.post(Events.RUN_SCRIPT_PATH, "scripts/tutorial/tutorial-pointer.py");
+            GlobalConf.program.DISPLAY_TUTORIAL = false;
+        }
 
     }
 
     @Override
     public void dispose() {
-	try {
-	    if (!Constants.mobile)
-		GlobalConf.saveProperties(new File(System.getProperty("properties.file")).toURI().toURL());
-	} catch (MalformedURLException e) {
-	    EventManager.instance.post(Events.JAVA_EXCEPTION, e);
-	}
-	frameRenderer.flush();
-	gui.dispose();
-	renderGui.dispose();
-	if (sg != null) {
-	    sg.dispose();
-	}
-	ModelCache.cache.dispose();
+        try {
+            if (!Constants.mobile)
+                GlobalConf.saveProperties(new File(System.getProperty("properties.file")).toURI().toURL());
+        } catch (MalformedURLException e) {
+            Logger.error(e);
+        }
+        frameRenderer.flush();
+        gui.dispose();
+        renderGui.dispose();
+        if (sg != null) {
+            sg.dispose();
+        }
+        ModelCache.cache.dispose();
     }
 
     @Override
     public void render() {
-	if (LOADING) {
-	    // Set main thread
-	    if (mainThread == null)
-		mainThread = Thread.currentThread();
+        if (LOADING) {
+            // Set main thread
+            if (mainThread == null)
+                mainThread = Thread.currentThread();
 
-	    if (manager.update()) {
-		doneLoading();
+            if (manager.update()) {
+                doneLoading();
 
-		LOADING = false;
-	    } else {
-		// Display loading screen
-		renderLoadingScreen();
-	    }
-	} else {
+                LOADING = false;
+            } else {
+                // Display loading screen
+                renderLoadingScreen();
+            }
+        } else {
 
-	    // Asynchronous load of textures and resources
-	    manager.update();
+            // Asynchronous load of textures and resources
+            manager.update();
 
-	    if (!GlobalConf.runtime.UPDATE_PAUSE) {
-		/**
-		 * UPDATE
-		 */
-		update(Gdx.graphics.getDeltaTime());
+            if (!GlobalConf.runtime.UPDATE_PAUSE) {
+                /**
+                 * UPDATE
+                 */
+                update(Gdx.graphics.getDeltaTime());
 
-		/**
-		 * RENDER
-		 */
+                /**
+                 * RENDER
+                 */
 
-		/* FRAME OUTPUT */
-		if (GlobalConf.frame.RENDER_OUTPUT) {
-		    renderToImage(cam, pp.getPostProcessBean(RenderType.frame), GlobalConf.frame.RENDER_WIDTH, GlobalConf.frame.RENDER_HEIGHT, GlobalConf.frame.RENDER_FOLDER, GlobalConf.frame.RENDER_FILE_NAME, frameRenderer);
-		}
+                /* FRAME OUTPUT */
+                if (GlobalConf.frame.RENDER_OUTPUT) {
+                    renderToImage(cam, pp.getPostProcessBean(RenderType.frame), GlobalConf.frame.RENDER_WIDTH, GlobalConf.frame.RENDER_HEIGHT, GlobalConf.frame.RENDER_FOLDER, GlobalConf.frame.RENDER_FILE_NAME, frameRenderer);
+                }
 
-		/* SCREENSHOT OUTPUT */
-		if (screenshot.active) {
-		    String file = renderToImage(cam, pp.getPostProcessBean(RenderType.screenshot), screenshot.width, screenshot.height, screenshot.folder, ScreenshotCmd.FILENAME, screenshotRenderer);
-		    screenshot.active = false;
-		    EventManager.instance.post(Events.SCREENSHOT_INFO, file);
-		}
+                /* SCREENSHOT OUTPUT */
+                if (screenshot.active) {
+                    String file = renderToImage(cam, pp.getPostProcessBean(RenderType.screenshot), screenshot.width, screenshot.height, screenshot.folder, ScreenshotCmd.FILENAME, screenshotRenderer);
+                    screenshot.active = false;
+                    EventManager.instance.post(Events.SCREENSHOT_INFO, file);
+                }
 
-		/* SCREEN OUTPUT */
-		if (GlobalConf.screen.SCREEN_OUTPUT) {
-		    /** RENDER THE SCENE **/
-		    preRenderScene();
-		    sgr.render(cam, Gdx.graphics.getWidth(), Gdx.graphics.getHeight(), null, pp.getPostProcessBean(RenderType.screen));
+                /* SCREEN OUTPUT */
+                if (GlobalConf.screen.SCREEN_OUTPUT) {
+                    /** RENDER THE SCENE **/
+                    preRenderScene();
+                    sgr.render(cam, Gdx.graphics.getWidth(), Gdx.graphics.getHeight(), null, pp.getPostProcessBean(RenderType.screen));
 
-		    if (!GlobalConf.runtime.CLEAN_MODE) {
-			// Render the GUI, setting the viewport
-			gui.getGuiStage().getViewport().apply();
-			gui.render();
-		    }
-		}
+                    if (!GlobalConf.runtime.CLEAN_MODE) {
+                        // Render the GUI, setting the viewport
+                        gui.getGuiStage().getViewport().apply();
+                        gui.render();
+                    }
+                }
 
-		sgr.clearLists();
-	    }
+                sgr.clearLists();
+            }
 
-	}
+        }
 
-	EventManager.instance.post(Events.FPS_INFO, Gdx.graphics.getFramesPerSecond());
+        EventManager.instance.post(Events.FPS_INFO, Gdx.graphics.getFramesPerSecond());
     }
 
     /**
@@ -430,38 +428,38 @@ public class GaiaSandbox implements ApplicationListener, IObserver {
      * @param dt Delta time in seconds.
      */
     public void update(float dt) {
-	if (GlobalConf.frame.RENDER_OUTPUT) {
-	    // If RENDER_OUTPUT is active, we need to set our dt according to the fps
-	    dt = 1f / GlobalConf.frame.RENDER_TARGET_FPS;
-	} else {
-	    // Max time step is 0.1 seconds. Not in RENDER_OUTPUT MODE.
-	    dt = Math.min(dt, 0.1f);
-	}
+        if (GlobalConf.frame.RENDER_OUTPUT) {
+            // If RENDER_OUTPUT is active, we need to set our dt according to the fps
+            dt = 1f / GlobalConf.frame.RENDER_TARGET_FPS;
+        } else {
+            // Max time step is 0.1 seconds. Not in RENDER_OUTPUT MODE.
+            dt = Math.min(dt, 0.1f);
+        }
 
-	gui.update(dt);
-	renderGui.update(dt);
+        gui.update(dt);
+        renderGui.update(dt);
 
-	float dtScene = dt;
-	if (!GlobalConf.runtime.TIME_ON) {
-	    dtScene = 0;
-	}
-	// Update clock
-	GlobalClock.clock.update(dtScene);
+        float dtScene = dt;
+        if (!GlobalConf.runtime.TIME_ON) {
+            dtScene = 0;
+        }
+        // Update clock
+        GlobalClock.clock.update(dtScene);
 
-	// Update events
-	EventManager.instance.dispatchDelayedMessages();
+        // Update events
+        EventManager.instance.dispatchDelayedMessages();
 
-	// Update cameras
-	cam.update(dt, GlobalClock.clock);
+        // Update cameras
+        cam.update(dt, GlobalClock.clock);
 
-	// Update scene graph
-	sg.update(GlobalClock.clock, cam);
+        // Update scene graph
+        sg.update(GlobalClock.clock, cam);
 
     }
 
     public void preRenderScene() {
-	Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT | GL20.GL_DEPTH_BUFFER_BIT | (Gdx.graphics.getBufferFormat().coverageSampling ? GL20.GL_COVERAGE_BUFFER_BIT_NV : 0));
-	Gdx.gl.glBlendFunc(GL20.GL_SRC_ALPHA, GL20.GL_ONE_MINUS_SRC_ALPHA);
+        Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT | GL20.GL_DEPTH_BUFFER_BIT | (Gdx.graphics.getBufferFormat().coverageSampling ? GL20.GL_COVERAGE_BUFFER_BIT_NV : 0));
+        Gdx.gl.glBlendFunc(GL20.GL_SRC_ALPHA, GL20.GL_ONE_MINUS_SRC_ALPHA);
     }
 
     /**
@@ -475,51 +473,51 @@ public class GaiaSandbox implements ApplicationListener, IObserver {
      * @return
      */
     public String renderToImage(ICamera camera, PostProcessBean ppb, int width, int height, String folder, String filename, IFileImageRenderer renderer) {
-	FrameBuffer m_fbo = getFrameBuffer(width, height);
-	// TODO That's a dirty trick, we should find a better way (i.e. making buildEnabledEffectsList() method public)
-	boolean postprocessing = ppb.pp.captureNoClear();
-	ppb.pp.captureEnd();
-	if (!postprocessing) {
-	    // If post processing is not active, we must start the buffer now.
-	    // Otherwise, it is used in the render method to write the results of the pp.
-	    m_fbo.begin();
-	}
+        FrameBuffer frameBuffer = getFrameBuffer(width, height);
+        // TODO That's a dirty trick, we should find a better way (i.e. making buildEnabledEffectsList() method public)
+        boolean postprocessing = ppb.pp.captureNoClear();
+        ppb.pp.captureEnd();
+        if (!postprocessing) {
+            // If post processing is not active, we must start the buffer now.
+            // Otherwise, it is used in the render method to write the results of the pp.
+            frameBuffer.begin();
+        }
 
-	// this is the main render function
-	preRenderScene();
-	//sgr.render(camera, width, height, postprocessing ? m_fbo : null, ppb);
-	sgr.render(camera, width, height, m_fbo, ppb);
+        // this is the main render function
+        preRenderScene();
+        //sgr.render(camera, width, height, postprocessing ? m_fbo : null, ppb);
+        sgr.render(camera, width, height, frameBuffer, ppb);
 
-	if (postprocessing) {
-	    // If post processing is active, we have to start now again because
-	    // the renderScene() has closed it.
-	    m_fbo.begin();
-	}
-	if (GlobalConf.frame.RENDER_SCREENSHOT_TIME) {
-	    // Timestamp
-	    renderGui.resize(width, height);
-	    renderGui.render();
-	}
+        if (postprocessing) {
+            // If post processing is active, we have to start now again because
+            // the renderScene() has closed it.
+            frameBuffer.begin();
+        }
+        if (GlobalConf.frame.RENDER_SCREENSHOT_TIME) {
+            // Timestamp
+            renderGui.resize(width, height);
+            renderGui.render();
+        }
 
-	String res = renderer.saveScreenshot(folder, filename, width, height, false);
+        String res = renderer.saveScreenshot(folder, filename, width, height, false);
 
-	m_fbo.end();
-	return res;
+        frameBuffer.end();
+        return res;
     }
 
     @Override
     public void resize(int width, int height) {
-	if (!initialized) {
-	    loadingGui.resize(width, height);
-	} else {
-	    pp.resize(width, height);
-	    gui.resize(width, height);
-	    sgr.resize(width, height);
-	}
+        if (!initialized) {
+            loadingGui.resize(width, height);
+        } else {
+            pp.resize(width, height);
+            gui.resize(width, height);
+            sgr.resize(width, height);
+        }
 
-	cam.updateAngleEdge(width, height);
+        cam.updateAngleEdge(width, height);
 
-	EventManager.instance.post(Events.SCREEN_RESIZE, width, height);
+        EventManager.instance.post(Events.SCREEN_RESIZE, width, height);
     }
 
     /**
@@ -527,15 +525,15 @@ public class GaiaSandbox implements ApplicationListener, IObserver {
      * @param g
      */
     private void renderLoadingScreen() {
-	Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT | GL20.GL_DEPTH_BUFFER_BIT);
-	Gdx.gl.glBlendFunc(GL20.GL_SRC_ALPHA, GL20.GL_ONE_MINUS_SRC_ALPHA);
-	Gdx.gl.glEnable(GL20.GL_DEPTH_TEST);
-	loadingGui.render();
+        Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT | GL20.GL_DEPTH_BUFFER_BIT);
+        Gdx.gl.glBlendFunc(GL20.GL_SRC_ALPHA, GL20.GL_ONE_MINUS_SRC_ALPHA);
+        Gdx.gl.glEnable(GL20.GL_DEPTH_TEST);
+        loadingGui.render();
     }
 
     @Override
     public void pause() {
-	frameRenderer.flush();
+        frameRenderer.flush();
     }
 
     @Override
@@ -544,64 +542,64 @@ public class GaiaSandbox implements ApplicationListener, IObserver {
 
     public List<CelestialBody> getFocusableEntities() {
 
-	return sg.getFocusableObjects();
+        return sg.getFocusableObjects();
     }
 
     public SceneGraphNode findEntity(String name) {
-	return sg.getNode(name);
+        return sg.getNode(name);
     }
 
     public CelestialBody findFocusByName(String name) {
-	return sg.findFocus(name);
+        return sg.findFocus(name);
     }
 
     private FrameBuffer getFrameBuffer(int w, int h) {
-	String key = getKey(w, h);
-	if (!fbmap.containsKey(key)) {
-	    FrameBuffer fb = new FrameBuffer(Format.RGB888, w, h, true);
-	    fbmap.put(key, fb);
-	}
-	return fbmap.get(key);
+        String key = getKey(w, h);
+        if (!fbmap.containsKey(key)) {
+            FrameBuffer fb = new FrameBuffer(Format.RGB888, w, h, true);
+            fbmap.put(key, fb);
+        }
+        return fbmap.get(key);
     }
 
     private String getKey(int w, int h) {
-	return w + "x" + h;
+        return w + "x" + h;
     }
 
     @Override
     public void notify(Events event, Object... data) {
-	switch (event) {
-	case TOGGLE_AMBIENT_LIGHT:
-	    // TODO No better place to put this??
-	    ModelComponent.toggleAmbientLight((Boolean) data[1]);
-	    break;
-	case AMBIENT_LIGHT_CMD:
-	    ModelComponent.setAmbientLight((float) data[0]);
-	    break;
-	case SCREENSHOT_CMD:
-	    screenshot.takeScreenshot((int) data[0], (int) data[1], (String) data[2]);
-	    break;
-	case FULLSCREEN_CMD:
-	    boolean toFullscreen = data.length >= 1 ? (Boolean) data[0] : !Gdx.graphics.isFullscreen();
-	    int width;
-	    int height;
-	    if (toFullscreen) {
-		width = GlobalConf.screen.FULLSCREEN_WIDTH;
-		height = GlobalConf.screen.FULLSCREEN_HEIGHT;
-		GlobalConf.screen.SCREEN_WIDTH = Gdx.graphics.getWidth();
-		GlobalConf.screen.SCREEN_HEIGHT = Gdx.graphics.getHeight();
-	    } else {
-		width = GlobalConf.screen.SCREEN_WIDTH;
-		height = GlobalConf.screen.SCREEN_HEIGHT;
-	    }
-	    // Only switch if needed
-	    if (Gdx.graphics.isFullscreen() != toFullscreen) {
-		Gdx.graphics.setDisplayMode(width, height, toFullscreen);
-	    }
-	    break;
-	default:
-	    break;
-	}
+        switch (event) {
+        case TOGGLE_AMBIENT_LIGHT:
+            // TODO No better place to put this??
+            ModelComponent.toggleAmbientLight((Boolean) data[1]);
+            break;
+        case AMBIENT_LIGHT_CMD:
+            ModelComponent.setAmbientLight((float) data[0]);
+            break;
+        case SCREENSHOT_CMD:
+            screenshot.takeScreenshot((int) data[0], (int) data[1], (String) data[2]);
+            break;
+        case FULLSCREEN_CMD:
+            boolean toFullscreen = data.length >= 1 ? (Boolean) data[0] : !Gdx.graphics.isFullscreen();
+            int width;
+            int height;
+            if (toFullscreen) {
+                width = GlobalConf.screen.FULLSCREEN_WIDTH;
+                height = GlobalConf.screen.FULLSCREEN_HEIGHT;
+                GlobalConf.screen.SCREEN_WIDTH = Gdx.graphics.getWidth();
+                GlobalConf.screen.SCREEN_HEIGHT = Gdx.graphics.getHeight();
+            } else {
+                width = GlobalConf.screen.SCREEN_WIDTH;
+                height = GlobalConf.screen.SCREEN_HEIGHT;
+            }
+            // Only switch if needed
+            if (Gdx.graphics.isFullscreen() != toFullscreen) {
+                Gdx.graphics.setDisplayMode(width, height, toFullscreen);
+            }
+            break;
+        default:
+            break;
+        }
 
     }
 

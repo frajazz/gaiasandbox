@@ -65,11 +65,11 @@ public enum FOV {
      */
     public static FOV getFov(int fovIndex) {
 
-	if (validFov(fovIndex)) {
+        if (validFov(fovIndex)) {
 
-	    return FOV.values()[fovIndex];
-	}
-	return null;
+            return FOV.values()[fovIndex];
+        }
+        return null;
     }
 
     /**
@@ -81,12 +81,12 @@ public enum FOV {
      */
     public static FOV getFovByNumber(int fovNumber) {
 
-	int fovIndex = fovNumber - 1;
-	if (validFov(fovIndex)) {
+        int fovIndex = fovNumber - 1;
+        if (validFov(fovIndex)) {
 
-	    return FOV.values()[fovIndex];
-	}
-	return null;
+            return FOV.values()[fovIndex];
+        }
+        return null;
     }
 
     /**
@@ -96,7 +96,7 @@ public enum FOV {
      */
     public static int getFovCount() {
 
-	return FOV.values().length;
+        return FOV.values().length;
     }
 
     /**
@@ -108,12 +108,12 @@ public enum FOV {
      */
     public static boolean validFov(int fovIndex) {
 
-	if ((fovIndex < FOV1.getIndex()) || (fovIndex > FOV4.getIndex())) {
+        if ((fovIndex < FOV1.getIndex()) || (fovIndex > FOV4.getIndex())) {
 
-	    return false;
-	}
+            return false;
+        }
 
-	return true;
+        return true;
     }
 
     /**
@@ -123,7 +123,7 @@ public enum FOV {
      */
     public byte getIndex() {
 
-	return (byte) this.ordinal();
+        return (byte) this.ordinal();
     }
 
     /**
@@ -133,7 +133,7 @@ public enum FOV {
      */
     public byte getNumber() {
 
-	return (byte) (this.ordinal() + 1);
+        return (byte) (this.ordinal() + 1);
     }
 
     /**
@@ -143,11 +143,11 @@ public enum FOV {
      */
     public double getNumericalFieldIndex() {
 
-	if (this.equals(FOV1) || this.equals(FOV3)) {
+        if (this.equals(FOV1) || this.equals(FOV3)) {
 
-	    return +1.0d;
-	}
-	return -1.0d;
+            return +1.0d;
+        }
+        return -1.0d;
     }
 
     /**
@@ -157,7 +157,7 @@ public enum FOV {
      */
     public byte getTelescopeIndex() {
 
-	return (byte) (this.ordinal() % 2);
+        return (byte) (this.ordinal() % 2);
     }
 
     /**
@@ -167,7 +167,7 @@ public enum FOV {
      */
     public byte getTelescopeNumber() {
 
-	return (byte) ((this.ordinal() % 2) + 1);
+        return (byte) ((this.ordinal() % 2) + 1);
     }
 
     /**
@@ -180,7 +180,7 @@ public enum FOV {
      */
     public boolean isFollowingTelescope() {
 
-	return !isPrecedingTelescope();
+        return !isPrecedingTelescope();
     }
 
     /**
@@ -190,7 +190,7 @@ public enum FOV {
      */
     public boolean isMotion() {
 
-	return (this.ordinal() < FOV3.ordinal());
+        return (this.ordinal() < FOV3.ordinal());
     }
 
     /**
@@ -200,7 +200,7 @@ public enum FOV {
      */
     public boolean isNullMotion() {
 
-	return !isMotion();
+        return !isMotion();
     }
 
     /**
@@ -210,6 +210,6 @@ public enum FOV {
      */
     public boolean isPrecedingTelescope() {
 
-	return this.equals(FOV1) || this.equals(FOV3);
+        return this.equals(FOV1) || this.equals(FOV3);
     }
 }

@@ -17,17 +17,17 @@ public class OrbitFileDataProvider implements IOrbitDataProvider {
 
     @Override
     public void load(String file, OrbitDataLoaderParameter parameter) {
-	FileDataLoader odl = new FileDataLoader();
-	try {
-	    data = odl.load(FileLocator.getStream(file));
-	    EventManager.instance.post(Events.ORBIT_DATA_LOADED, data, file);
-	} catch (Exception e) {
-	    Gdx.app.error(OrbitFileDataProvider.class.getName(), e.getMessage());
-	}
+        FileDataLoader odl = new FileDataLoader();
+        try {
+            data = odl.load(FileLocator.getStream(file));
+            EventManager.instance.post(Events.ORBIT_DATA_LOADED, data, file);
+        } catch (Exception e) {
+            Gdx.app.error(OrbitFileDataProvider.class.getName(), e.getMessage());
+        }
     }
 
     public OrbitData getData() {
-	return data;
+        return data;
     }
 
 }

@@ -9,15 +9,15 @@ public class RingComponent {
     }
 
     public void setInnerradius(Double innerRadius) {
-	this.innerRadius = innerRadius.floatValue();
+        this.innerRadius = innerRadius.floatValue();
     }
 
     public void setOuterradius(Double outerRadius) {
-	this.outerRadius = outerRadius.floatValue();
+        this.outerRadius = outerRadius.floatValue();
     }
 
     public void setDivisions(Long divisions) {
-	this.divisions = divisions.intValue();
+        this.divisions = divisions.intValue();
     }
 
 }

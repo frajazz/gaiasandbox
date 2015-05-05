@@ -10,42 +10,42 @@ public class OwnProgressBar extends ProgressBar {
     private boolean vertical;
 
     public OwnProgressBar(float min, float max, float stepSize, boolean vertical, ProgressBarStyle style) {
-	super(min, max, stepSize, vertical, style);
-	this.vertical = vertical;
+        super(min, max, stepSize, vertical, style);
+        this.vertical = vertical;
     }
 
     public OwnProgressBar(float min, float max, float stepSize, boolean vertical, Skin skin, String styleName) {
-	super(min, max, stepSize, vertical, skin, styleName);
-	this.vertical = vertical;
+        super(min, max, stepSize, vertical, skin, styleName);
+        this.vertical = vertical;
     }
 
     public OwnProgressBar(float min, float max, float stepSize, boolean vertical, Skin skin) {
-	super(min, max, stepSize, vertical, skin);
-	this.vertical = vertical;
+        super(min, max, stepSize, vertical, skin);
+        this.vertical = vertical;
     }
 
     public void setPrefWidth(float prefWidth) {
-	this.prefWidth = prefWidth;
+        this.prefWidth = prefWidth;
     }
 
     public void setPrefHeight(float prefHeight) {
-	this.prefHeight = prefHeight;
+        this.prefHeight = prefHeight;
     }
 
     public float getPrefWidth() {
-	if (!vertical && prefWidth > 0) {
-	    return prefWidth;
-	} else {
-	    return super.getPrefWidth();
-	}
+        if (!vertical && prefWidth > 0) {
+            return prefWidth;
+        } else {
+            return super.getPrefWidth();
+        }
 
     }
 
     public float getPrefHeight() {
-	if (vertical && prefHeight > 0) {
-	    return prefHeight;
-	} else {
-	    return super.getPrefHeight();
-	}
+        if (vertical && prefHeight > 0) {
+            return prefHeight;
+        } else {
+            return super.getPrefHeight();
+        }
     }
 }

@@ -21,7 +21,7 @@ public abstract class AnalyticalAttitudeDataServer extends BaseAttitudeDataServe
 
     /** Factor converting from arcsec/s to rad/day **/
     protected static final double ARCSEC_PER_S_TO_RAD_PER_DAY = 86400.
-	    * 4.84813681109536e-6;
+            * 4.84813681109536e-6;
 
     /** Unit vectors **/
     protected static final Vector3d X_AXIS = Vector3d.getUnitX();
@@ -35,7 +35,7 @@ public abstract class AnalyticalAttitudeDataServer extends BaseAttitudeDataServe
      * The time in ns of one rotation of the satellite around its spin axis.
      */
     protected long targetScanPeriod = Math
-	    .round(360.0 * 3600.0 * 1.e9 / Satellite.SCANRATE);
+            .round(360.0 * 3600.0 * 1.e9 / Satellite.SCANRATE);
 
     /**
      * Reference value of the solar aspect angle (valid at time tRef) [rad]
@@ -69,8 +69,8 @@ public abstract class AnalyticalAttitudeDataServer extends BaseAttitudeDataServe
      *            angle in [rad]
      */
     public void setXiRef(double xiRef) {
-	this.xiRef = xiRef;
-	initialized = false;
+        this.xiRef = xiRef;
+        initialized = false;
     }
 
     /**
@@ -80,8 +80,8 @@ public abstract class AnalyticalAttitudeDataServer extends BaseAttitudeDataServe
      *            angle in [rad]
      */
     public void setNuRef(double nuRef) {
-	this.nuRef = nuRef;
-	initialized = false;
+        this.nuRef = nuRef;
+        initialized = false;
     }
 
     /**
@@ -91,8 +91,8 @@ public abstract class AnalyticalAttitudeDataServer extends BaseAttitudeDataServe
      *            angle in [rad]
      */
     public void setOmegaRef(double omegaRef) {
-	this.omegaRef = omegaRef;
-	initialized = false;
+        this.omegaRef = omegaRef;
+        initialized = false;
     }
 
     /**
@@ -102,8 +102,8 @@ public abstract class AnalyticalAttitudeDataServer extends BaseAttitudeDataServe
      *            target value in [rev/yr]
      */
     public void setTargetPrecessionRate(double targetPrecessionRate) {
-	this.targetPrecessionRate = targetPrecessionRate;
-	initialized = false;
+        this.targetPrecessionRate = targetPrecessionRate;
+        initialized = false;
     }
 
     /**
@@ -111,19 +111,19 @@ public abstract class AnalyticalAttitudeDataServer extends BaseAttitudeDataServe
      */
     public void setDefault() {
 
-	// Default reference solar aspect angle [rad]
-	setXiRef(Math.toRadians(Satellite.SOLARASPECTANGLE_NOMINAL));
+        // Default reference solar aspect angle [rad]
+        setXiRef(Math.toRadians(Satellite.SOLARASPECTANGLE_NOMINAL));
 
-	// Default reference revolving phase angle [rad]
-	setNuRef(Satellite.REVOLVINGPHASE_INITIAL);
+        // Default reference revolving phase angle [rad]
+        setNuRef(Satellite.REVOLVINGPHASE_INITIAL);
 
-	// Default reference scan phase angle [rad]
-	setOmegaRef(Satellite.SCANPHASE_INITIAL);
+        // Default reference scan phase angle [rad]
+        setOmegaRef(Satellite.SCANPHASE_INITIAL);
 
-	// Default target scan rate [arcsec/s]
-	setTargetScanRate(Satellite.SCANRATE);
+        // Default target scan rate [arcsec/s]
+        setTargetScanRate(Satellite.SCANRATE);
 
-	setTargetPrecessionRate(Satellite.SPINAXIS_NUMBEROFLOOPSPERYEAR);
+        setTargetPrecessionRate(Satellite.SPINAXIS_NUMBEROFLOOPSPERYEAR);
     }
 
     /**
@@ -133,8 +133,8 @@ public abstract class AnalyticalAttitudeDataServer extends BaseAttitudeDataServe
      *            period in [ns]
      */
     public void setTargetScanPeriod(long targetScanPeriod) {
-	this.targetScanPeriod = targetScanPeriod;
-	initialized = false;
+        this.targetScanPeriod = targetScanPeriod;
+        initialized = false;
     }
 
     /**
@@ -144,8 +144,8 @@ public abstract class AnalyticalAttitudeDataServer extends BaseAttitudeDataServe
      *            target value in [arcsec/s]
      */
     public void setTargetScanRate(double targetScanRate) {
-	targetScanPeriod = Math.round(360.0 * 3600.0 * 1e9 / targetScanRate);
-	initialized = false;
+        targetScanPeriod = Math.round(360.0 * 3600.0 * 1e9 / targetScanRate);
+        initialized = false;
     }
 
     /**
@@ -154,7 +154,7 @@ public abstract class AnalyticalAttitudeDataServer extends BaseAttitudeDataServe
      * @return targetScanPeriod period in [ns]
      */
     public long getTargetScanPeriod() {
-	return targetScanPeriod;
+        return targetScanPeriod;
     }
 
     /**
@@ -163,7 +163,7 @@ public abstract class AnalyticalAttitudeDataServer extends BaseAttitudeDataServe
      * @return target scan rate value in [arcsec/s]
      */
     public double getTargetScanRate() {
-	return 360.0 * 3600.0 * 1e9 / (double) targetScanPeriod;
+        return 360.0 * 3600.0 * 1e9 / (double) targetScanPeriod;
     }
 
     /**
@@ -172,7 +172,7 @@ public abstract class AnalyticalAttitudeDataServer extends BaseAttitudeDataServe
      * @return reference solar aspect angle [rad]
      */
     public double getXiRef() {
-	return xiRef;
+        return xiRef;
     }
 
     /**
@@ -181,7 +181,7 @@ public abstract class AnalyticalAttitudeDataServer extends BaseAttitudeDataServe
      * @return reference revolving phase angle [rad]
      */
     public double getNuRef() {
-	return nuRef;
+        return nuRef;
     }
 
     /**
@@ -190,7 +190,7 @@ public abstract class AnalyticalAttitudeDataServer extends BaseAttitudeDataServe
      * @return reference scan phase angle [rad]
      */
     public double getOmegaRef() {
-	return omegaRef;
+        return omegaRef;
     }
 
     /**
@@ -199,7 +199,7 @@ public abstract class AnalyticalAttitudeDataServer extends BaseAttitudeDataServe
      * @return target precession rate [rev/year]
      */
     public double getTargetPrecessionRate() {
-	return targetPrecessionRate;
+        return targetPrecessionRate;
     }
 
     /**
@@ -207,6 +207,6 @@ public abstract class AnalyticalAttitudeDataServer extends BaseAttitudeDataServe
      * @see gaia.cu1.tools.satellite.attitude.AttitudeDataServer#inGap(long)
      */
     public boolean inGap(long time) {
-	return false;
+        return false;
     }
 }

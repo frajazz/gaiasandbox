@@ -36,31 +36,31 @@ public class Coordinates {
     private static Matrix4d equatorialToEcliptic, eclipticToEquatorial, equatorialToGalactic, galacticToEquatorial, eclipticToGalactic, galacticToEcliptic;
     private static Matrix4 equatorialToEclipticF, eclipticToEquatorialF, equatorialToGalacticF, galacticToEquatorialF, eclipticToGalacticF, galacticToEclipticF;
     static {
-	// Initialize matrices
+        // Initialize matrices
 
-	// EQ -> ECL
-	equatorialToEcliptic = getRotationMatrix(0, OBLIQUITY_DEG_J2000, 0);
-	equatorialToEclipticF = new Matrix4(equatorialToEcliptic.valuesf());
+        // EQ -> ECL
+        equatorialToEcliptic = getRotationMatrix(0, OBLIQUITY_DEG_J2000, 0);
+        equatorialToEclipticF = new Matrix4(equatorialToEcliptic.valuesf());
 
-	// ECL -> EQ
-	eclipticToEquatorial = getRotationMatrix(0, -OBLIQUITY_DEG_J2000, 0);
-	eclipticToEquatorialF = new Matrix4(equatorialToEcliptic.valuesf());
+        // ECL -> EQ
+        eclipticToEquatorial = getRotationMatrix(0, -OBLIQUITY_DEG_J2000, 0);
+        eclipticToEquatorialF = new Matrix4(equatorialToEcliptic.valuesf());
 
-	// EQ -> GAL
-	equatorialToGalactic = getRotationMatrix(nodes_l, incl_gal_cel, nodes_ra);
-	equatorialToGalacticF = new Matrix4(equatorialToGalactic.valuesf());
+        // EQ -> GAL
+        equatorialToGalactic = getRotationMatrix(nodes_l, incl_gal_cel, nodes_ra);
+        equatorialToGalacticF = new Matrix4(equatorialToGalactic.valuesf());
 
-	// GAL -> EQ
-	galacticToEquatorial = getRotationMatrix(-nodes_ra, -incl_gal_cel, -nodes_l);
-	galacticToEquatorialF = new Matrix4(galacticToEquatorial.valuesf());
+        // GAL -> EQ
+        galacticToEquatorial = getRotationMatrix(-nodes_ra, -incl_gal_cel, -nodes_l);
+        galacticToEquatorialF = new Matrix4(galacticToEquatorial.valuesf());
 
-	// ECL -> GAL
-	eclipticToGalactic = new Matrix4d(eclipticToEquatorial).mul(equatorialToGalactic);
-	eclipticToGalacticF = new Matrix4(eclipticToGalactic.valuesf());
+        // ECL -> GAL
+        eclipticToGalactic = new Matrix4d(eclipticToEquatorial).mul(equatorialToGalactic);
+        eclipticToGalacticF = new Matrix4(eclipticToGalactic.valuesf());
 
-	// GAL -> ECL
-	galacticToEcliptic = new Matrix4d(galacticToEquatorial).mul(equatorialToEcliptic);
-	galacticToEclipticF = new Matrix4(galacticToEcliptic.valuesf());
+        // GAL -> ECL
+        galacticToEcliptic = new Matrix4d(galacticToEquatorial).mul(equatorialToEcliptic);
+        galacticToEclipticF = new Matrix4(galacticToEcliptic.valuesf());
 
     }
 
@@ -82,8 +82,8 @@ public class Coordinates {
      * @return The rotation matrix.
      */
     public static Matrix4d getRotationMatrix(double alpha, double beta, double gamma) {
-	Matrix4d m = new Matrix4d().rotate(0, 1, 0, gamma).rotate(0, 0, 1, beta).rotate(0, 1, 0, alpha);
-	return m;
+        Matrix4d m = new Matrix4d().rotate(0, 1, 0, gamma).rotate(0, 0, 1, beta).rotate(0, 1, 0, alpha);
+        return m;
     }
 
     /**
@@ -95,7 +95,7 @@ public class Coordinates {
      * @return
      */
     public static Matrix4d equatorialToLunarOrbit() {
-	return getRotationMatrix(0, OBLIQUITY_DEG_J2000 + moonincl, 0);
+        return getRotationMatrix(0, OBLIQUITY_DEG_J2000 + moonincl, 0);
     }
 
     /**
@@ -106,13 +106,13 @@ public class Coordinates {
      * @return The matrix to transform from equatorial coordinates to ecliptic coordinates.
      */
     public static Matrix4d equatorialToEcliptic() {
-	//return getRotationMatrix(0, obliquity, 0);
-	return equatorialToEcliptic;
+        //return getRotationMatrix(0, obliquity, 0);
+        return equatorialToEcliptic;
     }
 
     public static Matrix4 equatorialToEclipticF() {
-	//return getRotationMatrix(0, obliquity, 0);
-	return equatorialToEclipticF;
+        //return getRotationMatrix(0, obliquity, 0);
+        return equatorialToEclipticF;
     }
 
     /**
@@ -123,7 +123,7 @@ public class Coordinates {
      * @return The matrix to transform from equatorial coordinates to ecliptic coordinates.
      */
     public static Matrix4d equatorialToEcliptic(double julianDate) {
-	return getRotationMatrix(0, AstroUtils.obliquity(julianDate), 0);
+        return getRotationMatrix(0, AstroUtils.obliquity(julianDate), 0);
     }
 
     /**
@@ -132,13 +132,13 @@ public class Coordinates {
      * @return The transformation matrix.
      */
     public static Matrix4d eclipticToEquatorial() {
-	//return getRotationMatrix(0, -obliquity, 0);
-	return eclipticToEquatorial;
+        //return getRotationMatrix(0, -obliquity, 0);
+        return eclipticToEquatorial;
     }
 
     public static Matrix4 eclipticToEquatorialF() {
-	//return getRotationMatrix(0, -obliquity, 0);
-	return eclipticToEquatorialF;
+        //return getRotationMatrix(0, -obliquity, 0);
+        return eclipticToEquatorialF;
     }
 
     /**
@@ -147,7 +147,7 @@ public class Coordinates {
      * @return The transformation matrix.
      */
     public static Matrix4d eclipticToEquatorial(double julianDate) {
-	return getRotationMatrix(0, -AstroUtils.obliquity(julianDate), 0);
+        return getRotationMatrix(0, -AstroUtils.obliquity(julianDate), 0);
     }
 
     /**
@@ -157,13 +157,13 @@ public class Coordinates {
      * @return The transformation matrix.
      */
     public static Matrix4d equatorialToGalactic() {
-	//return getRotationMatrix(-33f, 62.9f, 282.25f);
-	return equatorialToGalactic;
+        //return getRotationMatrix(-33f, 62.9f, 282.25f);
+        return equatorialToGalactic;
     }
 
     public static Matrix4 equatorialToGalacticF() {
-	//return getRotationMatrix(-33f, 62.9f, 282.25f);
-	return equatorialToGalacticF;
+        //return getRotationMatrix(-33f, 62.9f, 282.25f);
+        return equatorialToGalacticF;
     }
 
     /**
@@ -173,13 +173,13 @@ public class Coordinates {
      * @return The transformation matrix.
      */
     public static Matrix4d galacticToEquatorial() {
-	//	return getRotationMatrix(-282.25f, -62.9f, 33f);
-	return galacticToEquatorial;
+        //	return getRotationMatrix(-282.25f, -62.9f, 33f);
+        return galacticToEquatorial;
     }
 
     public static Matrix4 galacticToEquatorialF() {
-	//	return getRotationMatrix(-282.25f, -62.9f, 33f);
-	return galacticToEquatorialF;
+        //	return getRotationMatrix(-282.25f, -62.9f, 33f);
+        return galacticToEquatorialF;
     }
 
     /**
@@ -189,7 +189,7 @@ public class Coordinates {
      * @return The output vector with ecliptic longitude (&lambda;) and ecliptic latitude (&beta;) in radians, for chaining.
      */
     public static Vector2d equatorialToEcliptic(Vector2d vec, Vector2d out) {
-	return equatorialToEcliptic(vec.x, vec.y, out);
+        return equatorialToEcliptic(vec.x, vec.y, out);
     }
 
     /**
@@ -200,13 +200,13 @@ public class Coordinates {
      * @return The output vector with ecliptic longitude (&lambda;) and ecliptic latitude (&beta;) in radians, for chaining.
      */
     public static Vector2d equatorialToEcliptic(double alpha, double delta, Vector2d out) {
-	double lambda = Math.atan2((Math.sin(alpha) * Math.cos(OBLIQUITY_RAD_J2000) + Math.tan(delta) * Math.sin(OBLIQUITY_RAD_J2000)), Math.cos(alpha));
-	if (lambda < 0) {
-	    lambda += Math.PI * 2;
-	}
-	double beta = Math.asin(Math.sin(delta) * Math.cos(OBLIQUITY_RAD_J2000) - Math.cos(delta) * Math.sin(OBLIQUITY_RAD_J2000) * Math.sin(alpha));
+        double lambda = Math.atan2((Math.sin(alpha) * Math.cos(OBLIQUITY_RAD_J2000) + Math.tan(delta) * Math.sin(OBLIQUITY_RAD_J2000)), Math.cos(alpha));
+        if (lambda < 0) {
+            lambda += Math.PI * 2;
+        }
+        double beta = Math.asin(Math.sin(delta) * Math.cos(OBLIQUITY_RAD_J2000) - Math.cos(delta) * Math.sin(OBLIQUITY_RAD_J2000) * Math.sin(alpha));
 
-	return out.set(lambda, beta);
+        return out.set(lambda, beta);
     }
 
     /**
@@ -215,17 +215,17 @@ public class Coordinates {
      * @return Vector with ecliptic longitude (&lambda;) and ecliptic latitude (&beta;) in radians.
      */
     public static Vector2d equatorialToEcliptic(Vector2d vec, double julianDate) {
-	double alpha = vec.x;
-	double delta = vec.y;
-	double obliquity_rad = Math.toRadians(julianDate);
+        double alpha = vec.x;
+        double delta = vec.y;
+        double obliquity_rad = Math.toRadians(julianDate);
 
-	double lambda = Math.atan2((Math.sin(alpha) * Math.cos(obliquity_rad) + Math.tan(delta) * Math.sin(obliquity_rad)), Math.cos(alpha));
-	if (lambda < 0) {
-	    lambda += Math.PI * 2;
-	}
-	double beta = Math.asin(Math.sin(delta) * Math.cos(obliquity_rad) - Math.cos(delta) * Math.sin(obliquity_rad) * Math.sin(alpha));
+        double lambda = Math.atan2((Math.sin(alpha) * Math.cos(obliquity_rad) + Math.tan(delta) * Math.sin(obliquity_rad)), Math.cos(alpha));
+        if (lambda < 0) {
+            lambda += Math.PI * 2;
+        }
+        double beta = Math.asin(Math.sin(delta) * Math.cos(obliquity_rad) - Math.cos(delta) * Math.sin(obliquity_rad) * Math.sin(alpha));
 
-	return new Vector2d((float) lambda, (float) beta);
+        return new Vector2d((float) lambda, (float) beta);
     }
 
     /**
@@ -235,7 +235,7 @@ public class Coordinates {
      * @return The output vector with ra (&alpha;) and dec (&delta;) in radians, for chaining.
      */
     public static Vector2d eclipticToEquatorial(Vector2d vec, Vector2d out) {
-	return eclipticToEquatorial(vec.x, vec.y, out);
+        return eclipticToEquatorial(vec.x, vec.y, out);
     }
 
     /**
@@ -247,13 +247,13 @@ public class Coordinates {
      */
     public static Vector2d eclipticToEquatorial(double lambda, double beta, Vector2d out) {
 
-	double alpha = Math.atan2((Math.sin(lambda) * Math.cos(OBLIQUITY_RAD_J2000) - Math.tan(beta) * Math.sin(OBLIQUITY_RAD_J2000)), Math.cos(lambda));
-	if (alpha < 0) {
-	    alpha += Math.PI * 2;
-	}
-	double delta = Math.asin(Math.sin(beta) * Math.cos(OBLIQUITY_RAD_J2000) + Math.cos(beta) * Math.sin(OBLIQUITY_RAD_J2000) * Math.sin(lambda));
+        double alpha = Math.atan2((Math.sin(lambda) * Math.cos(OBLIQUITY_RAD_J2000) - Math.tan(beta) * Math.sin(OBLIQUITY_RAD_J2000)), Math.cos(lambda));
+        if (alpha < 0) {
+            alpha += Math.PI * 2;
+        }
+        double delta = Math.asin(Math.sin(beta) * Math.cos(OBLIQUITY_RAD_J2000) + Math.cos(beta) * Math.sin(OBLIQUITY_RAD_J2000) * Math.sin(lambda));
 
-	return out.set(alpha, delta);
+        return out.set(alpha, delta);
     }
 
     /**
@@ -262,33 +262,33 @@ public class Coordinates {
      * @return Vector with ra (&alpha;) and dec (&delta;) in radians.
      */
     public static Vector2d eclipticToEquatorial(Vector2d vec, double julianDate) {
-	double lambda = vec.x;
-	double beta = vec.y;
-	double obliquity_rad = Math.toRadians(AstroUtils.obliquity(julianDate));
+        double lambda = vec.x;
+        double beta = vec.y;
+        double obliquity_rad = Math.toRadians(AstroUtils.obliquity(julianDate));
 
-	double alpha = Math.atan2((Math.sin(lambda) * Math.cos(obliquity_rad) - Math.tan(beta) * Math.sin(obliquity_rad)), Math.cos(lambda));
-	if (alpha < 0) {
-	    alpha += Math.PI * 2;
-	}
-	double delta = Math.asin(Math.sin(beta) * Math.cos(obliquity_rad) + Math.cos(beta) * Math.sin(obliquity_rad) * Math.sin(lambda));
+        double alpha = Math.atan2((Math.sin(lambda) * Math.cos(obliquity_rad) - Math.tan(beta) * Math.sin(obliquity_rad)), Math.cos(lambda));
+        if (alpha < 0) {
+            alpha += Math.PI * 2;
+        }
+        double delta = Math.asin(Math.sin(beta) * Math.cos(obliquity_rad) + Math.cos(beta) * Math.sin(obliquity_rad) * Math.sin(lambda));
 
-	return new Vector2d((float) alpha, (float) delta);
+        return new Vector2d((float) alpha, (float) delta);
     }
 
     public static Matrix4d eclipticToGalactic() {
-	return eclipticToGalactic;
+        return eclipticToGalactic;
     }
 
     public static Matrix4 eclipticToGalacticF() {
-	return eclipticToGalacticF;
+        return eclipticToGalacticF;
     }
 
     public static Matrix4d galacticToEcliptic() {
-	return galacticToEcliptic;
+        return galacticToEcliptic;
     }
 
     public static Matrix4 galacticToEclipticF() {
-	return galacticToEclipticF;
+        return galacticToEclipticF;
     }
 
     /**
@@ -297,7 +297,7 @@ public class Coordinates {
      * @return Vector with galactic longitude (l) and galactic latitude (b) in radians.
      */
     public static Vector2d eclipticToGalactic(Vector2d vec) {
-	return new Vector2d();
+        return new Vector2d();
     }
 
     /**
@@ -306,7 +306,7 @@ public class Coordinates {
      * @return Vector with ecliptic longitude (&lambda;) and ecliptic latitude (&beta;) in radians.
      */
     public static Vector2d galacticToEcliptic(Vector2d vec) {
-	return new Vector2d();
+        return new Vector2d();
     }
 
     /**
@@ -316,7 +316,7 @@ public class Coordinates {
      */
     public static Vector2d equatorialToGalactic(Vector2d vec) {
 
-	return new Vector2d();
+        return new Vector2d();
     }
 
     /**
@@ -325,7 +325,7 @@ public class Coordinates {
      * @return Vector with ra (&alpha;) and dec (&delta;) in radians.
      */
     public static Vector2d galacticToEquatorial(Vector2d vec) {
-	return new Vector2d();
+        return new Vector2d();
     }
 
     /**
@@ -336,7 +336,7 @@ public class Coordinates {
      * @return Output vector in Cartesian coordinates where x and z are on the horizontal plane and y is in the up direction.
      */
     public static Vector3d sphericalToCartesian(Vector3d vec, Vector3d out) {
-	return sphericalToCartesian(vec.x, vec.y, vec.z, out);
+        return sphericalToCartesian(vec.x, vec.y, vec.z, out);
     }
 
     /**
@@ -348,10 +348,10 @@ public class Coordinates {
      * @return Output vector with the Cartesian coordinates[x, y, z] where x and z are on the horizontal plane and y is in the up direction, for chaining.
      */
     public static Vector3d sphericalToCartesian(double longitude, double latitude, double radius, Vector3d out) {
-	out.x = radius * Math.cos(latitude) * Math.sin(longitude);
-	out.y = radius * Math.sin(latitude);
-	out.z = radius * Math.cos(latitude) * Math.cos(longitude);
-	return out;
+        out.x = radius * Math.cos(latitude) * Math.sin(longitude);
+        out.y = radius * Math.sin(latitude);
+        out.z = radius * Math.cos(latitude) * Math.cos(longitude);
+        return out;
     }
 
     /**
@@ -361,46 +361,46 @@ public class Coordinates {
      * @return Output vector containing the spherical coordinates. <ol><li>The longitude or right ascension (&alpha;), from the z direction to the x direction.</li><li>The latitude or declination (&delta;).</li><li>The radius or distance to the point.</li></ol> 
      */
     public static Vector3d cartesianToSpherical(Vector3d vec, Vector3d out) {
-	/**
-	 * 
-	 *     x, y, z = values[:]
-	        xsq = x ** 2
-	        ysq = y ** 2
-	        zsq = z ** 2
-	        distance = math.sqrt(xsq + ysq + zsq)
-	    
-	        alpha = math.atan2(y, x)
-	        # Correct the value of alpha depending upon the quadrant.
-	        if alpha < 0:
-	            alpha += 2 * math.pi
-	    
-	        if (xsq + ysq) == 0:
-	            # In the case of the poles, delta is -90 or +90
-	            delta = math.copysign(math.pi / 2, z)
-	        else:
-	            delta = math.atan(z / math.sqrt(xsq + ysq))
-	 */
-	double xsq = vec.x * vec.x;
-	double ysq = vec.y * vec.y;
-	double zsq = vec.z * vec.z;
-	double distance = (float) Math.sqrt(xsq + ysq + zsq);
+        /**
+         * 
+         *     x, y, z = values[:]
+                xsq = x ** 2
+                ysq = y ** 2
+                zsq = z ** 2
+                distance = math.sqrt(xsq + ysq + zsq)
+            
+                alpha = math.atan2(y, x)
+                # Correct the value of alpha depending upon the quadrant.
+                if alpha < 0:
+                    alpha += 2 * math.pi
+            
+                if (xsq + ysq) == 0:
+                    # In the case of the poles, delta is -90 or +90
+                    delta = math.copysign(math.pi / 2, z)
+                else:
+                    delta = math.atan(z / math.sqrt(xsq + ysq))
+         */
+        double xsq = vec.x * vec.x;
+        double ysq = vec.y * vec.y;
+        double zsq = vec.z * vec.z;
+        double distance = (float) Math.sqrt(xsq + ysq + zsq);
 
-	double alpha = Math.atan2(vec.x, vec.z);
-	if (alpha < 0) {
-	    alpha += 2 * Math.PI;
-	}
+        double alpha = Math.atan2(vec.x, vec.z);
+        if (alpha < 0) {
+            alpha += 2 * Math.PI;
+        }
 
-	double delta = 0;
-	if (zsq + xsq == 0) {
-	    delta = (vec.y > 0 ? Math.PI / 2 : -Math.PI / 2);
-	} else {
-	    delta = Math.tan(vec.y / Math.sqrt(zsq + xsq));
-	}
+        double delta = 0;
+        if (zsq + xsq == 0) {
+            delta = (vec.y > 0 ? Math.PI / 2 : -Math.PI / 2);
+        } else {
+            delta = Math.tan(vec.y / Math.sqrt(zsq + xsq));
+        }
 
-	out.x = alpha;
-	out.y = delta;
-	out.z = distance;
-	return out;
+        out.x = alpha;
+        out.y = delta;
+        out.z = distance;
+        return out;
     }
 
 }

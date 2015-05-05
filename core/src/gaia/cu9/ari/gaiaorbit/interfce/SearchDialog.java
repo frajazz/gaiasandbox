@@ -28,74 +28,74 @@ public class SearchDialog extends Window {
     private final TextField searchInput;
 
     public SearchDialog(IGui gui, Skin skin, final ISceneGraph sg) {
-	super("Search", skin);
-	this.me = this;
-	this.gui = gui;
-	searchInput = new TextField("", skin);
-	searchInput.setMessageText(I18n.bundle.get("gui.objects.search"));
-	searchInput.addListener(new EventListener() {
-	    @Override
-	    public boolean handle(Event event) {
-		if (event instanceof InputEvent) {
-		    InputEvent ie = (InputEvent) event;
-		    if (ie.getType() == Type.keyUp) {
-			if (ie.getKeyCode() == Keys.ESCAPE || ie.getKeyCode() == Keys.ENTER) {
-			    me.remove();
-			} else {
-			    String text = searchInput.getText();
-			    if (sg.containsNode(text.toLowerCase())) {
-				SceneGraphNode node = sg.getNode(text.toLowerCase());
-				if (node instanceof CelestialBody) {
-				    EventManager.instance.post(Events.CAMERA_MODE_CMD, CameraMode.Focus, true);
-				    EventManager.instance.post(Events.FOCUS_CHANGE_CMD, node, true);
-				    searchInput.selectAll();
-				}
-			    }
-			}
+        super("Search", skin);
+        this.me = this;
+        this.gui = gui;
+        searchInput = new TextField("", skin);
+        searchInput.setMessageText(I18n.bundle.get("gui.objects.search"));
+        searchInput.addListener(new EventListener() {
+            @Override
+            public boolean handle(Event event) {
+                if (event instanceof InputEvent) {
+                    InputEvent ie = (InputEvent) event;
+                    if (ie.getType() == Type.keyUp) {
+                        if (ie.getKeyCode() == Keys.ESCAPE || ie.getKeyCode() == Keys.ENTER) {
+                            me.remove();
+                        } else {
+                            String text = searchInput.getText();
+                            if (sg.containsNode(text.toLowerCase())) {
+                                SceneGraphNode node = sg.getNode(text.toLowerCase());
+                                if (node instanceof CelestialBody) {
+                                    EventManager.instance.post(Events.CAMERA_MODE_CMD, CameraMode.Focus, true);
+                                    EventManager.instance.post(Events.FOCUS_CHANGE_CMD, node, true);
+                                    searchInput.selectAll();
+                                }
+                            }
+                        }
 
-			GaiaInputController.pressedKeys.remove(ie.getKeyCode());
-		    }
-		}
-		return false;
-	    }
-	});
+                        GaiaInputController.pressedKeys.remove(ie.getKeyCode());
+                    }
+                }
+                return false;
+            }
+        });
 
-	HorizontalGroup buttonGroup = new HorizontalGroup();
-	TextButton cls = new OwnTextButton(I18n.bundle.get("gui.close"), skin, "default");
-	cls.setName("close");
-	cls.addListener(new EventListener() {
-	    @Override
-	    public boolean handle(Event event) {
-		if (event instanceof ChangeEvent) {
-		    me.remove();
-		    return true;
-		}
+        HorizontalGroup buttonGroup = new HorizontalGroup();
+        TextButton cls = new OwnTextButton(I18n.bundle.get("gui.close"), skin, "default");
+        cls.setName("close");
+        cls.addListener(new EventListener() {
+            @Override
+            public boolean handle(Event event) {
+                if (event instanceof ChangeEvent) {
+                    me.remove();
+                    return true;
+                }
 
-		return false;
-	    }
+                return false;
+            }
 
-	});
-	buttonGroup.addActor(cls);
-	cls.setSize(70, 20);
-	buttonGroup.align(Align.right).space(10);
+        });
+        buttonGroup.addActor(cls);
+        cls.setSize(70, 20);
+        buttonGroup.align(Align.right).space(10);
 
-	add(searchInput).top().left().expand().row();
-	add(buttonGroup).pad(5, 0, 0, 0).bottom().right().expand();
-	setTitleAlignment(Align.left);
-	setModal(false);
-	pack();
+        add(searchInput).top().left().expand().row();
+        add(buttonGroup).pad(5, 0, 0, 0).bottom().right().expand();
+        setTitleAlignment(Align.left);
+        setModal(false);
+        pack();
 
-	this.setPosition(gui.getGuiStage().getWidth() / 2f - this.getWidth() / 2f, gui.getGuiStage().getHeight() / 2f - this.getHeight() / 2f);
+        this.setPosition(gui.getGuiStage().getWidth() / 2f - this.getWidth() / 2f, gui.getGuiStage().getHeight() / 2f - this.getHeight() / 2f);
 
     }
 
     public void clearText() {
-	searchInput.setText("");
+        searchInput.setText("");
     }
 
     public void display() {
-	if (!gui.getGuiStage().getActors().contains(me, true))
-	    gui.getGuiStage().addActor(this);
-	gui.getGuiStage().setKeyboardFocus(searchInput);
+        if (!gui.getGuiStage().getActors().contains(me, true))
+            gui.getGuiStage().addActor(this);
+        gui.getGuiStage().setKeyboardFocus(searchInput);
     }
 }

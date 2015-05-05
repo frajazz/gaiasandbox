@@ -24,43 +24,43 @@ public class ScriptStateInterface extends Table implements IObserver {
     private TextButton cancelScript;
 
     public ScriptStateInterface(Skin skin) {
-	super(skin);
-	img = new Image(new Texture(Gdx.files.internal("img/keyboard.png")));
-	this.add(img).left().row();
-	img.setVisible(!GlobalConf.runtime.INPUT_ENABLED);
+        super(skin);
+        img = new Image(new Texture(Gdx.files.internal("img/keyboard.png")));
+        this.add(img).left().row();
+        img.setVisible(!GlobalConf.runtime.INPUT_ENABLED);
 
-	int num = JythonFactory.getInstance().getNumRunningScripts();
-	cancelScript = new OwnTextButton(I18n.bundle.format("gui.script.stop", num), skin);
-	this.add(cancelScript).left();
-	cancelScript.setVisible(num > 0);
-	cancelScript.addListener(new EventListener() {
+        int num = JythonFactory.getInstance().getNumRunningScripts();
+        cancelScript = new OwnTextButton(I18n.bundle.format("gui.script.stop", num), skin);
+        this.add(cancelScript).left();
+        cancelScript.setVisible(num > 0);
+        cancelScript.addListener(new EventListener() {
 
-	    @Override
-	    public boolean handle(Event event) {
-		if (event instanceof ChangeEvent) {
-		    EventManager.instance.post(Events.CANCEL_SCRIPT_CMD);
-		}
-		return false;
-	    }
-	});
+            @Override
+            public boolean handle(Event event) {
+                if (event instanceof ChangeEvent) {
+                    EventManager.instance.post(Events.CANCEL_SCRIPT_CMD);
+                }
+                return false;
+            }
+        });
 
-	EventManager.instance.subscribe(this, Events.INPUT_ENABLED_CMD, Events.NUM_RUNNING_SCRIPTS);
+        EventManager.instance.subscribe(this, Events.INPUT_ENABLED_CMD, Events.NUM_RUNNING_SCRIPTS);
     }
 
     @Override
     public void notify(Events event, Object... data) {
-	switch (event) {
-	case INPUT_ENABLED_CMD:
-	    img.setVisible(!(boolean) data[0]);
-	    break;
-	case NUM_RUNNING_SCRIPTS:
-	    int num = (Integer) data[0];
-	    cancelScript.setVisible(num > 0);
-	    cancelScript.setText(I18n.bundle.format("gui.script.stop", num));
-	    break;
-	default:
-	    break;
-	}
+        switch (event) {
+        case INPUT_ENABLED_CMD:
+            img.setVisible(!(boolean) data[0]);
+            break;
+        case NUM_RUNNING_SCRIPTS:
+            int num = (Integer) data[0];
+            cancelScript.setVisible(num > 0);
+            cancelScript.setText(I18n.bundle.format("gui.script.stop", num));
+            break;
+        default:
+            break;
+        }
     }
 
 }

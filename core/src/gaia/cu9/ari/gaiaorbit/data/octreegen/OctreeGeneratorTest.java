@@ -25,119 +25,119 @@ import java.util.Properties;
 public class OctreeGeneratorTest implements IObserver {
 
     public static enum Operation {
-	LOAD_OCTREE, GENERATE_OCTREE
+        LOAD_OCTREE, GENERATE_OCTREE
     }
 
     public static Operation operation = Operation.GENERATE_OCTREE;
 
     public static void main(String[] args) {
-	try {
-	    GlobalConf.initialize(new FileInputStream(new File("../android/assets/conf/global.properties")), new FileInputStream(new File("../android/assets/data/dummyversion")));
+        try {
+            GlobalConf.initialize(new FileInputStream(new File("../android/assets/conf/global.properties")), new FileInputStream(new File("../android/assets/data/dummyversion")));
 
-	    I18n.initialize("../android/assets/i18n/gsbundle_en_GB");
+            I18n.initialize("../android/assets/i18n/gsbundle_en_GB");
 
-	    // Add notif watch
-	    EventManager.instance.subscribe(new OctreeGeneratorTest(), Events.POST_NOTIFICATION, Events.JAVA_EXCEPTION);
+            // Add notif watch
+            EventManager.instance.subscribe(new OctreeGeneratorTest(), Events.POST_NOTIFICATION, Events.JAVA_EXCEPTION);
 
-	    switch (operation) {
-	    case GENERATE_OCTREE:
-		generateOctree();
-		break;
-	    case LOAD_OCTREE:
-		FileLocator.initialize("../android/assets/");
-		loadOctree();
-		break;
-	    }
+            switch (operation) {
+            case GENERATE_OCTREE:
+                generateOctree();
+                break;
+            case LOAD_OCTREE:
+                FileLocator.initialize("../android/assets/");
+                loadOctree();
+                break;
+            }
 
-	} catch (FileNotFoundException e) {
-	    e.printStackTrace();
-	} catch (IOException e) {
-	    e.printStackTrace();
-	}
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
     private static void generateOctree() throws IOException {
-	OctreeGenerator og = new OctreeGenerator(BrightestStars.class);
+        OctreeGenerator og = new OctreeGenerator(BrightestStars.class);
 
-	HYGBinaryLoader starLoader = new HYGBinaryLoader();
+        HYGBinaryLoader starLoader = new HYGBinaryLoader();
 
-	List<Particle> list = (List<Particle>) starLoader.loadCatalog(new FileInputStream(new File("../android/assets/data/hygxyz.bin")));
-	OctreeNode<Particle> octree = og.generateOctree(list);
+        List<Particle> list = (List<Particle>) starLoader.loadCatalog(new FileInputStream(new File("../android/assets/data/hygxyz.bin")));
+        OctreeNode<Particle> octree = og.generateOctree(list);
 
-	// Put all new particles in list
-	list.clear();
-	octree.addParticlesTo(list);
+        // Put all new particles in list
+        list.clear();
+        octree.addParticlesTo(list);
 
-	System.out.println(octree.toString());
+        System.out.println(octree.toString());
 
-	String temp = System.getProperty("java.io.tmpdir");
+        String temp = System.getProperty("java.io.tmpdir");
 
-	/** WRITE METADATA **/
-	File metadata = new File(temp, "metadata_" + System.currentTimeMillis() + ".bin");
-	if (metadata.exists()) {
-	    metadata.delete();
-	}
-	metadata.createNewFile();
+        /** WRITE METADATA **/
+        File metadata = new File(temp, "metadata_" + System.currentTimeMillis() + ".bin");
+        if (metadata.exists()) {
+            metadata.delete();
+        }
+        metadata.createNewFile();
 
-	System.out.println("Writing metadata (" + octree.numNodes() + " nodes): " + metadata.getAbsolutePath());
+        System.out.println("Writing metadata (" + octree.numNodes() + " nodes): " + metadata.getAbsolutePath());
 
-	MetadataBinaryIO metadataWriter = new MetadataBinaryIO();
-	metadataWriter.writeMetadata(octree, new FileOutputStream(metadata));
+        MetadataBinaryIO metadataWriter = new MetadataBinaryIO();
+        metadataWriter.writeMetadata(octree, new FileOutputStream(metadata));
 
-	/** WRITE PARTICLES **/
-	File particles = new File(temp, "particles_" + System.currentTimeMillis() + ".bin");
-	if (particles.exists()) {
-	    particles.delete();
-	}
-	particles.createNewFile();
+        /** WRITE PARTICLES **/
+        File particles = new File(temp, "particles_" + System.currentTimeMillis() + ".bin");
+        if (particles.exists()) {
+            particles.delete();
+        }
+        particles.createNewFile();
 
-	System.out.println("Writing particles (" + list.size() + " particles): " + particles.getAbsolutePath());
+        System.out.println("Writing particles (" + list.size() + " particles): " + particles.getAbsolutePath());
 
-	ParticleDataBinaryIO particleWriter = new ParticleDataBinaryIO();
-	particleWriter.writeParticles(list, new FileOutputStream(particles));
+        ParticleDataBinaryIO particleWriter = new ParticleDataBinaryIO();
+        particleWriter.writeParticles(list, new FileOutputStream(particles));
     }
 
     private static void loadOctree() throws FileNotFoundException {
-	Properties p = new Properties();
-	p.put("metadata", "data/hyg_metadata.bin");
-	p.put("particles", "data/hyg_particles.bin");
-	ICatalogLoader loader = new OctreeCatalogLoader();
-	loader.initialize(p);
-	List<? extends SceneGraphNode> l = loader.loadCatalog();
-	AbstractOctreeWrapper ow = null;
-	for (SceneGraphNode n : l) {
-	    if (n instanceof AbstractOctreeWrapper) {
-		ow = (AbstractOctreeWrapper) n;
-		break;
-	    }
-	}
-	System.out.println(ow.root.toString());
+        Properties p = new Properties();
+        p.put("metadata", "data/hyg_metadata.bin");
+        p.put("particles", "data/hyg_particles.bin");
+        ICatalogLoader loader = new OctreeCatalogLoader();
+        loader.initialize(p);
+        List<? extends SceneGraphNode> l = loader.loadCatalog();
+        AbstractOctreeWrapper ow = null;
+        for (SceneGraphNode n : l) {
+            if (n instanceof AbstractOctreeWrapper) {
+                ow = (AbstractOctreeWrapper) n;
+                break;
+            }
+        }
+        System.out.println(ow.root.toString());
 
     }
 
     @Override
     public void notify(Events event, Object... data) {
-	switch (event) {
-	case POST_NOTIFICATION:
-	    String message = "";
-	    boolean perm = false;
-	    for (int i = 0; i < data.length; i++) {
-		if (i == data.length - 1 && data[i] instanceof Boolean) {
-		    perm = (Boolean) data[i];
-		} else {
-		    message += (String) data[i];
-		    if (i < data.length - 1 && !(i == data.length - 2 && data[data.length - 1] instanceof Boolean)) {
-			message += " - ";
-		    }
-		}
-	    }
-	    System.out.println(message);
-	    break;
-	case JAVA_EXCEPTION:
-	    Exception e = (Exception) data[0];
-	    e.printStackTrace(System.err);
-	    break;
-	}
+        switch (event) {
+        case POST_NOTIFICATION:
+            String message = "";
+            boolean perm = false;
+            for (int i = 0; i < data.length; i++) {
+                if (i == data.length - 1 && data[i] instanceof Boolean) {
+                    perm = (Boolean) data[i];
+                } else {
+                    message += (String) data[i];
+                    if (i < data.length - 1 && !(i == data.length - 2 && data[data.length - 1] instanceof Boolean)) {
+                        message += " - ";
+                    }
+                }
+            }
+            System.out.println(message);
+            break;
+        case JAVA_EXCEPTION:
+            Exception e = (Exception) data[0];
+            e.printStackTrace(System.err);
+            break;
+        }
 
     }
 

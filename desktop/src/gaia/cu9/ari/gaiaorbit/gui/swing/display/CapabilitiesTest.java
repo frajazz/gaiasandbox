@@ -63,15 +63,15 @@ class GraphicsConfigurationWrapper {
     private GraphicsConfiguration gc;
 
     public GraphicsConfigurationWrapper(GraphicsConfiguration gc) {
-	this.gc = gc;
+        this.gc = gc;
     }
 
     public GraphicsConfiguration getGC() {
-	return gc;
+        return gc;
     }
 
     public String toString() {
-	return gc.toString();
+        return gc.toString();
     }
 }
 
@@ -93,15 +93,15 @@ public class CapabilitiesTest extends JFrame implements ItemListener {
     private JCheckBox bbTrueVolatile = new JCheckBox("Volatile", false);
 
     public CapabilitiesTest(GraphicsDevice dev) {
-	super(dev.getDefaultConfiguration());
-	this.setTitle("Graphics device capabilities test");
-	initComponents(getContentPane());
-	GraphicsConfiguration[] gcs = dev.getConfigurations();
-	for (int i = 0; i < gcs.length; i++) {
-	    gcSelection.addItem(new GraphicsConfigurationWrapper(gcs[i]));
-	}
-	gcSelection.addItemListener(this);
-	gcChanged();
+        super(dev.getDefaultConfiguration());
+        this.setTitle("Graphics device capabilities test");
+        initComponents(getContentPane());
+        GraphicsConfiguration[] gcs = dev.getConfigurations();
+        for (int i = 0; i < gcs.length; i++) {
+            gcSelection.addItem(new GraphicsConfigurationWrapper(gcs[i]));
+        }
+        gcSelection.addItemListener(this);
+        gcChanged();
     }
 
     /**
@@ -109,154 +109,154 @@ public class CapabilitiesTest extends JFrame implements ItemListener {
      * See the comments below for an organizational overview by panel.
      */
     private void initComponents(Container c) {
-	// +=c=====================================================+
-	// ++=gcPanel==============================================+
-	// ++                    [gcSelection]                     +
-	// ++=capsPanel============================================+
-	// +++=imageCapsPanel======================================+
-	// +++ [imageAccelerated]                                  +
-	// +++ [imageTrueVolatile]                                 +
-	// +++=bufferCapsPanel=====================================+
-	// ++++=bufferAccessCapsPanel==============================+
-	// +++++=flippingPanel=====================================+
-	// +++++ [flipping]                                        +
-	// +++++=fsPanel===========================================+
-	// +++++ [indentPanel][fullScreen]                         +
-	// +++++=mbPanel===========================================+
-	// +++++ [indentPanel][multiBuffer]                        +
-	// ++++=buffersPanel=======================================+
-	// +++++=fbPanel===============+=bbPanel===================+
-	// +++++                       +                           +
-	// +++++ [fbAccelerated]       + [bbAccelerated]           +
-	// +++++                       +                           +
-	// +++++ [fbTrueVolatile]      + [bbTrueVolatile]          +
-	// +++++                       +                           +
-	// +=======================================================+
-	c.setLayout(new BorderLayout());
-	// Graphics Config
-	JPanel gcPanel = new JPanel(new FlowLayout(FlowLayout.CENTER));
-	c.add(gcPanel, BorderLayout.NORTH);
-	gcSelection.setPreferredSize(new Dimension(400, 30));
-	gcPanel.add(gcSelection);
-	// Capabilities
-	JPanel capsPanel = new JPanel(new BorderLayout());
-	c.add(capsPanel, BorderLayout.CENTER);
-	// Image Capabilities
-	JPanel imageCapsPanel = new JPanel(new GridLayout(2, 1));
-	capsPanel.add(imageCapsPanel, BorderLayout.NORTH);
-	imageCapsPanel.setBorder(BorderFactory.createTitledBorder(
-		"Image Capabilities"));
-	imageAccelerated.setEnabled(false);
-	imageCapsPanel.add(imageAccelerated);
-	imageTrueVolatile.setEnabled(false);
-	imageCapsPanel.add(imageTrueVolatile);
-	// Buffer Capabilities
-	JPanel bufferCapsPanel = new JPanel(new BorderLayout());
-	capsPanel.add(bufferCapsPanel, BorderLayout.CENTER);
-	bufferCapsPanel.setBorder(BorderFactory.createTitledBorder(
-		"Buffer Capabilities"));
-	// Buffer Access
-	JPanel bufferAccessCapsPanel = new JPanel(new GridLayout(3, 1));
-	bufferAccessCapsPanel.setPreferredSize(new Dimension(300, 88));
-	bufferCapsPanel.add(bufferAccessCapsPanel, BorderLayout.NORTH);
-	// Flipping
-	JPanel flippingPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
-	bufferAccessCapsPanel.add(flippingPanel);
-	flippingPanel.add(flipping);
-	flipping.setEnabled(false);
-	flippingPanel.add(flippingMethod);
-	// Full-screen
-	JPanel fsPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
-	bufferAccessCapsPanel.add(fsPanel);
-	JPanel indentPanel = new JPanel();
-	indentPanel.setPreferredSize(new Dimension(30, 30));
-	fsPanel.add(indentPanel);
-	fsPanel.add(fullScreen);
-	fullScreen.setEnabled(false);
-	// Multi-buffering
-	JPanel mbPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
-	bufferAccessCapsPanel.add(mbPanel);
-	indentPanel = new JPanel();
-	indentPanel.setPreferredSize(new Dimension(30, 30));
-	mbPanel.add(indentPanel);
-	mbPanel.add(multiBuffer);
-	multiBuffer.setEnabled(false);
-	// Front and Back Buffer Capabilities
-	JPanel buffersPanel = new JPanel(new GridLayout(1, 2));
-	bufferCapsPanel.add(buffersPanel, BorderLayout.CENTER);
-	// Front Buffer
-	JPanel fbPanel = new JPanel(new GridLayout(2, 1));
-	fbPanel.setBorder(BorderFactory.createTitledBorder(
-		"Front Buffer"));
-	buffersPanel.add(fbPanel);
-	fbPanel.add(fbAccelerated);
-	fbAccelerated.setEnabled(false);
-	fbPanel.add(fbTrueVolatile);
-	fbTrueVolatile.setEnabled(false);
-	// Back Buffer
-	JPanel bbPanel = new JPanel(new GridLayout(2, 1));
-	bbPanel.setPreferredSize(new Dimension(250, 80));
-	bbPanel.setBorder(BorderFactory.createTitledBorder(
-		"Back and Intermediate Buffers"));
-	buffersPanel.add(bbPanel);
-	bbPanel.add(bbAccelerated);
-	bbAccelerated.setEnabled(false);
-	bbPanel.add(bbTrueVolatile);
-	bbTrueVolatile.setEnabled(false);
+        // +=c=====================================================+
+        // ++=gcPanel==============================================+
+        // ++                    [gcSelection]                     +
+        // ++=capsPanel============================================+
+        // +++=imageCapsPanel======================================+
+        // +++ [imageAccelerated]                                  +
+        // +++ [imageTrueVolatile]                                 +
+        // +++=bufferCapsPanel=====================================+
+        // ++++=bufferAccessCapsPanel==============================+
+        // +++++=flippingPanel=====================================+
+        // +++++ [flipping]                                        +
+        // +++++=fsPanel===========================================+
+        // +++++ [indentPanel][fullScreen]                         +
+        // +++++=mbPanel===========================================+
+        // +++++ [indentPanel][multiBuffer]                        +
+        // ++++=buffersPanel=======================================+
+        // +++++=fbPanel===============+=bbPanel===================+
+        // +++++                       +                           +
+        // +++++ [fbAccelerated]       + [bbAccelerated]           +
+        // +++++                       +                           +
+        // +++++ [fbTrueVolatile]      + [bbTrueVolatile]          +
+        // +++++                       +                           +
+        // +=======================================================+
+        c.setLayout(new BorderLayout());
+        // Graphics Config
+        JPanel gcPanel = new JPanel(new FlowLayout(FlowLayout.CENTER));
+        c.add(gcPanel, BorderLayout.NORTH);
+        gcSelection.setPreferredSize(new Dimension(400, 30));
+        gcPanel.add(gcSelection);
+        // Capabilities
+        JPanel capsPanel = new JPanel(new BorderLayout());
+        c.add(capsPanel, BorderLayout.CENTER);
+        // Image Capabilities
+        JPanel imageCapsPanel = new JPanel(new GridLayout(2, 1));
+        capsPanel.add(imageCapsPanel, BorderLayout.NORTH);
+        imageCapsPanel.setBorder(BorderFactory.createTitledBorder(
+                "Image Capabilities"));
+        imageAccelerated.setEnabled(false);
+        imageCapsPanel.add(imageAccelerated);
+        imageTrueVolatile.setEnabled(false);
+        imageCapsPanel.add(imageTrueVolatile);
+        // Buffer Capabilities
+        JPanel bufferCapsPanel = new JPanel(new BorderLayout());
+        capsPanel.add(bufferCapsPanel, BorderLayout.CENTER);
+        bufferCapsPanel.setBorder(BorderFactory.createTitledBorder(
+                "Buffer Capabilities"));
+        // Buffer Access
+        JPanel bufferAccessCapsPanel = new JPanel(new GridLayout(3, 1));
+        bufferAccessCapsPanel.setPreferredSize(new Dimension(300, 88));
+        bufferCapsPanel.add(bufferAccessCapsPanel, BorderLayout.NORTH);
+        // Flipping
+        JPanel flippingPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
+        bufferAccessCapsPanel.add(flippingPanel);
+        flippingPanel.add(flipping);
+        flipping.setEnabled(false);
+        flippingPanel.add(flippingMethod);
+        // Full-screen
+        JPanel fsPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
+        bufferAccessCapsPanel.add(fsPanel);
+        JPanel indentPanel = new JPanel();
+        indentPanel.setPreferredSize(new Dimension(30, 30));
+        fsPanel.add(indentPanel);
+        fsPanel.add(fullScreen);
+        fullScreen.setEnabled(false);
+        // Multi-buffering
+        JPanel mbPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
+        bufferAccessCapsPanel.add(mbPanel);
+        indentPanel = new JPanel();
+        indentPanel.setPreferredSize(new Dimension(30, 30));
+        mbPanel.add(indentPanel);
+        mbPanel.add(multiBuffer);
+        multiBuffer.setEnabled(false);
+        // Front and Back Buffer Capabilities
+        JPanel buffersPanel = new JPanel(new GridLayout(1, 2));
+        bufferCapsPanel.add(buffersPanel, BorderLayout.CENTER);
+        // Front Buffer
+        JPanel fbPanel = new JPanel(new GridLayout(2, 1));
+        fbPanel.setBorder(BorderFactory.createTitledBorder(
+                "Front Buffer"));
+        buffersPanel.add(fbPanel);
+        fbPanel.add(fbAccelerated);
+        fbAccelerated.setEnabled(false);
+        fbPanel.add(fbTrueVolatile);
+        fbTrueVolatile.setEnabled(false);
+        // Back Buffer
+        JPanel bbPanel = new JPanel(new GridLayout(2, 1));
+        bbPanel.setPreferredSize(new Dimension(250, 80));
+        bbPanel.setBorder(BorderFactory.createTitledBorder(
+                "Back and Intermediate Buffers"));
+        buffersPanel.add(bbPanel);
+        bbPanel.add(bbAccelerated);
+        bbAccelerated.setEnabled(false);
+        bbPanel.add(bbTrueVolatile);
+        bbTrueVolatile.setEnabled(false);
     }
 
     public void itemStateChanged(ItemEvent ev) {
-	gcChanged();
+        gcChanged();
     }
 
     private void gcChanged() {
-	GraphicsConfigurationWrapper wrap = (GraphicsConfigurationWrapper) gcSelection.getSelectedItem();
-	//assert wrap != null;
-	GraphicsConfiguration gc = wrap.getGC();
-	//assert gc != null;
-	//Image Caps
-	ImageCapabilities imageCaps = gc.getImageCapabilities();
-	imageAccelerated.setSelected(imageCaps.isAccelerated());
-	imageTrueVolatile.setSelected(imageCaps.isTrueVolatile());
-	// Buffer Caps
-	BufferCapabilities bufferCaps = gc.getBufferCapabilities();
-	flipping.setSelected(bufferCaps.isPageFlipping());
-	flippingMethod.setText(getFlipText(bufferCaps.getFlipContents()));
-	fullScreen.setSelected(bufferCaps.isFullScreenRequired());
-	multiBuffer.setSelected(bufferCaps.isMultiBufferAvailable());
-	// Front buffer caps
-	imageCaps = bufferCaps.getFrontBufferCapabilities();
-	fbAccelerated.setSelected(imageCaps.isAccelerated());
-	fbTrueVolatile.setSelected(imageCaps.isTrueVolatile());
-	imageCaps = bufferCaps.getFrontBufferCapabilities();
-	// Back buffer caps
-	imageCaps = bufferCaps.getBackBufferCapabilities();
-	bbAccelerated.setSelected(imageCaps.isAccelerated());
-	bbTrueVolatile.setSelected(imageCaps.isTrueVolatile());
+        GraphicsConfigurationWrapper wrap = (GraphicsConfigurationWrapper) gcSelection.getSelectedItem();
+        //assert wrap != null;
+        GraphicsConfiguration gc = wrap.getGC();
+        //assert gc != null;
+        //Image Caps
+        ImageCapabilities imageCaps = gc.getImageCapabilities();
+        imageAccelerated.setSelected(imageCaps.isAccelerated());
+        imageTrueVolatile.setSelected(imageCaps.isTrueVolatile());
+        // Buffer Caps
+        BufferCapabilities bufferCaps = gc.getBufferCapabilities();
+        flipping.setSelected(bufferCaps.isPageFlipping());
+        flippingMethod.setText(getFlipText(bufferCaps.getFlipContents()));
+        fullScreen.setSelected(bufferCaps.isFullScreenRequired());
+        multiBuffer.setSelected(bufferCaps.isMultiBufferAvailable());
+        // Front buffer caps
+        imageCaps = bufferCaps.getFrontBufferCapabilities();
+        fbAccelerated.setSelected(imageCaps.isAccelerated());
+        fbTrueVolatile.setSelected(imageCaps.isTrueVolatile());
+        imageCaps = bufferCaps.getFrontBufferCapabilities();
+        // Back buffer caps
+        imageCaps = bufferCaps.getBackBufferCapabilities();
+        bbAccelerated.setSelected(imageCaps.isAccelerated());
+        bbTrueVolatile.setSelected(imageCaps.isTrueVolatile());
     }
 
     private static String getFlipText(BufferCapabilities.FlipContents flip) {
-	if (flip == null) {
-	    return "";
-	} else if (flip == BufferCapabilities.FlipContents.UNDEFINED) {
-	    return "Method Unspecified";
-	} else if (flip == BufferCapabilities.FlipContents.BACKGROUND) {
-	    return "Cleared to Background";
-	} else if (flip == BufferCapabilities.FlipContents.PRIOR) {
-	    return "Previous Front Buffer";
-	} else { // if (flip == BufferCapabilities.FlipContents.COPIED)
-	    return "Copied";
-	}
+        if (flip == null) {
+            return "";
+        } else if (flip == BufferCapabilities.FlipContents.UNDEFINED) {
+            return "Method Unspecified";
+        } else if (flip == BufferCapabilities.FlipContents.BACKGROUND) {
+            return "Cleared to Background";
+        } else if (flip == BufferCapabilities.FlipContents.PRIOR) {
+            return "Previous Front Buffer";
+        } else { // if (flip == BufferCapabilities.FlipContents.COPIED)
+            return "Copied";
+        }
     }
 
     public static void main(String[] args) {
-	GraphicsEnvironment ge =
-		GraphicsEnvironment.getLocalGraphicsEnvironment();
-	GraphicsDevice[] devices = ge.getScreenDevices();
-	for (int i = 0; i < devices.length; i++) {
-	    CapabilitiesTest tst = new CapabilitiesTest(devices[i]);
-	    tst.pack();
-	    tst.setVisible(true);
-	}
+        GraphicsEnvironment ge =
+                GraphicsEnvironment.getLocalGraphicsEnvironment();
+        GraphicsDevice[] devices = ge.getScreenDevices();
+        for (int i = 0; i < devices.length; i++) {
+            CapabilitiesTest tst = new CapabilitiesTest(devices[i]);
+            tst.pack();
+            tst.setVisible(true);
+        }
     }
 }

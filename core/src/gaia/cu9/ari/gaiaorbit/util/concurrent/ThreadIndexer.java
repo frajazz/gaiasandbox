@@ -12,11 +12,11 @@ public abstract class ThreadIndexer {
     public static ThreadIndexer inst;
 
     public static void initialize() {
-	if (GlobalConf.performance.MULTITHREADING) {
-	    inst = new MultiThreadIndexer();
-	} else {
-	    inst = new SingleThreadIndexer();
-	}
+        if (GlobalConf.performance.MULTITHREADING) {
+            inst = new MultiThreadIndexer();
+        } else {
+            inst = new SingleThreadIndexer();
+        }
     }
 
     /**

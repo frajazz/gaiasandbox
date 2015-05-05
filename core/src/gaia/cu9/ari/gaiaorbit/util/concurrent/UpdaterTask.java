@@ -15,31 +15,31 @@ public class UpdaterTask<T extends SceneGraphNode> implements Callable<Void> {
     int start, step;
 
     public UpdaterTask(List<T> nodes, int start, int step) {
-	this.nodes = nodes;
-	this.start = start;
-	this.step = step;
+        this.nodes = nodes;
+        this.start = start;
+        this.step = step;
     }
 
     public UpdaterTask(List<T> nodes) {
-	this(nodes, 0, 1);
+        this(nodes, 0, 1);
     }
 
     @Override
     public Void call() throws Exception {
-	int size = nodes.size();
-	for (int i = start; i < size; i += step) {
-	    SceneGraphNode node = nodes.get(i);
-	    node.update(time, node.parent.transform, camera);
-	}
-	return null;
+        int size = nodes.size();
+        for (int i = start; i < size; i += step) {
+            SceneGraphNode node = nodes.get(i);
+            node.update(time, node.parent.transform, camera);
+        }
+        return null;
     }
 
     public void setNodesToProcess(List<T> nodes) {
-	this.nodes = nodes;
+        this.nodes = nodes;
     }
 
     public void addAll(List<T> list) {
-	this.nodes.addAll(list);
+        this.nodes.addAll(list);
     }
 
     /**
@@ -48,8 +48,8 @@ public class UpdaterTask<T extends SceneGraphNode> implements Callable<Void> {
      * @param time
      */
     public void setParameters(ICamera camera, ITimeFrameProvider time) {
-	this.camera = camera;
-	this.time = time;
+        this.camera = camera;
+        this.time = time;
     }
 
 }

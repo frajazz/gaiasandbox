@@ -9,7 +9,7 @@ public class SingleThreadIndexer extends ThreadIndexer {
 
     @Override
     public int i() {
-	return 0;
+        return 0;
     }
 
 }

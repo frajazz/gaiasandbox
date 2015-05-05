@@ -96,40 +96,40 @@ public class WebFonts
      */
     static
     {
-	if (SystemUtils.isWindows())
-	{
-	    // Win8
-	    // Win7
-	    fonts.put(CONTROL, new FontUIResource(TAHOMA, Font.PLAIN, 10));
-	    fonts.put(ALERT, new FontUIResource(SEGOE_UI, Font.PLAIN, 10));
-	    fonts.put(MENU, new FontUIResource(SEGOE_UI, Font.PLAIN, 10));
-	    fonts.put(ACCELERATOR, new FontUIResource(SEGOE_UI, Font.PLAIN, 10));
-	    fonts.put(TITLE, new FontUIResource(SEGOE_UI, Font.PLAIN, 10));
-	    fonts.put(TEXT, new FontUIResource(TAHOMA, Font.PLAIN, 10));
-	    fonts.put(TOOLTIP, new FontUIResource(SEGOE_UI, Font.PLAIN, 10));
-	}
-	else if (SystemUtils.isMac())
-	{
-	    // Mac OS X
-	    fonts.put(CONTROL, new FontUIResource(LUCIDA_GRANDE, Font.PLAIN, 10));
-	    fonts.put(ALERT, new FontUIResource(LUCIDA_GRANDE, Font.PLAIN, 10));
-	    fonts.put(MENU, new FontUIResource(LUCIDA_GRANDE, Font.PLAIN, 10));
-	    fonts.put(ACCELERATOR, new FontUIResource(LUCIDA_GRANDE, Font.PLAIN, 9));
-	    fonts.put(TITLE, new FontUIResource(LUCIDA_GRANDE, Font.BOLD, 10));
-	    fonts.put(TEXT, new FontUIResource(LUCIDA_GRANDE, Font.PLAIN, 10));
-	    fonts.put(TOOLTIP, new FontUIResource(LUCIDA_GRANDE, Font.PLAIN, 10));
-	}
-	else
-	{
-	    // Unix systems
-	    fonts.put(CONTROL, new FontUIResource(SANS_SERIF, Font.PLAIN, 10));
-	    fonts.put(ALERT, new FontUIResource(SANS_SERIF, Font.PLAIN, 10));
-	    fonts.put(MENU, new FontUIResource(SANS_SERIF, Font.PLAIN, 10));
-	    fonts.put(ACCELERATOR, new FontUIResource(SANS_SERIF, Font.PLAIN, 9));
-	    fonts.put(TITLE, new FontUIResource(SANS_SERIF, Font.BOLD, 10));
-	    fonts.put(TEXT, new FontUIResource(SANS_SERIF, Font.PLAIN, 10));
-	    fonts.put(TOOLTIP, new FontUIResource(SANS_SERIF, Font.PLAIN, 10));
-	}
+        if (SystemUtils.isWindows())
+        {
+            // Win8
+            // Win7
+            fonts.put(CONTROL, new FontUIResource(TAHOMA, Font.PLAIN, 10));
+            fonts.put(ALERT, new FontUIResource(SEGOE_UI, Font.PLAIN, 10));
+            fonts.put(MENU, new FontUIResource(SEGOE_UI, Font.PLAIN, 10));
+            fonts.put(ACCELERATOR, new FontUIResource(SEGOE_UI, Font.PLAIN, 10));
+            fonts.put(TITLE, new FontUIResource(SEGOE_UI, Font.PLAIN, 10));
+            fonts.put(TEXT, new FontUIResource(TAHOMA, Font.PLAIN, 10));
+            fonts.put(TOOLTIP, new FontUIResource(SEGOE_UI, Font.PLAIN, 10));
+        }
+        else if (SystemUtils.isMac())
+        {
+            // Mac OS X
+            fonts.put(CONTROL, new FontUIResource(LUCIDA_GRANDE, Font.PLAIN, 10));
+            fonts.put(ALERT, new FontUIResource(LUCIDA_GRANDE, Font.PLAIN, 10));
+            fonts.put(MENU, new FontUIResource(LUCIDA_GRANDE, Font.PLAIN, 10));
+            fonts.put(ACCELERATOR, new FontUIResource(LUCIDA_GRANDE, Font.PLAIN, 9));
+            fonts.put(TITLE, new FontUIResource(LUCIDA_GRANDE, Font.BOLD, 10));
+            fonts.put(TEXT, new FontUIResource(LUCIDA_GRANDE, Font.PLAIN, 10));
+            fonts.put(TOOLTIP, new FontUIResource(LUCIDA_GRANDE, Font.PLAIN, 10));
+        }
+        else
+        {
+            // Unix systems
+            fonts.put(CONTROL, new FontUIResource(SANS_SERIF, Font.PLAIN, 10));
+            fonts.put(ALERT, new FontUIResource(SANS_SERIF, Font.PLAIN, 10));
+            fonts.put(MENU, new FontUIResource(SANS_SERIF, Font.PLAIN, 10));
+            fonts.put(ACCELERATOR, new FontUIResource(SANS_SERIF, Font.PLAIN, 9));
+            fonts.put(TITLE, new FontUIResource(SANS_SERIF, Font.BOLD, 10));
+            fonts.put(TEXT, new FontUIResource(SANS_SERIF, Font.PLAIN, 10));
+            fonts.put(TOOLTIP, new FontUIResource(SANS_SERIF, Font.PLAIN, 10));
+        }
     }
 
     /**
@@ -139,7 +139,7 @@ public class WebFonts
      */
     public static FontUIResource getSystemControlFont()
     {
-	return fonts.get(CONTROL);
+        return fonts.get(CONTROL);
     }
 
     /**
@@ -149,7 +149,7 @@ public class WebFonts
      */
     public static FontUIResource getSystemAlertFont()
     {
-	return fonts.get(ALERT);
+        return fonts.get(ALERT);
     }
 
     /**
@@ -159,7 +159,7 @@ public class WebFonts
      */
     public static FontUIResource getSystemMenuFont()
     {
-	return fonts.get(MENU);
+        return fonts.get(MENU);
     }
 
     /**
@@ -169,7 +169,7 @@ public class WebFonts
      */
     public static FontUIResource getSystemAcceleratorFont()
     {
-	return fonts.get(ACCELERATOR);
+        return fonts.get(ACCELERATOR);
     }
 
     /**
@@ -179,7 +179,7 @@ public class WebFonts
      */
     public static FontUIResource getSystemTitleFont()
     {
-	return fonts.get(TITLE);
+        return fonts.get(TITLE);
     }
 
     /**
@@ -189,7 +189,7 @@ public class WebFonts
      */
     public static FontUIResource getSystemTextFont()
     {
-	return fonts.get(TEXT);
+        return fonts.get(TEXT);
     }
 
     /**
@@ -199,6 +199,6 @@ public class WebFonts
      */
     public static FontUIResource getSystemTooltipFont()
     {
-	return fonts.get(TOOLTIP);
+        return fonts.get(TOOLTIP);
     }
 }

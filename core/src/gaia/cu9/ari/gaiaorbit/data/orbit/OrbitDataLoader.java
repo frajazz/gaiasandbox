@@ -23,24 +23,24 @@ public class OrbitDataLoader extends AsynchronousAssetLoader<OrbitData, OrbitDat
     OrbitData data;
 
     public OrbitDataLoader(FileHandleResolver resolver) {
-	super(resolver);
+        super(resolver);
     }
 
     @Override
     public Array<AssetDescriptor> getDependencies(String fileName, FileHandle file, OrbitDataLoaderParameter parameter) {
-	return null;
+        return null;
     }
 
     @Override
     public void loadAsync(AssetManager manager, String fileName, FileHandle file, OrbitDataLoaderParameter parameter) {
-	IOrbitDataProvider provider;
-	try {
-	    provider = parameter.providerClass.newInstance();
-	    provider.load(fileName, parameter);
-	    data = provider.getData();
-	} catch (Exception e) {
-	    Gdx.app.error(getClass().getSimpleName(), e.getMessage());
-	}
+        IOrbitDataProvider provider;
+        try {
+            provider = parameter.providerClass.newInstance();
+            provider.load(fileName, parameter);
+            data = provider.getData();
+        } catch (Exception e) {
+            Gdx.app.error(getClass().getSimpleName(), e.getMessage());
+        }
 
     }
 
@@ -48,52 +48,52 @@ public class OrbitDataLoader extends AsynchronousAssetLoader<OrbitData, OrbitDat
      * 
      */
     public OrbitData loadSync(AssetManager manager, String fileName, FileHandle file, OrbitDataLoaderParameter parameter) {
-	return data;
+        return data;
     }
 
     static public class OrbitDataLoaderParameter extends AssetLoaderParameters<OrbitData> {
 
-	Class<? extends IOrbitDataProvider> providerClass;
-	Date ini;
-	boolean forward;
-	float orbitalPeriod;
-	int numSamples;
-	String name;
-	OrbitComponent orbitalParamaters;
+        Class<? extends IOrbitDataProvider> providerClass;
+        Date ini;
+        boolean forward;
+        float orbitalPeriod;
+        int numSamples;
+        String name;
+        OrbitComponent orbitalParamaters;
 
-	public OrbitDataLoaderParameter(Class<? extends IOrbitDataProvider> providerClass) {
-	    this.providerClass = providerClass;
-	}
+        public OrbitDataLoaderParameter(Class<? extends IOrbitDataProvider> providerClass) {
+            this.providerClass = providerClass;
+        }
 
-	public OrbitDataLoaderParameter(String name, Class<? extends IOrbitDataProvider> providerClass, OrbitComponent orbitalParameters) {
-	    this(providerClass);
-	    this.name = name;
-	    this.orbitalParamaters = orbitalParameters;
-	}
+        public OrbitDataLoaderParameter(String name, Class<? extends IOrbitDataProvider> providerClass, OrbitComponent orbitalParameters) {
+            this(providerClass);
+            this.name = name;
+            this.orbitalParamaters = orbitalParameters;
+        }
 
-	public OrbitDataLoaderParameter(Class<? extends IOrbitDataProvider> providerClass, String name, Date ini, boolean forward, float orbitalPeriod, int numSamples) {
-	    this(providerClass);
-	    this.name = name;
-	    this.ini = ini;
-	    this.forward = forward;
-	    this.orbitalPeriod = orbitalPeriod;
-	    this.numSamples = numSamples;
-	}
+        public OrbitDataLoaderParameter(Class<? extends IOrbitDataProvider> providerClass, String name, Date ini, boolean forward, float orbitalPeriod, int numSamples) {
+            this(providerClass);
+            this.name = name;
+            this.ini = ini;
+            this.forward = forward;
+            this.orbitalPeriod = orbitalPeriod;
+            this.numSamples = numSamples;
+        }
 
-	public OrbitDataLoaderParameter(Class<? extends IOrbitDataProvider> providerClass, String name, Date ini, boolean forward, float orbitalPeriod) {
-	    this(providerClass, name, ini, forward, orbitalPeriod, -1);
-	}
+        public OrbitDataLoaderParameter(Class<? extends IOrbitDataProvider> providerClass, String name, Date ini, boolean forward, float orbitalPeriod) {
+            this(providerClass, name, ini, forward, orbitalPeriod, -1);
+        }
 
-	public void setIni(Date date) {
-	    this.ini = date;
-	}
+        public void setIni(Date date) {
+            this.ini = date;
+        }
 
-	public void setForward(boolean fwd) {
-	    this.forward = fwd;
-	}
+        public void setForward(boolean fwd) {
+            this.forward = fwd;
+        }
 
-	public void setOrbitalPeriod(float period) {
-	    this.orbitalPeriod = period;
-	}
+        public void setOrbitalPeriod(float period) {
+            this.orbitalPeriod = period;
+        }
     }
 }

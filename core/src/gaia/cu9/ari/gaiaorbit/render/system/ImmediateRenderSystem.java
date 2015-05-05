@@ -20,9 +20,9 @@ public abstract class ImmediateRenderSystem extends AbstractRenderSystem {
     protected int numVertices;
 
     protected ImmediateRenderSystem(RenderGroup rg, int priority, float[] alphas) {
-	super(rg, priority, alphas);
-	initShaderProgram();
-	initVertices();
+        super(rg, priority, alphas);
+        initShaderProgram();
+        initVertices();
     }
 
     protected abstract void initShaderProgram();
@@ -30,24 +30,24 @@ public abstract class ImmediateRenderSystem extends AbstractRenderSystem {
     protected abstract void initVertices();
 
     public void color(Color color) {
-	vertices[vertexIdx + colorOffset] = color.toFloatBits();
+        vertices[vertexIdx + colorOffset] = color.toFloatBits();
     }
 
     public void color(float r, float g, float b, float a) {
-	vertices[vertexIdx + colorOffset] = Color.toFloatBits(r, g, b, a);
+        vertices[vertexIdx + colorOffset] = Color.toFloatBits(r, g, b, a);
     }
 
     public void color(float colorBits) {
-	vertices[vertexIdx + colorOffset] = colorBits;
+        vertices[vertexIdx + colorOffset] = colorBits;
     }
 
     public void vertex(float x, float y, float z) {
-	vertices[vertexIdx] = x;
-	vertices[vertexIdx + 1] = y;
-	vertices[vertexIdx + 2] = z;
+        vertices[vertexIdx] = x;
+        vertices[vertexIdx + 1] = y;
+        vertices[vertexIdx + 2] = z;
 
-	vertexIdx += vertexSize;
-	numVertices++;
+        vertexIdx += vertexSize;
+        numVertices++;
     }
 
 }

@@ -15,13 +15,13 @@ public class SimpleGui {
     JFrame frame;
 
     public SimpleGui(JFrame fr, LwjglCanvas cv) {
-	this.frame = fr;
-	this.canvas = cv;
+        this.frame = fr;
+        this.canvas = cv;
     }
 
     public void initialize(ISceneGraph sg) {
-	this.frame.setLayout(new MigLayout("fill"));
-	this.frame.add(this.canvas.getCanvas(), "growx,growy");
-	this.frame.setMinimumSize(new Dimension(450, 300));
+        this.frame.setLayout(new MigLayout("fill"));
+        this.frame.add(this.canvas.getCanvas(), "growx,growy");
+        this.frame.setMinimumSize(new Dimension(450, 300));
     }
 }

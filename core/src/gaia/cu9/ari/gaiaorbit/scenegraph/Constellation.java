@@ -31,14 +31,14 @@ public class Constellation extends LineObject implements ILabelRenderable {
     public List<AbstractPositionEntity[]> stars;
 
     public Constellation() {
-	super();
-	cc = new float[] { .9f, 1f, .9f, alpha };
+        super();
+        cc = new float[] { .9f, 1f, .9f, alpha };
     }
 
     public Constellation(String name, String parentName) {
-	this();
-	this.name = name;
-	this.parentName = parentName;
+        this();
+        this.name = name;
+        this.parentName = parentName;
     }
 
     @Override
@@ -47,34 +47,34 @@ public class Constellation extends LineObject implements ILabelRenderable {
     }
 
     public void update(ITimeFrameProvider time, final Transform parentTransform, ICamera camera) {
-	pos.scl(0);
-	for (AbstractPositionEntity[] pair : stars) {
-	    pos.add(pair[0].transform.getTranslation());
-	}
-	pos.scl((1d / stars.size()));
-	pos.nor().scl(100 * Constants.PC_TO_U);
-	addToRenderLists(camera);
+        pos.scl(0);
+        for (AbstractPositionEntity[] pair : stars) {
+            pos.add(pair[0].transform.getTranslation());
+        }
+        pos.scl((1d / stars.size()));
+        pos.nor().scl(100 * Constants.PC_TO_U);
+        addToRenderLists(camera);
     }
 
     @Override
     public void setUp() {
-	stars = new ArrayList<AbstractPositionEntity[]>(ids.size());
-	for (long[] pair : ids) {
-	    AbstractPositionEntity s1, s2;
-	    s1 = sg.getStarMap().get(pair[0]);
-	    s2 = sg.getStarMap().get(pair[1]);
-	    if (s1 != null && s2 != null)
-		stars.add(new AbstractPositionEntity[] { s1, s2 });
-	}
+        stars = new ArrayList<AbstractPositionEntity[]>(ids.size());
+        for (long[] pair : ids) {
+            AbstractPositionEntity s1, s2;
+            s1 = sg.getStarMap().get(pair[0]);
+            s2 = sg.getStarMap().get(pair[1]);
+            if (s1 != null && s2 != null)
+                stars.add(new AbstractPositionEntity[] { s1, s2 });
+        }
     }
 
     @Override
     public void render(Object... params) {
-	if (params[0] instanceof ImmediateRenderSystem) {
-	    super.render(params);
-	} else if (params[0] instanceof SpriteBatch) {
-	    render((SpriteBatch) params[0], (ShaderProgram) params[1], (BitmapFont) params[2], (ICamera) params[3]);
-	}
+        if (params[0] instanceof ImmediateRenderSystem) {
+            super.render(params);
+        } else if (params[0] instanceof SpriteBatch) {
+            render((SpriteBatch) params[0], (ShaderProgram) params[1], (BitmapFont) params[2], (ICamera) params[3]);
+        }
     }
 
     /**
@@ -82,16 +82,16 @@ public class Constellation extends LineObject implements ILabelRenderable {
      */
     @Override
     public void render(LineRenderSystem renderer, ICamera camera, float alpha) {
-	constalpha = alpha;
-	alpha *= this.alpha;
-	// This is so that the shape renderer does not mess up the z-buffer
-	for (AbstractPositionEntity[] pair : stars) {
-	    double[] p1 = pair[0].transform.getTranslation();
-	    double[] p2 = pair[1].transform.getTranslation();
+        constalpha = alpha;
+        alpha *= this.alpha;
+        // This is so that the shape renderer does not mess up the z-buffer
+        for (AbstractPositionEntity[] pair : stars) {
+            double[] p1 = pair[0].transform.getTranslation();
+            double[] p2 = pair[1].transform.getTranslation();
 
-	    renderer.addLine((float) p1[0], (float) p1[1], (float) p1[2], (float) p2[0], (float) p2[1], (float) p2[2], cc[0], cc[1], cc[2], alpha);
+            renderer.addLine((float) p1[0], (float) p1[1], (float) p1[2], (float) p2[0], (float) p2[1], (float) p2[2], cc[0], cc[1], cc[2], alpha);
 
-	}
+        }
 
     }
 
@@ -100,20 +100,20 @@ public class Constellation extends LineObject implements ILabelRenderable {
      */
     @Override
     public void render(SpriteBatch batch, ShaderProgram shader, BitmapFont font, ICamera camera) {
-	Vector3d pos = auxVector3d.get();
-	labelPosition(pos);
-	shader.setUniformf("a_viewAngle", 90f);
-	shader.setUniformf("a_thOverFactor", 1f);
-	renderLabel(batch, shader, font, camera, label(), pos, labelScale(), labelSize(), labelColour());
+        Vector3d pos = auxVector3d.get();
+        labelPosition(pos);
+        shader.setUniformf("a_viewAngle", 90f);
+        shader.setUniformf("a_thOverFactor", 1f);
+        renderLabel(batch, shader, font, camera, label(), pos, labelScale(), labelSize(), labelColour());
     }
 
     @Override
     protected void addToRenderLists(ICamera camera) {
-	addToRender(this, RenderGroup.LINE);
-	if (renderLabel()) {
-	    addToRender(this, RenderGroup.LABEL);
+        addToRender(this, RenderGroup.LINE);
+        if (renderLabel()) {
+            addToRender(this, RenderGroup.LABEL);
 
-	}
+        }
     }
 
     @Override
@@ -122,38 +122,38 @@ public class Constellation extends LineObject implements ILabelRenderable {
 
     @Override
     public float[] labelColour() {
-	return cc;
+        return cc;
     }
 
     @Override
     public float labelSize() {
-	return .6e7f;
+        return .6e7f;
     }
 
     @Override
     public float labelScale() {
-	return 1f;
+        return 1f;
     }
 
     @Override
     public void labelPosition(Vector3d out) {
-	out.set(pos);
+        out.set(pos);
     }
 
     @Override
     public String label() {
-	return name;
+        return name;
     }
 
     @Override
     public boolean renderLabel() {
-	return true;
+        return true;
     }
 
     @Override
     public void labelDepthBuffer() {
-	Gdx.gl.glEnable(GL20.GL_DEPTH_TEST);
-	Gdx.gl.glDepthMask(true);
+        Gdx.gl.glEnable(GL20.GL_DEPTH_TEST);
+        Gdx.gl.glDepthMask(true);
     }
 
 }

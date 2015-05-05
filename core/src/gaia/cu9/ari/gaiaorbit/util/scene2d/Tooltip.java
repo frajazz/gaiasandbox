@@ -20,46 +20,46 @@ public class Tooltip<T extends Actor> implements EventListener {
     Stage stage;
 
     public Tooltip(T tooltipObject, Stage stage) {
-	this.stage = stage;
-	this.tooltipObject = tooltipObject;
-	this.tooltipObject.setVisible(false);
+        this.stage = stage;
+        this.tooltipObject = tooltipObject;
+        this.tooltipObject.setVisible(false);
     }
 
     @Override
     public boolean handle(Event event) {
-	if (event instanceof InputEvent) {
-	    InputEvent ie = (InputEvent) event;
-	    if (ie.getType().equals(Type.enter)) {
-		tt = new TimerTask() {
-		    @Override
-		    public void run() {
-			tooltipObject.setPosition(Gdx.input.getX() + 10, Gdx.graphics.getHeight() - Gdx.input.getY());
-			addToStage();
-			tooltipObject.setVisible(true);
-			tooltipObject.setZIndex(100);
-		    }
-		};
-		// Set timer
-		timer.schedule(tt, TOOLTIP_DELAY_MS);
-	    } else if (ie.getType().equals(Type.exit) || ie.getType().equals(Type.touchDown) || ie.getType().equals(Type.touchUp)) {
-		// Remove
-		if (tt != null) {
-		    tt.cancel();
-		    tt = null;
-		}
-		tooltipObject.setVisible(false);
-	    } else if (ie.getType().equals(Type.mouseMoved)) {
-		if (tooltipObject.isVisible()) {
-		    tooltipObject.setPosition(Gdx.input.getX() + 10, Gdx.graphics.getHeight() - Gdx.input.getY());
-		}
-	    }
-	}
-	return false;
+        if (event instanceof InputEvent) {
+            InputEvent ie = (InputEvent) event;
+            if (ie.getType().equals(Type.enter)) {
+                tt = new TimerTask() {
+                    @Override
+                    public void run() {
+                        tooltipObject.setPosition(Gdx.input.getX() + 10, Gdx.graphics.getHeight() - Gdx.input.getY());
+                        addToStage();
+                        tooltipObject.setVisible(true);
+                        tooltipObject.setZIndex(100);
+                    }
+                };
+                // Set timer
+                timer.schedule(tt, TOOLTIP_DELAY_MS);
+            } else if (ie.getType().equals(Type.exit) || ie.getType().equals(Type.touchDown) || ie.getType().equals(Type.touchUp)) {
+                // Remove
+                if (tt != null) {
+                    tt.cancel();
+                    tt = null;
+                }
+                tooltipObject.setVisible(false);
+            } else if (ie.getType().equals(Type.mouseMoved)) {
+                if (tooltipObject.isVisible()) {
+                    tooltipObject.setPosition(Gdx.input.getX() + 10, Gdx.graphics.getHeight() - Gdx.input.getY());
+                }
+            }
+        }
+        return false;
     }
 
     private void addToStage() {
-	if (!stage.getActors().contains(tooltipObject, true)) {
-	    stage.addActor(tooltipObject);
-	}
+        if (!stage.getActors().contains(tooltipObject, true)) {
+            stage.addActor(tooltipObject);
+        }
     }
 }

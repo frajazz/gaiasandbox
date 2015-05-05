@@ -12,11 +12,11 @@ public abstract class AbstractRenderer {
     protected static ISceneGraph sg;
 
     public static void initialize(ISceneGraph sg) {
-	AbstractRenderer.sg = sg;
+        AbstractRenderer.sg = sg;
     }
 
     public AbstractRenderer() {
-	super();
+        super();
     }
 
 }

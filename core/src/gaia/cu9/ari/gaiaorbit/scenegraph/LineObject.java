@@ -7,7 +7,7 @@ public abstract class LineObject extends AbstractPositionEntity implements ILine
 
     @Override
     public void render(Object... params) {
-	render((LineRenderSystem) params[0], (ICamera) params[1], (Float) params[2]);
+        render((LineRenderSystem) params[0], (ICamera) params[1], (Float) params[2]);
     }
 
 }

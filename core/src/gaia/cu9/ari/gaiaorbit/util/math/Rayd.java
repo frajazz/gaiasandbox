@@ -15,13 +15,13 @@ public class Rayd implements Serializable {
      * @param origin The starting position
      * @param direction The direction */
     public Rayd(Vector3d origin, Vector3d direction) {
-	this.origin.set(origin);
-	this.direction.set(direction).nor();
+        this.origin.set(origin);
+        this.direction.set(direction).nor();
     }
 
     /** @return a copy of this Rayd. */
     public Rayd cpy() {
-	return new Rayd(this.origin, this.direction);
+        return new Rayd(this.origin, this.direction);
     }
 
     /** @deprecated Use {@link #getEndPoint(Vector3d, float)} instead. Returns the endpoint given the distance. This is calculated as
@@ -30,7 +30,7 @@ public class Rayd implements Serializable {
      * @return The end point */
     @Deprecated
     public Vector3d getEndPoint(float distance) {
-	return getEndPoint(new Vector3d(), distance);
+        return getEndPoint(new Vector3d(), distance);
     }
 
     /** Returns the endpoint given the distance. This is calculated as startpoint + distance * direction.
@@ -38,7 +38,7 @@ public class Rayd implements Serializable {
      * @param distance The distance from the end point to the start point.
      * @return The out param */
     public Vector3d getEndPoint(final Vector3d out, final float distance) {
-	return out.set(direction).scl(distance).add(origin);
+        return out.set(direction).scl(distance).add(origin);
     }
 
     static Vector3d tmp = new Vector3d();
@@ -48,16 +48,16 @@ public class Rayd implements Serializable {
      * @param matrix The matrix
      * @return This Rayd for chaining. */
     public Rayd mul(Matrix4d matrix) {
-	tmp.set(origin).add(direction);
-	tmp.mul(matrix);
-	origin.mul(matrix);
-	direction.set(tmp.sub(origin));
-	return this;
+        tmp.set(origin).add(direction);
+        tmp.mul(matrix);
+        origin.mul(matrix);
+        direction.set(tmp.sub(origin));
+        return this;
     }
 
     /** {@inheritDoc} */
     public String toString() {
-	return "Rayd [" + origin + ":" + direction + "]";
+        return "Rayd [" + origin + ":" + direction + "]";
     }
 
     /** Sets the starting position and the direction of this Rayd.
@@ -66,9 +66,9 @@ public class Rayd implements Serializable {
      * @param direction The direction
      * @return this Rayd for chaining */
     public Rayd set(Vector3d origin, Vector3d direction) {
-	this.origin.set(origin);
-	this.direction.set(direction);
-	return this;
+        this.origin.set(origin);
+        this.direction.set(direction);
+        return this;
     }
 
     /** Sets this Rayd from the given starting position and direction.
@@ -81,9 +81,9 @@ public class Rayd implements Serializable {
      * @param dz The z-component of the direction
      * @return this Rayd for chaining */
     public Rayd set(float x, float y, float z, float dx, float dy, float dz) {
-	this.origin.set(x, y, z);
-	this.direction.set(dx, dy, dz);
-	return this;
+        this.origin.set(x, y, z);
+        this.direction.set(dx, dy, dz);
+        return this;
     }
 
     /** Sets the starting position and direction from the given Rayd
@@ -91,27 +91,27 @@ public class Rayd implements Serializable {
      * @param Rayd The Rayd
      * @return This Rayd for chaining */
     public Rayd set(Rayd Rayd) {
-	this.origin.set(Rayd.origin);
-	this.direction.set(Rayd.direction);
-	return this;
+        this.origin.set(Rayd.origin);
+        this.direction.set(Rayd.direction);
+        return this;
     }
 
     @Override
     public boolean equals(Object o) {
-	if (o == this)
-	    return true;
-	if (o == null || o.getClass() != this.getClass())
-	    return false;
-	Rayd r = (Rayd) o;
-	return this.direction.equals(r.direction) && this.origin.equals(r.origin);
+        if (o == this)
+            return true;
+        if (o == null || o.getClass() != this.getClass())
+            return false;
+        Rayd r = (Rayd) o;
+        return this.direction.equals(r.direction) && this.origin.equals(r.origin);
     }
 
     @Override
     public int hashCode() {
-	final int prime = 73;
-	int result = 1;
-	result = prime * result + this.direction.hashCode();
-	result = prime * result + this.origin.hashCode();
-	return result;
+        final int prime = 73;
+        int result = 1;
+        result = prime * result + this.direction.hashCode();
+        result = prime * result + this.origin.hashCode();
+        return result;
     }
 }

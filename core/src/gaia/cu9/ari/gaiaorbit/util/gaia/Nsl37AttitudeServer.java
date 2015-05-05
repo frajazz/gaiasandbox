@@ -20,8 +20,8 @@ public class Nsl37AttitudeServer {
     static Map<Long, Attitude> cache;
     static long hits = 0, misses = 0;
     static {
-	nsl = new Nsl37();
-	cache = Collections.synchronizedMap(new LruCache<Long, Attitude>(10));
+        nsl = new Nsl37();
+        cache = Collections.synchronizedMap(new LruCache<Long, Attitude>(10));
     }
 
     /**
@@ -30,16 +30,16 @@ public class Nsl37AttitudeServer {
      * @return
      */
     public synchronized static Attitude getAttitude(Date date) {
-	Long time = date.getTime();
-	if (!cache.containsKey(time)) {
-	    Attitude att = nsl.getAttitudeNative(date);
-	    cache.put(time, att);
-	    misses++;
-	    return att;
-	} else {
-	    hits++;
-	}
-	return cache.get(time);
+        Long time = date.getTime();
+        if (!cache.containsKey(time)) {
+            Attitude att = nsl.getAttitudeNative(date);
+            cache.put(time, att);
+            misses++;
+            return att;
+        } else {
+            hits++;
+        }
+        return cache.get(time);
     }
 
 }

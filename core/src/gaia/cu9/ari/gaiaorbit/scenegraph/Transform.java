@@ -18,7 +18,7 @@ public class Transform {
     public Vector3d position;
 
     public Transform() {
-	super();
+        super();
     }
 
     /**
@@ -26,66 +26,66 @@ public class Transform {
      * @param other
      */
     public void set(Transform parent) {
-	if (parent != null) {
-	    if (position != null) {
-		if (parent.position != null) {
-		    position.set(parent.position);
-		} else if (parent.transform != null) {
-		    // Vector > matrix
-		    parent.transform.getTranslation(position);
-		}
-	    } else if (transform != null) {
-		if (parent.position != null) {
-		    // Matrix > vector
-		    transform.setTranslation(parent.position);
-		} else if (parent.transform != null) {
-		    // Matrix > matrix
-		    transform.set(parent.transform);
-		}
-	    }
-	}
+        if (parent != null) {
+            if (position != null) {
+                if (parent.position != null) {
+                    position.set(parent.position);
+                } else if (parent.transform != null) {
+                    // Vector > matrix
+                    parent.transform.getTranslation(position);
+                }
+            } else if (transform != null) {
+                if (parent.position != null) {
+                    // Matrix > vector
+                    transform.setTranslation(parent.position);
+                } else if (parent.transform != null) {
+                    // Matrix > matrix
+                    transform.set(parent.transform);
+                }
+            }
+        }
     }
 
     public void translate(Vector3d position) {
-	if (this.transform != null) {
-	    this.transform.translate(position);
-	} else if (this.position != null) {
-	    this.position.add(position);
-	}
+        if (this.transform != null) {
+            this.transform.translate(position);
+        } else if (this.position != null) {
+            this.position.add(position);
+        }
     }
 
     public void setToTranslation(Transform parent, Vector3d localPosition) {
-	set(parent);
-	translate(localPosition);
+        set(parent);
+        translate(localPosition);
     }
 
     public Matrix4d getMatrix() {
-	if (transform != null) {
-	    return transform;
-	} else if (position != null) {
-	    return new Matrix4d().translate(position);
-	}
-	return null;
+        if (transform != null) {
+            return transform;
+        } else if (position != null) {
+            return new Matrix4d().translate(position);
+        }
+        return null;
     }
 
     public Vector3d getTranslation(Vector3d aux) {
-	if (position != null) {
-	    return aux.set(position);
-	} else if (transform != null) {
-	    return transform.getTranslation(aux);
-	} else {
-	    return aux;
-	}
+        if (position != null) {
+            return aux.set(position);
+        } else if (transform != null) {
+            return transform.getTranslation(aux);
+        } else {
+            return aux;
+        }
     }
 
     public Vector3 getTranslationf(Vector3 aux) {
-	if (position != null) {
-	    return aux.set(position.valuesf());
-	} else if (transform != null) {
-	    return transform.getTranslationf(aux);
-	} else {
-	    return aux;
-	}
+        if (position != null) {
+            return aux.set(position.valuesf());
+        } else if (transform != null) {
+            return transform.getTranslationf(aux);
+        } else {
+            return aux;
+        }
     }
 
     /** Adds the translation of this object to the aux vector, and 
@@ -93,52 +93,52 @@ public class Transform {
      * @param aux
      */
     public Vector3d addTranslationTo(Vector3d aux) {
-	if (position != null) {
-	    return aux.add(position);
-	} else if (transform != null) {
-	    return transform.addTranslationTo(aux);
-	} else {
-	    return aux;
-	}
+        if (position != null) {
+            return aux.add(position);
+        } else if (transform != null) {
+            return transform.addTranslationTo(aux);
+        } else {
+            return aux;
+        }
     }
 
     public double[] getTranslation() {
-	if (position != null) {
-	    return position.values();
-	} else if (transform != null) {
-	    return transform.getTranslation();
-	} else {
-	    return null;
-	}
+        if (position != null) {
+            return position.values();
+        } else if (transform != null) {
+            return transform.getTranslation();
+        } else {
+            return null;
+        }
     }
 
     public float[] getTranslationf() {
-	if (position != null) {
-	    return position.valuesf();
-	} else if (transform != null) {
-	    return transform.getTranslationf();
-	} else {
-	    return null;
-	}
+        if (position != null) {
+            return position.valuesf();
+        } else if (transform != null) {
+            return transform.getTranslationf();
+        } else {
+            return null;
+        }
     }
 
     public void getTranslationf(float[] vec) {
-	if (position != null) {
-	    position.valuesf(vec);
-	} else if (transform != null) {
-	    transform.getTranslationf(vec);
-	}
+        if (position != null) {
+            position.valuesf(vec);
+        } else if (transform != null) {
+            transform.getTranslationf(vec);
+        }
     }
 
     @Override
     public String toString() {
-	if (position != null) {
-	    return position.toString();
-	} else if (transform != null) {
-	    return transform.toString();
-	} else {
-	    return super.toString();
-	}
+        if (position != null) {
+            return position.toString();
+        } else if (transform != null) {
+            return transform.toString();
+        } else {
+            return super.toString();
+        }
     }
 
 }

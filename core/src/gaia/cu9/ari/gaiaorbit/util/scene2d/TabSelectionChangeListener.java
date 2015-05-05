@@ -24,12 +24,12 @@ import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener;
  * @author davebaol */
 public abstract class TabSelectionChangeListener extends ChangeListener {
 
-	@Override
-	public void changed (ChangeEvent event, Actor actor) {
-		if (event.getListenerActor() == event.getTarget()) {
-			tabSelectionChanged(event, actor);
-		}
-	}
+    @Override
+    public void changed(ChangeEvent event, Actor actor) {
+        if (event.getListenerActor() == event.getTarget()) {
+            tabSelectionChanged(event, actor);
+        }
+    }
 
-	public abstract void tabSelectionChanged (ChangeEvent event, Actor actor);
+    public abstract void tabSelectionChanged(ChangeEvent event, Actor actor);
 }

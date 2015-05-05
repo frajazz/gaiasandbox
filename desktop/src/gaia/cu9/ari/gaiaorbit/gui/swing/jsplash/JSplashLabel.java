@@ -10,7 +10,7 @@ import javax.swing.ImageIcon;
 import javax.swing.JLabel;
 
 public final class JSplashLabel
-	extends JLabel
+        extends JLabel
 {
     private static final long serialVersionUID = -774117609679903588L;
     private String m_text = null;
@@ -21,52 +21,52 @@ public final class JSplashLabel
 
     public JSplashLabel(URL url, String s, Font f, Color c)
     {
-	ImageIcon icon = new ImageIcon(url);
-	if (icon.getImageLoadStatus() != 8) {
-	    System.err.println("Cannot load splash screen: " + url);
-	    setText("Cannot load splash screen: " + url);
-	} else {
-	    setIcon(icon);
-	    m_text = s;
-	    m_font = f;
-	    m_color = c;
+        ImageIcon icon = new ImageIcon(url);
+        if (icon.getImageLoadStatus() != 8) {
+            System.err.println("Cannot load splash screen: " + url);
+            setText("Cannot load splash screen: " + url);
+        } else {
+            setIcon(icon);
+            m_text = s;
+            m_font = f;
+            m_color = c;
 
-	    if (m_font != null) {
-		setFont(m_font);
-	    }
-	}
+            if (m_font != null) {
+                setFont(m_font);
+            }
+        }
     }
 
     public JSplashLabel(URL url, String s)
     {
-	ImageIcon icon = new ImageIcon(url);
-	if (icon.getImageLoadStatus() != 8) {
-	    System.err.println("Cannot load splash screen: " + url);
-	    setText("Cannot load splash screen: " + url);
-	} else {
-	    setIcon(icon);
-	    m_text = s;
-	    if (m_font != null) {
-		setFont(m_font);
-	    }
-	}
+        ImageIcon icon = new ImageIcon(url);
+        if (icon.getImageLoadStatus() != 8) {
+            System.err.println("Cannot load splash screen: " + url);
+            setText("Cannot load splash screen: " + url);
+        } else {
+            setIcon(icon);
+            m_text = s;
+            if (m_font != null) {
+                setFont(m_font);
+            }
+        }
     }
 
     public void paint(Graphics g)
     {
-	super.paint(g);
+        super.paint(g);
 
-	if (m_text != null) {
-	    if (m_color != null) {
-		g.setColor(m_color);
-	    }
+        if (m_text != null) {
+            if (m_color != null) {
+                g.setColor(m_color);
+            }
 
-	    FontMetrics fm = g.getFontMetrics();
-	    int width = fm.stringWidth(m_text) + 20;
-	    int height = fm.getHeight();
+            FontMetrics fm = g.getFontMetrics();
+            int width = fm.stringWidth(m_text) + 20;
+            int height = fm.getHeight();
 
-	    g.drawString(m_text, getWidth() - width, getHeight() - height);
-	}
+            g.drawString(m_text, getWidth() - width, getHeight() - height);
+        }
     }
 }
 

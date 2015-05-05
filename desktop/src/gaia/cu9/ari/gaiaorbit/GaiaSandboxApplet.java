@@ -8,17 +8,17 @@ public class GaiaSandboxApplet extends LwjglApplet {
 
     public GaiaSandboxApplet()
     {
-	super(new GaiaSandbox(true), getConfig());
-	// Configuration
+        super(new GaiaSandbox(true), getConfig());
+        // Configuration
 
     }
 
     private static LwjglApplicationConfiguration getConfig() {
-	LwjglApplicationConfiguration cfg = new LwjglApplicationConfiguration();
-	cfg.title = "GaiaOrbit";
-	cfg.samples = 0;
-	cfg.depth = 16;
-	cfg.vSyncEnabled = true;
-	return cfg;
+        LwjglApplicationConfiguration cfg = new LwjglApplicationConfiguration();
+        cfg.title = "GaiaOrbit";
+        cfg.samples = 0;
+        cfg.depth = 16;
+        cfg.vSyncEnabled = true;
+        return cfg;
     }
 }

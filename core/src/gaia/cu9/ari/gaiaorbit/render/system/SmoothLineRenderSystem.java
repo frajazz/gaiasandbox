@@ -9,14 +9,14 @@ import java.util.List;
 public class SmoothLineRenderSystem extends AbstractRenderSystem {
 
     protected SmoothLineRenderSystem(RenderGroup rg, int priority, float[] alphas) {
-	super(rg, priority, alphas);
+        super(rg, priority, alphas);
     }
 
     @Override
     public void renderStud(List<IRenderable> renderables, ICamera camera) {
-	for (IRenderable renderable : renderables) {
+        for (IRenderable renderable : renderables) {
 
-	}
+        }
 
     }
 

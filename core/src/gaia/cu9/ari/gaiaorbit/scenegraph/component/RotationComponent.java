@@ -28,8 +28,8 @@ public class RotationComponent {
     public double meridianAngle;
 
     public RotationComponent() {
-	this.angle = 0;
-	this.angularVelocity = 0;
+        this.angle = 0;
+        this.angularVelocity = 0;
     }
 
     /**
@@ -37,15 +37,15 @@ public class RotationComponent {
      * @param rotationPeriod The period in hours.
      */
     public void setPeriod(Double rotationPeriod) {
-	this.period = rotationPeriod;
-	if (rotationPeriod != null) {
-	    angularVelocity = 360 / rotationPeriod;
-	}
+        this.period = rotationPeriod;
+        if (rotationPeriod != null) {
+            angularVelocity = 360 / rotationPeriod;
+        }
     }
 
     public void update(ITimeFrameProvider time) {
-	double t = time.getTime().getTime() - AstroUtils.J2000_MS;
-	angle = (meridianAngle + angularVelocity * t * Constants.MS_TO_H) % 360d;
+        double t = time.getTime().getTime() - AstroUtils.J2000_MS;
+        angle = (meridianAngle + angularVelocity * t * Constants.MS_TO_H) % 360d;
     }
 
     /**
@@ -53,11 +53,11 @@ public class RotationComponent {
      * @param f Angle in deg.
      */
     public void setAxialtilt(Double f) {
-	this.axialTilt = f;
+        this.axialTilt = f;
     }
 
     public void setAngle(Double angle) {
-	this.angle = angle;
+        this.angle = angle;
     }
 
     /**
@@ -65,7 +65,7 @@ public class RotationComponent {
      * @param i Inclination in deg.
      */
     public void setInclination(Double i) {
-	inclination = i + Coordinates.OBLIQUITY_DEG_J2000;
+        inclination = i + Coordinates.OBLIQUITY_DEG_J2000;
     }
 
     /**
@@ -73,7 +73,7 @@ public class RotationComponent {
      * @param i Inclination in deg.
      */
     public void setInclination(Long i) {
-	inclination = i + Coordinates.OBLIQUITY_DEG_J2000;
+        inclination = i + Coordinates.OBLIQUITY_DEG_J2000;
     }
 
     /**
@@ -81,7 +81,7 @@ public class RotationComponent {
      * @param an Angle in deg.
      */
     public void setAscendingnode(Double an) {
-	this.ascendingNode = an;
+        this.ascendingNode = an;
     }
 
     /**
@@ -89,16 +89,16 @@ public class RotationComponent {
      * @param ma Angle in deg.
      */
     public void setMeridianangle(Double ma) {
-	this.meridianAngle = ma;
+        this.meridianAngle = ma;
     }
 
     @Override
     public RotationComponent clone() {
-	RotationComponent clone = new RotationComponent();
-	clone.period = this.period;
-	clone.inclination = this.inclination;
-	clone.angularVelocity = this.angularVelocity;
-	clone.angle = this.angle;
-	return clone;
+        RotationComponent clone = new RotationComponent();
+        clone.period = this.period;
+        clone.inclination = this.inclination;
+        clone.angularVelocity = this.angularVelocity;
+        clone.angle = this.angle;
+        return clone;
     }
 }

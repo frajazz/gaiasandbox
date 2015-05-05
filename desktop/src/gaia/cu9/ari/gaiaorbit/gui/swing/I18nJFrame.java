@@ -12,14 +12,14 @@ import javax.swing.JFrame;
 public abstract class I18nJFrame extends JFrame {
 
     public I18nJFrame(String name) {
-	super(name);
+        super(name);
     }
 
     protected static String txt(String key) {
-	return I18n.bundle.get(key);
+        return I18n.bundle.get(key);
     }
 
     protected static String txt(String key, Object... args) {
-	return I18n.bundle.format(key, args);
+        return I18n.bundle.format(key, args);
     }
 }

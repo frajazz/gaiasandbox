@@ -18,38 +18,38 @@ import java.util.List;
 public class OctreeWrapperConcurrent extends AbstractOctreeWrapper {
 
     public OctreeWrapperConcurrent() {
-	super();
+        super();
     }
 
     public OctreeWrapperConcurrent(String parentName, OctreeNode<SceneGraphNode> root) {
-	super(parentName, root);
+        super(parentName, root);
     }
 
     public void setRoulette(List<SceneGraphNode> roulette) {
-	this.roulette = roulette;
+        this.roulette = roulette;
     }
 
     @Override
     public void initialize() {
-	super.initialize();
+        super.initialize();
     }
 
     public void update(ITimeFrameProvider time, final Transform parentTransform, ICamera camera, float opacity) {
-	this.opacity = opacity;
-	transform.set(parentTransform);
+        this.opacity = opacity;
+        transform.set(parentTransform);
 
-	// Update octants
-	if (!copy) {
-	    // Compute observed octants and fill roulette list
-	    root.update(transform, camera, roulette, 1f);
-	    updateLocal(time, camera);
+        // Update octants
+        if (!copy) {
+            // Compute observed octants and fill roulette list
+            root.update(transform, camera, roulette, 1f);
+            updateLocal(time, camera);
 
-	} else {
-	    // Just update children
-	    for (SceneGraphNode node : children) {
-		node.update(time, transform, camera);
-	    }
-	}
+        } else {
+            // Just update children
+            for (SceneGraphNode node : children) {
+                node.update(time, transform, camera);
+            }
+        }
 
     }
 
@@ -59,7 +59,7 @@ public class OctreeWrapperConcurrent extends AbstractOctreeWrapper {
 
     @Override
     protected String getRouletteDebug() {
-	return null;
+        return null;
     }
 
 }

@@ -7,11 +7,11 @@ public class Longref {
     }
 
     public Longref(long num) {
-	this.num = num;
+        this.num = num;
     }
 
     @Override
     public String toString() {
-	return String.valueOf(num);
+        return String.valueOf(num);
     }
 }

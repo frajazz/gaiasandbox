@@ -16,20 +16,20 @@ public class PrefixedProperties extends Properties {
     private static final long serialVersionUID = 1L;
 
     public PrefixedProperties(Properties props, String prefix) {
-	if (props == null) {
-	    return;
-	}
+        if (props == null) {
+            return;
+        }
 
-	@SuppressWarnings("unchecked")
-	Enumeration<String> en = (Enumeration<String>) props.propertyNames();
-	while (en.hasMoreElements()) {
-	    String propName = en.nextElement();
-	    String propValue = props.getProperty(propName);
+        @SuppressWarnings("unchecked")
+        Enumeration<String> en = (Enumeration<String>) props.propertyNames();
+        while (en.hasMoreElements()) {
+            String propName = en.nextElement();
+            String propValue = props.getProperty(propName);
 
-	    if (propName.startsWith(prefix)) {
-		String key = propName.substring(prefix.length());
-		setProperty(key, propValue);
-	    }
-	}
+            if (propName.startsWith(prefix)) {
+                String key = propName.substring(prefix.length());
+                setProperty(key, propValue);
+            }
+        }
     }
 }

@@ -1,11 +1,10 @@
 package gaia.cu9.ari.gaiaorbit.data.stars;
 
 import gaia.cu9.ari.gaiaorbit.data.FileLocator;
-import gaia.cu9.ari.gaiaorbit.event.EventManager;
-import gaia.cu9.ari.gaiaorbit.event.Events;
 import gaia.cu9.ari.gaiaorbit.scenegraph.Star;
 import gaia.cu9.ari.gaiaorbit.util.GlobalConf;
 import gaia.cu9.ari.gaiaorbit.util.I18n;
+import gaia.cu9.ari.gaiaorbit.util.Logger;
 import gaia.cu9.ari.gaiaorbit.util.coord.Coordinates;
 import gaia.cu9.ari.gaiaorbit.util.math.Vector3d;
 
@@ -42,64 +41,64 @@ public class HYGBinaryLoader extends AbstractCatalogLoader implements ICatalogLo
 
     @Override
     public List<Star> loadCatalog() throws FileNotFoundException {
-	List<Star> stars = new ArrayList<Star>();
-	InputStream data = null;
-	try {
-	    data = FileLocator.getStream(file);
-	} catch (FileNotFoundException e) {
-	    EventManager.instance.post(Events.JAVA_EXCEPTION, e);
-	}
-	DataInputStream data_in = new DataInputStream(data);
+        List<Star> stars = new ArrayList<Star>();
+        InputStream data = null;
+        try {
+            data = FileLocator.getStream(file);
+        } catch (FileNotFoundException e) {
+            Logger.error(e);
+        }
+        DataInputStream data_in = new DataInputStream(data);
 
-	EventManager.instance.post(Events.POST_NOTIFICATION, this.getClass().getSimpleName(), I18n.bundle.format("notif.limitmag", GlobalConf.data.LIMIT_MAG_LOAD));
+        Logger.info(this.getClass().getSimpleName(), I18n.bundle.format("notif.limitmag", GlobalConf.data.LIMIT_MAG_LOAD));
 
-	try {
-	    // Read size of stars
-	    int size = data_in.readInt();
+        try {
+            // Read size of stars
+            int size = data_in.readInt();
 
-	    for (int idx = 0; idx < size; idx++) {
-		try {
-		    // name_length, name, appmag, absmag, colorbv, ra, dec, dist	
-		    int nameLength = data_in.readInt();
-		    StringBuilder sb = new StringBuilder();
-		    for (int i = 0; i < nameLength; i++) {
-			sb.append(data_in.readChar());
-		    }
-		    String name = sb.toString();
-		    float appmag = data_in.readFloat();
-		    float absmag = data_in.readFloat();
-		    float colorbv = data_in.readFloat();
-		    double ra = data_in.readDouble();
-		    double dec = data_in.readDouble();
-		    double dist = data_in.readDouble();
-		    long id = data_in.readLong();
-		    if (appmag < GlobalConf.data.LIMIT_MAG_LOAD) {
-			Vector3d pos = Coordinates.sphericalToCartesian(Math.toRadians(ra), Math.toRadians(dec), dist, new Vector3d());
-			stars.add(new Star(pos, appmag, absmag, colorbv, name, ra, dec, id));
-		    }
-		} catch (EOFException eof) {
+            for (int idx = 0; idx < size; idx++) {
+                try {
+                    // name_length, name, appmag, absmag, colorbv, ra, dec, dist	
+                    int nameLength = data_in.readInt();
+                    StringBuilder sb = new StringBuilder();
+                    for (int i = 0; i < nameLength; i++) {
+                        sb.append(data_in.readChar());
+                    }
+                    String name = sb.toString();
+                    float appmag = data_in.readFloat();
+                    float absmag = data_in.readFloat();
+                    float colorbv = data_in.readFloat();
+                    double ra = data_in.readDouble();
+                    double dec = data_in.readDouble();
+                    double dist = data_in.readDouble();
+                    long id = data_in.readLong();
+                    if (appmag < GlobalConf.data.LIMIT_MAG_LOAD) {
+                        Vector3d pos = Coordinates.sphericalToCartesian(Math.toRadians(ra), Math.toRadians(dec), dist, new Vector3d());
+                        stars.add(new Star(pos, appmag, absmag, colorbv, name, ra, dec, id));
+                    }
+                } catch (EOFException eof) {
 
-		}
-	    }
+                }
+            }
 
-	} catch (IOException e) {
-	    Gdx.app.log(HYGBinaryLoader.class.getSimpleName(), e.getLocalizedMessage());
-	} finally {
-	    try {
-		data_in.close();
-	    } catch (IOException e) {
-		EventManager.instance.post(Events.JAVA_EXCEPTION, e);
-	    }
+        } catch (IOException e) {
+            Gdx.app.log(HYGBinaryLoader.class.getSimpleName(), e.getLocalizedMessage());
+        } finally {
+            try {
+                data_in.close();
+            } catch (IOException e) {
+                Logger.error(e);
+            }
 
-	}
+        }
 
-	EventManager.instance.post(Events.POST_NOTIFICATION, this.getClass().getSimpleName(), I18n.bundle.format("notif.catalog.init", stars.size()));
-	return stars;
+        Logger.info(this.getClass().getSimpleName(), I18n.bundle.format("notif.catalog.init", stars.size()));
+        return stars;
     }
 
     @Override
     public void initialize(Properties p) {
-	super.initialize(p);
+        super.initialize(p);
     }
 
 }

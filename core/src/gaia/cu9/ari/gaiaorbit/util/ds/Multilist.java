@@ -20,6 +20,7 @@ public class Multilist<T> implements List<T> {
 
     private final List<T>[] lists;
     private Integer size;
+    private final Object lock = new Object();
     private List<T> tolist;
 
     /**
@@ -28,7 +29,7 @@ public class Multilist<T> implements List<T> {
      * @param numLists The number of lists.
      */
     public Multilist(int numLists) {
-	this(numLists, 10);
+        this(numLists, 10);
     }
 
     /**
@@ -38,13 +39,13 @@ public class Multilist<T> implements List<T> {
      * @param initialCapacity The initial capacity for each list.
      */
     public Multilist(int numLists, int initialCapacity) {
-	super();
-	lists = new List[numLists];
-	for (int i = 0; i < lists.length; i++) {
-	    lists[i] = new ArrayList<T>(initialCapacity);
-	}
-	this.size = 0;
-	tolist = new ArrayList<T>(initialCapacity * numLists);
+        super();
+        lists = new List[numLists];
+        for (int i = 0; i < lists.length; i++) {
+            lists[i] = new ArrayList<T>(initialCapacity);
+        }
+        this.size = 0;
+        tolist = new ArrayList<T>(initialCapacity * numLists);
     }
 
     /**
@@ -52,31 +53,31 @@ public class Multilist<T> implements List<T> {
      * @return
      */
     public List<T> toList() {
-	tolist.clear();
-	int size = lists.length;
-	for (int i = 0; i < size; i++)
-	    tolist.addAll(lists[i]);
-	return tolist;
+        tolist.clear();
+        int size = lists.length;
+        for (int i = 0; i < size; i++)
+            tolist.addAll(lists[i]);
+        return tolist;
     }
 
     @Override
     public int size() {
-	return size;
+        return size;
     }
 
     @Override
     public boolean isEmpty() {
-	return size == 0;
+        return size == 0;
     }
 
     @Override
     public boolean contains(Object o) {
-	int size = lists.length;
-	for (int i = 0; i < size; i++) {
-	    if (lists[i].contains(o))
-		return true;
-	}
-	return false;
+        int size = lists.length;
+        for (int i = 0; i < size; i++) {
+            if (lists[i].contains(o))
+                return true;
+        }
+        return false;
     }
 
     /**
@@ -89,47 +90,47 @@ public class Multilist<T> implements List<T> {
      * @return
      */
     public boolean contains(Object o, int listIndex) {
-	return lists[listIndex].contains(o);
+        return lists[listIndex].contains(o);
     }
 
     @Override
     /** Not implemented **/
     public Iterator<T> iterator() {
-	return new MultilistIterator<T>();
+        return new MultilistIterator<T>();
     }
 
     @Override
     public T[] toArray() {
-	List<T> l = new ArrayList<T>(size);
-	int size = lists.length;
-	for (int i = 0; i < size; i++)
-	    l.addAll(lists[i]);
-	return (T[]) l.toArray();
+        List<T> l = new ArrayList<T>(size);
+        int size = lists.length;
+        for (int i = 0; i < size; i++)
+            l.addAll(lists[i]);
+        return (T[]) l.toArray();
     }
 
     @Override
     public <T> T[] toArray(T[] a) {
-	if (a.length >= size) {
-	    int k = 0;
-	    // Use a
-	    int size = lists.length;
-	    for (int i = 0; i < size; i++) {
-		int listSize = lists[i].size();
-		for (int j = 0; j < listSize; j++) {
-		    a[k] = (T) lists[i].get(j);
-		    k++;
-		}
-	    }
-	    return a;
-	} else {
-	    return (T[]) toArray();
-	}
+        if (a.length >= size) {
+            int k = 0;
+            // Use a
+            int size = lists.length;
+            for (int i = 0; i < size; i++) {
+                int listSize = lists[i].size();
+                for (int j = 0; j < listSize; j++) {
+                    a[k] = (T) lists[i].get(j);
+                    k++;
+                }
+            }
+            return a;
+        } else {
+            return (T[]) toArray();
+        }
     }
 
     @Override
     public boolean add(T e) {
-	incrementSize();
-	return lists[0].add(e);
+        incrementSize();
+        return lists[0].add(e);
     }
 
     /**
@@ -140,19 +141,19 @@ public class Multilist<T> implements List<T> {
      * @return <tt>true</tt> if this collection changed as a result of the call
      */
     public boolean add(T e, int index) {
-	incrementSize();
-	return lists[index].add(e);
+        incrementSize();
+        return lists[index].add(e);
     }
 
     @Override
     public boolean remove(Object o) {
-	for (int i = 0; i < lists.length; i++) {
-	    if (lists[i].remove(o)) {
-		decrementSize();
-		return true;
-	    }
-	}
-	return false;
+        for (int i = 0; i < lists.length; i++) {
+            if (lists[i].remove(o)) {
+                decrementSize();
+                return true;
+            }
+        }
+        return false;
     }
 
     /**
@@ -164,77 +165,77 @@ public class Multilist<T> implements List<T> {
      * @return <tt>true</tt> if the element was removed as a result of the call
      */
     public boolean remove(Object o, int index) {
-	if (lists[index].remove(o)) {
-	    decrementSize();
-	    return true;
-	}
-	return false;
+        if (lists[index].remove(o)) {
+            decrementSize();
+            return true;
+        }
+        return false;
     }
 
     @Override
     public boolean containsAll(Collection<?> c) {
-	for (Object o : c) {
-	    if (!contains(o)) {
-		return false;
-	    }
-	}
-	return true;
+        for (Object o : c) {
+            if (!contains(o)) {
+                return false;
+            }
+        }
+        return true;
     }
 
     @Override
     public boolean addAll(Collection<? extends T> c) {
-	if (lists[0].addAll(c)) {
-	    incrementSize(c.size());
-	    return true;
-	}
-	return false;
+        if (lists[0].addAll(c)) {
+            incrementSize(c.size());
+            return true;
+        }
+        return false;
     }
 
     @Override
     public boolean removeAll(Collection<?> c) {
-	boolean result = false;
-	for (Object o : c) {
-	    boolean r = remove(o);
-	    if (r) {
-		decrementSize();
-		result = true;
-	    }
-	}
-	return result;
+        boolean result = false;
+        for (Object o : c) {
+            boolean r = remove(o);
+            if (r) {
+                decrementSize();
+                result = true;
+            }
+        }
+        return result;
     }
 
     @Override
     public boolean retainAll(Collection<?> c) {
-	boolean result = false;
-	int newSize = 0;
-	for (int i = 0; i < lists.length; i++) {
-	    result = result || lists[i].retainAll(c);
-	    newSize += lists[i].size();
-	}
-	setSize(newSize);
-	return result;
+        boolean result = false;
+        int newSize = 0;
+        for (int i = 0; i < lists.length; i++) {
+            result = result || lists[i].retainAll(c);
+            newSize += lists[i].size();
+        }
+        setSize(newSize);
+        return result;
     }
 
     @Override
     public void clear() {
-	for (int i = 0; i < lists.length; i++)
-	    lists[i].clear();
-	tolist.clear();
-	resetSize();
+        for (int i = 0; i < lists.length; i++)
+            lists[i].clear();
+        tolist.clear();
+        resetSize();
     }
 
     @Override
     public boolean addAll(int index, Collection<? extends T> c) {
-	if (lists[0].addAll(index, c)) {
-	    incrementSize(c.size());
-	    return true;
-	}
-	return false;
+        if (lists[0].addAll(index, c)) {
+            incrementSize(c.size());
+            return true;
+        }
+        return false;
     }
 
     @Override
     public T get(int index) {
-	return lists[0].get(index);
+        return lists[0].get(index);
     }
 
     /**
@@ -244,12 +245,12 @@ public class Multilist<T> implements List<T> {
      * @return The element if exists, null otherwise.
      */
     public T get(int index, int listIndex) {
-	return lists[listIndex].get(index);
+        return lists[listIndex].get(index);
     }
 
     @Override
     public T set(int index, T element) {
-	return lists[0].set(index, element);
+        return lists[0].set(index, element);
     }
 
     /**
@@ -260,20 +261,20 @@ public class Multilist<T> implements List<T> {
      * @return <tt>true</tt> if the list was modified.
      */
     public T set(int index, T element, int listIndex) {
-	return lists[listIndex].set(index, element);
+        return lists[listIndex].set(index, element);
     }
 
     @Override
     public void add(int index, T element) {
-	lists[0].add(index, element);
-	incrementSize();
+        lists[0].add(index, element);
+        incrementSize();
     }
 
     @Override
     public T remove(int index) {
-	T t = lists[0].remove(index);
-	decrementSize();
-	return t;
+        T t = lists[0].remove(index);
+        decrementSize();
+        return t;
     }
 
     /**
@@ -283,120 +284,120 @@ public class Multilist<T> implements List<T> {
      * @return The element if it was removed, null otherwise.
      */
     public T remove(int index, int listIndex) {
-	T t = lists[listIndex].remove(index);
-	decrementSize();
-	return t;
+        T t = lists[listIndex].remove(index);
+        decrementSize();
+        return t;
     }
 
     @Override
     public int indexOf(Object o) {
-	return lists[0].indexOf(o);
+        return lists[0].indexOf(o);
     }
 
     @Override
     public int lastIndexOf(Object o) {
-	return lists[0].lastIndexOf(o);
+        return lists[0].lastIndexOf(o);
     }
 
     @Override
     /** Not implemented **/
     public ListIterator<T> listIterator() {
-	return null;
+        return null;
     }
 
     @Override
     /** Not implemented **/
     public ListIterator<T> listIterator(int index) {
-	return null;
+        return null;
     }
 
     @Override
     /** Not implemented **/
     public List<T> subList(int fromIndex, int toIndex) {
-	return null;
+        return null;
     }
 
     private void incrementSize(int incr) {
-	synchronized (size) {
-	    size += incr;
-	}
+        synchronized (lock) {
+            size += incr;
+        }
     }
 
     private void incrementSize() {
-	synchronized (size) {
-	    size++;
-	}
+        synchronized (lock) {
+            size++;
+        }
     }
 
     private void decrementSize(int decr) {
-	synchronized (size) {
-	    size -= decr;
-	}
+        synchronized (lock) {
+            size -= decr;
+        }
     }
 
     private void decrementSize() {
-	synchronized (size) {
-	    size--;
-	}
+        synchronized (lock) {
+            size--;
+        }
     }
 
     private void setSize(int newsize) {
-	synchronized (size) {
-	    size = newsize;
-	}
+        synchronized (lock) {
+            size = newsize;
+        }
     }
 
     private void resetSize() {
-	synchronized (size) {
-	    size = 0;
-	}
+        synchronized (lock) {
+            size = 0;
+        }
     }
 
     private class MultilistIterator<T> implements Iterator<T> {
-	/** The index of the list **/
-	int listIndex;
-	/** The index of the current element in the list **/
-	int index;
+        /** The index of the list **/
+        int listIndex;
+        /** The index of the current element in the list **/
+        int index;
 
-	public MultilistIterator() {
-	    super();
-	    listIndex = 0;
-	    index = 0;
-	}
+        public MultilistIterator() {
+            super();
+            listIndex = 0;
+            index = 0;
+        }
 
-	@Override
-	public boolean hasNext() {
-	    return (index < lists[listIndex].size() - 1) || (listIndex < lists.length - 1 && !emptyFrom(listIndex + 1));
-	}
+        @Override
+        public boolean hasNext() {
+            return (index < lists[listIndex].size() - 1) || (listIndex < lists.length - 1 && !emptyFrom(listIndex + 1));
+        }
 
-	/** Are the lists from index li onwards empty? **/
-	private boolean emptyFrom(int li) {
-	    for (int i = li; i < lists.length; i++) {
-		if (!lists[i].isEmpty())
-		    return false;
-	    }
-	    return true;
-	}
+        /** Are the lists from index li onwards empty? **/
+        private boolean emptyFrom(int li) {
+            for (int i = li; i < lists.length; i++) {
+                if (!lists[i].isEmpty())
+                    return false;
+            }
+            return true;
+        }
 
-	@Override
-	public T next() {
-	    if (index == lists[listIndex].size() - 1) {
-		index = 0;
-		listIndex++;
-	    } else {
-		index++;
-	    }
-	    return (T) lists[listIndex].get(index);
-	}
+        @Override
+        public T next() {
+            if (index == lists[listIndex].size() - 1) {
+                index = 0;
+                listIndex++;
+            } else {
+                index++;
+            }
+            return (T) lists[listIndex].get(index);
+        }
 
-	@Override
-	public void remove() {
-	    lists[listIndex].remove(index);
-	    if (index == lists[listIndex].size()) {
-		index--;
-	    }
+        @Override
+        public void remove() {
+            lists[listIndex].remove(index);
+            if (index == lists[listIndex].size()) {
+                index--;
+            }
 
-	}
+        }
 
     }
 

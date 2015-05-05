@@ -9,12 +9,12 @@ public class BasicFileImageRenderer implements IFileImageRenderer {
 
     @Override
     public String saveScreenshot(String absoluteLocation, String baseFileName, int w, int h, boolean immediate) {
-	return ImageRenderer.renderToImageGl20(absoluteLocation, baseFileName, w, h);
+        return ImageRenderer.renderToImageGl20(absoluteLocation, baseFileName, w, h);
     }
 
     @Override
     public void flush() {
-	// Nothing to do
+        // Nothing to do
     }
 
 }

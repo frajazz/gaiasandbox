@@ -53,18 +53,18 @@ public abstract class BaseAttitudeDataServer<A extends Attitude> {
      * @return Returns the initialised.
      */
     public boolean isInitialized() {
-	return initialized;
+        return initialized;
     }
 
     public void setInitialized(boolean initialized) {
-	this.initialized = initialized;
+        this.initialized = initialized;
     }
 
     /**
      * @see gaia.cu1.tools.satellite.attitude.AttitudeDataServer#getAttitude(gaia.cu1.tools.time.GaiaTime)
      */
     public A getAttitude(long time) {
-	return getAttitudeNative(time);
+        return getAttitudeNative(time);
     }
 
     /** 

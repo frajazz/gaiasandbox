@@ -133,11 +133,11 @@ public class Constants {
     public static boolean mobile;
 
     static {
-	if (Gdx.app != null) {
-	    mobile = Gdx.app.getType() == ApplicationType.Android || Gdx.app.getType() == ApplicationType.iOS;
-	} else {
-	    mobile = false;
-	}
+        if (Gdx.app != null) {
+            mobile = Gdx.app.getType() == ApplicationType.Android || Gdx.app.getType() == ApplicationType.iOS;
+        } else {
+            mobile = false;
+        }
     }
 
 }

@@ -9,23 +9,23 @@ public class AtmosphereGroundShaderProvider extends DefaultShaderProvider {
     public final AtmosphereGroundShader.Config config;
 
     public AtmosphereGroundShaderProvider(final AtmosphereGroundShader.Config config) {
-	this.config = (config == null) ? new AtmosphereGroundShader.Config() : config;
+        this.config = (config == null) ? new AtmosphereGroundShader.Config() : config;
     }
 
     public AtmosphereGroundShaderProvider(final String vertexShader, final String fragmentShader) {
-	this(new AtmosphereGroundShader.Config(vertexShader, fragmentShader));
+        this(new AtmosphereGroundShader.Config(vertexShader, fragmentShader));
     }
 
     public AtmosphereGroundShaderProvider(final FileHandle vertexShader, final FileHandle fragmentShader) {
-	this(vertexShader.readString(), fragmentShader.readString());
+        this(vertexShader.readString(), fragmentShader.readString());
     }
 
     public AtmosphereGroundShaderProvider() {
-	this(null);
+        this(null);
     }
 
     @Override
     protected Shader createShader(final Renderable renderable) {
-	return new AtmosphereGroundShader(renderable, config);
+        return new AtmosphereGroundShader(renderable, config);
     }
 }

@@ -16,11 +16,11 @@ public abstract class AbstractCatalogLoader {
     protected String file;
 
     public void initialize(Properties p) {
-	file = p.getProperty("file");
+        file = p.getProperty("file");
     }
 
     public List<? extends CelestialBody> loadCatalog(InputStream data) throws FileNotFoundException {
-	return loadCatalog();
+        return loadCatalog();
     }
 
     public abstract List<? extends CelestialBody> loadCatalog() throws FileNotFoundException;

@@ -28,36 +28,36 @@ public class ModelBatchRenderSystem extends AbstractRenderSystem {
      * @param addByte Should we add a byte to the call? (atmosphere rendering).
      */
     public ModelBatchRenderSystem(RenderGroup rg, int priority, float[] alphas, ModelBatch batch, boolean addByte) {
-	super(rg, priority, alphas);
-	this.batch = batch;
-	this.addByte = addByte;
-	comp = new ModelComparator<IRenderable>();
+        super(rg, priority, alphas);
+        this.batch = batch;
+        this.addByte = addByte;
+        comp = new ModelComparator<IRenderable>();
     }
 
     @Override
     public void renderStud(List<IRenderable> renderables, ICamera camera) {
-	Collections.sort(renderables, comp);
-	if (mustRender()) {
-	    batch.begin(camera.getCamera());
-	    int size = renderables.size();
-	    for (int i = 0; i < size; i++) {
-		IRenderable s = renderables.get(i);
-		if (!addByte) {
-		    s.render(batch, getAlpha(s));
-		} else {
-		    s.render(batch, getAlpha(s), (byte) 1);
-		}
-	    }
-	    batch.end();
-	}
+        Collections.sort(renderables, comp);
+        if (mustRender()) {
+            batch.begin(camera.getCamera());
+            int size = renderables.size();
+            for (int i = 0; i < size; i++) {
+                IRenderable s = renderables.get(i);
+                if (!addByte) {
+                    s.render(batch, getAlpha(s));
+                } else {
+                    s.render(batch, getAlpha(s), (byte) 1);
+                }
+            }
+            batch.end();
+        }
     }
 
     protected boolean mustRender() {
-	return true;
+        return true;
     }
 
     protected float getAlpha(IRenderable s) {
-	return alphas[s.getComponentType().ordinal()];
+        return alphas[s.getComponentType().ordinal()];
     }
 
 }

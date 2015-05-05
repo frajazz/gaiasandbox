@@ -21,69 +21,69 @@ public class NotificationWindow extends JWindow {
     NotificationWindow thisw;
 
     public NotificationWindow(String message, Icon icon, Component parent, int posY) {
-	super();
-	this.parent = parent;
-	this.posY = posY;
-	this.thisw = this;
-	this.setLayout(new BorderLayout());
+        super();
+        this.parent = parent;
+        this.posY = posY;
+        this.thisw = this;
+        this.setLayout(new BorderLayout());
 
-	JPanel panel = new JPanel();
-	panel = new JPanel();
-	panel.setBorder(new EmptyBorder(MARGIN, MARGIN, MARGIN, 0));
-	panel.add(new JLabel(icon));
-	this.add(panel, BorderLayout.WEST);
+        JPanel panel = new JPanel();
+        panel = new JPanel();
+        panel.setBorder(new EmptyBorder(MARGIN, MARGIN, MARGIN, 0));
+        panel.add(new JLabel(icon));
+        this.add(panel, BorderLayout.WEST);
 
-	panel = new JPanel();
-	panel.setBorder(new EmptyBorder(MARGIN, MARGIN, MARGIN, MARGIN));
-	panel.add(new JLabel(message));
-	this.add(panel, BorderLayout.CENTER);
-	this.setLocationRelativeTo(parent);
+        panel = new JPanel();
+        panel.setBorder(new EmptyBorder(MARGIN, MARGIN, MARGIN, MARGIN));
+        panel.add(new JLabel(message));
+        this.add(panel, BorderLayout.CENTER);
+        this.setLocationRelativeTo(parent);
 
-	this.setMinimumSize(new Dimension(215, 46));
-	this.setOpacity(0.85f);
-	this.pack();
+        this.setMinimumSize(new Dimension(215, 46));
+        this.setOpacity(0.85f);
+        this.pack();
 
-	relocate();
+        relocate();
 
-	this.setVisible(true);
-	this.date = new Date();
+        this.setVisible(true);
+        this.date = new Date();
 
-	this.addMouseListener(new MouseListener() {
-	    @Override
-	    public void mouseClicked(MouseEvent e) {
-		thisw.setVisible(false);
-		thisw.dispose();
-	    }
+        this.addMouseListener(new MouseListener() {
+            @Override
+            public void mouseClicked(MouseEvent e) {
+                thisw.setVisible(false);
+                thisw.dispose();
+            }
 
-	    @Override
-	    public void mousePressed(MouseEvent e) {
-	    }
+            @Override
+            public void mousePressed(MouseEvent e) {
+            }
 
-	    @Override
-	    public void mouseReleased(MouseEvent e) {
-	    }
+            @Override
+            public void mouseReleased(MouseEvent e) {
+            }
 
-	    @Override
-	    public void mouseEntered(MouseEvent e) {
-	    }
+            @Override
+            public void mouseEntered(MouseEvent e) {
+            }
 
-	    @Override
-	    public void mouseExited(MouseEvent e) {
-	    }
+            @Override
+            public void mouseExited(MouseEvent e) {
+            }
 
-	});
+        });
 
     }
 
     public void relocate() {
-	int x = parent.getX() + parent.getWidth() - this.getWidth() - 15;
-	int y = parent.getY() + parent.getHeight() - this.getHeight() - posY;
-	this.setLocation(x, y);
+        int x = parent.getX() + parent.getWidth() - this.getWidth() - 15;
+        int y = parent.getY() + parent.getHeight() - this.getHeight() - posY;
+        this.setLocation(x, y);
     }
 
     public void moveDown(int pixels) {
-	this.posY += pixels;
-	this.setLocation(this.getLocation().x, this.getLocation().y + pixels);
+        this.posY += pixels;
+        this.setLocation(this.getLocation().x, this.getLocation().y + pixels);
     }
 
 }

@@ -5,12 +5,12 @@ import com.badlogic.gdx.utils.NumberUtils;
 
 public class AtmosphereAttribute extends Attribute {
     public AtmosphereAttribute(long type) {
-	super(type);
+        super(type);
     }
 
     public AtmosphereAttribute(long type, float value) {
-	super(type);
-	this.value = value;
+        super(type);
+        this.value = value;
     }
 
     public float value;
@@ -74,14 +74,19 @@ public class AtmosphereAttribute extends Attribute {
 
     @Override
     public Attribute copy() {
-	return new AtmosphereAttribute(type, value);
+        return new AtmosphereAttribute(type, value);
     }
 
     @Override
     public int hashCode() {
-	int result = (int) type;
-	result = 977 * result + NumberUtils.floatToRawIntBits(value);
-	return result;
+        int result = (int) type;
+        result = 977 * result + NumberUtils.floatToRawIntBits(value);
+        return result;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        return super.equals(obj);
     }
 
 }

@@ -265,7 +265,7 @@ public enum Events {
     DEBUG1,
     DEBUG2,
     DEBUG3,
-    /** Notifies from a java exception, it sends only the exception itself **/
+    /** Notifies from a java exception, it sends the Throwable and an optional tag. **/
     JAVA_EXCEPTION,
 
     /** Enables/disables input from mouse/keyboard/etc. Contains a boolean with the new state **/

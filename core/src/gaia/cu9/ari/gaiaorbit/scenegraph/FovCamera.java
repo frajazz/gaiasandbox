@@ -8,6 +8,7 @@ import gaia.cu9.ari.gaiaorbit.util.Constants;
 import gaia.cu9.ari.gaiaorbit.util.GlobalConf;
 import gaia.cu9.ari.gaiaorbit.util.GlobalResources;
 import gaia.cu9.ari.gaiaorbit.util.I18n;
+import gaia.cu9.ari.gaiaorbit.util.Logger;
 import gaia.cu9.ari.gaiaorbit.util.gaia.Nsl37AttitudeServer;
 import gaia.cu9.ari.gaiaorbit.util.gaia.Satellite;
 import gaia.cu9.ari.gaiaorbit.util.math.Matrix4d;
@@ -74,100 +75,100 @@ public class FovCamera extends AbstractCamera implements IObserver {
     Drawable fp, fp_fov1, fp_fov2;
 
     public FovCamera(AssetManager assetManager, CameraManager parent) {
-	super(parent);
-	initialize(assetManager);
-	directions = new Vector3d[] { new Vector3d(), new Vector3d() };
-	interpolatedDirections = new ArrayList<Vector3d[]>();
-	dirMiddle = new Vector3d();
-	up = new Vector3d();
-	trf = new ThreadLocal<Matrix4d>() {
-	    @Override
-	    protected Matrix4d initialValue() {
-		return new Matrix4d();
-	    }
+        super(parent);
+        initialize(assetManager);
+        directions = new Vector3d[] { new Vector3d(), new Vector3d() };
+        interpolatedDirections = new ArrayList<Vector3d[]>();
+        dirMiddle = new Vector3d();
+        up = new Vector3d();
+        trf = new ThreadLocal<Matrix4d>() {
+            @Override
+            protected Matrix4d initialValue() {
+                return new Matrix4d();
+            }
 
-	};
-	currentTime = 0l;
-	lastTime = 0l;
-	vectorPool = Pools.get(Vector3d.class);
+        };
+        currentTime = 0l;
+        lastTime = 0l;
+        vectorPool = Pools.get(Vector3d.class);
     }
 
     public void initialize(AssetManager assetManager) {
-	camera = new PerspectiveCamera(FOV, (float) (Gdx.graphics.getHeight() * GAIA_ASPECT_RATIO), Gdx.graphics.getHeight());
-	camera.near = (float) CAM_NEAR;
-	camera.far = (float) CAM_FAR;
+        camera = new PerspectiveCamera(FOV, (float) (Gdx.graphics.getHeight() * GAIA_ASPECT_RATIO), Gdx.graphics.getHeight());
+        camera.near = (float) CAM_NEAR;
+        camera.far = (float) CAM_FAR;
 
-	camera2 = new PerspectiveCamera(FOV, (float) (Gdx.graphics.getHeight() * GAIA_ASPECT_RATIO), Gdx.graphics.getHeight());
-	camera2.near = (float) CAM_NEAR;
-	camera2.far = (float) CAM_FAR;
+        camera2 = new PerspectiveCamera(FOV, (float) (Gdx.graphics.getHeight() * GAIA_ASPECT_RATIO), Gdx.graphics.getHeight());
+        camera2.near = (float) CAM_NEAR;
+        camera2.far = (float) CAM_FAR;
 
-	fovFactor = FOV / 5f;
+        fovFactor = FOV / 5f;
 
-	/** 
-	 * Fit viewport ensures a fixed aspect ratio. We set the camera field of view equal to the
-	 * satelltie's AC FOV and calculate the satellite aspect ratio as FOV_AL/FOV_AC. With it we
-	 * set the width of the viewport to ensure we have the same vision as Gaia.
-	 */
-	viewport = new FitViewport((float) (Gdx.graphics.getHeight() * GAIA_ASPECT_RATIO), Gdx.graphics.getHeight(), camera);
-	viewport2 = new FitViewport((float) (Gdx.graphics.getHeight() * GAIA_ASPECT_RATIO), Gdx.graphics.getHeight(), camera2);
+        /** 
+         * Fit viewport ensures a fixed aspect ratio. We set the camera field of view equal to the
+         * satelltie's AC FOV and calculate the satellite aspect ratio as FOV_AL/FOV_AC. With it we
+         * set the width of the viewport to ensure we have the same vision as Gaia.
+         */
+        viewport = new FitViewport((float) (Gdx.graphics.getHeight() * GAIA_ASPECT_RATIO), Gdx.graphics.getHeight(), camera);
+        viewport2 = new FitViewport((float) (Gdx.graphics.getHeight() * GAIA_ASPECT_RATIO), Gdx.graphics.getHeight(), camera2);
 
-	/** Prepare stage with FP image **/
-	fp = new TextureRegionDrawable(new TextureRegion(new Texture(Gdx.files.internal("img/gaia-focalplane.png"))));
-	fp_fov1 = new TextureRegionDrawable(new TextureRegion(new Texture(Gdx.files.internal("img/gaia-focalplane-fov1.png"))));
-	fp_fov2 = new TextureRegionDrawable(new TextureRegion(new Texture(Gdx.files.internal("img/gaia-focalplane-fov2.png"))));
+        /** Prepare stage with FP image **/
+        fp = new TextureRegionDrawable(new TextureRegion(new Texture(Gdx.files.internal("img/gaia-focalplane.png"))));
+        fp_fov1 = new TextureRegionDrawable(new TextureRegion(new Texture(Gdx.files.internal("img/gaia-focalplane-fov1.png"))));
+        fp_fov2 = new TextureRegionDrawable(new TextureRegion(new Texture(Gdx.files.internal("img/gaia-focalplane-fov2.png"))));
 
-	fpstages = new Stage[3];
+        fpstages = new Stage[3];
 
-	Stage fov12 = new Stage(new ScalingViewport(Scaling.stretch, Gdx.graphics.getWidth(), Gdx.graphics.getHeight(), new OrthographicCamera()), GlobalResources.spriteBatch);
-	Image i = new Image(fp);
-	i.setFillParent(true);
-	i.setAlign(Align.center);
-	i.setColor(1, 1, 0, .7f);
-	fov12.addActor(i);
+        Stage fov12 = new Stage(new ScalingViewport(Scaling.stretch, Gdx.graphics.getWidth(), Gdx.graphics.getHeight(), new OrthographicCamera()), GlobalResources.spriteBatch);
+        Image i = new Image(fp);
+        i.setFillParent(true);
+        i.setAlign(Align.center);
+        i.setColor(1, 1, 0, .7f);
+        fov12.addActor(i);
 
-	Stage fov1 = new Stage(new ScalingViewport(Scaling.stretch, Gdx.graphics.getWidth(), Gdx.graphics.getHeight(), new OrthographicCamera()), GlobalResources.spriteBatch);
-	i = new Image(fp_fov1);
-	i.setFillParent(true);
-	i.setAlign(Align.center);
-	i.setColor(1, 1, 0, .7f);
-	fov1.addActor(i);
+        Stage fov1 = new Stage(new ScalingViewport(Scaling.stretch, Gdx.graphics.getWidth(), Gdx.graphics.getHeight(), new OrthographicCamera()), GlobalResources.spriteBatch);
+        i = new Image(fp_fov1);
+        i.setFillParent(true);
+        i.setAlign(Align.center);
+        i.setColor(1, 1, 0, .7f);
+        fov1.addActor(i);
 
-	Stage fov2 = new Stage(new ScalingViewport(Scaling.stretch, Gdx.graphics.getWidth(), Gdx.graphics.getHeight(), new OrthographicCamera()), GlobalResources.spriteBatch);
-	i = new Image(fp_fov2);
-	i.setFillParent(true);
-	i.setAlign(Align.center);
-	i.setColor(1, 1, 0, .7f);
-	fov2.addActor(i);
+        Stage fov2 = new Stage(new ScalingViewport(Scaling.stretch, Gdx.graphics.getWidth(), Gdx.graphics.getHeight(), new OrthographicCamera()), GlobalResources.spriteBatch);
+        i = new Image(fp_fov2);
+        i.setFillParent(true);
+        i.setAlign(Align.center);
+        i.setColor(1, 1, 0, .7f);
+        fov2.addActor(i);
 
-	fpstages[0] = fov1;
-	fpstages[1] = fov2;
-	fpstages[2] = fov12;
+        fpstages[0] = fov1;
+        fpstages[1] = fov2;
+        fpstages[2] = fov12;
 
-	EventManager.instance.subscribe(this, Events.GAIA_LOADED, Events.COMPUTE_GAIA_SCAN_CMD);
+        EventManager.instance.subscribe(this, Events.GAIA_LOADED, Events.COMPUTE_GAIA_SCAN_CMD);
     }
 
     public void update(float dt, ITimeFrameProvider time) {
-	up.set(0, 1, 0);
+        up.set(0, 1, 0);
 
-	/** POSITION **/
-	AbstractPositionEntity fccopy = gaia.getLineCopy();
-	fccopy.getRoot().transform.position.set(0f, 0f, 0f);
-	fccopy.getRoot().update(GlobalClock.clock, null, this);
+        /** POSITION **/
+        AbstractPositionEntity fccopy = gaia.getLineCopy();
+        fccopy.getRoot().transform.position.set(0f, 0f, 0f);
+        fccopy.getRoot().update(GlobalClock.clock, null, this);
 
-	this.pos.set(fccopy.transform.getTranslation());
-	this.posinv.set(this.pos).scl(-1);
+        this.pos.set(fccopy.transform.getTranslation());
+        this.posinv.set(this.pos).scl(-1);
 
-	/** ORIENTATION - directions and up **/
-	updateDirections(time);
-	up.mul(trf.get()).nor();
+        /** ORIENTATION - directions and up **/
+        updateDirections(time);
+        up.mul(trf.get()).nor();
 
-	// Update cameras
-	updateCamera(directions[0], up, camera);
-	//System.out.println(time.getTime() + ":: " + directions[0]);
+        // Update cameras
+        updateCamera(directions[0], up, camera);
+        //System.out.println(time.getTime() + ":: " + directions[0]);
 
-	updateCamera(directions[1], up, camera2);
+        updateCamera(directions[1], up, camera2);
 
-	dirMiddle.set(0, 0, 1).mul(trf.get());
+        dirMiddle.set(0, 0, 1).mul(trf.get());
 
     }
 
@@ -176,46 +177,46 @@ public class FovCamera extends AbstractCamera implements IObserver {
      * @param time
      */
     public void updateDirections(ITimeFrameProvider time) {
-	lastTime = currentTime;
-	currentTime = time.getTime().getTime();
+        lastTime = currentTime;
+        currentTime = time.getTime().getTime();
 
-	trf.get().idt();
-	Quaterniond quat = Nsl37AttitudeServer.getAttitude(time.getTime()).getQuaternion();
-	trf.get().rotate(quat).rotate(0, 0, 1, 180);
-	directions[0].set(0, 0, 1).rotate(BAM_2, 0, 1, 0).mul(trf.get()).nor();
-	directions[1].set(0, 0, 1).rotate(-BAM_2, 0, 1, 0).mul(trf.get()).nor();
+        trf.get().idt();
+        Quaterniond quat = Nsl37AttitudeServer.getAttitude(time.getTime()).getQuaternion();
+        trf.get().rotate(quat).rotate(0, 0, 1, 180);
+        directions[0].set(0, 0, 1).rotate(BAM_2, 0, 1, 0).mul(trf.get()).nor();
+        directions[1].set(0, 0, 1).rotate(-BAM_2, 0, 1, 0).mul(trf.get()).nor();
 
-	/** WORK OUT INTERPOLATED DIRECTIONS IN THE CASE OF FAST SCANNING **/
-	for (Vector3d[] directions : interpolatedDirections) {
-	    vectorPool.free(directions[0]);
-	    vectorPool.free(directions[1]);
-	}
-	interpolatedDirections.clear();
-	if (GlobalConf.scene.COMPUTE_GAIA_SCAN) {
-	    if (lastTime != 0 && currentTime - lastTime > MAX_OVERLAP_TIME) {
-		if (((GlobalClock) time).fps < 0) {
-		    ((GlobalClock) time).fps = 10;
-		    EventManager.instance.post(Events.POST_NOTIFICATION, this.getClass().getSimpleName(), I18n.bundle.get("notif.timeprovider.fixed"));
-		}
-		for (long t = lastTime + MAX_OVERLAP_TIME; t < currentTime; t += MAX_OVERLAP_TIME) {
-		    interpolatedDirections.add(getDirections(new Date(t)));
-		}
-	    } else {
-		if (((GlobalClock) time).fps > 0) {
-		    ((GlobalClock) time).fps = -1;
-		    EventManager.instance.post(Events.POST_NOTIFICATION, this.getClass().getSimpleName(), I18n.bundle.get("notif.timeprovider.real"));
-		}
-	    }
-	}
+        /** WORK OUT INTERPOLATED DIRECTIONS IN THE CASE OF FAST SCANNING **/
+        for (Vector3d[] directions : interpolatedDirections) {
+            vectorPool.free(directions[0]);
+            vectorPool.free(directions[1]);
+        }
+        interpolatedDirections.clear();
+        if (GlobalConf.scene.COMPUTE_GAIA_SCAN) {
+            if (lastTime != 0 && currentTime - lastTime > MAX_OVERLAP_TIME) {
+                if (((GlobalClock) time).fps < 0) {
+                    ((GlobalClock) time).fps = 10;
+                    Logger.info(this.getClass().getSimpleName(), I18n.bundle.get("notif.timeprovider.fixed"));
+                }
+                for (long t = lastTime + MAX_OVERLAP_TIME; t < currentTime; t += MAX_OVERLAP_TIME) {
+                    interpolatedDirections.add(getDirections(new Date(t)));
+                }
+            } else {
+                if (((GlobalClock) time).fps > 0) {
+                    ((GlobalClock) time).fps = -1;
+                    Logger.info(this.getClass().getSimpleName(), I18n.bundle.get("notif.timeprovider.real"));
+                }
+            }
+        }
     }
 
     public Vector3d[] getDirections(Date d) {
-	trf.get().idt();
-	Quaterniond quat = Nsl37AttitudeServer.getAttitude(d).getQuaternion();
-	trf.get().rotate(quat).rotate(0, 0, 1, 180);
-	Vector3d dir1 = vectorPool.obtain().set(0, 0, 1).rotate(BAM_2, 0, 1, 0).mul(trf.get()).nor();
-	Vector3d dir2 = vectorPool.obtain().set(0, 0, 1).rotate(-BAM_2, 0, 1, 0).mul(trf.get()).nor();
-	return new Vector3d[] { dir1, dir2 };
+        trf.get().idt();
+        Quaterniond quat = Nsl37AttitudeServer.getAttitude(d).getQuaternion();
+        trf.get().rotate(quat).rotate(0, 0, 1, 180);
+        Vector3d dir1 = vectorPool.obtain().set(0, 0, 1).rotate(BAM_2, 0, 1, 0).mul(trf.get()).nor();
+        Vector3d dir2 = vectorPool.obtain().set(0, 0, 1).rotate(-BAM_2, 0, 1, 0).mul(trf.get()).nor();
+        return new Vector3d[] { dir1, dir2 };
     }
 
     /**
@@ -226,81 +227,81 @@ public class FovCamera extends AbstractCamera implements IObserver {
      * @param cam
      */
     private void updateCamera(Vector3d dir, Vector3d up, PerspectiveCamera cam) {
-	cam.position.set(0f, 0f, 0f);
-	cam.direction.set(dir.valuesf());
-	cam.up.set(up.valuesf());
-	cam.update();
+        cam.position.set(0f, 0f, 0f);
+        cam.direction.set(dir.valuesf());
+        cam.up.set(up.valuesf());
+        cam.update();
     }
 
     @Override
     public PerspectiveCamera[] getFrontCameras() {
-	switch (parent.mode) {
-	case Gaia_FOV1:
-	default:
-	    return new PerspectiveCamera[] { camera };
-	case Gaia_FOV2:
-	    return new PerspectiveCamera[] { camera2 };
-	case Gaia_FOV1and2:
-	    return new PerspectiveCamera[] { camera, camera2 };
-	}
+        switch (parent.mode) {
+        case Gaia_FOV1:
+        default:
+            return new PerspectiveCamera[] { camera };
+        case Gaia_FOV2:
+            return new PerspectiveCamera[] { camera2 };
+        case Gaia_FOV1and2:
+            return new PerspectiveCamera[] { camera, camera2 };
+        }
     }
 
     @Override
     public PerspectiveCamera getCamera() {
-	switch (parent.mode) {
-	case Gaia_FOV1:
-	    return camera;
-	case Gaia_FOV2:
-	    return camera2;
-	default:
-	    return camera;
-	}
+        switch (parent.mode) {
+        case Gaia_FOV1:
+            return camera;
+        case Gaia_FOV2:
+            return camera2;
+        default:
+            return camera;
+        }
     }
 
     @Override
     public float getFovFactor() {
-	return this.fovFactor;
+        return this.fovFactor;
     }
 
     @Override
     public Viewport getViewport() {
-	if (parent.mode.equals(CameraMode.Gaia_FOV2)) {
-	    return viewport2;
-	}
-	return viewport;
+        if (parent.mode.equals(CameraMode.Gaia_FOV2)) {
+            return viewport2;
+        }
+        return viewport;
     }
 
     @Override
     public void setViewport(Viewport viewport) {
-	// Viewports are managed by the camera!
+        // Viewports are managed by the camera!
     }
 
     @Override
     public Vector3d getDirection() {
-	return directions[parent.mode.ordinal() - 2];
+        return directions[parent.mode.ordinal() - 2];
     }
 
     @Override
     public Vector3d getUp() {
-	return up;
+        return up;
     }
 
     @Override
     public final Vector3d[] getDirections() {
-	return directions;
+        return directions;
     }
 
     @Override
     public void notify(Events event, Object... data) {
-	switch (event) {
-	case GAIA_LOADED:
-	    this.gaia = (Gaia) data[0];
-	    break;
-	case COMPUTE_GAIA_SCAN_CMD:
-	    lastTime = 0;
-	    currentTime = 0;
-	    break;
-	}
+        switch (event) {
+        case GAIA_LOADED:
+            this.gaia = (Gaia) data[0];
+            break;
+        case COMPUTE_GAIA_SCAN_CMD:
+            lastTime = 0;
+            currentTime = 0;
+            break;
+        }
 
     }
 
@@ -310,20 +311,20 @@ public class FovCamera extends AbstractCamera implements IObserver {
 
     @Override
     public int getNCameras() {
-	switch (parent.mode) {
-	case Gaia_FOV1:
-	case Gaia_FOV2:
-	    return 1;
-	case Gaia_FOV1and2:
-	    return 2;
-	default:
-	    return 0;
-	}
+        switch (parent.mode) {
+        case Gaia_FOV1:
+        case Gaia_FOV2:
+            return 1;
+        case Gaia_FOV1and2:
+            return 2;
+        default:
+            return 0;
+        }
     }
 
     @Override
     public CameraMode getMode() {
-	return parent.mode;
+        return parent.mode;
     }
 
     /**
@@ -331,23 +332,23 @@ public class FovCamera extends AbstractCamera implements IObserver {
      * @Override
      */
     public void updateAngleEdge(int width, int height) {
-	float h = (float) Satellite.FOV_AC_ACTIVE;
-	float w = (float) Satellite.FOV_AL;
-	angleEdgeRad = (float) (Math.sqrt(h * h + w * w) * Math.PI / 180);
-	// Update max overlap time
-	MAX_OVERLAP_TIME = (long) (angleEdgeRad / (Satellite.SCANRATE * (Math.PI / (3600 * 180)))) * 1000;
-	MAX_OVERLAP_ANGLE = angleEdgeRad;
+        float h = (float) Satellite.FOV_AC_ACTIVE;
+        float w = (float) Satellite.FOV_AL;
+        angleEdgeRad = (float) (Math.sqrt(h * h + w * w) * Math.PI / 180);
+        // Update max overlap time
+        MAX_OVERLAP_TIME = (long) (angleEdgeRad / (Satellite.SCANRATE * (Math.PI / (3600 * 180)))) * 1000;
+        MAX_OVERLAP_ANGLE = angleEdgeRad;
     }
 
     @Override
     public void render() {
-	// Renders the focal plane CCDs
-	fpstages[parent.mode.ordinal() - 2].draw();
+        // Renders the focal plane CCDs
+        fpstages[parent.mode.ordinal() - 2].draw();
     }
 
     @Override
     public float getMotionMagnitude() {
-	return 0;
+        return 0;
     }
 
     @Override
@@ -360,17 +361,17 @@ public class FovCamera extends AbstractCamera implements IObserver {
 
     @Override
     public double getVelocity() {
-	return parent.getVelocity();
+        return parent.getVelocity();
     }
 
     @Override
     public boolean superVelocity() {
-	return parent.superVelocity();
+        return parent.superVelocity();
     }
 
     @Override
     public boolean isFocus(CelestialBody cb) {
-	return false;
+        return false;
     }
 
     @Override
@@ -379,23 +380,23 @@ public class FovCamera extends AbstractCamera implements IObserver {
 
     @Override
     public CelestialBody getFocus() {
-	return null;
+        return null;
     }
 
     @Override
     public boolean isVisible(ITimeFrameProvider time, CelestialBody cb, boolean computeGaiaScan) {
-	switch (parent.mode) {
-	case Gaia_FOV1:
-	case Gaia_FOV2:
-	    return super.isVisible(time, cb, computeGaiaScan);
-	case Gaia_FOV1and2:
-	    boolean visible = computeVisibleFovs(cb.pos, this, cb.distToCamera);
+        switch (parent.mode) {
+        case Gaia_FOV1:
+        case Gaia_FOV2:
+            return super.isVisible(time, cb, computeGaiaScan);
+        case Gaia_FOV1and2:
+            boolean visible = computeVisibleFovs(cb.pos, this, cb.distToCamera);
 
-	    cb.updateTransitNumber(visible && time.getDt() != 0, time, this);
-	    return visible && !(GlobalConf.scene.ONLY_OBSERVED_STARS && cb.transits == 0);
-	default:
-	    return false;
-	}
+            cb.updateTransitNumber(visible && time.getDt() != 0, time, this);
+            return visible && !(GlobalConf.scene.ONLY_OBSERVED_STARS && cb.transits == 0);
+        default:
+            return false;
+        }
     }
 
 }

@@ -18,52 +18,52 @@ public class SimplePostProcessor implements IPostProcessor {
     private LensFlare lens;
 
     public SimplePostProcessor() {
-	// Post process effects
-	ShaderLoader.BasePath = "shaders/";
-	postProcessor = new PostProcessor(true, true, true);
+        // Post process effects
+        ShaderLoader.BasePath = "shaders/";
+        postProcessor = new PostProcessor(true, true, true);
 
-	// BLOOM
-	bloom = new Bloom(Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
-	bloom.setBloomIntesity(GlobalConf.postprocess.POSTPROCESS_BLOOM_INTENSITY);
-	postProcessor.addEffect(bloom);
+        // BLOOM
+        bloom = new Bloom(Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
+        bloom.setBloomIntesity(GlobalConf.postprocess.POSTPROCESS_BLOOM_INTENSITY);
+        postProcessor.addEffect(bloom);
 
-	// ANTIALIAS
-	if (GlobalConf.postprocess.POSTPROCESS_ANTIALIAS < 0) {
-	    fxaa = new Fxaa(Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
-	    postProcessor.addEffect(fxaa);
-	}
+        // ANTIALIAS
+        if (GlobalConf.postprocess.POSTPROCESS_ANTIALIAS < 0) {
+            fxaa = new Fxaa(Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
+            postProcessor.addEffect(fxaa);
+        }
 
-	// LENS FLARE
-	lens = new LensFlare(Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
-	lens.setIntensity(1f);
-	lens.setColor(1.4f, 1.2f, 1.1f);
-	lens.setLightPosition(1f, 1f);
-	postProcessor.addEffect(lens);
+        // LENS FLARE
+        lens = new LensFlare(Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
+        lens.setIntensity(1f);
+        lens.setColor(1.4f, 1.2f, 1.1f);
+        lens.setLightPosition(1f, 1f);
+        postProcessor.addEffect(lens);
     }
 
     private boolean postProcess() {
-	return bloom.getBloomIntensity() > 0 || fxaa != null || lens != null;
+        return bloom.getBloomIntensity() > 0 || fxaa != null || lens != null;
     }
 
     public void capture() {
-	if (postProcess())
-	    postProcessor.capture();
+        if (postProcess())
+            postProcessor.capture();
     }
 
     public void render() {
-	if (postProcess())
-	    postProcessor.render();
+        if (postProcess())
+            postProcessor.render();
     }
 
     @Override
     public PostProcessBean getPostProcessBean(RenderType type) {
-	// TODO Auto-generated method stub
-	return null;
+        // TODO Auto-generated method stub
+        return null;
     }
 
     @Override
     public void resize(int width, int height) {
-	// TODO Auto-generated method stub
+        // TODO Auto-generated method stub
 
     }
 

@@ -13,11 +13,11 @@ import com.badlogic.gdx.math.Vector3;
 
 public abstract class ModelCreator {
     public interface IFace {
-	public int[] v();
+        public int[] v();
 
-	public int[] n();
+        public int[] n();
 
-	public void setNormals(int... n);
+        public void setNormals(int... n);
     }
 
     /**
@@ -27,56 +27,56 @@ public abstract class ModelCreator {
      */
     public class Face implements IFace
     {
-	/** This stores the indices for both the vertices and the UV coordinates **/
-	public int[] v;
+        /** This stores the indices for both the vertices and the UV coordinates **/
+        public int[] v;
 
-	/** This stores the indeces for the normals **/
-	public int[] n;
+        /** This stores the indeces for the normals **/
+        public int[] n;
 
-	/**
-	 * Constructs a face with the indeces of the vertices.
-	 * @param v Indeces of the vertices.
-	 */
-	public Face(int... v)
-	{
-	    this.v = v;
-	}
+        /**
+         * Constructs a face with the indeces of the vertices.
+         * @param v Indeces of the vertices.
+         */
+        public Face(int... v)
+        {
+            this.v = v;
+        }
 
-	/**
-	 * Sets the normal indeces.
-	 * @param n Indeces of the normals.
-	 */
-	public void setNormals(int... n) {
-	    this.n = n;
-	}
+        /**
+         * Sets the normal indeces.
+         * @param n Indeces of the normals.
+         */
+        public void setNormals(int... n) {
+            this.n = n;
+        }
 
-	@Override
-	public int[] v() {
-	    return v;
-	}
+        @Override
+        public int[] v() {
+            return v;
+        }
 
-	@Override
-	public int[] n() {
-	    return n;
-	}
+        @Override
+        public int[] n() {
+            return n;
+        }
     }
 
     protected void addFace(List<IFace> faces, boolean flipNormals, int... v) {
-	if (flipNormals) {
-	    faces.add(new Face(flip(v, 1)));
-	} else {
-	    faces.add(new Face(v));
-	}
+        if (flipNormals) {
+            faces.add(new Face(flip(v, 1)));
+        } else {
+            faces.add(new Face(v));
+        }
     }
 
     private int[] flip(int[] v, int startIndex) {
-	for (int i = startIndex; i < v.length / 2; i++)
-	{
-	    int temp = v[i];
-	    v[i] = v[v.length - i + startIndex - 1];
-	    v[v.length - i + startIndex - 1] = temp;
-	}
-	return v;
+        for (int i = startIndex; i < v.length / 2; i++)
+        {
+            int temp = v[i];
+            v[i] = v[v.length - i + startIndex - 1];
+            v[v.length - i + startIndex - 1] = temp;
+        }
+        return v;
     }
 
     public String name;
@@ -89,11 +89,11 @@ public abstract class ModelCreator {
     protected boolean hardEdges;
 
     public ModelCreator() {
-	this.vertices = new ArrayList<Vector3>();
-	this.normals = new ArrayList<Vector3>();
-	this.uv = new ArrayList<Vector2>();
-	this.faces = new ArrayList<IFace>();
-	this.index = 1;
+        this.vertices = new ArrayList<Vector3>();
+        this.normals = new ArrayList<Vector3>();
+        this.uv = new ArrayList<Vector2>();
+        this.faces = new ArrayList<IFace>();
+        this.index = 1;
     }
 
     /**
@@ -102,38 +102,38 @@ public abstract class ModelCreator {
      * @throws IOException
      */
     public void dumpObj(OutputStream os) throws IOException {
-	NumberFormat nf = new DecimalFormat("########0.000000");
-	OutputStreamWriter osw = new OutputStreamWriter(os);
-	osw.append("# Created by " + this.getClass().getSimpleName() + " - ARI - ZAH - Heidelberg Universitat\n");
-	osw.append("o " + name + "\n");
-	// Write vertices
-	for (Vector3 vertex : vertices) {
-	    osw.append("v " + nf.format(vertex.x) + " " + nf.format(vertex.y) + " " + nf.format(vertex.z) + "\n");
-	}
+        NumberFormat nf = new DecimalFormat("########0.000000");
+        OutputStreamWriter osw = new OutputStreamWriter(os);
+        osw.append("# Created by " + this.getClass().getSimpleName() + " - ARI - ZAH - Heidelberg Universitat\n");
+        osw.append("o " + name + "\n");
+        // Write vertices
+        for (Vector3 vertex : vertices) {
+            osw.append("v " + nf.format(vertex.x) + " " + nf.format(vertex.y) + " " + nf.format(vertex.z) + "\n");
+        }
 
-	// Write vertex normals
-	for (Vector3 vertex : normals) {
-	    osw.append("vn " + nf.format(vertex.x) + " " + nf.format(vertex.y) + " " + nf.format(vertex.z) + "\n");
-	}
+        // Write vertex normals
+        for (Vector3 vertex : normals) {
+            osw.append("vn " + nf.format(vertex.x) + " " + nf.format(vertex.y) + " " + nf.format(vertex.z) + "\n");
+        }
 
-	//osw.append("s 1\n");
+        //osw.append("s 1\n");
 
-	// Write faces
-	for (IFace face : faces) {
-	    // All vertices of a face share the same normal
-	    osw.append("f ");
-	    int v[] = face.v();
-	    for (int i = 0; i < v.length; i++) {
-		osw.append(idx(face.v()[i], face.n()[i]));
-		if (i != v.length - 1) {
-		    osw.append(" ");
-		}
-	    }
-	    osw.append("\n");
-	}
+        // Write faces
+        for (IFace face : faces) {
+            // All vertices of a face share the same normal
+            osw.append("f ");
+            int v[] = face.v();
+            for (int i = 0; i < v.length; i++) {
+                osw.append(idx(face.v()[i], face.n()[i]));
+                if (i != v.length - 1) {
+                    osw.append(" ");
+                }
+            }
+            osw.append("\n");
+        }
 
-	osw.flush();
-	osw.close();
+        osw.flush();
+        osw.close();
     }
 
     /**
@@ -143,6 +143,6 @@ public abstract class ModelCreator {
      * @return
      */
     private String idx(int vi, int ni) {
-	return vi + "//" + ni;
+        return vi + "//" + ni;
     }
 }

@@ -14,8 +14,8 @@ public class LruCache<A, B> extends LinkedHashMap<A, B> {
     private final int maxEntries;
 
     public LruCache(final int maxEntries) {
-	super(maxEntries, 1.0f, true);
-	this.maxEntries = maxEntries;
+        super(maxEntries, 1.0f, true);
+        this.maxEntries = maxEntries;
     }
 
     /**
@@ -36,6 +36,6 @@ public class LruCache<A, B> extends LinkedHashMap<A, B> {
      */
     @Override
     protected boolean removeEldestEntry(final Map.Entry<A, B> eldest) {
-	return super.size() >= maxEntries;
+        return super.size() >= maxEntries;
     }
 }

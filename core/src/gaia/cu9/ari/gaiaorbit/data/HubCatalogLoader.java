@@ -19,17 +19,17 @@ public class HubCatalogLoader implements ISceneGraphNodeProvider {
 
     @Override
     public void initialize(Properties properties) {
-	this.properties = properties;
+        this.properties = properties;
     }
 
     @Override
     public List<? extends SceneGraphNode> loadObjects() {
-	ISceneGraphNodeProvider loader = null;
-	// Always use local
-	loader = new StarLoader();
-	PrefixedProperties pp = new PrefixedProperties(properties, loader.getClass().getSimpleName() + ".");
-	loader.initialize(pp);
-	return loader.loadObjects();
+        ISceneGraphNodeProvider loader = null;
+        // Always use local
+        loader = new StarLoader();
+        PrefixedProperties pp = new PrefixedProperties(properties, loader.getClass().getSimpleName() + ".");
+        loader.initialize(pp);
+        return loader.loadObjects();
     }
 
 }

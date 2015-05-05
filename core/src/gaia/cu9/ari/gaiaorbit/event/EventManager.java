@@ -20,19 +20,19 @@ public class EventManager implements IObserver {
 
     /** Time frame options **/
     public enum TimeFrame {
-	/** Real time from the user's perspective **/
-	REAL_TIME,
-	/** Simulation time in the simulation clock **/
-	SIMULATION_TIME;
+        /** Real time from the user's perspective **/
+        REAL_TIME,
+        /** Simulation time in the simulation clock **/
+        SIMULATION_TIME;
 
-	public long getCurrentTimeMs() {
-	    if (this.equals(REAL_TIME)) {
-		return System.currentTimeMillis();
-	    } else if (this.equals(SIMULATION_TIME)) {
-		return GlobalClock.clock.time.getTime();
-	    }
-	    return -1;
-	}
+        public long getCurrentTimeMs() {
+            if (this.equals(REAL_TIME)) {
+                return System.currentTimeMillis();
+            } else if (this.equals(SIMULATION_TIME)) {
+                return GlobalClock.clock.time.getTime();
+            }
+            return -1;
+        }
     }
 
     /** Singleton pattern **/
@@ -53,19 +53,19 @@ public class EventManager implements IObserver {
     private TimeFrame defaultTimeFrame;
 
     public EventManager() {
-	this.pool = new Pool<Telegram>(20) {
-	    protected Telegram newObject() {
-		return new Telegram();
-	    }
-	};
-	// Initialize queues, one for each time frame.
-	queues = new ObjectMap<TimeFrame, PriorityQueue<Telegram>>(TimeFrame.values().length);
-	for (TimeFrame tf : TimeFrame.values()) {
-	    PriorityQueue<Telegram> pq = new PriorityQueue<Telegram>();
-	    queues.put(tf, pq);
-	}
-	defaultTimeFrame = TimeFrame.REAL_TIME;
-	subscribe(this, Events.EVENT_TIME_FRAME_CMD);
+        this.pool = new Pool<Telegram>(20) {
+            protected Telegram newObject() {
+                return new Telegram();
+            }
+        };
+        // Initialize queues, one for each time frame.
+        queues = new ObjectMap<TimeFrame, PriorityQueue<Telegram>>(TimeFrame.values().length);
+        for (TimeFrame tf : TimeFrame.values()) {
+            PriorityQueue<Telegram> pq = new PriorityQueue<Telegram>();
+            queues.put(tf, pq);
+        }
+        defaultTimeFrame = TimeFrame.REAL_TIME;
+        subscribe(this, Events.EVENT_TIME_FRAME_CMD);
     }
 
     /**
@@ -74,9 +74,9 @@ public class EventManager implements IObserver {
      * @param events The event types to subscribe to.
      */
     public synchronized void subscribe(IObserver observer, Events... events) {
-	for (Events event : events) {
-	    subscribe(observer, event);
-	}
+        for (Events event : events) {
+            subscribe(observer, event);
+        }
     }
 
     /** Registers a listener for the specified message code. Messages without an explicit receiver are broadcasted to all its
@@ -84,13 +84,13 @@ public class EventManager implements IObserver {
      * @param msg the message code
      * @param listener the listener to add */
     public synchronized void subscribe(IObserver listener, Events msg) {
-	Set<IObserver> listeners = subscriptions.get(msg.ordinal());
-	if (listeners == null) {
-	    // Associate an empty ordered array with the message code. Sometimes the order matters
-	    listeners = new LinkedHashSet<IObserver>();
-	    subscriptions.put(msg.ordinal(), listeners);
-	}
-	listeners.add(listener);
+        Set<IObserver> listeners = subscriptions.get(msg.ordinal());
+        if (listeners == null) {
+            // Associate an empty ordered array with the message code. Sometimes the order matters
+            listeners = new LinkedHashSet<IObserver>();
+            subscriptions.put(msg.ordinal(), listeners);
+        }
+        listeners.add(listener);
     }
 
     /** 
@@ -99,10 +99,10 @@ public class EventManager implements IObserver {
      * @param listener The listener to remove.
      **/
     public synchronized void removeSubscription(Events msg, IObserver listener) {
-	Set<IObserver> listeners = subscriptions.get(msg.ordinal());
-	if (listeners != null) {
-	    listeners.remove(listener);
-	}
+        Set<IObserver> listeners = subscriptions.get(msg.ordinal());
+        if (listeners != null) {
+            listeners.remove(listener);
+        }
     }
 
     /**
@@ -110,19 +110,19 @@ public class EventManager implements IObserver {
      * @param listeners The listeners to remove.
      */
     public synchronized void removeAllSubscriptions(IObserver... listeners) {
-	Keys km = subscriptions.keys();
-	while (km.hasNext) {
-	    int key = km.next();
-	    for (IObserver listener : listeners) {
-		subscriptions.get(key).remove(listener);
-	    }
-	}
+        Keys km = subscriptions.keys();
+        while (km.hasNext) {
+            int key = km.next();
+            for (IObserver listener : listeners) {
+                subscriptions.get(key).remove(listener);
+            }
+        }
     }
 
     /** Unregisters all the listeners for the specified message code.
      * @param msg the message code */
     public synchronized void clearSubscriptions(Events msg) {
-	subscriptions.remove(msg.ordinal());
+        subscriptions.remove(msg.ordinal());
     }
 
     /**
@@ -131,12 +131,12 @@ public class EventManager implements IObserver {
      * @param data The event data.
      */
     public synchronized void post(Events event, Object... data) {
-	Set<IObserver> observers = subscriptions.get(event.ordinal());
-	if (observers != null && observers.size() > 0) {
-	    for (IObserver observer : observers) {
-		observer.notify(event, data);
-	    }
-	}
+        Set<IObserver> observers = subscriptions.get(event.ordinal());
+        if (observers != null && observers.size() > 0) {
+            for (IObserver observer : observers) {
+                observer.notify(event, data);
+            }
+        }
     }
 
     /**
@@ -149,17 +149,17 @@ public class EventManager implements IObserver {
      * @param data The event data.
      */
     public synchronized void postDelayed(Events event, long delayMs, Object... data) {
-	if (delayMs <= 0) {
-	    post(event, data);
-	} else {
-	    Telegram t = pool.obtain();
-	    t.event = event;
-	    t.data = data;
-	    t.timestamp = defaultTimeFrame.getCurrentTimeMs() + delayMs;
+        if (delayMs <= 0) {
+            post(event, data);
+        } else {
+            Telegram t = pool.obtain();
+            t.event = event;
+            t.data = data;
+            t.timestamp = defaultTimeFrame.getCurrentTimeMs() + delayMs;
 
-	    // Add to queue
-	    queues.get(defaultTimeFrame).add(t);
-	}
+            // Add to queue
+            queues.get(defaultTimeFrame).add(t);
+        }
     }
 
     /**
@@ -171,24 +171,24 @@ public class EventManager implements IObserver {
      * @param data The event data.
      */
     public synchronized void postDelayed(Events event, long delayMs, TimeFrame frame, Object... data) {
-	if (delayMs <= 0) {
-	    post(event, data);
-	} else {
-	    Telegram t = pool.obtain();
-	    t.event = event;
-	    t.data = data;
-	    t.timestamp = frame.getCurrentTimeMs() + delayMs;
+        if (delayMs <= 0) {
+            post(event, data);
+        } else {
+            Telegram t = pool.obtain();
+            t.event = event;
+            t.data = data;
+            t.timestamp = frame.getCurrentTimeMs() + delayMs;
 
-	    // Add to queue
-	    queues.get(frame).add(t);
-	}
+            // Add to queue
+            queues.get(frame).add(t);
+        }
     }
 
     /** 
      * Returns the current time in milliseconds.
      * */
     public static long getCurrentTime() {
-	return System.currentTimeMillis() - START;
+        return System.currentTimeMillis() - START;
     }
 
     /** 
@@ -196,45 +196,45 @@ public class EventManager implements IObserver {
      * <p>
      * This method must be called each time through the main loop. */
     public synchronized void dispatchDelayedMessages() {
-	for (TimeFrame tf : queues.keys()) {
-	    dispatch(queues.get(tf), tf.getCurrentTimeMs());
-	}
+        for (TimeFrame tf : queues.keys()) {
+            dispatch(queues.get(tf), tf.getCurrentTimeMs());
+        }
     }
 
     private void dispatch(PriorityQueue<Telegram> queue, long currentTime) {
-	if (queue.size() == 0)
-	    return;
+        if (queue.size() == 0)
+            return;
 
-	// Now peek at the queue to see if any telegrams need dispatching.
-	// Remove all telegrams from the front of the queue that have gone
-	// past their time stamp.
-	do {
-	    // Read the telegram from the front of the queue
-	    final Telegram telegram = queue.peek();
-	    if (telegram.timestamp > currentTime)
-		break;
+        // Now peek at the queue to see if any telegrams need dispatching.
+        // Remove all telegrams from the front of the queue that have gone
+        // past their time stamp.
+        do {
+            // Read the telegram from the front of the queue
+            final Telegram telegram = queue.peek();
+            if (telegram.timestamp > currentTime)
+                break;
 
-	    // Send the telegram to the recipient
-	    discharge(telegram);
+            // Send the telegram to the recipient
+            discharge(telegram);
 
-	    // Remove it from the queue
-	    queue.poll();
-	} while (queue.size() > 0);
+            // Remove it from the queue
+            queue.poll();
+        } while (queue.size() > 0);
     }
 
     private void discharge(Telegram telegram) {
-	post(telegram.event, telegram.data);
-	// Release the telegram to the pool
-	pool.free(telegram);
+        post(telegram.event, telegram.data);
+        // Release the telegram to the pool
+        pool.free(telegram);
     }
 
     @Override
     public void notify(Events event, Object... data) {
-	switch (event) {
-	case EVENT_TIME_FRAME_CMD:
-	    defaultTimeFrame = (TimeFrame) data[0];
-	    break;
-	}
+        switch (event) {
+        case EVENT_TIME_FRAME_CMD:
+            defaultTimeFrame = (TimeFrame) data[0];
+            break;
+        }
 
     }
 }

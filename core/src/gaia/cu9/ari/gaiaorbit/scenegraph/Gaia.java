@@ -24,17 +24,17 @@ public class Gaia extends ModelBody {
 
     @Override
     public double THRESHOLD_ANGLE_NONE() {
-	return TH_ANGLE_NONE;
+        return TH_ANGLE_NONE;
     }
 
     @Override
     public double THRESHOLD_ANGLE_POINT() {
-	return TH_ANGLE_POINT;
+        return TH_ANGLE_POINT;
     }
 
     @Override
     public double THRESHOLD_ANGLE_QUAD() {
-	return TH_ANGLE_SHADER;
+        return TH_ANGLE_SHADER;
     }
 
     public Vector3d unrotatedPos;
@@ -44,74 +44,74 @@ public class Gaia extends ModelBody {
     Quaterniond quat;
 
     public Gaia() {
-	super();
-	unrotatedPos = new Vector3d();
+        super();
+        unrotatedPos = new Vector3d();
     }
 
     @Override
     public void initialize() {
-	super.initialize();
+        super.initialize();
     }
 
     @Override
     public void doneLoading(AssetManager manager) {
-	super.doneLoading(manager);
-	EventManager.instance.post(Events.GAIA_LOADED, this);
+        super.doneLoading(manager);
+        EventManager.instance.post(Events.GAIA_LOADED, this);
 
     }
 
     @Override
     public void updateLocalValues(ITimeFrameProvider time, ICamera camera) {
-	forceUpdatePosition(time, false);
+        forceUpdatePosition(time, false);
     }
 
     private void forceUpdatePosition(ITimeFrameProvider time, boolean force) {
-	if (time.getDt() != 0 || force) {
-	    coordinates.getEquatorialCartesianCoordinates(time.getTime(), pos);
-	    unrotatedPos.set(pos);
-	    // Undo rotation
-	    unrotatedPos.mul(Coordinates.eclipticToEquatorial()).rotate(-AstroUtils.getSunLongitude(time.getTime()) - 180, 0, 1, 0);
-	    attitude = Nsl37AttitudeServer.getAttitude(time.getTime());
-	}
+        if (time.getDt() != 0 || force) {
+            coordinates.getEquatorialCartesianCoordinates(time.getTime(), pos);
+            unrotatedPos.set(pos);
+            // Undo rotation
+            unrotatedPos.mul(Coordinates.eclipticToEquatorial()).rotate(-AstroUtils.getSunLongitude(time.getTime()) - 180, 0, 1, 0);
+            attitude = Nsl37AttitudeServer.getAttitude(time.getTime());
+        }
     }
 
     @Override
     protected void updateLocalTransform() {
-	// Local attitude
-	localTransform.set(transform.getMatrix().valuesf()).scl(size);
-	if (attitude != null) {
-	    quat = attitude.getQuaternion();
-	    // QuatRotation * Flip (upside down)
-	    localTransform.rotate(new Quaternion((float) quat.x, (float) quat.y, (float) quat.z, (float) quat.w));
-	    // Flip satellite along field of view axis (Z)
-	    localTransform.rotate(0, 0, 1, 180);
-	}
+        // Local attitude
+        localTransform.set(transform.getMatrix().valuesf()).scl(size);
+        if (attitude != null) {
+            quat = attitude.getQuaternion();
+            // QuatRotation * Flip (upside down)
+            localTransform.rotate(new Quaternion((float) quat.x, (float) quat.y, (float) quat.z, (float) quat.w));
+            // Flip satellite along field of view axis (Z)
+            localTransform.rotate(0, 0, 1, 180);
+        }
     }
 
     @Override
     public void render(ModelBatch modelBatch, float alpha) {
-	if (display)
-	    super.render(modelBatch, alpha);
+        if (display)
+            super.render(modelBatch, alpha);
     }
 
     @Override
     public void labelPosition(Vector3d out) {
-	transform.getTranslation(out);
+        transform.getTranslation(out);
     }
 
     @Override
     protected float labelMax() {
-	return 2.5e-8f;
+        return 2.5e-8f;
     }
 
     @Override
     protected float labelFactor() {
-	return 2e5f;
+        return 2e5f;
     }
 
     @Override
     public void labelDepthBuffer() {
-	Gdx.gl.glDisable(GL20.GL_DEPTH_TEST);
-	Gdx.gl.glDepthMask(false);
+        Gdx.gl.glDisable(GL20.GL_DEPTH_TEST);
+        Gdx.gl.glDepthMask(false);
     }
 }

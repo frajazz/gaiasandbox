@@ -4,6 +4,7 @@ import gaia.cu9.ari.gaiaorbit.event.EventManager;
 import gaia.cu9.ari.gaiaorbit.event.Events;
 import gaia.cu9.ari.gaiaorbit.scenegraph.octreewrapper.OctreeWrapperConcurrent;
 import gaia.cu9.ari.gaiaorbit.util.I18n;
+import gaia.cu9.ari.gaiaorbit.util.Logger;
 import gaia.cu9.ari.gaiaorbit.util.concurrent.ThreadPoolManager;
 import gaia.cu9.ari.gaiaorbit.util.concurrent.UpdaterTask;
 import gaia.cu9.ari.gaiaorbit.util.time.ITimeFrameProvider;
@@ -34,8 +35,8 @@ public class SceneGraphConcurrentOctree extends AbstractSceneGraph {
     int numThreads;
 
     public SceneGraphConcurrentOctree(int numThreads) {
-	super();
-	this.numThreads = numThreads;
+        super();
+        this.numThreads = numThreads;
 
     }
 
@@ -44,103 +45,103 @@ public class SceneGraphConcurrentOctree extends AbstractSceneGraph {
      * @param nodes
      */
     public void initialize(List<SceneGraphNode> nodes, ITimeFrameProvider time) {
-	super.initialize(nodes, time);
+        super.initialize(nodes, time);
 
-	pool = ThreadPoolManager.pool;
-	tasks = new ArrayList<UpdaterTask<SceneGraphNode>>(pool.getCorePoolSize());
-	roulette = new ArrayList<SceneGraphNode>(150000);
+        pool = ThreadPoolManager.pool;
+        tasks = new ArrayList<UpdaterTask<SceneGraphNode>>(pool.getCorePoolSize());
+        roulette = new ArrayList<SceneGraphNode>(150000);
 
-	Iterator<SceneGraphNode> it = nodes.iterator();
-	while (it.hasNext()) {
-	    SceneGraphNode node = it.next();
-	    if (node instanceof OctreeWrapperConcurrent) {
-		octree = (OctreeWrapperConcurrent) node;
-		it.remove();
-		octree.setRoulette(roulette);
-		break;
-	    }
-	}
+        Iterator<SceneGraphNode> it = nodes.iterator();
+        while (it.hasNext()) {
+            SceneGraphNode node = it.next();
+            if (node instanceof OctreeWrapperConcurrent) {
+                octree = (OctreeWrapperConcurrent) node;
+                it.remove();
+                octree.setRoulette(roulette);
+                break;
+            }
+        }
 
-	// Create the tasks with the roulette collections references
-	for (int i = 0; i < numThreads; i++) {
-	    tasks.add(new UpdaterTask<SceneGraphNode>(roulette, i, numThreads));
-	}
+        // Create the tasks with the roulette collections references
+        for (int i = 0; i < numThreads; i++) {
+            tasks.add(new UpdaterTask<SceneGraphNode>(roulette, i, numThreads));
+        }
 
-	EventManager.instance.post(Events.POST_NOTIFICATION, this.getClass().getSimpleName(), I18n.bundle.format("notif.threadpool.init", numThreads));
+        Logger.info(this.getClass().getSimpleName(), I18n.bundle.format("notif.threadpool.init", numThreads));
     }
 
     public void update(ITimeFrameProvider time, ICamera camera) {
-	super.update(time, camera);
-	root.transform.position.set(camera.getInversePos());
+        super.update(time, camera);
+        root.transform.position.set(camera.getInversePos());
 
-	// Add top-level nodes to roulette
-	roulette.addAll(root.children);
-	roulette.remove(octree);
+        // Add top-level nodes to roulette
+        roulette.addAll(root.children);
+        roulette.remove(octree);
 
-	// Update octree - Add nodes to process to roulette
-	octree.update(time, root.transform, camera);
+        // Update octree - Add nodes to process to roulette
+        octree.update(time, root.transform, camera);
 
-	// Update params
-	int size = tasks.size();
-	for (int i = 0; i < size; i++) {
-	    UpdaterTask<SceneGraphNode> task = tasks.get(i);
-	    task.setParameters(camera, time);
-	}
+        // Update params
+        int size = tasks.size();
+        for (int i = 0; i < size; i++) {
+            UpdaterTask<SceneGraphNode> task = tasks.get(i);
+            task.setParameters(camera, time);
+        }
 
-	try {
-	    pool.invokeAll(tasks);
-	} catch (InterruptedException e) {
-	    Gdx.app.error(SceneGraphConcurrentOctree.class.getName(), e.getLocalizedMessage());
-	}
+        try {
+            pool.invokeAll(tasks);
+        } catch (InterruptedException e) {
+            Gdx.app.error(SceneGraphConcurrentOctree.class.getName(), e.getLocalizedMessage());
+        }
 
-	// Update focus, just in case
-	CelestialBody focus = camera.getFocus();
-	if (focus != null) {
-	    SceneGraphNode star = focus.getFirstAncestorOfType(Star.class);
-	    OctreeNode<SceneGraphNode> parent = octree.parenthood.get(star);
-	    if (parent != null && !parent.isObserved()) {
-		star.update(time, star.parent.transform, camera);
-	    }
-	}
+        // Update focus, just in case
+        CelestialBody focus = camera.getFocus();
+        if (focus != null) {
+            SceneGraphNode star = focus.getFirstAncestorOfType(Star.class);
+            OctreeNode<SceneGraphNode> parent = octree.parenthood.get(star);
+            if (parent != null && !parent.isObserved()) {
+                star.update(time, star.parent.transform, camera);
+            }
+        }
 
-	// Debug thread number
-	EventManager.instance.post(Events.DEBUG2, "SG threads: " + getRouletteDebug());
+        // Debug thread number
+        EventManager.instance.post(Events.DEBUG2, "SG threads: " + getRouletteDebug());
 
-	// Clear roulette
-	roulette.clear();
+        // Clear roulette
+        roulette.clear();
     }
 
     public void dispose() {
-	super.dispose();
-	pool.shutdown(); // Disable new tasks from being submitted
-	try {
-	    // Wait a while for existing tasks to terminate
-	    if (!pool.awaitTermination(60, TimeUnit.SECONDS)) {
-		pool.shutdownNow(); // Cancel currently executing tasks
-		// Wait a while for tasks to respond to being cancelled
-		if (!pool.awaitTermination(60, TimeUnit.SECONDS))
-		    System.err.println("Pool did not terminate");
-	    }
-	} catch (InterruptedException ie) {
-	    // (Re-)Cancel if current thread also interrupted
-	    pool.shutdownNow();
-	    // Preserve interrupt status
-	    Thread.currentThread().interrupt();
-	}
+        super.dispose();
+        pool.shutdown(); // Disable new tasks from being submitted
+        try {
+            // Wait a while for existing tasks to terminate
+            if (!pool.awaitTermination(60, TimeUnit.SECONDS)) {
+                pool.shutdownNow(); // Cancel currently executing tasks
+                // Wait a while for tasks to respond to being cancelled
+                if (!pool.awaitTermination(60, TimeUnit.SECONDS))
+                    System.err.println("Pool did not terminate");
+            }
+        } catch (InterruptedException ie) {
+            // (Re-)Cancel if current thread also interrupted
+            pool.shutdownNow();
+            // Preserve interrupt status
+            Thread.currentThread().interrupt();
+        }
     }
 
     protected String getRouletteDebug() {
-	{
-	    int size = roulette.size() / numThreads;
-	    String s = "[";
-	    for (int i = 0; i < numThreads; i++) {
-		s += (size);
-		if (i < numThreads - 1)
-		    s += ", ";
-	    }
-	    s += "]";
-	    return s;
-	}
+        {
+            int size = roulette.size() / numThreads;
+            String s = "[";
+            for (int i = 0; i < numThreads; i++) {
+                s += (size);
+                if (i < numThreads - 1)
+                    s += ", ";
+            }
+            s += "]";
+            return s;
+        }
     }
 
 }

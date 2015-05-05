@@ -9,7 +9,7 @@ public class ThreadPoolManager {
     public static ThreadPoolExecutor pool;
 
     public static void initialize(int numThreads) {
-	pool = (ThreadPoolExecutor) Executors.newFixedThreadPool(numThreads, new GaiaSandboxThreadFactory());
+        pool = (ThreadPoolExecutor) Executors.newFixedThreadPool(numThreads, new GaiaSandboxThreadFactory());
     }
 
 }
