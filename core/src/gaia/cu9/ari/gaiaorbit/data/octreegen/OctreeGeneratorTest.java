@@ -53,6 +53,8 @@ public class OctreeGeneratorTest implements IObserver {
             e.printStackTrace();
         } catch (IOException e) {
             e.printStackTrace();
+        } catch (Exception e) {
+            e.printStackTrace();
         }
     }
 
