@@ -1,10 +1,12 @@
 # Change Log
 
-## [Unreleased](https://github.com/ari-zah/gaiasandbox/tree/HEAD)
+## [0.706b](https://github.com/ari-zah/gaiasandbox/tree/0.706b) (2015-05-05)
 
-[Full Changelog](https://github.com/ari-zah/gaiasandbox/compare/0.705b...HEAD)
+[Full Changelog](https://github.com/ari-zah/gaiasandbox/compare/0.705b...0.706b)
 
 **Implemented enhancements:**
+
+- General code style clean-up  [\#25](https://github.com/ari-zah/gaiasandbox/issues/25)
 
 - Big performance improvement in star rendering [\#23](https://github.com/ari-zah/gaiasandbox/issues/23)
 
@@ -17,6 +19,12 @@
 - Interface overhaul [\#19](https://github.com/ari-zah/gaiasandbox/issues/19)
 
 - Better looking lines [\#18](https://github.com/ari-zah/gaiasandbox/issues/18)
+
+**Fixed bugs:**
+
+- Handle outdated properties files in $HOME/.gaiasandbox folder [\#26](https://github.com/ari-zah/gaiasandbox/issues/26)
+
+- Scripting implementation should reset the colour [\#24](https://github.com/ari-zah/gaiasandbox/issues/24)
 
 **Closed issues:**
 
