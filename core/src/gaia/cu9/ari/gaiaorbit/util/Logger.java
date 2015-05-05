@@ -16,7 +16,7 @@ public class Logger {
     }
 
     public static void info(Object... messages) {
-        Logger.info(messages);
+        EventManager.instance.post(Events.POST_NOTIFICATION, messages);
     }
 
 }
