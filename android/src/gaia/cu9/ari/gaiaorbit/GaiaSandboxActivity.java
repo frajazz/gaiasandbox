@@ -4,7 +4,6 @@ import gaia.cu9.ari.gaiaorbit.scenegraph.NaturalCamera;
 import gaia.cu9.ari.gaiaorbit.util.GlobalConf;
 import gaia.cu9.ari.gaiaorbit.util.math.MathUtilsd;
 
-import java.io.IOException;
 import java.io.InputStream;
 
 import android.app.Activity;
@@ -43,7 +42,7 @@ public class GaiaSandboxActivity extends AndroidApplication {
                 version = this.getAssets().open("data/dummyversion");
             }
             GlobalConf.initialize(this.getAssets().open("conf/android/global.properties"), version);
-        } catch (IOException e) {
+        } catch (Exception e) {
             Log.e(this.getApplicationInfo().name, "Error initializing global configuration");
             this.finish();
         }
