@@ -1,5 +1,13 @@
 # Change Log
 
+## [Unreleased](https://github.com/ari-zah/gaiasandbox/tree/HEAD)
+
+[Full Changelog](https://github.com/ari-zah/gaiasandbox/compare/0.706b...HEAD)
+
+**Implemented enhancements:**
+
+- Support for location info [\#28](https://github.com/ari-zah/gaiasandbox/issues/28)
+
 ## [0.706b](https://github.com/ari-zah/gaiasandbox/tree/0.706b) (2015-05-05)
 
 [Full Changelog](https://github.com/ari-zah/gaiasandbox/compare/0.705b...0.706b)
