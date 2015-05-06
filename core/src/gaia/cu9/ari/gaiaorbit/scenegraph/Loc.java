@@ -16,12 +16,14 @@ import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.math.Vector3;
 
 public class Loc extends AbstractPositionEntity implements I3DTextRenderable {
-    private static final float LOWER_LIMIT = 0.0001f;
-    private static final float UPPER_LIMIT = 0.0003f;
+    private static final float LOWER_LIMIT = 5e-4f;
+    private static final float UPPER_LIMIT = 3e-3f;
 
     /** Longitude and latitude **/
     Vector2 location;
     Vector3 location3d;
+    /** This controls the distance from the center in case of non-spherical objects **/
+    float distFactor = 1f;
     float threshold;
 
     public Loc() {
@@ -57,7 +59,8 @@ public class Loc extends AbstractPositionEntity implements I3DTextRenderable {
     @Override
     public void updateLocalValues(ITimeFrameProvider time, ICamera camera) {
 
-        Matrix4 orientation = parent.localTransform;
+        ModelBody papa = (ModelBody) parent;
+        papa.setToLocalTransform(distFactor, localTransform, false);
 
         location3d.set(0, 0, -.5f);
         // Latitude [-90..90]
@@ -65,7 +68,7 @@ public class Loc extends AbstractPositionEntity implements I3DTextRenderable {
         // Longitude [0..360]
         location3d.rotate(location.x + (float) ((ModelBody) parent).rc.meridianAngle / 2, 0, 1, 0);
 
-        location3d.mul(orientation);
+        location3d.mul(localTransform);
 
     }
 
@@ -80,7 +83,7 @@ public class Loc extends AbstractPositionEntity implements I3DTextRenderable {
 
     @Override
     public boolean renderText() {
-        if (viewAngle < 5e-4f || viewAngle > 3e-3f) {
+        if (viewAngle < LOWER_LIMIT || viewAngle > UPPER_LIMIT) {
             return false;
         }
         Vector3d aux = auxVector3d.get();
@@ -148,6 +151,10 @@ public class Loc extends AbstractPositionEntity implements I3DTextRenderable {
 
     public void setSize(Long size) {
         this.size = (float) (size * Constants.KM_TO_U);
+    }
+
+    public void setDistFactor(Double distFactor) {
+        this.distFactor = distFactor.floatValue();
     }
 
 }

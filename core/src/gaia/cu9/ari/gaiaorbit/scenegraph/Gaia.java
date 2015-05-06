@@ -12,6 +12,7 @@ import gaia.cu9.ari.gaiaorbit.util.time.ITimeFrameProvider;
 
 import com.badlogic.gdx.assets.AssetManager;
 import com.badlogic.gdx.graphics.g3d.ModelBatch;
+import com.badlogic.gdx.math.Matrix4;
 import com.badlogic.gdx.math.Quaternion;
 
 public class Gaia extends ModelBody {
@@ -75,15 +76,23 @@ public class Gaia extends ModelBody {
 
     @Override
     protected void updateLocalTransform() {
-        // Local attitude
-        localTransform.set(transform.getMatrix().valuesf()).scl(size);
-        if (attitude != null) {
-            quat = attitude.getQuaternion();
-            // QuatRotation * Flip (upside down)
-            localTransform.rotate(new Quaternion((float) quat.x, (float) quat.y, (float) quat.z, (float) quat.w));
-            // Flip satellite along field of view axis (Z)
-            localTransform.rotate(0, 0, 1, 180);
+        setToLocalTransform(1, localTransform, true);
+    }
+
+    public void setToLocalTransform(float sizeFactor, Matrix4 localTransform, boolean forceUpdate) {
+        if (sizeFactor != 1 || forceUpdate) {
+            localTransform.set(transform.getMatrix().valuesf()).scl(size * sizeFactor);
+            if (attitude != null) {
+                quat = attitude.getQuaternion();
+                // QuatRotation * Flip (upside down)
+                localTransform.rotate(new Quaternion((float) quat.x, (float) quat.y, (float) quat.z, (float) quat.w));
+                // Flip satellite along field of view axis (Z)
+                localTransform.rotate(0, 0, 1, 180);
+            }
+        } else {
+            localTransform.set(this.localTransform);
         }
+
     }
 
     @Override

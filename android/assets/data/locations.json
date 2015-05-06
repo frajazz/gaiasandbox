@@ -127,6 +127,33 @@
 		"name" : "ESAC (European Space Astronomy Center)",				
 		"location" : [-3.952696, 40.444211],
 		"size" : 7
+	},
+	{
+		"parent" : "Gaia", 
+		"impl" : "gaia.cu9.ari.gaiaorbit.scenegraph.Loc",
+		"ct"   : Others,
+		"name" : "FoV2",				
+		"location" : [-30.0, 55.0],
+		"size" : 0.00003,
+		"distFactor" : 0.7
+	},
+	{
+		"parent" : "Gaia", 
+		"impl" : "gaia.cu9.ari.gaiaorbit.scenegraph.Loc",
+		"ct"   : Others,
+		"name" : "FoV1",				
+		"location" : [30.0, 55.0],
+		"size" : 0.00003,
+		"distFactor" : 0.7
+	},
+	{
+		"parent" : "Gaia", 
+		"impl" : "gaia.cu9.ari.gaiaorbit.scenegraph.Loc",
+		"ct"   : Others,
+		"name" : "Sunshield",				
+		"location" : [0.0, -90.0],
+		"size" : 0.00003,
+		"distFactor" : 0.3
 	}
 
 ]}

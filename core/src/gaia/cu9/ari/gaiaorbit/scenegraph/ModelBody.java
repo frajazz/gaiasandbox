@@ -62,11 +62,18 @@ public abstract class ModelBody extends CelestialBody {
      * Override if your model contains more than just the position and size.
      */
     protected void updateLocalTransform() {
-        // Scale + Rotate + Tilt + Translate 
-        float[] trnsltn = transform.getTranslationf();
-        localTransform.idt().translate(trnsltn[0], trnsltn[1], trnsltn[2]).scl(size).rotate(0, 1, 0, (float) rc.ascendingNode).rotate(0, 0, 1, (float) (rc.inclination + rc.axialTilt)).rotate(0, 1, 0, (float) rc.angle);
-        if (children != null)
-            orientation.idt().rotate(0, 1, 0, (float) rc.ascendingNode).rotate(0, 0, 1, (float) (rc.inclination + rc.axialTilt));
+        setToLocalTransform(1, localTransform, true);
+    }
+
+    public void setToLocalTransform(float sizeFactor, Matrix4 localTransform, boolean forceUpdate) {
+        if (sizeFactor != 1 || forceUpdate) {
+            float[] trnsltn = transform.getTranslationf();
+            localTransform.idt().translate(trnsltn[0], trnsltn[1], trnsltn[2]).scl(size * sizeFactor).rotate(0, 1, 0, (float) rc.ascendingNode).rotate(0, 0, 1, (float) (rc.inclination + rc.axialTilt)).rotate(0, 1, 0, (float) rc.angle);
+            if (children != null)
+                orientation.idt().rotate(0, 1, 0, (float) rc.ascendingNode).rotate(0, 0, 1, (float) (rc.inclination + rc.axialTilt));
+        } else {
+            localTransform.set(this.localTransform);
+        }
     }
 
     @Override
