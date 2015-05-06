@@ -1,6 +1,6 @@
 package gaia.cu9.ari.gaiaorbit.scenegraph;
 
-import gaia.cu9.ari.gaiaorbit.render.ILabelRenderable;
+import gaia.cu9.ari.gaiaorbit.render.I3DTextRenderable;
 import gaia.cu9.ari.gaiaorbit.render.system.ImmediateRenderSystem;
 import gaia.cu9.ari.gaiaorbit.render.system.LineRenderSystem;
 import gaia.cu9.ari.gaiaorbit.util.Constants;
@@ -21,7 +21,7 @@ import com.badlogic.gdx.graphics.glutils.ShaderProgram;
  * @author Toni Sagrista
  *
  */
-public class Constellation extends LineObject implements ILabelRenderable {
+public class Constellation extends LineObject implements I3DTextRenderable {
     float alpha = .5f;
     float constalpha;
 
@@ -101,16 +101,16 @@ public class Constellation extends LineObject implements ILabelRenderable {
     @Override
     public void render(SpriteBatch batch, ShaderProgram shader, BitmapFont font, ICamera camera) {
         Vector3d pos = auxVector3d.get();
-        labelPosition(pos);
+        textPosition(pos);
         shader.setUniformf("a_viewAngle", 90f);
         shader.setUniformf("a_thOverFactor", 1f);
-        renderLabel(batch, shader, font, camera, label(), pos, labelScale(), labelSize(), labelColour());
+        renderLabel(batch, shader, font, camera, text(), pos, textScale(), textSize(), textColour());
     }
 
     @Override
     protected void addToRenderLists(ICamera camera) {
         addToRender(this, RenderGroup.LINE);
-        if (renderLabel()) {
+        if (renderText()) {
             addToRender(this, RenderGroup.LABEL);
 
         }
@@ -121,39 +121,44 @@ public class Constellation extends LineObject implements ILabelRenderable {
     }
 
     @Override
-    public float[] labelColour() {
+    public float[] textColour() {
         return cc;
     }
 
     @Override
-    public float labelSize() {
+    public float textSize() {
         return .6e7f;
     }
 
     @Override
-    public float labelScale() {
+    public float textScale() {
         return 1f;
     }
 
     @Override
-    public void labelPosition(Vector3d out) {
+    public void textPosition(Vector3d out) {
         out.set(pos);
     }
 
     @Override
-    public String label() {
+    public String text() {
         return name;
     }
 
     @Override
-    public boolean renderLabel() {
+    public boolean renderText() {
         return true;
     }
 
     @Override
-    public void labelDepthBuffer() {
+    public void textDepthBuffer() {
         Gdx.gl.glEnable(GL20.GL_DEPTH_TEST);
         Gdx.gl.glDepthMask(true);
+    }
+
+    @Override
+    public boolean isLabel() {
+        return true;
     }
 
 }

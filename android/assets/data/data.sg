@@ -20,7 +20,7 @@ gaia.cu9.ari.gaiaorbit.data.HubCatalogLoader.StarLoader.HYGBinaryLoader.file=dat
 # NON-STAR LOADERS - loads non-star entities (planets, satellites, moons, orbits...)
 
 # Configuration file with the entities
-gaia.cu9.ari.gaiaorbit.data.JsonLoader.files=data/planets.json data/moons.json data/satellites.json data/asteroids.json data/orbits.json data/extra.json
+gaia.cu9.ari.gaiaorbit.data.JsonLoader.files=data/planets.json data/moons.json data/satellites.json data/asteroids.json data/orbits.json data/extra.json data/locations.json
 
 
 # CONSTELLATION LINE LOADER

@@ -173,7 +173,7 @@ public class Particle extends CelestialBody implements IPointRenderable {
                 addToRender(this, RenderGroup.SHADER);
             }
         }
-        if (renderLabel()) {
+        if (renderText()) {
             addToRender(this, RenderGroup.LABEL);
         }
 

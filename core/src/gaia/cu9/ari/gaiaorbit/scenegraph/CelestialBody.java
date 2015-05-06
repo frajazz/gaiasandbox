@@ -1,6 +1,6 @@
 package gaia.cu9.ari.gaiaorbit.scenegraph;
 
-import gaia.cu9.ari.gaiaorbit.render.ILabelRenderable;
+import gaia.cu9.ari.gaiaorbit.render.I3DTextRenderable;
 import gaia.cu9.ari.gaiaorbit.render.IModelRenderable;
 import gaia.cu9.ari.gaiaorbit.render.IQuadRenderable;
 import gaia.cu9.ari.gaiaorbit.scenegraph.component.RotationComponent;
@@ -28,7 +28,7 @@ import com.badlogic.gdx.math.Quaternion;
  * @author Toni Sagrista
  *
  */
-public abstract class CelestialBody extends AbstractPositionEntity implements ILabelRenderable, IQuadRenderable, IModelRenderable {
+public abstract class CelestialBody extends AbstractPositionEntity implements I3DTextRenderable, IQuadRenderable, IModelRenderable {
     private static float[] labelColour = new float[] { 1, 1, 1, 1 };
 
     protected static ThreadLocal<Quaternion> rotation = new ThreadLocal<Quaternion>() {
@@ -59,7 +59,7 @@ public abstract class CelestialBody extends AbstractPositionEntity implements IL
      */
     public abstract double THRESHOLD_ANGLE_POINT();
 
-    public double TH_OVER_FACTOR;
+    public float TH_OVER_FACTOR;
 
     /** Absolute magnitude, m = -2.5 log10(flux), with the flux at 10 pc **/
     public float absmag;
@@ -85,7 +85,7 @@ public abstract class CelestialBody extends AbstractPositionEntity implements IL
 
     public CelestialBody() {
         super();
-        TH_OVER_FACTOR = THRESHOLD_ANGLE_POINT() / GlobalConf.scene.LABEL_NUMBER_FACTOR;
+        TH_OVER_FACTOR = (float) (THRESHOLD_ANGLE_POINT() / GlobalConf.scene.LABEL_NUMBER_FACTOR);
     }
 
     /**
@@ -167,10 +167,10 @@ public abstract class CelestialBody extends AbstractPositionEntity implements IL
     @Override
     public void render(SpriteBatch batch, ShaderProgram shader, BitmapFont font, ICamera camera) {
         Vector3d pos = auxVector3d.get();
-        labelPosition(pos);
+        textPosition(pos);
         shader.setUniformf("a_viewAngle", viewAngle);
-        shader.setUniformf("a_thOverFactor", (float) TH_OVER_FACTOR);
-        renderLabel(batch, shader, font, camera, label(), pos, labelScale(), labelSize(), labelColour());
+        shader.setUniformf("a_thOverFactor", TH_OVER_FACTOR);
+        renderLabel(batch, shader, font, camera, text(), pos, textScale(), textSize(), textColour());
     }
 
     protected void setColor2Data() {
@@ -277,22 +277,22 @@ public abstract class CelestialBody extends AbstractPositionEntity implements IL
     }
 
     @Override
-    public boolean renderLabel() {
+    public boolean renderText() {
         return name != null && viewAngle > TH_OVER_FACTOR;
     }
 
     @Override
-    public float[] labelColour() {
+    public float[] textColour() {
         return labelColour;
     }
 
     @Override
-    public float labelScale() {
+    public float textScale() {
         return (float) Math.atan(labelMax()) * labelFactor() * 4e2f;
     }
 
     @Override
-    public float labelSize() {
+    public float textSize() {
         return (float) Math.min(labelSizeConcrete() / distToCamera, labelMax()) * distToCamera * labelFactor();
     }
 
@@ -305,19 +305,19 @@ public abstract class CelestialBody extends AbstractPositionEntity implements IL
     protected abstract float labelMax();
 
     @Override
-    public void labelPosition(Vector3d out) {
+    public void textPosition(Vector3d out) {
         transform.getTranslation(out);
         double len = out.len();
         out.clamp(0, len - getRadius());
     }
 
     @Override
-    public String label() {
+    public String text() {
         return name;
     }
 
     @Override
-    public void labelDepthBuffer() {
+    public void textDepthBuffer() {
         Gdx.gl.glEnable(GL20.GL_DEPTH_TEST);
         Gdx.gl.glDepthMask(true);
     }
@@ -325,6 +325,11 @@ public abstract class CelestialBody extends AbstractPositionEntity implements IL
     @Override
     public boolean hasAtmosphere() {
         return false;
+    }
+
+    @Override
+    public boolean isLabel() {
+        return true;
     }
 
 }

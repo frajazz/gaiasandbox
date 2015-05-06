@@ -1,6 +1,6 @@
 package gaia.cu9.ari.gaiaorbit.scenegraph;
 
-import gaia.cu9.ari.gaiaorbit.render.ILabelRenderable;
+import gaia.cu9.ari.gaiaorbit.render.I3DTextRenderable;
 import gaia.cu9.ari.gaiaorbit.render.IModelRenderable;
 import gaia.cu9.ari.gaiaorbit.scenegraph.component.ModelComponent;
 import gaia.cu9.ari.gaiaorbit.util.Constants;
@@ -23,7 +23,7 @@ import com.badlogic.gdx.graphics.g3d.attributes.ColorAttribute;
 import com.badlogic.gdx.graphics.glutils.ShaderProgram;
 import com.badlogic.gdx.math.Matrix4;
 
-public class MilkyWay extends Blob implements IModelRenderable, ILabelRenderable {
+public class MilkyWay extends Blob implements IModelRenderable, I3DTextRenderable {
     float[] labelColour = new float[] { 1f, 1f, 1f, 1f };
     ModelComponent mc;
     String model, transformName;
@@ -71,7 +71,7 @@ public class MilkyWay extends Blob implements IModelRenderable, ILabelRenderable
     protected void addToRenderLists(ICamera camera) {
         if (viewAngle <= highAngle) {
             addToRender(this, RenderGroup.MODEL_F);
-            if (renderLabel()) {
+            if (renderText()) {
                 addToRender(this, RenderGroup.LABEL);
             }
         }
@@ -125,10 +125,10 @@ public class MilkyWay extends Blob implements IModelRenderable, ILabelRenderable
     @Override
     public void render(SpriteBatch batch, ShaderProgram shader, BitmapFont font, ICamera camera) {
         Vector3d pos = auxVector3d.get();
-        labelPosition(pos);
+        textPosition(pos);
         shader.setUniformf("a_viewAngle", 90f);
         shader.setUniformf("a_thOverFactor", 1f);
-        renderLabel(batch, shader, font, camera, label(), pos, labelScale(), labelSize(), labelColour());
+        renderLabel(batch, shader, font, camera, text(), pos, textScale(), textSize(), textColour());
     }
 
     @Override
@@ -145,7 +145,7 @@ public class MilkyWay extends Blob implements IModelRenderable, ILabelRenderable
     }
 
     @Override
-    public boolean renderLabel() {
+    public boolean renderText() {
         return true;
     }
 
@@ -158,32 +158,32 @@ public class MilkyWay extends Blob implements IModelRenderable, ILabelRenderable
     }
 
     @Override
-    public float[] labelColour() {
+    public float[] textColour() {
         return labelColour;
     }
 
     @Override
-    public float labelSize() {
+    public float textSize() {
         return distToCamera * 3e-3f;
     }
 
     @Override
-    public float labelScale() {
+    public float textScale() {
         return 3f;
     }
 
     @Override
-    public void labelPosition(Vector3d out) {
+    public void textPosition(Vector3d out) {
         transform.getTranslation(out);
     }
 
     @Override
-    public String label() {
+    public String text() {
         return name;
     }
 
     @Override
-    public void labelDepthBuffer() {
+    public void textDepthBuffer() {
         Gdx.gl.glDisable(GL20.GL_DEPTH_TEST);
         Gdx.gl.glDepthMask(false);
     }
@@ -195,6 +195,11 @@ public class MilkyWay extends Blob implements IModelRenderable, ILabelRenderable
     public void setLabelcolor(double[] labelcolor) {
         this.labelColour = GlobalResources.toFloatArray(labelcolor);
 
+    }
+
+    @Override
+    public boolean isLabel() {
+        return true;
     }
 
 }

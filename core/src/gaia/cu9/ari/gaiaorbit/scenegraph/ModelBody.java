@@ -81,7 +81,7 @@ public abstract class ModelBody extends CelestialBody {
                 addToRender(this, RenderGroup.MODEL_F);
             }
 
-            if (renderLabel()) {
+            if (renderText()) {
                 addToRender(this, RenderGroup.LABEL);
             }
         }

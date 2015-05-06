@@ -99,7 +99,7 @@ public class Star extends Particle {
                     }
                 }
             }
-            if (renderLabel()) {
+            if (renderText()) {
                 addToRender(this, RenderGroup.LABEL);
             }
         }

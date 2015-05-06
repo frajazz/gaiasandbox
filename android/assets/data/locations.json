@@ -1,0 +1,108 @@
+{"objects" : [
+
+	{
+		"parent" : "Earth", 
+		"impl" : "gaia.cu9.ari.gaiaorbit.scenegraph.Loc",
+		"ct"   : Others,		
+		"name" : "North America",	
+		"location" : [-105.0, 40.0],
+		"size" : 40
+	},
+	{
+		"parent" : "Earth", 
+		"impl" : "gaia.cu9.ari.gaiaorbit.scenegraph.Loc",
+		"ct"   : Others,			
+		"name" : "South America",				
+		"location" : [-60.0, -10.0],
+		"size" : 40
+	},
+	{
+		"parent" : "Earth", 
+		"impl" : "gaia.cu9.ari.gaiaorbit.scenegraph.Loc",
+		"ct"   : Others,
+		"name" : "Europe",				
+		"location" : [0.0, 50.0],
+		"size" : 40
+	},
+	{
+		"parent" : "Earth", 
+		"impl" : "gaia.cu9.ari.gaiaorbit.scenegraph.Loc",
+		"ct"   : Others,
+		"name" : "Asia",				
+		"location" : [70.0, 40.0],
+		"size" : 50
+	},
+	{
+		"parent" : "Earth", 
+		"impl" : "gaia.cu9.ari.gaiaorbit.scenegraph.Loc",
+		"ct"   : Others,
+		"name" : "Africa",				
+		"location" : [20.0, 5.0],
+		"size" : 50
+	},
+	{
+		"parent" : "Earth", 
+		"impl" : "gaia.cu9.ari.gaiaorbit.scenegraph.Loc",
+		"ct"   : Others,
+		"name" : "Oceania",				
+		"location" : [135.0, -25.0],
+		"size" : 25
+	},
+	{
+		"parent" : "Earth", 
+		"impl" : "gaia.cu9.ari.gaiaorbit.scenegraph.Loc",
+		"ct"   : Others,
+		"name" : "Antartica",				
+		"location" : [0.0, -90.0],
+		"size" : 30
+	},
+	{
+		"parent" : "Earth", 
+		"impl" : "gaia.cu9.ari.gaiaorbit.scenegraph.Loc",
+		"ct"   : Others,
+		"name" : "North Atlantic Ocean",				
+		"location" : [-45.0, 40.0],
+		"size" : 20
+	},
+	{
+		"parent" : "Earth", 
+		"impl" : "gaia.cu9.ari.gaiaorbit.scenegraph.Loc",
+		"ct"   : Others,
+		"name" : "South Atlantic Ocean",				
+		"location" : [-15.0, -15.0],
+		"size" : 20
+	},
+	{
+		"parent" : "Earth", 
+		"impl" : "gaia.cu9.ari.gaiaorbit.scenegraph.Loc",
+		"ct"   : Others,
+		"name" : "North Pacific Ocean",				
+		"location" : [180.0, 30.0],
+		"size" : 20
+	},
+	{
+		"parent" : "Earth", 
+		"impl" : "gaia.cu9.ari.gaiaorbit.scenegraph.Loc",
+		"ct"   : Others,
+		"name" : "South Pacific Ocean",				
+		"location" : [-160.0, -10.0],
+		"size" : 20
+	},
+	{
+		"parent" : "Earth", 
+		"impl" : "gaia.cu9.ari.gaiaorbit.scenegraph.Loc",
+		"ct"   : Others,
+		"name" : "Indian Ocean",				
+		"location" : [75.0, -15.0],
+		"size" : 20
+	},
+	{
+		"parent" : "Earth", 
+		"impl" : "gaia.cu9.ari.gaiaorbit.scenegraph.Loc",
+		"ct"   : Others,
+		"name" : "Arctic Ocean",				
+		"location" : [0.0, 90.0],
+		"size" : 20
+	}
+
+]}

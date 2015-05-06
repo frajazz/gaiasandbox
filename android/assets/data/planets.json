@@ -123,7 +123,7 @@
 						"axialtilt" : -23.4392911,
 						// Inclination of orbit plane with respect to ecliptic
 						"inclination" : 0,
-						"meridianangle" : 180.147
+						"meridianangle" : 180.0
 						},
 						
 	"model"			: {

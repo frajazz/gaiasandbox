@@ -10,9 +10,7 @@ import gaia.cu9.ari.gaiaorbit.util.math.Quaterniond;
 import gaia.cu9.ari.gaiaorbit.util.math.Vector3d;
 import gaia.cu9.ari.gaiaorbit.util.time.ITimeFrameProvider;
 
-import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.assets.AssetManager;
-import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.g3d.ModelBatch;
 import com.badlogic.gdx.math.Quaternion;
 
@@ -95,7 +93,7 @@ public class Gaia extends ModelBody {
     }
 
     @Override
-    public void labelPosition(Vector3d out) {
+    public void textPosition(Vector3d out) {
         transform.getTranslation(out);
     }
 
@@ -109,9 +107,4 @@ public class Gaia extends ModelBody {
         return 2e5f;
     }
 
-    @Override
-    public void labelDepthBuffer() {
-        Gdx.gl.glDisable(GL20.GL_DEPTH_TEST);
-        Gdx.gl.glDepthMask(false);
-    }
 }

@@ -1,5 +1,6 @@
 package gaia.cu9.ari.gaiaorbit.render.system;
 
+import gaia.cu9.ari.gaiaorbit.render.I3DTextRenderable;
 import gaia.cu9.ari.gaiaorbit.render.IRenderable;
 import gaia.cu9.ari.gaiaorbit.render.SceneGraphRenderer.ComponentType;
 import gaia.cu9.ari.gaiaorbit.scenegraph.ICamera;
@@ -54,7 +55,8 @@ public class SpriteBatchRenderSystem extends AbstractRenderSystem {
                 s.render(batch, camera, alphas[s.getComponentType().ordinal()]);
             } else {
                 // Render font
-                shaderProgram.setUniformf("a_labelAlpha", alphas[ComponentType.Labels.ordinal()]);
+                I3DTextRenderable lr = (I3DTextRenderable) s;
+                shaderProgram.setUniformf("a_labelAlpha", lr.isLabel() ? alphas[ComponentType.Labels.ordinal()] : 1f);
                 shaderProgram.setUniformf("a_componentAlpha", alphas[s.getComponentType().ordinal()]);
                 s.render(batch, shaderProgram, bitmapFont, camera);
             }

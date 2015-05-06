@@ -1,6 +1,6 @@
 package gaia.cu9.ari.gaiaorbit.scenegraph;
 
-import gaia.cu9.ari.gaiaorbit.render.ILabelRenderable;
+import gaia.cu9.ari.gaiaorbit.render.I3DTextRenderable;
 import gaia.cu9.ari.gaiaorbit.util.DecalUtils;
 import gaia.cu9.ari.gaiaorbit.util.GlobalResources;
 import gaia.cu9.ari.gaiaorbit.util.Logger;
@@ -203,7 +203,7 @@ public abstract class AbstractPositionEntity extends SceneGraphNode {
         Vector3d p = pos.clamp(0, len - size);
 
         // Enable or disable blending
-        ((ILabelRenderable) this).labelDepthBuffer();
+        ((I3DTextRenderable) this).textDepthBuffer();
 
         font.setColor(colour[0], colour[1], colour[2], colour[3]);
         DecalUtils.drawFont3D(font, batch, label, (float) p.x, (float) p.y, (float) p.z, size, camera.getCamera(), true);
