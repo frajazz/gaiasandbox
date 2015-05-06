@@ -103,6 +103,30 @@
 		"name" : "Arctic Ocean",				
 		"location" : [0.0, 90.0],
 		"size" : 20
+	},
+	{
+		"parent" : "Earth", 
+		"impl" : "gaia.cu9.ari.gaiaorbit.scenegraph.Loc",
+		"ct"   : Others,
+		"name" : "Kourou (Gaia launch site)",				
+		"location" : [-52.6509798, 5.1628814],
+		"size" : 7
+	},
+	{
+		"parent" : "Earth", 
+		"impl" : "gaia.cu9.ari.gaiaorbit.scenegraph.Loc",
+		"ct"   : Others,
+		"name" : "ESOC (European Space Operations Center)",				
+		"location" : [8.5898778, 49.8256097],
+		"size" : 7
+	},
+	{
+		"parent" : "Earth", 
+		"impl" : "gaia.cu9.ari.gaiaorbit.scenegraph.Loc",
+		"ct"   : Others,
+		"name" : "ESAC (European Space Astronomy Center)",				
+		"location" : [-3.952696, 40.444211],
+		"size" : 7
 	}
 
 ]}

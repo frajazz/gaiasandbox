@@ -155,6 +155,8 @@ public class GaiaSandboxDesktop implements IObserver {
         JythonFactory.initialize();
         // Launch app
         new LwjglApplication(new GaiaSandbox(true), cfg);
+
+        EventManager.instance.unsubscribe(this, Events.POST_NOTIFICATION, Events.JAVA_EXCEPTION);
     }
 
     @Override

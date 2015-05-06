@@ -16,10 +16,13 @@ import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.math.Vector3;
 
 public class Loc extends AbstractPositionEntity implements I3DTextRenderable {
+    private static final float LOWER_LIMIT = 0.0001f;
+    private static final float UPPER_LIMIT = 0.0003f;
 
     /** Longitude and latitude **/
     Vector2 location;
     Vector3 location3d;
+    float threshold;
 
     public Loc() {
         cc = new float[] { 1f, 1f, 1f, 1f };
@@ -35,6 +38,23 @@ public class Loc extends AbstractPositionEntity implements I3DTextRenderable {
     }
 
     @Override
+    public void updateLocal(ITimeFrameProvider time, ICamera camera) {
+
+        if (((ModelBody) parent).viewAngle > ((ModelBody) parent).THRESHOLD_ANGLE_QUAD() * 30f) {
+            updateLocalValues(time, camera);
+
+            this.transform.translate(pos);
+
+            this.distToCamera = (float) transform.getTranslation(auxVector3d.get()).len();
+            this.viewAngle = (float) Math.atan(size / distToCamera) / camera.getFovFactor();
+            this.viewAngleApparent = this.viewAngle;
+            if (!copy) {
+                addToRenderLists(camera);
+            }
+        }
+    }
+
+    @Override
     public void updateLocalValues(ITimeFrameProvider time, ICamera camera) {
 
         Matrix4 orientation = parent.localTransform;
@@ -46,6 +66,7 @@ public class Loc extends AbstractPositionEntity implements I3DTextRenderable {
         location3d.rotate(location.x + (float) ((ModelBody) parent).rc.meridianAngle / 2, 0, 1, 0);
 
         location3d.mul(orientation);
+
     }
 
     public void setLocation(double[] pos) {
@@ -59,6 +80,9 @@ public class Loc extends AbstractPositionEntity implements I3DTextRenderable {
 
     @Override
     public boolean renderText() {
+        if (viewAngle < 5e-4f || viewAngle > 3e-3f) {
+            return false;
+        }
         Vector3d aux = auxVector3d.get();
         transform.getTranslation(aux).scl(-1);
 
@@ -73,7 +97,7 @@ public class Loc extends AbstractPositionEntity implements I3DTextRenderable {
     public void render(SpriteBatch batch, ShaderProgram shader, BitmapFont font, ICamera camera) {
         Vector3d pos = auxVector3d.get();
         textPosition(pos);
-        shader.setUniformf("a_viewAngle", viewAngle * 2f);
+        shader.setUniformf("a_viewAngle", viewAngle * (float) Constants.U_TO_KM);
         shader.setUniformf("a_thOverFactor", 1f);
         renderLabel(batch, shader, font, camera, text(), pos, textScale(), textSize(), textColour());
     }
@@ -85,7 +109,7 @@ public class Loc extends AbstractPositionEntity implements I3DTextRenderable {
 
     @Override
     public float textSize() {
-        return (float) (size * Constants.KM_TO_U);
+        return size;
     }
 
     @Override
@@ -112,6 +136,18 @@ public class Loc extends AbstractPositionEntity implements I3DTextRenderable {
     @Override
     public boolean isLabel() {
         return false;
+    }
+
+    /**
+     * Sets the absolute size of this entity
+     * @param size
+     */
+    public void setSize(Double size) {
+        this.size = (float) (size * Constants.KM_TO_U);
+    }
+
+    public void setSize(Long size) {
+        this.size = (float) (size * Constants.KM_TO_U);
     }
 
 }

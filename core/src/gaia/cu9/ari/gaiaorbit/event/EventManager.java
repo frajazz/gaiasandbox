@@ -93,13 +93,19 @@ public class EventManager implements IObserver {
         listeners.add(listener);
     }
 
+    public synchronized void unsubscribe(IObserver listener, Events... events) {
+        for (Events event : events) {
+            unsubscribe(listener, event);
+        }
+    }
+
     /** 
      * Unregister the specified listener for the specified message code.
-     * @param msg The message code.
+     * @param events The message code.
      * @param listener The listener to remove.
      **/
-    public synchronized void removeSubscription(Events msg, IObserver listener) {
-        Set<IObserver> listeners = subscriptions.get(msg.ordinal());
+    public synchronized void unsubscribe(IObserver listener, Events events) {
+        Set<IObserver> listeners = subscriptions.get(events.ordinal());
         if (listeners != null) {
             listeners.remove(listener);
         }
