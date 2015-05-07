@@ -159,7 +159,7 @@ public class Loc extends AbstractPositionEntity implements I3DTextRenderable {
 
     @Override
     public void setName(String name) {
-        this.name = "˙ " + name;
+        this.name = '\u02D9' + " " + name;
     }
 
 }
