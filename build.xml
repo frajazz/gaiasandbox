@@ -137,7 +137,8 @@
 				<!-- data folder -->
 				<exclude name="data/" />
 				<!-- font folder -->
-				<include name="font/**" />
+				<include name="font/main-font.fnt" />
+				<include name="font/main-font.png" />
 				<!-- icon folder -->
 				<include name="icon/ic_launcher.png" />
 				<!-- img folder -->

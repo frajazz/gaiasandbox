@@ -19,13 +19,13 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.graphics.glutils.ShaderProgram;
 
-public class SpriteBatchRenderSystem extends AbstractRenderSystem {
+public class FontRenderSystem extends AbstractRenderSystem {
     private SpriteBatch batch;
     private ShaderProgram shaderProgram;
     private BitmapFont bitmapFont;
     private Comparator<IRenderable> comp;
 
-    public SpriteBatchRenderSystem(RenderGroup rg, int priority, float[] alphas, SpriteBatch batch) {
+    public FontRenderSystem(RenderGroup rg, int priority, float[] alphas, SpriteBatch batch) {
         super(rg, priority, alphas);
         this.batch = batch;
 
@@ -33,13 +33,13 @@ public class SpriteBatchRenderSystem extends AbstractRenderSystem {
         comp = new DistToCameraComparator<IRenderable>();
     }
 
-    public SpriteBatchRenderSystem(RenderGroup rg, int priority, float[] alphas, SpriteBatch batch, ShaderProgram shaderProgram) {
+    public FontRenderSystem(RenderGroup rg, int priority, float[] alphas, SpriteBatch batch, ShaderProgram shaderProgram) {
         this(rg, priority, alphas, batch);
         this.shaderProgram = shaderProgram;
         // Init font
-        Texture texture = new Texture(Gdx.files.internal("font/dffont.png"), true);
+        Texture texture = new Texture(Gdx.files.internal("font/main-font.png"), true);
         texture.setFilter(TextureFilter.Linear, TextureFilter.Linear);
-        bitmapFont = new BitmapFont(Gdx.files.internal("font/dffont.fnt"), new TextureRegion(texture), false);
+        bitmapFont = new BitmapFont(Gdx.files.internal("font/main-font.fnt"), new TextureRegion(texture), false);
         bitmapFont.setScale(12f / 32f);
     }
 

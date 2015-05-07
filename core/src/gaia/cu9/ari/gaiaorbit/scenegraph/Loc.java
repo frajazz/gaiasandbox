@@ -157,4 +157,9 @@ public class Loc extends AbstractPositionEntity implements I3DTextRenderable {
         this.distFactor = distFactor.floatValue();
     }
 
+    @Override
+    public void setName(String name) {
+        this.name = "˙ " + name;
+    }
+
 }

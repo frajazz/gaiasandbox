@@ -13,7 +13,7 @@ import gaia.cu9.ari.gaiaorbit.render.system.PixelBloomRenderSystem;
 import gaia.cu9.ari.gaiaorbit.render.system.PixelFuzzyRenderSystem;
 import gaia.cu9.ari.gaiaorbit.render.system.PixelRenderSystem;
 import gaia.cu9.ari.gaiaorbit.render.system.QuadRenderSystem;
-import gaia.cu9.ari.gaiaorbit.render.system.SpriteBatchRenderSystem;
+import gaia.cu9.ari.gaiaorbit.render.system.FontRenderSystem;
 import gaia.cu9.ari.gaiaorbit.scenegraph.CameraManager.CameraMode;
 import gaia.cu9.ari.gaiaorbit.scenegraph.ICamera;
 import gaia.cu9.ari.gaiaorbit.scenegraph.NaturalCamera;
@@ -263,7 +263,7 @@ public class SceneGraphRenderer extends AbstractRenderer implements IProcessRend
         });
 
         // ANNOTATIONS
-        AbstractRenderSystem annotationsProc = new SpriteBatchRenderSystem(RenderGroup.MODEL_B_ANNOT, priority++, alphas, spriteBatch);
+        AbstractRenderSystem annotationsProc = new FontRenderSystem(RenderGroup.MODEL_B_ANNOT, priority++, alphas, spriteBatch);
         annotationsProc.setPreRunnable(blendNoDepthRunnable);
         annotationsProc.setPostRunnable(new Runnable() {
             @Override
@@ -289,7 +289,7 @@ public class SceneGraphRenderer extends AbstractRenderer implements IProcessRend
         modelStarsProc.setPreRunnable(blendDepthRunnable);
 
         // LABELS
-        AbstractRenderSystem labelsProc = new SpriteBatchRenderSystem(RenderGroup.LABEL, priority++, alphas, fontBatch, fontShader);
+        AbstractRenderSystem labelsProc = new FontRenderSystem(RenderGroup.LABEL, priority++, alphas, fontBatch, fontShader);
         labelsProc.setPreRunnable(blendDepthRunnable);
 
         // MODEL ATMOSPHERE

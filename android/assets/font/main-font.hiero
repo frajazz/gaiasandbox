@@ -1,0 +1,25 @@
+font.name=LM Mono 8
+font.size=30
+font.bold=false
+font.italic=false
+
+font2.file=/home/tsagrista/ws/GaiaOrbit-android/assets/skins/default/jgfont.fnt
+font2.use=false
+
+pad.top=6
+pad.right=1
+pad.bottom=6
+pad.left=1
+pad.advance.x=0
+pad.advance.y=0
+
+glyph.native.rendering=false
+glyph.page.width=512
+glyph.page.height=512
+glyph.text=AÀÁÄBCDEÈÉËFGHIÌÍÏJKLMNOÒÓÔPQRSTUÙÚÜVWXYZ\naàáäbcdeèéêëfghiìíîïjklmnoòóôöpqrstuùúûüvwxyz\n1234567890\n"!`?'.,;:()[]{}<>|/@\^$-%+=#_&~*\nθωερτψυιοπασδφγηςκλζχξωβνμ\nΘΩΕΡΤΨΥΙΟΠΑΣΔΦΓΗςΚΛΖΧΞΩΒΝΜ\n±∓×·÷√∑∫∮¬∝∞≠≈⇔↔≪≫≤≥\n°ℏÅ⊙ ☉ ☼ ☀¶ß©®£€¼½¾²³•□˚˙˟ˣ
+
+effect.class=com.badlogic.gdx.tools.hiero.unicodefont.effects.DistanceFieldEffect
+effect.Color=ffffff
+effect.Scale=10
+effect.Spread=6.2
+
