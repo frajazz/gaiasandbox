@@ -297,6 +297,14 @@ public class KeyMappings {
             }
         }), Keys.CONTROL_LEFT, Keys.P);
 
+        // CTRL + G -> Travel to focus object
+        addMapping(new ProgramAction(txt("action.gotoobject"), new Runnable() {
+            @Override
+            public void run() {
+                EventManager.instance.post(Events.GO_TO_OBJECT_CMD);
+            }
+        }), Keys.CONTROL_LEFT, Keys.G);
+
     }
 
     /**

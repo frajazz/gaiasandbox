@@ -121,7 +121,7 @@ public class NaturalCamera extends AbstractCamera implements IObserver {
         accelerometer = Gdx.input.isPeripheralAvailable(Peripheral.Accelerometer);
 
         // Focus is changed from GUI
-        EventManager.instance.subscribe(this, Events.FOCUS_CHANGE_CMD, Events.FOV_CHANGED_CMD, Events.FOCUS_LOCK_CMD, Events.CAMERA_POS_CMD, Events.CAMERA_DIR_CMD, Events.CAMERA_UP_CMD, Events.CAMERA_FWD, Events.CAMERA_ROTATE, Events.CAMERA_PAN, Events.CAMERA_ROLL, Events.CAMERA_TURN, Events.CAMERA_STOP, Events.CAMERA_CENTER);
+        EventManager.instance.subscribe(this, Events.FOCUS_CHANGE_CMD, Events.FOV_CHANGED_CMD, Events.FOCUS_LOCK_CMD, Events.CAMERA_POS_CMD, Events.CAMERA_DIR_CMD, Events.CAMERA_UP_CMD, Events.CAMERA_FWD, Events.CAMERA_ROTATE, Events.CAMERA_PAN, Events.CAMERA_ROLL, Events.CAMERA_TURN, Events.CAMERA_STOP, Events.CAMERA_CENTER, Events.GO_TO_OBJECT_CMD);
     }
 
     public void update(float dt, ITimeFrameProvider time) {
@@ -657,6 +657,23 @@ public class NaturalCamera extends AbstractCamera implements IObserver {
             break;
         case CAMERA_CENTER:
             diverted = false;
+            break;
+        case GO_TO_OBJECT_CMD:
+            if (this.focus != null) {
+                // Position camera near focus
+                stopTotalMovement();
+                float dst = this.focus.size * 3;
+                pos.set(this.focus.pos);
+                CelestialBody fc = this.focus;
+                while (fc.parent != null && fc.parent instanceof CelestialBody) {
+                    fc = (CelestialBody) fc.parent;
+                    pos.add(fc.pos);
+                }
+                pos.add(0, 0, -dst);
+                posinv.set(pos).scl(-1d);
+                direction.set(0, 0, 1);
+
+            }
             break;
         default:
             break;
