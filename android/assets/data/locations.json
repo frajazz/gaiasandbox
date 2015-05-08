@@ -1,139 +1,10 @@
 {"objects" : [
-
-	{
-		"parent" : "Earth", 
-		"impl" : "gaia.cu9.ari.gaiaorbit.scenegraph.Loc",
-		"ct"   : Others,		
-		"name" : "North America",	
-		"location" : [-105.0, 40.0],
-		"size" : 40
-	},
-	{
-		"parent" : "Earth", 
-		"impl" : "gaia.cu9.ari.gaiaorbit.scenegraph.Loc",
-		"ct"   : Others,			
-		"name" : "South America",				
-		"location" : [-60.0, -10.0],
-		"size" : 40
-	},
-	{
-		"parent" : "Earth", 
-		"impl" : "gaia.cu9.ari.gaiaorbit.scenegraph.Loc",
-		"ct"   : Others,
-		"name" : "Europe",				
-		"location" : [0.0, 50.0],
-		"size" : 40
-	},
-	{
-		"parent" : "Earth", 
-		"impl" : "gaia.cu9.ari.gaiaorbit.scenegraph.Loc",
-		"ct"   : Others,
-		"name" : "Asia",				
-		"location" : [70.0, 40.0],
-		"size" : 50
-	},
-	{
-		"parent" : "Earth", 
-		"impl" : "gaia.cu9.ari.gaiaorbit.scenegraph.Loc",
-		"ct"   : Others,
-		"name" : "Africa",				
-		"location" : [20.0, 5.0],
-		"size" : 50
-	},
-	{
-		"parent" : "Earth", 
-		"impl" : "gaia.cu9.ari.gaiaorbit.scenegraph.Loc",
-		"ct"   : Others,
-		"name" : "Oceania",				
-		"location" : [135.0, -25.0],
-		"size" : 25
-	},
-	{
-		"parent" : "Earth", 
-		"impl" : "gaia.cu9.ari.gaiaorbit.scenegraph.Loc",
-		"ct"   : Others,
-		"name" : "Antartica",				
-		"location" : [0.0, -90.0],
-		"size" : 30
-	},
-	{
-		"parent" : "Earth", 
-		"impl" : "gaia.cu9.ari.gaiaorbit.scenegraph.Loc",
-		"ct"   : Others,
-		"name" : "North Atlantic Ocean",				
-		"location" : [-45.0, 40.0],
-		"size" : 20
-	},
-	{
-		"parent" : "Earth", 
-		"impl" : "gaia.cu9.ari.gaiaorbit.scenegraph.Loc",
-		"ct"   : Others,
-		"name" : "South Atlantic Ocean",				
-		"location" : [-15.0, -15.0],
-		"size" : 20
-	},
-	{
-		"parent" : "Earth", 
-		"impl" : "gaia.cu9.ari.gaiaorbit.scenegraph.Loc",
-		"ct"   : Others,
-		"name" : "North Pacific Ocean",				
-		"location" : [180.0, 30.0],
-		"size" : 20
-	},
-	{
-		"parent" : "Earth", 
-		"impl" : "gaia.cu9.ari.gaiaorbit.scenegraph.Loc",
-		"ct"   : Others,
-		"name" : "South Pacific Ocean",				
-		"location" : [-160.0, -10.0],
-		"size" : 20
-	},
-	{
-		"parent" : "Earth", 
-		"impl" : "gaia.cu9.ari.gaiaorbit.scenegraph.Loc",
-		"ct"   : Others,
-		"name" : "Indian Ocean",				
-		"location" : [75.0, -15.0],
-		"size" : 20
-	},
-	{
-		"parent" : "Earth", 
-		"impl" : "gaia.cu9.ari.gaiaorbit.scenegraph.Loc",
-		"ct"   : Others,
-		"name" : "Arctic Ocean",				
-		"location" : [0.0, 90.0],
-		"size" : 20
-	},
-	{
-		"parent" : "Earth", 
-		"impl" : "gaia.cu9.ari.gaiaorbit.scenegraph.Loc",
-		"ct"   : Others,
-		"name" : "Kourou (Gaia launch site)",				
-		"location" : [-52.6509798, 5.1628814],
-		"size" : 7
-	},
-	{
-		"parent" : "Earth", 
-		"impl" : "gaia.cu9.ari.gaiaorbit.scenegraph.Loc",
-		"ct"   : Others,
-		"name" : "ESOC (European Space Operations Center)",				
-		"location" : [8.5898778, 49.8256097],
-		"size" : 7
-	},
-	{
-		"parent" : "Earth", 
-		"impl" : "gaia.cu9.ari.gaiaorbit.scenegraph.Loc",
-		"ct"   : Others,
-		"name" : "ESAC (European Space Astronomy Center)",				
-		"location" : [-3.952696, 40.444211],
-		"size" : 7
-	},
 	{
 		"parent" : "Gaia", 
 		"impl" : "gaia.cu9.ari.gaiaorbit.scenegraph.Loc",
 		"ct"   : Others,
-		"name" : "FoV1",				
-		"location" : [-30.0, 57.0],
+		"name" : "FoV2",				
+		"location" : [141.0, 62.0],
 		"size" : 0.00003,
 		"distFactor" : 0.55
 	},
@@ -141,8 +12,8 @@
 		"parent" : "Gaia", 
 		"impl" : "gaia.cu9.ari.gaiaorbit.scenegraph.Loc",
 		"ct"   : Others,
-		"name" : "FoV2",				
-		"location" : [35.0, 57.0],
+		"name" : "FoV1",				
+		"location" : [35.0, 62.0],
 		"size" : 0.00003,
 		"distFactor" : 0.55
 	},
@@ -155,5 +26,4 @@
 		"size" : 0.00003,
 		"distFactor" : 0.1
 	}
-
 ]}

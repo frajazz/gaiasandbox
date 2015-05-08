@@ -16,7 +16,7 @@ import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.math.Vector3;
 
 public class Loc extends AbstractPositionEntity implements I3DTextRenderable {
-    private static final float LOWER_LIMIT = 5e-4f;
+    private static final float LOWER_LIMIT = 3e-4f;
     private static final float UPPER_LIMIT = 3e-3f;
 
     /** Longitude and latitude **/
@@ -66,7 +66,7 @@ public class Loc extends AbstractPositionEntity implements I3DTextRenderable {
         // Latitude [-90..90]
         location3d.rotate(location.y, 1, 0, 0);
         // Longitude [0..360]
-        location3d.rotate(location.x + (float) ((ModelBody) parent).rc.meridianAngle / 2, 0, 1, 0);
+        location3d.rotate(location.x + 90, 0, 1, 0);
 
         location3d.mul(localTransform);
 
