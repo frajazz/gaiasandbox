@@ -633,19 +633,19 @@ public class Gui implements IObserver {
             }
             break;
         case PACE_CHANGED_INFO:
-            double newpace = (double) data[0];
-            if (((Double) pace.getValue()).doubleValue() != newpace) {
-                pace.setValue(newpace);
+            Double newPace = (Double) data[0];
+            if (((Double) pace.getValue()).doubleValue() != newPace) {
+                pace.setValue(newPace);
             }
             break;
         case FOCUS_LOCK_CMD:
-            boolean newlock = (boolean) data[1];
-            boolean iface = false;
+            Boolean L = (Boolean) data[1];
+            Boolean iFace = false;
             if (data.length > 2) {
-                iface = (boolean) data[2];
+                iFace = (Boolean) data[2];
             }
-            if (!iface && lockCameraCheckbox.isSelected() != newlock) {
-                lockCameraCheckbox.setSelected(newlock);
+            if (!iFace && lockCameraCheckbox.isSelected() != L) {
+                lockCameraCheckbox.setSelected(L);
             }
             break;
         case FULLSCREEN_CMD:
