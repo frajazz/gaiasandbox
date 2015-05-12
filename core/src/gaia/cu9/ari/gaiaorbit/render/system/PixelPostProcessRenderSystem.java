@@ -1,5 +1,11 @@
 package gaia.cu9.ari.gaiaorbit.render.system;
 
+import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.graphics.Pixmap.Format;
+import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.graphics.glutils.FrameBuffer;
+import com.badlogic.gdx.utils.viewport.Viewport;
+import com.bitfire.postprocessing.PostProcessor;
 import gaia.cu9.ari.gaiaorbit.event.EventManager;
 import gaia.cu9.ari.gaiaorbit.event.Events;
 import gaia.cu9.ari.gaiaorbit.event.IObserver;
@@ -13,13 +19,6 @@ import gaia.cu9.ari.gaiaorbit.util.GlobalResources;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
-import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.graphics.Pixmap.Format;
-import com.badlogic.gdx.graphics.Texture;
-import com.badlogic.gdx.graphics.glutils.FrameBuffer;
-import com.badlogic.gdx.utils.viewport.Viewport;
-import com.bitfire.postprocessing.PostProcessor;
 
 public abstract class PixelPostProcessRenderSystem extends PixelRenderSystem implements IObserver {
 
@@ -59,6 +58,7 @@ public abstract class PixelPostProcessRenderSystem extends PixelRenderSystem imp
                 rc.ppb.captureEnd();
             }
 
+            pp.rebind();
             // Capture bloom
             pp.capture();
 

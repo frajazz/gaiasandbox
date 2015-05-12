@@ -37,9 +37,9 @@ void main() {
     gl_Position = u_projModelView * vec4(pos, 0.0);
     
     if(viewAngleApparent > a_thAnglePoint * 2.0){
-	v_col = vec4(0.0);
+        v_col = vec4(0.0);
     }else{
-	v_col = vec4(a_color.rgb, opacity * u_alpha);
+        v_col = vec4(a_color.rgb, opacity * u_alpha);
     }
     gl_PointSize = 1.0;
 }

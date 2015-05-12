@@ -14,7 +14,7 @@ void main(void){
     float alpha = smoothstep(0.5 - smoothing, 0.5 + smoothing, dist);
     float aa = alpha * v_opacity * u_opacity;
     if (aa < 0.02)
-	discard;
+	    discard;
 
     gl_FragColor = vec4(v_color.rgb, aa);
 }
