@@ -41,6 +41,7 @@
 # Output folder #
 #################
 releases/
+out/
 
 # All gen and bin  folders #
 ############################
