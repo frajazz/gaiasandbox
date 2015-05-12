@@ -55,3 +55,8 @@ out/
 # Python pickled_dict #
 #######################
 pickled_dict
+
+# IDE files #
+#############
+**.iml
+**/.idea
