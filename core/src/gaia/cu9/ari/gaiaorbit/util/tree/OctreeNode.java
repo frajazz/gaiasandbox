@@ -282,7 +282,7 @@ public class OctreeNode<T extends IPosition> implements ILineRenderable {
 
     @Override
     public void render(Object... params) {
-        render((ImmediateModeRenderer20) params[0], (Float) params[1]);
+        render((LineRenderSystem) params[0], (ICamera) params[1], (Float) params[2]);
     }
 
     @Override
