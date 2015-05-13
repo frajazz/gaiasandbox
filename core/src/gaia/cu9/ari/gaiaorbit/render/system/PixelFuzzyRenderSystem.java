@@ -40,10 +40,10 @@ public class PixelFuzzyRenderSystem extends PixelPostProcessRenderSystem impleme
                 distortionList = new ArrayList<GravitationalDistortion>(4);
             }
             distortionList.add(distortion);
-            distortion.setEnabled(true);
+            distortion.setEnabled(false);
 
             // Enable post processor
-            pp.setEnabled(false);
+            pp.setEnabled(true);
 
             ppmap.put(key, pp);
         }
