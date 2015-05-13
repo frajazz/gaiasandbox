@@ -23,8 +23,6 @@ import com.badlogic.gdx.graphics.glutils.ImmediateModeRenderer;
  */
 public class Particle extends CelestialBody implements IPointRenderable {
 
-    private static final float TH_ANGLE_POINT = (float) Math.toRadians(2e-7f);
-    private static final float TH_ANGLE_NONE = 0;
     private static ThreadLocal<Random> rnd = new ThreadLocal<Random>() {
         @Override
         public Random initialValue() {
@@ -34,17 +32,17 @@ public class Particle extends CelestialBody implements IPointRenderable {
 
     @Override
     public double THRESHOLD_ANGLE_NONE() {
-        return TH_ANGLE_NONE;
+        return (float)GlobalConf.scene.STAR_TH_ANGLE_NONE;
     }
 
     @Override
     public double THRESHOLD_ANGLE_POINT() {
-        return TH_ANGLE_POINT;
+        return (float) GlobalConf.scene.STAR_TH_ANGLE_POINT;
     }
 
     @Override
     public double THRESHOLD_ANGLE_QUAD() {
-        return 0;
+        return (float) GlobalConf.scene.STAR_TH_ANGLE_QUAD;
     }
 
     double computedSize;
@@ -113,7 +111,7 @@ public class Particle extends CelestialBody implements IPointRenderable {
         setRGB(colorbv);
 
         // Calculate size
-        size = (float) Math.min((Math.pow(flux, 0.5f) * Constants.PC_TO_U * 0.16f), 1e8f);
+        size = (float) Math.min((Math.pow(flux, 0.5f) * Constants.PC_TO_U * 0.1f), 1e7f);
     }
 
     @Override
