@@ -6,6 +6,10 @@
 
 **Implemented enhancements:**
 
+- Add new Ceres texture from Dawn spacecraft [\#30](https://github.com/ari-zah/gaiasandbox/issues/30)
+
+- New command to travel to focus object instantly [\#29](https://github.com/ari-zah/gaiasandbox/issues/29)
+
 - Support for location info [\#28](https://github.com/ari-zah/gaiasandbox/issues/28)
 
 ## [0.706b](https://github.com/ari-zah/gaiasandbox/tree/0.706b) (2015-05-05)
