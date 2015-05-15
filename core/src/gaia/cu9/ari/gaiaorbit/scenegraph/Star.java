@@ -117,7 +117,7 @@ public class Star extends Particle {
 
     @Override
     public void render(ModelBatch modelBatch, float alpha) {
-        mc.setTransparency(alpha * opacity);
+        mc.setTransparency(alpha);
         ((ColorAttribute) mc.env.get(ColorAttribute.AmbientLight)).color.set(cc[0], cc[1], cc[2], 1f);
         ((FloatAttribute) mc.env.get(FloatAttribute.Shininess)).value = TimeUtils.getRunningTimeSecs();
         // Local transform

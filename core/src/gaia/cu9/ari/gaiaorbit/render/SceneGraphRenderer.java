@@ -1,5 +1,6 @@
 package gaia.cu9.ari.gaiaorbit.render;
 
+import com.bitfire.utils.ShaderLoader;
 import gaia.cu9.ari.gaiaorbit.event.EventManager;
 import gaia.cu9.ari.gaiaorbit.event.Events;
 import gaia.cu9.ari.gaiaorbit.event.IObserver;
@@ -163,6 +164,7 @@ public class SceneGraphRenderer extends AbstractRenderer implements IProcessRend
 
     @Override
     public void initialize(AssetManager manager) {
+        ShaderLoader.Pedantic = false;
         ShaderProgram.pedantic = false;
         starShader = new ShaderProgram(Gdx.files.internal("shader/star.vertex.glsl"), Gdx.files.internal("shader/star.rays.fragment.glsl"));
         if (!starShader.isCompiled()) {

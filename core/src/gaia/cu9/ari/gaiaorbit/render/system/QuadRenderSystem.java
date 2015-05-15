@@ -41,7 +41,6 @@ public class QuadRenderSystem extends AbstractRenderSystem implements IObserver 
      * @param priority The priority of the component.
      * @param alphas The alphas list.
      * @param shaderProgram The shader program to render the quad with.
-     * @param mesh The mesh.
      * @param useStarColorTransit Whether to use the star color transit or not.
      */
     public QuadRenderSystem(RenderGroup rg, int priority, float[] alphas, ShaderProgram shaderProgram, boolean useStarColorTransit) {

@@ -32,11 +32,11 @@ void main() {
     
     
     // opacity *= MathUtilsd.lint(viewAngleApparent, 0, THRESHOLD_ANGLE_POINT(), GlobalConf.scene.POINT_ALPHA_MIN, GlobalConf.scene.POINT_ALPHA_MAX);
-    float opacity = lint(viewAngleApparent, 0, a_thAnglePoint, u_pointAlphaMin, u_pointAlphaMax);
+    float opacity = pow(lint(viewAngleApparent, 0, a_thAnglePoint, u_pointAlphaMin, u_pointAlphaMax), 1.0);
     
     gl_Position = u_projModelView * vec4(pos, 0.0);
-    
-    if(viewAngleApparent > a_thAnglePoint * 2.0){
+
+    if(viewAngleApparent > a_thAnglePoint * 10.0){
         v_col = vec4(0.0);
     }else{
         v_col = vec4(a_color.rgb, opacity * u_alpha);

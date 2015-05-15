@@ -23,6 +23,8 @@ import com.badlogic.gdx.graphics.glutils.ImmediateModeRenderer;
  */
 public class Particle extends CelestialBody implements IPointRenderable {
 
+    private static final float DISC_FACTOR = 1.5f;
+
     private static ThreadLocal<Random> rnd = new ThreadLocal<Random>() {
         @Override
         public Random initialValue() {
@@ -111,7 +113,7 @@ public class Particle extends CelestialBody implements IPointRenderable {
         setRGB(colorbv);
 
         // Calculate size
-        size = (float) Math.min((Math.pow(flux, 0.5f) * Constants.PC_TO_U * 0.16f), 1e8f);
+        size = (float) Math.min((Math.pow(flux, 0.5f) * Constants.PC_TO_U * 0.16f), 1e8f) / DISC_FACTOR;
     }
 
     @Override
@@ -203,7 +205,7 @@ public class Particle extends CelestialBody implements IPointRenderable {
 
     @Override
     public float getInnerRad() {
-        return 0.04f;
+        return 0.04f * DISC_FACTOR;
     }
 
     @Override

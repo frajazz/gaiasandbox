@@ -1,18 +1,26 @@
 attribute vec4 a_position;
-attribute vec4 a_color;
 attribute vec2 a_texCoord0;
 
 uniform mat4 u_projTrans;
+uniform vec4 u_color;
 uniform vec4 u_quaternion;
 uniform vec3 u_pos;
 uniform float u_size;
+uniform float u_apparent_angle;
+uniform float u_th_angle_point;
 
 varying vec4 v_color;
 varying vec2 v_texCoords;
 
+float lint(float x, float x0, float x1, float y0, float y1) {
+    return mix(y0, y1, (x - x0) / (x1 - x0));
+}
+
 void main()
 {
-   v_color = a_color;
+   float alpha = min(1.0, lint(u_apparent_angle, u_th_angle_point, u_th_angle_point * 4.0, 0.0, 1.0));
+
+   v_color = vec4(u_color.rgb, u_color.a * alpha);
    v_texCoords = a_texCoord0;
    vec4 vertex = a_position;
    
