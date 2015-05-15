@@ -111,7 +111,7 @@ public class Particle extends CelestialBody implements IPointRenderable {
         setRGB(colorbv);
 
         // Calculate size
-        size = (float) Math.min((Math.pow(flux, 0.5f) * Constants.PC_TO_U * 0.1f), 1e7f);
+        size = (float) Math.min((Math.pow(flux, 0.5f) * Constants.PC_TO_U * 0.16f), 1e8f);
     }
 
     @Override

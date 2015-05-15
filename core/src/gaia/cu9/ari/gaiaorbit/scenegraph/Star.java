@@ -97,15 +97,15 @@ public class Star extends Particle {
                     }
                     // Check Sol position for gravity distortion
 
-                    if (this.name.equalsIgnoreCase("sol")) {
-                        // We have the closest shader star
-                        Vector3 aux = auxVector3f.get();
-                        camera.getCamera().project(aux.set(transform.getTranslationf()));
-                        float x = aux.x;
-                        float y = aux.y;
-
-                        EventManager.instance.post(Events.GRAVITATIONAL_LENSING_PARAMS, x, y);
-                    }
+//                    if (this.name.equalsIgnoreCase("sol")) {
+//                        // We have the closest shader star
+//                        Vector3 aux = auxVector3f.get();
+//                        camera.getCamera().project(aux.set(transform.getTranslationf()));
+//                        float x = aux.x;
+//                        float y = aux.y;
+//
+//                        EventManager.instance.post(Events.GRAVITATIONAL_LENSING_PARAMS, x, y);
+//                    }
                 }
             }
             if (renderText()) {
