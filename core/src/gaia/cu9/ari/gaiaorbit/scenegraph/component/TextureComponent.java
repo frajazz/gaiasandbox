@@ -27,6 +27,7 @@ public class TextureComponent {
     protected static final TextureParameter textureParams;
     static {
         textureParams = new TextureParameter();
+        textureParams.genMipMaps = true;
         textureParams.magFilter = TextureFilter.Linear;
         textureParams.minFilter = TextureFilter.Linear;
     }

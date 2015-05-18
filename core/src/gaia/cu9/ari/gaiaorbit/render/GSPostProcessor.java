@@ -82,6 +82,7 @@ public class GSPostProcessor implements IPostProcessor, IObserver {
         // ANTIALIAS
         if (GlobalConf.postprocess.POSTPROCESS_ANTIALIAS == -1) {
             ppb.antialiasing = new Fxaa(width, height);
+            ((Fxaa)ppb.antialiasing).setSpanMax(2f);
         } else {
             ppb.antialiasing = new Nfaa(width, height);
         }

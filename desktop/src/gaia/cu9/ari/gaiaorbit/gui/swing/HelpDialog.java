@@ -1,5 +1,6 @@
 package gaia.cu9.ari.gaiaorbit.gui.swing;
 
+import com.badlogic.gdx.utils.BufferUtils;
 import gaia.cu9.ari.gaiaorbit.gui.swing.components.LinkLabel;
 import gaia.cu9.ari.gaiaorbit.gui.swing.jsplash.GuiUtility;
 import gaia.cu9.ari.gaiaorbit.util.GlobalConf;
@@ -12,6 +13,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.lang.management.ManagementFactory;
 import java.lang.management.MemoryPoolMXBean;
+import java.nio.IntBuffer;
 
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
@@ -221,7 +223,10 @@ public class HelpDialog extends I18nJFrame {
         aux.setFont(boldFont);
         opengl.add(aux);
         String glExtensionsString = Gdx.gl.glGetString(GL20.GL_EXTENSIONS).replace(' ', '\n');
-        JTextArea glExtensions = new JTextArea(glExtensionsString);
+        IntBuffer buf = BufferUtils.newIntBuffer(16);
+        Gdx.gl.glGetIntegerv(Gdx.graphics.getGL20().GL_MAX_TEXTURE_SIZE, buf);
+        int maxSize = buf.get(0);
+        JTextArea glExtensions = new JTextArea("Max texture size: " + maxSize + "\n" + glExtensionsString);
         JScrollPane glExtensionsScroll = new JScrollPane(glExtensions);
         glExtensionsScroll.setPreferredSize(new Dimension(300, 80));
         glExtensions.setEditable(false);

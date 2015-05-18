@@ -137,9 +137,9 @@
 						"texture" : {
 									"base" : "data/tex/earth.jpg",
 									"hires" : "data/tex/earth-8k.jpg",
-									"specular" : "data/tex/earth-specular.jpg",
+									"specular" : "data/tex/earth-specular-4k.jpg",
 									"normal" : "data/tex/earth-normal-4k.jpg",
-									"night" : "data/tex/earth-night-2k.jpg"
+									"night" : "data/tex/earth-night-4k.jpg"
 									}
 						},
 									
