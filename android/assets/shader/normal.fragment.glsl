@@ -236,14 +236,13 @@ void main() {
     #endif // environmentCubemapFlag
 
     #ifdef shadowMapFlag
-	vec3 dayColor = (v_lightCol * diffuse.rgb) * NL * getShadow() + (ambient * diffuse.rgb) * (1.0 - NL);
-	vec3 nightColor = (v_lightCol * night.rgb) * (1.0 - NL) * getShadow();
-	gl_FragColor = vec4(dayColor + nightColor, diffuse.a * v_opacity);
+        vec3 dayColor = (v_lightCol * diffuse.rgb) * NL * getShadow() + (ambient * diffuse.rgb) * (1.0 - NL);
+        vec3 nightColor = (v_lightCol * night.rgb) * max(0.0, (0.6 - NL)) * getShadow();
+        gl_FragColor = vec4(dayColor + nightColor, diffuse.a * v_opacity);
     #else
-	vec3 dayColor = (v_lightCol * diffuse.rgb) * NL
-		+ (ambient * diffuse.rgb) * (1.0 - NL);
-	vec3 nightColor = (v_lightCol * night.rgb) * (0.7 - NL);
-	gl_FragColor = vec4(dayColor + nightColor, diffuse.a * v_opacity);
+        vec3 dayColor = (v_lightCol * diffuse.rgb) * NL + (ambient * diffuse.rgb) * (1.0 - NL);
+        vec3 nightColor = (v_lightCol * night.rgb) * max(0.0, (0.6 - NL));
+        gl_FragColor = vec4(dayColor + nightColor, diffuse.a * v_opacity);
     #endif // shadowMapFlag
 
     gl_FragColor.rgb += selfShadow * spec * specular;
