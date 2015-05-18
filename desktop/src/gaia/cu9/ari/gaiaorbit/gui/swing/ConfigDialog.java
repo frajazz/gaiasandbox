@@ -74,7 +74,6 @@ import javax.swing.event.ChangeListener;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 
-import javafx.scene.control.ComboBox;
 import net.miginfocom.swing.MigLayout;
 
 import com.alee.extended.filechooser.WebDirectoryChooser;
