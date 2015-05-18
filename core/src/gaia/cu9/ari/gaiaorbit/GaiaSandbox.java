@@ -42,9 +42,7 @@ import gaia.cu9.ari.gaiaorbit.util.concurrent.ThreadIndexer;
 import gaia.cu9.ari.gaiaorbit.util.concurrent.ThreadPoolManager;
 import gaia.cu9.ari.gaiaorbit.util.math.MathUtilsd;
 import gaia.cu9.ari.gaiaorbit.util.math.Vector3d;
-import gaia.cu9.ari.gaiaorbit.util.screenshot.BasicFileImageRenderer;
-import gaia.cu9.ari.gaiaorbit.util.screenshot.BufferedFileImageRenderer;
-import gaia.cu9.ari.gaiaorbit.util.screenshot.IFileImageRenderer;
+import gaia.cu9.ari.gaiaorbit.util.screenshot.*;
 import gaia.cu9.ari.gaiaorbit.util.time.GlobalClock;
 import gaia.cu9.ari.gaiaorbit.util.tree.OctreeNode;
 
@@ -387,22 +385,35 @@ public class GaiaSandbox implements ApplicationListener, IObserver {
                 update(Gdx.graphics.getDeltaTime());
 
                 /**
-                 * RENDER
+                 * FRAME OUTPUT
                  */
-
-                /* FRAME OUTPUT */
                 if (GlobalConf.frame.RENDER_OUTPUT) {
                     renderToImage(cam, pp.getPostProcessBean(RenderType.frame), GlobalConf.frame.RENDER_WIDTH, GlobalConf.frame.RENDER_HEIGHT, GlobalConf.frame.RENDER_FOLDER, GlobalConf.frame.RENDER_FILE_NAME, frameRenderer);
                 }
 
-                /* SCREENSHOT OUTPUT */
+                /**
+                 * SCREENSHOT OUTPUT - simple|redraw mode
+                 */
                 if (screenshot.active) {
-                    String file = renderToImage(cam, pp.getPostProcessBean(RenderType.screenshot), screenshot.width, screenshot.height, screenshot.folder, ScreenshotCmd.FILENAME, screenshotRenderer);
-                    screenshot.active = false;
-                    EventManager.instance.post(Events.SCREENSHOT_INFO, file);
+                    String file = null;
+                    switch (GlobalConf.screenshot.SCREENSHOT_MODE) {
+                    case simple:
+                        file = ImageRenderer.renderToImageGl20(screenshot.folder, ScreenshotCmd.FILENAME, Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
+                        break;
+                    case redraw:
+                        file = renderToImage(cam, pp.getPostProcessBean(RenderType.screenshot), screenshot.width, screenshot.height, screenshot.folder, ScreenshotCmd.FILENAME, screenshotRenderer);
+                        break;
+                    }
+                    if(file != null) {
+                        screenshot.active = false;
+                        EventManager.instance.post(Events.SCREENSHOT_INFO, file);
+                    }
+
                 }
 
-                /* SCREEN OUTPUT */
+                /**
+                 * SCREEN OUTPUT
+                 */
                 if (GlobalConf.screen.SCREEN_OUTPUT) {
                     /** RENDER THE SCENE **/
                     preRenderScene();
@@ -413,6 +424,7 @@ public class GaiaSandbox implements ApplicationListener, IObserver {
                         gui.getGuiStage().getViewport().apply();
                         gui.render();
                     }
+
                 }
 
                 sgr.clearLists();
@@ -469,7 +481,7 @@ public class GaiaSandbox implements ApplicationListener, IObserver {
      * @param height The height of the image.
      * @param folder The folder to save the image to.
      * @param filename The file name prefix.
-     * @param synchronous Whether to write the image synchronously so that the function blocks until it finishes.
+     * @param renderer the {@link IFileImageRenderer} to use.
      * @return
      */
     public String renderToImage(ICamera camera, PostProcessBean ppb, int width, int height, String folder, String filename, IFileImageRenderer renderer) {
@@ -522,7 +534,6 @@ public class GaiaSandbox implements ApplicationListener, IObserver {
 
     /**
      * Renders the loading screen
-     * @param g
      */
     private void renderLoadingScreen() {
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT | GL20.GL_DEPTH_BUFFER_BIT);

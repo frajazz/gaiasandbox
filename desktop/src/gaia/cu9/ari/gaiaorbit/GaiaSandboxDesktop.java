@@ -11,6 +11,7 @@ import gaia.cu9.ari.gaiaorbit.interfce.KeyMappings;
 import gaia.cu9.ari.gaiaorbit.util.GlobalConf;
 import gaia.cu9.ari.gaiaorbit.util.I18n;
 import gaia.cu9.ari.gaiaorbit.util.Logger;
+import gaia.cu9.ari.gaiaorbit.util.SysUtils;
 import gaia.cu9.ari.gaiaorbit.util.math.MathUtilsd;
 
 import java.awt.Font;
@@ -240,7 +241,7 @@ public class GaiaSandboxDesktop implements IObserver {
 
     private static String initConfigFile(boolean ow) throws IOException {
         // Use user folder
-        File userFolder = new File(System.getProperty("user.home") + File.separator + ".gaiasandbox" + File.separator);
+        File userFolder = SysUtils.getGSHomeDir();
         userFolder.mkdirs();
         File userFolderConfFile = new File(userFolder, "global.properties");
 

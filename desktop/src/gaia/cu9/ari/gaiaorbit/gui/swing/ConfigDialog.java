@@ -74,6 +74,7 @@ import javax.swing.event.ChangeListener;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 
+import javafx.scene.control.ComboBox;
 import net.miginfocom.swing.MigLayout;
 
 import com.alee.extended.filechooser.WebDirectoryChooser;
@@ -268,21 +269,21 @@ public class ConfigDialog extends I18nJFrame {
         msaaInfo.setForeground(darkgreen);
         msaaInfo.setEditable(false);
 
-        ThreadComboBoxBean[] aas = new ThreadComboBoxBean[] { new ThreadComboBoxBean(txt("gui.aa.no"), 0), new ThreadComboBoxBean(txt("gui.aa.fxaa"), -1), new ThreadComboBoxBean(txt("gui.aa.nfaa"), -2), new ThreadComboBoxBean(txt("gui.aa.msaa", 2), 2), new ThreadComboBoxBean(txt("gui.aa.msaa", 4), 4), new ThreadComboBoxBean(txt("gui.aa.msaa", 8), 8), new ThreadComboBoxBean(txt("gui.aa.msaa", 16), 16) };
-        final JComboBox<ThreadComboBoxBean> msaa = new JComboBox<ThreadComboBoxBean>(aas);
+        ComboBoxBean[] aas = new ComboBoxBean[] { new ComboBoxBean(txt("gui.aa.no"), 0), new ComboBoxBean(txt("gui.aa.fxaa"), -1), new ComboBoxBean(txt("gui.aa.nfaa"), -2), new ComboBoxBean(txt("gui.aa.msaa", 2), 2), new ComboBoxBean(txt("gui.aa.msaa", 4), 4), new ComboBoxBean(txt("gui.aa.msaa", 8), 8), new ComboBoxBean(txt("gui.aa.msaa", 16), 16) };
+        final JComboBox<ComboBoxBean> msaa = new JComboBox<ComboBoxBean>(aas);
         msaa.setSelectedItem(aas[idxAa(2, GlobalConf.postprocess.POSTPROCESS_ANTIALIAS)]);
 
         // Vsync
         final JCheckBox vsync = new JCheckBox(txt("gui.vsync"), GlobalConf.screen.VSYNC);
 
         // Pixel renderer
-        ThreadComboBoxBean[] pixelRenderers = new ThreadComboBoxBean[] { new ThreadComboBoxBean(txt("gui.pixrenderer.normal"), 0), new ThreadComboBoxBean(txt("gui.pixrenderer.bloom"), 1), new ThreadComboBoxBean(txt("gui.pixrenderer.fuzzy"), 2) };
-        final JComboBox<ThreadComboBoxBean> pixelRenderer = new JComboBox<ThreadComboBoxBean>(pixelRenderers);
+        ComboBoxBean[] pixelRenderers = new ComboBoxBean[] { new ComboBoxBean(txt("gui.pixrenderer.normal"), 0), new ComboBoxBean(txt("gui.pixrenderer.bloom"), 1), new ComboBoxBean(txt("gui.pixrenderer.fuzzy"), 2) };
+        final JComboBox<ComboBoxBean> pixelRenderer = new JComboBox<ComboBoxBean>(pixelRenderers);
         pixelRenderer.setSelectedItem(pixelRenderers[GlobalConf.scene.PIXEL_RENDERER]);
 
         // Line renderer
-        ThreadComboBoxBean[] lineRenderers = new ThreadComboBoxBean[] { new ThreadComboBoxBean(txt("gui.linerenderer.normal"), 0), new ThreadComboBoxBean(txt("gui.linerenderer.quad"), 1) };
-        final JComboBox<ThreadComboBoxBean> lineRenderer = new JComboBox<ThreadComboBoxBean>(lineRenderers);
+        ComboBoxBean[] lineRenderers = new ComboBoxBean[] { new ComboBoxBean(txt("gui.linerenderer.normal"), 0), new ComboBoxBean(txt("gui.linerenderer.quad"), 1) };
+        final JComboBox<ComboBoxBean> lineRenderer = new JComboBox<ComboBoxBean>(lineRenderers);
         lineRenderer.setSelectedItem(lineRenderers[GlobalConf.scene.LINE_RENDERER]);
 
         // AA
@@ -384,12 +385,12 @@ public class ConfigDialog extends I18nJFrame {
         multithread.setBorder(new TitledBorder(new MatteBorder(new Insets(thick, 0, 0, 0), bcol), txt("gui.multithreading"), just, pos));
 
         int maxthreads = Runtime.getRuntime().availableProcessors();
-        ThreadComboBoxBean[] cbs = new ThreadComboBoxBean[maxthreads + 1];
-        cbs[0] = new ThreadComboBoxBean(txt("gui.letdecide"), 0);
+        ComboBoxBean[] cbs = new ComboBoxBean[maxthreads + 1];
+        cbs[0] = new ComboBoxBean(txt("gui.letdecide"), 0);
         for (i = 1; i <= maxthreads; i++) {
-            cbs[i] = new ThreadComboBoxBean(txt("gui.thread", i), i);
+            cbs[i] = new ComboBoxBean(txt("gui.thread", i), i);
         }
-        final JComboBox<ThreadComboBoxBean> numThreads = new JComboBox<ThreadComboBoxBean>(cbs);
+        final JComboBox<ComboBoxBean> numThreads = new JComboBox<ComboBoxBean>(cbs);
         numThreads.setSelectedIndex(GlobalConf.performance.NUMBER_THREADS);
 
         final JCheckBox multithreadCb = new JCheckBox(txt("gui.thread.enable"));
@@ -476,15 +477,12 @@ public class ConfigDialog extends I18nJFrame {
             dirText = GlobalConf.screenshot.SCREENSHOT_FOLDER;
         }
         final WebButton screenshotsLocation = new WebButton(dirText);
-        screenshotsLocation.addActionListener(new ActionListener()
-        {
+        screenshotsLocation.addActionListener(new ActionListener() {
             private WebDirectoryChooser directoryChooser = null;
 
             @Override
-            public void actionPerformed(ActionEvent e)
-            {
-                if (directoryChooser == null)
-                {
+            public void actionPerformed(ActionEvent e) {
+                if (directoryChooser == null) {
                     directoryChooser = new WebDirectoryChooser(frame, txt("gui.directory.chooseany"));
                     // Increase scrollbar speed
                     JScrollPane wsp = (JScrollPane) ((Container) ((Container) ((Container) ((Container) ((Container) directoryChooser.getComponents()[0]).getComponents()[1]).getComponents()[0]).getComponents()[0]).getComponents()[1]).getComponents()[1];
@@ -496,8 +494,7 @@ public class ConfigDialog extends I18nJFrame {
                 }
                 directoryChooser.setVisible(true);
 
-                if (directoryChooser.getResult() == DialogOptions.OK_OPTION)
-                {
+                if (directoryChooser.getResult() == DialogOptions.OK_OPTION) {
                     File file = directoryChooser.getSelectedDirectory();
                     screenshotsLocation.setIcon(FileUtils.getFileIcon(file));
                     screenshotsLocation.setText(file.getAbsolutePath());
@@ -509,6 +506,26 @@ public class ConfigDialog extends I18nJFrame {
         final JSpinner sswidthField = new JSpinner(new SpinnerNumberModel(GlobalConf.screenshot.SCREENSHOT_WIDTH, 100, 5000, 1));
         final JSpinner ssheightField = new JSpinner(new SpinnerNumberModel(GlobalConf.screenshot.SCREENSHOT_HEIGHT, 100, 5000, 1));
 
+
+        // SCREENSHOTS MODE
+        ComboBoxBean[] screenshotModes = new ComboBoxBean[] { new ComboBoxBean(txt("gui.screenshots.mode.simple"), 0), new ComboBoxBean(txt("gui.screenshots.mode.redraw"), 1) };
+        final JComboBox<ComboBoxBean> screenshotsMode = new JComboBox<ComboBoxBean>(screenshotModes);
+        screenshotsMode.addActionListener(new ActionListener(){
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                if(((ComboBoxBean)screenshotsMode.getSelectedItem()).value == 0){
+                    // Simple
+                    sswidthField.setEnabled(false);
+                    ssheightField.setEnabled(false);
+                }else{
+                    // Redraw
+                    sswidthField.setEnabled(true);
+                    ssheightField.setEnabled(true);
+                }
+            }
+        });
+        screenshotsMode.setSelectedItem(screenshotModes[GlobalConf.screenshot.SCREENSHOT_MODE.ordinal()]);
+
         JPanel screenshotSize = new JPanel(new MigLayout("", "[][grow,fill][][grow,fill]", "[][]4[][]"));
         screenshotSize.add(new JLabel(txt("gui.width") + ":"));
         screenshotSize.add(sswidthField);
@@ -518,6 +535,8 @@ public class ConfigDialog extends I18nJFrame {
         screenshots.add(screenshotsInfo, "span,wrap");
         screenshots.add(screenshotsLocationLabel);
         screenshots.add(screenshotsLocation, "wrap");
+        screenshots.add(new JLabel(txt("gui.screenshots.mode")));
+        screenshots.add(screenshotsMode, "wrap");
         screenshots.add(screenshotSize, "span");
 
         JPanel screenshotsPanel = new JPanel(new MigLayout("", "[grow,fill]", ""));
@@ -551,15 +570,12 @@ public class ConfigDialog extends I18nJFrame {
             dirFrameText = GlobalConf.frame.RENDER_FOLDER;
         }
         final WebButton frameLocation = new WebButton(dirFrameText);
-        frameLocation.addActionListener(new ActionListener()
-        {
+        frameLocation.addActionListener(new ActionListener() {
             private WebDirectoryChooser directoryChooser = null;
 
             @Override
-            public void actionPerformed(ActionEvent e)
-            {
-                if (directoryChooser == null)
-                {
+            public void actionPerformed(ActionEvent e) {
+                if (directoryChooser == null) {
                     directoryChooser = new WebDirectoryChooser(frame, txt("gui.directory.chooseany"));
                     // Increase scrollbar speed
                     WebScrollPane wsp = (WebScrollPane) ((Container) ((Container) ((Container) ((Container) ((Container) directoryChooser.getComponents()[0]).getComponents()[1]).getComponents()[0]).getComponents()[0]).getComponents()[1]).getComponents()[1];
@@ -571,8 +587,7 @@ public class ConfigDialog extends I18nJFrame {
                 }
                 directoryChooser.setVisible(true);
 
-                if (directoryChooser.getResult() == DialogOptions.OK_OPTION)
-                {
+                if (directoryChooser.getResult() == DialogOptions.OK_OPTION) {
                     File file = directoryChooser.getSelectedDirectory();
                     frameLocation.setIcon(FileUtils.getFileIcon(file));
                     frameLocation.setText(file.getAbsolutePath());
@@ -703,12 +718,12 @@ public class ConfigDialog extends I18nJFrame {
                     GlobalConf.screen.RESIZABLE = resizable.isSelected();
 
                     // Graphics
-                    ThreadComboBoxBean bean = (ThreadComboBoxBean) msaa.getSelectedItem();
+                    ComboBoxBean bean = (ComboBoxBean) msaa.getSelectedItem();
                     GlobalConf.postprocess.POSTPROCESS_ANTIALIAS = bean.value;
                     GlobalConf.screen.VSYNC = vsync.isSelected();
 
                     // Pixel renderer
-                    bean = (ThreadComboBoxBean) pixelRenderer.getSelectedItem();
+                    bean = (ComboBoxBean) pixelRenderer.getSelectedItem();
                     int oldPx = GlobalConf.scene.PIXEL_RENDERER;
                     GlobalConf.scene.PIXEL_RENDERER = bean.value;
                     if (oldPx != bean.value) {
@@ -717,7 +732,7 @@ public class ConfigDialog extends I18nJFrame {
                     }
 
                     // Line renderer
-                    bean = (ThreadComboBoxBean) lineRenderer.getSelectedItem();
+                    bean = (ComboBoxBean) lineRenderer.getSelectedItem();
                     GlobalConf.scene.LINE_RENDERER = bean.value;
 
                     // Interface
@@ -728,7 +743,7 @@ public class ConfigDialog extends I18nJFrame {
                     GlobalConf.program.UI_THEME = (String) theme.getSelectedItem();
 
                     // Performance
-                    bean = (ThreadComboBoxBean) numThreads.getSelectedItem();
+                    bean = (ComboBoxBean) numThreads.getSelectedItem();
                     GlobalConf.performance.NUMBER_THREADS = bean.value;
                     GlobalConf.performance.MULTITHREADING = multithreadCb.isSelected();
 
@@ -736,6 +751,7 @@ public class ConfigDialog extends I18nJFrame {
                     File ssfile = new File(screenshotsLocation.getText());
                     if (ssfile.exists() && ssfile.isDirectory())
                         GlobalConf.screenshot.SCREENSHOT_FOLDER = ssfile.getAbsolutePath();
+                    GlobalConf.screenshot.SCREENSHOT_MODE = GlobalConf.ScreenshotConf.ScreenshotMode.values()[screenshotsMode.getSelectedIndex()];
                     GlobalConf.screenshot.SCREENSHOT_WIDTH = ((Integer) sswidthField.getValue());
                     GlobalConf.screenshot.SCREENSHOT_HEIGHT = ((Integer) ssheightField.getValue());
 
@@ -830,11 +846,11 @@ public class ConfigDialog extends I18nJFrame {
         return -1;
     }
 
-    private class ThreadComboBoxBean {
+    private class ComboBoxBean {
         public String name;
         public int value;
 
-        public ThreadComboBoxBean(String name, int samples) {
+        public ComboBoxBean(String name, int samples) {
             super();
             this.name = name;
             this.value = samples;

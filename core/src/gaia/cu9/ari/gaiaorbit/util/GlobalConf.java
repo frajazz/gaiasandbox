@@ -8,6 +8,7 @@ import gaia.cu9.ari.gaiaorbit.render.SceneGraphRenderer.ComponentType;
 import gaia.cu9.ari.gaiaorbit.render.system.AbstractRenderSystem;
 import gaia.cu9.ari.gaiaorbit.util.math.MathUtilsd;
 
+import java.io.File;
 import java.io.FileOutputStream;
 import java.io.InputStream;
 import java.net.URL;
@@ -53,22 +54,46 @@ public class GlobalConf {
     }
 
     public static class ScreenshotConf implements IConf {
+        public enum ScreenshotMode{
+            simple,
+            redraw
+        }
+
         public int SCREENSHOT_WIDTH;
         public int SCREENSHOT_HEIGHT;
         public String SCREENSHOT_FOLDER;
+        public ScreenshotMode SCREENSHOT_MODE;
 
         @Override
         public void persist(Properties p) {
             p.setProperty("screenshot.folder", SCREENSHOT_FOLDER);
             p.setProperty("screenshot.width", Integer.toString(SCREENSHOT_WIDTH));
             p.setProperty("screenshot.height", Integer.toString(SCREENSHOT_HEIGHT));
+            p.setProperty("screenshot.mode", SCREENSHOT_MODE.toString());
         }
 
         @Override
         public void initialize(Properties p) {
-            SCREENSHOT_FOLDER = p.getProperty("screenshot.folder").isEmpty() ? System.getProperty("java.io.tmpdir") : p.getProperty("screenshot.folder");
+            String screenshotFolder = null;
+            if(p.getProperty("screenshot.folder").isEmpty() ){
+                File screenshotDir = new File(SysUtils.getGSHomeDir(), "screenshots");
+                screenshotDir.mkdirs();
+                screenshotFolder = screenshotDir.getAbsolutePath();
+            }else{
+                screenshotFolder = p.getProperty("screenshot.folder");
+            }
+            SCREENSHOT_FOLDER = screenshotFolder;
             SCREENSHOT_WIDTH = Integer.parseInt(p.getProperty("screenshot.width"));
             SCREENSHOT_HEIGHT = Integer.parseInt(p.getProperty("screenshot.height"));
+            SCREENSHOT_MODE = ScreenshotMode.valueOf(p.getProperty("screenshot.mode"));
+        }
+
+        public boolean isSimpleMode(){
+            return SCREENSHOT_MODE.equals(ScreenshotMode.simple);
+        }
+
+        public boolean isRedrawMode(){
+            return SCREENSHOT_MODE.equals(ScreenshotMode.redraw);
         }
 
     }
@@ -272,21 +297,30 @@ public class GlobalConf {
 
         @Override
         public void persist(Properties p) {
+
+            p.setProperty("graphics.render.folder", RENDER_FOLDER);
+            p.setProperty("graphics.render.filename", RENDER_FILE_NAME);
             p.setProperty("graphics.render.width", Integer.toString(RENDER_WIDTH));
             p.setProperty("graphics.render.height", Integer.toString(RENDER_HEIGHT));
             p.setProperty("graphics.render.targetfps", Integer.toString(RENDER_TARGET_FPS));
-            p.setProperty("graphics.render.folder", RENDER_FOLDER);
-            p.setProperty("graphics.render.filename", RENDER_FILE_NAME);
             p.setProperty("graphics.render.time", Boolean.toString(RENDER_SCREENSHOT_TIME));
         }
 
         @Override
         public void initialize(Properties p) {
+            String renderFolder = null;
+            if(p.getProperty("graphics.render.folder").isEmpty() ){
+                File framesDir = new File(SysUtils.getGSHomeDir(), "frames");
+                framesDir.mkdirs();
+                renderFolder = framesDir.getAbsolutePath();
+            }else{
+                renderFolder = p.getProperty("graphics.render.folder");
+            }
+            RENDER_FOLDER = renderFolder;
+            RENDER_FILE_NAME = p.getProperty("graphics.render.filename");
             RENDER_WIDTH = Integer.parseInt(p.getProperty("graphics.render.width"));
             RENDER_HEIGHT = Integer.parseInt(p.getProperty("graphics.render.height"));
             RENDER_TARGET_FPS = Integer.parseInt(p.getProperty("graphics.render.targetfps"));
-            RENDER_FOLDER = p.getProperty("graphics.render.folder");
-            RENDER_FILE_NAME = p.getProperty("graphics.render.filename");
             RENDER_SCREENSHOT_TIME = Boolean.parseBoolean(p.getProperty("graphics.render.time"));
         }
 

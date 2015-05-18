@@ -1,7 +1,10 @@
 package gaia.cu9.ari.gaiaorbit.util;
 
+import java.io.File;
+
 /**
  * Wee utility class to check the operating system and the desktop environment.
+ * It also offers retrieval of common system folders.
  * @author Toni Sagrista
  *
  */
@@ -51,4 +54,14 @@ public class SysUtils {
         System.out.println("KDE: " + checkKDE());
         System.out.println("Gnome: " + checkGnome());
     }
+
+    /**
+     * Gets a file pointer to the home directory. It is $HOME/.gaiasandbox in Linux systems and C:\Users\$USERNAME\.gaiasandbox in Windows.
+     * @return A pointer to the GaiaSandbox directory in the user's home.
+     */
+    public static File getGSHomeDir(){
+        return new File(System.getProperty("user.home") + File.separator + ".gaiasandbox" + File.separator);
+    }
+
+
 }
