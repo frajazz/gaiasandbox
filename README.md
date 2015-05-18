@@ -245,6 +245,7 @@ people behind the following technologies/resources:
 - [WebLaF](http://weblookandfeel.com/)
 - Mark Taylor's [STIL](http://www.star.bristol.ac.uk/~mbt/stil/) library
 - The [Jython Project](http://www.jython.org/)
+- Tom Patterson ([www.shadedrelief.com]()) for some textures
 - [Install4j](http://www.ej-technologies.com/products/install4j/overview.html) (multi-platform installer builder), for providing a free open source license
 - Bitrock's [InstallBuilder](http://installbuilder.bitrock.com/) for providing a free open source license.
 - And several online resources without which this would have not been possible
