@@ -44,4 +44,9 @@ public class Vector3Attribute extends Attribute {
     public boolean equals(Object obj) {
         return super.equals(obj);
     }
+
+    @Override
+    public int compareTo(Attribute o) {
+        return 0;
+    }
 }

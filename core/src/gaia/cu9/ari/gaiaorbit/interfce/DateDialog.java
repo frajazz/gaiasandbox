@@ -24,7 +24,7 @@ import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
 import com.badlogic.gdx.scenes.scene2d.ui.TextField;
 import com.badlogic.gdx.scenes.scene2d.ui.Window;
-import com.badlogic.gdx.scenes.scene2d.utils.Align;
+import com.badlogic.gdx.utils.Align;
 import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener.ChangeEvent;
 
 public class DateDialog extends CollapsibleWindow {
@@ -241,7 +241,7 @@ public class DateDialog extends CollapsibleWindow {
         buttonGroup.align(Align.right).space(10);
 
         add(buttonGroup).colspan(2).pad(5, 0, 0, 0).bottom().right();
-        setTitleAlignment(Align.left);
+        getTitleTable().align(Align.left);
 
         pack();
 

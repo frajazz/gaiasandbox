@@ -47,7 +47,7 @@ import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.scenes.scene2d.ui.TextField;
 import com.badlogic.gdx.scenes.scene2d.ui.VerticalGroup;
-import com.badlogic.gdx.scenes.scene2d.utils.Align;
+import com.badlogic.gdx.utils.Align;
 import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener.ChangeEvent;
 import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
 import com.badlogic.gdx.scenes.scene2d.utils.TiledDrawable;
@@ -142,7 +142,7 @@ public class FullGui implements IGui, IObserver {
         /** The Options window **/
         options = new CollapsibleWindow(txt("gui.controls"), skin);
         options.left();
-        options.setTitleAlignment(Align.left);
+        options.getTitleTable().align(Align.left);
         options.setFillParent(false);
         options.setMovable(true);
         options.setResizable(false);

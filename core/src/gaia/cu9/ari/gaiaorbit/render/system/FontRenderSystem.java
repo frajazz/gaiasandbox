@@ -40,7 +40,7 @@ public class FontRenderSystem extends AbstractRenderSystem {
         Texture texture = new Texture(Gdx.files.internal("font/main-font.png"), true);
         texture.setFilter(TextureFilter.Linear, TextureFilter.Linear);
         bitmapFont = new BitmapFont(Gdx.files.internal("font/main-font.fnt"), new TextureRegion(texture), false);
-        bitmapFont.setScale(12f / 32f);
+        bitmapFont.getData().setScale(12f / 32f);
     }
 
     @Override

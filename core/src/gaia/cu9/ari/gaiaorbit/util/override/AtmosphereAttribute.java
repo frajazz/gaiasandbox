@@ -89,4 +89,9 @@ public class AtmosphereAttribute extends Attribute {
         return super.equals(obj);
     }
 
+    /** TODO Implement this **/
+    @Override
+    public int compareTo(Attribute o) {
+        return 0;
+    }
 }

@@ -16,7 +16,7 @@ import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
 import com.badlogic.gdx.scenes.scene2d.ui.VerticalGroup;
-import com.badlogic.gdx.scenes.scene2d.utils.Align;
+import com.badlogic.gdx.utils.Align;
 import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener.ChangeEvent;
 
 /** 
@@ -153,7 +153,7 @@ public class CollapsiblePane extends VerticalGroup {
         closeContainer.align(Align.right);
 
         window.add(closeContainer).pad(5, 0, 0, 0).bottom().right();
-        window.setTitleAlignment(Align.left);
+        window.getTitleTable().align(Align.left);
         window.pack();
 
         x = x < 0 ? stage.getWidth() / 2f - this.getWidth() / 2f : x;

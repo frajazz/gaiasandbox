@@ -117,7 +117,7 @@ public class ModelBuilder2 {
     public Node node(final String id, final Model model) {
         final Node node = new Node();
         node.id = id;
-        node.children.addAll(model.nodes);
+        node.addChildren(model.nodes);
         node(node);
         for (final Disposable disposable : model.getManagedDisposables())
             manage(disposable);
@@ -382,7 +382,8 @@ public class ModelBuilder2 {
                 model.manageDisposable(mpm.meshPart.mesh);
             }
         }
-        for (final Node child : node.children)
+        Iterable<Node> nodeIter = node.getChildren();
+        for (final Node child : nodeIter)
             rebuildReferences(model, child);
     }
 
