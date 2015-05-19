@@ -37,7 +37,7 @@ public class TextureComponent {
     private static final float HIRES_ANGLE_THRESHOLD = (float) Math.toRadians(20);
 
     public String base, hires, specular, normal, night, ring;
-    public Texture lo_resTex;
+    public Texture baseTex;
     @Deprecated
     public Texture hi_resTex;
 
@@ -78,7 +78,7 @@ public class TextureComponent {
         } else if (hiresTexFlag && viewAngle <= HIRES_ANGLE_THRESHOLD * camera.getFovFactor() && hi_resTex != null) {
             // UNLOAD hi-res texture loaded
             for (Material mat : instance.materials) {
-                mat.set(new TextureAttribute(TextureAttribute.Diffuse, lo_resTex));
+                mat.set(new TextureAttribute(TextureAttribute.Diffuse, baseTex));
             }
             Gdx.app.postRunnable(new Runnable() {
                 @Override
@@ -109,8 +109,8 @@ public class TextureComponent {
     public void initMaterial(AssetManager manager, Map<String, Material> materials, float[] cc) {
         Material material = materials.get("base");
         if (base != null) {
-            lo_resTex = manager.get(base, Texture.class);
-            material.set(new TextureAttribute(TextureAttribute.Diffuse, lo_resTex));
+            baseTex = manager.get(base, Texture.class);
+            material.set(new TextureAttribute(TextureAttribute.Diffuse, baseTex));
         } else {
             // If there is no diffuse texture, we add a colour
             material.set(new ColorAttribute(ColorAttribute.Diffuse, cc[0], cc[1], cc[2], cc[3]));

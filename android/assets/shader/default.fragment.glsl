@@ -9,6 +9,8 @@ precision mediump float;
 #define HIGH
 #endif
 
+#define TEXTURE_LOD_BIAS 1.0
+
 // Ground atmospheric scattering
 varying vec3 v_atmosphereColor;
 #define exposure 5.0
@@ -77,7 +79,7 @@ varying vec3 v_shadowMapUv;
 float getShadowness(vec2 offset)
 {
     const vec4 bitShifts = vec4(1.0, 1.0 / 255.0, 1.0 / 65025.0, 1.0 / 160581375.0);
-    return step(v_shadowMapUv.z, dot(texture2D(u_shadowTexture, v_shadowMapUv.xy + offset), bitShifts));//+(1.0/255.0));	
+    return step(v_shadowMapUv.z, dot(texture2D(u_shadowTexture, v_shadowMapUv.xy + offset, TEXTURE_LOD_BIAS), bitShifts));//+(1.0/255.0));
 }
 
 float getShadow() 
@@ -107,13 +109,13 @@ void main() {
 	#endif // normalFlag
 
 	#if defined(diffuseTextureFlag) && defined(diffuseColorFlag) && defined(colorFlag)
-		vec4 diffuse = texture2D(u_diffuseTexture, v_texCoords0) * u_diffuseColor * v_color;
+		vec4 diffuse = texture2D(u_diffuseTexture, v_texCoords0, TEXTURE_LOD_BIAS) * u_diffuseColor * v_color;
 	#elif defined(diffuseTextureFlag) && defined(diffuseColorFlag)
-		vec4 diffuse = texture2D(u_diffuseTexture, v_texCoords0) * u_diffuseColor;
+		vec4 diffuse = texture2D(u_diffuseTexture, v_texCoords0, TEXTURE_LOD_BIAS) * u_diffuseColor;
 	#elif defined(diffuseTextureFlag) && defined(colorFlag)
-		vec4 diffuse = texture2D(u_diffuseTexture, v_texCoords0) * v_color;
+		vec4 diffuse = texture2D(u_diffuseTexture, v_texCoords0, TEXTURE_LOD_BIAS) * v_color;
 	#elif defined(diffuseTextureFlag)
-		vec4 diffuse = texture2D(u_diffuseTexture, v_texCoords0);
+		vec4 diffuse = texture2D(u_diffuseTexture, v_texCoords0, TEXTURE_LOD_BIAS);
 	#elif defined(diffuseColorFlag) && defined(colorFlag)
 		vec4 diffuse = u_diffuseColor * v_color;
 	#elif defined(diffuseColorFlag)
@@ -130,7 +132,6 @@ void main() {
 		#if defined(ambientFlag) && defined(separateAmbientFlag)
 			#ifdef shadowMapFlag
 				gl_FragColor.rgb = (diffuse.rgb * (v_ambientLight + getShadow() * v_lightDiffuse));
-				//gl_FragColor.rgb = texture2D(u_shadowTexture, v_shadowMapUv.xy);
 			#else
 				gl_FragColor.rgb = (diffuse.rgb * (v_ambientLight + v_lightDiffuse));
 			#endif //shadowMapFlag
@@ -143,9 +144,9 @@ void main() {
 		#endif
 	#else
 		#if defined(specularTextureFlag) && defined(specularColorFlag)
-			vec3 specular = texture2D(u_specularTexture, v_texCoords0).rgb * u_specularColor.rgb * v_lightSpecular;
+			vec3 specular = texture2D(u_specularTexture, v_texCoords0, TEXTURE_LOD_BIAS).rgb * u_specularColor.rgb * v_lightSpecular;
 		#elif defined(specularTextureFlag)
-			vec3 specular = texture2D(u_specularTexture, v_texCoords0).rgb * v_lightSpecular;
+			vec3 specular = texture2D(u_specularTexture, v_texCoords0, TEXTURE_LOD_BIAS).rgb * v_lightSpecular;
 		#elif defined(specularColorFlag)
 			vec3 specular = u_specularColor.rgb * v_lightSpecular;
 		#else
@@ -155,7 +156,6 @@ void main() {
 		#if defined(ambientFlag) && defined(separateAmbientFlag)
 			#ifdef shadowMapFlag
 			gl_FragColor.rgb = (diffuse.rgb * (getShadow() * v_lightDiffuse + v_ambientLight)) + specular;
-				//gl_FragColor.rgb = texture2D(u_shadowTexture, v_shadowMapUv.xy);
 			#else
 				gl_FragColor.rgb = (diffuse.rgb * (v_lightDiffuse + v_ambientLight)) + specular;
 			#endif //shadowMapFlag
