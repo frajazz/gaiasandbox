@@ -69,10 +69,6 @@ public class Planet extends ModelBody implements IAtmosphereRenderable {
     @Override
     public void updateLocal(ITimeFrameProvider time, ICamera camera) {
         super.updateLocal(time, camera);
-        // Check texture
-        if (mc != null && mc.tc != null) {
-            mc.tc.updateTexture(manager, mc.instance, this.viewAngle, camera);
-        }
         this.camera = camera;
     }
 

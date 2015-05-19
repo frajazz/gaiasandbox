@@ -5,6 +5,8 @@ precision mediump float;
 #define LOWP 
 #endif
 
+#define TEXTURE_LOD_BIAS 0.0
+
 ////////////////////////////////////////////////////////////////////////////////////
 ////////// GROUND ATMOSPHERIC SCATTERING - FRAGMENT
 ////////////////////////////////////////////////////////////////////////////////////
@@ -121,7 +123,7 @@ varying vec3 v_shadowMapUv;
 float getShadowness(vec2 offset)
     {
     const vec4 bitShifts = vec4(1.0, 1.0 / 255.0, 1.0 / 65025.0, 1.0 / 160581375.0);
-    return step(v_shadowMapUv.z, dot(texture2D(u_shadowTexture, v_shadowMapUv.xy + offset), bitShifts)); //+(1.0/255.0));	
+    return step(v_shadowMapUv.z, dot(texture2D(u_shadowTexture, v_shadowMapUv.xy + offset, TEXTURE_LOD_BIAS), bitShifts)); //+(1.0/255.0));
     }
 
 float getShadow()
@@ -141,9 +143,9 @@ varying vec3 v_ambientLight;
 // COLOR DIFFUSE
 
 #if defined(diffuseTextureFlag) && defined(diffuseColorFlag)
-    #define fetchColorDiffuseTD(texture, texCoord, defaultValue) texture2D(texture, texCoord) * u_diffuseColor
+    #define fetchColorDiffuseTD(texture, texCoord, defaultValue) texture2D(texture, texCoord, TEXTURE_LOD_BIAS) * u_diffuseColor
 #elif defined(diffuseTextureFlag)
-    #define fetchColorDiffuseTD(texture, texCoord, defaultValue) texture2D(texture, texCoord)
+    #define fetchColorDiffuseTD(texture, texCoord, defaultValue) texture2D(texture, texCoord, TEXTURE_LOD_BIAS)
 #elif defined(diffuseColorFlag)
     #define fetchColorDiffuseTD(texture, texCoord, defaultValue) u_diffuseColor
 #else
@@ -160,7 +162,7 @@ varying vec3 v_ambientLight;
 // COLOR NIGHT
 
 #if defined(emissiveTextureFlag)
-#define fetchColorNight(emissiveTex, texCoord) texture2D(emissiveTex, texCoord)
+#define fetchColorNight(emissiveTex, texCoord) texture2D(emissiveTex, texCoord, TEXTURE_LOD_BIAS)
 #else
 #define fetchColorNight(emissiveTex, texCoord) vec4(0.0, 0.0, 0.0, 0.0)
 #endif // emissiveTextureFlag
@@ -168,9 +170,9 @@ varying vec3 v_ambientLight;
 // COLOR SPECULAR
 
 #if defined(specularTextureFlag) && defined(specularColorFlag)
-    #define fetchColorSpecular(texCoord, defaultValue) texture2D(u_specularTexture, texCoord).rgb * u_specularColor.rgb
+    #define fetchColorSpecular(texCoord, defaultValue) texture2D(u_specularTexture, texCoord, TEXTURE_LOD_BIAS).rgb * u_specularColor.rgb
 #elif defined(specularTextureFlag)
-    #define fetchColorSpecular(texCoord, defaultValue) texture2D(u_specularTexture, texCoord).rgb
+    #define fetchColorSpecular(texCoord, defaultValue) texture2D(u_specularTexture, texCoord, TEXTURE_LOD_BIAS).rgb
 #elif defined(specularColorFlag)
     #define fetchColorSpecular(texCoord, defaultValue) u_specularColor.rgb
 #else
@@ -205,7 +207,7 @@ void main() {
     vec3 atmosphere = v_atmosphereColor;
 
     #ifdef normalTextureFlag
-	vec4 N = vec4(normalize(texture2D(u_normalTexture, g_texCoord0).xyz * 2.0 - 1.0), 1.0);
+	vec4 N = vec4(normalize(texture2D(u_normalTexture, g_texCoord0, TEXTURE_LOD_BIAS).xyz * 2.0 - 1.0), 1.0);
 	#ifdef environmentCubemapFlag
 	    vec3 reflectDir = normalize(v_reflect + (vec3(0.0, 0.0, 1.0) - N.xyz));
 	#endif // environmentCubemapFlag

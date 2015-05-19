@@ -29,7 +29,7 @@ public class TextureComponent {
         textureParams = new TextureParameter();
         textureParams.genMipMaps = true;
         textureParams.magFilter = TextureFilter.Linear;
-        textureParams.minFilter = TextureFilter.Linear;
+        textureParams.minFilter = TextureFilter.MipMapLinearNearest;
     }
     /**
      * Above this angle the hi-resolution texture is loaded and applied (if any)
@@ -37,7 +37,11 @@ public class TextureComponent {
     private static final float HIRES_ANGLE_THRESHOLD = (float) Math.toRadians(20);
 
     public String base, hires, specular, normal, night, ring;
-    public Texture lo_resTex, hi_resTex;
+    public Texture lo_resTex;
+    @Deprecated
+    public Texture hi_resTex;
+
+    @Deprecated
     public boolean hiresTexFlag = false;
 
     public TextureComponent() {
@@ -63,6 +67,8 @@ public class TextureComponent {
      * @param instance
      * @param viewAngle
      * @param camera
+     *
+     * @deprecated This must be no longer used, we use mipmapping.
      */
     public void updateTexture(final AssetManager manager, ModelInstance instance, float viewAngle, ICamera camera) {
         if (!hiresTexFlag && viewAngle > HIRES_ANGLE_THRESHOLD * camera.getFovFactor() && hires != null) {
@@ -134,6 +140,10 @@ public class TextureComponent {
         this.base = base;
     }
 
+    /**
+     * @deprecated Hires textures no longer supported. Using mipmapping.
+     * @param hires
+     */
     public void setHires(String hires) {
         this.hires = hires;
     }
