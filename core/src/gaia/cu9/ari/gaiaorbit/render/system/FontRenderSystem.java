@@ -58,6 +58,8 @@ public class FontRenderSystem extends AbstractRenderSystem {
                 I3DTextRenderable lr = (I3DTextRenderable) s;
                 shaderProgram.setUniformf("a_labelAlpha", lr.isLabel() ? alphas[ComponentType.Labels.ordinal()] : 1f);
                 shaderProgram.setUniformf("a_componentAlpha", alphas[s.getComponentType().ordinal()]);
+                // Font opacity multiplier
+                shaderProgram.setUniformf("u_opacity", 0.8f);
                 s.render(batch, shaderProgram, bitmapFont, camera);
             }
         }

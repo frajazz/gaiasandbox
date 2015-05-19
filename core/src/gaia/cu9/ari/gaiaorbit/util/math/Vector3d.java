@@ -3,6 +3,7 @@ package gaia.cu9.ari.gaiaorbit.util.math;
 import java.io.Serializable;
 
 import com.badlogic.gdx.math.Quaternion;
+import com.badlogic.gdx.math.Vector;
 import com.badlogic.gdx.math.Vector3;
 
 /**
@@ -58,14 +59,14 @@ public class Vector3d implements Serializable {
     }
 
     /** Creates a vector from the given array. The array must have at least 3 elements.
-     * 
+     *
      * @param values The array */
     public Vector3d(final double[] values) {
         this.set(values[0], values[1], values[2]);
     }
 
     /** Sets the vector to the given components
-     * 
+     *
      * @param x The x-component
      * @param y The y-component
      * @param z The z-component
@@ -90,7 +91,7 @@ public class Vector3d implements Serializable {
     }
 
     /** Sets the components from the array. The array must have at least 3 elements
-     * 
+     *
      * @param values The array
      * @return this vector for chaining */
     public Vector3d set(final double[] values) {
@@ -98,7 +99,7 @@ public class Vector3d implements Serializable {
     }
 
     /** Sets the components from the array. The array must have at least 3 elements
-     * 
+     *
      * @param values The array
      * @return this vector for chaining */
     public Vector3d set(final float[] values) {
@@ -141,7 +142,7 @@ public class Vector3d implements Serializable {
     }
 
     /** Adds the given value to all three components of the vector.
-     * 
+     *
      * @param values The value
      * @return This vector for chaining */
     public Vector3d add(double values) {
@@ -157,7 +158,7 @@ public class Vector3d implements Serializable {
     }
 
     /** Subtracts the other vector from this vector.
-     * 
+     *
      * @param x The x-component of the other vector
      * @param y The y-component of the other vector
      * @param z The z-component of the other vector
@@ -167,7 +168,7 @@ public class Vector3d implements Serializable {
     }
 
     /** Subtracts the given value from all components of this vector
-     * 
+     *
      * @param value The value
      * @return This vector for chaining */
     public Vector3d sub(double value) {
@@ -357,7 +358,7 @@ public class Vector3d implements Serializable {
 
     /** Multiplies this vector by the given matrix dividing by w, assuming the fourth (w) component of the vector is 1. This is
      * mostly used to project/unproject vectors via a perspective projection matrix.
-     * 
+     *
      * @param matrix The matrix.
      * @return This vector for chaining */
     public Vector3d prj(final Matrix4d matrix) {
@@ -369,7 +370,7 @@ public class Vector3d implements Serializable {
     }
 
     /** Multiplies this vector by the first three columns of the matrix, essentially only applying rotation and scaling.
-     * 
+     *
      * @param matrix The matrix
      * @return This vector for chaining */
     public Vector3d rot(final Matrix4d matrix) {
@@ -403,7 +404,7 @@ public class Vector3d implements Serializable {
     }
 
     /** Rotates this vector by the given angle in degrees around the given axis.
-     * 
+     *
      * @param degrees the angle in degrees
      * @param axisX the x-component of the axis
      * @param axisY the y-component of the axis
@@ -414,7 +415,7 @@ public class Vector3d implements Serializable {
     }
 
     /** Rotates this vector by the given angle in radians around the given axis.
-     * 
+     *
      * @param radians the angle in radians
      * @param axisX the x-component of the axis
      * @param axisY the y-component of the axis
@@ -425,7 +426,7 @@ public class Vector3d implements Serializable {
     }
 
     /** Rotates this vector by the given angle in degrees around the given axis.
-     * 
+     *
      * @param axis the axis
      * @param degrees the angle in degrees
      * @return This vector for chaining */
@@ -435,7 +436,7 @@ public class Vector3d implements Serializable {
     }
 
     /** Rotates this vector by the given angle in radians around the given axis.
-     * 
+     *
      * @param axis the axis
      * @param radians the angle in radians
      * @return This vector for chaining */
@@ -476,7 +477,7 @@ public class Vector3d implements Serializable {
 
     /** Spherically interpolates between this vector and the target vector by alpha which is in the range [0,1]. The result is
      * stored in this vector.
-     * 
+     *
      * @param target The target vector
      * @param alpha The interpolation coefficient
      * @return This vector for chaining. */
@@ -511,6 +512,25 @@ public class Vector3d implements Serializable {
         return this;
     }
 
+    public Vector3d limit2(double limit2) {
+        double len2 = len2();
+        if (len2 > limit2) {
+            scl(Math.sqrt(limit2 / len2));
+        }
+        return this;
+    }
+
+    public Vector3d setLength(double len) {
+        return setLength2(len * len);
+    }
+
+    public Vector3d setLength2(double len2) {
+        double oldLen2 = len2();
+        return (oldLen2 == 0 || oldLen2 == len2)
+                ? this
+                : scl(Math.sqrt(len2 / oldLen2));
+    }
+
     public Vector3d clamp(double min, double max) {
         final double l2 = len2();
         if (l2 == 0f)
@@ -539,7 +559,7 @@ public class Vector3d implements Serializable {
     /**
      * Scales a given vector with a scalar and add the result to this one, i.e.
      * <code>this = this + s*v</code>.
-     * 
+     *
      * @param s
      *            scalar scaling factor
      * @param v

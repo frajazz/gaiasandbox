@@ -83,15 +83,15 @@ public class LineRenderSystem extends ImmediateRenderSystem {
         numVertices = 0;
     }
 
-    public void addLine(float x0, float y0, float z0, float x1, float y1, float z1, Color col) {
+    public void addLine(double x0, double y0, double z0, double x1, double y1, double z1, Color col) {
         addLine(x0, y0, z0, x1, y1, z1, col.r, col.g, col.b, col.a);
     }
 
-    public void addLine(float x0, float y0, float z0, float x1, float y1, float z1, float r, float g, float b, float a) {
+    public void addLine(double x0, double y0, double z0, double x1, double y1, double z1, float r, float g, float b, float a) {
         color(r, g, b, a);
-        vertex(x0, y0, z0);
+        vertex((float) x0, (float) y0, (float) z0);
         color(r, g, b, a);
-        vertex(x1, y1, z1);
+        vertex((float) x1, (float) y1, (float) z1);
     }
 
 }

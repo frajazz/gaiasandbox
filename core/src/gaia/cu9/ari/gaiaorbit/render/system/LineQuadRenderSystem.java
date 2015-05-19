@@ -16,6 +16,7 @@ import com.badlogic.gdx.graphics.VertexAttributes.Usage;
 import com.badlogic.gdx.graphics.glutils.ShaderProgram;
 import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.utils.Array;
+import gaia.cu9.ari.gaiaorbit.util.math.Vector3d;
 
 public class LineQuadRenderSystem extends LineRenderSystem {
 
@@ -24,17 +25,16 @@ public class LineQuadRenderSystem extends LineRenderSystem {
     int maxIndices;
     short[] indices;
 
-    Vector3 line, camdir, campos, point;
-    final static double widthAngle = Math.toRadians(0.2);
+    Vector3d line, camdir, point;
+    final static double widthAngle = Math.toRadians(0.08);
     final static double widthAngleTan = Math.tan(widthAngle);
 
     public LineQuadRenderSystem(RenderGroup rg, int priority, float[] alphas) {
         super(rg, priority, alphas);
         glType = GL20.GL_TRIANGLES;
-        line = new Vector3();
-        camdir = new Vector3();
-        campos = new Vector3();
-        point = new Vector3();
+        line = new Vector3d();
+        camdir = new Vector3d();
+        point = new Vector3d();
     }
 
     @Override
@@ -81,49 +81,62 @@ public class LineQuadRenderSystem extends LineRenderSystem {
         vertices[vertexIdx + uvOffset + 1] = v;
     }
 
-    public void addLine(float x0, float y0, float z0, float x1, float y1, float z1, float r, float g, float b, float a) {
-        camera.getDirection().setVector3(camdir);
+    public void addLine(double x0, double y0, double z0, double x1, double y1, double z1, float r, float g, float b, float a) {
+        camdir.set(camera.getDirection());
         line.set(x1 - x0, y1 - y0, z1 - z0);
 
         // Camdir will contain the perpendicular to camdir and line
-        camdir.crs(line).nor();
+        camdir.crs(line);
 
-        double distToLine = MathUtilsd.distancePointLine(x0, y0, z0, x1, y1, z1, 0, 0, 0);
+        double distToSegment = MathUtilsd.distancePointSegment(x0, y0, z0, x1, y1, z1, 0, 0, 0);
 
-        float dist = (float) Math.min(Math.sqrt(x0 * x0 + y0 * y0 + z0 * z0), distToLine);
-        float width = ((float) (widthAngleTan * dist) / 2f) * camera.getFovFactor();
-        camdir.scl(width);
+        double width0, width1;
+        double dist0 = Math.sqrt(x0 * x0 + y0 * y0 + z0 * z0);
+        double dist1 = Math.sqrt(x1 * x1 + y1 * y1 + z1 * z1);
+
+        if (distToSegment < dist0 && distToSegment < dist1) {
+            // Projection falls in line
+            double widthInProj = widthAngleTan * distToSegment * camera.getFovFactor();
+            width0 = widthInProj;
+            width1 = widthInProj;
+        } else {
+            // Projection falls outside line
+            width0 = widthAngleTan * dist0 * camera.getFovFactor();
+            width1 = widthAngleTan * dist1 * camera.getFovFactor();
+        }
+
+        camdir.setLength(width0);
         // P1
         point.set(x0, y0, z0).add(camdir);
         color(r, g, b, a);
-        vertex(point.x, point.y, point.z);
+        vertex((float) point.x, (float) point.y, (float) point.z);
         uv(0, 0);
 
         // P2
         point.set(x0, y0, z0).sub(camdir);
         color(r, g, b, a);
-        vertex(point.x, point.y, point.z);
+        vertex((float) point.x, (float) point.y, (float) point.z);
         uv(0, 1);
 
+        camdir.setLength(width1);
+
         // P3
-        dist = (float) Math.min(Math.sqrt(x1 * x1 + y1 * y1 + z1 * z1), distToLine);
-        width = ((float) (widthAngleTan * dist) / 2f) * camera.getFovFactor();
-        camdir.nor().scl(width);
         point.set(x1, y1, z1).add(camdir);
         color(r, g, b, a);
-        vertex(point.x, point.y, point.z);
+        vertex((float) point.x, (float) point.y, (float) point.z);
         uv(1, 0);
 
         // P4
         point.set(x1, y1, z1).sub(camdir);
         color(r, g, b, a);
-        vertex(point.x, point.y, point.z);
+        vertex((float) point.x, (float) point.y, (float) point.z);
         uv(1, 1);
 
         // Add indexes
+        index((short) (numVertices - 2));
         index((short) (numVertices - 4));
         index((short) (numVertices - 3));
-        index((short) (numVertices - 2));
+
         index((short) (numVertices - 2));
         index((short) (numVertices - 1));
         index((short) (numVertices - 3));

@@ -506,10 +506,10 @@ public final class MathUtilsd {
     /**
      * Gets the distance from the point x0 to the line denoted by x1-x2.<br/>
      * Check <a href="http://mathworld.wolfram.com/Point-LineDistance3-Dimensional.html">this link</a>.
-     * @param x1 The first segment delimiter.
-     * @param x2 The second segment delimiter.
+     * @param x1 The first point in the line.
+     * @param x2 The second point in the line.
      * @param x0 The point.
-     * @return The euclidean distance between x1x2 and x0.
+     * @return The euclidean distance between the line (x1, x2) and x0.
      */
     public static double distancePointLine(double x1, double y1, double z1, double x2, double y2, double z2, double x0, double y0, double z0) {
 
@@ -520,4 +520,34 @@ public final class MathUtilsd {
 
         return aux3.set(aux0).sub(aux1).crs(aux4.set(aux0).sub(aux2)).len() / aux3.set(aux2).sub(aux1).len();
     }
+
+    /**
+     * Gets the distance from the point x0 to the segment denoted by x1-x2.<br/>
+     * Check <a href="http://mathworld.wolfram.com/Point-LineDistance3-Dimensional.html">this link</a>.
+     * @param x1 The first segment delimiter.
+     * @param x2 The second segment delimiter.
+     * @param x0 The point.
+     * @return The euclidean distance between the segment (x1, x2)
+     */
+    public static double distancePointSegment(double x1, double y1, double z1, double x2, double y2, double z2, double x0, double y0, double z0){
+        Vector3d v = aux0.set(x1, y1, z1);
+        Vector3d w = aux1.set(x2, y2, z2);
+        Vector3d p = aux2.set(x0, y0, z0);
+        aux3.set(p).sub(v);
+        aux4.set(w).sub(v);
+
+        // Return minimum distance between line segment vw and point p
+        double l2 = v.dst2(w);
+        if (l2 == 0.0) return p.dst(v);   // v == w case
+        // Consider the line extending the segment, parameterized as v + t (w - v).
+        // We find projection of point p onto the line.
+        // It falls where t = [(p-v) . (w-v)] / |w-v|^2
+        double t = aux3.dot(aux4) / l2;
+        if (t < 0.0) return p.dst(v);       // Beyond the 'v' end of the segment
+        else if (t > 1.0) return p.dst(w);  // Beyond the 'w' end of the segment
+        Vector3d projection = v.add(aux4.scl(t)); // Projection falls on the segment
+        return p.dst(projection);
+    }
+
+
 }
