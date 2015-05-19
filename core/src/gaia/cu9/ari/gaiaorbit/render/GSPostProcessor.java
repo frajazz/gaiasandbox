@@ -79,16 +79,6 @@ public class GSPostProcessor implements IPostProcessor, IObserver {
         ppb.bloom.setEnabled(GlobalConf.postprocess.POSTPROCESS_BLOOM_INTENSITY > 0);
         ppb.pp.addEffect(ppb.bloom);
 
-        // ANTIALIAS
-        if (GlobalConf.postprocess.POSTPROCESS_ANTIALIAS == -1) {
-            ppb.antialiasing = new Fxaa(width, height);
-            ((Fxaa)ppb.antialiasing).setSpanMax(2f);
-        } else {
-            ppb.antialiasing = new Nfaa(width, height);
-        }
-        ppb.antialiasing.setEnabled(GlobalConf.postprocess.POSTPROCESS_ANTIALIAS < 0);
-        ppb.pp.addEffect(ppb.antialiasing);
-
         // MOTION BLUR
         ppb.motionblur = new MotionBlur();
         ppb.motionblur.setBlurOpacity(GlobalConf.postprocess.POSTPROCESS_MOTION_BLUR);
@@ -107,6 +97,16 @@ public class GSPostProcessor implements IPostProcessor, IObserver {
         ppb.lens.setBlurPasses(2);
         ppb.lens.setEnabled(GlobalConf.postprocess.POSTPROCESS_LENS_FLARE);
         ppb.pp.addEffect(ppb.lens);
+
+        // ANTIALIAS
+        if (GlobalConf.postprocess.POSTPROCESS_ANTIALIAS == -1) {
+            ppb.antialiasing = new Fxaa(width, height);
+            ((Fxaa)ppb.antialiasing).setSpanMax(2f);
+        } else {
+            ppb.antialiasing = new Nfaa(width, height);
+        }
+        ppb.antialiasing.setEnabled(GlobalConf.postprocess.POSTPROCESS_ANTIALIAS < 0);
+        ppb.pp.addEffect(ppb.antialiasing);
 
         return ppb;
     }
