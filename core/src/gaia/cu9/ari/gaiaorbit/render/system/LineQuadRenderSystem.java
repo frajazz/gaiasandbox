@@ -3,6 +3,7 @@ package gaia.cu9.ari.gaiaorbit.render.system;
 import gaia.cu9.ari.gaiaorbit.render.IRenderable;
 import gaia.cu9.ari.gaiaorbit.scenegraph.ICamera;
 import gaia.cu9.ari.gaiaorbit.scenegraph.SceneGraphNode.RenderGroup;
+import gaia.cu9.ari.gaiaorbit.util.Constants;
 import gaia.cu9.ari.gaiaorbit.util.math.MathUtilsd;
 
 import java.util.List;
@@ -19,13 +20,17 @@ import com.badlogic.gdx.utils.Array;
 import gaia.cu9.ari.gaiaorbit.util.math.Vector3d;
 
 public class LineQuadRenderSystem extends LineRenderSystem {
+    /** 100 pc of bin **/
+    private static double bin = 100 * Constants.PC_TO_U;
+
 
     int uvOffset;
     int indexIdx;
     int maxIndices;
     short[] indices;
 
-    Vector3d line, camdir, point;
+
+    Vector3d line, camdir, point, vec, aux, aux2;
     final static double widthAngle = Math.toRadians(0.08);
     final static double widthAngleTan = Math.tan(widthAngle);
 
@@ -35,6 +40,9 @@ public class LineQuadRenderSystem extends LineRenderSystem {
         line = new Vector3d();
         camdir = new Vector3d();
         point = new Vector3d();
+        vec = new Vector3d();
+        aux = new Vector3d();
+        aux2 = new Vector3d();
     }
 
     @Override
@@ -82,6 +90,26 @@ public class LineQuadRenderSystem extends LineRenderSystem {
     }
 
     public void addLine(double x0, double y0, double z0, double x1, double y1, double z1, float r, float g, float b, float a) {
+        // We bin long lines
+//        vec.set(x1 - x0, y1 - y0, z1 - z0);
+//        double realLength = vec.len();
+//        double currLength = 0;
+//        aux.set(x0, y0, z0);
+//        if (realLength > bin) {
+//            while(currLength < realLength){
+//                vec.setLength(bin);
+//                aux2.set(aux).add(vec);
+//                addLineInternal(aux.x, aux.y, aux.z, aux2.x, aux2.y, aux2.z, r, g, b, a);
+//                aux.set(aux2);
+//                currLength += bin;
+//            }
+//        } else {
+            addLineInternal(x0, y0, z0, x1, y1, z1, r, g, b, a);
+//        }
+
+    }
+
+    public void addLineInternal(double x0, double y0, double z0, double x1, double y1, double z1, float r, float g, float b, float a) {
         camdir.set(camera.getDirection());
         line.set(x1 - x0, y1 - y0, z1 - z0);
 
@@ -109,38 +137,37 @@ public class LineQuadRenderSystem extends LineRenderSystem {
         // P1
         point.set(x0, y0, z0).add(camdir);
         color(r, g, b, a);
-        vertex((float) point.x, (float) point.y, (float) point.z);
         uv(0, 0);
+        vertex((float) point.x, (float) point.y, (float) point.z);
 
         // P2
         point.set(x0, y0, z0).sub(camdir);
         color(r, g, b, a);
-        vertex((float) point.x, (float) point.y, (float) point.z);
         uv(0, 1);
+        vertex((float) point.x, (float) point.y, (float) point.z);
 
         camdir.setLength(width1);
 
         // P3
         point.set(x1, y1, z1).add(camdir);
         color(r, g, b, a);
-        vertex((float) point.x, (float) point.y, (float) point.z);
         uv(1, 0);
+        vertex((float) point.x, (float) point.y, (float) point.z);
 
         // P4
         point.set(x1, y1, z1).sub(camdir);
         color(r, g, b, a);
-        vertex((float) point.x, (float) point.y, (float) point.z);
         uv(1, 1);
+        vertex((float) point.x, (float) point.y, (float) point.z);
 
         // Add indexes
-        index((short) (numVertices - 2));
         index((short) (numVertices - 4));
         index((short) (numVertices - 3));
+        index((short) (numVertices - 2));
 
         index((short) (numVertices - 2));
         index((short) (numVertices - 1));
         index((short) (numVertices - 3));
-
     }
 
     private void index(short idx) {
@@ -162,7 +189,7 @@ public class LineQuadRenderSystem extends LineRenderSystem {
         mesh.setVertices(vertices, 0, vertexIdx);
         mesh.setIndices(indices, 0, indexIdx);
 
-        mesh.render(shaderProgram, glType);
+        mesh.render(shaderProgram, GL20.GL_TRIANGLES);
         shaderProgram.end();
 
         vertexIdx = 0;

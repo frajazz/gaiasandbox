@@ -281,7 +281,6 @@ public class SceneGraphRenderer extends AbstractRenderer implements IProcessRend
 
         // LINES
         AbstractRenderSystem lineProc = getLineRenderSystem();
-        lineProc.setPreRunnable(blendDepthRunnable);
 
         // MODEL FRONT
         AbstractRenderSystem modelFrontProc = new ModelBatchRenderSystem(RenderGroup.MODEL_F, priority++, alphas, modelBatchF, false);

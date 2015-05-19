@@ -60,7 +60,7 @@ public class LineRenderSystem extends ImmediateRenderSystem {
 
     @Override
     public void renderStud(List<IRenderable> renderables, ICamera camera) {
-        Gdx.gl.glLineWidth(1f);
+        Gdx.gl.glLineWidth(1.5f);
 
         Gdx.gl.glEnable(GL20.GL_BLEND);
         Gdx.gl.glEnable(GL20.GL_DEPTH_TEST);

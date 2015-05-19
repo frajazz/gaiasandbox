@@ -12,5 +12,5 @@ void main() {
    gl_Position = u_projModelView * a_position;
    v_col = a_color;
    
-   v_uv = a_uv.xy;
+   v_uv = a_uv;
 }
