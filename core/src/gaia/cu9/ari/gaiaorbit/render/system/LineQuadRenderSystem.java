@@ -1,21 +1,20 @@
 package gaia.cu9.ari.gaiaorbit.render.system;
 
+import com.badlogic.gdx.graphics.Mesh;
 import gaia.cu9.ari.gaiaorbit.render.IRenderable;
 import gaia.cu9.ari.gaiaorbit.scenegraph.ICamera;
 import gaia.cu9.ari.gaiaorbit.scenegraph.SceneGraphNode.RenderGroup;
 import gaia.cu9.ari.gaiaorbit.util.Constants;
+import gaia.cu9.ari.gaiaorbit.util.g3d.MeshInt;
 import gaia.cu9.ari.gaiaorbit.util.math.MathUtilsd;
 
 import java.util.List;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.GL20;
-import com.badlogic.gdx.graphics.Mesh;
-import com.badlogic.gdx.graphics.Mesh.VertexDataType;
 import com.badlogic.gdx.graphics.VertexAttribute;
 import com.badlogic.gdx.graphics.VertexAttributes.Usage;
 import com.badlogic.gdx.graphics.glutils.ShaderProgram;
-import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.utils.Array;
 import gaia.cu9.ari.gaiaorbit.util.math.Vector3d;
 
@@ -23,12 +22,20 @@ public class LineQuadRenderSystem extends LineRenderSystem {
     /** 100 pc of bin **/
     private static double bin = 100 * Constants.PC_TO_U;
 
+    private static final int shortLimit = (int) Math.pow(2, 2 * 8);
+    private MeshDataExt currext;
 
-    int uvOffset;
-    int indexIdx;
-    int maxIndices;
-    short[] indices;
+    private class MeshDataExt extends MeshData {
+        int uvOffset;
+        int indexIdx;
+        int maxIndices;
+        short[] indices;
 
+        public void clear() {
+            super.clear();
+            indexIdx = 0;
+        }
+    }
 
     Vector3d line, camdir, point, vec, aux, aux2;
     final static double widthAngle = Math.toRadians(0.08);
@@ -55,21 +62,34 @@ public class LineQuadRenderSystem extends LineRenderSystem {
 
     @Override
     protected void initVertices() {
-        maxVertices = 800000;
-        maxIndices = maxVertices + maxVertices / 2;
+        meshes = new MeshDataExt[10];
+        initVertices(meshIdx++);
+    }
 
-        VertexAttribute[] attribs = buildVertexAttributes();
-        mesh = new Mesh(VertexDataType.VertexArray, false, maxVertices, maxIndices, attribs);
+    private void initVertices(int index) {
+        if (meshes[index] == null) {
+            currext = new MeshDataExt();
+            meshes[index] = currext;
+            curr = currext;
 
-        indices = new short[maxIndices];
-        vertexSize = mesh.getVertexAttributes().vertexSize / 4;
-        vertices = new float[maxVertices * vertexSize];
+            maxVertices = 800000;
+            currext.maxIndices = maxVertices + maxVertices / 2;
 
-        colorOffset = mesh.getVertexAttribute(Usage.ColorPacked) != null ? mesh.getVertexAttribute(Usage.ColorPacked).offset / 4
-                : 0;
-        uvOffset = mesh.getVertexAttribute(Usage.TextureCoordinates) != null ? mesh.getVertexAttribute(Usage.TextureCoordinates).offset / 4
-                : 0;
+            VertexAttribute[] attribs = buildVertexAttributes();
+            currext.mesh = new Mesh(Mesh.VertexDataType.VertexArray, false, maxVertices, currext.maxIndices, attribs);
 
+            currext.indices = new short[currext.maxIndices];
+            currext.vertexSize = currext.mesh.getVertexAttributes().vertexSize / 4;
+            currext.vertices = new float[maxVertices * currext.vertexSize];
+
+            currext.colorOffset = currext.mesh.getVertexAttribute(Usage.ColorPacked) != null ? currext.mesh.getVertexAttribute(Usage.ColorPacked).offset / 4
+                    : 0;
+            currext.uvOffset = currext.mesh.getVertexAttribute(Usage.TextureCoordinates) != null ? currext.mesh.getVertexAttribute(Usage.TextureCoordinates).offset / 4
+                    : 0;
+        } else {
+            currext = (MeshDataExt) meshes[index];
+            curr = currext;
+        }
     }
 
     protected VertexAttribute[] buildVertexAttributes() {
@@ -85,31 +105,42 @@ public class LineQuadRenderSystem extends LineRenderSystem {
     }
 
     public void uv(float u, float v) {
-        vertices[vertexIdx + uvOffset] = u;
-        vertices[vertexIdx + uvOffset + 1] = v;
+        currext.vertices[currext.vertexIdx + currext.uvOffset] = u;
+        currext.vertices[currext.vertexIdx + currext.uvOffset + 1] = v;
     }
 
     public void addLine(double x0, double y0, double z0, double x1, double y1, double z1, float r, float g, float b, float a) {
         // We bin long lines
-//        vec.set(x1 - x0, y1 - y0, z1 - z0);
-//        double realLength = vec.len();
-//        double currLength = 0;
-//        aux.set(x0, y0, z0);
-//        if (realLength > bin) {
-//            while(currLength < realLength){
-//                vec.setLength(bin);
-//                aux2.set(aux).add(vec);
-//                addLineInternal(aux.x, aux.y, aux.z, aux2.x, aux2.y, aux2.z, r, g, b, a);
-//                aux.set(aux2);
-//                currLength += bin;
-//            }
-//        } else {
+        vec.set(x1 - x0, y1 - y0, z1 - z0);
+        double realLength = vec.len();
+        double currLength = 0;
+        aux.set(x0, y0, z0);
+        if (realLength > bin) {
+            while (currLength < realLength) {
+                double vecLength = bin;
+                if (currLength + vecLength > realLength) {
+                    vecLength = realLength - currLength;
+                }
+                vec.setLength(vecLength);
+                aux2.set(aux).add(vec);
+                addLineInternal(aux.x, aux.y, aux.z, aux2.x, aux2.y, aux2.z, r, g, b, a);
+                aux.set(aux2);
+                currLength += bin;
+            }
+        } else {
             addLineInternal(x0, y0, z0, x1, y1, z1, r, g, b, a);
-//        }
+        }
 
     }
 
     public void addLineInternal(double x0, double y0, double z0, double x1, double y1, double z1, float r, float g, float b, float a) {
+
+        // Check if 6 more indices fit
+        if (currext.numVertices + 3 >= shortLimit) {
+            // We need to open a new MeshDataExt!
+            initVertices(meshIdx++);
+        }
+
         camdir.set(camera.getDirection());
         line.set(x1 - x0, y1 - y0, z1 - z0);
 
@@ -161,18 +192,18 @@ public class LineQuadRenderSystem extends LineRenderSystem {
         vertex((float) point.x, (float) point.y, (float) point.z);
 
         // Add indexes
-        index((short) (numVertices - 4));
-        index((short) (numVertices - 3));
-        index((short) (numVertices - 2));
+        index((short) (currext.numVertices - 4));
+        index((short) (currext.numVertices - 3));
+        index((short) (currext.numVertices - 2));
 
-        index((short) (numVertices - 2));
-        index((short) (numVertices - 1));
-        index((short) (numVertices - 3));
+        index((short) (currext.numVertices - 2));
+        index((short) (currext.numVertices - 1));
+        index((short) (currext.numVertices - 3));
     }
 
     private void index(short idx) {
-        indices[indexIdx] = idx;
-        indexIdx++;
+        currext.indices[currext.indexIdx] = idx;
+        currext.indexIdx++;
     }
 
     @Override
@@ -186,15 +217,22 @@ public class LineQuadRenderSystem extends LineRenderSystem {
 
         shaderProgram.begin();
         shaderProgram.setUniformMatrix("u_projModelView", camera.getCamera().combined);
-        mesh.setVertices(vertices, 0, vertexIdx);
-        mesh.setIndices(indices, 0, indexIdx);
 
-        mesh.render(shaderProgram, GL20.GL_TRIANGLES);
+        for (int i = 0; i < meshIdx; i++) {
+            MeshDataExt md = (MeshDataExt) meshes[i];
+            md.mesh.setVertices(md.vertices, 0, md.vertexIdx);
+            md.mesh.setIndices(md.indices, 0, md.indexIdx);
+            md.mesh.render(shaderProgram, GL20.GL_TRIANGLES);
+
+            md.clear();
+        }
+
         shaderProgram.end();
 
-        vertexIdx = 0;
-        indexIdx = 0;
-        numVertices = 0;
+        // Reset mesh index and current
+        meshIdx = 1;
+        currext = (MeshDataExt) meshes[0];
+        curr = currext;
     }
 
 }

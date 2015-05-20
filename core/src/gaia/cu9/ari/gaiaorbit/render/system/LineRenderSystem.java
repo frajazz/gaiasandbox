@@ -1,5 +1,6 @@
 package gaia.cu9.ari.gaiaorbit.render.system;
 
+import com.badlogic.gdx.graphics.Mesh;
 import gaia.cu9.ari.gaiaorbit.render.IRenderable;
 import gaia.cu9.ari.gaiaorbit.scenegraph.ICamera;
 import gaia.cu9.ari.gaiaorbit.scenegraph.SceneGraphNode.RenderGroup;
@@ -9,11 +10,11 @@ import java.util.List;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL20;
-import com.badlogic.gdx.graphics.Mesh;
 import com.badlogic.gdx.graphics.VertexAttribute;
 import com.badlogic.gdx.graphics.VertexAttributes.Usage;
 import com.badlogic.gdx.graphics.glutils.ShaderProgram;
 import com.badlogic.gdx.utils.Array;
+
 
 public class LineRenderSystem extends ImmediateRenderSystem {
 
@@ -35,14 +36,18 @@ public class LineRenderSystem extends ImmediateRenderSystem {
 
     @Override
     protected void initVertices() {
+        meshes = new MeshData[1];
+        curr = new MeshData();
+        meshes[0] = curr;
+
         maxVertices = 400000;
 
         VertexAttribute[] attribs = buildVertexAttributes();
-        mesh = new Mesh(false, maxVertices, 0, attribs);
+        curr.mesh = new Mesh(false, maxVertices, 0, attribs);
 
-        vertices = new float[maxVertices * (mesh.getVertexAttributes().vertexSize / 4)];
-        vertexSize = mesh.getVertexAttributes().vertexSize / 4;
-        colorOffset = mesh.getVertexAttribute(Usage.ColorPacked) != null ? mesh.getVertexAttribute(Usage.ColorPacked).offset / 4
+        curr.vertices = new float[maxVertices * (curr.mesh.getVertexAttributes().vertexSize / 4)];
+        curr.vertexSize = curr.mesh.getVertexAttributes().vertexSize / 4;
+        curr.colorOffset = curr.mesh.getVertexAttribute(Usage.ColorPacked) != null ? curr.mesh.getVertexAttribute(Usage.ColorPacked).offset / 4
                 : 0;
 
     }
@@ -75,12 +80,11 @@ public class LineRenderSystem extends ImmediateRenderSystem {
 
         shaderProgram.begin();
         shaderProgram.setUniformMatrix("u_projModelView", camera.getCamera().combined);
-        mesh.setVertices(vertices, 0, vertexIdx);
-        mesh.render(shaderProgram, glType);
+        curr.mesh.setVertices(curr.vertices, 0, curr.vertexIdx);
+        curr.mesh.render(shaderProgram, glType);
         shaderProgram.end();
 
-        vertexIdx = 0;
-        numVertices = 0;
+        curr.clear();
     }
 
     public void addLine(double x0, double y0, double z0, double x1, double y1, double z1, Color col) {

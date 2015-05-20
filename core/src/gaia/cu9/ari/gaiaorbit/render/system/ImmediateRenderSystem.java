@@ -10,19 +10,30 @@ public abstract class ImmediateRenderSystem extends AbstractRenderSystem {
 
     protected ShaderProgram shaderProgram;
 
-    protected int vertexIdx;
-    protected Mesh mesh;
-    protected int vertexSize;
-    protected int colorOffset;
-    protected float[] vertices;
+    protected int meshIdx;
+    protected MeshData[] meshes;
+    protected MeshData curr;
 
+    protected class MeshData {
+        protected int vertexIdx;
+        protected Mesh mesh;
+        protected int vertexSize;
+        protected int colorOffset;
+        protected float[] vertices;
+        protected int numVertices;
+
+        public void clear(){
+            vertexIdx = 0;
+            numVertices = 0;
+        }
+    }
     protected int maxVertices;
-    protected int numVertices;
 
     protected ImmediateRenderSystem(RenderGroup rg, int priority, float[] alphas) {
         super(rg, priority, alphas);
         initShaderProgram();
         initVertices();
+        meshIdx = 0;
     }
 
     protected abstract void initShaderProgram();
@@ -30,24 +41,24 @@ public abstract class ImmediateRenderSystem extends AbstractRenderSystem {
     protected abstract void initVertices();
 
     public void color(Color color) {
-        vertices[vertexIdx + colorOffset] = color.toFloatBits();
+        curr.vertices[curr.vertexIdx + curr.colorOffset] = color.toFloatBits();
     }
 
     public void color(float r, float g, float b, float a) {
-        vertices[vertexIdx + colorOffset] = Color.toFloatBits(r, g, b, a);
+        curr.vertices[curr.vertexIdx + curr.colorOffset] = Color.toFloatBits(r, g, b, a);
     }
 
     public void color(float colorBits) {
-        vertices[vertexIdx + colorOffset] = colorBits;
+        curr.vertices[curr.vertexIdx + curr.colorOffset] = colorBits;
     }
 
     public void vertex(float x, float y, float z) {
-        vertices[vertexIdx] = x;
-        vertices[vertexIdx + 1] = y;
-        vertices[vertexIdx + 2] = z;
+        curr.vertices[curr.vertexIdx] = x;
+        curr.vertices[curr.vertexIdx + 1] = y;
+        curr.vertices[curr.vertexIdx + 2] = z;
 
-        vertexIdx += vertexSize;
-        numVertices++;
+        curr.vertexIdx += curr.vertexSize;
+        curr.numVertices++;
     }
 
 }

@@ -1,5 +1,6 @@
 package gaia.cu9.ari.gaiaorbit.render.system;
 
+import com.badlogic.gdx.graphics.Mesh;
 import gaia.cu9.ari.gaiaorbit.event.EventManager;
 import gaia.cu9.ari.gaiaorbit.event.Events;
 import gaia.cu9.ari.gaiaorbit.event.IObserver;
@@ -13,7 +14,6 @@ import java.util.List;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Color;
-import com.badlogic.gdx.graphics.Mesh;
 import com.badlogic.gdx.graphics.VertexAttribute;
 import com.badlogic.gdx.graphics.VertexAttributes.Usage;
 import com.badlogic.gdx.graphics.glutils.ShaderProgram;
@@ -48,19 +48,23 @@ public class PixelRenderSystem extends ImmediateRenderSystem implements IObserve
 
     @Override
     protected void initVertices() {
+        meshes = new MeshData[1];
+        curr = new MeshData();
+        meshes[0] = curr;
+
         aux = new Vector3();
 
         /** Init renderer **/
         maxVertices = 3000000;
 
         VertexAttribute[] attribs = buildVertexAttributes();
-        mesh = new Mesh(false, maxVertices, 0, attribs);
+        curr.mesh = new Mesh(false, maxVertices, 0, attribs);
 
-        vertices = new float[maxVertices * (mesh.getVertexAttributes().vertexSize / 4)];
-        vertexSize = mesh.getVertexAttributes().vertexSize / 4;
-        colorOffset = mesh.getVertexAttribute(Usage.ColorPacked) != null ? mesh.getVertexAttribute(Usage.ColorPacked).offset / 4
+        curr.vertices = new float[maxVertices * (curr.mesh.getVertexAttributes().vertexSize / 4)];
+        curr.vertexSize = curr.mesh.getVertexAttributes().vertexSize / 4;
+        curr.colorOffset = curr.mesh.getVertexAttribute(Usage.ColorPacked) != null ? curr.mesh.getVertexAttribute(Usage.ColorPacked).offset / 4
                 : 0;
-        additionalOffset = mesh.getVertexAttribute(Usage.Generic) != null ? mesh.getVertexAttribute(Usage.Generic).offset / 4
+        additionalOffset = curr.mesh.getVertexAttribute(Usage.Generic) != null ? curr.mesh.getVertexAttribute(Usage.Generic).offset / 4
                 : 0;
     }
 
@@ -68,8 +72,7 @@ public class PixelRenderSystem extends ImmediateRenderSystem implements IObserve
     public void renderStud(List<IRenderable> renderables, ICamera camera) {
         if (POINT_UPDATE_FLAG) {
             // Reset variables
-            vertexIdx = 0;
-            numVertices = 0;
+            curr.clear();
 
             int size = renderables.size();
             for (int i = 0; i < size; i++) {
@@ -77,21 +80,21 @@ public class PixelRenderSystem extends ImmediateRenderSystem implements IObserve
                 CelestialBody cb = (CelestialBody) renderables.get(i);
                 float[] col = starColorTransit ? cb.ccTransit : cb.ccPale;
                 // COLOR
-                vertices[vertexIdx + colorOffset] = Color.toFloatBits(col[0], col[1], col[2], 1.0f);
+                curr.vertices[curr.vertexIdx + curr.colorOffset] = Color.toFloatBits(col[0], col[1], col[2], 1.0f);
 
                 // SIZE
-                vertices[vertexIdx + additionalOffset] = cb.getRadius();
-                vertices[vertexIdx + additionalOffset + 1] = (float) cb.THRESHOLD_ANGLE_POINT();
+                curr.vertices[curr.vertexIdx + additionalOffset] = cb.getRadius();
+                curr.vertices[curr.vertexIdx + additionalOffset + 1] = (float) cb.THRESHOLD_ANGLE_POINT();
 
                 // VERTEX
                 aux.set((float) cb.pos.x, (float) cb.pos.y, (float) cb.pos.z);
                 //cb.transform.getTranslationf(aux);
-                final int idx = vertexIdx;
-                vertices[idx] = aux.x;
-                vertices[idx + 1] = aux.y;
-                vertices[idx + 2] = aux.z;
+                final int idx = curr.vertexIdx;
+                curr.vertices[idx] = aux.x;
+                curr.vertices[idx + 1] = aux.y;
+                curr.vertices[idx + 2] = aux.z;
 
-                vertexIdx += vertexSize;
+                curr.vertexIdx += curr.vertexSize;
             }
             // Put flag down
             POINT_UPDATE_FLAG = false;
@@ -103,9 +106,10 @@ public class PixelRenderSystem extends ImmediateRenderSystem implements IObserve
         shaderProgram.setUniformf("u_fovFactor", camera.getFovFactor());
         shaderProgram.setUniformf("u_alpha", alphas[0]);
         shaderProgram.setUniformf("u_starBrightness", GlobalConf.scene.STAR_BRIGHTNESS);
-        mesh.setVertices(vertices, 0, vertexIdx);
-        mesh.render(shaderProgram, ShapeType.Point.getGlType());
+        curr.mesh.setVertices(curr.vertices, 0, curr.vertexIdx);
+        curr.mesh.render(shaderProgram, ShapeType.Point.getGlType());
         shaderProgram.end();
+
 
     }
 
@@ -126,6 +130,5 @@ public class PixelRenderSystem extends ImmediateRenderSystem implements IObserve
         if (event == Events.TRANSIT_COLOUR_CMD) {
             starColorTransit = (boolean) data[1];
         }
-
     }
 }

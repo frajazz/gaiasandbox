@@ -22,7 +22,7 @@ import com.badlogic.gdx.graphics.glutils.ShaderProgram;
  *
  */
 public class Constellation extends LineObject implements I3DTextRenderable {
-    float alpha = .5f;
+    float alpha = .8f;
     float constalpha;
 
     /** List of pairs of identifiers **/
