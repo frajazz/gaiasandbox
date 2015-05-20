@@ -1,1 +1,1 @@
-java -Xmx512m -XX:+UseParallelGC -Dproperties.file=conf\global.properties -jar gaiasandbox.jar
+java -Xmx512m -XX:+UseParallelGC -jar gaiasandbox.jar
