@@ -15,16 +15,7 @@ import gaia.cu9.ari.gaiaorbit.util.GlobalResources;
 import gaia.cu9.ari.gaiaorbit.util.I18n;
 import gaia.cu9.ari.gaiaorbit.util.Logger;
 
-import java.awt.BorderLayout;
-import java.awt.Color;
-import java.awt.Component;
-import java.awt.Container;
-import java.awt.Desktop;
-import java.awt.Dimension;
-import java.awt.GridBagConstraints;
-import java.awt.GridBagLayout;
-import java.awt.GridLayout;
-import java.awt.Insets;
+import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
@@ -44,28 +35,7 @@ import java.util.Map;
 import java.util.Set;
 import java.util.TreeSet;
 
-import javax.swing.AbstractAction;
-import javax.swing.ButtonGroup;
-import javax.swing.Icon;
-import javax.swing.JButton;
-import javax.swing.JCheckBox;
-import javax.swing.JComboBox;
-import javax.swing.JComponent;
-import javax.swing.JFrame;
-import javax.swing.JLabel;
-import javax.swing.JPanel;
-import javax.swing.JRadioButton;
-import javax.swing.JScrollPane;
-import javax.swing.JSpinner;
-import javax.swing.JTabbedPane;
-import javax.swing.JTable;
-import javax.swing.JTextArea;
-import javax.swing.JTextField;
-import javax.swing.JTree;
-import javax.swing.KeyStroke;
-import javax.swing.SpinnerNumberModel;
-import javax.swing.SwingConstants;
-import javax.swing.UIManager;
+import javax.swing.*;
 import javax.swing.border.Border;
 import javax.swing.border.MatteBorder;
 import javax.swing.border.TitledBorder;
@@ -351,14 +321,30 @@ public class ConfigDialog extends I18nJFrame {
         final JComboBox<LangComboBoxBean> lang = new JComboBox<LangComboBoxBean>(langs);
         lang.setSelectedItem(langs[idxLang(GlobalConf.program.LOCALE, langs)]);
 
+        // Theme sample image
+        JPanel sampleImagePanel = new JPanel(new MigLayout("", "push[]", ""));
+        final JLabel sampleImage = new JLabel();
+        sampleImagePanel.add(sampleImage);
+
+        // Theme chooser
         String[] themes = new String[] { "dark", "bright", "dark-big" };
         final JComboBox<String> theme = new JComboBox<String>(themes);
+        theme.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                String selected = (String)theme.getSelectedItem();
+                ImageIcon icon = new ImageIcon(this.getClass().getResource("/img/themes/" + selected +".png"));
+                sampleImage.setIcon(icon);
+            }
+        });
         theme.setSelectedItem(GlobalConf.program.UI_THEME);
+
 
         ui.add(new JLabel(txt("gui.ui.language") + ":"));
         ui.add(lang, "wrap");
         ui.add(new JLabel(txt("gui.ui.theme") + ":"));
-        ui.add(theme);
+        ui.add(theme, "wrap");
+        ui.add(sampleImagePanel, "span, wrap");
 
         /** NOTICE **/
         JPanel uiNotice = new JPanel(new MigLayout("", "[]", ""));
