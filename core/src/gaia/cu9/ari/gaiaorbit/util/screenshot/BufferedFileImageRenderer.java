@@ -1,5 +1,7 @@
 package gaia.cu9.ari.gaiaorbit.util.screenshot;
 
+import com.badlogic.gdx.utils.Pool;
+import com.badlogic.gdx.utils.Pools;
 import gaia.cu9.ari.gaiaorbit.render.BufferedFrame;
 import gaia.cu9.ari.gaiaorbit.util.I18n;
 import gaia.cu9.ari.gaiaorbit.util.Logger;
@@ -8,9 +10,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Timer;
 import java.util.TimerTask;
-
-import com.badlogic.gdx.utils.Pool;
-import com.badlogic.gdx.utils.Pools;
 
 /**
  * Buffers the writing of images to disk.

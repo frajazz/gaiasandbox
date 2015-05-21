@@ -19,12 +19,7 @@ package gaia.cu9.ari.gaiaorbit.util.g3d;
 import com.badlogic.gdx.utils.Disposable;
 
 import java.nio.IntBuffer;
-
-
-import java.nio.Buffer;
 import java.nio.ShortBuffer;
-
-import com.badlogic.gdx.utils.Disposable;
 
 /**
  * Copy of libgdx's IndexData object with integer indices instead of short.

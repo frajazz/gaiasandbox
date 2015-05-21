@@ -1,14 +1,12 @@
 package gaia.cu9.ari.gaiaorbit.render.system;
 
 import com.badlogic.gdx.Gdx;
+import com.bitfire.postprocessing.PostProcessor;
 import gaia.cu9.ari.gaiaorbit.event.EventManager;
 import gaia.cu9.ari.gaiaorbit.event.Events;
 import gaia.cu9.ari.gaiaorbit.event.IObserver;
 import gaia.cu9.ari.gaiaorbit.scenegraph.SceneGraphNode.RenderGroup;
-import gaia.cu9.ari.gaiaorbit.util.GlobalConf;
 import gaia.cu9.ari.gaiaorbit.util.postprocessing.effects.Fuzzy;
-
-import com.bitfire.postprocessing.PostProcessor;
 import gaia.cu9.ari.gaiaorbit.util.postprocessing.effects.GravitationalDistortion;
 
 import java.util.ArrayList;

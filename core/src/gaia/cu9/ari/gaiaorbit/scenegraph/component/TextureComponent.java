@@ -1,10 +1,5 @@
 package gaia.cu9.ari.gaiaorbit.scenegraph.component;
 
-import gaia.cu9.ari.gaiaorbit.data.AssetBean;
-import gaia.cu9.ari.gaiaorbit.scenegraph.ICamera;
-
-import java.util.Map;
-
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.assets.AssetManager;
 import com.badlogic.gdx.assets.loaders.TextureLoader.TextureParameter;
@@ -16,6 +11,10 @@ import com.badlogic.gdx.graphics.g3d.ModelInstance;
 import com.badlogic.gdx.graphics.g3d.attributes.BlendingAttribute;
 import com.badlogic.gdx.graphics.g3d.attributes.ColorAttribute;
 import com.badlogic.gdx.graphics.g3d.attributes.TextureAttribute;
+import gaia.cu9.ari.gaiaorbit.data.AssetBean;
+import gaia.cu9.ari.gaiaorbit.scenegraph.ICamera;
+
+import java.util.Map;
 
 /**
  * A basic component that contains the info on the textures.

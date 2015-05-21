@@ -1,5 +1,11 @@
 package gaia.cu9.ari.gaiaorbit.scenegraph;
 
+import com.badlogic.gdx.assets.AssetManager;
+import com.badlogic.gdx.math.Matrix4;
+import com.badlogic.gdx.math.Vector3;
+import com.badlogic.gdx.utils.Bits;
+import com.badlogic.gdx.utils.Pool;
+import com.badlogic.gdx.utils.Pools;
 import gaia.cu9.ari.gaiaorbit.render.IRenderable;
 import gaia.cu9.ari.gaiaorbit.render.SceneGraphRenderer;
 import gaia.cu9.ari.gaiaorbit.render.SceneGraphRenderer.ComponentType;
@@ -14,13 +20,6 @@ import gaia.cu9.ari.gaiaorbit.util.tree.IPosition;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Vector;
-
-import com.badlogic.gdx.assets.AssetManager;
-import com.badlogic.gdx.math.Matrix4;
-import com.badlogic.gdx.math.Vector3;
-import com.badlogic.gdx.utils.Bits;
-import com.badlogic.gdx.utils.Pool;
-import com.badlogic.gdx.utils.Pools;
 
 /**
  * A scene graph entity.

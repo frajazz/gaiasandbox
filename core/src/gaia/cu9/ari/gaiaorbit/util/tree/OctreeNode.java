@@ -1,5 +1,8 @@
 package gaia.cu9.ari.gaiaorbit.util.tree;
 
+import com.badlogic.gdx.math.Frustum;
+import com.badlogic.gdx.math.Vector3;
+import com.badlogic.gdx.utils.Pools;
 import gaia.cu9.ari.gaiaorbit.render.ILineRenderable;
 import gaia.cu9.ari.gaiaorbit.render.SceneGraphRenderer.ComponentType;
 import gaia.cu9.ari.gaiaorbit.render.system.LineRenderSystem;
@@ -7,25 +10,11 @@ import gaia.cu9.ari.gaiaorbit.scenegraph.ICamera;
 import gaia.cu9.ari.gaiaorbit.scenegraph.Transform;
 import gaia.cu9.ari.gaiaorbit.util.GlobalResources;
 import gaia.cu9.ari.gaiaorbit.util.Pair;
-import gaia.cu9.ari.gaiaorbit.util.math.BoundingBoxd;
-import gaia.cu9.ari.gaiaorbit.util.math.Intersectord;
-import gaia.cu9.ari.gaiaorbit.util.math.MathUtilsd;
-import gaia.cu9.ari.gaiaorbit.util.math.Matrix4d;
-import gaia.cu9.ari.gaiaorbit.util.math.Rayd;
-import gaia.cu9.ari.gaiaorbit.util.math.Vector3d;
+import gaia.cu9.ari.gaiaorbit.util.math.*;
 
-import java.awt.Color;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
+import java.awt.*;
+import java.util.*;
 import java.util.List;
-import java.util.Map;
-import java.util.TreeSet;
-
-import com.badlogic.gdx.graphics.glutils.ImmediateModeRenderer20;
-import com.badlogic.gdx.math.Frustum;
-import com.badlogic.gdx.math.Vector3;
-import com.badlogic.gdx.utils.Pools;
 
 /**
  * Octree node implementation which contains a list of {@link IPosition} objects

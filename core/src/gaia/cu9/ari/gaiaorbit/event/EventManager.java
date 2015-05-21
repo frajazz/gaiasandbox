@@ -1,14 +1,13 @@
 package gaia.cu9.ari.gaiaorbit.event;
 
-import gaia.cu9.ari.gaiaorbit.util.time.GlobalClock;
-
-import java.util.LinkedHashSet;
-import java.util.Set;
-
 import com.badlogic.gdx.utils.IntMap;
 import com.badlogic.gdx.utils.IntMap.Keys;
 import com.badlogic.gdx.utils.ObjectMap;
 import com.badlogic.gdx.utils.Pool;
+import gaia.cu9.ari.gaiaorbit.util.time.GlobalClock;
+
+import java.util.LinkedHashSet;
+import java.util.Set;
 
 /**
  * Event manager that allows for subscription of observers to events (identified by strings), and also for the creation

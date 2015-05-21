@@ -1,21 +1,16 @@
 package gaia.cu9.ari.gaiaorbit.render;
 
+import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.graphics.Texture;
+import com.bitfire.postprocessing.PostProcessor;
+import com.bitfire.postprocessing.effects.*;
+import com.bitfire.utils.ShaderLoader;
 import gaia.cu9.ari.gaiaorbit.event.EventManager;
 import gaia.cu9.ari.gaiaorbit.event.Events;
 import gaia.cu9.ari.gaiaorbit.event.IObserver;
 import gaia.cu9.ari.gaiaorbit.util.GlobalConf;
 import gaia.cu9.ari.gaiaorbit.util.I18n;
 import gaia.cu9.ari.gaiaorbit.util.Logger;
-
-import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.graphics.Texture;
-import com.bitfire.postprocessing.PostProcessor;
-import com.bitfire.postprocessing.effects.Bloom;
-import com.bitfire.postprocessing.effects.Fxaa;
-import com.bitfire.postprocessing.effects.LensFlare2;
-import com.bitfire.postprocessing.effects.MotionBlur;
-import com.bitfire.postprocessing.effects.Nfaa;
-import com.bitfire.utils.ShaderLoader;
 
 public class GSPostProcessor implements IPostProcessor, IObserver {
 

@@ -1,10 +1,6 @@
 package gaia.cu9.ari.gaiaorbit.data;
 
-import gaia.cu9.ari.gaiaorbit.scenegraph.ISceneGraph;
-import gaia.cu9.ari.gaiaorbit.scenegraph.SceneGraph;
-import gaia.cu9.ari.gaiaorbit.scenegraph.SceneGraphConcurrent;
-import gaia.cu9.ari.gaiaorbit.scenegraph.SceneGraphConcurrentOctree;
-import gaia.cu9.ari.gaiaorbit.scenegraph.SceneGraphNode;
+import gaia.cu9.ari.gaiaorbit.scenegraph.*;
 import gaia.cu9.ari.gaiaorbit.scenegraph.octreewrapper.AbstractOctreeWrapper;
 import gaia.cu9.ari.gaiaorbit.util.Logger;
 import gaia.cu9.ari.gaiaorbit.util.time.ITimeFrameProvider;

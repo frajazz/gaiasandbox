@@ -1,12 +1,11 @@
 package gaia.cu9.ari.gaiaorbit.interfce;
 
-import gaia.cu9.ari.gaiaorbit.scenegraph.CameraManager;
-import gaia.cu9.ari.gaiaorbit.scenegraph.CameraManager.CameraMode;
-
 import com.badlogic.gdx.controllers.Controller;
 import com.badlogic.gdx.controllers.ControllerListener;
 import com.badlogic.gdx.controllers.PovDirection;
 import com.badlogic.gdx.math.Vector3;
+import gaia.cu9.ari.gaiaorbit.scenegraph.CameraManager;
+import gaia.cu9.ari.gaiaorbit.scenegraph.CameraManager.CameraMode;
 
 public class GaiaControllerListener implements ControllerListener {
 

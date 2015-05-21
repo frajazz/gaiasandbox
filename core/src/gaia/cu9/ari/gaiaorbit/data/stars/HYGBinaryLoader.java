@@ -1,5 +1,6 @@
 package gaia.cu9.ari.gaiaorbit.data.stars;
 
+import com.badlogic.gdx.Gdx;
 import gaia.cu9.ari.gaiaorbit.data.FileLocator;
 import gaia.cu9.ari.gaiaorbit.scenegraph.Star;
 import gaia.cu9.ari.gaiaorbit.util.GlobalConf;
@@ -8,16 +9,10 @@ import gaia.cu9.ari.gaiaorbit.util.Logger;
 import gaia.cu9.ari.gaiaorbit.util.coord.Coordinates;
 import gaia.cu9.ari.gaiaorbit.util.math.Vector3d;
 
-import java.io.DataInputStream;
-import java.io.EOFException;
-import java.io.FileNotFoundException;
-import java.io.IOException;
-import java.io.InputStream;
+import java.io.*;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Properties;
-
-import com.badlogic.gdx.Gdx;
 
 /**
  * Loads the HYG catalog in binary (own) format. The format is defined as follows

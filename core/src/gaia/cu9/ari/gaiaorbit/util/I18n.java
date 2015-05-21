@@ -1,11 +1,11 @@
 package gaia.cu9.ari.gaiaorbit.util;
 
-import java.util.Locale;
-import java.util.MissingResourceException;
-
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.files.FileHandle;
 import com.badlogic.gdx.utils.I18NBundle;
+
+import java.util.Locale;
+import java.util.MissingResourceException;
 
 /**
  * Manages the i18n system.

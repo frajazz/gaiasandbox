@@ -1,5 +1,7 @@
 package gaia.cu9.ari.gaiaorbit.scenegraph;
 
+import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.assets.AssetManager;
 import gaia.cu9.ari.gaiaorbit.data.orbit.IOrbitDataProvider;
 import gaia.cu9.ari.gaiaorbit.data.orbit.OrbitData;
 import gaia.cu9.ari.gaiaorbit.data.orbit.OrbitDataLoader;
@@ -15,9 +17,6 @@ import gaia.cu9.ari.gaiaorbit.util.time.ITimeFrameProvider;
 
 import java.lang.reflect.Method;
 import java.util.Date;
-
-import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.assets.AssetManager;
 
 public class Orbit extends LineObject {
 

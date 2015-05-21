@@ -1,11 +1,10 @@
 package gaia.cu9.ari.gaiaorbit.interfce;
 
-import gaia.cu9.ari.gaiaorbit.render.SceneGraphRenderer.ComponentType;
-import gaia.cu9.ari.gaiaorbit.scenegraph.ISceneGraph;
-
 import com.badlogic.gdx.assets.AssetManager;
 import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.Stage;
+import gaia.cu9.ari.gaiaorbit.render.SceneGraphRenderer.ComponentType;
+import gaia.cu9.ari.gaiaorbit.scenegraph.ISceneGraph;
 
 public interface IGui {
 

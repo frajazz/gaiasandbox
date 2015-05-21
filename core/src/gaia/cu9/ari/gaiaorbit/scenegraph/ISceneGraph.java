@@ -1,12 +1,11 @@
 package gaia.cu9.ari.gaiaorbit.scenegraph;
 
+import com.badlogic.gdx.utils.LongMap;
 import gaia.cu9.ari.gaiaorbit.util.time.ITimeFrameProvider;
 
 import java.io.Serializable;
 import java.util.HashMap;
 import java.util.List;
-
-import com.badlogic.gdx.utils.LongMap;
 
 public interface ISceneGraph extends Serializable {
     public void initialize(List<SceneGraphNode> nodes, ITimeFrameProvider time);

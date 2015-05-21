@@ -1,5 +1,6 @@
 package gaia.cu9.ari.gaiaorbit.render.system;
 
+import com.badlogic.gdx.graphics.g3d.ModelBatch;
 import gaia.cu9.ari.gaiaorbit.render.IRenderable;
 import gaia.cu9.ari.gaiaorbit.scenegraph.ICamera;
 import gaia.cu9.ari.gaiaorbit.scenegraph.SceneGraphNode.RenderGroup;
@@ -7,8 +8,6 @@ import gaia.cu9.ari.gaiaorbit.util.comp.ModelComparator;
 
 import java.util.Collections;
 import java.util.List;
-
-import com.badlogic.gdx.graphics.g3d.ModelBatch;
 
 /**
  * Renders with a given model batch.

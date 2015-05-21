@@ -1,20 +1,5 @@
 package gaia.cu9.ari.gaiaorbit.scenegraph;
 
-import gaia.cu9.ari.gaiaorbit.render.IAnnotationsRenderable;
-import gaia.cu9.ari.gaiaorbit.render.IModelRenderable;
-import gaia.cu9.ari.gaiaorbit.scenegraph.component.ModelComponent;
-import gaia.cu9.ari.gaiaorbit.util.GlobalResources;
-import gaia.cu9.ari.gaiaorbit.util.ModelCache;
-import gaia.cu9.ari.gaiaorbit.util.coord.Coordinates;
-import gaia.cu9.ari.gaiaorbit.util.g3d.MeshPartBuilder2;
-import gaia.cu9.ari.gaiaorbit.util.g3d.ModelBuilder2;
-import gaia.cu9.ari.gaiaorbit.util.math.Matrix4d;
-import gaia.cu9.ari.gaiaorbit.util.math.Vector3d;
-import gaia.cu9.ari.gaiaorbit.util.time.ITimeFrameProvider;
-
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
-
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.assets.AssetManager;
 import com.badlogic.gdx.graphics.GL20;
@@ -29,6 +14,20 @@ import com.badlogic.gdx.graphics.g3d.attributes.BlendingAttribute;
 import com.badlogic.gdx.graphics.g3d.attributes.ColorAttribute;
 import com.badlogic.gdx.math.Matrix4;
 import com.badlogic.gdx.math.Vector3;
+import gaia.cu9.ari.gaiaorbit.render.IAnnotationsRenderable;
+import gaia.cu9.ari.gaiaorbit.render.IModelRenderable;
+import gaia.cu9.ari.gaiaorbit.scenegraph.component.ModelComponent;
+import gaia.cu9.ari.gaiaorbit.util.GlobalResources;
+import gaia.cu9.ari.gaiaorbit.util.ModelCache;
+import gaia.cu9.ari.gaiaorbit.util.coord.Coordinates;
+import gaia.cu9.ari.gaiaorbit.util.g3d.MeshPartBuilder2;
+import gaia.cu9.ari.gaiaorbit.util.g3d.ModelBuilder2;
+import gaia.cu9.ari.gaiaorbit.util.math.Matrix4d;
+import gaia.cu9.ari.gaiaorbit.util.math.Vector3d;
+import gaia.cu9.ari.gaiaorbit.util.time.ITimeFrameProvider;
+
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 
 public class Grid extends AbstractPositionEntity implements IModelRenderable, IAnnotationsRenderable {
     private static final float ANNOTATIONS_ALPHA = 0.8f;

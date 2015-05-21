@@ -1,11 +1,11 @@
 package gaia.cu9.ari.gaiaorbit.data;
 
+import com.badlogic.gdx.Gdx;
+
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.InputStream;
-
-import com.badlogic.gdx.Gdx;
 
 public class FileLocator {
 

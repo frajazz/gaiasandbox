@@ -1,10 +1,9 @@
 package gaia.cu9.ari.gaiaorbit.render;
 
-import gaia.cu9.ari.gaiaorbit.render.IPostProcessor.PostProcessBean;
-import gaia.cu9.ari.gaiaorbit.scenegraph.ICamera;
-
 import com.badlogic.gdx.assets.AssetManager;
 import com.badlogic.gdx.graphics.glutils.FrameBuffer;
+import gaia.cu9.ari.gaiaorbit.render.IPostProcessor.PostProcessBean;
+import gaia.cu9.ari.gaiaorbit.scenegraph.ICamera;
 
 /**
  * Interface for component renderers.

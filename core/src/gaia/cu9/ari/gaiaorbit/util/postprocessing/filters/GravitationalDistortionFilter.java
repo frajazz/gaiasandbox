@@ -16,7 +16,6 @@
 package gaia.cu9.ari.gaiaorbit.util.postprocessing.filters;
 
 import com.badlogic.gdx.math.Vector2;
-import com.badlogic.gdx.math.Vector3;
 import com.bitfire.postprocessing.filters.Filter;
 import com.bitfire.utils.ShaderLoader;
 

@@ -1,7 +1,5 @@
 package gaia.cu9.ari.gaiaorbit.util.scene2d;
 
-import gaia.cu9.ari.gaiaorbit.util.GlobalResources;
-
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input.Buttons;
 import com.badlogic.gdx.graphics.Color;
@@ -11,6 +9,7 @@ import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.InputEvent.Type;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
+import gaia.cu9.ari.gaiaorbit.util.GlobalResources;
 
 /**
  * Link widget.

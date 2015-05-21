@@ -1,15 +1,11 @@
 package gaia.cu9.ari.gaiaorbit.util.scene2d;
 
+import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.scenes.scene2d.*;
+import com.badlogic.gdx.scenes.scene2d.InputEvent.Type;
+
 import java.util.Timer;
 import java.util.TimerTask;
-
-import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.scenes.scene2d.Actor;
-import com.badlogic.gdx.scenes.scene2d.Event;
-import com.badlogic.gdx.scenes.scene2d.EventListener;
-import com.badlogic.gdx.scenes.scene2d.InputEvent;
-import com.badlogic.gdx.scenes.scene2d.InputEvent.Type;
-import com.badlogic.gdx.scenes.scene2d.Stage;
 
 public class Tooltip<T extends Actor> implements EventListener {
     private static final long TOOLTIP_DELAY_MS = 750;

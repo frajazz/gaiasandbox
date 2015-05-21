@@ -1,14 +1,13 @@
 package gaia.cu9.ari.gaiaorbit.util.g3d;
 
+import com.badlogic.gdx.math.Vector2;
+import com.badlogic.gdx.math.Vector3;
 import gaia.cu9.ari.gaiaorbit.util.math.MathUtilsd;
 
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
-
-import com.badlogic.gdx.math.Vector2;
-import com.badlogic.gdx.math.Vector3;
 
 /**
  * Helper generic class to create rings.

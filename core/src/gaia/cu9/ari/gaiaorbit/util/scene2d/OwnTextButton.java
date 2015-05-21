@@ -1,7 +1,5 @@
 package gaia.cu9.ari.gaiaorbit.util.scene2d;
 
-import gaia.cu9.ari.gaiaorbit.util.GlobalResources;
-
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.scenes.scene2d.Event;
 import com.badlogic.gdx.scenes.scene2d.EventListener;
@@ -9,6 +7,7 @@ import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.InputEvent.Type;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
+import gaia.cu9.ari.gaiaorbit.util.GlobalResources;
 
 /**
  * TextButton in which the cursor changes when the mouse rolls over.

@@ -1,10 +1,9 @@
 package gaia.cu9.ari.gaiaorbit.util.coord;
 
+import com.badlogic.gdx.math.Matrix4;
 import gaia.cu9.ari.gaiaorbit.util.math.Matrix4d;
 import gaia.cu9.ari.gaiaorbit.util.math.Vector2d;
 import gaia.cu9.ari.gaiaorbit.util.math.Vector3d;
-
-import com.badlogic.gdx.math.Matrix4;
 
 /**
  * Provides utility coordinate conversions between some astronomical coordinate systems and to 

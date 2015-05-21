@@ -1,9 +1,5 @@
 package gaia.cu9.ari.gaiaorbit.data.orbit;
 
-import gaia.cu9.ari.gaiaorbit.scenegraph.component.OrbitComponent;
-
-import java.util.Date;
-
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.assets.AssetDescriptor;
 import com.badlogic.gdx.assets.AssetLoaderParameters;
@@ -12,6 +8,9 @@ import com.badlogic.gdx.assets.loaders.AsynchronousAssetLoader;
 import com.badlogic.gdx.assets.loaders.FileHandleResolver;
 import com.badlogic.gdx.files.FileHandle;
 import com.badlogic.gdx.utils.Array;
+import gaia.cu9.ari.gaiaorbit.scenegraph.component.OrbitComponent;
+
+import java.util.Date;
 
 /**
  * Abstract data loader to rule them all.

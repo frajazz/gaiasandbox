@@ -1,5 +1,7 @@
 package gaia.cu9.ari.gaiaorbit.interfce;
 
+import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.Input.Keys;
 import gaia.cu9.ari.gaiaorbit.event.EventManager;
 import gaia.cu9.ari.gaiaorbit.event.Events;
 import gaia.cu9.ari.gaiaorbit.scenegraph.CameraManager.CameraMode;
@@ -9,9 +11,6 @@ import gaia.cu9.ari.gaiaorbit.util.I18n;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.TreeSet;
-
-import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.Input.Keys;
 
 /**
  * Contains the key mappings and the actions. This should be persisted somehow in the future.

@@ -16,12 +16,10 @@
 
 package gaia.cu9.ari.gaiaorbit.util.g3d;
 
-import java.nio.Buffer;
+import com.badlogic.gdx.utils.BufferUtils;
+
 import java.nio.ByteBuffer;
 import java.nio.IntBuffer;
-import java.nio.ShortBuffer;
-
-import com.badlogic.gdx.utils.BufferUtils;
 
 /**
  * Copy of libgdx's IndexArray class using integers instead of shorts for indices.

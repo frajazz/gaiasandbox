@@ -1,40 +1,5 @@
 package gaia.cu9.ari.gaiaorbit.render;
 
-import com.bitfire.utils.ShaderLoader;
-import gaia.cu9.ari.gaiaorbit.event.EventManager;
-import gaia.cu9.ari.gaiaorbit.event.Events;
-import gaia.cu9.ari.gaiaorbit.event.IObserver;
-import gaia.cu9.ari.gaiaorbit.render.IPostProcessor.PostProcessBean;
-import gaia.cu9.ari.gaiaorbit.render.system.AbstractRenderSystem;
-import gaia.cu9.ari.gaiaorbit.render.system.IRenderSystem;
-import gaia.cu9.ari.gaiaorbit.render.system.LineQuadRenderSystem;
-import gaia.cu9.ari.gaiaorbit.render.system.LineRenderSystem;
-import gaia.cu9.ari.gaiaorbit.render.system.ModelBatchRenderSystem;
-import gaia.cu9.ari.gaiaorbit.render.system.PixelBloomRenderSystem;
-import gaia.cu9.ari.gaiaorbit.render.system.PixelFuzzyRenderSystem;
-import gaia.cu9.ari.gaiaorbit.render.system.PixelRenderSystem;
-import gaia.cu9.ari.gaiaorbit.render.system.QuadRenderSystem;
-import gaia.cu9.ari.gaiaorbit.render.system.FontRenderSystem;
-import gaia.cu9.ari.gaiaorbit.scenegraph.CameraManager.CameraMode;
-import gaia.cu9.ari.gaiaorbit.scenegraph.ICamera;
-import gaia.cu9.ari.gaiaorbit.scenegraph.NaturalCamera;
-import gaia.cu9.ari.gaiaorbit.scenegraph.SceneGraphNode.RenderGroup;
-import gaia.cu9.ari.gaiaorbit.util.Constants;
-import gaia.cu9.ari.gaiaorbit.util.GlobalConf;
-import gaia.cu9.ari.gaiaorbit.util.GlobalConf.ProgramConf.StereoProfile;
-import gaia.cu9.ari.gaiaorbit.util.GlobalResources;
-import gaia.cu9.ari.gaiaorbit.util.I18n;
-import gaia.cu9.ari.gaiaorbit.util.ds.Multilist;
-import gaia.cu9.ari.gaiaorbit.util.math.MathUtilsd;
-import gaia.cu9.ari.gaiaorbit.util.override.AtmosphereGroundShaderProvider;
-import gaia.cu9.ari.gaiaorbit.util.override.AtmosphereShaderProvider;
-
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.assets.AssetManager;
 import com.badlogic.gdx.graphics.Camera;
@@ -55,6 +20,27 @@ import com.badlogic.gdx.utils.Pools;
 import com.badlogic.gdx.utils.viewport.ExtendViewport;
 import com.badlogic.gdx.utils.viewport.StretchViewport;
 import com.badlogic.gdx.utils.viewport.Viewport;
+import com.bitfire.utils.ShaderLoader;
+import gaia.cu9.ari.gaiaorbit.event.EventManager;
+import gaia.cu9.ari.gaiaorbit.event.Events;
+import gaia.cu9.ari.gaiaorbit.event.IObserver;
+import gaia.cu9.ari.gaiaorbit.render.IPostProcessor.PostProcessBean;
+import gaia.cu9.ari.gaiaorbit.render.system.*;
+import gaia.cu9.ari.gaiaorbit.scenegraph.CameraManager.CameraMode;
+import gaia.cu9.ari.gaiaorbit.scenegraph.ICamera;
+import gaia.cu9.ari.gaiaorbit.scenegraph.NaturalCamera;
+import gaia.cu9.ari.gaiaorbit.scenegraph.SceneGraphNode.RenderGroup;
+import gaia.cu9.ari.gaiaorbit.util.Constants;
+import gaia.cu9.ari.gaiaorbit.util.GlobalConf;
+import gaia.cu9.ari.gaiaorbit.util.GlobalConf.ProgramConf.StereoProfile;
+import gaia.cu9.ari.gaiaorbit.util.GlobalResources;
+import gaia.cu9.ari.gaiaorbit.util.I18n;
+import gaia.cu9.ari.gaiaorbit.util.ds.Multilist;
+import gaia.cu9.ari.gaiaorbit.util.math.MathUtilsd;
+import gaia.cu9.ari.gaiaorbit.util.override.AtmosphereGroundShaderProvider;
+import gaia.cu9.ari.gaiaorbit.util.override.AtmosphereShaderProvider;
+
+import java.util.*;
 
 /**
  * Renders a scenegraph.

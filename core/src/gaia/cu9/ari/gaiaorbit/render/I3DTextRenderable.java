@@ -1,11 +1,10 @@
 package gaia.cu9.ari.gaiaorbit.render;
 
-import gaia.cu9.ari.gaiaorbit.scenegraph.ICamera;
-import gaia.cu9.ari.gaiaorbit.util.math.Vector3d;
-
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.glutils.ShaderProgram;
+import gaia.cu9.ari.gaiaorbit.scenegraph.ICamera;
+import gaia.cu9.ari.gaiaorbit.util.math.Vector3d;
 
 /**
  * Interface to be implemented by all entities that can render a text in 3d space.
