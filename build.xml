@@ -314,6 +314,24 @@
 
 	<!-- RUN the Gaia Sandbox from compiled code -->
 	<target name="run" depends="compile">
+		<path id="classpath">
+				<fileset dir="${gs.dir}/${lib}">
+					<include name="**/*.jar" />
+				</fileset>
+				<fileset dir="${gs-desktop.dir}/${lib}">
+					<include name="**/*.jar" />
+				</fileset>
+				<path location="${gs-android.dir}/assets" />
+				<path location="${gs.dir}/bin" />
+				<path location="${gs-desktop.dir}/bin" />
+		</path>
+		<pathconvert property="classpathProp" refid="classpath" />
+		<script language="javascript">
+			var before = project.getProperty("classpathProp");
+			project.setProperty("classpathProperty", before.replaceAll(";", "\n"));
+		</script>
+		<echo>Classpath:</echo>
+		<echo>${classpathProperty}</echo>
 		<java fork="true" classname="gaia.cu9.ari.gaiaorbit.GaiaSandboxDesktop" dir="${gs-desktop.dir}">
 			<sysproperty key="properties.file" value="${gs-android.dir}/assets/conf/global.properties" />
 			<classpath>
