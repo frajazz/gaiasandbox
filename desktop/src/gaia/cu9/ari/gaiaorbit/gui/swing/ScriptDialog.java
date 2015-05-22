@@ -5,20 +5,15 @@ import gaia.cu9.ari.gaiaorbit.event.Events;
 import gaia.cu9.ari.gaiaorbit.gui.swing.jsplash.GuiUtility;
 import gaia.cu9.ari.gaiaorbit.util.GlobalConf;
 
-import java.awt.Color;
-import java.awt.Dimension;
+import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
 import java.util.List;
 
-import javax.swing.JButton;
-import javax.swing.JCheckBox;
-import javax.swing.JFrame;
-import javax.swing.JLabel;
-import javax.swing.JPanel;
-import javax.swing.JTextArea;
+import javax.swing.*;
 import javax.swing.filechooser.FileFilter;
+import javax.swing.filechooser.FileNameExtensionFilter;
 
 import net.miginfocom.swing.MigLayout;
 
@@ -27,11 +22,6 @@ import org.python.core.PySyntaxError;
 
 import sandbox.script.JythonFactory;
 
-import com.alee.extended.filechooser.FilesSelectionListener;
-import com.alee.extended.filechooser.WebFileChooserField;
-import com.alee.laf.filechooser.WebFileChooserPanel;
-import com.alee.laf.scroll.WebScrollPane;
-import com.alee.laf.splitpane.WebSplitPane;
 
 public class ScriptDialog extends I18nJFrame {
 
@@ -43,7 +33,7 @@ public class ScriptDialog extends I18nJFrame {
     public ScriptDialog() {
         super(txt("gui.script.title"));
         initialize();
-        frame.setPreferredSize(new Dimension(300, 200));
+        //frame.setPreferredSize(new Dimension(400, 200));
         frame.pack();
         GuiUtility.centerOnScreen(frame);
         frame.setVisible(true);
@@ -71,59 +61,63 @@ public class ScriptDialog extends I18nJFrame {
         outConsole.setWrapStyleWord(true);
         outConsole.setEditable(false);
         outConsole.setForeground(Color.gray);
-        outConsole.setPreferredSize(new Dimension(300, 80));
+        //outConsole.setPreferredSize(new Dimension(350, 80));
 
         // Single file chooser field with custom root
-        WebFileChooserField scriptChooser = new WebFileChooserField(frame);
+        final JButton scriptChooser = new JButton(GlobalConf.program.SCRIPT_LOCATION);
+        scriptChooser.addActionListener(new ActionListener() {
+            JFileChooser chooser = null;
 
-        scriptChooser.setPreferredWidth(200);
-        scriptChooser.setMultiSelectionEnabled(false);
-        scriptChooser.setShowFileShortName(true);
-        scriptChooser.setShowRemoveButton(true);
-        scriptChooser.setShowFileExtensions(true);
-        FileFilter pyff = new FileFilter() {
-            @Override
-            public boolean accept(File f) {
-                return f.getName().endsWith(".py");
-            }
+            @Override public void actionPerformed(ActionEvent e) {
+                SecurityManager sm = System.getSecurityManager();
+                System.setSecurityManager(null);
+                chooser = new JFileChooser();
 
-            @Override
-            public String getDescription() {
-                return ".py Python scripts";
-            }
+                chooser.setFileHidingEnabled(false);
+                chooser.setMultiSelectionEnabled(false);
+                chooser.setAcceptAllFileFilterUsed(false);
+                chooser.setFileSelectionMode(JFileChooser.FILES_ONLY);
+                chooser.setCurrentDirectory(new File(GlobalConf.program.SCRIPT_LOCATION));
 
-        };
-        // Increase scroll bar speed
-        WebSplitPane wsp = ((WebSplitPane) ((WebFileChooserPanel) scriptChooser.getWebFileChooser().getComponents()[0]).getComponent(1));
-        ((WebScrollPane) wsp.getComponent(1)).getVerticalScrollBar().setUnitIncrement(50);
-        ((WebScrollPane) wsp.getComponent(2)).getVerticalScrollBar().setUnitIncrement(50);
+                // Filter
+                FileFilter filter = new FileNameExtensionFilter("Python scripts", new String[] {"py", "pyc"});
+                chooser.addChoosableFileFilter(filter);
+                chooser.setFileFilter(filter);
 
-        //	scriptChooser.getWebFileChooser().setCurrentDirectory(new File(System.getProperty("user.dir")));
-        scriptChooser.getWebFileChooser().setCurrentDirectory(new File(GlobalConf.program.SCRIPT_LOCATION));
-        scriptChooser.getWebFileChooser().addChoosableFileFilter(pyff);
-        scriptChooser.getWebFileChooser().setFileFilter(pyff);
-        scriptChooser.addSelectedFilesListener(new FilesSelectionListener() {
-            @Override
-            public void selectionChanged(List<File> files) {
-                if (files.size() == 1) {
-                    File file = files.get(0);
-                    GlobalConf.program.SCRIPT_LOCATION = file.getParent();
-                    try {
-                        code = JythonFactory.getInstance().compileJythonScript(file);
-                        outConsole.setText(txt("gui.script.ready"));
-                        outConsole.setForeground(darkgreen);
-                        okButton.setEnabled(true);
-                    } catch (PySyntaxError e) {
-                        outConsole.setText(txt("gui.script.error", e.type, e.value));
-                        outConsole.setForeground(darkred);
-                        okButton.setEnabled(false);
-                    } catch (Exception e) {
-                        outConsole.setText(txt("gui.script.error2", e.getMessage()));
-                        outConsole.setForeground(darkred);
-                        okButton.setEnabled(false);
+
+                int v = chooser.showOpenDialog(null);
+
+                switch (v) {
+                case JFileChooser.APPROVE_OPTION:
+                    File choice = null;
+                    if (chooser.getSelectedFile() != null) {
+                        choice = chooser.getSelectedFile();
+
+                        GlobalConf.program.SCRIPT_LOCATION = choice.getParent();
+                        try {
+                            code = JythonFactory.getInstance().compileJythonScript(choice);
+                            outConsole.setText(txt("gui.script.ready"));
+                            outConsole.setForeground(darkgreen);
+                            okButton.setEnabled(true);
+                        } catch (PySyntaxError e1) {
+                            outConsole.setText(txt("gui.script.error", e1.type, e1.value));
+                            outConsole.setForeground(darkred);
+                            okButton.setEnabled(false);
+                        } catch (Exception e2) {
+                            outConsole.setText(txt("gui.script.error2", e2.getMessage()));
+                            outConsole.setForeground(darkred);
+                            okButton.setEnabled(false);
+                        }
+
                     }
-                }
 
+                    break;
+                case JFileChooser.CANCEL_OPTION:
+                case JFileChooser.ERROR_OPTION:
+                }
+                chooser.removeAll();
+                chooser = null;
+                System.setSecurityManager(sm);
             }
         });
 

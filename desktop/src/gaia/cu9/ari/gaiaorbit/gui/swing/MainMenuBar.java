@@ -20,22 +20,12 @@ import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 
-import javax.swing.JCheckBoxMenuItem;
-import javax.swing.JDialog;
-import javax.swing.JFrame;
-import javax.swing.JMenu;
-import javax.swing.JMenuBar;
-import javax.swing.JMenuItem;
-import javax.swing.KeyStroke;
-import javax.swing.SwingUtilities;
+import javax.swing.*;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 
-import com.alee.extended.image.WebImage;
-import com.alee.laf.optionpane.WebOptionPane;
-import com.alee.laf.text.WebTextField;
 
 public class MainMenuBar extends JMenuBar implements IObserver {
 
@@ -158,11 +148,11 @@ public class MainMenuBar extends JMenuBar implements IObserver {
             @Override
             public void actionPerformed(ActionEvent e) {
                 final JDialog dialog = new JDialog((JFrame) SwingUtilities.getRoot(menu), "Search...", true);
-                final WebTextField searchInput = new WebTextField(20);
-                searchInput.setMargin(0, 0, 0, 2);
-                searchInput.setInputPrompt("Search...");
-                searchInput.setInputPromptFont(searchInput.getFont().deriveFont(Font.ITALIC));
-                searchInput.setTrailingComponent(new WebImage(IconManager.get("search")));
+                final JTextField searchInput = new JTextField(20);
+                //searchInput.setMargin(0, 0, 0, 2);
+                //searchInput.setInputPrompt("Search...");
+                //searchInput.setInputPromptFont(searchInput.getFont().deriveFont(Font.ITALIC));
+                //searchInput.setTrailingComponent(new WebImage(IconManager.get("search")));
                 searchInput.getDocument().addDocumentListener(new DocumentListener() {
                     public void changedUpdate(DocumentEvent e) {
                         warn();
@@ -380,7 +370,7 @@ public class MainMenuBar extends JMenuBar implements IObserver {
     public void notify(Events event, Object... data) {
         switch (event) {
         case SCREENSHOT_INFO:
-            WebOptionPane.showMessageDialog((JFrame) SwingUtilities.getRoot(menu), "Screenshot saved to " + (String) data[0], "Screen captured", WebOptionPane.INFORMATION_MESSAGE);
+            //WebOptionPane.showMessageDialog((JFrame) SwingUtilities.getRoot(menu), "Screenshot saved to " + (String) data[0], "Screen captured", WebOptionPane.INFORMATION_MESSAGE);
             break;
         }
 

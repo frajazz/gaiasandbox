@@ -24,7 +24,6 @@ import javax.swing.UIManager;
 
 import sandbox.script.JythonFactory;
 
-import com.alee.laf.WebLookAndFeel;
 import com.badlogic.gdx.Files;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.backends.lwjgl.LwjglApplicationConfiguration;
@@ -81,8 +80,8 @@ public class GaiaSandboxGuiSwing extends JFrame {
     public static void main(String[] args) {
         try {
             // Set look and feel
-            UIManager.setLookAndFeel("com.alee.laf.WebLookAndFeel");
-            WebLookAndFeel.setAllowLinuxTransparency(false);
+            //UIManager.setLookAndFeel("com.alee.laf.WebLookAndFeel");
+            //WebLookAndFeel.setAllowLinuxTransparency(false);
 
             assetsLocation = System.getProperty("assets.location");
             File confFile = new File(System.getProperty("properties.file"));

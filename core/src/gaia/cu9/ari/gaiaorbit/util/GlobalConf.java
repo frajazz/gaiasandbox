@@ -49,11 +49,13 @@ public class GlobalConf {
 
     }
 
+    public enum ScreenshotMode{
+        simple,
+        redraw
+    }
+
     public static class ScreenshotConf implements IConf {
-        public enum ScreenshotMode{
-            simple,
-            redraw
-        }
+
 
         public int SCREENSHOT_WIDTH;
         public int SCREENSHOT_HEIGHT;
@@ -286,6 +288,8 @@ public class GlobalConf {
         public boolean RENDER_SCREENSHOT_TIME;
         /** Whether the frame system is activated or not **/
         public boolean RENDER_OUTPUT = false;
+        /** The frame output screenshot mode **/
+        public ScreenshotMode FRAME_MODE;
 
         public FrameConf() {
             EventManager.instance.subscribe(this, Events.CONFIG_PIXEL_RENDERER, Events.FRAME_OUTPUT_CMD);
@@ -300,6 +304,7 @@ public class GlobalConf {
             p.setProperty("graphics.render.height", Integer.toString(RENDER_HEIGHT));
             p.setProperty("graphics.render.targetfps", Integer.toString(RENDER_TARGET_FPS));
             p.setProperty("graphics.render.time", Boolean.toString(RENDER_SCREENSHOT_TIME));
+            p.setProperty("graphics.render.mode", FRAME_MODE.toString());
         }
 
         @Override
@@ -318,6 +323,7 @@ public class GlobalConf {
             RENDER_HEIGHT = Integer.parseInt(p.getProperty("graphics.render.height"));
             RENDER_TARGET_FPS = Integer.parseInt(p.getProperty("graphics.render.targetfps"));
             RENDER_SCREENSHOT_TIME = Boolean.parseBoolean(p.getProperty("graphics.render.time"));
+            FRAME_MODE = ScreenshotMode.valueOf(p.getProperty("graphics.render.mode"));
         }
 
         @Override

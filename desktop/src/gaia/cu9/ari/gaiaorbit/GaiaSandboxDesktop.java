@@ -1,5 +1,9 @@
 package gaia.cu9.ari.gaiaorbit;
 
+import com.badlogic.gdx.Files;
+import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.backends.lwjgl.LwjglApplication;
+import com.badlogic.gdx.backends.lwjgl.LwjglApplicationConfiguration;
 import gaia.cu9.ari.gaiaorbit.event.EventManager;
 import gaia.cu9.ari.gaiaorbit.event.Events;
 import gaia.cu9.ari.gaiaorbit.event.IObserver;
@@ -13,31 +17,15 @@ import gaia.cu9.ari.gaiaorbit.util.I18n;
 import gaia.cu9.ari.gaiaorbit.util.Logger;
 import gaia.cu9.ari.gaiaorbit.util.SysUtils;
 import gaia.cu9.ari.gaiaorbit.util.math.MathUtilsd;
-
-import java.awt.Font;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.nio.channels.FileChannel;
-
-import javax.swing.JFileChooser;
-import javax.swing.JFrame;
-import javax.swing.UIManager;
-import javax.swing.plaf.FontUIResource;
-
 import sandbox.script.JythonFactory;
 
-import com.alee.laf.WebLookAndFeel;
-import com.alee.laf.filechooser.WebFileChooser;
-import com.alee.laf.filechooser.WebFileChooserPanel;
-import com.alee.laf.scroll.WebScrollPane;
-import com.alee.laf.splitpane.WebSplitPane;
-import com.badlogic.gdx.Files;
-import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.backends.lwjgl.LwjglApplication;
-import com.badlogic.gdx.backends.lwjgl.LwjglApplicationConfiguration;
+import javax.swing.*;
+import javax.swing.filechooser.FileFilter;
+import javax.swing.filechooser.FileNameExtensionFilter;
+import javax.swing.plaf.FontUIResource;
+import java.awt.*;
+import java.io.*;
+import java.nio.channels.FileChannel;
 
 /**
  * Main class for the desktop launcher
@@ -52,8 +40,17 @@ public class GaiaSandboxDesktop implements IObserver {
         try {
             gsd = new GaiaSandboxDesktop();
 
-            UIManager.setLookAndFeel("com.alee.laf.WebLookAndFeel");
-            WebLookAndFeel.setAllowLinuxTransparency(false);
+            for (UIManager.LookAndFeelInfo info : UIManager.getInstalledLookAndFeels()) {
+                System.out.println(info.getClassName());
+            }
+
+            //UIManager.setLookAndFeel("com.alee.laf.WebLookAndFeel");
+            //WebLookAndFeel.setAllowLinuxTransparency(false);
+            //UIManager.setLookAndFeel("com.sun.java.swing.plaf.gtk.GTKLookAndFeel");
+            //UIManager.setLookAndFeel("com.jgoodies.looks.plastic.PlasticXPLookAndFeel");
+            UIManager.setLookAndFeel("com.pagosoft.plaf.PgsLookAndFeel");
+            //UIManager.setLookAndFeel(new SyntheticaStandardLookAndFeel());
+
             setUIFont(new javax.swing.plaf.FontUIResource("SansSerif", Font.PLAIN, 10));
 
             String props = System.getProperty("properties.file");
@@ -171,20 +168,40 @@ public class GaiaSandboxDesktop implements IObserver {
                 @Override
                 public void run() {
                     // Show file dialog
-                    WebFileChooser fc = new WebFileChooser();
-                    fc.setCurrentDirectory(new File(System.getProperty("java.io.tmpdir")));
-                    WebSplitPane wsp = ((WebSplitPane) ((WebFileChooserPanel) fc.getComponents()[0]).getComponent(1));
-                    ((WebScrollPane) wsp.getComponent(1)).getVerticalScrollBar().setUnitIncrement(50);
-                    ((WebScrollPane) wsp.getComponent(2)).getVerticalScrollBar().setUnitIncrement(50);
-                    int returnVal = fc.showOpenDialog(fc);
+                    SecurityManager sm = System.getSecurityManager();
+                    System.setSecurityManager(null);
+                    JFileChooser chooser = new JFileChooser();
 
-                    if (returnVal == JFileChooser.APPROVE_OPTION) {
-                        File file = fc.getSelectedFile();
-                        // Send command to play file
-                        EventManager.instance.post(Events.PLAY_CAMERA_CMD, file.getAbsolutePath());
-                    } else {
-                        // Cancelled
+                    chooser.setFileHidingEnabled(false);
+                    chooser.setMultiSelectionEnabled(false);
+                    chooser.setAcceptAllFileFilterUsed(false);
+                    chooser.setFileSelectionMode(JFileChooser.FILES_ONLY);
+                    chooser.setCurrentDirectory(new File(System.getProperty("java.io.tmpdir")));
+
+                    // Filter
+                    FileFilter filter = new FileNameExtensionFilter("Camera data files", new String[] { "dat", "txt", "csv" });
+                    chooser.addChoosableFileFilter(filter);
+                    chooser.setFileFilter(filter);
+
+                    int v = chooser.showOpenDialog(null);
+
+                    switch (v) {
+                    case JFileChooser.APPROVE_OPTION:
+                        File choice = null;
+                        if (chooser.getSelectedFile() != null) {
+                            File file = chooser.getSelectedFile();
+                            // Send command to play file
+                            EventManager.instance.post(Events.PLAY_CAMERA_CMD, file.getAbsolutePath());
+                        }
+
+                        break;
+                    case JFileChooser.CANCEL_OPTION:
+                    case JFileChooser.ERROR_OPTION:
                     }
+                    chooser.removeAll();
+                    chooser = null;
+                    System.setSecurityManager(sm);
+
                 }
 
             });

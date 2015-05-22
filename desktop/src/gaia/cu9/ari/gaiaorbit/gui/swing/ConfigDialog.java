@@ -43,14 +43,10 @@ import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
+import javax.swing.filechooser.FileSystemView;
 
 import net.miginfocom.swing.MigLayout;
 
-import com.alee.extended.filechooser.WebDirectoryChooser;
-import com.alee.laf.button.WebButton;
-import com.alee.laf.scroll.WebScrollPane;
-import com.alee.utils.FileUtils;
-import com.alee.utils.swing.DialogOptions;
 import com.badlogic.gdx.Graphics.DisplayMode;
 import com.badlogic.gdx.Input.Keys;
 import com.badlogic.gdx.backends.lwjgl.LwjglApplicationConfiguration;
@@ -185,10 +181,12 @@ public class ConfigDialog extends I18nJFrame {
         final JSpinner widthField = new JSpinner(new SpinnerNumberModel(MathUtils.clamp(GlobalConf.screen.SCREEN_WIDTH, 100, nativeMode.width), 100, nativeMode.width, 1));
         final JSpinner heightField = new JSpinner(new SpinnerNumberModel(MathUtils.clamp(GlobalConf.screen.SCREEN_HEIGHT, 100, nativeMode.height), 100, nativeMode.height, 1));
         final JCheckBox resizable = new JCheckBox("Resizable", GlobalConf.screen.RESIZABLE);
+        final JLabel widthLabel = new JLabel(txt("gui.width") + ":");
+        final JLabel heightLabel = new JLabel(txt("gui.height") + ":");
 
-        windowedResolutions.add(new JLabel(txt("gui.width") + ":"));
+        windowedResolutions.add(widthLabel);
         windowedResolutions.add(widthField);
-        windowedResolutions.add(new JLabel(txt("gui.height") + ":"));
+        windowedResolutions.add(heightLabel);
         windowedResolutions.add(heightField, "wrap");
         windowedResolutions.add(resizable, "span");
 
@@ -198,7 +196,7 @@ public class ConfigDialog extends I18nJFrame {
             @Override
             public void actionPerformed(ActionEvent e) {
                 GlobalConf.screen.FULLSCREEN = fullscreen.isSelected();
-                selectFullscreen(fullscreen.isSelected(), widthField, heightField, fullScreenResolutions, resizable);
+                selectFullscreen(fullscreen.isSelected(), widthField, heightField, fullScreenResolutions, resizable, widthLabel, heightLabel);
             }
         });
         fullscreen.setSelected(GlobalConf.screen.FULLSCREEN);
@@ -208,11 +206,11 @@ public class ConfigDialog extends I18nJFrame {
             @Override
             public void actionPerformed(ActionEvent e) {
                 GlobalConf.screen.FULLSCREEN = !windowed.isSelected();
-                selectFullscreen(!windowed.isSelected(), widthField, heightField, fullScreenResolutions, resizable);
+                selectFullscreen(!windowed.isSelected(), widthField, heightField, fullScreenResolutions, resizable, widthLabel, heightLabel);
             }
         });
         windowed.setSelected(!GlobalConf.screen.FULLSCREEN);
-        selectFullscreen(GlobalConf.screen.FULLSCREEN, widthField, heightField, fullScreenResolutions, resizable);
+        selectFullscreen(GlobalConf.screen.FULLSCREEN, widthField, heightField, fullScreenResolutions, resizable, widthLabel, heightLabel);
 
         ButtonGroup modeButtons = new ButtonGroup();
         modeButtons.add(fullscreen);
@@ -332,13 +330,12 @@ public class ConfigDialog extends I18nJFrame {
         theme.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                String selected = (String)theme.getSelectedItem();
-                ImageIcon icon = new ImageIcon(this.getClass().getResource("/img/themes/" + selected +".png"));
+                String selected = (String) theme.getSelectedItem();
+                ImageIcon icon = new ImageIcon(this.getClass().getResource("/img/themes/" + selected + ".png"));
                 sampleImage.setIcon(icon);
             }
         });
         theme.setSelectedItem(GlobalConf.program.UI_THEME);
-
 
         ui.add(new JLabel(txt("gui.ui.language") + ":"));
         ui.add(lang, "wrap");
@@ -456,73 +453,94 @@ public class ConfigDialog extends I18nJFrame {
 
         // SCREENSHOTS LOCATION
         JLabel screenshotsLocationLabel = new JLabel(txt("gui.screenshots.save") + ":");
-        File currentLocation = new File(GlobalConf.screenshot.SCREENSHOT_FOLDER);
+        final File currentLocation = new File(GlobalConf.screenshot.SCREENSHOT_FOLDER);
         String dirText = txt("gui.screenshots.directory.choose");
+        final Label screenshotsTextContainer = new Label(currentLocation.getAbsolutePath());
         if (currentLocation.exists() && currentLocation.isDirectory()) {
-            dirText = GlobalConf.screenshot.SCREENSHOT_FOLDER;
+            dirText = currentLocation.getName();
         }
-        final WebButton screenshotsLocation = new WebButton(dirText);
-        screenshotsLocation.addActionListener(new ActionListener() {
-            private WebDirectoryChooser directoryChooser = null;
 
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                if (directoryChooser == null) {
-                    directoryChooser = new WebDirectoryChooser(frame, txt("gui.directory.chooseany"));
-                    // Increase scrollbar speed
-                    JScrollPane wsp = (JScrollPane) ((Container) ((Container) ((Container) ((Container) ((Container) directoryChooser.getComponents()[0]).getComponents()[1]).getComponents()[0]).getComponents()[0]).getComponents()[1]).getComponents()[1];
-                    wsp.getVerticalScrollBar().setUnitIncrement(50);
-                    File currentLocation = new File(GlobalConf.screenshot.SCREENSHOT_FOLDER);
-                    if (currentLocation.exists() && currentLocation.isDirectory()) {
-                        directoryChooser.setSelectedDirectory(new File(GlobalConf.screenshot.SCREENSHOT_FOLDER));
+        final JButton screenshotsDir = new JButton(dirText);
+        screenshotsDir.addActionListener(new ActionListener() {
+            JFileChooser chooser = null;
+
+            @Override public void actionPerformed(ActionEvent e) {
+                SecurityManager sm = System.getSecurityManager();
+                System.setSecurityManager(null);
+                chooser = new JFileChooser();
+
+                chooser.setFileHidingEnabled(false);
+                chooser.setMultiSelectionEnabled(false);
+                chooser.setAcceptAllFileFilterUsed(false);
+                chooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
+                File f = new File(screenshotsTextContainer.getText());
+                if (f.exists() && f.isDirectory()) {
+                    chooser.setCurrentDirectory(f);
+                    chooser.setSelectedFile(f);
+                }
+                chooser.setDialogTitle(txt("gui.directory.chooseany"));
+
+                int v = chooser.showOpenDialog(null);
+
+                switch (v) {
+                case JFileChooser.APPROVE_OPTION:
+                    File choice = null;
+                    if (chooser.getSelectedFile() != null && chooser.getSelectedFile().isDirectory()) {
+                        choice = chooser.getSelectedFile();
+                    } else if (chooser.getCurrentDirectory() != null) {
+                        choice = chooser.getCurrentDirectory();
                     }
+                    screenshotsTextContainer.setText(choice.getAbsolutePath());
+                    screenshotsDir.setText(choice.getName());
+                    break;
+                case JFileChooser.CANCEL_OPTION:
+                case JFileChooser.ERROR_OPTION:
                 }
-                directoryChooser.setVisible(true);
-
-                if (directoryChooser.getResult() == DialogOptions.OK_OPTION) {
-                    File file = directoryChooser.getSelectedDirectory();
-                    screenshotsLocation.setIcon(FileUtils.getFileIcon(file));
-                    screenshotsLocation.setText(file.getAbsolutePath());
-                }
+                chooser.removeAll();
+                chooser = null;
+                System.setSecurityManager(sm);
             }
         });
 
         // SCREENSHOT WIDTH AND HEIGHT
+        final JLabel screenshotsSizeLabel = new JLabel(txt("gui.screenshots.size") + ":");
+        final JLabel xLabel = new JLabel("\u2715");
         final JSpinner sswidthField = new JSpinner(new SpinnerNumberModel(GlobalConf.screenshot.SCREENSHOT_WIDTH, 100, 5000, 1));
         final JSpinner ssheightField = new JSpinner(new SpinnerNumberModel(GlobalConf.screenshot.SCREENSHOT_HEIGHT, 100, 5000, 1));
-
 
         // SCREENSHOTS MODE
         ComboBoxBean[] screenshotModes = new ComboBoxBean[] { new ComboBoxBean(txt("gui.screenshots.mode.simple"), 0), new ComboBoxBean(txt("gui.screenshots.mode.redraw"), 1) };
         final JComboBox<ComboBoxBean> screenshotsMode = new JComboBox<ComboBoxBean>(screenshotModes);
-        screenshotsMode.addActionListener(new ActionListener(){
+        screenshotsMode.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                if(((ComboBoxBean)screenshotsMode.getSelectedItem()).value == 0){
+                if (((ComboBoxBean) screenshotsMode.getSelectedItem()).value == 0) {
                     // Simple
-                    sswidthField.setEnabled(false);
-                    ssheightField.setEnabled(false);
-                }else{
+                    enableComponents(false, sswidthField, ssheightField, screenshotsSizeLabel, xLabel);
+                } else {
                     // Redraw
-                    sswidthField.setEnabled(true);
-                    ssheightField.setEnabled(true);
+                    enableComponents(true, sswidthField, ssheightField, screenshotsSizeLabel, xLabel);
                 }
             }
         });
         screenshotsMode.setSelectedItem(screenshotModes[GlobalConf.screenshot.SCREENSHOT_MODE.ordinal()]);
 
-        JPanel screenshotSize = new JPanel(new MigLayout("", "[][grow,fill][][grow,fill]", "[][]4[][]"));
-        screenshotSize.add(new JLabel(txt("gui.width") + ":"));
-        screenshotSize.add(sswidthField);
-        screenshotSize.add(new JLabel(txt("gui.height") + ":"));
-        screenshotSize.add(ssheightField);
+        JLabel screenshotsModeTooltip = new JLabel(IconManager.get("gui/info-tooltip"));
+        screenshotsModeTooltip.setToolTipText(txt("gui.tooltip.screenshotmode"));
+
+        JPanel screenshotsModePanel = new JPanel(new MigLayout("", "[grow,fill][]", ""));
+        screenshotsModePanel.add(screenshotsMode);
+        screenshotsModePanel.add(screenshotsModeTooltip, "wrap");
 
         screenshots.add(screenshotsInfo, "span,wrap");
         screenshots.add(screenshotsLocationLabel);
-        screenshots.add(screenshotsLocation, "wrap");
-        screenshots.add(new JLabel(txt("gui.screenshots.mode")));
-        screenshots.add(screenshotsMode, "wrap");
-        screenshots.add(screenshotSize, "span");
+        screenshots.add(screenshotsDir, "span,wrap");
+        screenshots.add(new JLabel(txt("gui.screenshots.mode") + ":"));
+        screenshots.add(screenshotsModePanel, "span,wrap");
+        screenshots.add(screenshotsSizeLabel);
+        screenshots.add(sswidthField);
+        screenshots.add(xLabel);
+        screenshots.add(ssheightField);
 
         JPanel screenshotsPanel = new JPanel(new MigLayout("", "[grow,fill]", ""));
         screenshotsPanel.add(screenshots, "wrap");
@@ -548,35 +566,53 @@ public class ConfigDialog extends I18nJFrame {
         frameInfo.setBackground(transparent);
         frameInfo.setForeground(darkgreen);
 
-        // SAVE LOCATION
-        File currentFrameLocation = new File(GlobalConf.screenshot.SCREENSHOT_FOLDER);
+        // FRAME SAVE LOCATION
+        final File currentFrameLocation = new File(GlobalConf.frame.RENDER_FOLDER);
         String dirFrameText = txt("gui.frameoutput.directory.choose");
+        final Label frameTextContainer = new Label(currentFrameLocation.getAbsolutePath());
         if (currentFrameLocation.exists() && currentFrameLocation.isDirectory()) {
-            dirFrameText = GlobalConf.frame.RENDER_FOLDER;
+            dirText = currentFrameLocation.getName();
         }
-        final WebButton frameLocation = new WebButton(dirFrameText);
-        frameLocation.addActionListener(new ActionListener() {
-            private WebDirectoryChooser directoryChooser = null;
 
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                if (directoryChooser == null) {
-                    directoryChooser = new WebDirectoryChooser(frame, txt("gui.directory.chooseany"));
-                    // Increase scrollbar speed
-                    WebScrollPane wsp = (WebScrollPane) ((Container) ((Container) ((Container) ((Container) ((Container) directoryChooser.getComponents()[0]).getComponents()[1]).getComponents()[0]).getComponents()[0]).getComponents()[1]).getComponents()[1];
-                    wsp.getVerticalScrollBar().setUnitIncrement(50);
-                    File currentLocation = new File(GlobalConf.frame.RENDER_FOLDER);
-                    if (currentLocation.exists() && currentLocation.isDirectory()) {
-                        directoryChooser.setSelectedDirectory(new File(GlobalConf.frame.RENDER_FOLDER));
+        final JButton frameDir = new JButton(dirText);
+        frameDir.addActionListener(new ActionListener() {
+            JFileChooser chooser = null;
+
+            @Override public void actionPerformed(ActionEvent e) {
+                SecurityManager sm = System.getSecurityManager();
+                System.setSecurityManager(null);
+                chooser = new JFileChooser();
+
+                chooser.setFileHidingEnabled(false);
+                chooser.setMultiSelectionEnabled(false);
+                chooser.setAcceptAllFileFilterUsed(false);
+                chooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
+                File f = new File(frameTextContainer.getText());
+                if (f.exists() && f.isDirectory()) {
+                    chooser.setCurrentDirectory(f);
+                    chooser.setSelectedFile(f);
+                }
+                chooser.setDialogTitle(txt("gui.directory.chooseany"));
+
+                int v = chooser.showOpenDialog(null);
+
+                switch (v) {
+                case JFileChooser.APPROVE_OPTION:
+                    File choice = null;
+                    if (chooser.getSelectedFile() != null && chooser.getSelectedFile().isDirectory()) {
+                        choice = chooser.getSelectedFile();
+                    } else if (chooser.getCurrentDirectory() != null) {
+                        choice = chooser.getCurrentDirectory();
                     }
+                    frameTextContainer.setText(choice.getAbsolutePath());
+                    frameDir.setText(choice.getName());
+                    break;
+                case JFileChooser.CANCEL_OPTION:
+                case JFileChooser.ERROR_OPTION:
                 }
-                directoryChooser.setVisible(true);
-
-                if (directoryChooser.getResult() == DialogOptions.OK_OPTION) {
-                    File file = directoryChooser.getSelectedDirectory();
-                    frameLocation.setIcon(FileUtils.getFileIcon(file));
-                    frameLocation.setText(file.getAbsolutePath());
-                }
+                chooser.removeAll();
+                chooser = null;
+                System.setSecurityManager(sm);
             }
         });
 
@@ -607,28 +643,55 @@ public class ConfigDialog extends I18nJFrame {
         });
         frameFileName.setText(GlobalConf.frame.RENDER_FILE_NAME);
 
+        // TARGET FPS
+        final JSpinner targetFPS = new JSpinner(new SpinnerNumberModel(GlobalConf.frame.RENDER_TARGET_FPS, 1, 60, 1));
+
         // FRAME OUTPUT WIDTH AND HEIGHT
+        final JLabel frameSizeLabel = new JLabel(txt("gui.frameoutput.size") + ":");
+        final JLabel frameXLabel = new JLabel("\u2715");
         final JSpinner frameWidthField = new JSpinner(new SpinnerNumberModel(GlobalConf.frame.RENDER_WIDTH, 100, 5000, 1));
         final JSpinner frameHeightField = new JSpinner(new SpinnerNumberModel(GlobalConf.frame.RENDER_HEIGHT, 100, 5000, 1));
 
-        JPanel renderSize = new JPanel(new MigLayout("", "[][grow,fill][][grow,fill]", "[][]4[][]"));
-        renderSize.add(new JLabel(txt("gui.width") + ":"));
-        renderSize.add(frameWidthField);
-        renderSize.add(new JLabel(txt("gui.height") + ":"));
-        renderSize.add(frameHeightField);
 
-        // TARGET FPS
-        final JSpinner targetFPS = new JSpinner(new SpinnerNumberModel(GlobalConf.frame.RENDER_TARGET_FPS, 1, 60, 1));
+        // FRAME OUTPUT MODE
+        ComboBoxBean[] frameModesBean = new ComboBoxBean[] { new ComboBoxBean(txt("gui.screenshots.mode.simple"), 0), new ComboBoxBean(txt("gui.screenshots.mode.redraw"), 1) };
+        final JComboBox<ComboBoxBean> frameMode = new JComboBox<ComboBoxBean>(frameModesBean);
+        frameMode.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                if (((ComboBoxBean) frameMode.getSelectedItem()).value == 0) {
+                    // Simple
+                    enableComponents(false, frameWidthField, frameHeightField, frameSizeLabel, frameXLabel);
+                } else {
+                    // Redraw
+                    enableComponents(true, frameWidthField, frameHeightField, frameSizeLabel, frameXLabel);
+                }
+            }
+        });
+        frameMode.setSelectedItem(frameModesBean[GlobalConf.frame.FRAME_MODE.ordinal()]);
+
+        JLabel frameModeTooltip = new JLabel(IconManager.get("gui/info-tooltip"));
+        frameModeTooltip.setToolTipText(txt("gui.tooltip.screenshotmode"));
+
+        JPanel frameModePanel = new JPanel(new MigLayout("", "[grow,fill][]", ""));
+        frameModePanel.add(frameMode);
+        frameModePanel.add(frameModeTooltip, "wrap");
 
         // FRAME OUTPUT CHECKBOX
         imageOutput.add(frameInfo, "span");
         imageOutput.add(new JLabel(txt("gui.frameoutput.location") + ":"));
-        imageOutput.add(frameLocation, "wrap");
+        imageOutput.add(frameDir, "wrap, span");
         imageOutput.add(new JLabel(txt("gui.frameoutput.prefix") + ":"));
-        imageOutput.add(frameFileName, "wrap");
-        imageOutput.add(renderSize, "span");
+        imageOutput.add(frameFileName, "wrap, span");
         imageOutput.add(new JLabel(txt("gui.frameoutput.fps") + ":"));
-        imageOutput.add(targetFPS);
+        imageOutput.add(targetFPS, "span");
+        imageOutput.add(new JLabel(txt("gui.screenshots.mode") + ":"));
+        imageOutput.add(frameModePanel, "span,wrap");
+        imageOutput.add(frameSizeLabel);
+        imageOutput.add(frameWidthField);
+        imageOutput.add(frameXLabel);
+        imageOutput.add(frameHeightField, "wrap");
+
 
         JPanel imageOutputPanel = new JPanel(new MigLayout("", "[grow,fill]", ""));
         imageOutputPanel.add(imageOutput, "wrap");
@@ -733,21 +796,22 @@ public class ConfigDialog extends I18nJFrame {
                     GlobalConf.performance.MULTITHREADING = multithreadCb.isSelected();
 
                     // Screenshots
-                    File ssfile = new File(screenshotsLocation.getText());
+                    File ssfile = new File(screenshotsTextContainer.getText());
                     if (ssfile.exists() && ssfile.isDirectory())
                         GlobalConf.screenshot.SCREENSHOT_FOLDER = ssfile.getAbsolutePath();
-                    GlobalConf.screenshot.SCREENSHOT_MODE = GlobalConf.ScreenshotConf.ScreenshotMode.values()[screenshotsMode.getSelectedIndex()];
+                    GlobalConf.screenshot.SCREENSHOT_MODE = GlobalConf.ScreenshotMode.values()[screenshotsMode.getSelectedIndex()];
                     GlobalConf.screenshot.SCREENSHOT_WIDTH = ((Integer) sswidthField.getValue());
                     GlobalConf.screenshot.SCREENSHOT_HEIGHT = ((Integer) ssheightField.getValue());
 
                     // Frame output
-                    File fofile = new File(frameLocation.getText());
+                    File fofile = new File(frameTextContainer.getText());
                     if (fofile.exists() && fofile.isDirectory())
                         GlobalConf.frame.RENDER_FOLDER = fofile.getAbsolutePath();
                     String text = frameFileName.getText();
                     if (text.matches("^\\w+$")) {
                         GlobalConf.frame.RENDER_FILE_NAME = text;
                     }
+                    GlobalConf.frame.FRAME_MODE = GlobalConf.ScreenshotMode.values()[frameMode.getSelectedIndex()];
                     GlobalConf.frame.RENDER_WIDTH = ((Integer) frameWidthField.getValue());
                     GlobalConf.frame.RENDER_HEIGHT = ((Integer) frameHeightField.getValue());
                     GlobalConf.frame.RENDER_TARGET_FPS = ((Integer) targetFPS.getValue());
@@ -796,7 +860,7 @@ public class ConfigDialog extends I18nJFrame {
         }
     }
 
-    private void selectFullscreen(boolean fullscreen, JSpinner widthField, JSpinner heightField, JComboBox<DisplayMode> fullScreenResolutions, JCheckBox resizable) {
+    private void selectFullscreen(boolean fullscreen, JSpinner widthField, JSpinner heightField, JComboBox<DisplayMode> fullScreenResolutions, JCheckBox resizable, JLabel widthLabel, JLabel heightLabel) {
         if (fullscreen) {
             GlobalConf.screen.SCREEN_WIDTH = ((DisplayMode) fullScreenResolutions.getSelectedItem()).width;
             GlobalConf.screen.SCREEN_HEIGHT = ((DisplayMode) fullScreenResolutions.getSelectedItem()).height;
@@ -805,7 +869,7 @@ public class ConfigDialog extends I18nJFrame {
             GlobalConf.screen.SCREEN_HEIGHT = (Integer) heightField.getValue();
         }
 
-        enableComponents(!fullscreen, widthField, heightField, resizable);
+        enableComponents(!fullscreen, widthField, heightField, resizable, widthLabel, heightLabel);
         enableComponents(fullscreen, fullScreenResolutions);
     }
 
@@ -919,9 +983,6 @@ public class ConfigDialog extends I18nJFrame {
                 JButton button = new JButton();
                 button.setText(txt("gui.newversion.getit"));
                 button.setHorizontalAlignment(SwingConstants.LEFT);
-                button.setBorderPainted(false);
-                button.setOpaque(false);
-                button.setBackground(Color.WHITE);
                 button.setToolTipText(uri.toString());
                 button.addActionListener(new ActionListener() {
 
@@ -946,9 +1007,6 @@ public class ConfigDialog extends I18nJFrame {
             JButton button = new JButton();
             button.setText(txt("gui.newversion.checknow"));
             button.setHorizontalAlignment(SwingConstants.LEFT);
-            button.setBorderPainted(false);
-            button.setOpaque(false);
-            button.setBackground(Color.WHITE);
             button.setToolTipText(txt("gui.newversion.checknow.tooltip"));
             button.addActionListener(new ActionListener() {
 
@@ -1123,6 +1181,8 @@ public class ConfigDialog extends I18nJFrame {
             Component rendererComponent = generateRendererComponent(text, icon, getHorizontalTextAlignment());
             int prototypeWidth = prototypeComponent.getPreferredSize().width;
             int prototypeHeight = prototypeComponent.getPreferredSize().height;
+            prototypeWidth = 110;
+            prototypeHeight = 20;
             rendererComponent.setPreferredSize(new Dimension(prototypeWidth, prototypeHeight));
             return rendererComponent;
         }

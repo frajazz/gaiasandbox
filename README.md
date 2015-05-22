@@ -242,7 +242,7 @@ people behind the following technologies/resources:
 - [Libgdx](http://libgdx.badlogicgames.com)
 - [libgdx-contribs-postprocessing](https://github.com/manuelbua/libgdx-contribs/tree/master/postprocessing)
 - [HYG catalog](http://www.astronexus.com/hyg)
-- [WebLaF](http://weblookandfeel.com/)
+- [PgsLookAndFeel](http://www.pagosoft.com/projects/pgslookandfeel/)
 - Mark Taylor's [STIL](http://www.star.bristol.ac.uk/~mbt/stil/) library
 - The [Jython Project](http://www.jython.org/)
 - Tom Patterson ([www.shadedrelief.com]()) for some textures

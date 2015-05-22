@@ -63,16 +63,6 @@ import javax.swing.tree.TreePath;
 
 import net.miginfocom.swing.MigLayout;
 
-import com.alee.extended.button.WebSwitch;
-import com.alee.extended.date.DateSelectionListener;
-import com.alee.extended.image.WebImage;
-import com.alee.extended.layout.ToolbarLayout;
-import com.alee.extended.panel.WebOverlay;
-import com.alee.extended.statusbar.WebMemoryBar;
-import com.alee.extended.statusbar.WebStatusBar;
-import com.alee.laf.button.WebToggleButton;
-import com.alee.laf.label.WebLabel;
-import com.alee.laf.text.WebTextField;
 import com.badlogic.gdx.backends.lwjgl.LwjglCanvas;
 
 public class Gui implements IObserver {
@@ -89,16 +79,16 @@ public class Gui implements IObserver {
     ISceneGraph sg;
 
     /** ALL WIDGETS **/
-    WebSwitch playPause;
+//    WebSwitch playPause;
     JSpinner pace, time;
     OwnDateField date;
     JComboBox<CameraMode> cameraMode;
     JSlider fovSlider;
     JCheckBox lockCameraCheckbox, gaiaScanToggle, colorScanToggle, onlyObservedToggle;
-    Map<ComponentType, WebToggleButton> visibilityButtons;
+//    Map<ComponentType, WebToggleButton> visibilityButtons;
     JSlider starBrightnessSlider, ambientSlider, bloomSlider;
     JScrollPane treeScrollPane;
-    WebTextField searchInput;
+//    WebTextField searchInput;
 
     boolean[] updateTime;
 
@@ -163,18 +153,18 @@ public class Gui implements IObserver {
 
         /** STATUS BAR **/
         // Simple status bar
-        WebStatusBar statusBar = new WebStatusBar();
+//        WebStatusBar statusBar = new WebStatusBar();
 
         // Simple label
         fpsLabel = new JLabel();
-        statusBar.add(fpsLabel);
+//        statusBar.add(fpsLabel);
 
         // Simple memory bar
-        WebMemoryBar memoryBar = new WebMemoryBar();
-        memoryBar.setPreferredWidth(memoryBar.getPreferredSize().width + 20);
-        statusBar.add(memoryBar, ToolbarLayout.END);
-
-        frame.add(statusBar, BorderLayout.SOUTH);
+//        WebMemoryBar memoryBar = new WebMemoryBar();
+//        memoryBar.setPreferredWidth(memoryBar.getPreferredSize().width + 20);
+//        statusBar.add(memoryBar, ToolbarLayout.END);
+//
+//        frame.add(statusBar, BorderLayout.SOUTH);
 
         /** LEFT PANE - TABS **/
         tabbedPane = new JTabbedPane()
@@ -217,196 +207,196 @@ public class Gui implements IObserver {
         treeScrollPane.setPreferredSize(new Dimension(300, 800));
 
         // Search input
-        searchInput = new WebTextField(20);
-        searchInput.setMargin(0, 0, 0, 2);
-        searchInput.setInputPrompt("Search...");
-        searchInput.setInputPromptFont(searchInput.getFont().deriveFont(Font.ITALIC));
-        searchInput.setTrailingComponent(new WebImage(IconManager.get("search")));
-        searchInput.getDocument().addDocumentListener(new DocumentListener() {
-            public void changedUpdate(DocumentEvent e) {
-                warn();
-            }
-
-            public void removeUpdate(DocumentEvent e) {
-                warn();
-            }
-
-            public void insertUpdate(DocumentEvent e) {
-                warn();
-            }
-
-            public void warn() {
-                String text = searchInput.getText();
-                if (stringNode.containsKey(text.toLowerCase())) {
-                    SceneGraphNode node = stringNode.get(text.toLowerCase());
-                    if (node instanceof CelestialBody) {
-                        EventManager.instance.post(Events.FOCUS_CHANGE_CMD, node, false);
-                        selectNodeInTree(node);
-                    }
-                }
-            }
-        });
-
-        JPanel treePanel = new JPanel(new BorderLayout());
-        treePanel.add(searchInput, BorderLayout.NORTH);
-        treePanel.add(treeScrollPane, BorderLayout.CENTER);
-
-        /** CONTROLS **/
-
-        /* TIME */
-        JPanel timePanel = new JPanel(new MigLayout("", "[pref!][grow,fill]", "[]2[]"));
-        timePanel.setBorder(new TitledBorder("Time"));
-        playPause = new WebSwitch(false);
-        playPause.setToolTipText("Play and pause the time simulation");
-        playPause.setMaximumSize(new Dimension(70, 50));
-        playPause.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                EventManager.instance.post(Events.TOGGLE_TIME_CMD, playPause.isSelected(), true);
-            }
-        });
-
-        pace = new JSpinner(new SpinnerNumberModel(0.01000d, -1000d, 1000d, 0.1000d));
-        pace.setMinimumSize(new Dimension(100, 0));
-        pace.setEditor(new JSpinner.NumberEditor(pace, "###0.0#####"));
-        pace.setBorder(null);
-        pace.addChangeListener(new ChangeListener() {
-            @Override
-            public void stateChanged(ChangeEvent e) {
-                EventManager.instance.post(Events.PACE_CHANGE_CMD, ((Double) pace.getValue()).floatValue());
-            }
-        });
-
-        date = new OwnDateField();
-        date.addDateSelectionListener(new DateSelectionListener() {
-            @Override
-            public void dateSelected(Date date) {
-                if (updateTime[0]) {
-                    SpinnerDateModel sdm = (SpinnerDateModel) time.getModel();
-                    Calendar hourCalendar = new GregorianCalendar();
-                    hourCalendar.setTime(sdm.getDate());
-
-                    Calendar dateCalendar = new GregorianCalendar();
-                    dateCalendar.setTime(date);
-
-                    dateCalendar.set(Calendar.HOUR_OF_DAY, hourCalendar.get(Calendar.HOUR_OF_DAY));
-                    dateCalendar.set(Calendar.MINUTE, hourCalendar.get(Calendar.MINUTE));
-                    dateCalendar.set(Calendar.SECOND, hourCalendar.get(Calendar.SECOND));
-
-                    Date d = new Date(dateCalendar.getTimeInMillis());
-                    EventManager.instance.post(Events.TIME_CHANGE_CMD, d);
-                } else {
-                    updateTime[0] = true;
-                }
-            }
-        });
-        time = new JSpinner(new SpinnerDateModel());
-        JSpinner.DateEditor timeEditor = new JSpinner.DateEditor(time, "HH:mm:ss");
-        time.setEditor(timeEditor);
-        time.setBorder(null);
-        time.addChangeListener(new ChangeListener() {
-            @Override
-            public void stateChanged(ChangeEvent e) {
-                if (updateTime[1]) {
-                    // This is the date DD:MM:YY
-                    Calendar dateCalendar = new GregorianCalendar();
-                    dateCalendar.setTime(date.getDate());
-
-                    // Output calendar, it has the correct HH:mm:ss
-                    SpinnerDateModel sdm = (SpinnerDateModel) time.getModel();
-                    Calendar hourCalendar = new GregorianCalendar();
-                    hourCalendar.setTime(sdm.getDate());
-
-                    hourCalendar.set(Calendar.DAY_OF_MONTH, dateCalendar.get(Calendar.DAY_OF_MONTH));
-                    hourCalendar.set(Calendar.MONTH, dateCalendar.get(Calendar.MONTH));
-                    hourCalendar.set(Calendar.YEAR, dateCalendar.get(Calendar.YEAR));
-
-                    Date d = new Date(hourCalendar.getTimeInMillis());
-                    EventManager.instance.post(Events.TIME_CHANGE_CMD, d);
-                } else {
-                    updateTime[1] = true;
-                }
-            }
-        });
-
-        JPanel dateTime = new JPanel(new MigLayout("fill", "[][grow,fill]", ""));
-        dateTime.add(date);
-        dateTime.add(time);
-
-        WebLabel timeSpeedLabel = new WebLabel("Time speed");
-        timeSpeedLabel.setToolTipText("Number of hours in the simulation per real time second");
-        WebOverlay timeSpeedPanel = new WebOverlay();
-        timeSpeedPanel.setComponent(timeSpeedLabel);
-        timeSpeedPanel.setToolTipText("Number of hours in the simulation per real time second");
-
-        timePanel.add(new JLabel("Time simulation"));
-        timePanel.add(playPause, "wrap");
-        timePanel.add(timeSpeedPanel);
-        timePanel.add(pace, "wrap");
-        timePanel.add(new JLabel("Current date and time"), "wrap");
-        timePanel.add(dateTime, "span,wrap");
-
-        /* CAMERA */
-        JPanel cameraPanel = new JPanel(new MigLayout("", "[][grow,fill]", ""));
-        cameraPanel.setBorder(new TitledBorder("Camera"));
-
-        CameraMode[] cms = CameraMode.values();
-        cameraMode = new JComboBox<CameraMode>(cms);
-        cameraMode.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                CameraMode mode = (CameraMode) cameraMode.getSelectedItem();
-                EventManager.instance.post(Events.CAMERA_MODE_CMD, mode);
-            }
-        });
-
-        fovSlider = new JSlider();
-        fovSlider.setMinimum(Constants.MIN_FOV);
-        fovSlider.setMaximum(Constants.MAX_FOV);
-        fovSlider.setMinorTickSpacing(20);
-        fovSlider.setMajorTickSpacing(70);
-        fovSlider.setValue((int) GlobalConf.scene.CAMERA_FOV);
-        fovSlider.setPaintTicks(true);
-        fovSlider.setPaintLabels(true);
-        fovSlider.addChangeListener(new ChangeListener() {
-            @Override
-            public void stateChanged(ChangeEvent e) {
-                EventManager.instance.post(Events.FOV_CHANGED_CMD, (float) fovSlider.getValue());
-            }
-        });
-
-        lockCameraCheckbox = new JCheckBox("Lock camera to focus");
-        lockCameraCheckbox.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                EventManager.instance.post(Events.FOCUS_LOCK_CMD, "Focus lock", lockCameraCheckbox.isSelected(), true);
-            }
-        });
-
-        cameraPanel.add(new JLabel("Camera mode"));
-        cameraPanel.add(cameraMode, "wrap");
-        cameraPanel.add(new JLabel("Field of view"), "span,wrap");
-        cameraPanel.add(fovSlider, "span,growx,wrap");
-        cameraPanel.add(lockCameraCheckbox, "span,wrap");
-
-        /* VISIBILITY TOGGLES */
-        JPanel visibilityPanel = new JPanel(new MigLayout("", "[grow,fill][grow,fill]", "[]2[]"));
-        visibilityPanel.setBorder(new TitledBorder("Object visibility"));
-        visibilityButtons = new HashMap<ComponentType, WebToggleButton>();
-        ComponentType[] cts = ComponentType.values();
-        int idx = 1;
-        for (final ComponentType ct : cts) {
-            final WebToggleButton wtb = new WebToggleButton(ct.name(), IconManager.get(ct));
-            wtb.addActionListener(new ActionListener() {
-                @Override
-                public void actionPerformed(ActionEvent e) {
-                    EventManager.instance.post(Events.TOGGLE_VISIBILITY_CMD, new Object[] { ct.name(), wtb.isSelected() });
-                }
-            });
-            visibilityPanel.add(wtb, idx % 2 == 0 ? "wrap" : "");
-            visibilityButtons.put(ct, wtb);
-            idx++;
-        }
+//        searchInput = new WebTextField(20);
+//        searchInput.setMargin(0, 0, 0, 2);
+//        searchInput.setInputPrompt("Search...");
+//        searchInput.setInputPromptFont(searchInput.getFont().deriveFont(Font.ITALIC));
+//        searchInput.setTrailingComponent(new WebImage(IconManager.get("search")));
+//        searchInput.getDocument().addDocumentListener(new DocumentListener() {
+//            public void changedUpdate(DocumentEvent e) {
+//                warn();
+//            }
+//
+//            public void removeUpdate(DocumentEvent e) {
+//                warn();
+//            }
+//
+//            public void insertUpdate(DocumentEvent e) {
+//                warn();
+//            }
+//
+//            public void warn() {
+//                String text = searchInput.getText();
+//                if (stringNode.containsKey(text.toLowerCase())) {
+//                    SceneGraphNode node = stringNode.get(text.toLowerCase());
+//                    if (node instanceof CelestialBody) {
+//                        EventManager.instance.post(Events.FOCUS_CHANGE_CMD, node, false);
+//                        selectNodeInTree(node);
+//                    }
+//                }
+//            }
+//        });
+//
+//        JPanel treePanel = new JPanel(new BorderLayout());
+//        treePanel.add(searchInput, BorderLayout.NORTH);
+//        treePanel.add(treeScrollPane, BorderLayout.CENTER);
+//
+//        /** CONTROLS **/
+//
+//        /* TIME */
+//        JPanel timePanel = new JPanel(new MigLayout("", "[pref!][grow,fill]", "[]2[]"));
+//        timePanel.setBorder(new TitledBorder("Time"));
+//        playPause = new WebSwitch(false);
+//        playPause.setToolTipText("Play and pause the time simulation");
+//        playPause.setMaximumSize(new Dimension(70, 50));
+//        playPause.addActionListener(new ActionListener() {
+//            @Override
+//            public void actionPerformed(ActionEvent e) {
+//                EventManager.instance.post(Events.TOGGLE_TIME_CMD, playPause.isSelected(), true);
+//            }
+//        });
+//
+//        pace = new JSpinner(new SpinnerNumberModel(0.01000d, -1000d, 1000d, 0.1000d));
+//        pace.setMinimumSize(new Dimension(100, 0));
+//        pace.setEditor(new JSpinner.NumberEditor(pace, "###0.0#####"));
+//        pace.setBorder(null);
+//        pace.addChangeListener(new ChangeListener() {
+//            @Override
+//            public void stateChanged(ChangeEvent e) {
+//                EventManager.instance.post(Events.PACE_CHANGE_CMD, ((Double) pace.getValue()).floatValue());
+//            }
+//        });
+//
+//        date = new OwnDateField();
+//        date.addDateSelectionListener(new DateSelectionListener() {
+//            @Override
+//            public void dateSelected(Date date) {
+//                if (updateTime[0]) {
+//                    SpinnerDateModel sdm = (SpinnerDateModel) time.getModel();
+//                    Calendar hourCalendar = new GregorianCalendar();
+//                    hourCalendar.setTime(sdm.getDate());
+//
+//                    Calendar dateCalendar = new GregorianCalendar();
+//                    dateCalendar.setTime(date);
+//
+//                    dateCalendar.set(Calendar.HOUR_OF_DAY, hourCalendar.get(Calendar.HOUR_OF_DAY));
+//                    dateCalendar.set(Calendar.MINUTE, hourCalendar.get(Calendar.MINUTE));
+//                    dateCalendar.set(Calendar.SECOND, hourCalendar.get(Calendar.SECOND));
+//
+//                    Date d = new Date(dateCalendar.getTimeInMillis());
+//                    EventManager.instance.post(Events.TIME_CHANGE_CMD, d);
+//                } else {
+//                    updateTime[0] = true;
+//                }
+//            }
+//        });
+//        time = new JSpinner(new SpinnerDateModel());
+//        JSpinner.DateEditor timeEditor = new JSpinner.DateEditor(time, "HH:mm:ss");
+//        time.setEditor(timeEditor);
+//        time.setBorder(null);
+//        time.addChangeListener(new ChangeListener() {
+//            @Override
+//            public void stateChanged(ChangeEvent e) {
+//                if (updateTime[1]) {
+//                    // This is the date DD:MM:YY
+//                    Calendar dateCalendar = new GregorianCalendar();
+//                    dateCalendar.setTime(date.getDate());
+//
+//                    // Output calendar, it has the correct HH:mm:ss
+//                    SpinnerDateModel sdm = (SpinnerDateModel) time.getModel();
+//                    Calendar hourCalendar = new GregorianCalendar();
+//                    hourCalendar.setTime(sdm.getDate());
+//
+//                    hourCalendar.set(Calendar.DAY_OF_MONTH, dateCalendar.get(Calendar.DAY_OF_MONTH));
+//                    hourCalendar.set(Calendar.MONTH, dateCalendar.get(Calendar.MONTH));
+//                    hourCalendar.set(Calendar.YEAR, dateCalendar.get(Calendar.YEAR));
+//
+//                    Date d = new Date(hourCalendar.getTimeInMillis());
+//                    EventManager.instance.post(Events.TIME_CHANGE_CMD, d);
+//                } else {
+//                    updateTime[1] = true;
+//                }
+//            }
+//        });
+//
+//        JPanel dateTime = new JPanel(new MigLayout("fill", "[][grow,fill]", ""));
+//        dateTime.add(date);
+//        dateTime.add(time);
+//
+//        WebLabel timeSpeedLabel = new WebLabel("Time speed");
+//        timeSpeedLabel.setToolTipText("Number of hours in the simulation per real time second");
+//        WebOverlay timeSpeedPanel = new WebOverlay();
+//        timeSpeedPanel.setComponent(timeSpeedLabel);
+//        timeSpeedPanel.setToolTipText("Number of hours in the simulation per real time second");
+//
+//        timePanel.add(new JLabel("Time simulation"));
+//        timePanel.add(playPause, "wrap");
+//        timePanel.add(timeSpeedPanel);
+//        timePanel.add(pace, "wrap");
+//        timePanel.add(new JLabel("Current date and time"), "wrap");
+//        timePanel.add(dateTime, "span,wrap");
+//
+//        /* CAMERA */
+//        JPanel cameraPanel = new JPanel(new MigLayout("", "[][grow,fill]", ""));
+//        cameraPanel.setBorder(new TitledBorder("Camera"));
+//
+//        CameraMode[] cms = CameraMode.values();
+//        cameraMode = new JComboBox<CameraMode>(cms);
+//        cameraMode.addActionListener(new ActionListener() {
+//            @Override
+//            public void actionPerformed(ActionEvent e) {
+//                CameraMode mode = (CameraMode) cameraMode.getSelectedItem();
+//                EventManager.instance.post(Events.CAMERA_MODE_CMD, mode);
+//            }
+//        });
+//
+//        fovSlider = new JSlider();
+//        fovSlider.setMinimum(Constants.MIN_FOV);
+//        fovSlider.setMaximum(Constants.MAX_FOV);
+//        fovSlider.setMinorTickSpacing(20);
+//        fovSlider.setMajorTickSpacing(70);
+//        fovSlider.setValue((int) GlobalConf.scene.CAMERA_FOV);
+//        fovSlider.setPaintTicks(true);
+//        fovSlider.setPaintLabels(true);
+//        fovSlider.addChangeListener(new ChangeListener() {
+//            @Override
+//            public void stateChanged(ChangeEvent e) {
+//                EventManager.instance.post(Events.FOV_CHANGED_CMD, (float) fovSlider.getValue());
+//            }
+//        });
+//
+//        lockCameraCheckbox = new JCheckBox("Lock camera to focus");
+//        lockCameraCheckbox.addActionListener(new ActionListener() {
+//            @Override
+//            public void actionPerformed(ActionEvent e) {
+//                EventManager.instance.post(Events.FOCUS_LOCK_CMD, "Focus lock", lockCameraCheckbox.isSelected(), true);
+//            }
+//        });
+//
+//        cameraPanel.add(new JLabel("Camera mode"));
+//        cameraPanel.add(cameraMode, "wrap");
+//        cameraPanel.add(new JLabel("Field of view"), "span,wrap");
+//        cameraPanel.add(fovSlider, "span,growx,wrap");
+//        cameraPanel.add(lockCameraCheckbox, "span,wrap");
+//
+//        /* VISIBILITY TOGGLES */
+//        JPanel visibilityPanel = new JPanel(new MigLayout("", "[grow,fill][grow,fill]", "[]2[]"));
+//        visibilityPanel.setBorder(new TitledBorder("Object visibility"));
+//        visibilityButtons = new HashMap<ComponentType, WebToggleButton>();
+//        ComponentType[] cts = ComponentType.values();
+//        int idx = 1;
+//        for (final ComponentType ct : cts) {
+//            final WebToggleButton wtb = new WebToggleButton(ct.name(), IconManager.get(ct));
+//            wtb.addActionListener(new ActionListener() {
+//                @Override
+//                public void actionPerformed(ActionEvent e) {
+//                    EventManager.instance.post(Events.TOGGLE_VISIBILITY_CMD, new Object[] { ct.name(), wtb.isSelected() });
+//                }
+//            });
+//            visibilityPanel.add(wtb, idx % 2 == 0 ? "wrap" : "");
+//            visibilityButtons.put(ct, wtb);
+//            idx++;
+//        }
 
         /* GRAPHICS TOGGLES */
         JPanel graphicsPanel = new JPanel(new MigLayout("", "[grow,fill]", ""));
@@ -460,12 +450,12 @@ public class Gui implements IObserver {
             }
         });
 
-        graphicsPanel.add(new WebLabel("Star brightness", IconManager.get("brightness")), "wrap");
-        graphicsPanel.add(starBrightnessSlider, "wrap");
-        graphicsPanel.add(new WebLabel("Ambient light", IconManager.get("bulb")), "wrap");
-        graphicsPanel.add(ambientSlider, "wrap");
-        graphicsPanel.add(new WebLabel("Bloom effect", IconManager.get("visibility")), "wrap");
-        graphicsPanel.add(bloomSlider, "wrap");
+//        graphicsPanel.add(new WebLabel("Star brightness", IconManager.get("brightness")), "wrap");
+//        graphicsPanel.add(starBrightnessSlider, "wrap");
+//        graphicsPanel.add(new WebLabel("Ambient light", IconManager.get("bulb")), "wrap");
+//        graphicsPanel.add(ambientSlider, "wrap");
+//        graphicsPanel.add(new WebLabel("Bloom effect", IconManager.get("visibility")), "wrap");
+//        graphicsPanel.add(bloomSlider, "wrap");
 
         /* GAIA OBSERVATION */
         JPanel gaiaPanel = new JPanel(new MigLayout("", "[grow,fill]", ""));
@@ -502,19 +492,19 @@ public class Gui implements IObserver {
 
         /* FILL IN THE CONTROLS PANEL */
         JPanel controlsPanel = new JPanel();
-        controlsPanel.setLayout(new MigLayout("fillx", "[grow,fill]", "[]"));
-        controlsPanel.add(timePanel, "wrap");
-        controlsPanel.add(cameraPanel, "wrap");
-        controlsPanel.add(visibilityPanel, "wrap");
-        controlsPanel.add(graphicsPanel, "wrap");
-        controlsPanel.add(gaiaPanel);
+//        controlsPanel.setLayout(new MigLayout("fillx", "[grow,fill]", "[]"));
+//        controlsPanel.add(timePanel, "wrap");
+//        controlsPanel.add(cameraPanel, "wrap");
+//        controlsPanel.add(visibilityPanel, "wrap");
+//        controlsPanel.add(graphicsPanel, "wrap");
+//        controlsPanel.add(gaiaPanel);
 
         JScrollPane controlsScrollPanel = new JScrollPane(controlsPanel);
         controlsScrollPanel.setPreferredSize(new Dimension(300, 800));
         controlsScrollPanel.setAutoscrolls(true);
 
         tabbedPane.addTab("Controls", controlsScrollPanel);
-        tabbedPane.addTab("Objects", treePanel);
+        //tabbedPane.addTab("Objects", treePanel);
 
         // Horizontal split pane
         mainPanel = new JPanel();
@@ -595,8 +585,8 @@ public class Gui implements IObserver {
         case TOGGLE_TIME_CMD:
             if (!(Boolean) data[1]) {
                 boolean timeOn = (Boolean) data[0];
-                if (playPause.isSelected() != timeOn)
-                    playPause.setSelected(timeOn, true);
+//                if (playPause.isSelected() != timeOn)
+//                    playPause.setSelected(timeOn, true);
             }
             break;
         case TIME_CHANGE_INFO:
@@ -617,7 +607,7 @@ public class Gui implements IObserver {
             int i = 0;
             for (ComponentType ct : ComponentType.values()) {
                 boolean visible = vis[i++];
-                visibilityButtons.get(ct).setSelected(visible);
+               // visibilityButtons.get(ct).setSelected(visible);
             }
             break;
         case FOCUS_CHANGED:
