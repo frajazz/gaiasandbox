@@ -19,10 +19,12 @@ import java.util.GregorianCalendar;
  */
 public class AstroUtils {
 
-    /** Julian date of J2000 epoch */
+    /** Julian date of J2000 epoch **/
     static final public double JD_J2000 = 2451545.; // Julian Date of J2000
-    /** Julian date of J2010 epoch */
-    static final public double JD_J2012 = 2455198; // 2010 Jan 1 12:00
+    /** Julian date of the Gaia-specific reference epoch J2010 = J2010.0 = JD2455197.5 = 2010-01-01T00:00:00 **/
+    static final public double JD_J2010 = 2455197.5;
+
+
     /** Julian date of B1900 epoch */
     static final public double JD_B1900 = 2415020.31352;// Julian Date of B1900
     /** Milliseconds of J2000 in the scale of java.util.Date **/

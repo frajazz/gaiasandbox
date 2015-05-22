@@ -8,9 +8,9 @@
 	<classpathentry exported="true" kind="con" path="com.android.ide.eclipse.adt.LIBRARIES"/>
 	<classpathentry exported="true" kind="lib" path="/GaiaSandbox/lib/postprocessing.jar"/>
 	<classpathentry exported="true" kind="lib" path="libs/gdx-backend-android.jar"/>
-	<classpathentry exported="true" kind="lib" path="/GaiaSandbox/lib/gdx-1.5.5.jar"/>
 	<classpathentry exported="true" kind="lib" path="/GaiaSandbox/lib/stil.jar" sourcepath="/home/tsagrista/Programs/Libraries/STIL/stil_src.zip"/>
-	<classpathentry exported="true" kind="lib" path="/GaiaSandbox/lib/gdx-controllers-1.5.5.jar"/>
 	<classpathentry exported="true" kind="lib" path="libs/gdx-controllers-android.jar"/>
+	<classpathentry kind="lib" path="/GaiaSandbox/lib/gdx-1.6.0.jar"/>
+	<classpathentry kind="lib" path="/GaiaSandbox/lib/gdx-controllers-1.6.0.jar"/>
 	<classpathentry kind="output" path="bin/classes"/>
 </classpath>

@@ -61,17 +61,17 @@ public class Nsl37 extends AnalyticalAttitudeDataServer {
     }
 
     public Attitude getAttitudeNative(Date date) {
-        long tNs = (long) ((AstroUtils.getJulianDateCache(date) - AstroUtils.JD_J2000) * AstroUtils.DAY_TO_NS);
+        long tNs = (long) ((AstroUtils.getJulianDateCache(date) - AstroUtils.JD_J2010) * AstroUtils.DAY_TO_NS);
         return getAttitudeNative(tNs);
     }
 
     public Attitude getAttitudeNative(double julianDate) {
-        long tNs = (long) ((julianDate - AstroUtils.JD_J2000) * AstroUtils.DAY_TO_NS);
+        long tNs = (long) ((julianDate - AstroUtils.JD_J2010) * AstroUtils.DAY_TO_NS);
         return getAttitudeNative(tNs);
     }
 
     /**
-     * @see gaia.cu1.tools.satellite.attitude.AttitudeDataServer#getAttitude(long)
+     * @see gaia.cu9.ari.gaiaorbit.util.gaia.BaseAttitudeDataServer#getAttitude(long)
      * Calculate the scanning law at a given time. See {@docref
      * GAIA-CA-TN-OCA-FM-037-2}
      */
@@ -172,7 +172,7 @@ public class Nsl37 extends AnalyticalAttitudeDataServer {
         this.scanPerNs = this.getTargetScanPeriod();
 
         NslSun sun0 = new NslSun();
-        sun0.setTime(AstroUtils.JD_J2000);
+        sun0.setTime(AstroUtils.JD_J2010);
         this.lSunRef = sun0.getSolarLongitude();
 
         sx = Math.sin(xi);

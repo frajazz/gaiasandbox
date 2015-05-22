@@ -15,6 +15,7 @@ import gaia.cu9.ari.gaiaorbit.util.math.Vector3d;
  */
 public abstract class AnalyticalAttitudeDataServer extends BaseAttitudeDataServer<Attitude> {
     /** Mathematical constants **/
+    protected static final double PI =Math.PI;
     protected static final double TWO_PI = 2.0 * Math.PI;
     protected static final double FOUR_PI = 4.0 * Math.PI;
     protected static final double PI_HALF = 0.5 * Math.PI;
@@ -36,6 +37,11 @@ public abstract class AnalyticalAttitudeDataServer extends BaseAttitudeDataServe
      */
     protected long targetScanPeriod = Math
             .round(360.0 * 3600.0 * 1.e9 / Satellite.SCANRATE);
+
+    /**
+     * Reference time
+     */
+    private long tRef;
 
     /**
      * Reference value of the solar aspect angle (valid at time tRef) [rad]
@@ -61,6 +67,8 @@ public abstract class AnalyticalAttitudeDataServer extends BaseAttitudeDataServe
     * every thread gets is own local copy of the NslSun
     */
     protected NslSun nslSun = new NslSun();
+
+
 
     /**
      * Set the reference value for the solar aspect angle (xi)
@@ -204,9 +212,20 @@ public abstract class AnalyticalAttitudeDataServer extends BaseAttitudeDataServe
 
     /**
      * @overide
-     * @see gaia.cu1.tools.satellite.attitude.AttitudeDataServer#inGap(long)
      */
     public boolean inGap(long time) {
         return false;
+    }
+
+    public long getRefTime() {
+        return tRef;
+    }
+
+    public void setRefTime(long tRef) {
+        this.tRef = tRef;
+    }
+
+    protected NslSun getNominalSunVector() {
+        return nslSun;
     }
 }

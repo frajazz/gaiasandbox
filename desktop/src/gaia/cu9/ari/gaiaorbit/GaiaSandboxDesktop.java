@@ -40,10 +40,6 @@ public class GaiaSandboxDesktop implements IObserver {
         try {
             gsd = new GaiaSandboxDesktop();
 
-            for (UIManager.LookAndFeelInfo info : UIManager.getInstalledLookAndFeels()) {
-                System.out.println(info.getClassName());
-            }
-
             //UIManager.setLookAndFeel("com.alee.laf.WebLookAndFeel");
             //WebLookAndFeel.setAllowLinuxTransparency(false);
             //UIManager.setLookAndFeel("com.sun.java.swing.plaf.gtk.GTKLookAndFeel");

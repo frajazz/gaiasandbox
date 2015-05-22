@@ -139,4 +139,18 @@ public class Constants {
         }
     }
 
+    /**
+     * Nature
+     */
+    public static class Nature{
+        /** Number of seconds per day */
+        public static final double DAY_SECOND = 86400.0D;
+        /** One degree in units of radians */
+        public static final double DEGREE_RADIAN = 0.0174532925199433D;
+        /** One radian in units of degrees */
+        public static final double RADIAN_DEGREE = 57.2957795130823D;
+        /** One arcsecond in units of radians */
+        public static final double ARCSECOND_RADIAN = 4.84813681109536E-6D;
+    }
+
 }

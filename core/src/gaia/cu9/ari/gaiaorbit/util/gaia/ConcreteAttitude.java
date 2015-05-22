@@ -248,14 +248,15 @@ public class ConcreteAttitude implements Attitude {
     }
 
     /**
-     * @see gaia.cu1.tools.satellite.attitude.Attitude#getSrsAxes()
+     * @see gaia.cu9.ari.gaiaorbit.util.gaia.Attitude#getSrsAxes(Vector3d[])
      */
     @Override
-    public void getSrsAxes(Vector3d[] xyz) {
+    public Vector3d[] getSrsAxes(Vector3d[] xyz) {
         // computed from q using vector rotation on three unit vectors
         xyz[0].set(1, 0, 0).mul(q);
         xyz[1].set(0, 1, 0).mul(q);
         xyz[2].set(0, 0, 1).mul(q);
+        return xyz;
     }
 
     /**

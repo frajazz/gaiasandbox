@@ -70,7 +70,7 @@ public interface Attitude {
      * 
      * @return array of three (x, y, z) vectors
      */
-    public void getSrsAxes(Vector3d[] xyz);
+    public Vector3d[] getSrsAxes(Vector3d[] xyz);
 
     /**
      * Compute the angular speed AL and AC of an inertial direction in the SRS
