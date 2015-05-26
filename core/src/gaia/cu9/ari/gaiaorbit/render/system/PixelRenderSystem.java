@@ -127,6 +127,7 @@ public class PixelRenderSystem extends ImmediateRenderSystem implements IObserve
     public void notify(Events event, Object... data) {
         if (event == Events.TRANSIT_COLOUR_CMD) {
             starColorTransit = (boolean) data[1];
+            POINT_UPDATE_FLAG = true;
         }
     }
 }

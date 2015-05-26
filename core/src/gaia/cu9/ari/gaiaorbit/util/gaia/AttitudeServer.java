@@ -1,9 +1,11 @@
 package gaia.cu9.ari.gaiaorbit.util.gaia;
 
+import gaia.cu9.ari.gaiaorbit.util.Logger;
 import gaia.cu9.ari.gaiaorbit.util.LruCache;
 
 import java.util.Collections;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.Map;
 
 /**
@@ -15,13 +17,34 @@ import java.util.Map;
  */
 public class AttitudeServer {
 
-    static Nsl37 nsl;
+    public enum AttitudeType {
+        NSL, EPSL;
 
-    static Map<Long, Attitude> cache;
-    static long hits = 0, misses = 0;
+    }
+
+    static Map<AttitudeType, AttitudeCache> attitudeMap;
+
+    private static class AttitudeCache {
+        public BaseAttitudeDataServer attitude;
+        public Map<Long, Attitude> cache;
+        public long hits = 0, misses = 0;
+
+        public AttitudeCache(Class<? extends BaseAttitudeDataServer> clazz) {
+            try {
+                attitude = clazz.newInstance();
+            } catch (Exception e) {
+                Logger.error(e);
+            }
+            cache = Collections.synchronizedMap(new LruCache<Long, Attitude>(10));
+        }
+
+    }
+
     static {
-        nsl = new Nsl37();
-        cache = Collections.synchronizedMap(new LruCache<Long, Attitude>(10));
+        attitudeMap = new HashMap<AttitudeType, AttitudeCache>();
+
+        attitudeMap.put(AttitudeType.NSL, new AttitudeCache(Nsl37.class));
+        attitudeMap.put(AttitudeType.EPSL, new AttitudeCache(Epsl.class));
     }
 
     /**
@@ -30,16 +53,17 @@ public class AttitudeServer {
      * @return
      */
     public synchronized static Attitude getAttitude(Date date) {
+        AttitudeCache cache = attitudeMap.get(AttitudeType.EPSL);
         Long time = date.getTime();
-        if (!cache.containsKey(time)) {
-            Attitude att = nsl.getAttitudeNative(date);
-            cache.put(time, att);
-            misses++;
+        if (!cache.cache.containsKey(time)) {
+            Attitude att = cache.attitude.getAttitude(date);
+            cache.cache.put(time, att);
+            cache.misses++;
             return att;
         } else {
-            hits++;
+            cache.hits++;
         }
-        return cache.get(time);
+        return (Attitude) cache.cache.get(time);
     }
 
 }

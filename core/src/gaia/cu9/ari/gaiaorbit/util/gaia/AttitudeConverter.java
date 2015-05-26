@@ -58,36 +58,11 @@ public class AttitudeConverter {
             double nu, double omega, double lSunDot, double nuDot,
             double omegaDot) {
 
-        //	/** Calculate the attitude quaternion **/
-        //	Quaterniond q = new Quaterniond(X_AXIS, OBLIQUITY_DEG);
-        //	q.mul(new Quaterniond(Z_AXIS, Math.toDegrees(lSun)));
-        //	q.mul(new Quaterniond(X_AXIS, Math.toDegrees(nu - PI_HALF)));
-        //	q.mul(new Quaterniond(Y_AXIS, Math.toDegrees(PI_HALF - xi)));
-        //	q.mul(new Quaterniond(Z_AXIS, Math.toDegrees(omega)));
-        //
-        //	/**
-        //	 * Calculate the time derivative of the attitude quaternion using (A.17)
-        //	 * in AGIS paper, based on the rates in the ICRS:
-        //	 **/
-        //	double sinLSun = Math.sin(lSun);
-        //	double cosLSun = Math.cos(lSun);
-        //	Vector3d zInSrs = Z_AXIS.cpy().mul(q); // TODO
-        //	double rateX = nuDot * cosLSun + omegaDot * zInSrs.x;
-        //	double rateY = -lSunDot * sinObliquity + nuDot * sinLSun * cosObliquity
-        //		+ omegaDot * zInSrs.y;
-        //	double rateZ = lSunDot * cosObliquity + nuDot * sinLSun * sinObliquity
-        //		+ omegaDot * zInSrs.z;
-        //	Quaterniond halfSpinInIcrs = new Quaterniond(0.5 * rateX, 0.5 * rateY,
-        //		0.5 * rateZ, 0.0);
-        //	Quaterniond qDot = halfSpinInIcrs.mul(q);
-        //
-        //	return new Quaterniond[] { q, qDot };
-
         /** SOME AXES NEED TO BE SWAPPED TO ALIGN WITH OUR REF SYS:
          * 	GLOBAL	GAIASANDBOX
-         * 	Z	Y
-         * 	X	Z
-         * 	Y	X
+         * 	Z -> Y
+         * 	X -> Z
+         * 	Y -> X
          */
 
         /** Calculate the attitude quaternion **/
@@ -141,12 +116,19 @@ public class AttitudeConverter {
             double nu, double omega, double lSunDot, double nuDot,
             double omegaDot) {
 
+        /** SOME AXES NEED TO BE SWAPPED TO ALIGN WITH OUR REF SYS:
+         * 	GLOBAL	GAIASANDBOX
+         * 	Z -> Y
+         * 	X -> Z
+         * 	Y -> X
+         */
+
         /** Calculate the attitude quaternion **/
-        Quaterniond q = new Quaterniond(X_AXIS, OBLIQUITY_DEG);
-        q.mul(new Quaterniond(Z_AXIS, Math.toDegrees(lSun)));
-        q.mul(new Quaterniond(X_AXIS, Math.toDegrees(nu - PI_HALF)));
-        q.mul(new Quaterniond(Y_AXIS, Math.toDegrees(PI_HALF - xi)));
-        q.mul(new Quaterniond(Z_AXIS, Math.toDegrees(omega)));
+        Quaterniond q = new Quaterniond(Z_AXIS, OBLIQUITY_DEG);
+        q.mul(new Quaterniond(Y_AXIS, Math.toDegrees(lSun)));
+        q.mul(new Quaterniond(Z_AXIS, Math.toDegrees(nu - PI_HALF)));
+        q.mul(new Quaterniond(X_AXIS, Math.toDegrees(PI_HALF - xi)));
+        q.mul(new Quaterniond(Y_AXIS, Math.toDegrees(omega)));
 
         /**
          * Calculate the inertial rate in SRS by adding the rotations around
@@ -180,17 +162,24 @@ public class AttitudeConverter {
     public static Quaterniond[] getQuaternionAndRate(long gt,
             HeliotropicAnglesRates h) {
 
+        /** SOME AXES NEED TO BE SWAPPED TO ALIGN WITH OUR REF SYS:
+         * 	GLOBAL	GAIASANDBOX
+         * 	Z -> Y
+         * 	X -> Z
+         * 	Y -> X
+         */
+
         NslSun sun = new NslSun();
         sun.setTime(gt);
         double lSun = sun.getSolarLongitude();
         double lSunDot = sun.getSolarLongitudeDot();
 
         /** Calculate the attitude quaternion **/
-        Quaterniond q = new Quaterniond(X_AXIS, OBLIQUITY_DEG);
-        q.mul(new Quaterniond(Z_AXIS, Math.toDegrees(lSun)));
-        q.mul(new Quaterniond(X_AXIS, Math.toDegrees(h.getNu() - PI_HALF)));
-        q.mul(new Quaterniond(Y_AXIS, Math.toDegrees(PI_HALF - h.getXi())));
-        q.mul(new Quaterniond(Z_AXIS, Math.toDegrees(h.getOmega())));
+        Quaterniond q = new Quaterniond(Z_AXIS, OBLIQUITY_DEG);
+        q.mul(new Quaterniond(Y_AXIS, Math.toDegrees(lSun)));
+        q.mul(new Quaterniond(Z_AXIS, Math.toDegrees(h.getNu() - PI_HALF)));
+        q.mul(new Quaterniond(X_AXIS, Math.toDegrees(PI_HALF - h.getXi())));
+        q.mul(new Quaterniond(Y_AXIS, Math.toDegrees(h.getOmega())));
 
         /**
          * Calculate the time derivative of the attitude quaternion using (A.17)
@@ -199,7 +188,7 @@ public class AttitudeConverter {
         double sinLSun = Math.sin(lSun);
         double cosLSun = Math.cos(lSun);
         Vector3d zInSrs = aux1;
-        zInSrs.set(Z_AXIS).mul(q);
+        zInSrs.set(Y_AXIS).mul(q);
         Vector3d sz = aux2;
         sz.set(sun.getSolarDirection(aux3)).crs(zInSrs).nor();
         double rateX = h.getNuDot() * cosLSun + h.getOmegaDot() * zInSrs.x

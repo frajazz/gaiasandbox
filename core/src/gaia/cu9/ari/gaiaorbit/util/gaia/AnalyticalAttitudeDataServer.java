@@ -2,27 +2,38 @@ package gaia.cu9.ari.gaiaorbit.util.gaia;
 
 import gaia.cu9.ari.gaiaorbit.util.coord.Coordinates;
 import gaia.cu9.ari.gaiaorbit.util.coord.NslSun;
+import gaia.cu9.ari.gaiaorbit.util.gaia.time.TimeContext;
 import gaia.cu9.ari.gaiaorbit.util.math.Vector3d;
 
 /**
  * This abstract class defines the fields and implements the methods that any
  * analytically defined attitude (e.g., NSL or EPSL) need in addition to those
  * in the superclass.
- * 
+ *
  * @author Lennart Lindegren
  * @version $Id: AnalyticalAttitudeDataServer.java 329790 2013-11-15 16:31:56Z ulammers $
- * 
+ *
  */
 public abstract class AnalyticalAttitudeDataServer extends BaseAttitudeDataServer<Attitude> {
+
+    /**
+     * The reference epoch for the coordinate time scale expressed as Julian
+     * years. The epoch is fixed to the value J2010.0 following {@ref BAS-003}.
+     */
+    public static final double REF_EPOCH_YR = 2010.0;
+
     /** Mathematical constants **/
-    protected static final double PI =Math.PI;
+    protected static final double PI = Math.PI;
     protected static final double TWO_PI = 2.0 * Math.PI;
     protected static final double FOUR_PI = 4.0 * Math.PI;
     protected static final double PI_HALF = 0.5 * Math.PI;
 
     /** Factor converting from arcsec/s to rad/day **/
-    protected static final double ARCSEC_PER_S_TO_RAD_PER_DAY = 86400.
-            * 4.84813681109536e-6;
+    protected static final double ARCSEC_PER_S_TO_RAD_PER_DAY = 86400.D
+            * 4.84813681109536e-6D;
+    /** Factor converting from arcsec/s to deg/day **/
+    protected static final double ARCSEC_PER_S_TO_DEG_PER_DAY = 86400.D
+            * (1d / 3600d);
 
     /** Unit vectors **/
     protected static final Vector3d X_AXIS = Vector3d.getUnitX();
@@ -30,7 +41,8 @@ public abstract class AnalyticalAttitudeDataServer extends BaseAttitudeDataServe
     protected static final Vector3d Z_AXIS = Vector3d.getUnitZ();
 
     /** The obliquity of the ecliptic **/
-    protected static final double OBLIQUITY = Coordinates.OBLIQUITY_RAD_J2000;
+    protected static final double OBLIQUITY_RAD = Coordinates.OBLIQUITY_RAD_J2000;
+    protected static final double OBLIQUITY_DEG = Coordinates.OBLIQUITY_DEG_J2000;
 
     /**
      * The time in ns of one rotation of the satellite around its spin axis.
@@ -68,11 +80,9 @@ public abstract class AnalyticalAttitudeDataServer extends BaseAttitudeDataServe
     */
     protected NslSun nslSun = new NslSun();
 
-
-
     /**
      * Set the reference value for the solar aspect angle (xi)
-     * 
+     *
      * @param xiRef
      *            angle in [rad]
      */
@@ -83,7 +93,7 @@ public abstract class AnalyticalAttitudeDataServer extends BaseAttitudeDataServe
 
     /**
      * Set the reference value for the precession phase angle (nu)
-     * 
+     *
      * @param nuRef
      *            angle in [rad]
      */
@@ -94,7 +104,7 @@ public abstract class AnalyticalAttitudeDataServer extends BaseAttitudeDataServe
 
     /**
      * Set the reference value for the spin phase abgle (Omega)
-     * 
+     *
      * @param omegaRef
      *            angle in [rad]
      */
@@ -105,7 +115,7 @@ public abstract class AnalyticalAttitudeDataServer extends BaseAttitudeDataServe
 
     /**
      * Set the target precession rate
-     * 
+     *
      * @param targetPrecessionRate
      *            target value in [rev/yr]
      */
@@ -118,6 +128,10 @@ public abstract class AnalyticalAttitudeDataServer extends BaseAttitudeDataServe
      * Set all parameters to default values (from GaiaParam)
      */
     public void setDefault() {
+        nativeTimeContext = TimeContext.TCB;
+
+        // Default reference epoch
+        setRefTime(0l);
 
         // Default reference solar aspect angle [rad]
         setXiRef(Math.toRadians(Satellite.SOLARASPECTANGLE_NOMINAL));
@@ -136,7 +150,7 @@ public abstract class AnalyticalAttitudeDataServer extends BaseAttitudeDataServe
 
     /**
      * Set the target scan period
-     * 
+     *
      * @param targetScanPeriod
      *            period in [ns]
      */
@@ -147,7 +161,7 @@ public abstract class AnalyticalAttitudeDataServer extends BaseAttitudeDataServe
 
     /**
      * Set the target scan rate
-     * 
+     *
      * @param targetScanRate
      *            target value in [arcsec/s]
      */
@@ -158,7 +172,7 @@ public abstract class AnalyticalAttitudeDataServer extends BaseAttitudeDataServe
 
     /**
      * Get the target scan period
-     * 
+     *
      * @return targetScanPeriod period in [ns]
      */
     public long getTargetScanPeriod() {
@@ -167,7 +181,7 @@ public abstract class AnalyticalAttitudeDataServer extends BaseAttitudeDataServe
 
     /**
      * Get the target scan rate
-     * 
+     *
      * @return target scan rate value in [arcsec/s]
      */
     public double getTargetScanRate() {
@@ -176,7 +190,7 @@ public abstract class AnalyticalAttitudeDataServer extends BaseAttitudeDataServe
 
     /**
      * Get the reference solar aspect angle
-     * 
+     *
      * @return reference solar aspect angle [rad]
      */
     public double getXiRef() {
@@ -185,7 +199,7 @@ public abstract class AnalyticalAttitudeDataServer extends BaseAttitudeDataServe
 
     /**
      * Get the reference revolving phase angle
-     * 
+     *
      * @return reference revolving phase angle [rad]
      */
     public double getNuRef() {
@@ -194,7 +208,7 @@ public abstract class AnalyticalAttitudeDataServer extends BaseAttitudeDataServe
 
     /**
      * Get the reference scan phase angle
-     * 
+     *
      * @return reference scan phase angle [rad]
      */
     public double getOmegaRef() {
@@ -203,7 +217,7 @@ public abstract class AnalyticalAttitudeDataServer extends BaseAttitudeDataServe
 
     /**
      * Get the target precession rate
-     * 
+     *
      * @return target precession rate [rev/year]
      */
     public double getTargetPrecessionRate() {
@@ -217,10 +231,18 @@ public abstract class AnalyticalAttitudeDataServer extends BaseAttitudeDataServe
         return false;
     }
 
+    /**
+     * Ref time in nanoseconds since epoch.
+     * @return The reference time [ns]
+     */
     public long getRefTime() {
         return tRef;
     }
 
+    /**
+     * Sets the reference time in nanoseconds.
+     * @param tRef [ns]
+     */
     public void setRefTime(long tRef) {
         this.tRef = tRef;
     }

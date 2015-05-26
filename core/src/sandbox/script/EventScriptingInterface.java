@@ -1,30 +1,25 @@
 package sandbox.script;
 
-import gaia.cu9.ari.gaiaorbit.GaiaSandbox;
-import gaia.cu9.ari.gaiaorbit.event.EventManager;
-import gaia.cu9.ari.gaiaorbit.event.EventManager.TimeFrame;
-import gaia.cu9.ari.gaiaorbit.event.Events;
-import gaia.cu9.ari.gaiaorbit.event.IObserver;
-import gaia.cu9.ari.gaiaorbit.interfce.IGui;
-import gaia.cu9.ari.gaiaorbit.scenegraph.AbstractPositionEntity;
-import gaia.cu9.ari.gaiaorbit.scenegraph.CameraManager.CameraMode;
-import gaia.cu9.ari.gaiaorbit.scenegraph.CelestialBody;
-import gaia.cu9.ari.gaiaorbit.scenegraph.ISceneGraph;
-import gaia.cu9.ari.gaiaorbit.scenegraph.NaturalCamera;
-import gaia.cu9.ari.gaiaorbit.scenegraph.SceneGraphNode;
-import gaia.cu9.ari.gaiaorbit.util.Constants;
-import gaia.cu9.ari.gaiaorbit.util.GlobalConf;
-import gaia.cu9.ari.gaiaorbit.util.LruCache;
-import gaia.cu9.ari.gaiaorbit.util.math.MathUtilsd;
-
-import java.util.Date;
-
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input.Keys;
 import com.badlogic.gdx.assets.AssetManager;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.Group;
+import gaia.cu9.ari.gaiaorbit.GaiaSandbox;
+import gaia.cu9.ari.gaiaorbit.event.EventManager;
+import gaia.cu9.ari.gaiaorbit.event.EventManager.TimeFrame;
+import gaia.cu9.ari.gaiaorbit.event.Events;
+import gaia.cu9.ari.gaiaorbit.event.IObserver;
+import gaia.cu9.ari.gaiaorbit.interfce.IGui;
+import gaia.cu9.ari.gaiaorbit.scenegraph.*;
+import gaia.cu9.ari.gaiaorbit.scenegraph.CameraManager.CameraMode;
+import gaia.cu9.ari.gaiaorbit.util.Constants;
+import gaia.cu9.ari.gaiaorbit.util.GlobalConf;
+import gaia.cu9.ari.gaiaorbit.util.LruCache;
+import gaia.cu9.ari.gaiaorbit.util.math.MathUtilsd;
+
+import java.util.Date;
 
 /**
  * Implementation of the scripting interface using the event system.

@@ -1,7 +1,9 @@
 package gaia.cu9.ari.gaiaorbit.scenegraph;
 
 import com.badlogic.gdx.utils.LongMap;
+import gaia.cu9.ari.gaiaorbit.render.system.PixelRenderSystem;
 import gaia.cu9.ari.gaiaorbit.scenegraph.octreewrapper.AbstractOctreeWrapper;
+import gaia.cu9.ari.gaiaorbit.util.GlobalConf;
 import gaia.cu9.ari.gaiaorbit.util.I18n;
 import gaia.cu9.ari.gaiaorbit.util.Logger;
 import gaia.cu9.ari.gaiaorbit.util.time.ITimeFrameProvider;
@@ -87,11 +89,12 @@ public abstract class AbstractSceneGraph implements ISceneGraph {
         Logger.info(this.getClass().getSimpleName(), I18n.bundle.format("notif.sg.init", root.numChildren));
     }
 
-    /**
-     * Only clears the toRender list.
-     */
     @Override
     public void update(ITimeFrameProvider time, ICamera camera) {
+        // Check if we need to update the points
+        if(GlobalConf.scene.COMPUTE_GAIA_SCAN && time.getDt() != 0){
+            PixelRenderSystem.POINT_UPDATE_FLAG = true;
+        }
     }
 
     public HashMap<String, SceneGraphNode> getStringToNodeMap() {

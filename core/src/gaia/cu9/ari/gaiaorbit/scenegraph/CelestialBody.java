@@ -176,7 +176,7 @@ public abstract class CelestialBody extends AbstractPositionEntity implements I3
     protected void setColor2Data() {
         final float plus = 0.15f;
         ccPale = new float[] { Math.min(1, cc[0] + plus), Math.min(1, cc[1] + plus), Math.min(1, cc[2] + plus) };
-        ccTransit = new float[] { cc[0], cc[1], cc[2], cc[3] };
+        ccTransit = new float[] { ccPale[0], ccPale[1], ccPale[2], cc[3] };
     }
 
     public abstract float getInnerRad();

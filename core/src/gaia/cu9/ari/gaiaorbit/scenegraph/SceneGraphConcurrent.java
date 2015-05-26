@@ -67,6 +67,7 @@ public class SceneGraphConcurrent extends AbstractSceneGraph {
 
     public void update(ITimeFrameProvider time, ICamera camera) {
         super.update(time, camera);
+        
         root.transform.position.set(camera.getInversePos());
 
         // Update params

@@ -29,8 +29,7 @@ public class Epsl extends AnalyticalAttitudeDataServer {
     private Mode currentMode;
 
     /** The unit vector towards the North Ecliptic Pole, expressed in ICRS **/
-    static final Vector3d NECLP = new Vector3d(0.0, -Math.sin(OBLIQUITY),
-            Math.cos(OBLIQUITY));
+    static final Vector3d NECLP = new Vector3d(-Math.sin(OBLIQUITY_RAD), Math.cos(OBLIQUITY_RAD), 0.0);
     static final Vector3d[] xyz = new Vector3d[] { new Vector3d(), new Vector3d(), new Vector3d() };
 
     /** Auxiliary vector **/
@@ -75,19 +74,25 @@ public class Epsl extends AnalyticalAttitudeDataServer {
 
         // Calculate the scan phase angle Omega (modulo 4*PI), which has to be 0 at the
         // reference time
-        long tElapsed = t;
+        long tElapsed = t - getRefTime();
         long twicePeriod = 2L * getTargetScanPeriod();
         omegaRevs = 2 * (int) (tElapsed / twicePeriod);
         long tRemainder = tElapsed % twicePeriod;
         omega = getOmegaRef() + FOUR_PI * (double) tRemainder
                 / (double) twicePeriod;
 
+        /** SOME AXES NEED TO BE SWAPPED TO ALIGN WITH OUR REF SYS:
+         * 	GLOBAL	GAIASANDBOX
+         * 	Z -> Y
+         * 	X -> Z
+         * 	Y -> X
+         */
         // Calculate and set the attitude quaternion
-        Quaterniond q = new Quaterniond(X_AXIS, OBLIQUITY);
-        q.mul(new Quaterniond(Z_AXIS, nslSun.getSolarLongitude()));
-        q.mul(new Quaterniond(X_AXIS, super.getNuRef() - PI_HALF));
-        q.mul(new Quaterniond(Y_AXIS, PI_HALF - super.getXiRef()));
-        q.mul(new Quaterniond(Z_AXIS, omega));
+        Quaterniond q = new Quaterniond(Z_AXIS, OBLIQUITY_DEG);
+        q.mul(new Quaterniond(Y_AXIS, Math.toDegrees(nslSun.getSolarLongitude())));
+        q.mul(new Quaterniond(Z_AXIS, Math.toDegrees(super.getNuRef() - PI_HALF)));
+        q.mul(new Quaterniond(X_AXIS, Math.toDegrees(PI_HALF - super.getXiRef())));
+        q.mul(new Quaterniond(Y_AXIS, Math.toDegrees(omega)));
 
         ConcreteAttitude att = new ConcreteAttitude(t, q, null, true);
 
@@ -95,11 +100,11 @@ public class Epsl extends AnalyticalAttitudeDataServer {
         // quaternion [1/day]. First compute the inertial spin vector [rad/day]
         // in ICRS...
         spinVector.set(Epsl.NECLP).scl(nslSun.getSolarLongitudeDot());
-        spinVector.scaleAdd(getTargetScanRate() * ARCSEC_PER_S_TO_RAD_PER_DAY,
+        spinVector.scaleAdd(getTargetScanRate() * ARCSEC_PER_S_TO_DEG_PER_DAY,
                 att.getSrsAxes(xyz)[2]);
         // ...then convert to quaternion rate using (A.17) in AGIS paper
-        Quaterniond qDot = new Quaterniond(0.5 * spinVector.x,
-                0.5 * spinVector.y, 0.5 * spinVector.z, 0.0);
+        Quaterniond qDot = new Quaterniond(0.5 * spinVector.z,
+                0.5 * spinVector.x, 0.5 * spinVector.y, 0.0);
         qDot.mul(q);
         att.setQuaternionDot(qDot);
 

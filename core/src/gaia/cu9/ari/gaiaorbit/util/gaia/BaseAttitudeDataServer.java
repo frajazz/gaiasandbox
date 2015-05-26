@@ -19,15 +19,21 @@
  */
 package gaia.cu9.ari.gaiaorbit.util.gaia;
 
+import gaia.cu9.ari.gaiaorbit.util.coord.AstroUtils;
+import gaia.cu9.ari.gaiaorbit.util.gaia.time.TimeContext;
+
+import java.util.Date;
+import java.util.Stack;
+
 /**
  * Common base class for all attitude data servers. This holds all common fields
  * e.g. the time origin for relative time scales (in ns) and implements
- * {@link #getAttitude(GaiaTime)} in terms of {@link #getAttitude(long)} which
+ * {@link #getAttitude(long)} in terms of {@link #getAttitude(long)} which
  * is the same for all servers.
- * 
+ *
  * The time context and its possible switch is implemented in a thread-safe manner.
  * Derived classes should hence be likewise thread-safe.
- * 
+ *
  * @author Uwe Lammers
  * @version $Id: BaseAttitudeDataServer.java 254926 2012-10-01 15:10:38Z
  *          ulammers $
@@ -45,6 +51,19 @@ public abstract class BaseAttitudeDataServer<A extends Attitude> {
     protected boolean initialized = false;
 
     /**
+     * native and initially requested time context of the server - has to be set by the implementing class
+     */
+    protected TimeContext nativeTimeContext = null;
+    protected TimeContext initialRequestedTimeContext = null;
+
+    protected ThreadLocal<TimeContext> requestedTimeContext = new ThreadLocal<TimeContext>() {
+        @Override
+        protected TimeContext initialValue() {
+            return initialRequestedTimeContext;
+        }
+    };
+
+    /**
      * switch to decide if attitude uncertainties and correlations should be calculated
      */
     protected boolean withUncertaintiesCorrelations = true;
@@ -60,14 +79,19 @@ public abstract class BaseAttitudeDataServer<A extends Attitude> {
         this.initialized = initialized;
     }
 
+
+    public A getAttitude(Date date) {
+        long tNs = (long) ((AstroUtils.getJulianDateCache(date) - AstroUtils.JD_J2010) * AstroUtils.DAY_TO_NS);
+        return getAttitudeNative(tNs);
+    }
+
     /**
-     * @see gaia.cu1.tools.satellite.attitude.AttitudeDataServer#getAttitude(gaia.cu1.tools.time.GaiaTime)
      */
-    public A getAttitude(long time) {
+    public synchronized A getAttitude(long time) {
         return getAttitudeNative(time);
     }
 
-    /** 
+    /**
      * Evaluate the attitude in the native time system of the server
      */
     abstract protected A getAttitudeNative(long time);

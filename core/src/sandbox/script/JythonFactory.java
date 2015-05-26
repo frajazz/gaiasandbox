@@ -1,9 +1,13 @@
 package sandbox.script;
 
+import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.files.FileHandle;
 import gaia.cu9.ari.gaiaorbit.event.EventManager;
 import gaia.cu9.ari.gaiaorbit.event.Events;
 import gaia.cu9.ari.gaiaorbit.event.IObserver;
 import gaia.cu9.ari.gaiaorbit.util.I18n;
+import org.python.core.PyCode;
+import org.python.util.PythonInterpreter;
 
 import java.io.File;
 import java.io.FileReader;
@@ -12,12 +16,6 @@ import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.concurrent.ThreadFactory;
 import java.util.concurrent.atomic.AtomicInteger;
-
-import org.python.core.PyCode;
-import org.python.util.PythonInterpreter;
-
-import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.files.FileHandle;
 
 /**
  * Factory class to create, execute and cancel Jython scripts.

@@ -72,12 +72,12 @@ public class HYGBinaryLoader extends AbstractCatalogLoader implements ICatalogLo
                         stars.add(new Star(pos, appmag, absmag, colorbv, name, ra, dec, id));
                     }
                 } catch (EOFException eof) {
-
+                    Logger.error(eof, HYGBinaryLoader.class.getSimpleName());
                 }
             }
 
         } catch (IOException e) {
-            Gdx.app.log(HYGBinaryLoader.class.getSimpleName(), e.getLocalizedMessage());
+            Logger.error(e, HYGBinaryLoader.class.getSimpleName());
         } finally {
             try {
                 data_in.close();

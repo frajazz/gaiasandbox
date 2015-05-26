@@ -116,6 +116,7 @@ public abstract class PixelPostProcessRenderSystem extends PixelRenderSystem imp
 
     @Override
     public void notify(Events event, Object... data) {
+        super.notify(event, data);
         switch (event) {
         case SCREEN_RESIZE:
             getFrameBuffer((Integer) data[0], (Integer) data[1]);

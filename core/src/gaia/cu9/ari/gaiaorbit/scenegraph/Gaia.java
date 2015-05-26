@@ -9,7 +9,7 @@ import gaia.cu9.ari.gaiaorbit.event.Events;
 import gaia.cu9.ari.gaiaorbit.util.coord.AstroUtils;
 import gaia.cu9.ari.gaiaorbit.util.coord.Coordinates;
 import gaia.cu9.ari.gaiaorbit.util.gaia.Attitude;
-import gaia.cu9.ari.gaiaorbit.util.gaia.Nsl37AttitudeServer;
+import gaia.cu9.ari.gaiaorbit.util.gaia.AttitudeServer;
 import gaia.cu9.ari.gaiaorbit.util.math.Quaterniond;
 import gaia.cu9.ari.gaiaorbit.util.math.Vector3d;
 import gaia.cu9.ari.gaiaorbit.util.time.ITimeFrameProvider;
@@ -69,7 +69,7 @@ public class Gaia extends ModelBody {
             unrotatedPos.set(pos);
             // Undo rotation
             unrotatedPos.mul(Coordinates.eclipticToEquatorial()).rotate(-AstroUtils.getSunLongitude(time.getTime()) - 180, 0, 1, 0);
-            attitude = Nsl37AttitudeServer.getAttitude(time.getTime());
+            attitude = AttitudeServer.getAttitude(time.getTime());
         }
     }
 

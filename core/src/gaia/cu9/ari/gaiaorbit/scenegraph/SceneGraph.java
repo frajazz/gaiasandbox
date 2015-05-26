@@ -1,5 +1,7 @@
 package gaia.cu9.ari.gaiaorbit.scenegraph;
 
+import gaia.cu9.ari.gaiaorbit.render.system.PixelRenderSystem;
+import gaia.cu9.ari.gaiaorbit.util.GlobalConf;
 import gaia.cu9.ari.gaiaorbit.util.time.ITimeFrameProvider;
 
 /**
@@ -15,6 +17,7 @@ public class SceneGraph extends AbstractSceneGraph {
 
     public void update(ITimeFrameProvider time, ICamera camera) {
         super.update(time, camera);
+
         root.transform.position.set(camera.getInversePos());
         root.update(time, null, camera);
         objectsPerThread[0] = root.numChildren;

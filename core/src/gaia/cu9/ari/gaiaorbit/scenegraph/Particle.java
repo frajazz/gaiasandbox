@@ -4,7 +4,9 @@ import com.badlogic.gdx.assets.AssetManager;
 import com.badlogic.gdx.graphics.g3d.ModelBatch;
 import com.badlogic.gdx.graphics.glutils.ImmediateModeRenderer;
 import gaia.cu9.ari.gaiaorbit.render.IPointRenderable;
+import gaia.cu9.ari.gaiaorbit.render.SceneGraphRenderer;
 import gaia.cu9.ari.gaiaorbit.render.SceneGraphRenderer.ComponentType;
+import gaia.cu9.ari.gaiaorbit.render.system.PixelRenderSystem;
 import gaia.cu9.ari.gaiaorbit.util.Constants;
 import gaia.cu9.ari.gaiaorbit.util.GlobalConf;
 import gaia.cu9.ari.gaiaorbit.util.color.ColourUtils;
@@ -33,7 +35,7 @@ public class Particle extends CelestialBody implements IPointRenderable {
 
     @Override
     public double THRESHOLD_ANGLE_NONE() {
-        return (float)GlobalConf.scene.STAR_TH_ANGLE_NONE;
+        return (float) GlobalConf.scene.STAR_TH_ANGLE_NONE;
     }
 
     @Override
@@ -128,13 +130,16 @@ public class Particle extends CelestialBody implements IPointRenderable {
         if (appmag <= GlobalConf.runtime.LIMIT_MAG_RUNTIME) {
             transform.position.set(parentTransform.position).add(pos);
             distToCamera = (float) transform.position.len();
-            addToRender(this, RenderGroup.POINT);
-            boolean visible = camera.isVisible(time, this, GlobalConf.scene.COMPUTE_GAIA_SCAN) || camera.isFocus(this);
-            if (visible && !copy) {
-                viewAngle = ((float) radius / distToCamera) / camera.getFovFactor();
-                viewAngleApparent = viewAngle * GlobalConf.scene.STAR_BRIGHTNESS;
 
-                addToRenderLists(camera);
+            if (!copy) {
+                addToRender(this, RenderGroup.POINT);
+
+                if (camera.isVisible(time, this, GlobalConf.scene.COMPUTE_GAIA_SCAN) || camera.isFocus(this)) {
+                    viewAngle = ((float) radius / distToCamera) / camera.getFovFactor();
+                    viewAngleApparent = viewAngle * GlobalConf.scene.STAR_BRIGHTNESS;
+
+                    addToRenderLists(camera);
+                }
             }
 
             if (distToCamera < size) {

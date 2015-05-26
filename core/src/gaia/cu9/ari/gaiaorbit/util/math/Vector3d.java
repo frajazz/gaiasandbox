@@ -587,4 +587,24 @@ public class Vector3d implements Serializable {
         return v.set((float) x, (float) y, (float) z);
     }
 
+
+    /**
+     * Rotates this vector by a quaternion, using "vector rotation" according to
+     * (60) in LL-072. Both the original and the returned vectors are expressed
+     * in the same reference frame as the quaternion.
+     *
+     * @param q
+     *            Quaternion defining the vector rotation.
+     * @return the rotated vector.
+     */
+    public Vector3d rotateVectorByQuaternion(final Quaterniond q) {
+        Quaterniond oldVecQ = new Quaterniond(this.x, this.y, this.z, 0.0);
+        Quaterniond newVecQ = q.cpy().mul(oldVecQ).multInverse(q);
+        this.x = newVecQ.x;
+        this.y = newVecQ.y;
+        this.z = newVecQ.z;
+
+        return this;
+    }
+
 }

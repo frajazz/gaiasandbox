@@ -196,9 +196,9 @@ public class NotificationsInterface extends Table implements IObserver {
                 break;
             case JAVA_EXCEPTION:
                 if (data.length == 1) {
-                    addMessage(I18n.bundle.format("notif.error", ((Throwable) data[0]).getLocalizedMessage()));
+                    addMessage(I18n.bundle.format("notif.error", ((Throwable) data[0]).toString()));
                 } else {
-                    addMessage(I18n.bundle.format("notif.error", data[1] + TAG_SEPARATOR + ((Throwable) data[0]).getLocalizedMessage()));
+                    addMessage(I18n.bundle.format("notif.error", data[1] + TAG_SEPARATOR + ((Throwable) data[0]).toString()));
                 }
                 break;
             case ORBIT_DATA_LOADED:

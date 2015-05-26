@@ -2,6 +2,7 @@ package gaia.cu9.ari.gaiaorbit.util.gaia;
 
 import gaia.cu9.ari.gaiaorbit.util.coord.Coordinates;
 import gaia.cu9.ari.gaiaorbit.util.coord.NslSun;
+import gaia.cu9.ari.gaiaorbit.util.math.Matrix4d;
 import gaia.cu9.ari.gaiaorbit.util.math.Quaterniond;
 import gaia.cu9.ari.gaiaorbit.util.math.Vector3d;
 
@@ -253,9 +254,10 @@ public class ConcreteAttitude implements Attitude {
     @Override
     public Vector3d[] getSrsAxes(Vector3d[] xyz) {
         // computed from q using vector rotation on three unit vectors
-        xyz[0].set(1, 0, 0).mul(q);
-        xyz[1].set(0, 1, 0).mul(q);
-        xyz[2].set(0, 0, 1).mul(q);
+        xyz[0].set(1, 0, 0).rotateVectorByQuaternion(q);
+        xyz[1].set(0, 1, 0).rotateVectorByQuaternion(q);
+        xyz[2].set(0, 0, 1).rotateVectorByQuaternion(q);
+
         return xyz;
     }
 

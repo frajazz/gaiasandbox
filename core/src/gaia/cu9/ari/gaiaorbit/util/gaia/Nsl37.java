@@ -22,8 +22,6 @@ import gaia.cu9.ari.gaiaorbit.util.coord.AstroUtils;
 import gaia.cu9.ari.gaiaorbit.util.coord.NslSun;
 import gaia.cu9.ari.gaiaorbit.util.math.Quaterniond;
 
-import java.util.Date;
-
 /**
  * Improved analytical representation of the Gaia Nominal Scanning Law (NSL).
  * <p>
@@ -33,8 +31,8 @@ import java.util.Date;
  * @author Lennart Lindegren (lennart@astro.lu.se)
  */
 public class Nsl37 extends AnalyticalAttitudeDataServer {
-    static final double sinObliquity = Math.sin(OBLIQUITY);
-    static final double cosObliquity = Math.cos(OBLIQUITY);
+    static final double sinObliquity = Math.sin(OBLIQUITY_RAD);
+    static final double cosObliquity = Math.cos(OBLIQUITY_RAD);
 
     /**
      * Variables that are calculated on initialization
@@ -60,10 +58,6 @@ public class Nsl37 extends AnalyticalAttitudeDataServer {
         super.setDefault();
     }
 
-    public Attitude getAttitudeNative(Date date) {
-        long tNs = (long) ((AstroUtils.getJulianDateCache(date) - AstroUtils.JD_J2010) * AstroUtils.DAY_TO_NS);
-        return getAttitudeNative(tNs);
-    }
 
     public Attitude getAttitudeNative(double julianDate) {
         long tNs = (long) ((julianDate - AstroUtils.JD_J2010) * AstroUtils.DAY_TO_NS);
@@ -76,15 +70,14 @@ public class Nsl37 extends AnalyticalAttitudeDataServer {
      * GAIA-CA-TN-OCA-FM-037-2}
      */
     @Override
-    public synchronized Attitude getAttitudeNative(long t) {
+    protected Attitude getAttitudeNative(long t) {
         if (!initialized) {
             recomputeConstants();
             super.setInitialized(true);
         }
-        long tElapsed = t;
 
         // Get the solar longitude [rad]
-        nslSun.setTime(tElapsed);
+        nslSun.setTime(t);
         double lSun = nslSun.getSolarLongitude();
         double lSunDot = nslSun.getSolarLongitudeDot();
         double precRate = this.getTargetPrecessionRate();
@@ -108,6 +101,8 @@ public class Nsl37 extends AnalyticalAttitudeDataServer {
                         * c2z - 3.0 * c3v * s3z + 3.0 * s3v * c3z - 4.0 * c4v
                         * s4z + 4.0 * s4v * c4z);
 
+        // Elapsed time since 2010 epoch:
+        long tElapsed = t - getRefTime();
         this.omegaRevs = (int) (tElapsed / scanPerNs);
 
         double omegaArg = TWO_PI * (double) (tElapsed - omegaRevs * scanPerNs)
