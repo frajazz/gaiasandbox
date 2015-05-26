@@ -13,7 +13,7 @@ import java.util.Map;
  * @author Toni Sagrista
  *
  */
-public class Nsl37AttitudeServer {
+public class AttitudeServer {
 
     static Nsl37 nsl;
 

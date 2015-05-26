@@ -67,17 +67,17 @@ public class GSPostProcessor implements IPostProcessor, IObserver {
         PostProcessBean ppb = new PostProcessBean();
         ppb.pp = new PostProcessor(width, height, true, false, true);
 
+        // MOTION BLUR
+        ppb.motionblur = new MotionBlur();
+        ppb.motionblur.setBlurOpacity(GlobalConf.postprocess.POSTPROCESS_MOTION_BLUR);
+        ppb.pp.addEffect(ppb.motionblur);
+
         // BLOOM
         ppb.bloom = new Bloom((int) (width * bloomFboScale), (int) (height * bloomFboScale));
         ppb.bloom.setBloomIntesity(GlobalConf.postprocess.POSTPROCESS_BLOOM_INTENSITY);
         ppb.bloom.setThreshold(0f);
         ppb.bloom.setEnabled(GlobalConf.postprocess.POSTPROCESS_BLOOM_INTENSITY > 0);
         ppb.pp.addEffect(ppb.bloom);
-
-        // MOTION BLUR
-        ppb.motionblur = new MotionBlur();
-        ppb.motionblur.setBlurOpacity(GlobalConf.postprocess.POSTPROCESS_MOTION_BLUR);
-        ppb.pp.addEffect(ppb.motionblur);
 
         // LENS FLARE
         ppb.lens = new LensFlare2((int) (width * lensFboScale), (int) (height * lensFboScale));
