@@ -72,7 +72,6 @@
 							"ascendingnode" : 0.0,
 							"meridianangle" : 0.0
 							},
-							
 		"model"			: {
 							"args" : [true],
 							"type" : "sphere",
@@ -116,7 +115,6 @@
 							"ascendingnode" : 0.0,
 							"meridianangle" : 0.0
 							},
-							
 		"model"			: {
 							"args" : [true],
 							"type" : "sphere",
