@@ -18,20 +18,43 @@ import java.util.Map;
 public class AttitudeServer {
 
     public enum AttitudeType {
-        NSL, EPSL;
+        /** Nominal Scanning Law (NSL), as close a possible to a galactic plane scan **/
+        NSL_STAR_GPS,
+        /** Ecliptic Pole Scanning Law (EPSL) used preferably until mid-March 2014 **/
+        EPSL_STAR_FOLLOW,
+        /** EPSL scanning law used preferably after mid-March 2014 and for the first
+         30 days of the routine phase **/
+        EPSL_STAR_PRECEDE,
+        /** Scanning law (after spin rate update) covering EPSL and its transition to NSL
+         over South Ecliptic Pole and continuation in NSL **/
+        TSL,
+        /** Nominal Scanning Law after spin rate update, incl. a galactic plane scan **/
+        NSL_GPS,
+        /** Continuous transition from EPSL into NSL **/
+        NSL_CONT,
+        /** NSL with GAREQ-optimized precession phase **/
+        NSL_GAREQ0,
+        /** NSL with GAREQ-optimized spin phase **/
+        NSL_GAREQ1,
+        /** NSL with updated GAREQ-optimized spin phase **/
+        NSL_GAREQn,
+        /** NSL with a solar aspect angle of 0 **/
+        SAA0,
+        /** NSL with a reduced solar aspect angle **/
+        SAA42;
 
     }
 
     static Map<AttitudeType, AttitudeCache> attitudeMap;
 
     private static class AttitudeCache {
-        public BaseAttitudeDataServer attitude;
+        public AnalyticalAttitudeDataServer attitude;
         public Map<Long, Attitude> cache;
         public long hits = 0, misses = 0;
 
-        public AttitudeCache(Class<? extends BaseAttitudeDataServer> clazz) {
+        public AttitudeCache(Class<? extends AnalyticalAttitudeDataServer> clazz, Class<?>[] paramTypes, Object[] paramValues) {
             try {
-                attitude = clazz.newInstance();
+                attitude = clazz.getConstructor(paramTypes).newInstance(paramValues);
             } catch (Exception e) {
                 Logger.error(e);
             }
@@ -43,8 +66,14 @@ public class AttitudeServer {
     static {
         attitudeMap = new HashMap<AttitudeType, AttitudeCache>();
 
-        attitudeMap.put(AttitudeType.NSL, new AttitudeCache(Nsl37.class));
-        attitudeMap.put(AttitudeType.EPSL, new AttitudeCache(Epsl.class));
+        // Solar aspect angle = 0
+        attitudeMap.put(AttitudeType.NSL_STAR_GPS, new AttitudeCache(Nsl37.class, null, null));
+        //attitudeMap.get(AttitudeType.NSL_STAR_GPS).attitude.setXiRef(Math.toRadians(10));
+
+        attitudeMap.put(AttitudeType.EPSL_STAR_PRECEDE, new AttitudeCache(Epsl.class, new Class[]{Epsl.Mode.class}, new Object[]{ Epsl.Mode.PRECEDING}));
+
+
+
     }
 
     /**
@@ -53,7 +82,7 @@ public class AttitudeServer {
      * @return
      */
     public synchronized static Attitude getAttitude(Date date) {
-        AttitudeCache cache = attitudeMap.get(AttitudeType.EPSL);
+        AttitudeCache cache = attitudeMap.get(AttitudeType.NSL_STAR_GPS);
         Long time = date.getTime();
         if (!cache.cache.containsKey(time)) {
             Attitude att = cache.attitude.getAttitude(date);

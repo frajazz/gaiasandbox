@@ -29,7 +29,7 @@ public interface IBodyCoordinates {
      * Gets equatorial cartesian coordinates for the given date.
      * @param date The date.
      * @param out The out vector where the equatorial cartesian coordinates will be.
-     * @return The out vector for chaining.
+     * @return The out vector for chaining, or null if the date is out of range, in case of non elliptical orbits such as Gaia.
      */
     public Vector3d getEquatorialCartesianCoordinates(Date date, Vector3d out);
 

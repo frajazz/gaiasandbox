@@ -31,8 +31,6 @@ import gaia.cu9.ari.gaiaorbit.util.math.Quaterniond;
  * @author Lennart Lindegren (lennart@astro.lu.se)
  */
 public class Nsl37 extends AnalyticalAttitudeDataServer {
-    static final double sinObliquity = Math.sin(OBLIQUITY_RAD);
-    static final double cosObliquity = Math.cos(OBLIQUITY_RAD);
 
     /**
      * Variables that are calculated on initialization

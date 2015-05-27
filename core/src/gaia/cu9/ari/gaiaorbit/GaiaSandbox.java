@@ -368,9 +368,10 @@ public class GaiaSandbox implements ApplicationListener, IObserver {
                  * FRAME OUTPUT
                  */
                 if (GlobalConf.frame.RENDER_OUTPUT) {
-                    switch(GlobalConf.frame.FRAME_MODE){
+                    switch (GlobalConf.frame.FRAME_MODE) {
                     case simple:
-                        ImageRenderer.renderToImageGl20(GlobalConf.frame.RENDER_FOLDER, GlobalConf.frame.RENDER_FILE_NAME, Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
+                        //                        ImageRenderer.renderToImageGl20(GlobalConf.frame.RENDER_FOLDER, GlobalConf.frame.RENDER_FILE_NAME, Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
+                        frameRenderer.saveScreenshot(GlobalConf.frame.RENDER_FOLDER, GlobalConf.frame.RENDER_FILE_NAME, Gdx.graphics.getWidth(), Gdx.graphics.getHeight(), false);
                         break;
                     case redraw:
                         renderToImage(cam, pp.getPostProcessBean(RenderType.frame), GlobalConf.frame.RENDER_WIDTH, GlobalConf.frame.RENDER_HEIGHT, GlobalConf.frame.RENDER_FOLDER, GlobalConf.frame.RENDER_FILE_NAME, frameRenderer);
@@ -392,7 +393,7 @@ public class GaiaSandbox implements ApplicationListener, IObserver {
                         file = renderToImage(cam, pp.getPostProcessBean(RenderType.screenshot), screenshot.width, screenshot.height, screenshot.folder, ScreenshotCmd.FILENAME, screenshotRenderer);
                         break;
                     }
-                    if(file != null) {
+                    if (file != null) {
                         screenshot.active = false;
                         EventManager.instance.post(Events.SCREENSHOT_INFO, file);
                     }

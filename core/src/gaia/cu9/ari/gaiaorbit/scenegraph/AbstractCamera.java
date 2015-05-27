@@ -72,7 +72,7 @@ public abstract class AbstractCamera implements ICamera {
         return this;
     }
 
-    private static final double VIEW_ANGLE = 0.43633231;
+    private static final double VIEW_ANGLE = Math.toRadians(0.05);
 
     @Override
     public boolean isVisible(ITimeFrameProvider time, CelestialBody cb, boolean computeGaiaScan) {

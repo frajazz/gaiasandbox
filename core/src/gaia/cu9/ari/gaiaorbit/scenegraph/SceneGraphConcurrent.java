@@ -31,10 +31,9 @@ public class SceneGraphConcurrent extends AbstractSceneGraph {
     public SceneGraphConcurrent(int numThreads) {
         super();
         this.numThreads = numThreads;
-
     }
 
-    /** 
+    /**
      * Builds the scene graph using the given nodes.
      * @param nodes
      */
@@ -67,7 +66,7 @@ public class SceneGraphConcurrent extends AbstractSceneGraph {
 
     public void update(ITimeFrameProvider time, ICamera camera) {
         super.update(time, camera);
-        
+
         root.transform.position.set(camera.getInversePos());
 
         // Update params

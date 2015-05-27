@@ -68,13 +68,13 @@ public class OrbitData {
      * @param date
      * @return
      */
-    public void loadPoint(Vector3d v, Date date) {
+    public boolean loadPoint(Vector3d v, Date date) {
         // Data is sorted
         int idx = binarySearch(time, date);
 
         if (idx < 0 || idx >= time.size()) {
             // No data for this time
-            return;
+            return false;
         }
 
         if (time.get(idx).equals(date)) {
@@ -89,7 +89,7 @@ public class OrbitData {
             double scl = (double) (date.getTime() - t0.getTime()) / (t1.getTime() - t0.getTime());
             v.set(v1.sub(v0).scl(scl).add(v0));
         }
-
+        return true;
     }
 
     private int binarySearch(List<Date> times, Date elem) {

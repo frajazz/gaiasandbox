@@ -10,6 +10,7 @@ import gaia.cu9.ari.gaiaorbit.util.coord.AstroUtils;
 import gaia.cu9.ari.gaiaorbit.util.coord.Coordinates;
 import gaia.cu9.ari.gaiaorbit.util.gaia.Attitude;
 import gaia.cu9.ari.gaiaorbit.util.gaia.AttitudeServer;
+import gaia.cu9.ari.gaiaorbit.util.math.MathUtilsd;
 import gaia.cu9.ari.gaiaorbit.util.math.Quaterniond;
 import gaia.cu9.ari.gaiaorbit.util.math.Vector3d;
 import gaia.cu9.ari.gaiaorbit.util.time.ITimeFrameProvider;
@@ -36,7 +37,6 @@ public class Gaia extends ModelBody {
     }
 
     public Vector3d unrotatedPos;
-    int currentIndex = 0;
     boolean display = true;
     Attitude attitude;
     Quaterniond quat;
@@ -59,13 +59,19 @@ public class Gaia extends ModelBody {
     }
 
     @Override
+    protected void addToRenderLists(ICamera camera) {
+        if (display)
+            super.addToRenderLists(camera);
+    }
+
+    @Override
     public void updateLocalValues(ITimeFrameProvider time, ICamera camera) {
         forceUpdatePosition(time, false);
     }
 
     private void forceUpdatePosition(ITimeFrameProvider time, boolean force) {
         if (time.getDt() != 0 || force) {
-            coordinates.getEquatorialCartesianCoordinates(time.getTime(), pos);
+            display = coordinates.getEquatorialCartesianCoordinates(time.getTime(), pos) != null;
             unrotatedPos.set(pos);
             // Undo rotation
             unrotatedPos.mul(Coordinates.eclipticToEquatorial()).rotate(-AstroUtils.getSunLongitude(time.getTime()) - 180, 0, 1, 0);
@@ -92,12 +98,6 @@ public class Gaia extends ModelBody {
             localTransform.set(this.localTransform);
         }
 
-    }
-
-    @Override
-    public void render(ModelBatch modelBatch, float alpha) {
-        if (display)
-            super.render(modelBatch, alpha);
     }
 
     @Override
