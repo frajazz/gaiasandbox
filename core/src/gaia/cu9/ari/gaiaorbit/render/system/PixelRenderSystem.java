@@ -29,7 +29,7 @@ public class PixelRenderSystem extends ImmediateRenderSystem implements IObserve
     public PixelRenderSystem(RenderGroup rg, int priority, float[] alphas) {
         super(rg, priority, alphas);
 
-        EventManager.instance.subscribe(this, Events.TRANSIT_COLOUR_CMD);
+        EventManager.instance.subscribe(this, Events.TRANSIT_COLOUR_CMD, Events.ONLY_OBSERVED_STARS_CMD);
     }
 
     @Override
@@ -127,6 +127,8 @@ public class PixelRenderSystem extends ImmediateRenderSystem implements IObserve
     public void notify(Events event, Object... data) {
         if (event == Events.TRANSIT_COLOUR_CMD) {
             starColorTransit = (boolean) data[1];
+            POINT_UPDATE_FLAG = true;
+        }else if(event == Events.ONLY_OBSERVED_STARS_CMD){
             POINT_UPDATE_FLAG = true;
         }
     }

@@ -89,8 +89,8 @@ public abstract class AbstractCamera implements ICamera {
     /**
      * Returns true if a body with the given position is observed in any of the given directions using the given cone angle
      * @param pos The position of the body.
-     * @param coneAngle The whole observation angle
-     * @param dirs The directions
+     * @param fcamera The FovCamera.
+     * @param poslen Length of position vector.
      * @return True if the body is observed. False otherwise.
      */
     protected boolean computeVisibleFovs(Vector3d pos, FovCamera fcamera, double poslen) {

@@ -67,7 +67,7 @@ public class GaiaComponent extends GuiComponent {
         VerticalGroup gaiaGroup = new VerticalGroup().align(Align.left);
         gaiaGroup.addActor(computeGaiaScan);
         gaiaGroup.addActor(transitColor);
-        gaiaGroup.addActor(onlyObservedStars);
+        //gaiaGroup.addActor(onlyObservedStars);
 
         component = gaiaGroup;
 

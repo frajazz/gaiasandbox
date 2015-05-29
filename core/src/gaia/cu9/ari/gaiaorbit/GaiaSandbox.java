@@ -370,8 +370,7 @@ public class GaiaSandbox implements ApplicationListener, IObserver {
                 if (GlobalConf.frame.RENDER_OUTPUT) {
                     switch (GlobalConf.frame.FRAME_MODE) {
                     case simple:
-                        //                        ImageRenderer.renderToImageGl20(GlobalConf.frame.RENDER_FOLDER, GlobalConf.frame.RENDER_FILE_NAME, Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
-                        frameRenderer.saveScreenshot(GlobalConf.frame.RENDER_FOLDER, GlobalConf.frame.RENDER_FILE_NAME, Gdx.graphics.getWidth(), Gdx.graphics.getHeight(), false);
+                        frameRenderer.saveScreenshot(GlobalConf.frame.RENDER_FOLDER, GlobalConf.frame.RENDER_FILE_NAME, Gdx.graphics.getWidth(), Gdx.graphics.getHeight(), true);
                         break;
                     case redraw:
                         renderToImage(cam, pp.getPostProcessBean(RenderType.frame), GlobalConf.frame.RENDER_WIDTH, GlobalConf.frame.RENDER_HEIGHT, GlobalConf.frame.RENDER_FOLDER, GlobalConf.frame.RENDER_FILE_NAME, frameRenderer);

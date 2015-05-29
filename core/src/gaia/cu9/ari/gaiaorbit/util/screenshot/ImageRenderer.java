@@ -9,6 +9,7 @@ import com.badlogic.gdx.graphics.Pixmap.Format;
 import com.badlogic.gdx.graphics.PixmapIO;
 import com.badlogic.gdx.utils.ScreenUtils;
 
+import java.awt.*;
 import java.io.File;
 import java.nio.ByteBuffer;
 import java.text.DecimalFormat;
@@ -22,6 +23,11 @@ import java.util.Arrays;
 public class ImageRenderer {
     private static int sequenceNumber = 0;
 
+    enum ImageType{
+        PNG, JPG;
+    }
+    private static ImageType imageType = ImageType.JPG;
+
     /**
      * Saves the current screen as an image to the given directory using the given file name. 
      * The sequence number is added automatically to the file name.
@@ -30,7 +36,6 @@ public class ImageRenderer {
      * @param baseFileName
      * @param w
      * @param h
-     * @param antialias
      */
     public static String renderToImageGl20(String absoluteLocation, String baseFileName, int w, int h) {
         Pixmap pixmap = getScreenshot(0, 0, w, h, true);
@@ -46,7 +51,14 @@ public class ImageRenderer {
 
     public static String writePixmapToImage(String absoluteLocation, String baseFileName, Pixmap pixmap) {
         FileHandle fh = getTarget(absoluteLocation, baseFileName);
-        PixmapIO.writePNG(fh, pixmap);
+        switch(imageType){
+        case PNG:
+            PixmapIO.writePNG(fh, pixmap);
+            break;
+        case JPG:
+            JPGWriter.write(fh, pixmap);
+            break;
+        }
         return fh.path();
     }
 
@@ -74,7 +86,7 @@ public class ImageRenderer {
         pixels.clear();
         pixels.put(lines);
 
-        PixmapIO.writePNG(getTarget(absoluteLocation, baseFileName), pixmap);
+        writePixmapToImage(absoluteLocation, baseFileName, pixmap);
         pixmap.dispose();
     }
 
@@ -99,8 +111,7 @@ public class ImageRenderer {
             }
             pixels.clear();
             pixels.put(lines);
-        }
-        else {
+        } else {
             pixels.clear();
             pixels.get(lines);
         }
@@ -109,9 +120,9 @@ public class ImageRenderer {
     }
 
     private static FileHandle getTarget(String absoluteLocation, String baseFileName) {
-        FileHandle fh = Gdx.files.absolute(absoluteLocation + File.separator + baseFileName + getNextSeqNumSuffix() + ".png");
+        FileHandle fh = Gdx.files.absolute(absoluteLocation + File.separator + baseFileName + getNextSeqNumSuffix() + "." + imageType.toString().toLowerCase());
         while (fh.exists()) {
-            fh = Gdx.files.absolute(absoluteLocation + File.separator + baseFileName + getNextSeqNumSuffix() + ".png");
+            fh = Gdx.files.absolute(absoluteLocation + File.separator + baseFileName + getNextSeqNumSuffix() + "." + imageType.toString().toLowerCase());
         }
         return fh;
     }
