@@ -60,7 +60,36 @@ public class SysUtils {
      * @return A pointer to the GaiaSandbox directory in the user's home.
      */
     public static File getGSHomeDir(){
-        return new File(System.getProperty("user.home") + File.separator + ".gaiasandbox" + File.separator);
+        return new File(System.getProperty("user.home") + File.separator + GAIASANDBOX_DIR_NAME + File.separator);
+    }
+
+    private static final String GAIASANDBOX_DIR_NAME = ".gaiasandbox";
+    private static final String CAMERA_DIR_NAME = "camera";
+    private static final String SCREENSHOTS_DIR_NAME = "screenshots";
+    private static final String FRAMES_DIR_NAME = "frames";
+
+    /**
+     * Gets a file pointer to the $HOME/.gaiasandbox/camera directory.
+     * @return A pointer to the GaiaSandbox camera directory in the user's home.
+     */
+    public static File getGSCameraDir(){
+        return new File(System.getProperty("user.home") + File.separator + GAIASANDBOX_DIR_NAME + File.separator + CAMERA_DIR_NAME + File.separator);
+    }
+
+    /**
+     * Gets a file pointer to the $HOME/.gaiasandbox/camera directory.
+     * @return A pointer to the GaiaSandbox camera directory in the user's home.
+     */
+    public static File getDefaultScreenshotsDir(){
+        return new File(System.getProperty("user.home") + File.separator + GAIASANDBOX_DIR_NAME + File.separator + SCREENSHOTS_DIR_NAME + File.separator);
+    }
+
+    /**
+     * Gets a file pointer to the $HOME/.gaiasandbox/camera directory.
+     * @return A pointer to the GaiaSandbox camera directory in the user's home.
+     */
+    public static File getDefaultFramesDir(){
+        return new File(System.getProperty("user.home") + File.separator + GAIASANDBOX_DIR_NAME + File.separator + FRAMES_DIR_NAME + File.separator);
     }
 
 

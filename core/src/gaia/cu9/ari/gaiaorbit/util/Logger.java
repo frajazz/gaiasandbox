@@ -15,6 +15,10 @@ public class Logger {
         EventManager.instance.post(Events.JAVA_EXCEPTION, t);
     }
 
+    public static void warn(Object... messages) {
+        EventManager.instance.post(Events.POST_NOTIFICATION, messages);
+    }
+
     public static void info(Object... messages) {
         EventManager.instance.post(Events.POST_NOTIFICATION, messages);
     }

@@ -537,6 +537,7 @@ public class AstroUtils {
      * @param min
      * @param sec
      * @param nanos
+     * @param gregorian Whether to use the Gregorian or the Julian calendar
      * @return
      */
     public static double getJulianDate(int year, int month, int day, int hour, int min, int sec, int nanos, boolean gregorian) {

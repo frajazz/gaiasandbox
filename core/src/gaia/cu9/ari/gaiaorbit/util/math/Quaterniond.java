@@ -358,14 +358,32 @@ public class Quaterniond implements Serializable {
      * 
      * @param q1
      *            the other quaternion
-     * @return Quaternion
+     * @return Quaterniond
      */
-    public Quaterniond multInverse(final Quaterniond q1) {
+    public Quaterniond mulInverse(final Quaterniond q1) {
         final Quaterniond tempQuat = new Quaterniond(q1);
 
         tempQuat.inverse();
         this.mul(tempQuat);
 
+        return this;
+    }
+
+    /**
+     * Pre-multiplies this quaternion by the inverse of quaternion q and places
+     * the value into this quaternion. The value of the argument quaternion is
+     * preserved (this = q^-1 * this). Warning: this quaternion will NOT be
+     * normalized.
+     *
+     * @param q1
+     *            the other quaternion
+     * @return Quaterniond
+     */
+    public Quaterniond mulLeftInverse(final Quaterniond q1) {
+        final Quaterniond tempQuat = new Quaterniond(q1);
+
+        tempQuat.inverse();
+        this.mulLeft(tempQuat);
         return this;
     }
 
@@ -718,6 +736,18 @@ public class Quaterniond implements Serializable {
         this.y *= scalar;
         this.z *= scalar;
         this.w *= scalar;
+        return this;
+    }
+
+    /** Add quaternion q, scaled by s, to this quaternion (this = this + q * s)
+     * @param q
+     * @param s
+     * @return this quaternion for chaining. */
+    public Quaterniond mulAdd(Quaterniond q, double s) {
+        this.x += q.x * s;
+        this.y += q.y * s;
+        this.z += q.z * s;
+        this.w += q.w * s;
         return this;
     }
 

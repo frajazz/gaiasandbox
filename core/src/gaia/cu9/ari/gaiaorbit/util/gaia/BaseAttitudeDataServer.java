@@ -50,6 +50,8 @@ public abstract class BaseAttitudeDataServer<A extends Attitude> {
      */
     protected boolean initialized = false;
 
+    private long refEpoch = -1;
+
     /**
      * native and initially requested time context of the server - has to be set by the implementing class
      */
@@ -95,5 +97,13 @@ public abstract class BaseAttitudeDataServer<A extends Attitude> {
      * Evaluate the attitude in the native time system of the server
      */
     abstract protected A getAttitudeNative(long time);
+
+    public void setRefTime(long t) {
+        this.refEpoch = t;
+    }
+
+    public long getRefTime() {
+        return refEpoch;
+    }
 
 }

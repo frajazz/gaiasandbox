@@ -126,7 +126,7 @@ public class CamRecorder implements IObserver {
                     Logger.info(I18n.bundle.get("error.camerarecord.already"));
                     return;
                 }
-                f = new File(System.getProperty("java.io.tmpdir"), System.currentTimeMillis() + "_gscamera.dat");
+                f = new File(SysUtils.getGSHomeDir(), System.currentTimeMillis() + "_gscamera.dat");
                 if (f.exists()) {
                     f.delete();
                 }

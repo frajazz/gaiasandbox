@@ -49,13 +49,12 @@ public class GlobalConf {
 
     }
 
-    public enum ScreenshotMode{
+    public enum ScreenshotMode {
         simple,
         redraw
     }
 
     public static class ScreenshotConf implements IConf {
-
 
         public int SCREENSHOT_WIDTH;
         public int SCREENSHOT_HEIGHT;
@@ -73,11 +72,11 @@ public class GlobalConf {
         @Override
         public void initialize(Properties p) {
             String screenshotFolder = null;
-            if(p.getProperty("screenshot.folder").isEmpty() ){
-                File screenshotDir = new File(SysUtils.getGSHomeDir(), "screenshots");
+            if (p.getProperty("screenshot.folder") == null || p.getProperty("screenshot.folder").isEmpty()) {
+                File screenshotDir = SysUtils.getDefaultScreenshotsDir();
                 screenshotDir.mkdirs();
                 screenshotFolder = screenshotDir.getAbsolutePath();
-            }else{
+            } else {
                 screenshotFolder = p.getProperty("screenshot.folder");
             }
             SCREENSHOT_FOLDER = screenshotFolder;
@@ -86,11 +85,11 @@ public class GlobalConf {
             SCREENSHOT_MODE = ScreenshotMode.valueOf(p.getProperty("screenshot.mode"));
         }
 
-        public boolean isSimpleMode(){
+        public boolean isSimpleMode() {
             return SCREENSHOT_MODE.equals(ScreenshotMode.simple);
         }
 
-        public boolean isRedrawMode(){
+        public boolean isRedrawMode() {
             return SCREENSHOT_MODE.equals(ScreenshotMode.redraw);
         }
 
@@ -310,11 +309,11 @@ public class GlobalConf {
         @Override
         public void initialize(Properties p) {
             String renderFolder = null;
-            if(p.getProperty("graphics.render.folder").isEmpty() ){
-                File framesDir = new File(SysUtils.getGSHomeDir(), "frames");
+            if (p.getProperty("graphics.render.folder") == null || p.getProperty("graphics.render.folder").isEmpty()) {
+                File framesDir = SysUtils.getDefaultFramesDir();
                 framesDir.mkdirs();
                 renderFolder = framesDir.getAbsolutePath();
-            }else{
+            } else {
                 renderFolder = p.getProperty("graphics.render.folder");
             }
             RENDER_FOLDER = renderFolder;
@@ -885,7 +884,7 @@ public class GlobalConf {
     /**
      * Runs the initialize method in all the configurations using the given properties file stream.
      * @param propsFile An input stream sourced in the configuration file.
-     * @throws Exception 
+     * @throws Exception
      */
     public static void initialize(InputStream propsFile) throws Exception {
         p = new CommentedProperties();

@@ -40,7 +40,7 @@ public class OctreeGeneratorTest implements IObserver {
                 generateOctree();
                 break;
             case LOAD_OCTREE:
-                FileLocator.initialize("../android/assets/");
+                FileLocator.initialize();
                 loadOctree();
                 break;
             }

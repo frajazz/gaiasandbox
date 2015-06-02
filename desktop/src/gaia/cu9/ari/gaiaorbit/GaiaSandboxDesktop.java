@@ -4,6 +4,7 @@ import com.badlogic.gdx.Files;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.backends.lwjgl.LwjglApplication;
 import com.badlogic.gdx.backends.lwjgl.LwjglApplicationConfiguration;
+import gaia.cu9.ari.gaiaorbit.data.FileLocator;
 import gaia.cu9.ari.gaiaorbit.event.EventManager;
 import gaia.cu9.ari.gaiaorbit.event.Events;
 import gaia.cu9.ari.gaiaorbit.event.IObserver;
@@ -63,6 +64,7 @@ public class GaiaSandboxDesktop implements IObserver {
                 version = new FileInputStream(new File("../android/assets/data/dummyversion"));
             }
             try {
+                FileLocator.initialize();
                 GlobalConf.initialize(fis, version);
             } catch (Exception e) {
                 // Retry

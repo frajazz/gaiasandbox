@@ -16,11 +16,6 @@ import gaia.cu9.ari.gaiaorbit.util.math.Vector3d;
  */
 public abstract class AnalyticalAttitudeDataServer extends BaseAttitudeDataServer<Attitude> {
 
-    /**
-     * The reference epoch for the coordinate time scale expressed as Julian
-     * years. The epoch is fixed to the value J2010.0 following {@ref BAS-003}.
-     */
-    public static final double REF_EPOCH_YR = 2010.0;
 
     /** Mathematical constants **/
     protected static final double PI = Math.PI;
@@ -28,9 +23,6 @@ public abstract class AnalyticalAttitudeDataServer extends BaseAttitudeDataServe
     protected static final double FOUR_PI = 4.0 * Math.PI;
     protected static final double PI_HALF = 0.5 * Math.PI;
 
-    /** Factor converting from arcsec/s to rad/day **/
-    protected static final double ARCSEC_PER_S_TO_RAD_PER_DAY = 86400.D
-            * 4.84813681109536e-6D;
     /** Factor converting from arcsec/s to deg/day **/
     protected static final double ARCSEC_PER_S_TO_DEG_PER_DAY = 86400.D
             * (1d / 3600d);
@@ -130,7 +122,7 @@ public abstract class AnalyticalAttitudeDataServer extends BaseAttitudeDataServe
     public void setDefault() {
         nativeTimeContext = TimeContext.TCB;
 
-        // Default reference epoch
+        // Default reference epoch - 2010
         setRefTime(0l);
 
         // Default reference solar aspect angle [rad]

@@ -311,6 +311,22 @@ public class Vector3d implements Serializable {
         return this.set(y * vector.z - z * vector.y, z * vector.x - x * vector.z, x * vector.y - y * vector.x);
     }
 
+    /**
+     * Calculates the outer product of two given vectors <code>v</code> and
+     * <code>w</code> and returns the result as a new <code>GVector3d</code>.
+     *
+     * @param v
+     *            left operand
+     * @param w
+     *            right operand
+     * @return outer product of <code>v</code> and <code>w</code>
+     */
+    static public Vector3d crs(final Vector3d v, final Vector3d w) {
+        final Vector3d res = new Vector3d(v);
+
+        return res.crs(w);
+    }
+
     /** Sets this vector to the cross product between it and the other vector.
      * @param x The x-component of the other vector
      * @param y The y-component of the other vector
@@ -599,7 +615,7 @@ public class Vector3d implements Serializable {
      */
     public Vector3d rotateVectorByQuaternion(final Quaterniond q) {
         Quaterniond oldVecQ = new Quaterniond(this.x, this.y, this.z, 0.0);
-        Quaterniond newVecQ = q.cpy().mul(oldVecQ).multInverse(q);
+        Quaterniond newVecQ = q.cpy().mul(oldVecQ).mulInverse(q);
         this.x = newVecQ.x;
         this.y = newVecQ.y;
         this.z = newVecQ.z;

@@ -33,7 +33,6 @@ public class GaiaSandboxGuiSwing extends JFrame {
 
     private static final long serialVersionUID = 1L;
     private GaiaSandbox program;
-    private static String assetsLocation;
     private static ISceneGraph sg;
     private static LwjglCanvas canvas;
 
@@ -83,7 +82,6 @@ public class GaiaSandboxGuiSwing extends JFrame {
             //UIManager.setLookAndFeel("com.alee.laf.WebLookAndFeel");
             //WebLookAndFeel.setAllowLinuxTransparency(false);
 
-            assetsLocation = System.getProperty("assets.location");
             File confFile = new File(System.getProperty("properties.file"));
             FileInputStream fis = new FileInputStream(confFile);
             GlobalConf.initialize(fis, GaiaSandboxDesktop.class.getResourceAsStream("/version"));
@@ -115,8 +113,8 @@ public class GaiaSandboxGuiSwing extends JFrame {
             new Observer(splash);
 
             GlobalClock.initialize(0.01f);
-            FileLocator.initialize(assetsLocation);
-            sg = SceneGraphLoader.loadSceneGraph(new FileInputStream(new File(assetsLocation + GlobalConf.data.DATA_SG_FILE)), GlobalClock.clock, GlobalConf.performance.MULTITHREADING, GlobalConf.performance.NUMBER_THREADS());
+            FileLocator.initialize();
+            sg = SceneGraphLoader.loadSceneGraph(new FileInputStream(FileLocator.getFile(GlobalConf.data.DATA_SG_FILE)), GlobalClock.clock, GlobalConf.performance.MULTITHREADING, GlobalConf.performance.NUMBER_THREADS());
             IconManager.initialise(new File("data/ui/"));
             splash.splashOff();
             splash.dispose();

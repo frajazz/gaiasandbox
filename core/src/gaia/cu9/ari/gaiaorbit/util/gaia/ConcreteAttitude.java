@@ -79,7 +79,6 @@ public class ConcreteAttitude implements Attitude {
     }
 
     /**
-     * @see gaia.cu1.tools.satellite.attitude.Attitude#getTime()
      */
     @Override
     public long getTime() {
@@ -89,8 +88,7 @@ public class ConcreteAttitude implements Attitude {
     /**
      * Set the time of the attitude. This usually does not make sense as the
      * time is set during construction of the object
-     * {@link #ConcreteAttitude(long, Quaterniond, Quaterniond)}
-     * 
+     *
      * @param time
      *            time of the attitude in [ns] since reference epoch
      */
@@ -99,7 +97,6 @@ public class ConcreteAttitude implements Attitude {
     }
 
     /**
-     * @see gaia.cu1.tools.satellite.attitude.Attitude#getQuaternion()
      */
     @Override
     public Quaterniond getQuaternion() {
@@ -109,8 +106,7 @@ public class ConcreteAttitude implements Attitude {
     /**
      * The the quaternion of the attitude. * Set the time of the attitude. This
      * usually does not make sense as the time is set during construction of the
-     * object {@link #ConcreteAttitude(long, Quaterniond, Quaterniond)}
-     * 
+     *
      * @param q
      */
     public void setQuaternion(Quaterniond q) {
@@ -136,7 +132,6 @@ public class ConcreteAttitude implements Attitude {
     }
 
     /**
-     * @see gaia.cu1.tools.satellite.attitude.Attitude#getHeliotropicAnglesRates()
      */
     public HeliotropicAnglesRates getHeliotropicAnglesRates() {
         HeliotropicAnglesRates anglesAndRates = new HeliotropicAnglesRates();
@@ -205,7 +200,6 @@ public class ConcreteAttitude implements Attitude {
     }
 
     /**
-     * @see gaia.cu1.tools.satellite.attitude.Attitude#getSpinVectorInSrs()
      */
     @Override
     public Vector3d getSpinVectorInSrs() {
@@ -216,18 +210,16 @@ public class ConcreteAttitude implements Attitude {
     }
 
     /**
-     * @see gaia.cu1.tools.satellite.attitude.Attitude#getSpinVectorInIcrs()
      */
     @Override
     public Vector3d getSpinVectorInIcrs() {
         // Using (A.17) in AGIS paper (A&A 538, A78, 2012):
         Quaterniond tmp = qDot.cpy();
-        tmp.multInverse(q);
+        tmp.mulInverse(q);
         return new Vector3d(2. * tmp.x, 2. * tmp.y, 2. * tmp.z);
     }
 
     /**
-     * @see gaia.cu1.tools.satellite.attitude.Attitude#getFovDirections()
      */
     @Override
     public Vector3d[] getFovDirections() {
@@ -262,8 +254,6 @@ public class ConcreteAttitude implements Attitude {
     }
 
     /**
-     * @see gaia.cu1.tools.satellite.attitude.Attitude#getAlAcRates(double,
-     *      double)
      */
     @Override
     public double[] getAlAcRates(double alInstrumentAngle, double acFieldAngle) {
@@ -284,8 +274,6 @@ public class ConcreteAttitude implements Attitude {
     }
 
     /**
-     * @see gaia.cu1.tools.satellite.attitude.Attitude#getAlAcRates(gaia.cu1.tools.satellite.definitions.Fov,
-     *      double, double)
      */
     @Override
     public double[] getAlAcRates(FOV fov, double alFieldAngle,

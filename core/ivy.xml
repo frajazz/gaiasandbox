@@ -8,5 +8,6 @@
     <dependency org="com.badlogicgames.gdx" name="gdx" rev="&gdx.version;" conf="default"/>
     <dependency org="com.badlogicgames.gdx" name="gdx-controllers" rev="&gdx.version;" conf="default"/>
     <dependency org="org.python" name="jython-standalone" rev="2.5.4-rc1" conf="default"/>
+    <dependency org="junit" name="junit" rev="4.12" conf="default" />
   </dependencies>
 </ivy-module>

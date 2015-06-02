@@ -151,6 +151,17 @@ public class Constants {
         public static final double RADIAN_DEGREE = 57.2957795130823D;
         /** One arcsecond in units of radians */
         public static final double ARCSECOND_RADIAN = 4.84813681109536E-6D;
+        /** Number of days per Julian year */
+        public static final double JULIANYEAR_DAY = 365.25D;
+        /**
+         * Mean (geometric) longitude rate of the nominal Sun for use in simulations of the
+         * NSL (mean ecliptic orbital elements, at the standard epoch J2000.0). Note that a value
+         * of 1295977422.83429 / (1.0E3 * 365.25 * 3600.0) = 0.98560911 degrees day^-1 is given in
+         * Section 5.8.3 of J.L. Simon, P. Bretagnon, J. Chapront, M. Chapront-Touze, G. Francou,
+         * J. Laskar, 1994, \'Numerical expressions for precession formulae and mean elements for
+         * the Moon and the planets\', A&A, 282, 663 (1994A&A...282..663S)
+         */
+        public static final double NOMINALSUN_MEANLONGITUDERATE_J2000 = 0.98560903D;
     }
 
 }
