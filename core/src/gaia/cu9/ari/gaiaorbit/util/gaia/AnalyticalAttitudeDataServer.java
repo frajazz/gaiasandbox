@@ -16,7 +16,6 @@ import gaia.cu9.ari.gaiaorbit.util.math.Vector3d;
  */
 public abstract class AnalyticalAttitudeDataServer extends BaseAttitudeDataServer<Attitude> {
 
-
     /** Mathematical constants **/
     protected static final double PI = Math.PI;
     protected static final double TWO_PI = 2.0 * Math.PI;
@@ -120,7 +119,7 @@ public abstract class AnalyticalAttitudeDataServer extends BaseAttitudeDataServe
      * Set all parameters to default values (from GaiaParam)
      */
     public void setDefault() {
-        nativeTimeContext = TimeContext.TCB;
+        // nativeTimeContext = TimeContext.TCB;
 
         // Default reference epoch - 2010
         setRefTime(0l);

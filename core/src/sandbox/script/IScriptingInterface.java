@@ -82,7 +82,7 @@ public interface IScriptingInterface {
      * already exists with the given id, it is removed. However, if a text object already exists 
      * with the same id, its properties are updated.
      * @param id A unique identifier, used to identify this message when you want to remove it.
-     * @param message The string message, to be displayed in one line.
+     * @param text The string message, to be displayed in one line.
      * @param x The x coordinate of the bottom-left corner, in [0..1] from left to right. This is not resolution-dependant.
      * @param y The y coordinate of the bottom-left corner, in [0..1] from bottom to top. This is not resolution-dependant.
      * @param maxWidth The maximum width in screen percentage [0..1]. Set to 0 to let the system decide.
@@ -132,7 +132,7 @@ public interface IScriptingInterface {
 
     /**
      * Removes the item with the given id.
-     * @param ids Integer with the integer id of the object to remove.
+     * @param id Integer with the integer id of the object to remove.
      */
     public void removeObject(int id);
 
@@ -286,7 +286,7 @@ public interface IScriptingInterface {
      * Sets the time of the application. The long value represents specified 
      * number of milliseconds since the standard base time known as "the epoch",
      * namely January 1, 1970, 00:00:00 GMT.
-     * @param value Number of milliseconds since the epoch (Jan 1, 1970)
+     * @param time Number of milliseconds since the epoch (Jan 1, 1970)
      */
     public void setSimulationTime(long time);
 
@@ -376,7 +376,6 @@ public interface IScriptingInterface {
      * Moves the interface window to a new position.
      * @param x The new x coordinate of the new top-left corner of the window, in [0..1] from left to right.
      * @param y The new y coordinate of the new top-left corner of the window, in [0..1] from bottom to top.
-     * @param delayMs
      */
     public void setGuiPosition(float x, float y);
 

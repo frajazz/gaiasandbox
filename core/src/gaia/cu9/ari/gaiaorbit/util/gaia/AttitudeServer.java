@@ -1,22 +1,18 @@
 package gaia.cu9.ari.gaiaorbit.util.gaia;
 
-import com.badlogic.gdx.Gdx;
-import gaia.cu9.ari.gaiaorbit.data.FileLocator;
 import gaia.cu9.ari.gaiaorbit.event.EventManager;
 import gaia.cu9.ari.gaiaorbit.event.Events;
 import gaia.cu9.ari.gaiaorbit.util.BinarySearchTree;
 import gaia.cu9.ari.gaiaorbit.util.Logger;
-import gaia.cu9.ari.gaiaorbit.util.LruCache;
-import gaia.cu9.ari.gaiaorbit.util.Pair;
-import gaia.cu9.ari.gaiaorbit.util.gaia.time.Duration;
-import gaia.cu9.ari.gaiaorbit.util.gaia.time.Mins;
-import gaia.cu9.ari.gaiaorbit.util.gaia.time.Secs;
 import gaia.cu9.ari.gaiaorbit.util.math.Quaterniond;
 
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.*;
+import java.util.Calendar;
+import java.util.Date;
+
+import com.badlogic.gdx.files.FileHandle;
 
 /**
  * Provides caching of the last Nsl37 attitude requested.
@@ -38,9 +34,9 @@ public class AttitudeServer {
     // The first activation date
     static Date initialDate;
 
-    static {
-        attitudes = AttitudeXmlParser.parseFolder(FileLocator.internal("data/attitudexml/"));
-        initialDate = ((AttitudeIntervalBean)attitudes.findMin()).activationTime;
+    public static void initialize(FileHandle xmlFolder) {
+        attitudes = AttitudeXmlParser.parseFolder(xmlFolder);
+        initialDate = ((AttitudeIntervalBean) attitudes.findMin()).activationTime;
         current = new AttitudeIntervalBean(null, null, null);
         // Dummy attitude
         dummyAttitude = new ConcreteAttitude(0, new Quaterniond(), false);
@@ -66,8 +62,6 @@ public class AttitudeServer {
         return cal.getTime();
     }
 
-
-
     /**
      * Returns the NSL37 attitude for the given date.
      * @param date
@@ -75,21 +69,22 @@ public class AttitudeServer {
      */
     public synchronized static Attitude getAttitude(Date date) {
         // Find AttitudeType in timeSlots
-        if(date.before(initialDate)){
+        if (date.before(initialDate)) {
             return dummyAttitude;
-        }else{
+        } else {
             current.activationTime = date;
-            AttitudeIntervalBean att = (AttitudeIntervalBean) attitudes.find(current);
+            AttitudeIntervalBean att = (AttitudeIntervalBean) attitudes.findIntervalStart(current);
 
-            if(prevAttitude != null && !att.name.equals(prevAttitude.name)){
+            if (prevAttitude != null && !att.equals(prevAttitude)) {
                 // Change!
                 EventManager.instance.post(Events.POST_NOTIFICATION, "Gaia attitude changed to " + att.toString() + " at time " + att.activationTime);
             }
 
+            prevAttitude = att;
+
             // Get actual attitude
             return att.get(date);
         }
-
 
     }
 

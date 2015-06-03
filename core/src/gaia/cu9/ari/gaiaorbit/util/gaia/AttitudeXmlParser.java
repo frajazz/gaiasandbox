@@ -1,13 +1,9 @@
 package gaia.cu9.ari.gaiaorbit.util.gaia;
 
-import com.badlogic.gdx.files.FileHandle;
-import com.badlogic.gdx.utils.XmlReader;
 import gaia.cu9.ari.gaiaorbit.util.BinarySearchTree;
 import gaia.cu9.ari.gaiaorbit.util.I18n;
 import gaia.cu9.ari.gaiaorbit.util.Logger;
 import gaia.cu9.ari.gaiaorbit.util.coord.AstroUtils;
-import gaia.cu9.ari.gaiaorbit.util.gaia.time.Days;
-import gaia.cu9.ari.gaiaorbit.util.gaia.time.Duration;
 import gaia.cu9.ari.gaiaorbit.util.units.Quantity;
 
 import java.io.File;
@@ -19,6 +15,9 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
+import com.badlogic.gdx.files.FileHandle;
+import com.badlogic.gdx.utils.XmlReader;
+
 /**
  * Parses the XML files with the attitudes and their activaton times into a binary search tree.
  * Created by tsagrista on 01/06/15.
@@ -28,7 +27,8 @@ public class AttitudeXmlParser {
     public static BinarySearchTree parseFolder(FileHandle folder) {
         final FileHandle[] list = folder.list(new FileFilter() {
 
-            @Override public boolean accept(File pathname) {
+            @Override
+            public boolean accept(File pathname) {
                 return pathname.isFile() && pathname.canRead() && pathname.getName().matches("OPS_RSLS_[\\d+][\\w|\\W]*.xml");
             }
         });
@@ -45,6 +45,9 @@ public class AttitudeXmlParser {
                 Logger.error(e, I18n.bundle.format("notif.error", e.getMessage()));
             }
         }
+
+        // TODO - Add this to I18n
+        Logger.info("Initialized Gaia attitudes with " + list.length + " attitude files");
         return bst;
     }
 
@@ -61,15 +64,15 @@ public class AttitudeXmlParser {
         String className = model.get("classname");
         String activTime = model.get("starttime");
         Date activationTime = getDate(activTime);
+        double startTimeNsSince2010 = (AstroUtils.getJulianDate(activationTime) - AstroUtils.JD_J2010) * AstroUtils.DAY_TO_NS;
 
-        double startTimeJD = AstroUtils.getJulianDate(activationTime) - AstroUtils.JD_J2010;
         Class clazz = Class.forName(className);
 
         /** SCAN LAW ELEMENT **/
         XmlReader.Element scanlaw = model.getChildByName("scanlaw");
         String epochRef = scanlaw.getAttribute("epochref");
         Date refEpochDate = getDate(epochRef);
-        double refEpoch = AstroUtils.getJulianDate(refEpochDate) - AstroUtils.JD_J2010;
+        double refEpoch = (AstroUtils.getJulianDate(refEpochDate) - AstroUtils.JD_J2010) * AstroUtils.DAY_TO_NS;
 
         // Spin phase
         XmlReader.Element spinphase = scanlaw.getChildByName("spinphase");
@@ -85,7 +88,7 @@ public class AttitudeXmlParser {
 
         // Scan rate
         XmlReader.Element scanrate = scanlaw.getChildByName("scanrate");
-        Quantity.Angle scanRate = new Quantity.Angle(getDouble(scanlaw, "value"), scanlaw.get("unit").split("_")[0]);
+        Quantity.Angle scanRate = new Quantity.Angle(getDouble(scanrate, "value"), scanrate.get("unit").split("_")[0]);
 
         // Solar aspect angle
         XmlReader.Element saa = scanlaw.getChildByName("solaraspectangle");
@@ -94,17 +97,27 @@ public class AttitudeXmlParser {
         if (className.contains("MslAttitudeDataServer")) {
             // We need to pass the startTime, duration and MSL to the constructor
 
-            Duration duration = new Days(80);
-            ModifiedScanningLaw msl = new ModifiedScanningLaw((long) startTimeJD);
-            msl.setRefEpoch((long) refEpoch);
-            msl.setRefOmega(spinPhase.get(Quantity.Angle.AngleUnit.RAD));
-            msl.setRefNu(precessionPhase.get(Quantity.Angle.AngleUnit.RAD));
-            msl.setPrecRate(precessionRate);
-            msl.setScanRate(scanRate.get(Quantity.Angle.AngleUnit.ARCSEC));
-            msl.setRefXi(solarAspectAngle.get(Quantity.Angle.AngleUnit.RAD));
+            //            Duration duration = new Days(80);
+            //            ModifiedScanningLaw msl = new ModifiedScanningLaw((long) startTimeNsSince2010);
+            //            msl.setRefEpoch((long) refEpoch);
+            //            msl.setRefOmega(spinPhase.get(Quantity.Angle.AngleUnit.RAD));
+            //            msl.setRefNu(precessionPhase.get(Quantity.Angle.AngleUnit.RAD));
+            //            msl.setPrecRate(precessionRate);
+            //            msl.setScanRate(scanRate.get(Quantity.Angle.AngleUnit.ARCSEC));
+            //            msl.setRefXi(solarAspectAngle.get(Quantity.Angle.AngleUnit.RAD));
+            //
+            //            MslAttitudeDataServer mslDatServ = (MslAttitudeDataServer) clazz.getConstructor(new Class[] { long.class, Duration.class, ModifiedScanningLaw.class }).newInstance(new Object[] { (long) startTimeNsSince2010, duration, msl });
+            //            result = mslDatServ;
 
-            MslAttitudeDataServer mslDatServ = (MslAttitudeDataServer) clazz.getConstructor(new Class[] { long.class, Duration.class, ModifiedScanningLaw.class }).newInstance(new Object[] { startTimeJD, duration, msl });
-            result = mslDatServ;
+            Nsl37 nsl = new Nsl37();
+            nsl.setRefTime((long) refEpoch);
+            nsl.setNuRef(precessionPhase.get(Quantity.Angle.AngleUnit.RAD));
+            nsl.setOmegaRef(spinPhase.get(Quantity.Angle.AngleUnit.RAD));
+            nsl.setXiRef(solarAspectAngle.get(Quantity.Angle.AngleUnit.RAD));
+            nsl.setTargetScanRate(scanRate.get(Quantity.Angle.AngleUnit.ARCSEC));
+            nsl.setTargetPrecessionRate(precessionRate);
+
+            result = nsl;
 
         } else if (className.contains("Epsl")) {
 
@@ -117,12 +130,11 @@ public class AttitudeXmlParser {
             epsl.setXiRef(solarAspectAngle.get(Quantity.Angle.AngleUnit.RAD));
             epsl.setTargetScanRate(scanRate.get(Quantity.Angle.AngleUnit.ARCSEC));
             epsl.setTargetPrecessionRate(precessionRate);
-            //            epsl.setTargetScanPeriod();
 
             result = epsl;
         }
 
-        return new AttitudeIntervalBean(name, new Date(), result);
+        return new AttitudeIntervalBean(name, activationTime, result);
     }
 
     static DateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
@@ -138,6 +150,6 @@ public class AttitudeXmlParser {
     }
 
     private static Double getDouble(XmlReader.Element e, String property) {
-        return Double.parseDouble(e.get("property"));
+        return Double.parseDouble(e.get(property));
     }
 }

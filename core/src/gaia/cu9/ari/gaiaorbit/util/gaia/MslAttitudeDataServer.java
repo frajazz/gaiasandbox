@@ -100,7 +100,7 @@ public class MslAttitudeDataServer extends
         super.setRefTime(msl.getRefEpoch());
 
         // Ensure that TimeContext is GAIATIME, not OBMT
-        this.nativeTimeContext = TimeContext.TCB;
+        //this.nativeTimeContext = TimeContext.TCB;
 
         this.msl = msl;
         if (msl.getHighDensityAreas().length == 0) {
