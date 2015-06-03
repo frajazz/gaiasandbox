@@ -6,11 +6,31 @@
 
 **Implemented enhancements:**
 
+- Add sample image when choosing theme [\#38](https://github.com/ari-zah/gaiasandbox/issues/38)
+
+- Drop old manual lo-res/hi-res texture loading and implement mipmapping [\#35](https://github.com/ari-zah/gaiasandbox/issues/35)
+
+- Update project to libgdx 1.6.0 [\#34](https://github.com/ari-zah/gaiasandbox/issues/34)
+
+- Add simple screenshot mode [\#32](https://github.com/ari-zah/gaiasandbox/issues/32)
+
+- Move default location of screenshots to `$HOME/.gaiasandbox/screenshots` [\#31](https://github.com/ari-zah/gaiasandbox/issues/31)
+
 - Add new Ceres texture from Dawn spacecraft [\#30](https://github.com/ari-zah/gaiasandbox/issues/30)
 
 - New command to travel to focus object instantly [\#29](https://github.com/ari-zah/gaiasandbox/issues/29)
 
 - Support for location info [\#28](https://github.com/ari-zah/gaiasandbox/issues/28)
+
+**Fixed bugs:**
+
+- Fix new line rendering for perspective lines [\#37](https://github.com/ari-zah/gaiasandbox/issues/37)
+
+- Motion blur not working with FXAA or NFAA [\#36](https://github.com/ari-zah/gaiasandbox/issues/36)
+
+- Fix night/day blending in shader  [\#33](https://github.com/ari-zah/gaiasandbox/issues/33)
+
+- Screenshot action \(F5\) not working well with motion blur [\#27](https://github.com/ari-zah/gaiasandbox/issues/27)
 
 ## [0.706b](https://github.com/ari-zah/gaiasandbox/tree/0.706b) (2015-05-05)
 
