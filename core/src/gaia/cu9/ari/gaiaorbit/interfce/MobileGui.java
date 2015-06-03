@@ -1,5 +1,6 @@
 package gaia.cu9.ari.gaiaorbit.interfce;
 
+import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.assets.AssetManager;
 import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.Stage;
@@ -130,9 +131,13 @@ public class MobileGui implements IGui {
     }
 
     @Override
-    public void resize(int width, int height) {
-        ui.getViewport().update(width, height, true);
-        rebuildGui();
+    public void resize(final int width, final int height) {
+        Gdx.app.postRunnable(new Runnable() {
+            @Override public void run() {
+                ui.getViewport().update(width, height, true);
+                rebuildGui();
+            }
+        });
     }
 
     @Override

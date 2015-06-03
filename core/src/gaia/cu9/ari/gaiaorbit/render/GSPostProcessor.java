@@ -65,6 +65,7 @@ public class GSPostProcessor implements IPostProcessor, IObserver {
 
     private PostProcessBean newPostProcessor(int width, int height) {
         PostProcessBean ppb = new PostProcessBean();
+
         ppb.pp = new PostProcessor(width, height, true, false, true);
 
         // MOTION BLUR
@@ -197,9 +198,7 @@ public class GSPostProcessor implements IPostProcessor, IObserver {
      * @param height
      */
     private void replace(int index, final int width, final int height) {
-        PostProcessBean ppb = pps[index];
-        ppb.pp.dispose(false);
-
+        //pps[index].pp.dispose(false);
         pps[index] = newPostProcessor(width, height);
 
     }

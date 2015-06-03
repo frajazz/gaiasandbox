@@ -569,9 +569,14 @@ public class FullGui implements IGui, IObserver {
 
     }
 
-    public void resize(int width, int height) {
-        ui.getViewport().update(width, height, true);
-        rebuildGui();
+    @Override
+    public void resize(final int width, final int height) {
+        Gdx.app.postRunnable(new Runnable() {
+            @Override public void run() {
+                ui.getViewport().update(width, height, true);
+                rebuildGui();
+            }
+        });
     }
 
     /**

@@ -13,6 +13,7 @@ import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.Pixmap.Format;
 import com.badlogic.gdx.graphics.glutils.FrameBuffer;
 import gaia.cu9.ari.gaiaorbit.data.AssetBean;
+import gaia.cu9.ari.gaiaorbit.data.FileLocator;
 import gaia.cu9.ari.gaiaorbit.data.SGLoader;
 import gaia.cu9.ari.gaiaorbit.data.SGLoader.SGLoaderParameter;
 import gaia.cu9.ari.gaiaorbit.data.orbit.OrbitData;
@@ -34,6 +35,7 @@ import gaia.cu9.ari.gaiaorbit.scenegraph.component.ModelComponent;
 import gaia.cu9.ari.gaiaorbit.util.*;
 import gaia.cu9.ari.gaiaorbit.util.concurrent.ThreadIndexer;
 import gaia.cu9.ari.gaiaorbit.util.concurrent.ThreadPoolManager;
+import gaia.cu9.ari.gaiaorbit.util.gaia.AttitudeServer;
 import gaia.cu9.ari.gaiaorbit.util.math.MathUtilsd;
 import gaia.cu9.ari.gaiaorbit.util.math.Vector3d;
 import gaia.cu9.ari.gaiaorbit.util.screenshot.BasicFileImageRenderer;
@@ -189,6 +191,9 @@ public class GaiaSandbox implements ApplicationListener, IObserver {
 
         // Initialize Cameras
         cam = new CameraManager(manager, CameraMode.Focus);
+
+        // Initialize Gaia attitudes
+        AttitudeServer.initialize(FileLocator.internal("data/attitudexml/"));
 
         if (sg == null) {
             // Set asset manager to asset bean
@@ -506,18 +511,23 @@ public class GaiaSandbox implements ApplicationListener, IObserver {
     }
 
     @Override
-    public void resize(int width, int height) {
-        if (!initialized) {
-            loadingGui.resize(width, height);
-        } else {
-            pp.resize(width, height);
-            gui.resize(width, height);
-            sgr.resize(width, height);
-        }
+    public void resize(final int width, final int height) {
+        Gdx.app.postRunnable(new Runnable() {
+            @Override public void run() {
+                if (!initialized) {
+                    loadingGui.resize(width, height);
+                } else {
+                    pp.resize(width, height);
+                    gui.resize(width, height);
+                    sgr.resize(width, height);
+                }
 
-        cam.updateAngleEdge(width, height);
+                cam.updateAngleEdge(width, height);
 
-        EventManager.instance.post(Events.SCREEN_RESIZE, width, height);
+                EventManager.instance.post(Events.SCREEN_RESIZE, width, height);
+            }
+        });
+
     }
 
     /**

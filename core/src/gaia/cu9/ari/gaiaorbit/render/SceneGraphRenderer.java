@@ -68,6 +68,7 @@ public class SceneGraphRenderer extends AbstractRenderer implements IProcessRend
         Others("Others");
 
         private static Map<String, ComponentType> namesMap = new HashMap<String, ComponentType>();
+
         static {
             for (ComponentType ct : ComponentType.values()) {
                 namesMap.put(ct.id, ct);
@@ -208,10 +209,10 @@ public class SceneGraphRenderer extends AbstractRenderer implements IProcessRend
             alphas[i] = 1f;
         }
 
-        /** 
-         * 
+        /**
+         *
          * =======  INITIALIZE RENDER COMPONENTS  =======
-         * 
+         *
          **/
         pixelRenderSystems = new AbstractRenderSystem[3];
 
@@ -522,7 +523,7 @@ public class SceneGraphRenderer extends AbstractRenderer implements IProcessRend
         }
     }
 
-    public void resize(int w, int h) {
+    public void resize(final int w, final int h) {
         extendViewport.update(w, h);
         stretchViewport.update(w, h);
     }
