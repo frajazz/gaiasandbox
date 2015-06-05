@@ -1,6 +1,12 @@
 package gaia.cu9.ari.gaiaorbit.gui.swing;
 
+import com.badlogic.gdx.Graphics.DisplayMode;
+import com.badlogic.gdx.Input.Keys;
+import com.badlogic.gdx.backends.lwjgl.LwjglApplicationConfiguration;
+import com.badlogic.gdx.math.MathUtils;
+import com.badlogic.gdx.utils.JsonValue;
 import gaia.cu9.ari.gaiaorbit.GaiaSandboxDesktop;
+import gaia.cu9.ari.gaiaorbit.data.FileLocator;
 import gaia.cu9.ari.gaiaorbit.event.EventManager;
 import gaia.cu9.ari.gaiaorbit.event.Events;
 import gaia.cu9.ari.gaiaorbit.gui.swing.callback.Callback;
@@ -14,7 +20,16 @@ import gaia.cu9.ari.gaiaorbit.util.GlobalConf;
 import gaia.cu9.ari.gaiaorbit.util.GlobalResources;
 import gaia.cu9.ari.gaiaorbit.util.I18n;
 import gaia.cu9.ari.gaiaorbit.util.Logger;
+import net.miginfocom.swing.MigLayout;
 
+import javax.swing.*;
+import javax.swing.border.Border;
+import javax.swing.border.MatteBorder;
+import javax.swing.border.TitledBorder;
+import javax.swing.event.ChangeEvent;
+import javax.swing.event.ChangeListener;
+import javax.swing.event.DocumentEvent;
+import javax.swing.event.DocumentListener;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -28,30 +43,7 @@ import java.net.MalformedURLException;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URL;
-import java.util.Arrays;
-import java.util.Date;
-import java.util.Locale;
-import java.util.Map;
-import java.util.Set;
-import java.util.TreeSet;
-
-import javax.swing.*;
-import javax.swing.border.Border;
-import javax.swing.border.MatteBorder;
-import javax.swing.border.TitledBorder;
-import javax.swing.event.ChangeEvent;
-import javax.swing.event.ChangeListener;
-import javax.swing.event.DocumentEvent;
-import javax.swing.event.DocumentListener;
-import javax.swing.filechooser.FileSystemView;
-
-import net.miginfocom.swing.MigLayout;
-
-import com.badlogic.gdx.Graphics.DisplayMode;
-import com.badlogic.gdx.Input.Keys;
-import com.badlogic.gdx.backends.lwjgl.LwjglApplicationConfiguration;
-import com.badlogic.gdx.math.MathUtils;
-import com.badlogic.gdx.utils.JsonValue;
+import java.util.*;
 
 /**
  * The configuration dialog to set the resolution, the screen mode, etc.
@@ -81,7 +73,12 @@ public class ConfigDialog extends I18nJFrame {
 
         if (startup) {
             /** SPLASH IMAGE **/
-            URL url = this.getClass().getResource("/img/splash/splash-s.jpg");
+            URL url = null;
+            try {
+                url = FileLocator.getFile("img/splash/splash-s.jpg").toURI().toURL();
+            } catch (MalformedURLException e) {
+                Logger.error(e);
+            }
             JSplashLabel label = new JSplashLabel(url, txt("gui.build", GlobalConf.version.build) + " - " + txt("gui.version", GlobalConf.version.version), null, Color.lightGray);
             JPanel imagePanel = new JPanel(new GridLayout(1, 1, 0, 0));
             imagePanel.add(label);
@@ -331,7 +328,7 @@ public class ConfigDialog extends I18nJFrame {
             @Override
             public void actionPerformed(ActionEvent e) {
                 String selected = (String) theme.getSelectedItem();
-                ImageIcon icon = new ImageIcon(this.getClass().getResource("/img/themes/" + selected + ".png"));
+                ImageIcon icon = new ImageIcon(FileLocator.getFileString("img/themes/" + selected + ".png"));
                 sampleImage.setIcon(icon);
             }
         });

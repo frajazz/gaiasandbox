@@ -39,6 +39,10 @@ public class FileLocator {
         return new File(ASSETS_FOLDER, file);
     }
 
+    public static String getFileString(String file){
+        return ASSETS_FOLDER + file;
+    }
+
     public static FileHandle internal(String file){
         return Gdx.files.internal(ASSETS_FOLDER + file);
     }

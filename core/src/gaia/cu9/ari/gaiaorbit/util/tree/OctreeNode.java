@@ -85,8 +85,12 @@ public class OctreeNode<T extends IPosition> implements ILineRenderable {
     /**
      * Constructs an octree node
      * @param pageId
-     * @param centre
-     * @param size
+     * @param x
+     * @param y
+     * @param z
+     * @param hsx
+     * @param hsy
+     * @param hsz
      * @param depth
      */
     public OctreeNode(long pageId, double x, double y, double z, double hsx, double hsy, double hsz, int depth) {

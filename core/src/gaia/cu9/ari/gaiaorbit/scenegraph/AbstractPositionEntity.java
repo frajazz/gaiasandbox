@@ -124,8 +124,8 @@ public abstract class AbstractPositionEntity extends SceneGraphNode {
     /**
      * This function updates all the local values before the localTransform is
      * updated. Position, rotations and scale must be updated in here.
-     * @param dt
      * @param time
+     * @param camera
      */
     public abstract void updateLocalValues(ITimeFrameProvider time, ICamera camera);
 

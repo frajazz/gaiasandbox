@@ -40,6 +40,8 @@ public class GaiaSandboxDesktop implements IObserver {
 
         try {
             gsd = new GaiaSandboxDesktop();
+            // Init file locator
+            FileLocator.initialize();
 
             //UIManager.setLookAndFeel("com.alee.laf.WebLookAndFeel");
             //WebLookAndFeel.setAllowLinuxTransparency(false);
@@ -61,10 +63,9 @@ public class GaiaSandboxDesktop implements IObserver {
             InputStream version = GaiaSandboxDesktop.class.getResourceAsStream("/version");
             if (version == null) {
                 // In case of running in 'developer' mode
-                version = new FileInputStream(new File("../android/assets/data/dummyversion"));
+                version = new FileInputStream(FileLocator.getFile("data/dummyversion"));
             }
             try {
-                FileLocator.initialize();
                 GlobalConf.initialize(fis, version);
             } catch (Exception e) {
                 // Retry
@@ -91,7 +92,7 @@ public class GaiaSandboxDesktop implements IObserver {
             // Initialize i18n
             I18n.initialize("./data/i18n/gsbundle");
             // Dev mode
-            I18n.initialize("../android/assets/i18n/gsbundle");
+            I18n.initialize(FileLocator.getFileString("i18n/gsbundle"));
 
             // Initialize icons
             IconManager.initialise(new File("./data/ui/"));

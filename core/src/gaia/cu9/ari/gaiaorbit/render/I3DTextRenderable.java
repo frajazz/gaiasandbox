@@ -48,7 +48,7 @@ public interface I3DTextRenderable extends IRenderable {
 
     /**
      * Sets the position of this text in the out vector.
-     * @param pos The out parameter with the result.
+     * @param out The out parameter with the result.
      */
     public void textPosition(Vector3d out);
 

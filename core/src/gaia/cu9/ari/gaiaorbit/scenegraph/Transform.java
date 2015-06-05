@@ -22,7 +22,7 @@ public class Transform {
 
     /**
      * Sets this transform to represent the same as the other transform.
-     * @param other
+     * @param parent
      */
     public void set(Transform parent) {
         if (parent != null) {
