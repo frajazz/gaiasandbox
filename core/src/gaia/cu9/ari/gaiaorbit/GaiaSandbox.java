@@ -1,19 +1,8 @@
 package gaia.cu9.ari.gaiaorbit;
 
-import com.badlogic.gdx.Application;
-import com.badlogic.gdx.ApplicationListener;
-import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.InputMultiplexer;
-import com.badlogic.gdx.assets.AssetManager;
-import com.badlogic.gdx.assets.loaders.FileHandleResolver;
-import com.badlogic.gdx.assets.loaders.resolvers.InternalFileHandleResolver;
-import com.badlogic.gdx.controllers.Controllers;
-import com.badlogic.gdx.files.FileHandle;
-import com.badlogic.gdx.graphics.GL20;
-import com.badlogic.gdx.graphics.Pixmap.Format;
-import com.badlogic.gdx.graphics.glutils.FrameBuffer;
 import gaia.cu9.ari.gaiaorbit.data.AssetBean;
 import gaia.cu9.ari.gaiaorbit.data.FileLocator;
+import gaia.cu9.ari.gaiaorbit.data.JythonFactoryLoader;
 import gaia.cu9.ari.gaiaorbit.data.SGLoader;
 import gaia.cu9.ari.gaiaorbit.data.SGLoader.SGLoaderParameter;
 import gaia.cu9.ari.gaiaorbit.data.orbit.OrbitData;
@@ -21,7 +10,14 @@ import gaia.cu9.ari.gaiaorbit.data.orbit.OrbitDataLoader;
 import gaia.cu9.ari.gaiaorbit.event.EventManager;
 import gaia.cu9.ari.gaiaorbit.event.Events;
 import gaia.cu9.ari.gaiaorbit.event.IObserver;
-import gaia.cu9.ari.gaiaorbit.interfce.*;
+import gaia.cu9.ari.gaiaorbit.interfce.FullGui;
+import gaia.cu9.ari.gaiaorbit.interfce.GaiaControllerListener;
+import gaia.cu9.ari.gaiaorbit.interfce.GaiaInputController;
+import gaia.cu9.ari.gaiaorbit.interfce.HUDGui;
+import gaia.cu9.ari.gaiaorbit.interfce.IGui;
+import gaia.cu9.ari.gaiaorbit.interfce.LoadingGui;
+import gaia.cu9.ari.gaiaorbit.interfce.MobileGui;
+import gaia.cu9.ari.gaiaorbit.interfce.RenderGui;
 import gaia.cu9.ari.gaiaorbit.render.AbstractRenderer;
 import gaia.cu9.ari.gaiaorbit.render.GSPostProcessor;
 import gaia.cu9.ari.gaiaorbit.render.IPostProcessor;
@@ -29,10 +25,21 @@ import gaia.cu9.ari.gaiaorbit.render.IPostProcessor.PostProcessBean;
 import gaia.cu9.ari.gaiaorbit.render.IPostProcessor.RenderType;
 import gaia.cu9.ari.gaiaorbit.render.SceneGraphRenderer;
 import gaia.cu9.ari.gaiaorbit.render.SceneGraphRenderer.ComponentType;
-import gaia.cu9.ari.gaiaorbit.scenegraph.*;
+import gaia.cu9.ari.gaiaorbit.scenegraph.AbstractPositionEntity;
+import gaia.cu9.ari.gaiaorbit.scenegraph.CameraManager;
 import gaia.cu9.ari.gaiaorbit.scenegraph.CameraManager.CameraMode;
+import gaia.cu9.ari.gaiaorbit.scenegraph.CelestialBody;
+import gaia.cu9.ari.gaiaorbit.scenegraph.ICamera;
+import gaia.cu9.ari.gaiaorbit.scenegraph.ISceneGraph;
+import gaia.cu9.ari.gaiaorbit.scenegraph.SceneGraphNode;
 import gaia.cu9.ari.gaiaorbit.scenegraph.component.ModelComponent;
-import gaia.cu9.ari.gaiaorbit.util.*;
+import gaia.cu9.ari.gaiaorbit.util.CamRecorder;
+import gaia.cu9.ari.gaiaorbit.util.Constants;
+import gaia.cu9.ari.gaiaorbit.util.GlobalConf;
+import gaia.cu9.ari.gaiaorbit.util.GlobalResources;
+import gaia.cu9.ari.gaiaorbit.util.I18n;
+import gaia.cu9.ari.gaiaorbit.util.Logger;
+import gaia.cu9.ari.gaiaorbit.util.ModelCache;
 import gaia.cu9.ari.gaiaorbit.util.concurrent.ThreadIndexer;
 import gaia.cu9.ari.gaiaorbit.util.concurrent.ThreadPoolManager;
 import gaia.cu9.ari.gaiaorbit.util.gaia.AttitudeServer;
@@ -48,7 +55,26 @@ import gaia.cu9.ari.gaiaorbit.util.tree.OctreeNode;
 import java.io.File;
 import java.io.FileInputStream;
 import java.net.MalformedURLException;
-import java.util.*;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+
+import sandbox.script.JythonFactory;
+
+import com.badlogic.gdx.Application;
+import com.badlogic.gdx.ApplicationListener;
+import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.InputMultiplexer;
+import com.badlogic.gdx.assets.AssetManager;
+import com.badlogic.gdx.assets.loaders.FileHandleResolver;
+import com.badlogic.gdx.assets.loaders.resolvers.InternalFileHandleResolver;
+import com.badlogic.gdx.controllers.Controllers;
+import com.badlogic.gdx.files.FileHandle;
+import com.badlogic.gdx.graphics.GL20;
+import com.badlogic.gdx.graphics.Pixmap.Format;
+import com.badlogic.gdx.graphics.glutils.FrameBuffer;
 
 /**
  * The main class. Holds all the entities manages the update/draw cycle as well as the image rendering.
@@ -185,6 +211,7 @@ public class GaiaSandbox implements ApplicationListener, IObserver {
         manager = new AssetManager(resolver);
         manager.setLoader(ISceneGraph.class, new SGLoader(resolver));
         manager.setLoader(OrbitData.class, new OrbitDataLoader(resolver));
+        manager.setLoader(JythonFactory.class, new JythonFactoryLoader(resolver));
 
         // Init global resources
         GlobalResources.initialize(manager);
@@ -200,6 +227,9 @@ public class GaiaSandbox implements ApplicationListener, IObserver {
             AssetBean.setAssetManager(manager);
             manager.load(GlobalConf.data.DATA_SG_FILE, ISceneGraph.class, new SGLoaderParameter(GlobalClock.clock, GlobalConf.performance.MULTITHREADING, GlobalConf.performance.NUMBER_THREADS()));
         }
+
+        // Load jython
+        manager.load(".", JythonFactory.class);
 
         // Initialize timestamp for screenshots
         renderGui = new RenderGui();
@@ -292,7 +322,7 @@ public class GaiaSandbox implements ApplicationListener, IObserver {
         EventManager.instance.post(Events.SCENE_GRAPH_LOADED, sg);
         EventManager.instance.post(Events.CAMERA_MODE_CMD, CameraMode.Focus);
 
-        AbstractPositionEntity focus = (AbstractPositionEntity) sg.getNode("Earth");
+        AbstractPositionEntity focus = (AbstractPositionEntity) sg.getNode("Sol");
         EventManager.instance.post(Events.FOCUS_CHANGE_CMD, focus, true);
         float dst = focus.size * 3;
         Vector3d newCameraPos = focus.pos.cpy().add(0, 0, -dst);
@@ -513,7 +543,8 @@ public class GaiaSandbox implements ApplicationListener, IObserver {
     @Override
     public void resize(final int width, final int height) {
         Gdx.app.postRunnable(new Runnable() {
-            @Override public void run() {
+            @Override
+            public void run() {
                 if (!initialized) {
                     loadingGui.resize(width, height);
                 } else {
