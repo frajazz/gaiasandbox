@@ -1,68 +1,5 @@
 package gaia.cu9.ari.gaiaorbit;
 
-import gaia.cu9.ari.gaiaorbit.data.AssetBean;
-import gaia.cu9.ari.gaiaorbit.data.FileLocator;
-import gaia.cu9.ari.gaiaorbit.data.JythonFactoryLoader;
-import gaia.cu9.ari.gaiaorbit.data.SGLoader;
-import gaia.cu9.ari.gaiaorbit.data.SGLoader.SGLoaderParameter;
-import gaia.cu9.ari.gaiaorbit.data.orbit.OrbitData;
-import gaia.cu9.ari.gaiaorbit.data.orbit.OrbitDataLoader;
-import gaia.cu9.ari.gaiaorbit.event.EventManager;
-import gaia.cu9.ari.gaiaorbit.event.Events;
-import gaia.cu9.ari.gaiaorbit.event.IObserver;
-import gaia.cu9.ari.gaiaorbit.interfce.FullGui;
-import gaia.cu9.ari.gaiaorbit.interfce.GaiaControllerListener;
-import gaia.cu9.ari.gaiaorbit.interfce.GaiaInputController;
-import gaia.cu9.ari.gaiaorbit.interfce.HUDGui;
-import gaia.cu9.ari.gaiaorbit.interfce.IGui;
-import gaia.cu9.ari.gaiaorbit.interfce.LoadingGui;
-import gaia.cu9.ari.gaiaorbit.interfce.MobileGui;
-import gaia.cu9.ari.gaiaorbit.interfce.RenderGui;
-import gaia.cu9.ari.gaiaorbit.render.AbstractRenderer;
-import gaia.cu9.ari.gaiaorbit.render.GSPostProcessor;
-import gaia.cu9.ari.gaiaorbit.render.IPostProcessor;
-import gaia.cu9.ari.gaiaorbit.render.IPostProcessor.PostProcessBean;
-import gaia.cu9.ari.gaiaorbit.render.IPostProcessor.RenderType;
-import gaia.cu9.ari.gaiaorbit.render.SceneGraphRenderer;
-import gaia.cu9.ari.gaiaorbit.render.SceneGraphRenderer.ComponentType;
-import gaia.cu9.ari.gaiaorbit.scenegraph.AbstractPositionEntity;
-import gaia.cu9.ari.gaiaorbit.scenegraph.CameraManager;
-import gaia.cu9.ari.gaiaorbit.scenegraph.CameraManager.CameraMode;
-import gaia.cu9.ari.gaiaorbit.scenegraph.CelestialBody;
-import gaia.cu9.ari.gaiaorbit.scenegraph.ICamera;
-import gaia.cu9.ari.gaiaorbit.scenegraph.ISceneGraph;
-import gaia.cu9.ari.gaiaorbit.scenegraph.SceneGraphNode;
-import gaia.cu9.ari.gaiaorbit.scenegraph.component.ModelComponent;
-import gaia.cu9.ari.gaiaorbit.util.CamRecorder;
-import gaia.cu9.ari.gaiaorbit.util.Constants;
-import gaia.cu9.ari.gaiaorbit.util.GlobalConf;
-import gaia.cu9.ari.gaiaorbit.util.GlobalResources;
-import gaia.cu9.ari.gaiaorbit.util.I18n;
-import gaia.cu9.ari.gaiaorbit.util.Logger;
-import gaia.cu9.ari.gaiaorbit.util.ModelCache;
-import gaia.cu9.ari.gaiaorbit.util.concurrent.ThreadIndexer;
-import gaia.cu9.ari.gaiaorbit.util.concurrent.ThreadPoolManager;
-import gaia.cu9.ari.gaiaorbit.util.gaia.AttitudeServer;
-import gaia.cu9.ari.gaiaorbit.util.math.MathUtilsd;
-import gaia.cu9.ari.gaiaorbit.util.math.Vector3d;
-import gaia.cu9.ari.gaiaorbit.util.screenshot.BasicFileImageRenderer;
-import gaia.cu9.ari.gaiaorbit.util.screenshot.BufferedFileImageRenderer;
-import gaia.cu9.ari.gaiaorbit.util.screenshot.IFileImageRenderer;
-import gaia.cu9.ari.gaiaorbit.util.screenshot.ImageRenderer;
-import gaia.cu9.ari.gaiaorbit.util.time.GlobalClock;
-import gaia.cu9.ari.gaiaorbit.util.tree.OctreeNode;
-
-import java.io.File;
-import java.io.FileInputStream;
-import java.net.MalformedURLException;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-
-import sandbox.script.JythonFactory;
-
 import com.badlogic.gdx.Application;
 import com.badlogic.gdx.ApplicationListener;
 import com.badlogic.gdx.Gdx;
@@ -75,6 +12,45 @@ import com.badlogic.gdx.files.FileHandle;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.Pixmap.Format;
 import com.badlogic.gdx.graphics.glutils.FrameBuffer;
+import gaia.cu9.ari.gaiaorbit.data.AssetBean;
+import gaia.cu9.ari.gaiaorbit.data.FileLocator;
+import gaia.cu9.ari.gaiaorbit.data.JythonFactoryLoader;
+import gaia.cu9.ari.gaiaorbit.data.SGLoader;
+import gaia.cu9.ari.gaiaorbit.data.SGLoader.SGLoaderParameter;
+import gaia.cu9.ari.gaiaorbit.data.orbit.OrbitData;
+import gaia.cu9.ari.gaiaorbit.data.orbit.OrbitDataLoader;
+import gaia.cu9.ari.gaiaorbit.event.EventManager;
+import gaia.cu9.ari.gaiaorbit.event.Events;
+import gaia.cu9.ari.gaiaorbit.event.IObserver;
+import gaia.cu9.ari.gaiaorbit.interfce.*;
+import gaia.cu9.ari.gaiaorbit.render.AbstractRenderer;
+import gaia.cu9.ari.gaiaorbit.render.GSPostProcessor;
+import gaia.cu9.ari.gaiaorbit.render.IPostProcessor;
+import gaia.cu9.ari.gaiaorbit.render.IPostProcessor.PostProcessBean;
+import gaia.cu9.ari.gaiaorbit.render.IPostProcessor.RenderType;
+import gaia.cu9.ari.gaiaorbit.render.SceneGraphRenderer;
+import gaia.cu9.ari.gaiaorbit.render.SceneGraphRenderer.ComponentType;
+import gaia.cu9.ari.gaiaorbit.scenegraph.*;
+import gaia.cu9.ari.gaiaorbit.scenegraph.CameraManager.CameraMode;
+import gaia.cu9.ari.gaiaorbit.scenegraph.component.ModelComponent;
+import gaia.cu9.ari.gaiaorbit.util.*;
+import gaia.cu9.ari.gaiaorbit.util.concurrent.ThreadIndexer;
+import gaia.cu9.ari.gaiaorbit.util.concurrent.ThreadPoolManager;
+import gaia.cu9.ari.gaiaorbit.util.gaia.AttitudeServer;
+import gaia.cu9.ari.gaiaorbit.util.math.MathUtilsd;
+import gaia.cu9.ari.gaiaorbit.util.math.Vector3d;
+import gaia.cu9.ari.gaiaorbit.util.screenshot.BasicFileImageRenderer;
+import gaia.cu9.ari.gaiaorbit.util.screenshot.BufferedFileImageRenderer;
+import gaia.cu9.ari.gaiaorbit.util.screenshot.IFileImageRenderer;
+import gaia.cu9.ari.gaiaorbit.util.screenshot.ImageRenderer;
+import gaia.cu9.ari.gaiaorbit.util.time.GlobalClock;
+import gaia.cu9.ari.gaiaorbit.util.tree.OctreeNode;
+import sandbox.script.JythonFactory;
+
+import java.io.File;
+import java.io.FileInputStream;
+import java.net.MalformedURLException;
+import java.util.*;
 
 /**
  * The main class. Holds all the entities manages the update/draw cycle as well as the image rendering.
@@ -259,7 +235,7 @@ public class GaiaSandbox implements ApplicationListener, IObserver {
         screenshot = new ScreenshotCmd();
 
         // Initialize loading screen
-        loadingGui = new LoadingGui(GlobalConf.OPENGL_GUI, desktop ? 23 : 20);
+        loadingGui = new LoadingGui();
         loadingGui.initialize(manager);
 
         Logger.info(this.getClass().getSimpleName(), I18n.bundle.format("notif.glslversion", Gdx.gl.glGetString(GL20.GL_SHADING_LANGUAGE_VERSION)));
@@ -565,6 +541,7 @@ public class GaiaSandbox implements ApplicationListener, IObserver {
      * Renders the loading screen
      */
     private void renderLoadingScreen() {
+        loadingGui.update(Gdx.graphics.getDeltaTime());
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT | GL20.GL_DEPTH_BUFFER_BIT);
         Gdx.gl.glBlendFunc(GL20.GL_SRC_ALPHA, GL20.GL_ONE_MINUS_SRC_ALPHA);
         Gdx.gl.glEnable(GL20.GL_DEPTH_TEST);
