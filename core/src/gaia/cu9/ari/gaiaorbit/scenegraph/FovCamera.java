@@ -273,7 +273,9 @@ public class FovCamera extends AbstractCamera implements IObserver {
 
     @Override
     public Vector3d getDirection() {
-        return directions[parent.mode.ordinal() - 2];
+        int idx = parent.mode.ordinal() - 2;
+        idx = Math.min(idx, 1);
+        return directions[idx];
     }
 
     @Override
