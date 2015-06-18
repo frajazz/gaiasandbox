@@ -14,7 +14,6 @@ public abstract class ModelBody extends CelestialBody {
 
     /**
      * Angle limit for rendering as point. If angle is any bigger, we render with shader.
-     * Returns Math.toRadians(0.35)
      */
     public double THRESHOLD_ANGLE_POINT() {
         return TH_ANGLE_POINT;
@@ -120,11 +119,34 @@ public abstract class ModelBody extends CelestialBody {
 
     @Override
     protected float labelMax() {
-        return 5e-4f;
+        return 1e-4f;
     }
 
     public void setModel(ModelComponent mc) {
         this.mc = mc;
     }
 
+    public float getFuzzyRenderSize(ICamera camera) {
+        float thAngleQuad = (float) THRESHOLD_ANGLE_QUAD() * camera.getFovFactor();
+        double size = 0f;
+        if (viewAngle >= THRESHOLD_ANGLE_POINT() * camera.getFovFactor()) {
+            float tanThShaderOverlapDist = (float) Math.tan(thAngleQuad) * distToCamera;
+            size = tanThShaderOverlapDist;
+        }
+        return (float) size / camera.getFovFactor();
+    }
+
+    @Override
+    public float textScale() {
+        return labelSizeConcrete() * 4e1f;
+    }
+
+    protected float labelSizeConcrete() {
+        return (float) Math.pow(this.size, 0.5);
+    }
+
+    @Override
+    public boolean renderText() {
+        return name != null && Math.pow(viewAngle, 1.1) > TH_OVER_FACTOR * 100;
+    }
 }

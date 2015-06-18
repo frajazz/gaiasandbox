@@ -1,7 +1,6 @@
 package gaia.cu9.ari.gaiaorbit.scenegraph;
 
 import com.badlogic.gdx.assets.AssetManager;
-import com.badlogic.gdx.graphics.g3d.ModelBatch;
 import com.badlogic.gdx.math.Matrix4;
 import com.badlogic.gdx.math.Quaternion;
 import gaia.cu9.ari.gaiaorbit.event.EventManager;
@@ -10,7 +9,6 @@ import gaia.cu9.ari.gaiaorbit.util.coord.AstroUtils;
 import gaia.cu9.ari.gaiaorbit.util.coord.Coordinates;
 import gaia.cu9.ari.gaiaorbit.util.gaia.Attitude;
 import gaia.cu9.ari.gaiaorbit.util.gaia.AttitudeServer;
-import gaia.cu9.ari.gaiaorbit.util.math.MathUtilsd;
 import gaia.cu9.ari.gaiaorbit.util.math.Quaterniond;
 import gaia.cu9.ari.gaiaorbit.util.math.Vector3d;
 import gaia.cu9.ari.gaiaorbit.util.time.ITimeFrameProvider;
@@ -19,7 +17,7 @@ public class Gaia extends ModelBody {
 
     private static final double TH_ANGLE_NONE = ModelBody.TH_ANGLE_POINT / 1e18;
     private static final double TH_ANGLE_POINT = ModelBody.TH_ANGLE_POINT / 1e17;
-    private static final double TH_ANGLE_SHADER = ModelBody.TH_ANGLE_POINT / 3.0;
+    private static final double TH_ANGLE_QUAD = ModelBody.TH_ANGLE_POINT / 4d;
 
     @Override
     public double THRESHOLD_ANGLE_NONE() {
@@ -33,7 +31,7 @@ public class Gaia extends ModelBody {
 
     @Override
     public double THRESHOLD_ANGLE_QUAD() {
-        return TH_ANGLE_SHADER;
+        return TH_ANGLE_QUAD;
     }
 
     public Vector3d unrotatedPos;
@@ -105,14 +103,25 @@ public class Gaia extends ModelBody {
         transform.getTranslation(out);
     }
 
-    @Override
-    protected float labelMax() {
-        return 2.5e-8f;
-    }
 
     @Override
     protected float labelFactor() {
-        return 2e5f;
+        return 2e1f;
+    }
+
+    @Override
+    protected float labelMax() {
+        return super.labelMax();
+    }
+
+    @Override
+    public float textScale() {
+        return labelSizeConcrete() * .5e4f;
+    }
+
+    @Override
+    public boolean renderText() {
+        return name != null && viewAngle > TH_ANGLE_POINT;
     }
 
 }

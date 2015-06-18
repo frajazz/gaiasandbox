@@ -1,5 +1,7 @@
 package gaia.cu9.ari.gaiaorbit.util.gaia;
 
+import com.badlogic.gdx.files.FileHandle;
+import com.badlogic.gdx.utils.XmlReader;
 import gaia.cu9.ari.gaiaorbit.util.BinarySearchTree;
 import gaia.cu9.ari.gaiaorbit.util.I18n;
 import gaia.cu9.ari.gaiaorbit.util.Logger;
@@ -15,12 +17,10 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
-import com.badlogic.gdx.files.FileHandle;
-import com.badlogic.gdx.utils.XmlReader;
-
 /**
  * Parses the XML files with the attitudes and their activaton times into a binary search tree.
- * Created by tsagrista on 01/06/15.
+ * @author Toni Sagrista
+ * @date 01/06/15.
  */
 public class AttitudeXmlParser {
 
@@ -72,7 +72,8 @@ public class AttitudeXmlParser {
         XmlReader.Element scanlaw = model.getChildByName("scanlaw");
         String epochRef = scanlaw.getAttribute("epochref");
         Date refEpochDate = getDate(epochRef);
-        double refEpoch = (AstroUtils.getJulianDate(refEpochDate) - AstroUtils.JD_J2010) * AstroUtils.DAY_TO_NS;
+        double refEpoch = AstroUtils.getJulianDate(refEpochDate) * AstroUtils.DAY_TO_NS;
+        double refEpochJ2010 = refEpoch - AstroUtils.JD_J2010 * AstroUtils.DAY_TO_NS;
 
         // Spin phase
         XmlReader.Element spinphase = scanlaw.getChildByName("spinphase");
