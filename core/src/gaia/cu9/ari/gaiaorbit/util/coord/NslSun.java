@@ -26,6 +26,9 @@ import gaia.cu9.ari.gaiaorbit.util.math.Vector3d;
  */
 public class NslSun {
 
+    // the zero point for mission reference
+    static final double missionReferenceEpoch = 0l;
+
     static final double piHalf = Math.PI / 2.0;
     static final double NOMINALSUN_ORBITALECCENTRICITY_J2000 = 0.01671;
     static final double NOMINALSUN_MEANLONGITUDE_J2000 = 280.4665;// [deg] 
@@ -37,23 +40,25 @@ public class NslSun {
      * Constants used in the approximate longitude formula calculated from
      * obliquity and eccentricity taken from GPDB
      */
-    static final double obliquity = Coordinates.OBLIQUITY_RAD_J2000;
-    static final double obliquity_deg = Coordinates.OBLIQUITY_DEG_J2000;
+
+    static final double OBLIQUITY_DEG = Coordinates.OBLIQUITY_DEG_J2000;
     static final double e = NOMINALSUN_ORBITALECCENTRICITY_J2000;
     static final double d2e = Math.toDegrees(2. * e);
     static final double d5_2e2 = Math.toDegrees(2.5 * e * e);
-    static final double sineObliquity = Math.sin(obliquity);
-    static final double cosineObliquity = Math.cos(obliquity);
+    static final double sineObliquity = Math.sin(Coordinates.OBLIQUITY_RAD_J2000);
+    static final double cosineObliquity = Math.cos(Coordinates.OBLIQUITY_RAD_J2000);
     static final double ABERRATION_CONSTANT_J2000 = 20.49122;
     // static final double ABERRATION_CONSTANT_J2000 =
     // GaiaParam.Nature.ABERRATION_CONSTANT_J2000;
 
-    /**
-     * Unit vectors along the SRS axes
-     */
-    final Vector3d xAxis = new Vector3d(1.0, 0.0, 0.0);
-    final Vector3d yAxis = new Vector3d(0.0, 1.0, 0.0);
-    final Vector3d zAxis = new Vector3d(0.0, 0.0, 1.0);
+    private final double timeOriginDaysFromJ2000 = missionReferenceEpoch - (AstroUtils.JD_J2000 - AstroUtils.JD_J2010);
+    private final double timeOriginNsFromJ2000 = missionReferenceEpoch - (AstroUtils.JD_J2000 - AstroUtils.JD_J2010) * AstroUtils.DAY_TO_NS;
+
+
+    /** Unit vectors **/
+    static final Vector3d X_AXIS = Vector3d.getUnitX();
+    static final Vector3d Y_AXIS = Vector3d.getUnitY();
+    static final Vector3d Z_AXIS = Vector3d.getUnitZ();
 
     /**
      * Time dependent variables
@@ -84,7 +89,7 @@ public class NslSun {
      *            time in [ns] since the time origin
      */
     public void setTime(long tNs) {
-        final double daysFromJ2000 = (double) tNs * AstroUtils.NS_TO_DAY;
+        final double daysFromJ2000 = timeOriginDaysFromJ2000 + (double) tNs * AstroUtils.NS_TO_DAY;
 
         // Mean apparent Sun longitude:
         final double xl = NOMINALSUN_MEANLONGITUDE_J2000
@@ -162,11 +167,19 @@ public class NslSun {
             double Omega) {
         setTime(t);
         double sLon = getSolarLongitude();
-        Quaterniond q = new Quaterniond(xAxis, obliquity_deg);
-        q.mul(new Quaterniond(zAxis, Math.toDegrees(sLon)));
-        q.mul(new Quaterniond(xAxis, Math.toDegrees(nu - piHalf)));
-        q.mul(new Quaterniond(yAxis, Math.toDegrees(piHalf - xi)));
-        q.mul(new Quaterniond(zAxis, Math.toDegrees(Omega)));
+
+
+        /** SOME AXES NEED TO BE SWAPPED TO ALIGN WITH OUR REF SYS:
+         * 	GLOBAL ->	GAIASANDBOX
+         * 	Z -> Y
+         * 	X -> Z
+         * 	Y -> X
+         */
+        Quaterniond q = new Quaterniond(Z_AXIS, OBLIQUITY_DEG);
+        q.mul(new Quaterniond(Y_AXIS, Math.toDegrees(sLon)));
+        q.mul(new Quaterniond(Z_AXIS, Math.toDegrees(nu - piHalf)));
+        q.mul(new Quaterniond(X_AXIS, Math.toDegrees(piHalf - xi)));
+        q.mul(new Quaterniond(Y_AXIS, Math.toDegrees(Omega)));
         return q;
     }
 

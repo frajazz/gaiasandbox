@@ -47,7 +47,7 @@ public class AttitudeXmlParser {
         }
 
         // TODO - Add this to I18n
-        Logger.info("Initialized Gaia attitudes with " + list.length + " attitude files");
+        Logger.info(I18n.bundle.format("notif.attitude.initialized", list.length));
         return bst;
     }
 
@@ -111,7 +111,7 @@ public class AttitudeXmlParser {
             //            result = mslDatServ;
 
             Nsl37 nsl = new Nsl37();
-            nsl.setRefTime((long) refEpoch);
+            nsl.setRefTime((long) refEpochJ2010);
             nsl.setNuRef(precessionPhase.get(Quantity.Angle.AngleUnit.RAD));
             nsl.setOmegaRef(spinPhase.get(Quantity.Angle.AngleUnit.RAD));
             nsl.setXiRef(solarAspectAngle.get(Quantity.Angle.AngleUnit.RAD));
@@ -125,7 +125,7 @@ public class AttitudeXmlParser {
             Epsl.Mode mode = name.equals("EPSL_F") ? Epsl.Mode.FOLLOWING : Epsl.Mode.PRECEDING;
             Epsl epsl = (Epsl) clazz.getConstructor(Epsl.Mode.class).newInstance(mode);
 
-            epsl.setRefTime((long) refEpoch);
+            epsl.setRefTime((long) refEpochJ2010);
             epsl.setNuRef(precessionPhase.get(Quantity.Angle.AngleUnit.RAD));
             epsl.setOmegaRef(spinPhase.get(Quantity.Angle.AngleUnit.RAD));
             epsl.setXiRef(solarAspectAngle.get(Quantity.Angle.AngleUnit.RAD));

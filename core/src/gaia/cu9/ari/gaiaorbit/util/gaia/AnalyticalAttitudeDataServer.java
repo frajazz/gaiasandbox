@@ -1,8 +1,8 @@
 package gaia.cu9.ari.gaiaorbit.util.gaia;
 
+import gaia.cu9.ari.gaiaorbit.util.coord.AstroUtils;
 import gaia.cu9.ari.gaiaorbit.util.coord.Coordinates;
 import gaia.cu9.ari.gaiaorbit.util.coord.NslSun;
-import gaia.cu9.ari.gaiaorbit.util.gaia.time.TimeContext;
 import gaia.cu9.ari.gaiaorbit.util.math.Vector3d;
 
 /**
@@ -122,7 +122,7 @@ public abstract class AnalyticalAttitudeDataServer extends BaseAttitudeDataServe
         // nativeTimeContext = TimeContext.TCB;
 
         // Default reference epoch - 2010
-        setRefTime(0l);
+        setRefTime((long)(AstroUtils.JD_J2010 * AstroUtils.DAY_TO_NS));
 
         // Default reference solar aspect angle [rad]
         setXiRef(Math.toRadians(Satellite.SOLARASPECTANGLE_NOMINAL));

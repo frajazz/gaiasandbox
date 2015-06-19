@@ -30,6 +30,9 @@
   <component name="EntryPointsManager">
     <entry_points version="2.0" />
   </component>
+  <component name="FrameworkDetectionExcludesConfiguration">
+    <file type="IvyIDEA" url="file://$USER_HOME$/Workspaces/workspace-luna/GaiaTools_17.3.1" />
+  </component>
   <component name="GradleUISettings">
     <setting name="root" />
   </component>
@@ -37,6 +40,25 @@
     <setting name="root" />
   </component>
   <component name="IdProvider" IDEtalkID="11DA1DB66DD62DDA1ED602B7079FE97C" />
+  <component name="IvyIDEA.ProjectSettings">
+    <option name="artifactTypeSettings">
+      <ArtifactTypeSettings>
+        <option name="classesTypes" value="jar, mar, sar, war, ear, ejb, bundle, test-jar" />
+        <option name="javadocTypes" value="javadoc, doc, docs, apidoc, apidocs, documentation, documents" />
+        <option name="sourcesTypes" value="source, src, sources, srcs" />
+      </ArtifactTypeSettings>
+    </option>
+    <option name="propertiesSettings">
+      <PropertiesSettings>
+        <option name="propertyFiles">
+          <list>
+            <option value="$USER_HOME$/Workspaces/workspace-luna/common-software/conf/ivysettings.properties" />
+            <option value="$USER_HOME$/Workspaces/workspace-luna/common-software/conf/ivysettings.xml" />
+          </list>
+        </option>
+      </PropertiesSettings>
+    </option>
+  </component>
   <component name="JavadocGenerationManager">
     <option name="OUTPUT_DIRECTORY" />
     <option name="OPTION_SCOPE" value="protected" />
@@ -192,7 +214,27 @@
     <option name="mySupportsUserInfoFilter" value="true" />
   </component>
   <component name="VcsDirectoryMappings">
-    <mapping directory="" vcs="" />
     <mapping directory="$PROJECT_DIR$" vcs="Git" />
+  </component>
+  <component name="libraryTable">
+    <library name="GaiaMdbDm-15.2.5">
+      <CLASSES>
+        <root url="jar://$USER_HOME$/Workspaces/workspace-luna/GaiaTools_17.3.1/data/GaiaMdbDm-15.2.5.jar!/" />
+      </CLASSES>
+      <JAVADOC />
+      <SOURCES />
+    </library>
+    <library name="test">
+      <CLASSES>
+        <root url="jar://$USER_HOME$/Workspaces/workspace-luna/GaiaTools_17.3.1/data/test/GaiaToolsDm-14.0.0.jar!/" />
+        <root url="jar://$USER_HOME$/Workspaces/workspace-luna/GaiaTools_17.3.1/data/test/IDT-16.0.5.mfonly.jar!/" />
+        <root url="jar://$USER_HOME$/Workspaces/workspace-luna/GaiaTools_17.3.1/data/test/MDBExplorerStandalone.manifestOnly.jar!/" />
+        <root url="jar://$USER_HOME$/Workspaces/workspace-luna/GaiaTools_17.3.1/data/test/GbinClassLoaderTestJar.jar!/" />
+        <root url="jar://$USER_HOME$/Workspaces/workspace-luna/GaiaTools_17.3.1/data/test/Test.jar!/" />
+        <root url="jar://$USER_HOME$/Workspaces/workspace-luna/GaiaTools_17.3.1/data/test/IDT_libs_D-16.0.5.mfonly.jar!/" />
+      </CLASSES>
+      <JAVADOC />
+      <SOURCES />
+    </library>
   </component>
 </project>

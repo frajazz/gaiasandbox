@@ -23,7 +23,6 @@ import gaia.cu9.ari.gaiaorbit.util.coord.AstroUtils;
 import gaia.cu9.ari.gaiaorbit.util.gaia.time.TimeContext;
 
 import java.util.Date;
-import java.util.Stack;
 
 /**
  * Common base class for all attitude data servers. This holds all common fields
@@ -88,6 +87,7 @@ public abstract class BaseAttitudeDataServer<A extends Attitude> {
     }
 
     /**
+     * @param time The elapsed time in nanoseconds since J2010
      */
     public synchronized A getAttitude(long time) {
         return getAttitudeNative(time);
@@ -98,10 +98,18 @@ public abstract class BaseAttitudeDataServer<A extends Attitude> {
      */
     abstract protected A getAttitudeNative(long time);
 
+    /**
+     *
+     * @param t Reference time in nanoseconds (jd)
+     */
     public void setRefTime(long t) {
         this.refEpoch = t;
     }
 
+    /**
+     *
+     * @return The reference time in ns
+     */
     public long getRefTime() {
         return refEpoch;
     }

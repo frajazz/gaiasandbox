@@ -1,8 +1,10 @@
 package gaia.cu9.ari.gaiaorbit.util.gaia;
 
+import com.badlogic.gdx.files.FileHandle;
 import gaia.cu9.ari.gaiaorbit.event.EventManager;
 import gaia.cu9.ari.gaiaorbit.event.Events;
 import gaia.cu9.ari.gaiaorbit.util.BinarySearchTree;
+import gaia.cu9.ari.gaiaorbit.util.I18n;
 import gaia.cu9.ari.gaiaorbit.util.Logger;
 import gaia.cu9.ari.gaiaorbit.util.math.Quaterniond;
 
@@ -11,8 +13,6 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
-
-import com.badlogic.gdx.files.FileHandle;
 
 /**
  * Provides caching of the last Nsl37 attitude requested.
@@ -77,7 +77,7 @@ public class AttitudeServer {
 
             if (prevAttitude != null && !att.equals(prevAttitude)) {
                 // Change!
-                EventManager.instance.post(Events.POST_NOTIFICATION, "Gaia attitude changed to " + att.toString() + " at time " + att.activationTime);
+                EventManager.instance.post(Events.POST_NOTIFICATION, I18n.bundle.format("notif.attitude.changed", att.toString(), att.activationTime));
             }
 
             prevAttitude = att;

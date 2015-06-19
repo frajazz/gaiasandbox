@@ -7,7 +7,7 @@ import gaia.cu9.ari.gaiaorbit.util.math.Vector3d;
 
 /**
  * Convert a given set of heliotropic angles into a quaternion
- * 
+ *
  * @author Lennart Lindegren
  * @version $Id: AttitudeConverter.java 311494 2013-08-23 14:44:30Z llindegr $
  */
@@ -36,7 +36,7 @@ public class AttitudeConverter {
     /**
      * Converts heliotropic angles and rates to an attitude quaternion and its
      * derivative
-     * 
+     *
      * @param lSun
      *            longitude of the nominal sun [rad]
      * @param xi
@@ -59,7 +59,7 @@ public class AttitudeConverter {
             double omegaDot) {
 
         /** SOME AXES NEED TO BE SWAPPED TO ALIGN WITH OUR REF SYS:
-         * 	GLOBAL	GAIASANDBOX
+         * 	GLOBAL ->	GAIASANDBOX
          * 	Z -> Y
          * 	X -> Z
          * 	Y -> X
@@ -79,14 +79,14 @@ public class AttitudeConverter {
         double sinLSun = Math.sin(lSun);
         double cosLSun = Math.cos(lSun);
         Vector3d zInSrs = aux1;
-        zInSrs.set(Y_AXIS).mul(q);
+        zInSrs.set(Y_AXIS).rotateVectorByQuaternion(q);
         double rateX = nuDot * cosLSun + omegaDot * zInSrs.x;
         double rateY = -lSunDot * sinObliquity + nuDot * sinLSun * cosObliquity
                 + omegaDot * zInSrs.y;
         double rateZ = lSunDot * cosObliquity + nuDot * sinLSun * sinObliquity
                 + omegaDot * zInSrs.z;
-        Quaterniond halfSpinInIcrs = new Quaterniond(0.5 * rateX, 0.5 * rateY,
-                0.5 * rateZ, 0.0);
+        Quaterniond halfSpinInIcrs = new Quaterniond(0.5 * rateZ, 0.5 * rateX,
+                0.5 * rateY, 0.0);
         Quaterniond qDot = halfSpinInIcrs.mul(q);
 
         return new Quaterniond[] { q, qDot };
@@ -95,7 +95,7 @@ public class AttitudeConverter {
     /**
      * Converts heliotropic angles and rates to the attitude quaternion
      * components and the inertial rates in SRS
-     * 
+     *
      * @param lSun
      *            longitude of the nominal sun [rad]
      * @param xi
@@ -144,13 +144,13 @@ public class AttitudeConverter {
         double rateY = k.y * lSunDot + sun.y * nuDot;
         double rateZ = k.z * lSunDot + sun.z * nuDot + omegaDot;
 
-        return new double[] { q.x, q.y, q.z, q.w, rateX, rateY, rateZ };
+        return new double[] { q.z, q.x, q.y, q.w, rateZ, rateX, rateY };
     }
 
     /**
      * Converts heliotropic angles and rates to an attitude quaternion and its
      * derivative
-     * 
+     *
      * @param gt
      *            GaiaTime
      * @param h
@@ -201,8 +201,8 @@ public class AttitudeConverter {
                 * sinObliquity + h.getOmegaDot() * zInSrs.z + h.getXiDot()
                 * sz.z;
         ;
-        Quaterniond halfSpinInIcrs = new Quaterniond(0.5 * rateX, 0.5 * rateY,
-                0.5 * rateZ, 0.0);
+        Quaterniond halfSpinInIcrs = new Quaterniond(0.5 * rateZ, 0.5 * rateX,
+                0.5 * rateY, 0.0);
         Quaterniond qDot = halfSpinInIcrs.mul(q);
 
         return new Quaterniond[] { q, qDot };
@@ -210,7 +210,7 @@ public class AttitudeConverter {
 
     /**
      * Calculate the heliotropic angles and rates for a given attitude
-     * 
+     *
      * @param gt
      *            Time for the attitude
      * @param att

@@ -1,16 +1,12 @@
 package gaia.cu9.ari.gaiaorbit.util.gaia;
 
-import com.badlogic.gdx.math.Matrix4;
-import gaia.cu9.ari.gaiaorbit.util.Constants;
-import gaia.cu9.ari.gaiaorbit.util.coord.AstroUtils;
 import gaia.cu9.ari.gaiaorbit.util.coord.Coordinates;
 import gaia.cu9.ari.gaiaorbit.util.coord.NslSun;
 import gaia.cu9.ari.gaiaorbit.util.gaia.time.Secs;
 import gaia.cu9.ari.gaiaorbit.util.gaia.utils.*;
+import gaia.cu9.ari.gaiaorbit.util.math.Matrix4d;
 import gaia.cu9.ari.gaiaorbit.util.math.Quaterniond;
 import gaia.cu9.ari.gaiaorbit.util.math.Vector3d;
-
-import gaia.cu9.ari.gaiaorbit.util.math.Matrix4d;
 
 /**
  * Class to generate Gaia Modified Scanning Law (MSL).
@@ -39,9 +35,6 @@ public class ModifiedScanningLaw {
     protected final static double DAY_NS = 86400e9;
 
 
-    /** Unit vectors **/
-    protected static final Vector3d xAxis = new Vector3d(1., 0., 0.);
-
     protected static final double obliquity = Coordinates.OBLIQUITY_DEG_J2000;
 
 
@@ -50,8 +43,8 @@ public class ModifiedScanningLaw {
     // here since the shift of the origin (equinox) by 0.05542 arcsec
     // is not consistent with the ScanningLaw transformation from
     // ecliptic to equatorial coordinates.
-    protected static Vector3d eclPole = new Vector3d(0.0, 0.0, 1.0)
-            .rotate(obliquity, 1, 0, 0);
+    protected static Vector3d eclPole = new Vector3d(0.0, 1.0, 0.0)
+            .rotate(obliquity, 0, 0, 1);
 
     /**
      * Reference epoch to which the reference scan parameters refer
@@ -108,7 +101,6 @@ public class ModifiedScanningLaw {
      * quaternion representing a rotation by 90-xi about Y axis
      */
     protected double xi;
-    protected Quaterniond qXi;
     protected double sinXi, cosXi;
 
     /**

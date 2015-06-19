@@ -43,7 +43,7 @@ public class AstroUtils {
     private static LruCache<Long, Double> jdcache = new LruCache<Long, Double>(50);
 
     // Time units
-    public static final double DAY_TO_NS = 8.64e13;
+    public static final double DAY_TO_NS = 86400e9;
     public static final double NS_TO_DAY = 1 / DAY_TO_NS;
 
     // Angle conversion

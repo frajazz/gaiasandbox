@@ -27,7 +27,7 @@ import gaia.cu9.ari.gaiaorbit.util.math.Quaterniond;
  * <p>
  * Based on {@docref GAIA-CA-TN-OCA-FM-037-2}.
  * <p>
- * 
+ *
  * @author Lennart Lindegren (lennart@astro.lu.se)
  */
 public class Nsl37 extends AnalyticalAttitudeDataServer {
@@ -57,25 +57,30 @@ public class Nsl37 extends AnalyticalAttitudeDataServer {
     }
 
 
+    /**
+     * Calculate the scanning law at a given time. See {@docref
+     * GAIA-CA-TN-OCA-FM-037-2}
+     *
+     * @param julianDate - the julian date
+     */
     public Attitude getAttitudeNative(double julianDate) {
         long tNs = (long) ((julianDate - AstroUtils.JD_J2010) * AstroUtils.DAY_TO_NS);
         return getAttitudeNative(tNs);
     }
 
     /**
-     * @see gaia.cu9.ari.gaiaorbit.util.gaia.BaseAttitudeDataServer#getAttitude(long)
-     * Calculate the scanning law at a given time. See {@docref
-     * GAIA-CA-TN-OCA-FM-037-2}
+     *
+     * @param tNow - The time elapsed in nanoseconds since epoch J2010
+     * @return
      */
-    @Override
-    protected Attitude getAttitudeNative(long t) {
+    protected Attitude getAttitudeNative(long tNow) {
         if (!initialized) {
             recomputeConstants();
-            super.setInitialized(true);
+            setInitialized(true);
         }
 
         // Get the solar longitude [rad]
-        nslSun.setTime(t);
+        nslSun.setTime(tNow);
         double lSun = nslSun.getSolarLongitude();
         double lSunDot = nslSun.getSolarLongitudeDot();
         double precRate = this.getTargetPrecessionRate();
@@ -100,7 +105,7 @@ public class Nsl37 extends AnalyticalAttitudeDataServer {
                         * s4z + 4.0 * s4v * c4z);
 
         // Elapsed time since 2010 epoch:
-        long tElapsed = t - getRefTime();
+        long tElapsed = tNow - getRefTime();
         this.omegaRevs = (int) (tElapsed / scanPerNs);
 
         double omegaArg = TWO_PI * (double) (tElapsed - omegaRevs * scanPerNs)
@@ -148,7 +153,7 @@ public class Nsl37 extends AnalyticalAttitudeDataServer {
                 lSun, super.getXiRef(), getNuMod4Pi(), getOmegaMod4Pi(),
                 lSunDot, nuDot, omegaDot);
 
-        return new ConcreteAttitude(t, qAndRate[0], qAndRate[1], true);
+        return new ConcreteAttitude(tNow, qAndRate[0], qAndRate[1], true);
     }
 
     /**
@@ -165,7 +170,7 @@ public class Nsl37 extends AnalyticalAttitudeDataServer {
         this.scanPerNs = this.getTargetScanPeriod();
 
         NslSun sun0 = new NslSun();
-        sun0.setTime(AstroUtils.JD_J2010);
+        sun0.setTime(getRefTime() * AstroUtils.NS_TO_DAY);
         this.lSunRef = sun0.getSolarLongitude();
 
         sx = Math.sin(xi);
@@ -280,7 +285,7 @@ public class Nsl37 extends AnalyticalAttitudeDataServer {
 
     /**
      * Returns the argument modulo 4*pi [rad]
-     * 
+     *
      * @param angle angle [rad]
      * @return angle modulo 4*PI
      */
