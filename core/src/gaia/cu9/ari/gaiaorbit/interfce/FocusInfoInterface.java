@@ -10,6 +10,7 @@ import gaia.cu9.ari.gaiaorbit.scenegraph.CelestialBody;
 import gaia.cu9.ari.gaiaorbit.util.Constants;
 import gaia.cu9.ari.gaiaorbit.util.GlobalResources;
 import gaia.cu9.ari.gaiaorbit.util.I18n;
+import gaia.cu9.ari.gaiaorbit.util.coord.Coordinates;
 import gaia.cu9.ari.gaiaorbit.util.math.Vector3d;
 import gaia.cu9.ari.gaiaorbit.util.scene2d.OwnLabel;
 
@@ -108,15 +109,16 @@ public class FocusInfoInterface extends Table implements IObserver {
             }
             // Update focus information
             String objectName = cb.name;
-            cb.getPosition(pos);
 
             focusName.setText(objectName);
-            if (pos != null) {
-                focusRA.setText(format.format(pos.x % 360) + "°");
-                focusDEC.setText(format.format(pos.y % 360) + "°");
+            if (cb.posSph != null && cb.posSph.len() > 0f) {
+                focusRA.setText(format.format(cb.posSph.x) + "°");
+                focusDEC.setText(format.format(cb.posSph.y) + "°");
             } else {
-                focusRA.setText("");
-                focusDEC.setText("");
+                Coordinates.cartesianToSpherical(cb.pos, pos);
+
+                focusRA.setText(format.format(cb.pos.x % 360) + "°");
+                focusDEC.setText(format.format(cb.pos.y % 360) + "°");
             }
 
             Float appmag = cb.appmag;

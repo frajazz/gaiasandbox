@@ -22,7 +22,7 @@ public class FileLocator {
     public static InputStream getStream(String file) throws FileNotFoundException {
         if (Gdx.files != null) {
             return Gdx.files.internal(file).read();
-        } else {
+        } else{
             return new FileInputStream(new File(ASSETS_FOLDER + file));
         }
     }

@@ -45,7 +45,7 @@ public class I18n {
     }
 
     public static boolean forceinit(FileHandle baseFileHandle) {
-        if (GlobalConf.program.LOCALE.isEmpty()) {
+        if (GlobalConf.program == null || GlobalConf.program.LOCALE.isEmpty()) {
             // Use system default
             locale = Locale.getDefault();
         } else {

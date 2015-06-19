@@ -59,7 +59,8 @@ public class OctreeGeneratorTest implements IObserver {
 
         HYGBinaryLoader starLoader = new HYGBinaryLoader();
 
-        List<Particle> list = (List<Particle>) starLoader.loadCatalog(new FileInputStream(new File("../android/assets/data/hygxyz.bin")));
+        starLoader.file = "../android/assets/data/hygxyz.bin";
+        List<Particle> list = (List<Particle>) starLoader.loadCatalog();
         OctreeNode<Particle> octree = og.generateOctree(list);
 
         // Put all new particles in list

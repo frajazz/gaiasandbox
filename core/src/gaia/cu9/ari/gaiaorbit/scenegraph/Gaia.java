@@ -111,12 +111,12 @@ public class Gaia extends ModelBody {
 
     @Override
     protected float labelMax() {
-        return super.labelMax();
+        return super.labelMax() * 10;
     }
 
     @Override
     public float textScale() {
-        return labelSizeConcrete() * .5e4f;
+        return labelSizeConcrete() * .5e5f;
     }
 
     @Override

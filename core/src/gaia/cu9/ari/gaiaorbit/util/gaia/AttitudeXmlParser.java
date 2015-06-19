@@ -6,6 +6,8 @@ import gaia.cu9.ari.gaiaorbit.util.BinarySearchTree;
 import gaia.cu9.ari.gaiaorbit.util.I18n;
 import gaia.cu9.ari.gaiaorbit.util.Logger;
 import gaia.cu9.ari.gaiaorbit.util.coord.AstroUtils;
+import gaia.cu9.ari.gaiaorbit.util.gaia.time.Days;
+import gaia.cu9.ari.gaiaorbit.util.gaia.time.Duration;
 import gaia.cu9.ari.gaiaorbit.util.units.Quantity;
 
 import java.io.File;
@@ -98,27 +100,28 @@ public class AttitudeXmlParser {
         if (className.contains("MslAttitudeDataServer")) {
             // We need to pass the startTime, duration and MSL to the constructor
 
-            //            Duration duration = new Days(80);
-            //            ModifiedScanningLaw msl = new ModifiedScanningLaw((long) startTimeNsSince2010);
-            //            msl.setRefEpoch((long) refEpoch);
-            //            msl.setRefOmega(spinPhase.get(Quantity.Angle.AngleUnit.RAD));
-            //            msl.setRefNu(precessionPhase.get(Quantity.Angle.AngleUnit.RAD));
-            //            msl.setPrecRate(precessionRate);
-            //            msl.setScanRate(scanRate.get(Quantity.Angle.AngleUnit.ARCSEC));
-            //            msl.setRefXi(solarAspectAngle.get(Quantity.Angle.AngleUnit.RAD));
+            Duration duration = new Days(80);
+            ModifiedScanningLaw msl = new ModifiedScanningLaw((long) startTimeNsSince2010);
+            msl.setRefEpoch((long) refEpoch);
+            msl.setRefOmega(spinPhase.get(Quantity.Angle.AngleUnit.RAD));
+            msl.setRefNu(precessionPhase.get(Quantity.Angle.AngleUnit.RAD));
+            msl.setPrecRate(precessionRate);
+            msl.setScanRate(scanRate.get(Quantity.Angle.AngleUnit.ARCSEC));
+            msl.setRefXi(solarAspectAngle.get(Quantity.Angle.AngleUnit.RAD));
+            msl.initialize();
+
+            MslAttitudeDataServer mslDatServ = (MslAttitudeDataServer) clazz.getConstructor(new Class[] { long.class, Duration.class, ModifiedScanningLaw.class }).newInstance(new Object[] { (long) startTimeNsSince2010, duration, msl });
+            result = mslDatServ;
+
+            //            Nsl37 nsl = new Nsl37();
+            //            nsl.setRefTime((long) refEpochJ2010);
+            //            nsl.setNuRef(precessionPhase.get(Quantity.Angle.AngleUnit.RAD));
+            //            nsl.setOmegaRef(spinPhase.get(Quantity.Angle.AngleUnit.RAD));
+            //            nsl.setXiRef(solarAspectAngle.get(Quantity.Angle.AngleUnit.RAD));
+            //            nsl.setTargetScanRate(scanRate.get(Quantity.Angle.AngleUnit.ARCSEC));
+            //            nsl.setTargetPrecessionRate(precessionRate);
             //
-            //            MslAttitudeDataServer mslDatServ = (MslAttitudeDataServer) clazz.getConstructor(new Class[] { long.class, Duration.class, ModifiedScanningLaw.class }).newInstance(new Object[] { (long) startTimeNsSince2010, duration, msl });
-            //            result = mslDatServ;
-
-            Nsl37 nsl = new Nsl37();
-            nsl.setRefTime((long) refEpochJ2010);
-            nsl.setNuRef(precessionPhase.get(Quantity.Angle.AngleUnit.RAD));
-            nsl.setOmegaRef(spinPhase.get(Quantity.Angle.AngleUnit.RAD));
-            nsl.setXiRef(solarAspectAngle.get(Quantity.Angle.AngleUnit.RAD));
-            nsl.setTargetScanRate(scanRate.get(Quantity.Angle.AngleUnit.ARCSEC));
-            nsl.setTargetPrecessionRate(precessionRate);
-
-            result = nsl;
+            //            result = nsl;
 
         } else if (className.contains("Epsl")) {
 

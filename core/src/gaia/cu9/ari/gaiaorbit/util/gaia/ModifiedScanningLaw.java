@@ -119,12 +119,6 @@ public class ModifiedScanningLaw {
     protected int omegaRevs;
 
     /**
-     * Current values of the inertial spin rates, in [rad/day], in the SRS
-     * (i.e., with respect to the instrument x, y, z axes)
-     */
-    protected double rateX, rateY, rateZ;
-
-    /**
      * Have computed quantities been properly initialized?
      */
     protected boolean initialized;
@@ -193,7 +187,7 @@ public class ModifiedScanningLaw {
      * NOMINAL and MODIFIED states. The attitude may have discontinuous second
      * derivatives when changing from one ScanState to another.
      */
-    public static enum ScanState {
+    public enum ScanState {
         NOMINAL, TRANSITION, MODIFIED
     }
 
@@ -203,6 +197,7 @@ public class ModifiedScanningLaw {
 
     /**
      * Constructor with NSL initialization for given start time
+     * @param gtBeg - The time elapsed in nanoseconds since epoch J2010
      */
     public ModifiedScanningLaw(long gtBeg) {
 

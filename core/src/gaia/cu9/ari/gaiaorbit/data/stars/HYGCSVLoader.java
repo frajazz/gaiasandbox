@@ -65,7 +65,7 @@ public class HYGCSVLoader extends AbstractCatalogLoader implements ICatalogLoade
 
     private void addStar(String line, List<Star> stars) {
         String[] st = line.split(separator);
-        double ra = MathUtilsd.lint(Parser.parseFloat(st[7].trim()), 0, 24, 0, 360);
+        double ra = MathUtilsd.lint(Parser.parseDouble(st[7].trim()), 0, 24, 0, 360);
         double dec = Parser.parseDouble(st[8].trim());
         double dist = Parser.parseDouble(st[9]) * Constants.PC_TO_U;
         Vector3d pos = Coordinates.sphericalToCartesian(Math.toRadians(ra), Math.toRadians(dec), dist, new Vector3d());
@@ -92,6 +92,11 @@ public class HYGCSVLoader extends AbstractCatalogLoader implements ICatalogLoade
                 name = "Hip " + st[1].trim();
             }
             long starid = Parser.parseLong(st[0].trim());
+
+            if(name != null && name.equalsIgnoreCase("Betelgeuse")){
+                int ad = 34;
+                ad += 213;
+            }
 
             Star star = new Star(pos, appmag, absmag, colorbv, name, ra, dec, starid);
             stars.add(star);

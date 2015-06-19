@@ -126,4 +126,14 @@ public class Star extends Particle {
     public void doneLoading(AssetManager manager) {
         initModel();
     }
+
+    public String toString() {
+        return "Star{" +
+                " name=" + name +
+                " id=" + id +
+                " sph=" + posSph +
+                " pos=" + pos +
+                " absmag=" + absmag +
+                '}';
+    }
 }

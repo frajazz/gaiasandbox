@@ -1,14 +1,16 @@
 package gaia.cu9.ari.gaiaorbit.data.stars;
 
+import gaia.cu9.ari.gaiaorbit.data.FileLocator;
 import gaia.cu9.ari.gaiaorbit.event.EventManager;
 import gaia.cu9.ari.gaiaorbit.event.Events;
 import gaia.cu9.ari.gaiaorbit.event.IObserver;
 import gaia.cu9.ari.gaiaorbit.scenegraph.CelestialBody;
 import gaia.cu9.ari.gaiaorbit.util.GlobalConf;
+import gaia.cu9.ari.gaiaorbit.util.I18n;
+import gaia.cu9.ari.gaiaorbit.util.Logger;
 
 import java.io.*;
 import java.util.List;
-import java.util.Properties;
 
 /**
  * Small utility to convert a the HYG CSV catalog to binary in the following format:
@@ -26,31 +28,32 @@ import java.util.Properties;
  */
 public class HYGToBinary implements IObserver {
 
+    static String fileIn = "/home/tsagrista/git/gaiasandbox/android/assets-bak/data/hygxyz.csv";
+    static String fileOut = "/home/tsagrista/git/gaiasandbox/android/assets-bak/data/hygxyz.bin";
+
     public static void main(String[] args) {
         HYGToBinary hyg = new HYGToBinary();
-        EventManager.instance.subscribe(hyg, Events.POST_NOTIFICATION);
+        EventManager.instance.subscribe(hyg, Events.POST_NOTIFICATION, Events.JAVA_EXCEPTION);
 
-        InputStream versionFile = HYGToBinary.class.getResourceAsStream("/version");
-        Properties vprops = new Properties();
+        FileLocator.initialize();
+        I18n.initialize("/home/tsagrista/git/gaiasandbox/android/assets/i18n/gsbundle");
+
         try {
-            vprops.load(versionFile);
+            File props = new File("/home/tsagrista/git/gaiasandbox/android/assets/conf/global.properties");
+            File version = new File("/home/tsagrista/git/gaiasandbox/android/assets/data/dummyversion");
+            GlobalConf.initialize(new FileInputStream(props), new FileInputStream(version));
         } catch (IOException e) {
-            e.printStackTrace(System.err);
+            Logger.error(e);
+        } catch (Exception e) {
+            Logger.error(e);
         }
-        GlobalConf.version = new GlobalConf.VersionConf();
-        GlobalConf.version.initialize(vprops);
 
-        //hyg.compareCSVtoBinary("/home/tsagrista/Workspaces/workspace/GaiaOrbit-android/assets/data/hyg80.csv", "/home/tsagrista/Workspaces/workspace/GaiaOrbit-android/assets/data/hyg80.bin");
+        hyg.compareCSVtoBinary(fileIn, fileOut);
 
-        hyg.convertToBinary();
+        //hyg.convertToBinary(fileIn, fileOut);
 
     }
 
-    public void convertToBinary() {
-        String fileIn = "/home/tsagrista/Workspaces/workspace-luna/GaiaSandbox-android/assets-bak/data/hygxyz.csv";
-        String fileOut = "/home/tsagrista/Workspaces/workspace-luna/GaiaSandbox-android/assets/data/android/hygxyz.bin";
-        convertToBinary(fileIn, fileOut);
-    }
 
     public void compareCSVtoBinary(String csv, String bin) {
 
@@ -58,22 +61,28 @@ public class HYGToBinary implements IObserver {
             HYGCSVLoader csvLoader = new HYGCSVLoader();
             HYGBinaryLoader binLoader = new HYGBinaryLoader();
 
-            List<? extends CelestialBody> csvStars = csvLoader.loadCatalog(new FileInputStream(new File(csv)));
-            List<? extends CelestialBody> binStars = binLoader.loadCatalog(new FileInputStream(new File(bin)));
+            csvLoader.file = csv;
+            List<? extends CelestialBody> csvStars = csvLoader.loadCatalog();
+            binLoader.file = bin;
+            List<? extends CelestialBody> binStars = binLoader.loadCatalog();
 
             if (csvStars.size() != binStars.size()) {
                 System.err.println("Different sizes");
             }
 
+            int different = 0;
             for (int i = 0; i < csvStars.size(); i++) {
                 CelestialBody csvs = csvStars.get(i);
                 CelestialBody bins = binStars.get(i);
 
-                if (!csvs.equals(bins)) {
-                    System.err.println("Different stars: idx: " + i + ", name: " + csvs.name);
+                if (!equals(csvs, bins) && csvs.name.equals("Betelgeuse")) {
+                    Logger.info("Different stars: " + csvs + " // " + bins);
+                    boolean b = equals(csvs, bins);
+                    different++;
                 }
-
             }
+
+            Logger.info("Found " + different + " different stars");
 
         } catch (IOException e) {
             e.printStackTrace();
@@ -81,14 +90,16 @@ public class HYGToBinary implements IObserver {
 
     }
 
-    public void convertToBinary(String fileIn, String fileOut) {
+    public void convertToBinary(String csv, String bin) {
         HYGCSVLoader cat = new HYGCSVLoader();
         try {
-            GlobalConf.data.LIMIT_MAG_LOAD = 6.3f;
-            List<? extends CelestialBody> stars = cat.loadCatalog(new FileInputStream(new File(fileIn)));
+            GlobalConf.data = new GlobalConf.DataConf();
+            GlobalConf.data.LIMIT_MAG_LOAD = 20;
+            cat.file = csv;
+            List<? extends CelestialBody> stars = cat.loadCatalog();
 
             // Write to binary
-            File binFile = new File(fileOut);
+            File binFile = new File(bin);
             binFile.mkdirs();
             if (binFile.exists()) {
                 binFile.delete();
@@ -114,7 +125,7 @@ public class HYGToBinary implements IObserver {
                 data_out.writeLong(s.id);
             }
             file_output.close();
-            System.out.println(stars.size() + " stars written to binary file " + fileOut);
+            System.out.println(stars.size() + " stars written to binary file " + bin);
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -123,7 +134,8 @@ public class HYGToBinary implements IObserver {
     public void loadBinaryFile(String fileIn) {
         HYGBinaryLoader cat = new HYGBinaryLoader();
         try {
-            List<? extends CelestialBody> stars = cat.loadCatalog(new FileInputStream(new File(fileIn)));
+            cat.file = fileIn;
+            List<? extends CelestialBody> stars = cat.loadCatalog();
 
         } catch (FileNotFoundException e) {
             e.printStackTrace();
@@ -134,8 +146,30 @@ public class HYGToBinary implements IObserver {
     public void notify(Events event, Object... data) {
         switch (event) {
         case POST_NOTIFICATION:
-            System.out.println((String) data[0]);
+            StringBuilder sb = new StringBuilder();
+            int i = 0;
+            for (Object ob : data) {
+                sb.append(ob);
+                if (i < data.length - 1) {
+                    sb.append(" - ");
+                }
+                i++;
+            }
+            System.out.println(sb);
+            break;
+        case JAVA_EXCEPTION:
+            ((Throwable) data[0]).printStackTrace(System.err);
         }
 
+    }
+
+    private boolean equals(CelestialBody s1, CelestialBody s2){
+        return s1.id.equals(s2.id) &&
+                s1.posSph.x == s2.posSph.x &&
+                s1.posSph.y == s2.posSph.y &&
+                s1.pos.x == s2.pos.x &&
+                s1.pos.y == s2.pos.y &&
+                s1.pos.z == s2.pos.z &&
+                s1.absmag == s2.absmag;
     }
 }

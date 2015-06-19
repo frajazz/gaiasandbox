@@ -1,7 +1,7 @@
 package gaia.cu9.ari.gaiaorbit.data.stars;
 
-import com.badlogic.gdx.Gdx;
 import gaia.cu9.ari.gaiaorbit.data.FileLocator;
+import gaia.cu9.ari.gaiaorbit.scenegraph.Particle;
 import gaia.cu9.ari.gaiaorbit.scenegraph.Star;
 import gaia.cu9.ari.gaiaorbit.util.GlobalConf;
 import gaia.cu9.ari.gaiaorbit.util.I18n;
@@ -16,7 +16,7 @@ import java.util.Properties;
 
 /**
  * Loads the HYG catalog in binary (own) format. The format is defined as follows
- * 
+ *
  * - 32 bits (int) with the number of stars, starNum
  * repeat the following starNum times (for each star)
  * - 32 bits (int) - The the length of the name, or nameLength
@@ -28,15 +28,15 @@ import java.util.Properties;
  * - 32 bits (float) - dec
  * - 32 bits (float) - distance
  * - 64 bits (long) - id
- * 
+ *
  * @author Toni Sagrista
  *
  */
 public class HYGBinaryLoader extends AbstractCatalogLoader implements ICatalogLoader {
 
     @Override
-    public List<Star> loadCatalog() throws FileNotFoundException {
-        List<Star> stars = new ArrayList<Star>();
+    public List<Particle> loadCatalog() throws FileNotFoundException {
+        List<Particle> stars = new ArrayList<Particle>();
         InputStream data = null;
         try {
             data = FileLocator.getStream(file);
@@ -53,7 +53,7 @@ public class HYGBinaryLoader extends AbstractCatalogLoader implements ICatalogLo
 
             for (int idx = 0; idx < size; idx++) {
                 try {
-                    // name_length, name, appmag, absmag, colorbv, ra, dec, dist	
+                    // name_length, name, appmag, absmag, colorbv, ra, dec, dist
                     int nameLength = data_in.readInt();
                     StringBuilder sb = new StringBuilder();
                     for (int i = 0; i < nameLength; i++) {
