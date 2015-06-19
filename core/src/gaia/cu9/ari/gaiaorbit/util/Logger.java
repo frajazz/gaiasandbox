@@ -8,11 +8,20 @@ public class Logger {
     com.badlogic.gdx.utils.Logger gdxlogger = new com.badlogic.gdx.utils.Logger("GaiaSandbox");
 
     public static void error(Throwable t, String tag) {
-        EventManager.instance.post(Events.JAVA_EXCEPTION, t, tag);
+        if(EventManager.instance.hasSubscriptors(Events.JAVA_EXCEPTION)) {
+            EventManager.instance.post(Events.JAVA_EXCEPTION, t, tag);
+        }else{
+            System.err.println(tag);
+            t.printStackTrace(System.err);
+        }
     }
 
     public static void error(Throwable t) {
-        EventManager.instance.post(Events.JAVA_EXCEPTION, t);
+        if(EventManager.instance.hasSubscriptors(Events.JAVA_EXCEPTION)) {
+            EventManager.instance.post(Events.JAVA_EXCEPTION, t);
+        }else{
+            t.printStackTrace(System.err);
+        }
     }
 
     public static void warn(Object... messages) {

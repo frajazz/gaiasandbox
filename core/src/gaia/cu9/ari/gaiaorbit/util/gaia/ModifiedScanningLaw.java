@@ -713,7 +713,7 @@ public class ModifiedScanningLaw {
 
     /**
      * Get reference epoch (for the reference values of nu and omega) as
-     * GaiaTime
+     * nanoseconds since J2010
      *
      * @return reference epoch
      */

@@ -37,7 +37,7 @@ public class AttitudeServer {
     public static void initialize(FileHandle xmlFolder) {
         attitudes = AttitudeXmlParser.parseFolder(xmlFolder);
         initialDate = ((AttitudeIntervalBean) attitudes.findMin()).activationTime;
-        current = new AttitudeIntervalBean(null, null, null);
+        current = new AttitudeIntervalBean("current", null, null);
         // Dummy attitude
         dummyAttitude = new ConcreteAttitude(0, new Quaterniond(), false);
 

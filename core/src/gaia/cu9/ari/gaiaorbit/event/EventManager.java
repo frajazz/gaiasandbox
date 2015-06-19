@@ -98,7 +98,7 @@ public class EventManager implements IObserver {
         }
     }
 
-    /** 
+    /**
      * Unregister the specified listener for the specified message code.
      * @param events The message code.
      * @param listener The listener to remove.
@@ -145,7 +145,7 @@ public class EventManager implements IObserver {
     }
 
     /**
-     * Posts or registers a new event type with the given data and the default time frame. The 
+     * Posts or registers a new event type with the given data and the default time frame. The
      * default time frame can be changed using the event {@link Events#EVENT_TIME_FRAME_CMD}.
      * The event will be passed along after the specified delay time [ms] in the given time
      * frame has passed.
@@ -189,14 +189,14 @@ public class EventManager implements IObserver {
         }
     }
 
-    /** 
+    /**
      * Returns the current time in milliseconds.
      * */
     public static long getCurrentTime() {
         return System.currentTimeMillis() - START;
     }
 
-    /** 
+    /**
      * Dispatches any telegrams with a timestamp that has expired. Any dispatched telegrams are removed from the queue.
      * <p>
      * This method must be called each time through the main loop. */
@@ -231,6 +231,10 @@ public class EventManager implements IObserver {
         post(telegram.event, telegram.data);
         // Release the telegram to the pool
         pool.free(telegram);
+    }
+
+    public boolean hasSubscriptors(Events event){
+        return !subscriptions.get(event.ordinal()).isEmpty();
     }
 
     @Override

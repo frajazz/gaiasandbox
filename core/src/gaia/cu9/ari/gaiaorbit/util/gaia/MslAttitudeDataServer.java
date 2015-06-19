@@ -85,8 +85,7 @@ public class MslAttitudeDataServer extends
      *             if the tStart is before the start time of the passed scanning
      *             law, msl.
      */
-    public MslAttitudeDataServer(long tStart, Duration tLength,
-            ModifiedScanningLaw msl) {
+    public MslAttitudeDataServer(long tStart, Duration tLength, ModifiedScanningLaw msl) {
 
         super(tStart, tLength);
 

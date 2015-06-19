@@ -100,9 +100,9 @@ public class AttitudeXmlParser {
         if (className.contains("MslAttitudeDataServer")) {
             // We need to pass the startTime, duration and MSL to the constructor
 
-            Duration duration = new Days(80);
+            Duration duration = new Days(380);
             ModifiedScanningLaw msl = new ModifiedScanningLaw((long) startTimeNsSince2010);
-            msl.setRefEpoch((long) refEpoch);
+            msl.setRefEpoch((long) refEpochJ2010);
             msl.setRefOmega(spinPhase.get(Quantity.Angle.AngleUnit.RAD));
             msl.setRefNu(precessionPhase.get(Quantity.Angle.AngleUnit.RAD));
             msl.setPrecRate(precessionRate);
