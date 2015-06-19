@@ -38,7 +38,7 @@ import java.util.List;
 public class FullGui implements IGui, IObserver {
     private Skin skin;
     /**
-     * The user interface stage	    
+     * The user interface stage
      */
     protected Stage ui;
 
@@ -107,7 +107,7 @@ public class FullGui implements IGui, IObserver {
         buildGui();
 
         // We must subscribe to the desired events
-        EventManager.instance.subscribe(this, Events.FOV_CHANGED_CMD, Events.TOGGLE_TIME_CMD, Events.CAMERA_MODE_CMD, Events.SHOW_TUTORIAL_ACTION, Events.SHOW_SEARCH_ACTION, Events.GUI_SCROLL_POSITION_CMD, Events.GUI_FOLD_CMD, Events.GUI_MOVE_CMD, Events.RECALCULATE_OPTIONS_SIZE);
+        EventManager.instance.subscribe(this, Events.FOV_CHANGED_CMD, Events.TOGGLE_TIME_CMD, Events.CAMERA_MODE_CMD, Events.SHOW_TUTORIAL_ACTION, Events.SHOW_SEARCH_ACTION, Events.GUI_SCROLL_POSITION_CMD, Events.GUI_FOLD_CMD, Events.GUI_MOVE_CMD, Events.RECALCULATE_OPTIONS_SIZE, Events.REMOVE_KEYBOARD_FOCUS);
     }
 
     private void buildGui() {
@@ -564,6 +564,9 @@ public class FullGui implements IGui, IObserver {
             break;
         case RECALCULATE_OPTIONS_SIZE:
             recalculateOptionsSize();
+            break;
+        case REMOVE_KEYBOARD_FOCUS:
+            ui.setKeyboardFocus(null);
             break;
         }
 

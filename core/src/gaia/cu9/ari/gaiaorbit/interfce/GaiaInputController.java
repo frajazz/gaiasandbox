@@ -227,6 +227,11 @@ public class GaiaInputController extends GestureDetector {
                     }
                 }
             }
+
+            // Remove keyboard focus from GUI elements
+            EventManager.instance.notify(Events.REMOVE_KEYBOARD_FOCUS);
+
+
             this.button = -1;
         }
         return super.touchUp(screenX, screenY, pointer, button);

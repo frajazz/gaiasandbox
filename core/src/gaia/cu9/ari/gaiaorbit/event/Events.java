@@ -32,7 +32,7 @@ public enum Events {
     ROTATION_SPEED_CMD,
     /** Contains the new turning speed **/
     TURNING_SPEED_CMD,
-    /** 
+    /**
      * Contains the speed limit index as in:
      *  0 - 100 km/h
      *  1 - c (3e8 m/s)
@@ -64,13 +64,13 @@ public enum Events {
     /** Focus change command.
      * <ul><li>
      * [0] - The new focus object OR its name.
-     * </li></ul> 
+     * </li></ul>
      * **/
     FOCUS_CHANGE_CMD,
     /** Informs that the focus has somehow changed and the GUI must be updated.
      * <ul><li>
      * [0] - The new focus object OR its name.
-     * </li></ul> 
+     * </li></ul>
      * **/
     FOCUS_CHANGED,
     /** Contains the distance [0] and the viewing angle [1] **/
@@ -115,7 +115,7 @@ public enum Events {
     /** Issues the frame output command. Contains an optional boolean with the state. Otherwise, the state is toggled **/
     FRAME_OUTPUT_CMD,
 
-    /** 
+    /**
      * Will be displayed in the notifications area (bottom left). Contains an array of strings with the messages and an optional boolean
      * indicating whether the message is permanent so should stay until the next message is received.
      **/
@@ -174,7 +174,7 @@ public enum Events {
      * <strong>x</strong> - X coordinate of the top-left corner, float in [0..1] from left to right.
      * </li><li>
      * <strong>y</strong> - Y coordinate of top-left corner, float in [0..1] from bottom to top.
-     * </li></ol> 
+     * </li></ol>
      */
     GUI_MOVE_CMD,
     /** Adds or modifies a custom message. Contains:
@@ -196,7 +196,7 @@ public enum Events {
      * <strong>a</strong> - float in [0..1]
      * </li><li>
      * <strong>size</strong> - float
-     * </li></ol> 
+     * </li></ol>
      */
     ADD_CUSTOM_MESSAGE,
     /** Adds or modifies a custom message. Contains:
@@ -222,7 +222,7 @@ public enum Events {
      * <strong>a</strong> - float in [0..1]
      * </li><li>
      * <strong>size</strong> - float
-     * </li></ol> 
+     * </li></ol>
      */
     ADD_CUSTOM_TEXT,
     /** Adds or modifies a custom image. Contains:
@@ -242,7 +242,7 @@ public enum Events {
      * <strong>b</strong> - optional, float in [0..1]
      * </li><li>
      * <strong>a</strong> - optional, float in [0..1]
-     * </li></ol> 
+     * </li></ol>
      */
     ADD_CUSTOM_IMAGE,
     /** Removes a previously added message or image. Contains the id. **/
@@ -300,5 +300,8 @@ public enum Events {
     /** Contains the Gaia object [0] **/
     GAIA_LOADED,
     /** Issues the command to update the pixel render system. Contains no parameters. **/
-    PIXEL_RENDERER_UPDATE;
+    PIXEL_RENDERER_UPDATE,
+    /** Removes the keyboard focus in the GUI **/
+    REMOVE_KEYBOARD_FOCUS;
+
 }
