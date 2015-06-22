@@ -21,29 +21,30 @@ import java.util.Date;
  * @author Toni Sagrista
  *
  */
-public class AttitudeServer {
+public class GaiaAttitudeServer {
+
+    public static GaiaAttitudeServer instance;
 
     // List of attitudes in a BST sorted by activation date
-    private static BinarySearchTree attitudes;
+    private BinarySearchTree attitudes;
     // Dummy attitude for launch sequence
-    static Attitude dummyAttitude;
+    Attitude dummyAttitude;
 
     // The previous attitude
-    static AttitudeIntervalBean prevAttitude = null, current;
+    AttitudeIntervalBean prevAttitude = null, current;
 
     // The first activation date
-    static Date initialDate;
+    Date initialDate;
 
-    public static void initialize(FileHandle xmlFolder) {
+    public GaiaAttitudeServer(FileHandle xmlFolder) {
         attitudes = AttitudeXmlParser.parseFolder(xmlFolder);
         initialDate = ((AttitudeIntervalBean) attitudes.findMin()).activationTime;
         current = new AttitudeIntervalBean("current", null, null);
         // Dummy attitude
         dummyAttitude = new ConcreteAttitude(0, new Quaterniond(), false);
-
     }
 
-    private static Date getDate(String date) {
+    private Date getDate(String date) {
         String fmt = "yyyy-MM-dd HH:mm:ss";
         DateFormat format = new SimpleDateFormat(fmt);
         try {
@@ -55,7 +56,7 @@ public class AttitudeServer {
         return null;
     }
 
-    private static Date getDate(int day, int month, int year, int hour, int min, int sec) {
+    private Date getDate(int day, int month, int year, int hour, int min, int sec) {
         Calendar cal = Calendar.getInstance();
         cal.setTimeInMillis(0);
         cal.set(year, month, day, hour, min, sec);
@@ -67,7 +68,7 @@ public class AttitudeServer {
      * @param date
      * @return
      */
-    public synchronized static Attitude getAttitude(Date date) {
+    public synchronized Attitude getAttitude(Date date) {
         // Find AttitudeType in timeSlots
         if (date.before(initialDate)) {
             return dummyAttitude;

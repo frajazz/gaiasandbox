@@ -12,10 +12,7 @@ import com.badlogic.gdx.files.FileHandle;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.Pixmap.Format;
 import com.badlogic.gdx.graphics.glutils.FrameBuffer;
-import gaia.cu9.ari.gaiaorbit.data.AssetBean;
-import gaia.cu9.ari.gaiaorbit.data.FileLocator;
-import gaia.cu9.ari.gaiaorbit.data.JythonFactoryLoader;
-import gaia.cu9.ari.gaiaorbit.data.SGLoader;
+import gaia.cu9.ari.gaiaorbit.data.*;
 import gaia.cu9.ari.gaiaorbit.data.SGLoader.SGLoaderParameter;
 import gaia.cu9.ari.gaiaorbit.data.orbit.OrbitData;
 import gaia.cu9.ari.gaiaorbit.data.orbit.OrbitDataLoader;
@@ -36,7 +33,7 @@ import gaia.cu9.ari.gaiaorbit.scenegraph.component.ModelComponent;
 import gaia.cu9.ari.gaiaorbit.util.*;
 import gaia.cu9.ari.gaiaorbit.util.concurrent.ThreadIndexer;
 import gaia.cu9.ari.gaiaorbit.util.concurrent.ThreadPoolManager;
-import gaia.cu9.ari.gaiaorbit.util.gaia.AttitudeServer;
+import gaia.cu9.ari.gaiaorbit.util.gaia.GaiaAttitudeServer;
 import gaia.cu9.ari.gaiaorbit.util.math.MathUtilsd;
 import gaia.cu9.ari.gaiaorbit.util.math.Vector3d;
 import gaia.cu9.ari.gaiaorbit.util.screenshot.BasicFileImageRenderer;
@@ -188,6 +185,7 @@ public class GaiaSandbox implements ApplicationListener, IObserver {
         manager.setLoader(ISceneGraph.class, new SGLoader(resolver));
         manager.setLoader(OrbitData.class, new OrbitDataLoader(resolver));
         manager.setLoader(JythonFactory.class, new JythonFactoryLoader(resolver));
+        manager.setLoader(GaiaAttitudeServer.class, new GaiaAttitudeLoader(resolver));
 
         // Init global resources
         GlobalResources.initialize(manager);
@@ -196,7 +194,7 @@ public class GaiaSandbox implements ApplicationListener, IObserver {
         cam = new CameraManager(manager, CameraMode.Focus);
 
         // Initialize Gaia attitudes
-        AttitudeServer.initialize(FileLocator.internal("data/attitudexml/"));
+        manager.load("data/attitudexml/", GaiaAttitudeServer.class);
 
         if (sg == null) {
             // Set asset manager to asset bean
@@ -242,12 +240,15 @@ public class GaiaSandbox implements ApplicationListener, IObserver {
     }
 
     /**
-     * Execute this when the models have finished loading. This sets the models to their classes and 
+     * Execute this when the models have finished loading. This sets the models to their classes and
      * removes the Loading message
      */
     private void doneLoading() {
         loadingGui.dispose();
         loadingGui = null;
+
+        // Get attitude
+        GaiaAttitudeServer.instance = manager.get("data/attitudexml/");
 
         pp = new GSPostProcessor();
 

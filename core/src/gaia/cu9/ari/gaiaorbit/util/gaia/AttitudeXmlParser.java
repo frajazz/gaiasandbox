@@ -3,11 +3,13 @@ package gaia.cu9.ari.gaiaorbit.util.gaia;
 import com.badlogic.gdx.files.FileHandle;
 import com.badlogic.gdx.utils.XmlReader;
 import gaia.cu9.ari.gaiaorbit.util.BinarySearchTree;
+import gaia.cu9.ari.gaiaorbit.util.Constants;
 import gaia.cu9.ari.gaiaorbit.util.I18n;
 import gaia.cu9.ari.gaiaorbit.util.Logger;
 import gaia.cu9.ari.gaiaorbit.util.coord.AstroUtils;
 import gaia.cu9.ari.gaiaorbit.util.gaia.time.Days;
 import gaia.cu9.ari.gaiaorbit.util.gaia.time.Duration;
+import gaia.cu9.ari.gaiaorbit.util.gaia.time.Hours;
 import gaia.cu9.ari.gaiaorbit.util.units.Quantity;
 
 import java.io.File;
@@ -17,7 +19,7 @@ import java.lang.reflect.InvocationTargetException;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.Date;
+import java.util.*;
 
 /**
  * Parses the XML files with the attitudes and their activaton times into a binary search tree.
@@ -25,6 +27,14 @@ import java.util.Date;
  * @date 01/06/15.
  */
 public class AttitudeXmlParser {
+
+    private static Date endOfMission;
+    private static DateFormat format;
+
+    static {
+        format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+        endOfMission = getDate("2019-06-20 06:13:26");
+    }
 
     public static BinarySearchTree parseFolder(FileHandle folder) {
         final FileHandle[] list = folder.list(new FileFilter() {
@@ -37,9 +47,40 @@ public class AttitudeXmlParser {
 
         BinarySearchTree bst = new BinarySearchTree();
 
+        // GENERATE LIST OF DURATIONS
+        SortedMap<Date, FileHandle> datesMap = new TreeMap<Date, FileHandle>();
         for (FileHandle fh : list) {
             try {
-                AttitudeIntervalBean att = parseFile(fh);
+                Date date = parseActivationTime(fh);
+                datesMap.put(date, fh);
+            } catch (IOException e) {
+                Logger.error(e, I18n.bundle.format("error.file.parse", fh.name()));
+            }
+        }
+        Map<FileHandle, Duration> durationMap = new HashMap<FileHandle, Duration>();
+        Set<Date> dates = datesMap.keySet();
+        FileHandle lastFH = null;
+        Date lastDate = null;
+        for (Date date : dates) {
+            if(lastDate != null && lastFH != null){
+                long elapsed = date.getTime() - lastDate.getTime();
+                Duration d = new Days(elapsed * Constants.MS_TO_H);
+                durationMap.put(lastFH, d);
+            }
+            lastDate = date;
+            lastFH = datesMap.get(date);
+        }
+        // Last element
+        long elapsed = endOfMission.getTime() - lastDate.getTime();
+        Duration d = new Hours(elapsed * Constants.MS_TO_H);
+        durationMap.put(lastFH, d);
+
+
+        // PARSE ATTITUDES
+        for (FileHandle fh : list) {
+            Logger.info(I18n.bundle.format("notif.attitude.loadingfile", fh.name()));
+            try {
+                AttitudeIntervalBean att = parseFile(fh, durationMap.get(fh));
                 bst.insert(att);
             } catch (IOException e) {
                 Logger.error(e, I18n.bundle.format("error.file.parse", fh.name()));
@@ -48,12 +89,25 @@ public class AttitudeXmlParser {
             }
         }
 
-        // TODO - Add this to I18n
         Logger.info(I18n.bundle.format("notif.attitude.initialized", list.length));
         return bst;
     }
 
-    private static AttitudeIntervalBean parseFile(FileHandle fh) throws IOException, ClassNotFoundException, NoSuchMethodException, IllegalAccessException, InvocationTargetException, InstantiationException {
+    private static Date parseActivationTime(FileHandle fh) throws IOException {
+        BaseAttitudeDataServer result = null;
+
+        XmlReader reader = new XmlReader();
+        XmlReader.Element element = reader.parse(fh);
+        XmlReader.Element model = element.getChildByName("model");
+
+        /** MODEL ELEMENT **/
+        String name = model.get("name");
+        String className = model.get("classname");
+        String activTime = model.get("starttime");
+        return getDate(activTime);
+    }
+
+    private static AttitudeIntervalBean parseFile(FileHandle fh, Duration duration) throws IOException, ClassNotFoundException, NoSuchMethodException, IllegalAccessException, InvocationTargetException, InstantiationException {
 
         BaseAttitudeDataServer result = null;
 
@@ -100,7 +154,6 @@ public class AttitudeXmlParser {
         if (className.contains("MslAttitudeDataServer")) {
             // We need to pass the startTime, duration and MSL to the constructor
 
-            Duration duration = new Days(380);
             ModifiedScanningLaw msl = new ModifiedScanningLaw((long) startTimeNsSince2010);
             msl.setRefEpoch((long) refEpochJ2010);
             msl.setRefOmega(spinPhase.get(Quantity.Angle.AngleUnit.RAD));
@@ -140,8 +193,6 @@ public class AttitudeXmlParser {
 
         return new AttitudeIntervalBean(name, activationTime, result);
     }
-
-    static DateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 
     private static Date getDate(String date) {
         try {

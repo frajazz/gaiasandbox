@@ -22,7 +22,7 @@ import gaia.cu9.ari.gaiaorbit.event.Events;
 import gaia.cu9.ari.gaiaorbit.event.IObserver;
 import gaia.cu9.ari.gaiaorbit.scenegraph.CameraManager.CameraMode;
 import gaia.cu9.ari.gaiaorbit.util.*;
-import gaia.cu9.ari.gaiaorbit.util.gaia.AttitudeServer;
+import gaia.cu9.ari.gaiaorbit.util.gaia.GaiaAttitudeServer;
 import gaia.cu9.ari.gaiaorbit.util.gaia.Satellite;
 import gaia.cu9.ari.gaiaorbit.util.math.Matrix4d;
 import gaia.cu9.ari.gaiaorbit.util.math.Quaterniond;
@@ -99,7 +99,7 @@ public class FovCamera extends AbstractCamera implements IObserver {
 
         fovFactor = FOV / 5f;
 
-        /** 
+        /**
          * Fit viewport ensures a fixed aspect ratio. We set the camera field of view equal to the
          * satelltie's AC FOV and calculate the satellite aspect ratio as FOV_AL/FOV_AC. With it we
          * set the width of the viewport to ensure we have the same vision as Gaia.
@@ -176,7 +176,7 @@ public class FovCamera extends AbstractCamera implements IObserver {
         currentTime = time.getTime().getTime();
 
         trf.get().idt();
-        Quaterniond quat = AttitudeServer.getAttitude(time.getTime()).getQuaternion();
+        Quaterniond quat = GaiaAttitudeServer.instance.getAttitude(time.getTime()).getQuaternion();
         trf.get().rotate(quat).rotate(0, 0, 1, 180);
         directions[0].set(0, 0, 1).rotate(BAM_2, 0, 1, 0).mul(trf.get()).nor();
         directions[1].set(0, 0, 1).rotate(-BAM_2, 0, 1, 0).mul(trf.get()).nor();
@@ -207,7 +207,7 @@ public class FovCamera extends AbstractCamera implements IObserver {
 
     public Vector3d[] getDirections(Date d) {
         trf.get().idt();
-        Quaterniond quat = AttitudeServer.getAttitude(d).getQuaternion();
+        Quaterniond quat = GaiaAttitudeServer.instance.getAttitude(d).getQuaternion();
         trf.get().rotate(quat).rotate(0, 0, 1, 180);
         Vector3d dir1 = vectorPool.obtain().set(0, 0, 1).rotate(BAM_2, 0, 1, 0).mul(trf.get()).nor();
         Vector3d dir2 = vectorPool.obtain().set(0, 0, 1).rotate(-BAM_2, 0, 1, 0).mul(trf.get()).nor();
