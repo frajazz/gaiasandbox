@@ -268,12 +268,14 @@ public class GaiaSandbox implements ApplicationListener, IObserver {
         for (SceneGraphNode sgn : nodes) {
             sgn.doneLoading(manager);
         }
+
         // Update whole tree to initialize positions
         OctreeNode.LOAD_ACTIVE = false;
         GlobalClock.clock.update(0.000000001f);
         sg.update(GlobalClock.clock, cam);
         GlobalClock.clock.update(0);
         OctreeNode.LOAD_ACTIVE = true;
+
 
         // Initialize  input handlers
         InputMultiplexer inputMultiplexer = new InputMultiplexer();
@@ -286,6 +288,7 @@ public class GaiaSandbox implements ApplicationListener, IObserver {
         // Initialize the GUI
         gui.doneLoading(manager);
         renderGui.doneLoading(manager);
+        Logger.info("C");
 
         // Publish visibility
         EventManager.instance.post(Events.VISIBILITY_OF_COMPONENTS, new Object[] { SceneGraphRenderer.visible });
@@ -325,11 +328,13 @@ public class GaiaSandbox implements ApplicationListener, IObserver {
 
         initialized = true;
 
+
         // Run tutorial
         if (GlobalConf.program.DISPLAY_TUTORIAL) {
             EventManager.instance.post(Events.RUN_SCRIPT_PATH, "scripts/tutorial/tutorial-pointer.py");
             GlobalConf.program.DISPLAY_TUTORIAL = false;
         }
+
 
     }
 

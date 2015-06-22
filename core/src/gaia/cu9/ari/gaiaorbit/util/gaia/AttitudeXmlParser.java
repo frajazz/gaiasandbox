@@ -164,6 +164,7 @@ public class AttitudeXmlParser {
             msl.initialize();
 
             MslAttitudeDataServer mslDatServ = (MslAttitudeDataServer) clazz.getConstructor(new Class[] { long.class, Duration.class, ModifiedScanningLaw.class }).newInstance(new Object[] { (long) startTimeNsSince2010, duration, msl });
+            mslDatServ.initialize();
             result = mslDatServ;
 
             //            Nsl37 nsl = new Nsl37();
