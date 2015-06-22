@@ -1,6 +1,7 @@
 package gaia.cu9.ari.gaiaorbit.util.gaia.utils;
 
 import gaia.cu9.ari.gaiaorbit.util.Constants;
+import gaia.cu9.ari.gaiaorbit.util.math.MathUtilsd;
 import gaia.cu9.ari.gaiaorbit.util.math.Quaterniond;
 
 public class Interpolator {
@@ -10,7 +11,7 @@ public class Interpolator {
 	/**
 	 * Static method for cubic Hermite interpolation between two points, given
 	 * their values and derivatives.
-	 * 
+	 *
 	 * @param x
 	 *            desired abscissa (normally between x0 and x1)
 	 * @param x0
@@ -30,34 +31,39 @@ public class Interpolator {
 	public static double[] hermite3(final double x, final double x0,
 			final double y0, final double yp0, final double x1,
 			final double y1, final double yp1) {
-		double dx = x1 - x0;
-		double ddx = (yp0 + yp1 - 2.0 * (y1 - y0) / dx) / dx;
-		double c = ((yp1 - yp0) / dx - 3.0 * ddx) / 2.0;
-		double d = ddx / dx;
-		double t = x - x0;
-		double yInt = y0 + t * (yp0 + t * (c + t * d));
-		double ypInt = yp0 + t * (2.0 * c + t * 3.0 * d);
-		return new double[] { yInt, ypInt };
+		double y = MathUtilsd.lint(x, x0, x1, y0, y1);
+		double yprima = (y1 - y0)/(x1 - x0);
+		return new double[]{y, yprima};
+
 	}
+
+	public static double[] linear(final double x, final double x0,
+			final double y0,  final double x1,
+			final double y1){
+		double y = MathUtilsd.lint(x, x0, x1, y0, y1);
+		double yprima = (y1 - y0)/(x1 - x0);
+		return new double[]{y, yprima};
+	}
+
 
 	/**
 	 * Static method for computing the average attitude quaternion over a finite
 	 * time interval ta <= t <= tb, using cubic Hermite interpolation, as well
 	 * as the average time derivative
-	 * 
+	 *
 	 * It is assumed that ta <= tb. If tb-ta is less than dtMin then no average
 	 * is computed but the instantaneous (interpolated) values at the instant
 	 * (ta+tb)/2 are returned instead.
-	 * 
+	 *
 	 * The times ta, tb, t[] are in [days] from some arbitrary but common
 	 * origin. Time derivatives are in [1/day].
-	 * 
+	 *
 	 * The lengths of the array arguments must be: t.length >= 2, q.length >=
 	 * t.length, qDot-length >= t.length. No check is made of these conditions.
-	 * 
+	 *
 	 * The argument indx is such that t[indx] is not far from ta and tb. It must
 	 * be in the range 0 <= indx <= t.length-2
-	 * 
+	 *
 	 * @param ta
 	 *            start time of the averaging interval
 	 * @param tb
@@ -116,7 +122,7 @@ public class Interpolator {
 
 	/**
 	 * Kind of interpolation: for derivative, value or integral
-	 * 
+	 *
 	 * @author lennartlindegren
 	 * @version $Id: Interpolator.java 374850 2014-07-01 16:04:16Z pbalm $
 	 */
@@ -129,7 +135,7 @@ public class Interpolator {
 	 * Hermite interpolation in t[], q[], qDot[]. left is such that t[left] <=
 	 * tx < t[left+1]. Kind = DER returns the derivative at tx, VAL returns the
 	 * value at tx, and INT returns the integral from t[left] to tx.
-	 * 
+	 *
 	 * @param tx
 	 *            time at which the derivative, value or integral is evaluated
 	 * @param t
@@ -179,7 +185,7 @@ public class Interpolator {
 
 	/**
 	 * Find left such that t[left] <= ta < t[left+1]
-	 * 
+	 *
 	 * @param ta
 	 * @param t
 	 * @param indx
@@ -198,7 +204,7 @@ public class Interpolator {
 	/**
 	 * Find left such that t[left] <= ta < t[left+1] (but one less if ta ==
 	 * t[left+1])
-	 * 
+	 *
 	 * @param ta
 	 * @param t
 	 * @param indx
@@ -215,7 +221,7 @@ public class Interpolator {
 	/**
 	 * For normalized argument x (between 0 and 1), calculate the four
 	 * interpolating polynomials a0(x), a1(x), b0(x), b1(x) [DRO-012, Eq. (8)]
-	 * 
+	 *
 	 * @param x
 	 * @return double array containing a0, a1, b0, b1 at x
 	 */
@@ -231,7 +237,7 @@ public class Interpolator {
 	/**
 	 * For normalized argument x (between 0 and 1), calculate the derivatives
 	 * ap0(x), ap1(x), bp0(x), bp1(x) of the four interpolating polynomials
-	 * 
+	 *
 	 * @param x
 	 * @return double array containing ap0, ap1, bp0, bp1 at x
 	 */
@@ -246,9 +252,9 @@ public class Interpolator {
 	/**
 	 * For normalized argument x (between 0 and 1), calculate the integrals
 	 * A0(x), A1(x), B0(x), B1(x) of the interpolating polynomials
-	 * 
+	 *
 	 * A0(x) = int_0^x a0(y)*dy (etc)
-	 * 
+	 *
 	 * @param x
 	 * @return double array containing A0, A1, B0, B1 at x
 	 */
@@ -265,12 +271,12 @@ public class Interpolator {
 	/**
 	 * In the non-decreasing sequence xa[0:n-1], finds the left index such that
 	 * xa[left] <= x < xa[left+1]
-	 * 
+	 *
 	 * If x < xa[0] the method returns -1 if x >= xa[n-1], the last index to the
 	 * array (n-1) is returned
-	 * 
+	 *
 	 * Uses a straight bisection method to locate the left index.
-	 * 
+	 *
 	 * @param xa - array of non-decreasing values
 	 * @param xaLength - ???
 	 * @param x - value to locate

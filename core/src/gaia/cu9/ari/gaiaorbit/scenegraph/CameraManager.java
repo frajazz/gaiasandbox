@@ -66,6 +66,10 @@ public class CameraManager implements ICamera, IObserver {
         public static CameraMode fromString(String str) {
             return equivalences.getForward(str);
         }
+
+        public  boolean isGaiaFov(){
+            return this.equals(CameraMode.Gaia_FOV1) || this.equals(CameraMode.Gaia_FOV2) || this.equals(CameraMode.Gaia_FOV1and2);
+        }
     }
 
     public CameraMode mode;
@@ -181,11 +185,13 @@ public class CameraManager implements ICamera, IObserver {
         lastPos.set(current.getPos());
     }
 
+    int pxRendererBackup = -1;
     /**
      * Sets the new camera mode and updates the frustum
      * @param mode
      */
     public void updateMode(CameraMode mode, boolean postEvent) {
+        CameraMode prevMode = this.mode;
         boolean modeChange = mode != this.mode;
         // Save state of current if mode is different
         if (modeChange)
@@ -201,8 +207,22 @@ public class CameraManager implements ICamera, IObserver {
         if (modeChange)
             restoreState();
 
-        if (postEvent)
+        if (postEvent) {
             EventManager.instance.post(Events.FOV_CHANGE_NOTIFICATION, this.getCamera().fieldOfView);
+
+            // In fov1and2 mode we can only use the normal pixel renderer
+            if(mode.isGaiaFov() && !prevMode.isGaiaFov() && GlobalConf.scene.PIXEL_RENDERER != 0){
+                // We change to FOV1and2 and the current renderer is not normal
+                pxRendererBackup = GlobalConf.scene.PIXEL_RENDERER;
+                EventManager.instance.post(Events.PIXEL_RENDERER_CMD, 0);
+                EventManager.instance.post(Events.PIXEL_RENDERER_UPDATE);
+            }else if (!mode.isGaiaFov() && prevMode.isGaiaFov() && pxRendererBackup >= 0){
+                // We get out of Fov1and2
+                EventManager.instance.post(Events.PIXEL_RENDERER_CMD, pxRendererBackup);
+                EventManager.instance.post(Events.PIXEL_RENDERER_UPDATE);
+                pxRendererBackup = -1;
+            }
+        }
     }
 
     @Override

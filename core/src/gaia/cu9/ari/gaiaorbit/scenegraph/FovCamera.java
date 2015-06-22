@@ -40,11 +40,11 @@ import java.util.List;
  *
  */
 public class FovCamera extends AbstractCamera implements IObserver {
-    private static final double CAM_NEAR = 1e4 * Constants.KM_TO_U;
-    private static final double CAM_FAR = 1e18 * Constants.KM_TO_U;
+    private static final double CAM_NEAR = 1e6 * Constants.KM_TO_U;
+    private static final double CAM_FAR = 1e22 * Constants.KM_TO_U;
     private static final float FOV = (float) Satellite.FOV_AC_ACTIVE;
     private static final float BAM_2 = (float) Satellite.BASICANGLE_DEGREE / 2f;
-    private static final double GAIA_ASPECT_RATIO = Satellite.FOV_AL / Satellite.FOV_AC_ACTIVE;
+    private static final double GAIA_ASPECT_RATIO = Satellite.FOV_AL / FOV;
 
     /** time that has to pass with the current scan rate so that we scan to the
      * edge of the current field of view.
