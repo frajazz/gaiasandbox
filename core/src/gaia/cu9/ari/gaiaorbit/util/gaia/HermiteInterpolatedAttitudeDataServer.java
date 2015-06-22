@@ -87,24 +87,24 @@ public abstract class HermiteInterpolatedAttitudeDataServer extends
         double x = (t - tNs[left]) / timeUnit;
 
         // HERMITE
-        double intX[] = Interpolator.hermite3(x, x0, qX[left], qXDotL, x1,
-                qX[left + 1], qXDotL1);
-        double intY[] = Interpolator.hermite3(x, x0, qY[left], qYDotL, x1,
-                qY[left + 1], qYDotL1);
-        double intZ[] = Interpolator.hermite3(x, x0, qZ[left], qZDotL, x1,
-                qZ[left + 1], qZDotL1);
-        double intW[] = Interpolator.hermite3(x, x0, qW[left], qWDotL, x1,
-                qW[left + 1], qWDotL1);
+        //        double intX[] = Interpolator.hermite3(x, x0, qX[left], qXDotL, x1,
+        //                qX[left + 1], qXDotL1);
+        //        double intY[] = Interpolator.hermite3(x, x0, qY[left], qYDotL, x1,
+        //                qY[left + 1], qYDotL1);
+        //        double intZ[] = Interpolator.hermite3(x, x0, qZ[left], qZDotL, x1,
+        //                qZ[left + 1], qZDotL1);
+        //        double intW[] = Interpolator.hermite3(x, x0, qW[left], qWDotL, x1,
+        //                qW[left + 1], qWDotL1);
 
         // LINEAR
-        //        double intX[] = Interpolator.linear(x, x0, qX[left], x1,
-        //                qX[left + 1]);
-        //        double intY[] = Interpolator.linear(x, x0, qY[left], x1,
-        //                qY[left + 1]);
-        //        double intZ[] = Interpolator.linear(x, x0, qZ[left], x1,
-        //                qZ[left + 1]);
-        //        double intW[] = Interpolator.linear(x, x0, qW[left], x1,
-        //                qW[left + 1]);
+        double intX[] = Interpolator.linear(x, x0, qX[left], x1,
+                qX[left + 1]);
+        double intY[] = Interpolator.linear(x, x0, qY[left], x1,
+                qY[left + 1]);
+        double intZ[] = Interpolator.linear(x, x0, qZ[left], x1,
+                qZ[left + 1]);
+        double intW[] = Interpolator.linear(x, x0, qW[left], x1,
+                qW[left + 1]);
 
         Quaterniond qInt = new Quaterniond(intX[0], intY[0], intZ[0], intW[0]);
         double fact = 1.0 / Math.sqrt(qInt.len2());

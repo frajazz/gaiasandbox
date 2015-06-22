@@ -31,9 +31,14 @@ public class Interpolator {
 	public static double[] hermite3(final double x, final double x0,
 			final double y0, final double yp0, final double x1,
 			final double y1, final double yp1) {
-		double y = MathUtilsd.lint(x, x0, x1, y0, y1);
-		double yprima = (y1 - y0)/(x1 - x0);
-		return new double[]{y, yprima};
+		double dx = x1 - x0;
+		double ddx = (yp0 + yp1 - 2.0 * (y1 - y0) / dx) / dx;
+		double c = ((yp1 - yp0) / dx - 3.0 * ddx) / 2.0;
+		double d = ddx / dx;
+		double t = x - x0;
+		double yInt = y0 + t * (yp0 + t * (c + t * d));
+		double ypInt = yp0 + t * (2.0 * c + t * 3.0 * d);
+		return new double[] { yInt, ypInt };
 
 	}
 
