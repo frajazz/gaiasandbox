@@ -288,7 +288,6 @@ public class GaiaSandbox implements ApplicationListener, IObserver {
         // Initialize the GUI
         gui.doneLoading(manager);
         renderGui.doneLoading(manager);
-        Logger.info("C");
 
         // Publish visibility
         EventManager.instance.post(Events.VISIBILITY_OF_COMPONENTS, new Object[] { SceneGraphRenderer.visible });

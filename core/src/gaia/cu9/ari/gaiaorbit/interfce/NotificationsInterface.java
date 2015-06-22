@@ -89,6 +89,11 @@ public class NotificationsInterface extends Table implements IObserver {
         EventManager.instance.subscribe(this, Events.POST_NOTIFICATION, Events.FOCUS_CHANGED, Events.TOGGLE_TIME_CMD, Events.TOGGLE_VISIBILITY_CMD, Events.CAMERA_MODE_CMD, Events.PACE_CHANGED_INFO, Events.FOCUS_LOCK_CMD, Events.TOGGLE_AMBIENT_LIGHT, Events.FOV_CHANGE_NOTIFICATION, Events.JAVA_EXCEPTION, Events.ORBIT_DATA_LOADED, Events.SCREENSHOT_INFO, Events.COMPUTE_GAIA_SCAN_CMD, Events.ONLY_OBSERVED_STARS_CMD, Events.TRANSIT_COLOUR_CMD, Events.LIMIT_MAG_CMD, Events.TOGGLE_STEREOSCOPIC, Events.TOGGLE_CLEANMODE, Events.FRAME_OUTPUT_CMD, Events.TOGGLE_STEREO_PROFILE);
     }
 
+    public void unsubscribe(){
+        EventManager.instance.unsubscribe(this, Events.POST_NOTIFICATION, Events.FOCUS_CHANGED, Events.TOGGLE_TIME_CMD, Events.TOGGLE_VISIBILITY_CMD, Events.CAMERA_MODE_CMD, Events.PACE_CHANGED_INFO, Events.FOCUS_LOCK_CMD, Events.TOGGLE_AMBIENT_LIGHT, Events.FOV_CHANGE_NOTIFICATION, Events.JAVA_EXCEPTION, Events.ORBIT_DATA_LOADED, Events.SCREENSHOT_INFO, Events.COMPUTE_GAIA_SCAN_CMD, Events.ONLY_OBSERVED_STARS_CMD, Events.TRANSIT_COLOUR_CMD, Events.LIMIT_MAG_CMD, Events.TOGGLE_STEREOSCOPIC, Events.TOGGLE_CLEANMODE, Events.FRAME_OUTPUT_CMD, Events.TOGGLE_STEREO_PROFILE);
+    }
+
+
     private void addMessage(String msg) {
         addMessage(msg, false);
     }
@@ -256,6 +261,10 @@ public class NotificationsInterface extends Table implements IObserver {
         public String toString() {
             return formatMessage(this);
         }
+    }
+
+    public void dispose(){
+        this.unsubscribe();
     }
 
 }

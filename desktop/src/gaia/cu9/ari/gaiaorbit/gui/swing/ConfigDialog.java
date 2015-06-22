@@ -73,12 +73,8 @@ public class ConfigDialog extends I18nJFrame {
 
         if (startup) {
             /** SPLASH IMAGE **/
-            URL url = null;
-            try {
-                url = FileLocator.getFile("img/splash/splash-s.jpg").toURI().toURL();
-            } catch (MalformedURLException e) {
-                Logger.error(e);
-            }
+            URL url = this.getClass().getResource("/img/splash/splash-s.jpg");
+
             JSplashLabel label = new JSplashLabel(url, txt("gui.build", GlobalConf.version.build) + " - " + txt("gui.version", GlobalConf.version.version), null, Color.lightGray);
             JPanel imagePanel = new JPanel(new GridLayout(1, 1, 0, 0));
             imagePanel.add(label);
@@ -187,7 +183,7 @@ public class ConfigDialog extends I18nJFrame {
         windowedResolutions.add(heightField, "wrap");
         windowedResolutions.add(resizable, "span");
 
-        // Radio buttons 
+        // Radio buttons
         final JRadioButton fullscreen = new JRadioButton(txt("gui.fullscreen"));
         fullscreen.addActionListener(new ActionListener() {
             @Override

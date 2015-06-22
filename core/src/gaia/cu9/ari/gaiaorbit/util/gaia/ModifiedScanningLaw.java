@@ -242,7 +242,7 @@ public class ModifiedScanningLaw {
 
         // default maximum time step for Runge-Kutta integrator -
         // a step of 150 sec is needed for MSL (NSL can do with 1000 sec step):
-        double stepSecs = 100.0;
+        double stepSecs = 150.0;
         setMaxInternalTimeStep(Math.round(stepSecs * 1e9));
 
         initialize();

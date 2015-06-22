@@ -25,7 +25,7 @@ import gaia.cu9.ari.gaiaorbit.util.scene2d.AnimatedImage;
 public class LoadingGui implements IGui {
     private Skin skin;
     /**
-     * The user interface stage	    
+     * The user interface stage
      */
     protected Stage ui;
     protected Table center;
@@ -86,6 +86,7 @@ public class LoadingGui implements IGui {
 
     @Override
     public void dispose() {
+        notificationsInterface.dispose();
         ui.dispose();
     }
 
