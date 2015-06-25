@@ -14,13 +14,15 @@ import java.util.Map;
 public class AttitudeIntervalBean implements Comparable<AttitudeIntervalBean> {
     public String name;
     public Date activationTime;
+    public String file;
     public BaseAttitudeDataServer attitude;
 
     public Map<Long, Attitude> cache;
     public long hits = 0, misses = 0;
 
 
-    public AttitudeIntervalBean(String name, Date activationTime, BaseAttitudeDataServer attitude){
+    public AttitudeIntervalBean(String name, Date activationTime, BaseAttitudeDataServer attitude, String file){
+        this.file = file;
         this.name = name;
         this.activationTime = activationTime;
         this.attitude = attitude;

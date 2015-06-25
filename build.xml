@@ -38,7 +38,7 @@
 		<replace file="${packages.dir}/gaiasandbox-${repository.tag}.${repository.version}.install4j" token="@gs-release-folder@" value="${dist.dir}" />
 		<replace file="${packages.dir}/gaiasandbox-${repository.tag}.${repository.version}.install4j" token="@gs-git-folder@" value="${base.dir}" />
 		<replace file="${packages.dir}/gaiasandbox-${repository.tag}.${repository.version}.install4j" token="@version-tag@" value="${repository.tag}.${repository.version}" />
-		
+
 		<!-- Build install4j installers -->
         <install4j projectfile="${packages.dir}/gaiasandbox-${repository.tag}.${repository.version}.install4j"/>
 	</target>
@@ -46,36 +46,36 @@
 
 	<!-- packages the app into a tgz file -->
 	<target name="package" depends="build" description="Creates the releases for windows, mac, linux and the package">
-		<property name="packages.dir" location="${releases.dir}/packages-${repository.tag}.${repository.version}" />		
-		
+		<property name="packages.dir" location="${releases.dir}/packages-${repository.tag}.${repository.version}" />
+
 		<!-- Package the app into a tgz -->
 		<delete dir="${packages.dir}" />
 		<mkdir dir="${packages.dir}" />
-		
+
 		<!-- Create tar file -->
 		<tar destfile="${packages.dir}/${dist.name}.tgz" compression="gzip">
     		<tarfileset dir="${dist.dir}" prefix="${dist.name}">
-      			<include name="**" /> 
+      			<include name="**" />
     		</tarfileset>
 		</tar>
-		
+
 		<!-- Prepare install4j and installbuilder scripts -->
 		<!-- <antcall target="installbuilder-task" inheritAll="true" inheritRefs="true" /> -->
 		<antcall target="install4j-task" inheritAll="true" inheritRefs="true" />
 
 	</target>
-	
+
 	<!-- Packages the app for the Circle CI system -->
 	<target name="package-ci" depends="build" description="Creates the package">
-    
+
 	    <!-- Package the app into a tgz -->
 	    <delete file="${dist.name}.tgz"/>
 	    <tar destfile="${dist.name}.tgz" basedir="${dist.dir}" compression="gzip">
 	        <tarfileset dir="${dist.dir}" prefix="${dist.name}">
-      			<include name="**" /> 
+      			<include name="**" />
     		</tarfileset>
     	</tar>
-    
+
   	</target>
 
 
@@ -334,6 +334,7 @@
 		<echo>${classpathProperty}</echo>
 		<java fork="true" classname="gaia.cu9.ari.gaiaorbit.GaiaSandboxDesktop" dir="${gs-desktop.dir}">
 			<sysproperty key="properties.file" value="${gs-android.dir}/assets/conf/global.properties" />
+			<sysproperty key="assets.location" value="${gs-android.dir}/assets/" />
 			<classpath>
 				<fileset dir="${gs.dir}/${lib}">
 					<include name="**/*.jar" />

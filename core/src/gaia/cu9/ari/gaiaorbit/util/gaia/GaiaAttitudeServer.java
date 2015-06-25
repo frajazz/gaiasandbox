@@ -39,7 +39,7 @@ public class GaiaAttitudeServer {
     public GaiaAttitudeServer(FileHandle xmlFolder) {
         attitudes = AttitudeXmlParser.parseFolder(xmlFolder);
         initialDate = ((AttitudeIntervalBean) attitudes.findMin()).activationTime;
-        current = new AttitudeIntervalBean("current", null, null);
+        current = new AttitudeIntervalBean("current", null, null, "dummy");
         // Dummy attitude
         dummyAttitude = new ConcreteAttitude(0, new Quaterniond(), false);
     }
@@ -87,6 +87,13 @@ public class GaiaAttitudeServer {
             return att.get(date);
         }
 
+    }
+
+    public synchronized String getCurrentAttitudeName(){
+        if(prevAttitude != null){
+            return prevAttitude.file;
+        }
+        return null;
     }
 
 }

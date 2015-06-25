@@ -192,7 +192,7 @@ public class AttitudeXmlParser {
             result = epsl;
         }
 
-        return new AttitudeIntervalBean(name, activationTime, result);
+        return new AttitudeIntervalBean(name, activationTime, result, fh.name());
     }
 
     private static Date getDate(String date) {
