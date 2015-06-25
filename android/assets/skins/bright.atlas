@@ -21,9 +21,9 @@ default-window
 default-select
   rotate: false
   xy: 30, 29
-  size: 25, 20
-  split: 2, 14, 2, 2
-  orig: 25, 20
+  size: 23, 18
+  split: 2, 12, 2, 2
+  orig: 23, 18
   offset: 0, 0
   index: -1
 default-round-large
