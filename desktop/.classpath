@@ -12,9 +12,9 @@
 	<classpathentry kind="lib" path="lib/xstream-1.4.7.jar"/>
 	<classpathentry kind="lib" path="lib/gdx-controllers-desktop-natives.jar"/>
 	<classpathentry kind="lib" path="lib/lwjgl-2.9.3.jar"/>
-	<classpathentry kind="lib" path="lib/gdx-1.6.0.jar"/>
-	<classpathentry kind="lib" path="lib/gdx-backend-lwjgl-1.6.0.jar"/>
-	<classpathentry kind="lib" path="lib/gdx-controllers-desktop-1.6.0.jar"/>
 	<classpathentry kind="lib" path="lib/pgslookandfeel-1.1.4.jar"/>
+	<classpathentry kind="lib" path="lib/gdx-1.6.3.jar"/>
+	<classpathentry kind="lib" path="lib/gdx-backend-lwjgl-1.6.3.jar"/>
+	<classpathentry kind="lib" path="lib/gdx-controllers-desktop-1.6.3.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

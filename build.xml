@@ -9,6 +9,7 @@
 	<property name="gs.dir" value="${base.dir}/core" />
 	<property name="gs-android.dir" value="${base.dir}/android" />
 	<property name="gs-desktop.dir" value="${base.dir}/desktop" />
+	<property name="gs-html.dir" value="${base.dir}/html" />
 	<property name="assets.link" value="${gs-android.dir}/assets" />
 	<property name="debuglevel" value="source,lines,vars" />
 	<property name="install4j.dir" value="/home/tsagrista/Programs/install4j6" />
@@ -241,7 +242,11 @@
 		<ant antfile="build.xml" dir="${gs-android.dir}" target="resolve">
 		</ant>
 	</target>
-
+	<!-- RESOLVE GS-HTML -->
+	<target name="resolve_gs_html">
+		<ant antfile="build.xml" dir="${gs-html.dir}" target="resolve">
+		</ant>
+	</target>
 
 	<!-- MAIN CLEAN -->
 	<target depends="clean_gs, clean_gs_desktop" name="clean" />
