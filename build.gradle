@@ -54,11 +54,19 @@ project(":desktop") {
     }
 }
 
+
+
 project(":html") {
     apply plugin: "gwt"
     apply plugin: "war"
 
-
+	configurations.all {
+		resolutionStrategy {
+			failOnVersionConflict()
+			force 'com.google.gwt:gwt-user:2.7.0', 'com.google.gwt:gwt-dev:2.7.0'
+		}
+	}
+	
     dependencies {
         compile project(":core")
         compile "com.badlogicgames.gdx:gdx-backend-gwt:$gdxVersion"
