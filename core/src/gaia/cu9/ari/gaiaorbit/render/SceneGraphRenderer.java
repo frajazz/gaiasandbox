@@ -1,5 +1,38 @@
 package gaia.cu9.ari.gaiaorbit.render;
 
+import gaia.cu9.ari.gaiaorbit.event.EventManager;
+import gaia.cu9.ari.gaiaorbit.event.Events;
+import gaia.cu9.ari.gaiaorbit.event.IObserver;
+import gaia.cu9.ari.gaiaorbit.render.IPostProcessor.PostProcessBean;
+import gaia.cu9.ari.gaiaorbit.render.system.AbstractRenderSystem;
+import gaia.cu9.ari.gaiaorbit.render.system.FontRenderSystem;
+import gaia.cu9.ari.gaiaorbit.render.system.IRenderSystem;
+import gaia.cu9.ari.gaiaorbit.render.system.LineQuadRenderSystem;
+import gaia.cu9.ari.gaiaorbit.render.system.LineRenderSystem;
+import gaia.cu9.ari.gaiaorbit.render.system.ModelBatchRenderSystem;
+import gaia.cu9.ari.gaiaorbit.render.system.PixelBloomRenderSystem;
+import gaia.cu9.ari.gaiaorbit.render.system.PixelFuzzyRenderSystem;
+import gaia.cu9.ari.gaiaorbit.render.system.PixelRenderSystem;
+import gaia.cu9.ari.gaiaorbit.render.system.QuadRenderSystem;
+import gaia.cu9.ari.gaiaorbit.scenegraph.CameraManager.CameraMode;
+import gaia.cu9.ari.gaiaorbit.scenegraph.ICamera;
+import gaia.cu9.ari.gaiaorbit.scenegraph.NaturalCamera;
+import gaia.cu9.ari.gaiaorbit.scenegraph.SceneGraphNode.RenderGroup;
+import gaia.cu9.ari.gaiaorbit.util.Constants;
+import gaia.cu9.ari.gaiaorbit.util.GlobalConf;
+import gaia.cu9.ari.gaiaorbit.util.GlobalConf.ProgramConf.StereoProfile;
+import gaia.cu9.ari.gaiaorbit.util.GlobalResources;
+import gaia.cu9.ari.gaiaorbit.util.ds.Multilist;
+import gaia.cu9.ari.gaiaorbit.util.math.MathUtilsd;
+import gaia.cu9.ari.gaiaorbit.util.override.AtmosphereGroundShaderProvider;
+import gaia.cu9.ari.gaiaorbit.util.override.AtmosphereShaderProvider;
+
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.assets.AssetManager;
 import com.badlogic.gdx.graphics.Camera;
@@ -21,26 +54,6 @@ import com.badlogic.gdx.utils.viewport.ExtendViewport;
 import com.badlogic.gdx.utils.viewport.StretchViewport;
 import com.badlogic.gdx.utils.viewport.Viewport;
 import com.bitfire.utils.ShaderLoader;
-import gaia.cu9.ari.gaiaorbit.event.EventManager;
-import gaia.cu9.ari.gaiaorbit.event.Events;
-import gaia.cu9.ari.gaiaorbit.event.IObserver;
-import gaia.cu9.ari.gaiaorbit.render.IPostProcessor.PostProcessBean;
-import gaia.cu9.ari.gaiaorbit.render.system.*;
-import gaia.cu9.ari.gaiaorbit.scenegraph.CameraManager.CameraMode;
-import gaia.cu9.ari.gaiaorbit.scenegraph.ICamera;
-import gaia.cu9.ari.gaiaorbit.scenegraph.NaturalCamera;
-import gaia.cu9.ari.gaiaorbit.scenegraph.SceneGraphNode.RenderGroup;
-import gaia.cu9.ari.gaiaorbit.util.Constants;
-import gaia.cu9.ari.gaiaorbit.util.GlobalConf;
-import gaia.cu9.ari.gaiaorbit.util.GlobalConf.ProgramConf.StereoProfile;
-import gaia.cu9.ari.gaiaorbit.util.GlobalResources;
-import gaia.cu9.ari.gaiaorbit.util.I18n;
-import gaia.cu9.ari.gaiaorbit.util.ds.Multilist;
-import gaia.cu9.ari.gaiaorbit.util.math.MathUtilsd;
-import gaia.cu9.ari.gaiaorbit.util.override.AtmosphereGroundShaderProvider;
-import gaia.cu9.ari.gaiaorbit.util.override.AtmosphereShaderProvider;
-
-import java.util.*;
 
 /**
  * Renders a scenegraph.
@@ -48,74 +61,6 @@ import java.util.*;
  *
  */
 public class SceneGraphRenderer extends AbstractRenderer implements IProcessRenderer, IObserver {
-
-    public enum ComponentType {
-        Stars("Stars"),
-        Planets("Planets"),
-        Moons("Moons"),
-        Satellites("Satellites"),
-        Asteroids("Asteroids"),
-        Labels("Labels"),
-        Equatorial("Equatorial grid", "grid-icon"),
-        Ecliptic("Ecliptic grid", "grid-icon"),
-        Galactic("Galactic grid", "grid-icon"),
-        Orbits("Orbits"),
-        Atmospheres("Atmospheres"),
-        Constellations("Constellations"),
-        Boundaries("Boundaries"),
-        MilkyWay("Milky way"),
-        Galaxies("Galaxies"),
-        Others("Others");
-
-        private static Map<String, ComponentType> namesMap = new HashMap<String, ComponentType>();
-
-        static {
-            for (ComponentType ct : ComponentType.values()) {
-                namesMap.put(ct.id, ct);
-            }
-        }
-
-        public String id;
-        private String name;
-        public String style;
-
-        private ComponentType(String id) {
-            this.id = id;
-        }
-
-        private ComponentType(String id, String icon) {
-            this(id);
-            this.style = icon;
-        }
-
-        public String getId() {
-            return id;
-        }
-
-        public String getName() {
-            if (name == null) {
-                name = I18n.bundle.get("element." + name().toLowerCase());
-                namesMap.put(name, this);
-            }
-            return name;
-        }
-
-        @Override
-        public String toString() {
-            return getName();
-        }
-
-        public static ComponentType getFromName(String name) {
-            ComponentType ct = null;
-            try {
-                ct = ComponentType.valueOf(name);
-            } catch (Exception e) {
-                // Look for name
-                ct = namesMap.get(name);
-            }
-            return ct;
-        }
-    }
 
     /** Contains the flags representing each type's visibility **/
     public static boolean[] visible;
@@ -566,9 +511,7 @@ public class SceneGraphRenderer extends AbstractRenderer implements IProcessRend
     private void updatePixelRenderSystem() {
         if (renderProcesses != null && !renderProcesses.isEmpty()) {
             IRenderSystem sys = renderProcesses.get(0);
-            if ((sys instanceof PixelBloomRenderSystem && !GlobalConf.scene.isBloomPixelRenderer()) ||
-                    (sys instanceof PixelRenderSystem && !GlobalConf.scene.isNormalPixelRenderer()) ||
-                    (sys instanceof PixelFuzzyRenderSystem && !GlobalConf.scene.isFuzzyPixelRenderer())) {
+            if ((sys instanceof PixelBloomRenderSystem && !GlobalConf.scene.isBloomPixelRenderer()) || (sys instanceof PixelRenderSystem && !GlobalConf.scene.isNormalPixelRenderer()) || (sys instanceof PixelFuzzyRenderSystem && !GlobalConf.scene.isFuzzyPixelRenderer())) {
                 IRenderSystem newsys = getPixelRenderSystem();
                 renderProcesses.remove(sys);
                 renderProcesses.add(0, newsys);

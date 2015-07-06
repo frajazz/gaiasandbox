@@ -16,10 +16,10 @@ package gaia.cu9.ari.gaiaorbit.util.math;
  * limitations under the License.
  ******************************************************************************/
 
+import java.io.Serializable;
+
 import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Matrix3;
-
-import java.io.Serializable;
 
 /** Encapsulates a 2D vector. Allows chaining methods by returning a reference to itself
  * @author badlogicgames@gmail.com */

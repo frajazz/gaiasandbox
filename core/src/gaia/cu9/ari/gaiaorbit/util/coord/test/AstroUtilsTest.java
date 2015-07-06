@@ -1,8 +1,7 @@
 package gaia.cu9.ari.gaiaorbit.util.coord.test;
 
+import static org.junit.Assert.assertEquals;
 import gaia.cu9.ari.gaiaorbit.util.coord.AstroUtils;
-
-import static org.junit.Assert.*;
 
 /**
  * Created by tsagrista on 01/06/15.

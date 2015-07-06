@@ -1,5 +1,7 @@
 package gaia.cu9.ari.gaiaorbit.util.scene2d;
 
+import gaia.cu9.ari.gaiaorbit.util.GlobalResources;
+
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.scenes.scene2d.Event;
 import com.badlogic.gdx.scenes.scene2d.EventListener;
@@ -9,7 +11,6 @@ import com.badlogic.gdx.scenes.scene2d.ui.ImageButton;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.DelayedRemovalArray;
-import gaia.cu9.ari.gaiaorbit.util.GlobalResources;
 
 /**
  * ImageButton in which the cursor changes when the mouse rolls over.

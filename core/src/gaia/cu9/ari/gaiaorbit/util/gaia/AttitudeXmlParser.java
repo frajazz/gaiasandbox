@@ -1,7 +1,5 @@
 package gaia.cu9.ari.gaiaorbit.util.gaia;
 
-import com.badlogic.gdx.files.FileHandle;
-import com.badlogic.gdx.utils.XmlReader;
 import gaia.cu9.ari.gaiaorbit.util.BinarySearchTree;
 import gaia.cu9.ari.gaiaorbit.util.Constants;
 import gaia.cu9.ari.gaiaorbit.util.I18n;
@@ -19,7 +17,15 @@ import java.lang.reflect.InvocationTargetException;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.*;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Set;
+import java.util.SortedMap;
+import java.util.TreeMap;
+
+import com.badlogic.gdx.files.FileHandle;
+import com.badlogic.gdx.utils.XmlReader;
 
 /**
  * Parses the XML files with the attitudes and their activaton times into a binary search tree.

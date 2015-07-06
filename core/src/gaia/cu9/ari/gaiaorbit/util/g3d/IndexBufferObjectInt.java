@@ -15,13 +15,13 @@ package gaia.cu9.ari.gaiaorbit.util.g3d;
  * limitations under the License.
  ******************************************************************************/
 
+import java.nio.ByteBuffer;
+import java.nio.IntBuffer;
+
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.utils.BufferUtils;
 import com.badlogic.gdx.utils.GdxRuntimeException;
-
-import java.nio.ByteBuffer;
-import java.nio.IntBuffer;
 
 /**
  * <p>

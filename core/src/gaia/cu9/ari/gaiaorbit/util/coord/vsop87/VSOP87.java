@@ -1,10 +1,11 @@
 package gaia.cu9.ari.gaiaorbit.util.coord.vsop87;
 
-import com.badlogic.gdx.Gdx;
 import gaia.cu9.ari.gaiaorbit.util.GlobalResources;
 
 import java.util.HashMap;
 import java.util.Map;
+
+import com.badlogic.gdx.Gdx;
 
 public class VSOP87 {
     public static VSOP87 instance;

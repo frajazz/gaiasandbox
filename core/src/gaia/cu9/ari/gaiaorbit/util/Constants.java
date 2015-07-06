@@ -1,8 +1,9 @@
 package gaia.cu9.ari.gaiaorbit.util;
 
+import gaia.cu9.ari.gaiaorbit.util.coord.AstroUtils;
+
 import com.badlogic.gdx.Application.ApplicationType;
 import com.badlogic.gdx.Gdx;
-import gaia.cu9.ari.gaiaorbit.util.coord.AstroUtils;
 
 public class Constants {
 

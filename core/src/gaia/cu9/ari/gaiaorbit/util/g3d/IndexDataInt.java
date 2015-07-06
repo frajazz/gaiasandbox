@@ -16,10 +16,10 @@ package gaia.cu9.ari.gaiaorbit.util.g3d;
  * limitations under the License.
  ******************************************************************************/
 
-import com.badlogic.gdx.utils.Disposable;
-
 import java.nio.IntBuffer;
 import java.nio.ShortBuffer;
+
+import com.badlogic.gdx.utils.Disposable;
 
 /**
  * Copy of libgdx's IndexData object with integer indices instead of short.

@@ -1,5 +1,67 @@
 package gaia.cu9.ari.gaiaorbit;
 
+import gaia.cu9.ari.gaiaorbit.data.AssetBean;
+import gaia.cu9.ari.gaiaorbit.data.GaiaAttitudeLoader;
+import gaia.cu9.ari.gaiaorbit.data.JythonFactoryLoader;
+import gaia.cu9.ari.gaiaorbit.data.SGLoader;
+import gaia.cu9.ari.gaiaorbit.data.SGLoader.SGLoaderParameter;
+import gaia.cu9.ari.gaiaorbit.data.orbit.OrbitData;
+import gaia.cu9.ari.gaiaorbit.data.orbit.OrbitDataLoader;
+import gaia.cu9.ari.gaiaorbit.event.EventManager;
+import gaia.cu9.ari.gaiaorbit.event.Events;
+import gaia.cu9.ari.gaiaorbit.event.IObserver;
+import gaia.cu9.ari.gaiaorbit.interfce.FullGui;
+import gaia.cu9.ari.gaiaorbit.interfce.GaiaControllerListener;
+import gaia.cu9.ari.gaiaorbit.interfce.GaiaInputController;
+import gaia.cu9.ari.gaiaorbit.interfce.HUDGui;
+import gaia.cu9.ari.gaiaorbit.interfce.IGui;
+import gaia.cu9.ari.gaiaorbit.interfce.LoadingGui;
+import gaia.cu9.ari.gaiaorbit.interfce.MobileGui;
+import gaia.cu9.ari.gaiaorbit.interfce.RenderGui;
+import gaia.cu9.ari.gaiaorbit.render.AbstractRenderer;
+import gaia.cu9.ari.gaiaorbit.render.ComponentType;
+import gaia.cu9.ari.gaiaorbit.render.GSPostProcessor;
+import gaia.cu9.ari.gaiaorbit.render.IPostProcessor;
+import gaia.cu9.ari.gaiaorbit.render.IPostProcessor.PostProcessBean;
+import gaia.cu9.ari.gaiaorbit.render.IPostProcessor.RenderType;
+import gaia.cu9.ari.gaiaorbit.render.SceneGraphRenderer;
+import gaia.cu9.ari.gaiaorbit.scenegraph.AbstractPositionEntity;
+import gaia.cu9.ari.gaiaorbit.scenegraph.CameraManager;
+import gaia.cu9.ari.gaiaorbit.scenegraph.CameraManager.CameraMode;
+import gaia.cu9.ari.gaiaorbit.scenegraph.CelestialBody;
+import gaia.cu9.ari.gaiaorbit.scenegraph.ICamera;
+import gaia.cu9.ari.gaiaorbit.scenegraph.ISceneGraph;
+import gaia.cu9.ari.gaiaorbit.scenegraph.SceneGraphNode;
+import gaia.cu9.ari.gaiaorbit.scenegraph.component.ModelComponent;
+import gaia.cu9.ari.gaiaorbit.util.CamRecorder;
+import gaia.cu9.ari.gaiaorbit.util.Constants;
+import gaia.cu9.ari.gaiaorbit.util.GlobalConf;
+import gaia.cu9.ari.gaiaorbit.util.GlobalResources;
+import gaia.cu9.ari.gaiaorbit.util.I18n;
+import gaia.cu9.ari.gaiaorbit.util.Logger;
+import gaia.cu9.ari.gaiaorbit.util.ModelCache;
+import gaia.cu9.ari.gaiaorbit.util.concurrent.ThreadIndexer;
+import gaia.cu9.ari.gaiaorbit.util.concurrent.ThreadPoolManager;
+import gaia.cu9.ari.gaiaorbit.util.gaia.GaiaAttitudeServer;
+import gaia.cu9.ari.gaiaorbit.util.math.MathUtilsd;
+import gaia.cu9.ari.gaiaorbit.util.math.Vector3d;
+import gaia.cu9.ari.gaiaorbit.util.screenshot.BasicFileImageRenderer;
+import gaia.cu9.ari.gaiaorbit.util.screenshot.BufferedFileImageRenderer;
+import gaia.cu9.ari.gaiaorbit.util.screenshot.IFileImageRenderer;
+import gaia.cu9.ari.gaiaorbit.util.screenshot.ImageRenderer;
+import gaia.cu9.ari.gaiaorbit.util.time.GlobalClock;
+import gaia.cu9.ari.gaiaorbit.util.tree.OctreeNode;
+
+import java.io.File;
+import java.io.FileInputStream;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+
+import sandbox.script.JythonFactory;
+
 import com.badlogic.gdx.Application;
 import com.badlogic.gdx.ApplicationListener;
 import com.badlogic.gdx.Gdx;
@@ -12,45 +74,11 @@ import com.badlogic.gdx.files.FileHandle;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.Pixmap.Format;
 import com.badlogic.gdx.graphics.glutils.FrameBuffer;
-import gaia.cu9.ari.gaiaorbit.data.*;
-import gaia.cu9.ari.gaiaorbit.data.SGLoader.SGLoaderParameter;
-import gaia.cu9.ari.gaiaorbit.data.orbit.OrbitData;
-import gaia.cu9.ari.gaiaorbit.data.orbit.OrbitDataLoader;
-import gaia.cu9.ari.gaiaorbit.event.EventManager;
-import gaia.cu9.ari.gaiaorbit.event.Events;
-import gaia.cu9.ari.gaiaorbit.event.IObserver;
-import gaia.cu9.ari.gaiaorbit.interfce.*;
-import gaia.cu9.ari.gaiaorbit.render.AbstractRenderer;
-import gaia.cu9.ari.gaiaorbit.render.GSPostProcessor;
-import gaia.cu9.ari.gaiaorbit.render.IPostProcessor;
-import gaia.cu9.ari.gaiaorbit.render.IPostProcessor.PostProcessBean;
-import gaia.cu9.ari.gaiaorbit.render.IPostProcessor.RenderType;
-import gaia.cu9.ari.gaiaorbit.render.SceneGraphRenderer;
-import gaia.cu9.ari.gaiaorbit.render.SceneGraphRenderer.ComponentType;
-import gaia.cu9.ari.gaiaorbit.scenegraph.*;
-import gaia.cu9.ari.gaiaorbit.scenegraph.CameraManager.CameraMode;
-import gaia.cu9.ari.gaiaorbit.scenegraph.component.ModelComponent;
-import gaia.cu9.ari.gaiaorbit.util.*;
-import gaia.cu9.ari.gaiaorbit.util.concurrent.ThreadIndexer;
-import gaia.cu9.ari.gaiaorbit.util.concurrent.ThreadPoolManager;
-import gaia.cu9.ari.gaiaorbit.util.gaia.GaiaAttitudeServer;
-import gaia.cu9.ari.gaiaorbit.util.math.MathUtilsd;
-import gaia.cu9.ari.gaiaorbit.util.math.Vector3d;
-import gaia.cu9.ari.gaiaorbit.util.screenshot.BasicFileImageRenderer;
-import gaia.cu9.ari.gaiaorbit.util.screenshot.BufferedFileImageRenderer;
-import gaia.cu9.ari.gaiaorbit.util.screenshot.IFileImageRenderer;
-import gaia.cu9.ari.gaiaorbit.util.screenshot.ImageRenderer;
-import gaia.cu9.ari.gaiaorbit.util.time.GlobalClock;
-import gaia.cu9.ari.gaiaorbit.util.tree.OctreeNode;
-import sandbox.script.JythonFactory;
-
-import java.io.File;
-import java.io.FileInputStream;
-import java.net.MalformedURLException;
-import java.util.*;
 
 /**
- * The main class. Holds all the entities manages the update/draw cycle as well as the image rendering.
+ * The main class. Holds all the entities manages the update/draw cycle as well
+ * as the image rendering.
+ * 
  * @author Toni Sagrista
  *
  */
@@ -58,7 +86,6 @@ public class GaiaSandbox implements ApplicationListener, IObserver {
     private static boolean LOADING = true;
 
     public static GaiaSandbox instance;
-    private static Thread mainThread;
 
     // Asset manager
     public AssetManager manager;
@@ -108,7 +135,10 @@ public class GaiaSandbox implements ApplicationListener, IObserver {
 
     /**
      * Creates a Gaia Sandbox instance.
-     * @param openGLGUI This will paint the GUI in OpenGL. True for Desktop (if not Swing GUI) and Android.
+     * 
+     * @param openGLGUI
+     *            This will paint the GUI in OpenGL. True for Desktop (if not
+     *            Swing GUI) and Android.
      */
     public GaiaSandbox(boolean openGLGUI) {
         super();
@@ -123,7 +153,6 @@ public class GaiaSandbox implements ApplicationListener, IObserver {
     @Override
     public void create() {
         Gdx.app.setLogLevel(Application.LOG_INFO);
-        Thread.currentThread().setPriority(Thread.MAX_PRIORITY);
 
         boolean mobile = Constants.mobile;
         boolean desktop = !mobile;
@@ -139,10 +168,10 @@ public class GaiaSandbox implements ApplicationListener, IObserver {
         }
 
         if (!GlobalConf.initialized()) {
-            // Initialize the configuration if needed
+            // Initialise the configuration if needed
             try {
                 if (mobile) {
-                    GlobalConf.initialize(Gdx.files.internal("conf/android/global.properties").read(), this.getClass().getResourceAsStream("/version"));
+                    GlobalConf.initialize(Gdx.files.internal("conf/android/global.properties").read(), Gdx.files.internal("version").read());
                 } else {
                     File confFile = new File(System.getProperty("properties.file"));
                     FileInputStream fis = new FileInputStream(confFile);
@@ -240,8 +269,8 @@ public class GaiaSandbox implements ApplicationListener, IObserver {
     }
 
     /**
-     * Execute this when the models have finished loading. This sets the models to their classes and
-     * removes the Loading message
+     * Execute this when the models have finished loading. This sets the models
+     * to their classes and removes the Loading message
      */
     private void doneLoading() {
         loadingGui.dispose();
@@ -276,8 +305,7 @@ public class GaiaSandbox implements ApplicationListener, IObserver {
         GlobalClock.clock.update(0);
         OctreeNode.LOAD_ACTIVE = true;
 
-
-        // Initialize  input handlers
+        // Initialize input handlers
         InputMultiplexer inputMultiplexer = new InputMultiplexer();
         if (GlobalConf.OPENGL_GUI) {
             // Only for the Full GUI
@@ -307,7 +335,8 @@ public class GaiaSandbox implements ApplicationListener, IObserver {
         Vector3d newCameraPos = focus.pos.cpy().add(0, 0, -dst);
         EventManager.instance.post(Events.CAMERA_POS_CMD, newCameraPos.values());
 
-        // Update whole tree to reinitialize positions with the new camera position
+        // Update whole tree to reinitialize positions with the new camera
+        // position
         GlobalClock.clock.update(0.00000001f);
         sg.update(GlobalClock.clock, cam);
         sgr.clearLists();
@@ -327,24 +356,20 @@ public class GaiaSandbox implements ApplicationListener, IObserver {
 
         initialized = true;
 
-
         // Run tutorial
         if (GlobalConf.program.DISPLAY_TUTORIAL) {
             EventManager.instance.post(Events.RUN_SCRIPT_PATH, "scripts/tutorial/tutorial-pointer.py");
             GlobalConf.program.DISPLAY_TUTORIAL = false;
         }
 
-
     }
 
     @Override
     public void dispose() {
-        try {
-            if (!Constants.mobile)
-                GlobalConf.saveProperties(new File(System.getProperty("properties.file")).toURI().toURL());
-        } catch (MalformedURLException e) {
-            Logger.error(e);
-        }
+
+        if (!Constants.mobile)
+            GlobalConf.saveProperties(new File(System.getProperty("properties.file")));
+
         frameRenderer.flush();
         gui.dispose();
         renderGui.dispose();
@@ -357,10 +382,6 @@ public class GaiaSandbox implements ApplicationListener, IObserver {
     @Override
     public void render() {
         if (LOADING) {
-            // Set main thread
-            if (mainThread == null)
-                mainThread = Thread.currentThread();
-
             if (manager.update()) {
                 doneLoading();
 
@@ -441,11 +462,14 @@ public class GaiaSandbox implements ApplicationListener, IObserver {
 
     /**
      * Update method.
-     * @param dt Delta time in seconds.
+     * 
+     * @param dt
+     *            Delta time in seconds.
      */
     public void update(float dt) {
         if (GlobalConf.frame.RENDER_OUTPUT) {
-            // If RENDER_OUTPUT is active, we need to set our dt according to the fps
+            // If RENDER_OUTPUT is active, we need to set our dt according to
+            // the fps
             dt = 1f / GlobalConf.frame.RENDER_TARGET_FPS;
         } else {
             // Max time step is 0.1 seconds. Not in RENDER_OUTPUT MODE.
@@ -479,29 +503,39 @@ public class GaiaSandbox implements ApplicationListener, IObserver {
     }
 
     /**
-     * Renders the current scene to an image and returns the file name where it has been written to
+     * Renders the current scene to an image and returns the file name where it
+     * has been written to
+     * 
      * @param camera
-     * @param width The width of the image.
-     * @param height The height of the image.
-     * @param folder The folder to save the image to.
-     * @param filename The file name prefix.
-     * @param renderer the {@link IFileImageRenderer} to use.
+     * @param width
+     *            The width of the image.
+     * @param height
+     *            The height of the image.
+     * @param folder
+     *            The folder to save the image to.
+     * @param filename
+     *            The file name prefix.
+     * @param renderer
+     *            the {@link IFileImageRenderer} to use.
      * @return
      */
     public String renderToImage(ICamera camera, PostProcessBean ppb, int width, int height, String folder, String filename, IFileImageRenderer renderer) {
         FrameBuffer frameBuffer = getFrameBuffer(width, height);
-        // TODO That's a dirty trick, we should find a better way (i.e. making buildEnabledEffectsList() method public)
+        // TODO That's a dirty trick, we should find a better way (i.e. making
+        // buildEnabledEffectsList() method public)
         boolean postprocessing = ppb.pp.captureNoClear();
         ppb.pp.captureEnd();
         if (!postprocessing) {
             // If post processing is not active, we must start the buffer now.
-            // Otherwise, it is used in the render method to write the results of the pp.
+            // Otherwise, it is used in the render method to write the results
+            // of the pp.
             frameBuffer.begin();
         }
 
         // this is the main render function
         preRenderScene();
-        //sgr.render(camera, width, height, postprocessing ? m_fbo : null, ppb);
+        // sgr.render(camera, width, height, postprocessing ? m_fbo : null,
+        // ppb);
         sgr.render(camera, width, height, frameBuffer, ppb);
 
         if (postprocessing) {

@@ -1,6 +1,5 @@
 package gaia.cu9.ari.gaiaorbit.render;
 
-import gaia.cu9.ari.gaiaorbit.render.SceneGraphRenderer.ComponentType;
 
 /**
  * A top-level renderable interface that all renderable objects must extend.

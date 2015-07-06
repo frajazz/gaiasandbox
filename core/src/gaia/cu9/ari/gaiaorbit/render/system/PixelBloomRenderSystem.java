@@ -1,10 +1,11 @@
 package gaia.cu9.ari.gaiaorbit.render.system;
 
+import gaia.cu9.ari.gaiaorbit.event.IObserver;
+import gaia.cu9.ari.gaiaorbit.scenegraph.SceneGraphNode.RenderGroup;
+
 import com.bitfire.postprocessing.PostProcessor;
 import com.bitfire.postprocessing.effects.Bloom;
 import com.bitfire.postprocessing.filters.Blur.BlurType;
-import gaia.cu9.ari.gaiaorbit.event.IObserver;
-import gaia.cu9.ari.gaiaorbit.scenegraph.SceneGraphNode.RenderGroup;
 
 public class PixelBloomRenderSystem extends PixelPostProcessRenderSystem implements IObserver {
 

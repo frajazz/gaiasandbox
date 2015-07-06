@@ -1,18 +1,6 @@
 package gaia.cu9.ari.gaiaorbit.scenegraph;
 
-import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.assets.AssetManager;
-import com.badlogic.gdx.graphics.GL20;
-import com.badlogic.gdx.graphics.Texture;
-import com.badlogic.gdx.graphics.Texture.TextureFilter;
-import com.badlogic.gdx.graphics.VertexAttributes.Usage;
-import com.badlogic.gdx.graphics.g3d.*;
-import com.badlogic.gdx.graphics.g3d.attributes.BlendingAttribute;
-import com.badlogic.gdx.graphics.g3d.attributes.ColorAttribute;
-import com.badlogic.gdx.graphics.g3d.attributes.FloatAttribute;
-import com.badlogic.gdx.graphics.g3d.attributes.TextureAttribute;
-import com.badlogic.gdx.math.Matrix4;
-import gaia.cu9.ari.gaiaorbit.render.SceneGraphRenderer.ComponentType;
+import gaia.cu9.ari.gaiaorbit.render.ComponentType;
 import gaia.cu9.ari.gaiaorbit.scenegraph.component.ModelComponent;
 import gaia.cu9.ari.gaiaorbit.util.GlobalConf;
 import gaia.cu9.ari.gaiaorbit.util.ModelCache;
@@ -22,6 +10,23 @@ import gaia.cu9.ari.gaiaorbit.util.time.TimeUtils;
 
 import java.util.Map;
 import java.util.TreeMap;
+
+import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.assets.AssetManager;
+import com.badlogic.gdx.graphics.GL20;
+import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.graphics.Texture.TextureFilter;
+import com.badlogic.gdx.graphics.VertexAttributes.Usage;
+import com.badlogic.gdx.graphics.g3d.Environment;
+import com.badlogic.gdx.graphics.g3d.Material;
+import com.badlogic.gdx.graphics.g3d.Model;
+import com.badlogic.gdx.graphics.g3d.ModelBatch;
+import com.badlogic.gdx.graphics.g3d.ModelInstance;
+import com.badlogic.gdx.graphics.g3d.attributes.BlendingAttribute;
+import com.badlogic.gdx.graphics.g3d.attributes.ColorAttribute;
+import com.badlogic.gdx.graphics.g3d.attributes.FloatAttribute;
+import com.badlogic.gdx.graphics.g3d.attributes.TextureAttribute;
+import com.badlogic.gdx.math.Matrix4;
 
 public class Star extends Particle {
 
@@ -94,15 +99,15 @@ public class Star extends Particle {
                     }
                     // Check Sol position for gravity distortion
 
-//                    if (this.name.equalsIgnoreCase("sol")) {
-//                        // We have the closest shader star
-//                        Vector3 aux = auxVector3f.get();
-//                        camera.getCamera().project(aux.set(transform.getTranslationf()));
-//                        float x = aux.x;
-//                        float y = aux.y;
-//
-//                        EventManager.instance.post(Events.GRAVITATIONAL_LENSING_PARAMS, x, y);
-//                    }
+                    //                    if (this.name.equalsIgnoreCase("sol")) {
+                    //                        // We have the closest shader star
+                    //                        Vector3 aux = auxVector3f.get();
+                    //                        camera.getCamera().project(aux.set(transform.getTranslationf()));
+                    //                        float x = aux.x;
+                    //                        float y = aux.y;
+                    //
+                    //                        EventManager.instance.post(Events.GRAVITATIONAL_LENSING_PARAMS, x, y);
+                    //                    }
                 }
             }
             if (renderText()) {
@@ -128,12 +133,6 @@ public class Star extends Particle {
     }
 
     public String toString() {
-        return "Star{" +
-                " name=" + name +
-                " id=" + id +
-                " sph=" + posSph +
-                " pos=" + pos +
-                " absmag=" + absmag +
-                '}';
+        return "Star{" + " name=" + name + " id=" + id + " sph=" + posSph + " pos=" + pos + " absmag=" + absmag + '}';
     }
 }

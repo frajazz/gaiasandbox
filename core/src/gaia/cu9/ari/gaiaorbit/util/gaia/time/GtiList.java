@@ -39,7 +39,6 @@ package gaia.cu9.ari.gaiaorbit.util.gaia.time;
 
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.Date;
 
 /**
  * A collection of Good Time Intervals (GTIs).

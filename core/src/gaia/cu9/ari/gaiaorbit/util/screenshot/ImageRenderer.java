@@ -1,5 +1,10 @@
 package gaia.cu9.ari.gaiaorbit.util.screenshot;
 
+import java.io.File;
+import java.nio.ByteBuffer;
+import java.text.DecimalFormat;
+import java.util.Arrays;
+
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Graphics;
 import com.badlogic.gdx.files.FileHandle;
@@ -8,12 +13,6 @@ import com.badlogic.gdx.graphics.Pixmap;
 import com.badlogic.gdx.graphics.Pixmap.Format;
 import com.badlogic.gdx.graphics.PixmapIO;
 import com.badlogic.gdx.utils.ScreenUtils;
-
-import java.awt.*;
-import java.io.File;
-import java.nio.ByteBuffer;
-import java.text.DecimalFormat;
-import java.util.Arrays;
 
 /**
  * Utility class to render the current frame buffer to images.

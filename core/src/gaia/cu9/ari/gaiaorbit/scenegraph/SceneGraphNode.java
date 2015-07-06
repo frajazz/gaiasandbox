@@ -1,14 +1,8 @@
 package gaia.cu9.ari.gaiaorbit.scenegraph;
 
-import com.badlogic.gdx.assets.AssetManager;
-import com.badlogic.gdx.math.Matrix4;
-import com.badlogic.gdx.math.Vector3;
-import com.badlogic.gdx.utils.Bits;
-import com.badlogic.gdx.utils.Pool;
-import com.badlogic.gdx.utils.Pools;
+import gaia.cu9.ari.gaiaorbit.render.ComponentType;
 import gaia.cu9.ari.gaiaorbit.render.IRenderable;
 import gaia.cu9.ari.gaiaorbit.render.SceneGraphRenderer;
-import gaia.cu9.ari.gaiaorbit.render.SceneGraphRenderer.ComponentType;
 import gaia.cu9.ari.gaiaorbit.scenegraph.octreewrapper.AbstractOctreeWrapper;
 import gaia.cu9.ari.gaiaorbit.util.concurrent.ThreadIndexer;
 import gaia.cu9.ari.gaiaorbit.util.math.Matrix4d;
@@ -20,6 +14,13 @@ import gaia.cu9.ari.gaiaorbit.util.tree.IPosition;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Vector;
+
+import com.badlogic.gdx.assets.AssetManager;
+import com.badlogic.gdx.math.Matrix4;
+import com.badlogic.gdx.math.Vector3;
+import com.badlogic.gdx.utils.Bits;
+import com.badlogic.gdx.utils.Pool;
+import com.badlogic.gdx.utils.Pools;
 
 /**
  * A scene graph entity.
@@ -192,7 +193,7 @@ public class SceneGraphNode implements ISceneGraphNode, IPosition {
     /**
      * For visibility toggles
      */
-    public SceneGraphRenderer.ComponentType ct;
+    public ComponentType ct;
 
     public SceneGraphNode() {
         // Identity
@@ -205,7 +206,7 @@ public class SceneGraphNode implements ISceneGraphNode, IPosition {
         this.id = id;
     }
 
-    public SceneGraphNode(SceneGraphRenderer.ComponentType ct) {
+    public SceneGraphNode(ComponentType ct) {
         super();
         this.ct = ct;
     }
@@ -465,7 +466,7 @@ public class SceneGraphNode implements ISceneGraphNode, IPosition {
     }
 
     public void setCt(String ct) {
-        this.ct = SceneGraphRenderer.ComponentType.valueOf(ct);
+        this.ct = ComponentType.valueOf(ct);
     }
 
     public ComponentType getComponentType() {

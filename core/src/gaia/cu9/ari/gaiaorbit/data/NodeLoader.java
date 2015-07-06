@@ -1,7 +1,5 @@
 package gaia.cu9.ari.gaiaorbit.data;
 
-import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.math.Vector3;
 import gaia.cu9.ari.gaiaorbit.scenegraph.SceneGraphNode;
 import gaia.cu9.ari.gaiaorbit.util.GlobalResources;
 import gaia.cu9.ari.gaiaorbit.util.I18n;
@@ -14,6 +12,9 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Properties;
+
+import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.math.Vector3;
 
 /**
  * Class that loads scene graph nodes.

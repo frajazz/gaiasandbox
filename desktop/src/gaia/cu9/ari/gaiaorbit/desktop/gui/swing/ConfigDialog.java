@@ -1,11 +1,5 @@
 package gaia.cu9.ari.gaiaorbit.desktop.gui.swing;
 
-import com.badlogic.gdx.Graphics.DisplayMode;
-import com.badlogic.gdx.Input.Keys;
-import com.badlogic.gdx.backends.lwjgl.LwjglApplicationConfiguration;
-import com.badlogic.gdx.math.MathUtils;
-import com.badlogic.gdx.utils.JsonValue;
-
 import gaia.cu9.ari.gaiaorbit.data.FileLocator;
 import gaia.cu9.ari.gaiaorbit.desktop.GaiaSandboxDesktop;
 import gaia.cu9.ari.gaiaorbit.desktop.gui.swing.callback.Callback;
@@ -20,19 +14,17 @@ import gaia.cu9.ari.gaiaorbit.interfce.KeyMappings.ProgramAction;
 import gaia.cu9.ari.gaiaorbit.util.GlobalConf;
 import gaia.cu9.ari.gaiaorbit.util.GlobalResources;
 import gaia.cu9.ari.gaiaorbit.util.I18n;
-import gaia.cu9.ari.gaiaorbit.util.Logger;
-import net.miginfocom.swing.MigLayout;
 
-import javax.swing.*;
-import javax.swing.border.Border;
-import javax.swing.border.MatteBorder;
-import javax.swing.border.TitledBorder;
-import javax.swing.event.ChangeEvent;
-import javax.swing.event.ChangeListener;
-import javax.swing.event.DocumentEvent;
-import javax.swing.event.DocumentListener;
-
-import java.awt.*;
+import java.awt.BorderLayout;
+import java.awt.Color;
+import java.awt.Component;
+import java.awt.Desktop;
+import java.awt.Dimension;
+import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
+import java.awt.GridLayout;
+import java.awt.Insets;
+import java.awt.Label;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
@@ -41,14 +33,59 @@ import java.beans.PropertyChangeListener;
 import java.beans.PropertyChangeSupport;
 import java.io.File;
 import java.io.IOException;
-import java.net.MalformedURLException;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URL;
-import java.util.*;
+import java.util.Arrays;
+import java.util.Date;
+import java.util.Locale;
+import java.util.Map;
+import java.util.Set;
+import java.util.TreeSet;
+
+import javax.swing.AbstractAction;
+import javax.swing.ButtonGroup;
+import javax.swing.Icon;
+import javax.swing.ImageIcon;
+import javax.swing.JButton;
+import javax.swing.JCheckBox;
+import javax.swing.JComboBox;
+import javax.swing.JComponent;
+import javax.swing.JFileChooser;
+import javax.swing.JFrame;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+import javax.swing.JRadioButton;
+import javax.swing.JScrollPane;
+import javax.swing.JSpinner;
+import javax.swing.JTabbedPane;
+import javax.swing.JTable;
+import javax.swing.JTextArea;
+import javax.swing.JTextField;
+import javax.swing.JTree;
+import javax.swing.KeyStroke;
+import javax.swing.SpinnerNumberModel;
+import javax.swing.SwingConstants;
+import javax.swing.UIManager;
+import javax.swing.border.Border;
+import javax.swing.border.MatteBorder;
+import javax.swing.border.TitledBorder;
+import javax.swing.event.ChangeEvent;
+import javax.swing.event.ChangeListener;
+import javax.swing.event.DocumentEvent;
+import javax.swing.event.DocumentListener;
+
+import net.miginfocom.swing.MigLayout;
+
+import com.badlogic.gdx.Graphics.DisplayMode;
+import com.badlogic.gdx.Input.Keys;
+import com.badlogic.gdx.backends.lwjgl.LwjglApplicationConfiguration;
+import com.badlogic.gdx.math.MathUtils;
+import com.badlogic.gdx.utils.JsonValue;
 
 /**
  * The configuration dialog to set the resolution, the screen mode, etc.
+ * 
  * @author Toni Sagrista
  *
  */
@@ -91,19 +128,18 @@ public class ConfigDialog extends I18nJFrame {
         frame.setAutoRequestFocus(true);
 
         // ESC closes the frame
-        getRootPane().getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(
-                KeyStroke.getKeyStroke("ESCAPE"), "closeTheDialog");
-        getRootPane().getActionMap().put("closeTheDialog",
-                new AbstractAction() {
+        getRootPane().getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(KeyStroke.getKeyStroke("ESCAPE"), "closeTheDialog");
+        getRootPane().getActionMap().put("closeTheDialog", new AbstractAction() {
 
-                    private static final long serialVersionUID = 8360999630557775801L;
+            private static final long serialVersionUID = 8360999630557775801L;
 
-                    @Override
-                    public void actionPerformed(ActionEvent e) {
-                        //This should be replaced by the action you want to perform
-                        cancelButton.doClick();
-                    }
-                });
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                // This should be replaced by the action you want to
+                // perform
+                cancelButton.doClick();
+            }
+        });
 
         // Request focus
         frame.getRootPane().setDefaultButton(okButton);
@@ -265,14 +301,14 @@ public class ConfigDialog extends I18nJFrame {
         notice.add(noticeText);
 
         /** SUB TABBED PANE **/
-        //	JTabbedPane graphicsTabbedPane = new JTabbedPane();
-        //	graphicsTabbedPane.setTabPlacement(JTabbedPane.TOP);
+        // JTabbedPane graphicsTabbedPane = new JTabbedPane();
+        // graphicsTabbedPane.setTabPlacement(JTabbedPane.TOP);
         //
-        //	graphicsTabbedPane.addTab(txt("gui.resolutionmode"), mode);
-        //	graphicsTabbedPane.addTab(txt("gui.graphicssettings"), graphics);
+        // graphicsTabbedPane.addTab(txt("gui.resolutionmode"), mode);
+        // graphicsTabbedPane.addTab(txt("gui.graphicssettings"), graphics);
 
         JPanel graphicsPanel = new JPanel(new MigLayout("", "[grow,fill][]", ""));
-        //graphicsPanel.add(graphicsTabbedPane, "wrap");
+        // graphicsPanel.add(graphicsTabbedPane, "wrap");
         graphicsPanel.add(mode, "wrap");
         graphicsPanel.add(graphics, "wrap");
         if (!startup) {
@@ -459,7 +495,8 @@ public class ConfigDialog extends I18nJFrame {
         screenshotsDir.addActionListener(new ActionListener() {
             JFileChooser chooser = null;
 
-            @Override public void actionPerformed(ActionEvent e) {
+            @Override
+            public void actionPerformed(ActionEvent e) {
                 SecurityManager sm = System.getSecurityManager();
                 System.setSecurityManager(null);
                 chooser = new JFileChooser();
@@ -573,7 +610,8 @@ public class ConfigDialog extends I18nJFrame {
         frameDir.addActionListener(new ActionListener() {
             JFileChooser chooser = null;
 
-            @Override public void actionPerformed(ActionEvent e) {
+            @Override
+            public void actionPerformed(ActionEvent e) {
                 SecurityManager sm = System.getSecurityManager();
                 System.setSecurityManager(null);
                 chooser = new JFileChooser();
@@ -647,7 +685,6 @@ public class ConfigDialog extends I18nJFrame {
         final JSpinner frameWidthField = new JSpinner(new SpinnerNumberModel(GlobalConf.frame.RENDER_WIDTH, 100, 5000, 1));
         final JSpinner frameHeightField = new JSpinner(new SpinnerNumberModel(GlobalConf.frame.RENDER_HEIGHT, 100, 5000, 1));
 
-
         // FRAME OUTPUT MODE
         ComboBoxBean[] frameModesBean = new ComboBoxBean[] { new ComboBoxBean(txt("gui.screenshots.mode.simple"), 0), new ComboBoxBean(txt("gui.screenshots.mode.redraw"), 1) };
         final JComboBox<ComboBoxBean> frameMode = new JComboBox<ComboBoxBean>(frameModesBean);
@@ -686,7 +723,6 @@ public class ConfigDialog extends I18nJFrame {
         imageOutput.add(frameWidthField);
         imageOutput.add(frameXLabel);
         imageOutput.add(frameHeightField, "wrap");
-
 
         JPanel imageOutputPanel = new JPanel(new MigLayout("", "[grow,fill]", ""));
         imageOutputPanel.add(imageOutput, "wrap");
@@ -812,11 +848,8 @@ public class ConfigDialog extends I18nJFrame {
                     GlobalConf.frame.RENDER_TARGET_FPS = ((Integer) targetFPS.getValue());
 
                     // Save configuration
-                    try {
-                        GlobalConf.saveProperties(new File(System.getProperty("properties.file")).toURI().toURL());
-                    } catch (MalformedURLException e) {
-                        Logger.error(e);
-                    }
+
+                    GlobalConf.saveProperties(new File(System.getProperty("properties.file")));
 
                     EventManager.instance.post(Events.PROPERTIES_WRITTEN);
 
@@ -959,12 +992,17 @@ public class ConfigDialog extends I18nJFrame {
 
     /**
      * Checks the given version against the current version and:
-     * <ul><li>
-     * Displays a "new version available" message if the given version is newer than the current.
-     * </li><li>
-     * Display a "you have the latest version" message and a "check now" button if the given version is older.
-     * </li></ul>
-     * @param version The version to check.
+     * <ul>
+     * <li>
+     * Displays a "new version available" message if the given version is newer
+     * than the current.</li>
+     * <li>
+     * Display a "you have the latest version" message and a "check now" button
+     * if the given version is older.</li>
+     * </ul>
+     * 
+     * @param version
+     *            The version to check.
      */
     private void newVersionCheck(String version) {
         int[] majmin = GlobalConf.VersionConf.getMajorMinorFromString(version);

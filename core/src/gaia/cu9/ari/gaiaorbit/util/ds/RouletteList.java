@@ -1,6 +1,10 @@
 package gaia.cu9.ari.gaiaorbit.util.ds;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.Iterator;
+import java.util.List;
 
 /**
  * A structure composed of a set of collections of a given size in which

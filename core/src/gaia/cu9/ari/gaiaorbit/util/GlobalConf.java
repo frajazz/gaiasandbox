@@ -4,17 +4,20 @@ import gaia.cu9.ari.gaiaorbit.GaiaSandbox;
 import gaia.cu9.ari.gaiaorbit.event.EventManager;
 import gaia.cu9.ari.gaiaorbit.event.Events;
 import gaia.cu9.ari.gaiaorbit.event.IObserver;
-import gaia.cu9.ari.gaiaorbit.render.SceneGraphRenderer.ComponentType;
+import gaia.cu9.ari.gaiaorbit.render.ComponentType;
 import gaia.cu9.ari.gaiaorbit.render.system.AbstractRenderSystem;
 import gaia.cu9.ari.gaiaorbit.util.math.MathUtilsd;
 
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.InputStream;
-import java.net.URL;
 import java.text.DateFormat;
 import java.text.ParseException;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
+import java.util.Locale;
+import java.util.Properties;
 
 /**
  * Holds the global configuration options
@@ -50,8 +53,7 @@ public class GlobalConf {
     }
 
     public enum ScreenshotMode {
-        simple,
-        redraw
+        simple, redraw
     }
 
     public static class ScreenshotConf implements IConf {
@@ -905,13 +907,13 @@ public class GlobalConf {
     /**
      * Saves the current state of the properties to the properties file.
      */
-    public static void saveProperties(URL propsFileURL) {
+    public static void saveProperties(File propsFile) {
         updatePropertiesValues();
         try {
-            FileOutputStream fos = new FileOutputStream(propsFileURL.getFile());
+            FileOutputStream fos = new FileOutputStream(propsFile);
             p.store(fos, null);
             fos.close();
-            Logger.info("Configuration saved to " + propsFileURL);
+            Logger.info("Configuration saved to " + propsFile.getAbsolutePath());
         } catch (Exception e) {
             Logger.error(e);
         }

@@ -1,6 +1,5 @@
 package gaia.cu9.ari.gaiaorbit.util.gaia;
 
-import com.badlogic.gdx.files.FileHandle;
 import gaia.cu9.ari.gaiaorbit.event.EventManager;
 import gaia.cu9.ari.gaiaorbit.event.Events;
 import gaia.cu9.ari.gaiaorbit.util.BinarySearchTree;
@@ -13,6 +12,8 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
+
+import com.badlogic.gdx.files.FileHandle;
 
 /**
  * Provides caching of the last Nsl37 attitude requested.

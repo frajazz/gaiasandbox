@@ -1,7 +1,5 @@
 package gaia.cu9.ari.gaiaorbit.render.system;
 
-import com.badlogic.gdx.Gdx;
-import com.bitfire.postprocessing.PostProcessor;
 import gaia.cu9.ari.gaiaorbit.event.EventManager;
 import gaia.cu9.ari.gaiaorbit.event.Events;
 import gaia.cu9.ari.gaiaorbit.event.IObserver;
@@ -11,6 +9,9 @@ import gaia.cu9.ari.gaiaorbit.util.postprocessing.effects.GravitationalDistortio
 
 import java.util.ArrayList;
 import java.util.List;
+
+import com.badlogic.gdx.Gdx;
+import com.bitfire.postprocessing.PostProcessor;
 
 public class PixelFuzzyRenderSystem extends PixelPostProcessRenderSystem implements IObserver {
 

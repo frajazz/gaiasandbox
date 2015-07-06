@@ -1,9 +1,9 @@
 package gaia.cu9.ari.gaiaorbit.util.math;
 
+import java.io.Serializable;
+
 import com.badlogic.gdx.math.Quaternion;
 import com.badlogic.gdx.math.Vector3;
-
-import java.io.Serializable;
 
 /**
  * Copy of libgdx's Vector3d class using doubles for some precision calculations.

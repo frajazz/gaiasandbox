@@ -1,9 +1,10 @@
 package gaia.cu9.ari.gaiaorbit.render.system;
 
+import gaia.cu9.ari.gaiaorbit.scenegraph.SceneGraphNode.RenderGroup;
+
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.Mesh;
 import com.badlogic.gdx.graphics.glutils.ShaderProgram;
-import gaia.cu9.ari.gaiaorbit.scenegraph.SceneGraphNode.RenderGroup;
 
 public abstract class ImmediateRenderSystem extends AbstractRenderSystem {
 

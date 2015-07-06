@@ -1,10 +1,11 @@
 package gaia.cu9.ari.gaiaorbit.data.orbit;
 
-import com.badlogic.gdx.Gdx;
 import gaia.cu9.ari.gaiaorbit.data.FileLocator;
 import gaia.cu9.ari.gaiaorbit.data.orbit.OrbitDataLoader.OrbitDataLoaderParameter;
 import gaia.cu9.ari.gaiaorbit.event.EventManager;
 import gaia.cu9.ari.gaiaorbit.event.Events;
+
+import com.badlogic.gdx.Gdx;
 
 /**
  * Reads an orbit file into an OrbitData object.

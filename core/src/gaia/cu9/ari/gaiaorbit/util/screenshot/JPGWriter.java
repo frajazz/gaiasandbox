@@ -1,13 +1,14 @@
 package gaia.cu9.ari.gaiaorbit.util.screenshot;
 
-import com.badlogic.gdx.files.FileHandle;
-import com.badlogic.gdx.graphics.Pixmap;
 import gaia.cu9.ari.gaiaorbit.util.Logger;
 
-import java.io.File;
-import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
+
+import javax.imageio.ImageIO;
+
+import com.badlogic.gdx.files.FileHandle;
+import com.badlogic.gdx.graphics.Pixmap;
 
 public class JPGWriter  {
 

@@ -16,10 +16,10 @@ package gaia.cu9.ari.gaiaorbit.util.math;
  * limitations under the License.
  ******************************************************************************/
 
+import java.io.Serializable;
+
 import com.badlogic.gdx.math.Matrix3;
 import com.badlogic.gdx.math.Vector3;
-
-import java.io.Serializable;
 
 /** Encapsulates a <a href="http://en.wikipedia.org/wiki/Row-major_order#Column-major_order">column major</a> 4 by 4 matrix. Like
  * the {@link Vector3d} class it allows the chaining of methods by returning a reference to itself. For example:

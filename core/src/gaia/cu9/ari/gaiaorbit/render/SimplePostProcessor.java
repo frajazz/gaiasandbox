@@ -1,12 +1,12 @@
 package gaia.cu9.ari.gaiaorbit.render;
 
+import gaia.cu9.ari.gaiaorbit.util.GlobalConf;
+
 import com.badlogic.gdx.Gdx;
 import com.bitfire.postprocessing.PostProcessor;
 import com.bitfire.postprocessing.effects.Bloom;
 import com.bitfire.postprocessing.effects.Fxaa;
-import com.bitfire.postprocessing.effects.LensFlare;
 import com.bitfire.utils.ShaderLoader;
-import gaia.cu9.ari.gaiaorbit.util.GlobalConf;
 
 public class SimplePostProcessor implements IPostProcessor {
 

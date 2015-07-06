@@ -4,8 +4,6 @@ import gaia.cu9.ari.gaiaorbit.util.Logger;
 import gaia.cu9.ari.gaiaorbit.util.gaia.time.Gti;
 import gaia.cu9.ari.gaiaorbit.util.gaia.time.GtiList;
 
-import java.util.Date;
-
 /**
  * This abstract class defines the fields and implements the methods that any
  * numerically defined attitude need in addition to those in the superclass.

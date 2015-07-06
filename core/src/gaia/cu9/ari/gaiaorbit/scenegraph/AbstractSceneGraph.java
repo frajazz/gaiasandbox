@@ -1,6 +1,5 @@
 package gaia.cu9.ari.gaiaorbit.scenegraph;
 
-import com.badlogic.gdx.utils.LongMap;
 import gaia.cu9.ari.gaiaorbit.render.system.PixelRenderSystem;
 import gaia.cu9.ari.gaiaorbit.scenegraph.octreewrapper.AbstractOctreeWrapper;
 import gaia.cu9.ari.gaiaorbit.util.GlobalConf;
@@ -11,6 +10,8 @@ import gaia.cu9.ari.gaiaorbit.util.time.ITimeFrameProvider;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+
+import com.badlogic.gdx.utils.LongMap;
 
 public abstract class AbstractSceneGraph implements ISceneGraph {
 

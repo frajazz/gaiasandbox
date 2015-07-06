@@ -1,5 +1,12 @@
 package gaia.cu9.ari.gaiaorbit.interfce;
 
+import gaia.cu9.ari.gaiaorbit.render.ComponentType;
+import gaia.cu9.ari.gaiaorbit.scenegraph.ISceneGraph;
+import gaia.cu9.ari.gaiaorbit.util.GifDecoder;
+import gaia.cu9.ari.gaiaorbit.util.GlobalResources;
+import gaia.cu9.ari.gaiaorbit.util.Logger;
+import gaia.cu9.ari.gaiaorbit.util.scene2d.AnimatedImage;
+
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.assets.AssetManager;
 import com.badlogic.gdx.graphics.Texture;
@@ -10,12 +17,6 @@ import com.badlogic.gdx.scenes.scene2d.ui.Image;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.utils.viewport.ScreenViewport;
-import gaia.cu9.ari.gaiaorbit.render.SceneGraphRenderer.ComponentType;
-import gaia.cu9.ari.gaiaorbit.scenegraph.ISceneGraph;
-import gaia.cu9.ari.gaiaorbit.util.GifDecoder;
-import gaia.cu9.ari.gaiaorbit.util.GlobalResources;
-import gaia.cu9.ari.gaiaorbit.util.Logger;
-import gaia.cu9.ari.gaiaorbit.util.scene2d.AnimatedImage;
 
 /**
  * Displays the loading screen.
@@ -34,14 +35,12 @@ public class LoadingGui implements IGui {
     /** Lock object for synchronization **/
     private Object lock;
 
-
     public LoadingGui() {
         lock = new Object();
     }
 
     @Override
     public void initialize(AssetManager assetManager) {
-
 
         // User interface
         ui = new Stage(new ScreenViewport(), GlobalResources.spriteBatch);
@@ -62,11 +61,9 @@ public class LoadingGui implements IGui {
         center.add(loadingImage);
         center.row();
 
-
         // MESSAGE INTERFACE - BOTTOM
         notificationsInterface = new NotificationsInterface(skin, lock, false, false);
         center.add(notificationsInterface);
-
 
         rebuildGui();
 
@@ -109,7 +106,8 @@ public class LoadingGui implements IGui {
     @Override
     public void resize(final int width, final int height) {
         Gdx.app.postRunnable(new Runnable() {
-            @Override public void run() {
+            @Override
+            public void run() {
                 ui.getViewport().update(width, height, true);
                 rebuildGui();
             }
@@ -138,7 +136,6 @@ public class LoadingGui implements IGui {
     @Override
     public void setVisibilityToggles(ComponentType[] entities, boolean[] visible) {
     }
-
 
     @Override
     public Actor findActor(String name) {
