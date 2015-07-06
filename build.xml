@@ -337,7 +337,7 @@
 		</script>
 		<echo>Classpath:</echo>
 		<echo>${classpathProperty}</echo>
-		<java fork="true" classname="gaia.cu9.ari.gaiaorbit.GaiaSandboxDesktop" dir="${gs-desktop.dir}">
+		<java fork="true" classname="gaia.cu9.ari.gaiaorbit.desktop.GaiaSandboxDesktop" dir="${gs-desktop.dir}">
 			<sysproperty key="properties.file" value="${gs-android.dir}/assets/conf/global.properties" />
 			<sysproperty key="assets.location" value="${gs-android.dir}/assets/" />
 			<classpath>

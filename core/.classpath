@@ -1,16 +1,13 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <classpath>
-	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/JavaSE-1.7"/>
 	<classpathentry kind="src" path="src"/>
-	<classpathentry kind="lib" path="lib/stil.jar" sourcepath="/home/tsagrista/Programs/Libraries/STIL/stil_src.zip"/>
-	<classpathentry kind="lib" path="lib/postprocessing.jar" sourcepath="/libgdx-contribs-postprocessing"/>
-	<classpathentry kind="lib" path="lib/hamcrest-core-1.3.jar"/>
-	<classpathentry kind="lib" path="lib/junit-4.12.jar"/>
-	<classpathentry kind="lib" path="lib/jython-standalone-2.7.0.jar"/>
-	<classpathentry kind="con" path="org.apache.ivyde.eclipse.cpcontainer.IVYDE_CONTAINER/?project=GaiaSandbox&amp;ivyXmlPath=ivy.xml&amp;confs=*"/>
-	<classpathentry kind="lib" path="lib/gdx-1.6.3-sources.jar"/>
-	<classpathentry kind="lib" path="lib/gdx-1.6.3.jar"/>
-	<classpathentry kind="lib" path="lib/gdx-controllers-1.6.3-sources.jar"/>
-	<classpathentry kind="lib" path="lib/gdx-controllers-1.6.3.jar"/>
+	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER" exported="true"/>
 	<classpathentry kind="output" path="bin"/>
+	<classpathentry sourcepath="/home/tsagrista/.gradle/caches/modules-2/files-2.1/com.badlogicgames.gdx/gdx/1.6.3/1606d3dacea2ce1d680407c24fa5bb3d108cf12e/gdx-1.6.3-sources.jar" kind="lib" path="/home/tsagrista/.gradle/caches/modules-2/files-2.1/com.badlogicgames.gdx/gdx/1.6.3/f5848caaa3edeedce92361c61c716a1cb33587f/gdx-1.6.3.jar" exported="true"/>
+	<classpathentry sourcepath="/home/tsagrista/.gradle/caches/modules-2/files-2.1/com.badlogicgames.gdx/gdx-controllers/1.6.3/7a6ac72a2e6a4a1446cbab8683bcd737cdbc958e/gdx-controllers-1.6.3-sources.jar" kind="lib" path="/home/tsagrista/.gradle/caches/modules-2/files-2.1/com.badlogicgames.gdx/gdx-controllers/1.6.3/8573b2dd551b672a9854092de970203ad61b07b5/gdx-controllers-1.6.3.jar" exported="true"/>
+	<classpathentry sourcepath="/home/tsagrista/.gradle/caches/modules-2/files-2.1/org.python/jython-standalone/2.7.0/7ffff3853a1c497ea4543849935a5c360d853ee2/jython-standalone-2.7.0-sources.jar" kind="lib" path="/home/tsagrista/.gradle/caches/modules-2/files-2.1/org.python/jython-standalone/2.7.0/cdfb38bc6f8343bcf1d6accc2e1147e8e7b63b75/jython-standalone-2.7.0.jar" exported="true"/>
+	<classpathentry sourcepath="/home/tsagrista/.gradle/caches/modules-2/files-2.1/junit/junit/4.12/a6c32b40bf3d76eca54e3c601e5d1470c86fcdfa/junit-4.12-sources.jar" kind="lib" path="/home/tsagrista/.gradle/caches/modules-2/files-2.1/junit/junit/4.12/2973d150c0dc1fefe998f834810d68f278ea58ec/junit-4.12.jar" exported="true"/>
+	<classpathentry sourcepath="/home/tsagrista/.gradle/caches/modules-2/files-2.1/org.hamcrest/hamcrest-core/1.3/1dc37250fbc78e23a65a67fbbaf71d2e9cbc3c0b/hamcrest-core-1.3-sources.jar" kind="lib" path="/home/tsagrista/.gradle/caches/modules-2/files-2.1/org.hamcrest/hamcrest-core/1.3/42a25dc3219429f0e5d060061f71acb49bf010a0/hamcrest-core-1.3.jar" exported="true"/>
+	<classpathentry kind="lib" path="/home/tsagrista/git/gaiasandbox/core/lib/postprocessing.jar" exported="true"/>
+	<classpathentry kind="lib" path="/home/tsagrista/git/gaiasandbox/core/lib/stil.jar" exported="true"/>
 </classpath>

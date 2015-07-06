@@ -14,7 +14,6 @@ public class SimplePostProcessor implements IPostProcessor {
     private PostProcessor postProcessor;
     private Bloom bloom;
     private Fxaa fxaa;
-    private LensFlare lens;
 
     public SimplePostProcessor() {
         // Post process effects
@@ -32,16 +31,10 @@ public class SimplePostProcessor implements IPostProcessor {
             postProcessor.addEffect(fxaa);
         }
 
-        // LENS FLARE
-        lens = new LensFlare(Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
-        lens.setIntensity(1f);
-        lens.setColor(1.4f, 1.2f, 1.1f);
-        lens.setLightPosition(1f, 1f);
-        postProcessor.addEffect(lens);
     }
 
     private boolean postProcess() {
-        return bloom.getBloomIntensity() > 0 || fxaa != null || lens != null;
+        return bloom.getBloomIntensity() > 0 || fxaa != null;
     }
 
     public void capture() {
