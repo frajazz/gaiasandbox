@@ -1,6 +1,5 @@
-#Mon Jul 06 11:15:17 CEST 2015
-jarsExcludedFromWebInfLib=
-warSrcDir=webapp/
-lastWarOutDir=/home/tsagrista/git/gaiasandbox/html/war
 eclipse.preferences.version=1
+jarsExcludedFromWebInfLib=
+lastWarOutDir=/home/tsagrista/git/gaiasandbox/html/webapp
+warSrcDir=webapp/
 warSrcDirIsOutput=false
