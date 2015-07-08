@@ -33,14 +33,10 @@ public abstract class PixelPostProcessRenderSystem extends PixelRenderSystem imp
         // Initialize post processors
         ppmap = new HashMap<String, PostProcessor>();
         getPostProcessor(Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
-        getPostProcessor(GlobalConf.screenshot.SCREENSHOT_WIDTH, GlobalConf.screen.SCREEN_HEIGHT);
-        getPostProcessor(GlobalConf.frame.RENDER_WIDTH, GlobalConf.frame.RENDER_HEIGHT);
 
         // Initialize frame buffers
         fbmap = new HashMap<String, FrameBuffer>();
         getFrameBuffer(Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
-        getFrameBuffer(GlobalConf.screenshot.SCREENSHOT_WIDTH, GlobalConf.screen.SCREEN_HEIGHT);
-        getFrameBuffer(GlobalConf.frame.RENDER_WIDTH, GlobalConf.frame.RENDER_HEIGHT);
 
         EventManager.instance.subscribe(this, Events.SCREEN_RESIZE, Events.TOGGLE_STEREOSCOPIC);
     }

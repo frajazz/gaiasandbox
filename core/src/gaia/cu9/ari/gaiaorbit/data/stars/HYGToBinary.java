@@ -11,7 +11,6 @@ import gaia.cu9.ari.gaiaorbit.util.Logger;
 
 import java.io.DataOutputStream;
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -41,12 +40,10 @@ public class HYGToBinary implements IObserver {
         EventManager.instance.subscribe(hyg, Events.POST_NOTIFICATION, Events.JAVA_EXCEPTION);
 
         FileLocator.initialize();
-        I18n.initialize("/home/tsagrista/git/gaiasandbox/android/assets/i18n/gsbundle");
+        I18n.initialize();
 
         try {
-            File props = new File("/home/tsagrista/git/gaiasandbox/android/assets/conf/global.properties");
-            File version = new File("/home/tsagrista/git/gaiasandbox/android/assets/data/dummyversion");
-            GlobalConf.initialize(new FileInputStream(props), new FileInputStream(version));
+            GlobalConf.initialize();
         } catch (IOException e) {
             Logger.error(e);
         } catch (Exception e) {
@@ -58,7 +55,6 @@ public class HYGToBinary implements IObserver {
         //hyg.convertToBinary(fileIn, fileOut);
 
     }
-
 
     public void compareCSVtoBinary(String csv, String bin) {
 
@@ -168,13 +164,7 @@ public class HYGToBinary implements IObserver {
 
     }
 
-    private boolean equals(CelestialBody s1, CelestialBody s2){
-        return s1.id.equals(s2.id) &&
-                s1.posSph.x == s2.posSph.x &&
-                s1.posSph.y == s2.posSph.y &&
-                s1.pos.x == s2.pos.x &&
-                s1.pos.y == s2.pos.y &&
-                s1.pos.z == s2.pos.z &&
-                s1.absmag == s2.absmag;
+    private boolean equals(CelestialBody s1, CelestialBody s2) {
+        return s1.id.equals(s2.id) && s1.posSph.x == s2.posSph.x && s1.posSph.y == s2.posSph.y && s1.pos.x == s2.pos.x && s1.pos.y == s2.pos.y && s1.pos.z == s2.pos.z && s1.absmag == s2.absmag;
     }
 }

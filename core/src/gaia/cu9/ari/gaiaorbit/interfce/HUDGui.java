@@ -30,7 +30,6 @@ public class HUDGui implements IGui {
     protected NotificationsInterface notificationsInterface;
     protected MessagesInterface messagesInterface;
     protected DebugInterface debugInterface;
-    protected ScriptStateInterface inputInterface;
 
     /**
      * Number formats
@@ -85,12 +84,6 @@ public class HUDGui implements IGui {
         messagesInterface.left().bottom();
         messagesInterface.pad(0, 300, 150, 0);
 
-        // INPUT STATE
-        inputInterface = new ScriptStateInterface(skin);
-        inputInterface.setFillParent(true);
-        inputInterface.right().top();
-        inputInterface.pad(50, 0, 0, 5);
-
         // Add to GUI
         rebuildGui();
     }
@@ -113,9 +106,6 @@ public class HUDGui implements IGui {
             }
             if (cameraInterface != null) {
                 ui.addActor(cameraInterface);
-            }
-            if (inputInterface != null) {
-                ui.addActor(inputInterface);
             }
         }
     }

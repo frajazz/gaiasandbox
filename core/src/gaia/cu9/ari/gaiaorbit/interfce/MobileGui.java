@@ -29,7 +29,6 @@ public class MobileGui implements IGui {
     protected NotificationsInterface notificationsInterface;
     protected MessagesInterface messagesInterface;
     protected DebugInterface debugInterface;
-    protected ScriptStateInterface inputInterface;
 
     /**
      * Number formats
@@ -104,9 +103,6 @@ public class MobileGui implements IGui {
             }
             if (focusInterface != null) {
                 ui.addActor(focusInterface);
-            }
-            if (inputInterface != null) {
-                ui.addActor(inputInterface);
             }
         }
     }

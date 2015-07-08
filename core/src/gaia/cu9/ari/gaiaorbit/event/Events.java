@@ -12,8 +12,7 @@ public enum Events {
     /** Notifies of a change in the time, contains the Date object **/
     TIME_CHANGE_INFO,
     /** Issues a change time command, contains the Date object with the new time **/
-    TIME_CHANGE_CMD,
-    GAIA_POSITION,
+    TIME_CHANGE_CMD, GAIA_POSITION,
 
     // CAMERA
     /** Contains the new CameraMode object **/
@@ -106,8 +105,6 @@ public enum Events {
     PACE_DIVIDE_CMD,
     /** Contains the new pace **/
     PACE_CHANGED_INFO,
-    /** Issues the command to enable camera recording. Contains the boolean indicating the state (may be null) and a boolean indicating whether this comes from the interface. **/
-    RECORD_CAMERA_CMD,
 
     /** Issues the play command. Contains the path to the file to play **/
     PLAY_CAMERA_CMD,
@@ -139,17 +136,11 @@ public enum Events {
     /** Executes the command to position the camera near the object in focus **/
     GO_TO_OBJECT_CMD,
     /** Contains an optional boolean indicating whether debug info should be shown or not. Otherwise, it toggles its state **/
-    SHOW_DEBUG_CMD,
-    SHOW_ABOUT_ACTION,
-    SHOW_TUTORIAL_ACTION,
-    SHOW_PREFERENCES_ACTION,
-    SHOW_RUNSCRIPT_ACTION,
-    SHOW_PLAYCAMERA_ACTION,
+    SHOW_DEBUG_CMD, SHOW_ABOUT_ACTION, SHOW_TUTORIAL_ACTION, SHOW_PREFERENCES_ACTION, SHOW_RUNSCRIPT_ACTION, SHOW_PLAYCAMERA_ACTION,
     /** Informs about the number of running scripts **/
     NUM_RUNNING_SCRIPTS,
     /** Cancels the next script **/
-    CANCEL_SCRIPT_CMD,
-    SHOW_SEARCH_ACTION,
+    CANCEL_SCRIPT_CMD, SHOW_SEARCH_ACTION,
     /** This event is issued when the screen has been resized. It contains the new width and height **/
     SCREEN_RESIZE,
     /** Issued when the viewport size changed. Contains the new width and height **/
@@ -250,23 +241,13 @@ public enum Events {
     /** Removes all the custom objects **/
     REMOVE_ALL_OBJECTS,
     /** Contains the star brightness multiplier **/
-    STAR_BRIGHTNESS_CMD,
-    FPS_INFO,
-    /** Contains an optional boolean indicating whether full screen must be activated (true) or deactivated (false). If no
-     * boolean is attached, it functions as a toggle. **/
-    FULLSCREEN_CMD,
-    SCENE_GRAPH_LOADED,
-    /** Contains the width, height (integers) and the folder name and filename (strings) **/
-    SCREENSHOT_CMD,
+    STAR_BRIGHTNESS_CMD, FPS_INFO, SCENE_GRAPH_LOADED,
     /** Contains the path where the screenshot has been saved */
     SCREENSHOT_INFO,
     /** Contains an array of booleans with the visibility of each ComponentType, in the same order returned by ComponentType.values() **/
     VISIBILITY_OF_COMPONENTS,
     /** Sets the limit magnitude. Contains a double with the new magnitude **/
-    LIMIT_MAG_CMD,
-    DEBUG1,
-    DEBUG2,
-    DEBUG3,
+    LIMIT_MAG_CMD, DEBUG1, DEBUG2, DEBUG3,
     /** Notifies from a java exception, it sends the Throwable and an optional tag. **/
     JAVA_EXCEPTION,
 

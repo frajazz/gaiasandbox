@@ -65,7 +65,7 @@ public class FullGui implements IGui, IObserver {
      */
     protected Stage ui;
 
-    protected OwnImageButton recCamera, playCamera, playstop;
+    protected OwnImageButton playCamera, playstop;
 
     protected CollapsibleWindow options;
     protected VerticalGroup mainVertical;
@@ -80,7 +80,6 @@ public class FullGui implements IGui, IObserver {
     protected NotificationsInterface notificationsInterface;
     protected MessagesInterface messagesInterface;
     protected DebugInterface debugInterface;
-    protected ScriptStateInterface inputInterface;
     protected CustomInterface customInterface;
 
     /**
@@ -180,23 +179,6 @@ public class FullGui implements IGui, IObserver {
         mainActors.add(time);
 
         /** ----CAMERA---- **/
-        // Record camera button
-        recCamera = new OwnImageButton(skin, "rec");
-        recCamera.setName("recCam");
-        recCamera.setChecked(GlobalConf.runtime.RECORD_CAMERA);
-        recCamera.addListener(new EventListener() {
-            @Override
-            public boolean handle(Event event) {
-                if (event instanceof ChangeEvent) {
-                    EventManager.instance.post(Events.RECORD_CAMERA_CMD, recCamera.isChecked(), true);
-                    return true;
-                }
-                return false;
-            }
-        });
-        Label recTooltip = new Label(txt("gui.tooltip.reccamera"), skin, "tooltip");
-        recCamera.addListener(new Tooltip<Label>(recTooltip, ui));
-
         // Play camera button
         playCamera = new OwnImageButton(skin, "play");
         playCamera.setName("playCam");
@@ -218,7 +200,7 @@ public class FullGui implements IGui, IObserver {
         CameraComponent cameraComponent = new CameraComponent(skin, ui);
         cameraComponent.initialize();
 
-        CollapsiblePane camera = new CollapsiblePane(ui, txt("gui.camera"), cameraComponent.getActor(), skin, recCamera, playCamera);
+        CollapsiblePane camera = new CollapsiblePane(ui, txt("gui.camera"), cameraComponent.getActor(), skin, playCamera);
         camera.align(Align.left);
         mainActors.add(camera);
 
@@ -382,12 +364,6 @@ public class FullGui implements IGui, IObserver {
         messagesInterface.left().bottom();
         messagesInterface.pad(0, 300, 150, 0);
 
-        // INPUT STATE
-        inputInterface = new ScriptStateInterface(skin);
-        inputInterface.setFillParent(true);
-        inputInterface.right().top();
-        inputInterface.pad(100, 0, 0, 5);
-
         // CUSTOM OBJECTS INTERFACE
         customInterface = new CustomInterface(ui, skin, lock);
 
@@ -437,9 +413,6 @@ public class FullGui implements IGui, IObserver {
                 ui.addActor(messagesInterface);
             if (focusInterface != null)
                 ui.addActor(fi);
-            if (inputInterface != null) {
-                ui.addActor(inputInterface);
-            }
             if (customInterface != null) {
                 customInterface.reAddObjects();
             }

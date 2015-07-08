@@ -2,7 +2,6 @@ package gaia.cu9.ari.gaiaorbit;
 
 import gaia.cu9.ari.gaiaorbit.data.AssetBean;
 import gaia.cu9.ari.gaiaorbit.data.GaiaAttitudeLoader;
-import gaia.cu9.ari.gaiaorbit.data.JythonFactoryLoader;
 import gaia.cu9.ari.gaiaorbit.data.SGLoader;
 import gaia.cu9.ari.gaiaorbit.data.SGLoader.SGLoaderParameter;
 import gaia.cu9.ari.gaiaorbit.data.orbit.OrbitData;
@@ -22,37 +21,26 @@ import gaia.cu9.ari.gaiaorbit.render.AbstractRenderer;
 import gaia.cu9.ari.gaiaorbit.render.ComponentType;
 import gaia.cu9.ari.gaiaorbit.render.GSPostProcessor;
 import gaia.cu9.ari.gaiaorbit.render.IPostProcessor;
-import gaia.cu9.ari.gaiaorbit.render.IPostProcessor.PostProcessBean;
-import gaia.cu9.ari.gaiaorbit.render.IPostProcessor.RenderType;
 import gaia.cu9.ari.gaiaorbit.render.SceneGraphRenderer;
 import gaia.cu9.ari.gaiaorbit.scenegraph.AbstractPositionEntity;
 import gaia.cu9.ari.gaiaorbit.scenegraph.CameraManager;
 import gaia.cu9.ari.gaiaorbit.scenegraph.CameraManager.CameraMode;
 import gaia.cu9.ari.gaiaorbit.scenegraph.CelestialBody;
-import gaia.cu9.ari.gaiaorbit.scenegraph.ICamera;
 import gaia.cu9.ari.gaiaorbit.scenegraph.ISceneGraph;
 import gaia.cu9.ari.gaiaorbit.scenegraph.SceneGraphNode;
 import gaia.cu9.ari.gaiaorbit.scenegraph.component.ModelComponent;
-import gaia.cu9.ari.gaiaorbit.script.JythonFactory;
-import gaia.cu9.ari.gaiaorbit.util.CamRecorder;
 import gaia.cu9.ari.gaiaorbit.util.Constants;
 import gaia.cu9.ari.gaiaorbit.util.GlobalConf;
 import gaia.cu9.ari.gaiaorbit.util.GlobalResources;
 import gaia.cu9.ari.gaiaorbit.util.I18n;
 import gaia.cu9.ari.gaiaorbit.util.Logger;
 import gaia.cu9.ari.gaiaorbit.util.ModelCache;
-import gaia.cu9.ari.gaiaorbit.util.concurrent.ThreadPoolManager;
 import gaia.cu9.ari.gaiaorbit.util.gaia.GaiaAttitudeServer;
 import gaia.cu9.ari.gaiaorbit.util.math.MathUtilsd;
 import gaia.cu9.ari.gaiaorbit.util.math.Vector3d;
-import gaia.cu9.ari.gaiaorbit.util.screenshot.BasicFileImageRenderer;
-import gaia.cu9.ari.gaiaorbit.util.screenshot.BufferedFileImageRenderer;
-import gaia.cu9.ari.gaiaorbit.util.screenshot.IFileImageRenderer;
-import gaia.cu9.ari.gaiaorbit.util.screenshot.ImageRenderer;
 import gaia.cu9.ari.gaiaorbit.util.time.GlobalClock;
 import gaia.cu9.ari.gaiaorbit.util.tree.OctreeNode;
 
-import java.io.File;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -67,7 +55,6 @@ import com.badlogic.gdx.assets.AssetManager;
 import com.badlogic.gdx.assets.loaders.FileHandleResolver;
 import com.badlogic.gdx.assets.loaders.resolvers.InternalFileHandleResolver;
 import com.badlogic.gdx.controllers.Controllers;
-import com.badlogic.gdx.files.FileHandle;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.Pixmap.Format;
 import com.badlogic.gdx.graphics.glutils.FrameBuffer;
@@ -127,7 +114,6 @@ public class GaiaSandbox implements ApplicationListener, IObserver {
 
     }
 
-    public IFileImageRenderer frameRenderer, screenshotRenderer;
     private ScreenshotCmd screenshot;
 
     /**
@@ -167,16 +153,7 @@ public class GaiaSandbox implements ApplicationListener, IObserver {
         if (!GlobalConf.initialized()) {
             // Initialise the configuration if needed
             try {
-                if (mobile) {
-                    GlobalConf.initialize(Gdx.files.internal("conf/android/global.properties").read(), Gdx.files.internal("version").read());
-                } else {
-                    FileHandle confFile = Gdx.files.external(System.getProperty("properties.file"));
-                    FileHandle versionfile = Gdx.files.internal("version");
-                    if (!versionfile.exists()) {
-                        versionfile = Gdx.files.internal("data/dummyversion");
-                    }
-                    GlobalConf.initialize(confFile.read(), versionfile.read());
-                }
+                GlobalConf.initialize();
             } catch (Exception e) {
                 // Android
                 Logger.error(e);
@@ -189,23 +166,11 @@ public class GaiaSandbox implements ApplicationListener, IObserver {
         // Initialize i18n
         I18n.initialize();
 
-        if (GlobalConf.performance.MULTITHREADING)
-            // Initialize thread pool manager
-            ThreadPoolManager.initialize(GlobalConf.performance.NUMBER_THREADS());
-
-        // Initialize camera recorder
-        CamRecorder.initialize();
-
-        // Init frame/screenshot renderer
-        frameRenderer = new BufferedFileImageRenderer(GlobalConf.runtime.OUTPUT_FRAME_BUFFER_SIZE);
-        screenshotRenderer = new BasicFileImageRenderer();
-
         // Initialize asset manager
         FileHandleResolver resolver = new InternalFileHandleResolver();
         manager = new AssetManager(resolver);
         manager.setLoader(ISceneGraph.class, new SGLoader(resolver));
         manager.setLoader(OrbitData.class, new OrbitDataLoader(resolver));
-        manager.setLoader(JythonFactory.class, new JythonFactoryLoader(resolver));
         manager.setLoader(GaiaAttitudeServer.class, new GaiaAttitudeLoader(resolver));
 
         // Init global resources
@@ -220,11 +185,8 @@ public class GaiaSandbox implements ApplicationListener, IObserver {
         if (sg == null) {
             // Set asset manager to asset bean
             AssetBean.setAssetManager(manager);
-            manager.load(GlobalConf.data.DATA_SG_FILE, ISceneGraph.class, new SGLoaderParameter(GlobalClock.clock, GlobalConf.performance.MULTITHREADING, GlobalConf.performance.NUMBER_THREADS()));
+            manager.load(GlobalConf.data.DATA_SG_FILE, ISceneGraph.class, new SGLoaderParameter(GlobalClock.clock));
         }
-
-        // Load jython
-        manager.load(".", JythonFactory.class);
 
         // Initialize timestamp for screenshots
         renderGui = new RenderGui();
@@ -341,7 +303,7 @@ public class GaiaSandbox implements ApplicationListener, IObserver {
         EventManager.instance.post(Events.TIME_CHANGE_INFO, GlobalClock.clock.time);
 
         // Subscribe to events
-        EventManager.instance.subscribe(this, Events.TOGGLE_AMBIENT_LIGHT, Events.AMBIENT_LIGHT_CMD, Events.SCREENSHOT_CMD, Events.FULLSCREEN_CMD);
+        EventManager.instance.subscribe(this, Events.TOGGLE_AMBIENT_LIGHT, Events.AMBIENT_LIGHT_CMD);
 
         // Re-enable input
         EventManager.instance.post(Events.INPUT_ENABLED_CMD, true);
@@ -358,11 +320,6 @@ public class GaiaSandbox implements ApplicationListener, IObserver {
 
     @Override
     public void dispose() {
-
-        if (!Constants.mobile)
-            GlobalConf.saveProperties(new File(System.getProperty("properties.file")));
-
-        frameRenderer.flush();
         gui.dispose();
         renderGui.dispose();
         if (sg != null) {
@@ -393,55 +350,16 @@ public class GaiaSandbox implements ApplicationListener, IObserver {
                  */
                 update(Gdx.graphics.getDeltaTime());
 
-                /**
-                 * FRAME OUTPUT
-                 */
-                if (GlobalConf.frame.RENDER_OUTPUT) {
-                    switch (GlobalConf.frame.FRAME_MODE) {
-                    case simple:
-                        frameRenderer.saveScreenshot(GlobalConf.frame.RENDER_FOLDER, GlobalConf.frame.RENDER_FILE_NAME, Gdx.graphics.getWidth(), Gdx.graphics.getHeight(), true);
-                        break;
-                    case redraw:
-                        renderToImage(cam, pp.getPostProcessBean(RenderType.frame), GlobalConf.frame.RENDER_WIDTH, GlobalConf.frame.RENDER_HEIGHT, GlobalConf.frame.RENDER_FOLDER, GlobalConf.frame.RENDER_FILE_NAME, frameRenderer);
-                        break;
-                    }
+                /** 
+                 * RENDER THE SCENE
+                 **/
+                preRenderScene();
+                sgr.render(cam, Gdx.graphics.getWidth(), Gdx.graphics.getHeight(), null, pp.getPostProcessBean());
 
-                }
-
-                /**
-                 * SCREENSHOT OUTPUT - simple|redraw mode
-                 */
-                if (screenshot.active) {
-                    String file = null;
-                    switch (GlobalConf.screenshot.SCREENSHOT_MODE) {
-                    case simple:
-                        file = ImageRenderer.renderToImageGl20(screenshot.folder, ScreenshotCmd.FILENAME, Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
-                        break;
-                    case redraw:
-                        file = renderToImage(cam, pp.getPostProcessBean(RenderType.screenshot), screenshot.width, screenshot.height, screenshot.folder, ScreenshotCmd.FILENAME, screenshotRenderer);
-                        break;
-                    }
-                    if (file != null) {
-                        screenshot.active = false;
-                        EventManager.instance.post(Events.SCREENSHOT_INFO, file);
-                    }
-
-                }
-
-                /**
-                 * SCREEN OUTPUT
-                 */
-                if (GlobalConf.screen.SCREEN_OUTPUT) {
-                    /** RENDER THE SCENE **/
-                    preRenderScene();
-                    sgr.render(cam, Gdx.graphics.getWidth(), Gdx.graphics.getHeight(), null, pp.getPostProcessBean(RenderType.screen));
-
-                    if (!GlobalConf.runtime.CLEAN_MODE) {
-                        // Render the GUI, setting the viewport
-                        gui.getGuiStage().getViewport().apply();
-                        gui.render();
-                    }
-
+                if (!GlobalConf.runtime.CLEAN_MODE) {
+                    // Render the GUI, setting the viewport
+                    gui.getGuiStage().getViewport().apply();
+                    gui.render();
                 }
 
                 sgr.clearLists();
@@ -459,14 +377,9 @@ public class GaiaSandbox implements ApplicationListener, IObserver {
      *            Delta time in seconds.
      */
     public void update(float dt) {
-        if (GlobalConf.frame.RENDER_OUTPUT) {
-            // If RENDER_OUTPUT is active, we need to set our dt according to
-            // the fps
-            dt = 1f / GlobalConf.frame.RENDER_TARGET_FPS;
-        } else {
-            // Max time step is 0.1 seconds. Not in RENDER_OUTPUT MODE.
-            dt = Math.min(dt, 0.1f);
-        }
+
+        // Max time step is 0.1 seconds. Not in RENDER_OUTPUT MODE.
+        dt = Math.min(dt, 0.1f);
 
         gui.update(dt);
         renderGui.update(dt);
@@ -492,59 +405,6 @@ public class GaiaSandbox implements ApplicationListener, IObserver {
     public void preRenderScene() {
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT | GL20.GL_DEPTH_BUFFER_BIT | (Gdx.graphics.getBufferFormat().coverageSampling ? GL20.GL_COVERAGE_BUFFER_BIT_NV : 0));
         Gdx.gl.glBlendFunc(GL20.GL_SRC_ALPHA, GL20.GL_ONE_MINUS_SRC_ALPHA);
-    }
-
-    /**
-     * Renders the current scene to an image and returns the file name where it
-     * has been written to
-     * 
-     * @param camera
-     * @param width
-     *            The width of the image.
-     * @param height
-     *            The height of the image.
-     * @param folder
-     *            The folder to save the image to.
-     * @param filename
-     *            The file name prefix.
-     * @param renderer
-     *            the {@link IFileImageRenderer} to use.
-     * @return
-     */
-    public String renderToImage(ICamera camera, PostProcessBean ppb, int width, int height, String folder, String filename, IFileImageRenderer renderer) {
-        FrameBuffer frameBuffer = getFrameBuffer(width, height);
-        // TODO That's a dirty trick, we should find a better way (i.e. making
-        // buildEnabledEffectsList() method public)
-        boolean postprocessing = ppb.pp.captureNoClear();
-        ppb.pp.captureEnd();
-        if (!postprocessing) {
-            // If post processing is not active, we must start the buffer now.
-            // Otherwise, it is used in the render method to write the results
-            // of the pp.
-            frameBuffer.begin();
-        }
-
-        // this is the main render function
-        preRenderScene();
-        // sgr.render(camera, width, height, postprocessing ? m_fbo : null,
-        // ppb);
-        sgr.render(camera, width, height, frameBuffer, ppb);
-
-        if (postprocessing) {
-            // If post processing is active, we have to start now again because
-            // the renderScene() has closed it.
-            frameBuffer.begin();
-        }
-        if (GlobalConf.frame.RENDER_SCREENSHOT_TIME) {
-            // Timestamp
-            renderGui.resize(width, height);
-            renderGui.render();
-        }
-
-        String res = renderer.saveScreenshot(folder, filename, width, height, false);
-
-        frameBuffer.end();
-        return res;
     }
 
     @Override
@@ -581,7 +441,6 @@ public class GaiaSandbox implements ApplicationListener, IObserver {
 
     @Override
     public void pause() {
-        frameRenderer.flush();
     }
 
     @Override
@@ -624,27 +483,7 @@ public class GaiaSandbox implements ApplicationListener, IObserver {
         case AMBIENT_LIGHT_CMD:
             ModelComponent.setAmbientLight((float) data[0]);
             break;
-        case SCREENSHOT_CMD:
-            screenshot.takeScreenshot((int) data[0], (int) data[1], (String) data[2]);
-            break;
-        case FULLSCREEN_CMD:
-            boolean toFullscreen = data.length >= 1 ? (Boolean) data[0] : !Gdx.graphics.isFullscreen();
-            int width;
-            int height;
-            if (toFullscreen) {
-                width = GlobalConf.screen.FULLSCREEN_WIDTH;
-                height = GlobalConf.screen.FULLSCREEN_HEIGHT;
-                GlobalConf.screen.SCREEN_WIDTH = Gdx.graphics.getWidth();
-                GlobalConf.screen.SCREEN_HEIGHT = Gdx.graphics.getHeight();
-            } else {
-                width = GlobalConf.screen.SCREEN_WIDTH;
-                height = GlobalConf.screen.SCREEN_HEIGHT;
-            }
-            // Only switch if needed
-            if (Gdx.graphics.isFullscreen() != toFullscreen) {
-                Gdx.graphics.setDisplayMode(width, height, toFullscreen);
-            }
-            break;
+
         default:
             break;
         }

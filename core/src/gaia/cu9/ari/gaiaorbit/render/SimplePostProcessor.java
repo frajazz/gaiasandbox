@@ -48,7 +48,7 @@ public class SimplePostProcessor implements IPostProcessor {
     }
 
     @Override
-    public PostProcessBean getPostProcessBean(RenderType type) {
+    public PostProcessBean getPostProcessBean() {
         // TODO Auto-generated method stub
         return null;
     }

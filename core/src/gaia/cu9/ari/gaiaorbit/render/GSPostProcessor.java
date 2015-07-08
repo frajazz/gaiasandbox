@@ -19,7 +19,7 @@ import com.bitfire.utils.ShaderLoader;
 
 public class GSPostProcessor implements IPostProcessor, IObserver {
 
-    private PostProcessBean[] pps;
+    private PostProcessBean pps;
 
     float bloomFboScale = 0.5f;
     float lensFboScale = 0.25f;
@@ -27,11 +27,8 @@ public class GSPostProcessor implements IPostProcessor, IObserver {
     public GSPostProcessor() {
         ShaderLoader.BasePath = "shaders/";
 
-        pps = new PostProcessBean[RenderType.values().length];
-
-        pps[RenderType.screen.index] = newPostProcessor(getWidth(RenderType.screen), getHeight(RenderType.screen));
-        pps[RenderType.screenshot.index] = newPostProcessor(getWidth(RenderType.screenshot), getHeight(RenderType.screenshot));
-        pps[RenderType.frame.index] = newPostProcessor(getWidth(RenderType.frame), getHeight(RenderType.frame));
+        pps = newPostProcessor(Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
+        ;
 
         // Output AA info.
         if (GlobalConf.postprocess.POSTPROCESS_ANTIALIAS == -1) {
@@ -40,32 +37,8 @@ public class GSPostProcessor implements IPostProcessor, IObserver {
             Logger.info(this.getClass().getSimpleName(), I18n.bundle.format("notif.selected", "NFAA"));
         }
 
-        EventManager.instance.subscribe(this, Events.PROPERTIES_WRITTEN, Events.BLOOM_CMD, Events.LENS_FLARE_CMD, Events.MOTION_BLUR_CMD);
+        EventManager.instance.subscribe(this, Events.BLOOM_CMD, Events.LENS_FLARE_CMD, Events.MOTION_BLUR_CMD);
 
-    }
-
-    private int getWidth(RenderType type) {
-        switch (type) {
-        case screen:
-            return Gdx.graphics.getWidth();
-        case screenshot:
-            return GlobalConf.screenshot.SCREENSHOT_WIDTH;
-        case frame:
-            return GlobalConf.frame.RENDER_WIDTH;
-        }
-        return 0;
-    }
-
-    private int getHeight(RenderType type) {
-        switch (type) {
-        case screen:
-            return Gdx.graphics.getHeight();
-        case screenshot:
-            return GlobalConf.screenshot.SCREENSHOT_HEIGHT;
-        case frame:
-            return GlobalConf.frame.RENDER_HEIGHT;
-        }
-        return 0;
     }
 
     private PostProcessBean newPostProcessor(int width, int height) {
@@ -102,7 +75,7 @@ public class GSPostProcessor implements IPostProcessor, IObserver {
         // ANTIALIAS
         if (GlobalConf.postprocess.POSTPROCESS_ANTIALIAS == -1) {
             ppb.antialiasing = new Fxaa(width, height);
-            ((Fxaa)ppb.antialiasing).setSpanMax(2f);
+            ((Fxaa) ppb.antialiasing).setSpanMax(2f);
         } else {
             ppb.antialiasing = new Nfaa(width, height);
         }
@@ -113,17 +86,17 @@ public class GSPostProcessor implements IPostProcessor, IObserver {
     }
 
     @Override
-    public PostProcessBean getPostProcessBean(RenderType type) {
-        return pps[type.index];
+    public PostProcessBean getPostProcessBean() {
+        return pps;
     }
 
     @Override
     public void resize(final int width, final int height) {
-        if (pps[RenderType.screen.index].antialiasing != null) {
+        if (pps.antialiasing != null) {
             Gdx.app.postRunnable(new Runnable() {
                 @Override
                 public void run() {
-                    replace(RenderType.screen.index, width, height);
+                    replace(width, height);
                 }
             });
         }
@@ -133,62 +106,28 @@ public class GSPostProcessor implements IPostProcessor, IObserver {
     @Override
     public void notify(Events event, final Object... data) {
         switch (event) {
-        case PROPERTIES_WRITTEN:
-            if (changed(pps[RenderType.screenshot.index].pp, GlobalConf.screenshot.SCREENSHOT_WIDTH, GlobalConf.screenshot.SCREENSHOT_HEIGHT)) {
-                Gdx.app.postRunnable(new Runnable() {
-                    @Override
-                    public void run() {
-                        replace(RenderType.screenshot.index, GlobalConf.screenshot.SCREENSHOT_WIDTH, GlobalConf.screenshot.SCREENSHOT_HEIGHT);
-                    }
-                });
-            }
 
-            if (changed(pps[RenderType.frame.index].pp, GlobalConf.frame.RENDER_WIDTH, GlobalConf.frame.RENDER_HEIGHT)) {
-                Gdx.app.postRunnable(new Runnable() {
-                    @Override
-                    public void run() {
-                        replace(RenderType.frame.index, GlobalConf.frame.RENDER_WIDTH, GlobalConf.frame.RENDER_HEIGHT);
-                    }
-                });
-            }
-            break;
         case BLOOM_CMD:
             Gdx.app.postRunnable(new Runnable() {
                 @Override
                 public void run() {
                     float intensity = (float) data[0];
-                    for (int i = 0; i < RenderType.values().length; i++) {
-                        PostProcessBean ppb = pps[i];
-                        ppb.bloom.setBloomIntesity(intensity);
-                        ppb.bloom.setEnabled(intensity > 0);
-                    }
+                    pps.bloom.setBloomIntesity(intensity);
+                    pps.bloom.setEnabled(intensity > 0);
                 }
             });
             break;
         case LENS_FLARE_CMD:
             boolean active = (Boolean) data[0];
-            for (int i = 0; i < RenderType.values().length; i++) {
-                PostProcessBean ppb = pps[i];
-                ppb.lens.setEnabled(active);
-            }
-            break;
-        case CAMERA_MOTION_UPDATED:
-            //	    rts = RenderType.values();
-            //	    float strength = (float) MathUtilsd.lint(((double) data[1] * Constants.KM_TO_U * Constants.U_TO_PC), 0, 100, 0, 0.05);
-            //	    for (int i = 0; i < rts.length; i++) {
-            //		pps[i].zoomer.setBlurStrength(strength);
-            //	    }
+            pps.lens.setEnabled(active);
             break;
         case MOTION_BLUR_CMD:
             Gdx.app.postRunnable(new Runnable() {
                 @Override
                 public void run() {
                     float opacity = (float) data[0];
-                    for (int i = 0; i < RenderType.values().length; i++) {
-                        PostProcessBean ppb = pps[i];
-                        ppb.motionblur.setBlurOpacity(opacity);
-                        ppb.motionblur.setEnabled(opacity > 0);
-                    }
+                    pps.motionblur.setBlurOpacity(opacity);
+                    pps.motionblur.setEnabled(opacity > 0);
                 }
             });
             break;
@@ -202,9 +141,8 @@ public class GSPostProcessor implements IPostProcessor, IObserver {
      * @param width
      * @param height
      */
-    private void replace(int index, final int width, final int height) {
-        //pps[index].pp.dispose(false);
-        pps[index] = newPostProcessor(width, height);
+    private void replace(final int width, final int height) {
+        pps = newPostProcessor(width, height);
 
     }
 

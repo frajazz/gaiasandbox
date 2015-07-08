@@ -35,7 +35,7 @@ public class SGLoader extends AsynchronousAssetLoader<ISceneGraph, SGLoader.SGLo
 
     @Override
     public void loadAsync(AssetManager manager, String fileName, FileHandle file, SGLoaderParameter parameter) {
-        sg = SceneGraphLoader.loadSceneGraph(file.read(), parameter.time, parameter.multithreading, parameter.maxThreads);
+        sg = SceneGraphLoader.loadSceneGraph(file.read(), parameter.time);
         Logger.info(I18n.bundle.get("notif.render.init"));
     }
 
@@ -48,13 +48,9 @@ public class SGLoader extends AsynchronousAssetLoader<ISceneGraph, SGLoader.SGLo
 
     static public class SGLoaderParameter extends AssetLoaderParameters<ISceneGraph> {
         ITimeFrameProvider time;
-        boolean multithreading;
-        int maxThreads;
 
-        public SGLoaderParameter(ITimeFrameProvider time, boolean multithreading, int maxThreads) {
+        public SGLoaderParameter(ITimeFrameProvider time) {
             this.time = time;
-            this.multithreading = multithreading;
-            this.maxThreads = maxThreads;
         }
     }
 }

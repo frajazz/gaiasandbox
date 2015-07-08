@@ -57,11 +57,7 @@ public class KeyMappings {
         addMapping(new ProgramAction(txt("action.exit"), new Runnable() {
             @Override
             public void run() {
-                if (GlobalConf.OPENGL_GUI) {
-                    Gdx.app.exit();
-                } else {
-                    EventManager.instance.post(Events.FULLSCREEN_CMD, false);
-                }
+                Gdx.app.exit();
             }
         }), Keys.ESCAPE);
 
@@ -200,30 +196,6 @@ public class KeyMappings {
                 EventManager.instance.post(Events.LIMIT_MAG_CMD, GlobalConf.data.LIMIT_MAG_LOAD);
             }
         }), Keys.STAR);
-
-        // F11 -> fullscreen
-        addMapping(new ProgramAction(txt("action.togglefs"), new Runnable() {
-            @Override
-            public void run() {
-                EventManager.instance.post(Events.FULLSCREEN_CMD);
-            }
-        }), Keys.F11);
-
-        // F5 -> take screenshot
-        addMapping(new ProgramAction(txt("action.screenshot"), new Runnable() {
-            @Override
-            public void run() {
-                EventManager.instance.post(Events.SCREENSHOT_CMD, GlobalConf.screenshot.SCREENSHOT_WIDTH, GlobalConf.screenshot.SCREENSHOT_HEIGHT, GlobalConf.screenshot.SCREENSHOT_FOLDER);
-            }
-        }), Keys.F5);
-
-        // F6 -> toggle frame output
-        addMapping(new ProgramAction(txt("action.toggle", txt("element.frameoutput")), new Runnable() {
-            @Override
-            public void run() {
-                EventManager.instance.post(Events.FRAME_OUTPUT_CMD);
-            }
-        }), Keys.F6);
 
         // U -> toggle UI collapse/expand
         addMapping(new ProgramAction(txt("action.toggle", txt("element.controls")), new Runnable() {
