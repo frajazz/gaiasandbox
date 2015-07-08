@@ -11,14 +11,13 @@ import gaia.cu9.ari.gaiaorbit.util.math.MathUtilsd;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.InputStream;
+import java.text.DateFormat;
 import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Properties;
-
-import org.python.icu.text.DateFormat;
-import org.python.icu.text.SimpleDateFormat;
 
 /**
  * Holds the global configuration options
