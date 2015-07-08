@@ -33,6 +33,7 @@ import gaia.cu9.ari.gaiaorbit.scenegraph.ICamera;
 import gaia.cu9.ari.gaiaorbit.scenegraph.ISceneGraph;
 import gaia.cu9.ari.gaiaorbit.scenegraph.SceneGraphNode;
 import gaia.cu9.ari.gaiaorbit.scenegraph.component.ModelComponent;
+import gaia.cu9.ari.gaiaorbit.script.JythonFactory;
 import gaia.cu9.ari.gaiaorbit.util.CamRecorder;
 import gaia.cu9.ari.gaiaorbit.util.Constants;
 import gaia.cu9.ari.gaiaorbit.util.GlobalConf;
@@ -40,7 +41,6 @@ import gaia.cu9.ari.gaiaorbit.util.GlobalResources;
 import gaia.cu9.ari.gaiaorbit.util.I18n;
 import gaia.cu9.ari.gaiaorbit.util.Logger;
 import gaia.cu9.ari.gaiaorbit.util.ModelCache;
-import gaia.cu9.ari.gaiaorbit.util.concurrent.ThreadIndexer;
 import gaia.cu9.ari.gaiaorbit.util.concurrent.ThreadPoolManager;
 import gaia.cu9.ari.gaiaorbit.util.gaia.GaiaAttitudeServer;
 import gaia.cu9.ari.gaiaorbit.util.math.MathUtilsd;
@@ -53,14 +53,11 @@ import gaia.cu9.ari.gaiaorbit.util.time.GlobalClock;
 import gaia.cu9.ari.gaiaorbit.util.tree.OctreeNode;
 
 import java.io.File;
-import java.io.FileInputStream;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-
-import sandbox.script.JythonFactory;
 
 import com.badlogic.gdx.Application;
 import com.badlogic.gdx.ApplicationListener;
@@ -173,14 +170,12 @@ public class GaiaSandbox implements ApplicationListener, IObserver {
                 if (mobile) {
                     GlobalConf.initialize(Gdx.files.internal("conf/android/global.properties").read(), Gdx.files.internal("version").read());
                 } else {
-                    File confFile = new File(System.getProperty("properties.file"));
-                    FileInputStream fis = new FileInputStream(confFile);
+                    FileHandle confFile = Gdx.files.external(System.getProperty("properties.file"));
                     FileHandle versionfile = Gdx.files.internal("version");
                     if (!versionfile.exists()) {
                         versionfile = Gdx.files.internal("data/dummyversion");
                     }
-                    GlobalConf.initialize(fis, versionfile.read());
-                    fis.close();
+                    GlobalConf.initialize(confFile.read(), versionfile.read());
                 }
             } catch (Exception e) {
                 // Android
@@ -197,9 +192,6 @@ public class GaiaSandbox implements ApplicationListener, IObserver {
         if (GlobalConf.performance.MULTITHREADING)
             // Initialize thread pool manager
             ThreadPoolManager.initialize(GlobalConf.performance.NUMBER_THREADS());
-
-        // Initialize thread indexer
-        ThreadIndexer.initialize();
 
         // Initialize camera recorder
         CamRecorder.initialize();

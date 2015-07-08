@@ -49,14 +49,14 @@ public class I18n {
             // Use system default
             locale = Locale.getDefault();
         } else {
-            locale = Locale.forLanguageTag(GlobalConf.program.LOCALE);
+            locale = forLanguageTag(GlobalConf.program.LOCALE);
         }
         try {
             bundle = I18NBundle.createBundle(baseFileHandle, locale);
             return true;
         } catch (MissingResourceException e) {
             // Use default locale - en_GB
-            locale = Locale.forLanguageTag("en-GB");
+            locale = new Locale("en", "GB");
             try {
                 bundle = I18NBundle.createBundle(baseFileHandle, locale);
             } catch (Exception e2) {
@@ -64,6 +64,15 @@ public class I18n {
             return false;
         }
 
+    }
+
+    public static Locale forLanguageTag(String languageTag) {
+        String[] tags = languageTag.split("-");
+        if (tags.length > 1) {
+            return new Locale(tags[0], tags[1]);
+        } else {
+            return new Locale(languageTag);
+        }
     }
 
 }

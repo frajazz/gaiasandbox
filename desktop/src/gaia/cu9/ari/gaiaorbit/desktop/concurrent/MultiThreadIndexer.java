@@ -1,6 +1,7 @@
-package gaia.cu9.ari.gaiaorbit.util.concurrent;
+package gaia.cu9.ari.gaiaorbit.desktop.concurrent;
 
 import gaia.cu9.ari.gaiaorbit.util.concurrent.GaiaSandboxThreadFactory.GSThread;
+import gaia.cu9.ari.gaiaorbit.util.concurrent.ThreadIndexer;
 
 /**
  * Thread indexer for a multithread environment.

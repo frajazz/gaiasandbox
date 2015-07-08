@@ -1,22 +1,23 @@
 package gaia.cu9.ari.gaiaorbit.util.concurrent;
 
-import gaia.cu9.ari.gaiaorbit.util.GlobalConf;
-
 /**
- * Class that returns the thread inxes.
+ * Class that returns the thread indices.
  * @author Toni Sagrista
  *
  */
 public abstract class ThreadIndexer {
 
-    public static ThreadIndexer inst;
+    private static ThreadIndexer inst;
 
-    public static void initialize() {
-        if (GlobalConf.performance.MULTITHREADING) {
-            inst = new MultiThreadIndexer();
-        } else {
+    public static void setInstance(ThreadIndexer inst) {
+        ThreadIndexer.inst = inst;
+    }
+
+    public static ThreadIndexer inst() {
+        if (inst == null) {
             inst = new SingleThreadIndexer();
         }
+        return inst;
     }
 
     /**

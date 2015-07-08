@@ -3,6 +3,7 @@ package gaia.cu9.ari.gaiaorbit.desktop.gui.swing;
 import gaia.cu9.ari.gaiaorbit.desktop.gui.swing.jsplash.GuiUtility;
 import gaia.cu9.ari.gaiaorbit.event.EventManager;
 import gaia.cu9.ari.gaiaorbit.event.Events;
+import gaia.cu9.ari.gaiaorbit.script.JythonFactory;
 import gaia.cu9.ari.gaiaorbit.util.GlobalConf;
 
 import java.awt.*;
@@ -19,8 +20,6 @@ import net.miginfocom.swing.MigLayout;
 
 import org.python.core.PyCode;
 import org.python.core.PySyntaxError;
-
-import sandbox.script.JythonFactory;
 
 
 public class ScriptDialog extends I18nJFrame {

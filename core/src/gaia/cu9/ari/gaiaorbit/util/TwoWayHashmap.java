@@ -1,12 +1,12 @@
 package gaia.cu9.ari.gaiaorbit.util;
 
-import java.util.Hashtable;
+import java.util.HashMap;
 import java.util.Map;
 
 public class TwoWayHashmap<K extends Object, V extends Object> {
 
-    private Map<K, V> forward = new Hashtable<K, V>();
-    private Map<V, K> backward = new Hashtable<V, K>();
+    private Map<K, V> forward = new HashMap<K, V>();
+    private Map<V, K> backward = new HashMap<V, K>();
 
     public synchronized void add(K key, V value) {
         forward.put(key, value);

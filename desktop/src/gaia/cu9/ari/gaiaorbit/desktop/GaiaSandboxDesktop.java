@@ -1,12 +1,8 @@
 package gaia.cu9.ari.gaiaorbit.desktop;
 
-import com.badlogic.gdx.Files;
-import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.backends.lwjgl.LwjglApplication;
-import com.badlogic.gdx.backends.lwjgl.LwjglApplicationConfiguration;
-
 import gaia.cu9.ari.gaiaorbit.GaiaSandbox;
 import gaia.cu9.ari.gaiaorbit.data.FileLocator;
+import gaia.cu9.ari.gaiaorbit.desktop.concurrent.MultiThreadIndexer;
 import gaia.cu9.ari.gaiaorbit.desktop.gui.swing.ConfigDialog;
 import gaia.cu9.ari.gaiaorbit.desktop.gui.swing.HelpDialog;
 import gaia.cu9.ari.gaiaorbit.desktop.gui.swing.IconManager;
@@ -15,21 +11,33 @@ import gaia.cu9.ari.gaiaorbit.event.EventManager;
 import gaia.cu9.ari.gaiaorbit.event.Events;
 import gaia.cu9.ari.gaiaorbit.event.IObserver;
 import gaia.cu9.ari.gaiaorbit.interfce.KeyMappings;
+import gaia.cu9.ari.gaiaorbit.script.JythonFactory;
 import gaia.cu9.ari.gaiaorbit.util.GlobalConf;
 import gaia.cu9.ari.gaiaorbit.util.I18n;
 import gaia.cu9.ari.gaiaorbit.util.Logger;
 import gaia.cu9.ari.gaiaorbit.util.SysUtils;
+import gaia.cu9.ari.gaiaorbit.util.concurrent.ThreadIndexer;
 import gaia.cu9.ari.gaiaorbit.util.math.MathUtilsd;
-import sandbox.script.JythonFactory;
 
-import javax.swing.*;
+import java.awt.Font;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.nio.channels.FileChannel;
+
+import javax.swing.JFileChooser;
+import javax.swing.JFrame;
+import javax.swing.UIManager;
 import javax.swing.filechooser.FileFilter;
 import javax.swing.filechooser.FileNameExtensionFilter;
 import javax.swing.plaf.FontUIResource;
 
-import java.awt.*;
-import java.io.*;
-import java.nio.channels.FileChannel;
+import com.badlogic.gdx.Files;
+import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.backends.lwjgl.LwjglApplication;
+import com.badlogic.gdx.backends.lwjgl.LwjglApplicationConfiguration;
 
 /**
  * Main class for the desktop launcher
@@ -153,6 +161,12 @@ public class GaiaSandboxDesktop implements IObserver {
 
         // Init scripting
         JythonFactory.initialize();
+
+        // Init thread indexer
+        if (GlobalConf.performance.MULTITHREADING) {
+            ThreadIndexer.setInstance(new MultiThreadIndexer());
+        }
+
         // Launch app
         new LwjglApplication(new GaiaSandbox(true), cfg);
 

@@ -8,6 +8,7 @@ import gaia.cu9.ari.gaiaorbit.desktop.gui.swing.IconManager;
 import gaia.cu9.ari.gaiaorbit.desktop.gui.swing.Observer;
 import gaia.cu9.ari.gaiaorbit.desktop.gui.swing.jsplash.JSplash;
 import gaia.cu9.ari.gaiaorbit.scenegraph.ISceneGraph;
+import gaia.cu9.ari.gaiaorbit.script.JythonFactory;
 import gaia.cu9.ari.gaiaorbit.util.GlobalConf;
 import gaia.cu9.ari.gaiaorbit.util.SysUtils;
 import gaia.cu9.ari.gaiaorbit.util.time.GlobalClock;
@@ -22,8 +23,6 @@ import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.SwingUtilities;
 import javax.swing.UIManager;
-
-import sandbox.script.JythonFactory;
 
 import com.badlogic.gdx.Files;
 import com.badlogic.gdx.Gdx;

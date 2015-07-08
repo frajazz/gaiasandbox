@@ -16,7 +16,6 @@ import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
-import java.util.Locale;
 import java.util.Properties;
 
 /**
@@ -498,7 +497,8 @@ public class GlobalConf {
         @Override
         public void initialize(Properties p) {
             LOCALE = p.getProperty("program.locale");
-            df = DateFormat.getDateTimeInstance(DateFormat.MEDIUM, DateFormat.MEDIUM, Locale.forLanguageTag(LOCALE));
+
+            df = DateFormat.getDateTimeInstance(DateFormat.MEDIUM, DateFormat.MEDIUM);
 
             DISPLAY_TUTORIAL = Boolean.parseBoolean(p.getProperty("program.tutorial"));
             TUTORIAL_SCRIPT_LOCATION = p.getProperty("program.tutorial.script");

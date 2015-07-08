@@ -1,7 +1,7 @@
 package gaia.cu9.ari.gaiaorbit.data;
 
+import gaia.cu9.ari.gaiaorbit.script.JythonFactory;
 import gaia.cu9.ari.gaiaorbit.util.Logger;
-import sandbox.script.JythonFactory;
 
 import com.badlogic.gdx.assets.AssetDescriptor;
 import com.badlogic.gdx.assets.AssetLoaderParameters;

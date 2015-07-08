@@ -1,4 +1,4 @@
-package sandbox.script;
+package gaia.cu9.ari.gaiaorbit.script;
 
 /**
  * Scripting interface. Provides an interface to the Gaia Sandbox

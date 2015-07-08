@@ -1,4 +1,4 @@
-package sandbox.script;
+package gaia.cu9.ari.gaiaorbit.script;
 
 import gaia.cu9.ari.gaiaorbit.GaiaSandbox;
 import gaia.cu9.ari.gaiaorbit.event.EventManager;
