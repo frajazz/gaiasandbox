@@ -11,12 +11,14 @@ import gaia.cu9.ari.gaiaorbit.util.math.MathUtilsd;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.InputStream;
-import java.text.DateFormat;
 import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Properties;
+
+import org.python.icu.text.DateFormat;
+import org.python.icu.text.SimpleDateFormat;
 
 /**
  * Holds the global configuration options
@@ -472,7 +474,7 @@ public class GlobalConf {
         /** This controls the side of the images in the stereoscopic mode **/
         public StereoProfile STEREO_PROFILE = StereoProfile.VR_HEADSET;
 
-        private DateFormat df;
+        private SimpleDateFormat df = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss");
 
         public ProgramConf() {
             EventManager.instance.subscribe(this, Events.TOGGLE_STEREOSCOPIC, Events.TOGGLE_STEREO_PROFILE);
@@ -498,8 +500,6 @@ public class GlobalConf {
         public void initialize(Properties p) {
             LOCALE = p.getProperty("program.locale");
 
-            df = DateFormat.getDateTimeInstance(DateFormat.MEDIUM, DateFormat.MEDIUM);
-
             DISPLAY_TUTORIAL = Boolean.parseBoolean(p.getProperty("program.tutorial"));
             TUTORIAL_SCRIPT_LOCATION = p.getProperty("program.tutorial.script");
             SHOW_CONFIG_DIALOG = Boolean.parseBoolean(p.getProperty("program.configdialog"));
@@ -519,6 +519,7 @@ public class GlobalConf {
         }
 
         public String getLastCheckedString() {
+            DateFormat df = DateFormat.getDateTimeInstance(DateFormat.MEDIUM, DateFormat.MEDIUM, I18n.locale);
             return df.format(LAST_CHECKED);
         }
 
