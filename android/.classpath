@@ -5,7 +5,6 @@
 	<classpathentry kind="src" path="src"/>
 	<classpathentry exported="true" kind="con" path="com.android.ide.eclipse.adt.LIBRARIES"/>
 	<classpathentry exported="true" kind="con" path="com.android.ide.eclipse.adt.DEPENDENCIES"/>
-	<classpathentry exported="true" kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
 	<classpathentry exported="true" kind="con" path="com.android.ide.eclipse.adt.ANDROID_FRAMEWORK"/>
 	<classpathentry exported="true" kind="src" path="/GaiaSandbox-core"/>
 	<classpathentry exported="true" kind="lib" path="/home/tsagrista/.gradle/caches/modules-2/files-2.1/com.badlogicgames.gdx/gdx-backend-android/1.6.3/78054a81e63d50b73e0cb00e4ba01bb54f9be94f/gdx-backend-android-1.6.3.jar" sourcepath="/home/tsagrista/.gradle/caches/modules-2/files-2.1/com.badlogicgames.gdx/gdx-backend-android/1.6.3/6fcffa7156188d3bf33d1042e00ae73be56c5b7e/gdx-backend-android-1.6.3-sources.jar"/>

@@ -24,6 +24,10 @@
 
 **Fixed bugs:**
 
+- RA and DEC are wrong in binary version of HYG catalog [\#42](https://github.com/ari-zah/gaiasandbox/issues/42)
+
+- Keyboard focus stays in input texts [\#41](https://github.com/ari-zah/gaiasandbox/issues/41)
+
 - Fix new line rendering for perspective lines [\#37](https://github.com/ari-zah/gaiasandbox/issues/37)
 
 - Motion blur not working with FXAA or NFAA [\#36](https://github.com/ari-zah/gaiasandbox/issues/36)
