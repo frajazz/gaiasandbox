@@ -25,12 +25,7 @@ public class Particle extends CelestialBody implements IPointRenderable {
 
     private static final float DISC_FACTOR = 1.5f;
 
-    private static ThreadLocal<Random> rnd = new ThreadLocal<Random>() {
-        @Override
-        public Random initialValue() {
-            return new Random();
-        }
-    };
+    private static Random rnd = new Random();
 
     @Override
     public double THRESHOLD_ANGLE_NONE() {
@@ -90,7 +85,7 @@ public class Particle extends CelestialBody implements IPointRenderable {
 
         if (this.name == null) {
             randomName = true;
-            this.name = "star_" + rnd.get().nextInt(10000000);
+            this.name = "star_" + rnd.nextInt(10000000);
         }
     }
 

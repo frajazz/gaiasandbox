@@ -2,7 +2,6 @@ package gaia.cu9.ari.gaiaorbit.util.gaia;
 
 import gaia.cu9.ari.gaiaorbit.util.LruCache;
 
-import java.util.Collections;
 import java.util.Date;
 import java.util.Map;
 
@@ -20,17 +19,16 @@ public class AttitudeIntervalBean implements Comparable<AttitudeIntervalBean> {
     public Map<Long, Attitude> cache;
     public long hits = 0, misses = 0;
 
-
-    public AttitudeIntervalBean(String name, Date activationTime, BaseAttitudeDataServer attitude, String file){
+    public AttitudeIntervalBean(String name, Date activationTime, BaseAttitudeDataServer attitude, String file) {
         this.file = file;
         this.name = name;
         this.activationTime = activationTime;
         this.attitude = attitude;
 
-        cache = Collections.synchronizedMap(new LruCache<Long, Attitude>(10));
+        cache = new LruCache<Long, Attitude>(10);
     }
 
-    public Attitude get(Date date){
+    public Attitude get(Date date) {
         Long time = date.getTime();
         if (!cache.containsKey(time)) {
             Attitude att = attitude.getAttitude(date);

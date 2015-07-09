@@ -64,8 +64,8 @@ public class CollapsiblePane extends VerticalGroup {
                 return false;
             }
         });
-        Label expandIconTooltip = new Label(I18n.bundle.get("gui.tooltip.expandcollapse.group"), skin, "tooltip");
-        expandIcon.addListener(new Tooltip<Label>(expandIconTooltip, stage));
+        //Label expandIconTooltip = new Label(I18n.bundle.get("gui.tooltip.expandcollapse.group"), skin, "tooltip");
+        //expandIcon.addListener(new Tooltip<Label>(expandIconTooltip, stage));
 
         // Detach icon
         detachIcon = new OwnImageButton(skin, detachButtonStyle);
@@ -89,8 +89,8 @@ public class CollapsiblePane extends VerticalGroup {
                 return false;
             }
         });
-        Label detachIconTooltip = new Label(I18n.bundle.get("gui.tooltip.detach.group"), skin, "tooltip");
-        detachIcon.addListener(new Tooltip<Label>(detachIconTooltip, stage));
+        //Label detachIconTooltip = new Label(I18n.bundle.get("gui.tooltip.detach.group"), skin, "tooltip");
+        //detachIcon.addListener(new Tooltip<Label>(detachIconTooltip, stage));
 
         HorizontalGroup headerGroup = new HorizontalGroup();
         headerGroup.space(10).align(Align.center);

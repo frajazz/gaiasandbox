@@ -53,7 +53,7 @@ public class Revs extends ConcreteDuration implements Serializable {
      * @see Duration#set(Duration)
      */
     @Override
-	public Duration set(final Duration d) {
+    public Duration set(final Duration d) {
         value = d.asRevs();
 
         return this;
@@ -63,7 +63,7 @@ public class Revs extends ConcreteDuration implements Serializable {
      * @see Duration#asNanoSecs()
      */
     @Override
-	public long asNanoSecs() {
+    public long asNanoSecs() {
         return Math.round(value * Duration.NS_PER_REV);
     }
 
@@ -80,7 +80,7 @@ public class Revs extends ConcreteDuration implements Serializable {
      * @see Duration#asSecs()
      */
     @Override
-	public double asSecs() {
+    public double asSecs() {
         return value * Duration.SECS_PER_REV;
     }
 
@@ -97,7 +97,7 @@ public class Revs extends ConcreteDuration implements Serializable {
      * @see Duration#asMins()
      */
     @Override
-	public double asMins() {
+    public double asMins() {
         return value * Duration.MINS_PER_REV;
     }
 
@@ -114,7 +114,7 @@ public class Revs extends ConcreteDuration implements Serializable {
      * @see Duration#asHours()
      */
     @Override
-	public double asHours() {
+    public double asHours() {
         return value * Duration.HOURS_PER_REV;
     }
 
@@ -128,18 +128,18 @@ public class Revs extends ConcreteDuration implements Serializable {
     }
 
     /**
-	 * @see Duration#asRevs()
-	 */
-	@Override
-	public double asRevs() {
-		return value;
-	}
+     * @see Duration#asRevs()
+     */
+    @Override
+    public double asRevs() {
+        return value;
+    }
 
-	/**
+    /**
      * @see Duration#asDays()
      */
     @Override
-	public double asDays() {
+    public double asDays() {
         return value / Duration.REVS_PER_DAY;
     }
 
@@ -156,7 +156,7 @@ public class Revs extends ConcreteDuration implements Serializable {
      * @see Duration#asJulianYears()
      */
     @Override
-	public double asJulianYears() {
+    public double asJulianYears() {
         return value / Duration.REVS_PER_JULIAN_YEAR;
     }
 
@@ -169,11 +169,11 @@ public class Revs extends ConcreteDuration implements Serializable {
         return revs / Duration.REVS_PER_JULIAN_YEAR;
     }
 
-	/**
+    /**
      * @see Duration#sub(Duration)
      */
     @Override
-	public Duration add(final Duration d) {
+    public Duration add(final Duration d) {
         value += d.asRevs();
 
         return this;
@@ -183,18 +183,17 @@ public class Revs extends ConcreteDuration implements Serializable {
      * @see Duration#sub(Duration)
      */
     @Override
-	public Duration sub(final Duration d) {
+    public Duration sub(final Duration d) {
         value -= d.asRevs();
 
         return this;
     }
-    
-	/**
-	 * @see ConcreteDuration#clone()
-	 */
-	@Override
-	public Revs clone() {
-		return new Revs(value);
-	}
+
+    /**
+     * @see ConcreteDuration#clone()
+     */
+    public Revs clone() {
+        return new Revs(value);
+    }
 
 }

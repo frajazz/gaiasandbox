@@ -403,4 +403,22 @@ public class Coordinates {
         return out;
     }
 
+    public static Matrix4d getTransformMatrix(String matrixName) {
+        switch (matrixName) {
+        case "equatorialToEcliptic":
+            return equatorialToEcliptic;
+        case "eclipticToEquatorial":
+            return eclipticToEquatorial;
+        case "equatorialToGalactic":
+            return equatorialToGalactic;
+        case "galacticToEquatorial":
+            return galacticToEquatorial;
+        case "eclipticToGalactic":
+            return eclipticToGalactic;
+        case "galacticToEcliptic":
+            return galacticToEcliptic;
+        }
+        return null;
+    }
+
 }

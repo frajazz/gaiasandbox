@@ -1,5 +1,6 @@
-package gaia.cu9.ari.gaiaorbit.data;
+package gaia.cu9.ari.gaiaorbit.data.constel;
 
+import gaia.cu9.ari.gaiaorbit.data.ISceneGraphNodeProvider;
 import gaia.cu9.ari.gaiaorbit.render.ComponentType;
 import gaia.cu9.ari.gaiaorbit.scenegraph.ConstellationBoundaries;
 import gaia.cu9.ari.gaiaorbit.scenegraph.SceneGraphNode;
@@ -15,22 +16,17 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Properties;
+
+import com.badlogic.gdx.files.FileHandle;
 
 public class ConstelBoundariesLoader<T extends SceneGraphNode> implements ISceneGraphNodeProvider {
     private static final String separator = "\\t";
     private static final boolean LOAD_INTERPOLATED = true;
     private static final int INTERPOLATED_MOD = 3;
-    private String dataPath;
+    private FileHandle file;
 
-    @Override
-    public void initialize(Properties properties) {
-        try {
-            dataPath = properties.getProperty("file");
-
-        } catch (Exception e) {
-            Logger.error(e, this.getClass().getSimpleName());
-        }
+    public void initialize(FileHandle file) {
+        this.file = file;
     }
 
     @Override
@@ -38,7 +34,7 @@ public class ConstelBoundariesLoader<T extends SceneGraphNode> implements IScene
         List<ConstellationBoundaries> boundaries = new ArrayList<ConstellationBoundaries>();
         try {
             // load constellations
-            BufferedReader br = new BufferedReader(new InputStreamReader(FileLocator.getStream(dataPath)));
+            BufferedReader br = new BufferedReader(new InputStreamReader(file.read()));
             int n = 0;
             try {
                 //Skip first line

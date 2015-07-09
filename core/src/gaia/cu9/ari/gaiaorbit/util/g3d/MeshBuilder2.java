@@ -450,8 +450,7 @@ public class MeshBuilder2 implements MeshPartBuilder2 {
 
     @Override
     public short vertex(final VertexInfo info) {
-        return vertex(info.hasPosition ? info.position : null, info.hasNormal ? info.normal : null, info.hasColor ? info.color
-                : null, info.hasUV ? info.uv : null);
+        return vertex(info.hasPosition ? info.position : null, info.hasNormal ? info.normal : null, info.hasColor ? info.color : null, info.hasUV ? info.uv : null);
     }
 
     @Override
@@ -495,8 +494,7 @@ public class MeshBuilder2 implements MeshPartBuilder2 {
     }
 
     @Override
-    public void index(short value1, short value2, short value3, short value4, short value5, short value6, short value7,
-            short value8) {
+    public void index(short value1, short value2, short value3, short value4, short value5, short value6, short value7, short value8) {
         ensureIndices(8);
         indices.add(value1);
         indices.add(value2);
@@ -582,24 +580,16 @@ public class MeshBuilder2 implements MeshPartBuilder2 {
 
     @Override
     public void rect(Vector3 corner00, Vector3 corner10, Vector3 corner11, Vector3 corner01, Vector3 normal) {
-        rect(vertTmp1.set(corner00, normal, null, null).setUV(uMin, vMax),
-                vertTmp2.set(corner10, normal, null, null).setUV(uMax, vMax),
-                vertTmp3.set(corner11, normal, null, null).setUV(uMax, vMin),
-                vertTmp4.set(corner01, normal, null, null).setUV(uMin, vMin));
+        rect(vertTmp1.set(corner00, normal, null, null).setUV(uMin, vMax), vertTmp2.set(corner10, normal, null, null).setUV(uMax, vMax), vertTmp3.set(corner11, normal, null, null).setUV(uMax, vMin), vertTmp4.set(corner01, normal, null, null).setUV(uMin, vMin));
     }
 
     @Override
-    public void rect(float x00, float y00, float z00, float x10, float y10, float z10, float x11, float y11, float z11,
-            float x01, float y01, float z01, float normalX, float normalY, float normalZ) {
-        rect(vertTmp1.set(null, null, null, null).setPos(x00, y00, z00).setNor(normalX, normalY, normalZ).setUV(uMin, vMax),
-                vertTmp2.set(null, null, null, null).setPos(x10, y10, z10).setNor(normalX, normalY, normalZ).setUV(uMax, vMax), vertTmp3
-                        .set(null, null, null, null).setPos(x11, y11, z11).setNor(normalX, normalY, normalZ).setUV(uMax, vMin),
-                vertTmp4.set(null, null, null, null).setPos(x01, y01, z01).setNor(normalX, normalY, normalZ).setUV(uMin, vMin));
+    public void rect(float x00, float y00, float z00, float x10, float y10, float z10, float x11, float y11, float z11, float x01, float y01, float z01, float normalX, float normalY, float normalZ) {
+        rect(vertTmp1.set(null, null, null, null).setPos(x00, y00, z00).setNor(normalX, normalY, normalZ).setUV(uMin, vMax), vertTmp2.set(null, null, null, null).setPos(x10, y10, z10).setNor(normalX, normalY, normalZ).setUV(uMax, vMax), vertTmp3.set(null, null, null, null).setPos(x11, y11, z11).setNor(normalX, normalY, normalZ).setUV(uMax, vMin), vertTmp4.set(null, null, null, null).setPos(x01, y01, z01).setNor(normalX, normalY, normalZ).setUV(uMin, vMin));
     }
 
     @Override
-    public void patch(VertexInfo corner00, VertexInfo corner10, VertexInfo corner11, VertexInfo corner01, int divisionsU,
-            int divisionsV) {
+    public void patch(VertexInfo corner00, VertexInfo corner10, VertexInfo corner11, VertexInfo corner01, int divisionsU, int divisionsV) {
         if (divisionsU < 1 || divisionsV < 1) {
             throw new GdxRuntimeException("divisionsU and divisionV must be > 0, u,v: " + divisionsU + ", " + divisionsV);
         }
@@ -617,25 +607,16 @@ public class MeshBuilder2 implements MeshPartBuilder2 {
     }
 
     @Override
-    public void patch(Vector3 corner00, Vector3 corner10, Vector3 corner11, Vector3 corner01, Vector3 normal, int divisionsU,
-            int divisionsV) {
-        patch(vertTmp1.set(corner00, normal, null, null).setUV(uMin, vMax),
-                vertTmp2.set(corner10, normal, null, null).setUV(uMax, vMax),
-                vertTmp3.set(corner11, normal, null, null).setUV(uMax, vMin),
-                vertTmp4.set(corner01, normal, null, null).setUV(uMin, vMin), divisionsU, divisionsV);
+    public void patch(Vector3 corner00, Vector3 corner10, Vector3 corner11, Vector3 corner01, Vector3 normal, int divisionsU, int divisionsV) {
+        patch(vertTmp1.set(corner00, normal, null, null).setUV(uMin, vMax), vertTmp2.set(corner10, normal, null, null).setUV(uMax, vMax), vertTmp3.set(corner11, normal, null, null).setUV(uMax, vMin), vertTmp4.set(corner01, normal, null, null).setUV(uMin, vMin), divisionsU, divisionsV);
     }
 
-    public void patch(float x00, float y00, float z00, float x10, float y10, float z10, float x11, float y11, float z11,
-            float x01, float y01, float z01, float normalX, float normalY, float normalZ, int divisionsU, int divisionsV) {
-        patch(vertTmp1.set(null).setPos(x00, y00, z00).setNor(normalX, normalY, normalZ).setUV(uMin, vMax), vertTmp2.set(null)
-                .setPos(x10, y10, z10).setNor(normalX, normalY, normalZ).setUV(uMax, vMax), vertTmp3.set(null).setPos(x11, y11, z11)
-                .setNor(normalX, normalY, normalZ).setUV(uMax, vMin),
-                vertTmp4.set(null).setPos(x01, y01, z01).setNor(normalX, normalY, normalZ).setUV(uMin, vMin), divisionsU, divisionsV);
+    public void patch(float x00, float y00, float z00, float x10, float y10, float z10, float x11, float y11, float z11, float x01, float y01, float z01, float normalX, float normalY, float normalZ, int divisionsU, int divisionsV) {
+        patch(vertTmp1.set(null).setPos(x00, y00, z00).setNor(normalX, normalY, normalZ).setUV(uMin, vMax), vertTmp2.set(null).setPos(x10, y10, z10).setNor(normalX, normalY, normalZ).setUV(uMax, vMax), vertTmp3.set(null).setPos(x11, y11, z11).setNor(normalX, normalY, normalZ).setUV(uMax, vMin), vertTmp4.set(null).setPos(x01, y01, z01).setNor(normalX, normalY, normalZ).setUV(uMin, vMin), divisionsU, divisionsV);
     }
 
     @Override
-    public void box(VertexInfo corner000, VertexInfo corner010, VertexInfo corner100, VertexInfo corner110, VertexInfo corner001,
-            VertexInfo corner011, VertexInfo corner101, VertexInfo corner111) {
+    public void box(VertexInfo corner000, VertexInfo corner010, VertexInfo corner100, VertexInfo corner110, VertexInfo corner001, VertexInfo corner011, VertexInfo corner101, VertexInfo corner111) {
         ensureVertices(8);
         final short i000 = vertex(corner000);
         final short i100 = vertex(corner100);
@@ -667,13 +648,9 @@ public class MeshBuilder2 implements MeshPartBuilder2 {
     }
 
     @Override
-    public void box(Vector3 corner000, Vector3 corner010, Vector3 corner100, Vector3 corner110, Vector3 corner001,
-            Vector3 corner011, Vector3 corner101, Vector3 corner111) {
+    public void box(Vector3 corner000, Vector3 corner010, Vector3 corner100, Vector3 corner110, Vector3 corner001, Vector3 corner011, Vector3 corner101, Vector3 corner111) {
         if (norOffset < 0 && uvOffset < 0) {
-            box(vertTmp1.set(corner000, null, null, null), vertTmp2.set(corner010, null, null, null),
-                    vertTmp3.set(corner100, null, null, null), vertTmp4.set(corner110, null, null, null),
-                    vertTmp5.set(corner001, null, null, null), vertTmp6.set(corner011, null, null, null),
-                    vertTmp7.set(corner101, null, null, null), vertTmp8.set(corner111, null, null, null));
+            box(vertTmp1.set(corner000, null, null, null), vertTmp2.set(corner010, null, null, null), vertTmp3.set(corner100, null, null, null), vertTmp4.set(corner110, null, null, null), vertTmp5.set(corner001, null, null, null), vertTmp6.set(corner011, null, null, null), vertTmp7.set(corner101, null, null, null), vertTmp8.set(corner111, null, null, null));
         } else {
             ensureRectangles(6);
             Vector3 nor = tempV1.set(corner000).lerp(corner110, 0.5f).sub(tempV2.set(corner001).lerp(corner111, 0.5f)).nor();
@@ -690,9 +667,7 @@ public class MeshBuilder2 implements MeshPartBuilder2 {
 
     @Override
     public void box(Matrix4 transform) {
-        box(tmp(-0.5f, -0.5f, -0.5f).mul(transform), tmp(-0.5f, 0.5f, -0.5f).mul(transform),
-                tmp(0.5f, -0.5f, -0.5f).mul(transform), tmp(0.5f, 0.5f, -0.5f).mul(transform), tmp(-0.5f, -0.5f, 0.5f).mul(transform),
-                tmp(-0.5f, 0.5f, 0.5f).mul(transform), tmp(0.5f, -0.5f, 0.5f).mul(transform), tmp(0.5f, 0.5f, 0.5f).mul(transform));
+        box(tmp(-0.5f, -0.5f, -0.5f).mul(transform), tmp(-0.5f, 0.5f, -0.5f).mul(transform), tmp(0.5f, -0.5f, -0.5f).mul(transform), tmp(0.5f, 0.5f, -0.5f).mul(transform), tmp(-0.5f, -0.5f, 0.5f).mul(transform), tmp(-0.5f, 0.5f, 0.5f).mul(transform), tmp(0.5f, -0.5f, 0.5f).mul(transform), tmp(0.5f, 0.5f, 0.5f).mul(transform));
         cleanup();
     }
 
@@ -707,8 +682,7 @@ public class MeshBuilder2 implements MeshPartBuilder2 {
     }
 
     @Override
-    public void circle(float radius, int divisions, float centerX, float centerY, float centerZ, float normalX, float normalY,
-            float normalZ) {
+    public void circle(float radius, int divisions, float centerX, float centerY, float centerZ, float normalX, float normalY, float normalZ) {
         circle(radius, divisions, centerX, centerY, centerZ, normalX, normalY, normalZ, 0f, 360f);
     }
 
@@ -718,22 +692,17 @@ public class MeshBuilder2 implements MeshPartBuilder2 {
     }
 
     @Override
-    public void circle(float radius, int divisions, final Vector3 center, final Vector3 normal, final Vector3 tangent,
-            final Vector3 binormal) {
-        circle(radius, divisions, center.x, center.y, center.z, normal.x, normal.y, normal.z, tangent.x, tangent.y, tangent.z,
-                binormal.x, binormal.y, binormal.z);
+    public void circle(float radius, int divisions, final Vector3 center, final Vector3 normal, final Vector3 tangent, final Vector3 binormal) {
+        circle(radius, divisions, center.x, center.y, center.z, normal.x, normal.y, normal.z, tangent.x, tangent.y, tangent.z, binormal.x, binormal.y, binormal.z);
     }
 
     @Override
-    public void circle(float radius, int divisions, float centerX, float centerY, float centerZ, float normalX, float normalY,
-            float normalZ, float tangentX, float tangentY, float tangentZ, float binormalX, float binormalY, float binormalZ) {
-        circle(radius, divisions, centerX, centerY, centerZ, normalX, normalY, normalZ, tangentX, tangentY, tangentZ, binormalX,
-                binormalY, binormalZ, 0f, 360f);
+    public void circle(float radius, int divisions, float centerX, float centerY, float centerZ, float normalX, float normalY, float normalZ, float tangentX, float tangentY, float tangentZ, float binormalX, float binormalY, float binormalZ) {
+        circle(radius, divisions, centerX, centerY, centerZ, normalX, normalY, normalZ, tangentX, tangentY, tangentZ, binormalX, binormalY, binormalZ, 0f, 360f);
     }
 
     @Override
-    public void circle(float radius, int divisions, float centerX, float centerY, float centerZ, float normalX, float normalY,
-            float normalZ, float angleFrom, float angleTo) {
+    public void circle(float radius, int divisions, float centerX, float centerY, float centerZ, float normalX, float normalY, float normalZ, float angleFrom, float angleTo) {
         ellipse(radius * 2f, radius * 2f, divisions, centerX, centerY, centerZ, normalX, normalY, normalZ, angleFrom, angleTo);
     }
 
@@ -743,23 +712,17 @@ public class MeshBuilder2 implements MeshPartBuilder2 {
     }
 
     @Override
-    public void circle(float radius, int divisions, final Vector3 center, final Vector3 normal, final Vector3 tangent,
-            final Vector3 binormal, float angleFrom, float angleTo) {
-        circle(radius, divisions, center.x, center.y, center.z, normal.x, normal.y, normal.z, tangent.x, tangent.y, tangent.z,
-                binormal.x, binormal.y, binormal.z, angleFrom, angleTo);
+    public void circle(float radius, int divisions, final Vector3 center, final Vector3 normal, final Vector3 tangent, final Vector3 binormal, float angleFrom, float angleTo) {
+        circle(radius, divisions, center.x, center.y, center.z, normal.x, normal.y, normal.z, tangent.x, tangent.y, tangent.z, binormal.x, binormal.y, binormal.z, angleFrom, angleTo);
     }
 
     @Override
-    public void circle(float radius, int divisions, float centerX, float centerY, float centerZ, float normalX, float normalY,
-            float normalZ, float tangentX, float tangentY, float tangentZ, float binormalX, float binormalY, float binormalZ,
-            float angleFrom, float angleTo) {
-        ellipse(radius * 2, radius * 2, 0, 0, divisions, centerX, centerY, centerZ, normalX, normalY, normalZ, tangentX, tangentY,
-                tangentZ, binormalX, binormalY, binormalZ, angleFrom, angleTo);
+    public void circle(float radius, int divisions, float centerX, float centerY, float centerZ, float normalX, float normalY, float normalZ, float tangentX, float tangentY, float tangentZ, float binormalX, float binormalY, float binormalZ, float angleFrom, float angleTo) {
+        ellipse(radius * 2, radius * 2, 0, 0, divisions, centerX, centerY, centerZ, normalX, normalY, normalZ, tangentX, tangentY, tangentZ, binormalX, binormalY, binormalZ, angleFrom, angleTo);
     }
 
     @Override
-    public void ellipse(float width, float height, int divisions, float centerX, float centerY, float centerZ, float normalX,
-            float normalY, float normalZ) {
+    public void ellipse(float width, float height, int divisions, float centerX, float centerY, float centerZ, float normalX, float normalY, float normalZ) {
         ellipse(width, height, divisions, centerX, centerY, centerZ, normalX, normalY, normalZ, 0f, 360f);
     }
 
@@ -769,84 +732,64 @@ public class MeshBuilder2 implements MeshPartBuilder2 {
     }
 
     @Override
-    public void ellipse(float width, float height, int divisions, final Vector3 center, final Vector3 normal,
-            final Vector3 tangent, final Vector3 binormal) {
-        ellipse(width, height, divisions, center.x, center.y, center.z, normal.x, normal.y, normal.z, tangent.x, tangent.y,
-                tangent.z, binormal.x, binormal.y, binormal.z);
+    public void ellipse(float width, float height, int divisions, final Vector3 center, final Vector3 normal, final Vector3 tangent, final Vector3 binormal) {
+        ellipse(width, height, divisions, center.x, center.y, center.z, normal.x, normal.y, normal.z, tangent.x, tangent.y, tangent.z, binormal.x, binormal.y, binormal.z);
     }
 
     @Override
-    public void ellipse(float width, float height, int divisions, float centerX, float centerY, float centerZ, float normalX,
-            float normalY, float normalZ, float tangentX, float tangentY, float tangentZ, float binormalX, float binormalY,
-            float binormalZ) {
-        ellipse(width, height, divisions, centerX, centerY, centerZ, normalX, normalY, normalZ, tangentX, tangentY, tangentZ,
-                binormalX, binormalY, binormalZ, 0f, 360f);
+    public void ellipse(float width, float height, int divisions, float centerX, float centerY, float centerZ, float normalX, float normalY, float normalZ, float tangentX, float tangentY, float tangentZ, float binormalX, float binormalY, float binormalZ) {
+        ellipse(width, height, divisions, centerX, centerY, centerZ, normalX, normalY, normalZ, tangentX, tangentY, tangentZ, binormalX, binormalY, binormalZ, 0f, 360f);
     }
 
     @Override
-    public void ellipse(float width, float height, int divisions, float centerX, float centerY, float centerZ, float normalX,
-            float normalY, float normalZ, float angleFrom, float angleTo) {
+    public void ellipse(float width, float height, int divisions, float centerX, float centerY, float centerZ, float normalX, float normalY, float normalZ, float angleFrom, float angleTo) {
         ellipse(width, height, 0f, 0f, divisions, centerX, centerY, centerZ, normalX, normalY, normalZ, angleFrom, angleTo);
     }
 
     @Override
-    public void ellipse(float width, float height, int divisions, final Vector3 center, final Vector3 normal, float angleFrom,
-            float angleTo) {
+    public void ellipse(float width, float height, int divisions, final Vector3 center, final Vector3 normal, float angleFrom, float angleTo) {
         ellipse(width, height, 0f, 0f, divisions, center.x, center.y, center.z, normal.x, normal.y, normal.z, angleFrom, angleTo);
     }
 
     @Override
-    public void ellipse(float width, float height, int divisions, final Vector3 center, final Vector3 normal,
-            final Vector3 tangent, final Vector3 binormal, float angleFrom, float angleTo) {
-        ellipse(width, height, 0f, 0f, divisions, center.x, center.y, center.z, normal.x, normal.y, normal.z, tangent.x, tangent.y,
-                tangent.z, binormal.x, binormal.y, binormal.z, angleFrom, angleTo);
+    public void ellipse(float width, float height, int divisions, final Vector3 center, final Vector3 normal, final Vector3 tangent, final Vector3 binormal, float angleFrom, float angleTo) {
+        ellipse(width, height, 0f, 0f, divisions, center.x, center.y, center.z, normal.x, normal.y, normal.z, tangent.x, tangent.y, tangent.z, binormal.x, binormal.y, binormal.z, angleFrom, angleTo);
     }
 
     @Override
-    public void ellipse(float width, float height, int divisions, float centerX, float centerY, float centerZ, float normalX,
-            float normalY, float normalZ, float tangentX, float tangentY, float tangentZ, float binormalX, float binormalY,
-            float binormalZ, float angleFrom, float angleTo) {
-        ellipse(width, height, 0f, 0f, divisions, centerX, centerY, centerZ, normalX, normalY, normalZ, tangentX, tangentY,
-                tangentZ, binormalX, binormalY, binormalZ, angleFrom, angleTo);
+    public void ellipse(float width, float height, int divisions, float centerX, float centerY, float centerZ, float normalX, float normalY, float normalZ, float tangentX, float tangentY, float tangentZ, float binormalX, float binormalY, float binormalZ, float angleFrom, float angleTo) {
+        ellipse(width, height, 0f, 0f, divisions, centerX, centerY, centerZ, normalX, normalY, normalZ, tangentX, tangentY, tangentZ, binormalX, binormalY, binormalZ, angleFrom, angleTo);
     }
 
     @Override
-    public void ellipse(float width, float height, float innerWidth, float innerHeight, int divisions, Vector3 center,
-            Vector3 normal) {
-        ellipse(width, height, innerWidth, innerHeight, divisions, center.x, center.y, center.z, normal.x, normal.y, normal.z, 0f,
-                360f);
+    public void ellipse(float width, float height, float innerWidth, float innerHeight, int divisions, Vector3 center, Vector3 normal) {
+        ellipse(width, height, innerWidth, innerHeight, divisions, center.x, center.y, center.z, normal.x, normal.y, normal.z, 0f, 360f);
     }
 
     @Override
-    public void ellipse(float width, float height, float innerWidth, float innerHeight, int divisions, float centerX,
-            float centerY, float centerZ, float normalX, float normalY, float normalZ) {
+    public void ellipse(float width, float height, float innerWidth, float innerHeight, int divisions, float centerX, float centerY, float centerZ, float normalX, float normalY, float normalZ) {
         ellipse(width, height, innerWidth, innerHeight, divisions, centerX, centerY, centerZ, normalX, normalY, normalZ, 0f, 360f);
     }
 
     @Override
-    public void ellipse(float width, float height, float innerWidth, float innerHeight, int divisions, float centerX,
-            float centerY, float centerZ, float normalX, float normalY, float normalZ, float angleFrom, float angleTo) {
+    public void ellipse(float width, float height, float innerWidth, float innerHeight, int divisions, float centerX, float centerY, float centerZ, float normalX, float normalY, float normalZ, float angleFrom, float angleTo) {
         tempV1.set(normalX, normalY, normalZ).crs(0, 0, 1);
         tempV2.set(normalX, normalY, normalZ).crs(0, 1, 0);
         if (tempV2.len2() > tempV1.len2())
             tempV1.set(tempV2);
         tempV2.set(tempV1.nor()).crs(normalX, normalY, normalZ).nor();
-        ellipse(width, height, innerWidth, innerHeight, divisions, centerX, centerY, centerZ, normalX, normalY, normalZ, tempV1.x,
-                tempV1.y, tempV1.z, tempV2.x, tempV2.y, tempV2.z, angleFrom, angleTo);
+        ellipse(width, height, innerWidth, innerHeight, divisions, centerX, centerY, centerZ, normalX, normalY, normalZ, tempV1.x, tempV1.y, tempV1.z, tempV2.x, tempV2.y, tempV2.z, angleFrom, angleTo);
     }
 
     @Override
-    public void ellipse(float width, float height, float innerWidth, float innerHeight, int divisions, float centerX,
-            float centerY, float centerZ, float normalX, float normalY, float normalZ, float tangentX, float tangentY, float tangentZ,
-            float binormalX, float binormalY, float binormalZ, float angleFrom, float angleTo) {
+    public void ellipse(float width, float height, float innerWidth, float innerHeight, int divisions, float centerX, float centerY, float centerZ, float normalX, float normalY, float normalZ, float tangentX, float tangentY, float tangentZ, float binormalX, float binormalY, float binormalZ, float angleFrom, float angleTo) {
         if (innerWidth <= 0 || innerHeight <= 0) {
             ensureTriangles(divisions + 2, divisions);
         } else if (innerWidth == width && innerHeight == height) {
             ensureVertices(divisions + 1);
             ensureIndices(divisions + 1);
             if (primitiveType != GL20.GL_LINES)
-                throw new GdxRuntimeException(
-                        "Incorrect primitive type : expect GL_LINES because innerWidth == width && innerHeight == height");
+                throw new GdxRuntimeException("Incorrect primitive type : expect GL_LINES because innerWidth == width && innerHeight == height");
         } else {
             ensureRectangles((divisions + 1) * 2, divisions + 1);
         }
@@ -876,8 +819,7 @@ public class MeshBuilder2 implements MeshPartBuilder2 {
             angle = ao + step * i;
             final float x = MathUtils.cos(angle);
             final float y = MathUtils.sin(angle);
-            currEx.position.set(centerX, centerY, centerZ).add(sxEx.x * x + syEx.x * y, sxEx.y * x + syEx.y * y,
-                    sxEx.z * x + syEx.z * y);
+            currEx.position.set(centerX, centerY, centerZ).add(sxEx.x * x + syEx.x * y, sxEx.y * x + syEx.y * y, sxEx.z * x + syEx.z * y);
             currEx.uv.set(.5f + .5f * x, .5f + .5f * y);
             i1 = vertex(currEx);
 
@@ -890,8 +832,7 @@ public class MeshBuilder2 implements MeshPartBuilder2 {
                     line(i1, i2);
                 i2 = i1;
             } else {
-                currIn.position.set(centerX, centerY, centerZ).add(sxIn.x * x + syIn.x * y, sxIn.y * x + syIn.y * y,
-                        sxIn.z * x + syIn.z * y);
+                currIn.position.set(centerX, centerY, centerZ).add(sxIn.x * x + syIn.x * y, sxIn.y * x + syIn.y * y, sxIn.z * x + syIn.z * y);
                 currIn.uv.set(.5f + us * x, .5f + vs * y);
                 i2 = i1;
                 i1 = vertex(currIn);
@@ -1005,16 +946,14 @@ public class MeshBuilder2 implements MeshPartBuilder2 {
     }
 
     @Override
-    public void sphere(float width, float height, float depth, int divisionsU, int divisionsV, float angleUFrom, float angleUTo,
-            float angleVFrom, float angleVTo) {
+    public void sphere(float width, float height, float depth, int divisionsU, int divisionsV, float angleUFrom, float angleUTo, float angleVFrom, float angleVTo) {
         sphere(matTmp1.idt(), width, height, depth, divisionsU, divisionsV, angleUFrom, angleUTo, angleVFrom, angleVTo);
     }
 
     private static ShortArray tmpIndices;
 
     @Override
-    public void sphere(final Matrix4 transform, float width, float height, float depth, int divisionsU, int divisionsV,
-            float angleUFrom, float angleUTo, float angleVFrom, float angleVTo) {
+    public void sphere(final Matrix4 transform, float width, float height, float depth, int divisionsU, int divisionsV, float angleUFrom, float angleUTo, float angleVFrom, float angleVTo) {
         // FIXME create better sphere method (- only one vertex for each pole, - position)
         final float hw = width * 0.5f;
         final float hh = height * 0.5f;
@@ -1057,8 +996,7 @@ public class MeshBuilder2 implements MeshPartBuilder2 {
                 tmpIndices.set(tempOffset, vertex(curr1));
                 final int o = tempOffset + s;
                 if ((iv > 0) && (iu > 0)) // FIXME don't duplicate lines and points
-                    rect(tmpIndices.get(tempOffset), tmpIndices.get((o - 1) % s), tmpIndices.get((o - (divisionsU + 2)) % s),
-                            tmpIndices.get((o - (divisionsU + 1)) % s));
+                    rect(tmpIndices.get(tempOffset), tmpIndices.get((o - 1) % s), tmpIndices.get((o - (divisionsU + 2)) % s), tmpIndices.get((o - (divisionsU + 1)) % s));
                 tempOffset = (tempOffset + 1) % tmpIndices.size;
             }
         }
@@ -1144,38 +1082,12 @@ public class MeshBuilder2 implements MeshPartBuilder2 {
     }
 
     @Override
-    public void icosphere(float radius, int divisions, boolean flipNormals, boolean hardEdges) {
-        icosphere(radius, divisions, flipNormals, hardEdges, 0, Short.MAX_VALUE);
-    }
-
-    @Override
-    public void icosphere(float radius, int divisions, boolean flipNormals, boolean hardEdges, int startFace, int nfaces) {
-        ensureTriangles(10 * (int) Math.pow(2, 2 * divisions - 1));
-        IcoSphereCreator isc = new IcoSphereCreator();
-        isc.create(radius, divisions, flipNormals, hardEdges);
-
-        for (int j = startFace; j < startFace + nfaces && j < isc.faces.size(); j++) {
-            IFace face = isc.faces.get(j);
-
-            short[] tri = new short[3];
-            for (int i = 0; i < 3; i++) {
-                VertexInfo v = vertTmp1.set(isc.vertices.get(face.v()[i] - 1), isc.normals.get(face.n()[i] - 1), null, isc.uv.get(face.v()[i] - 1));
-                short idx = vertex(v);
-                tri[i] = idx;
-            }
-            triangle(tri[0], tri[1], tri[2]);
-        }
-    }
-
-    @Override
-    public void sphere(float width, float height, float depth, int divisionsU, int divisionsV, boolean flipNormals, float angleUFrom, float angleUTo,
-            float angleVFrom, float angleVTo) {
+    public void sphere(float width, float height, float depth, int divisionsU, int divisionsV, boolean flipNormals, float angleUFrom, float angleUTo, float angleVFrom, float angleVTo) {
         sphere(matTmp1.idt(), width, height, depth, divisionsU, divisionsV, flipNormals, angleUFrom, angleUTo, angleVFrom, angleVTo);
     }
 
     @Override
-    public void sphere(final Matrix4 transform, float width, float height, float depth, int divisionsU, int divisionsV, boolean flipNormals,
-            float angleUFrom, float angleUTo, float angleVFrom, float angleVTo) {
+    public void sphere(final Matrix4 transform, float width, float height, float depth, int divisionsU, int divisionsV, boolean flipNormals, float angleUFrom, float angleUTo, float angleVFrom, float angleVTo) {
         // FIXME create better sphere method (- only one vertex for each pole, - position)
         final float hw = width * 0.5f;
         final float hh = height * 0.5f;
@@ -1219,15 +1131,9 @@ public class MeshBuilder2 implements MeshPartBuilder2 {
                 final int o = tempOffset + s;
                 if ((iv > 0) && (iu > 0)) // FIXME don't duplicate lines and points
                     if (!flipNormals) {
-                        rect(tmpIndices.get(tempOffset),
-                                tmpIndices.get((o - 1) % s),
-                                tmpIndices.get((o - (divisionsU + 2)) % s),
-                                tmpIndices.get((o - (divisionsU + 1)) % s));
+                        rect(tmpIndices.get(tempOffset), tmpIndices.get((o - 1) % s), tmpIndices.get((o - (divisionsU + 2)) % s), tmpIndices.get((o - (divisionsU + 1)) % s));
                     } else {
-                        rect(tmpIndices.get(tempOffset),
-                                tmpIndices.get((o - (divisionsU + 1)) % s),
-                                tmpIndices.get((o - (divisionsU + 2)) % s),
-                                tmpIndices.get((o - 1) % s));
+                        rect(tmpIndices.get(tempOffset), tmpIndices.get((o - (divisionsU + 1)) % s), tmpIndices.get((o - (divisionsU + 2)) % s), tmpIndices.get((o - 1) % s));
                     }
                 tempOffset = (tempOffset + 1) % tmpIndices.size;
             }

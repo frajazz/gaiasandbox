@@ -1,15 +1,14 @@
 package gaia.cu9.ari.gaiaorbit.scenegraph.component;
 
 import gaia.cu9.ari.gaiaorbit.data.AssetBean;
-import gaia.cu9.ari.gaiaorbit.data.FileLocator;
 import gaia.cu9.ari.gaiaorbit.util.Logger;
 import gaia.cu9.ari.gaiaorbit.util.ModelCache;
 import gaia.cu9.ari.gaiaorbit.util.Pair;
 
 import java.util.HashMap;
 import java.util.Map;
-import java.util.zip.DataFormatException;
 
+import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.assets.AssetManager;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.VertexAttributes.Usage;
@@ -76,7 +75,7 @@ public class ModelComponent {
     }
 
     public void initialize() {
-        if (modelFile != null && FileLocator.exists(modelFile)) {
+        if (modelFile != null && Gdx.files.internal(modelFile).exists()) {
             AssetBean.addAsset(modelFile, Model.class);
         }
 
@@ -107,7 +106,7 @@ public class ModelComponent {
             materials = pair.getSecond();
         } else {
             // Data error!
-            Logger.error(new DataFormatException("The 'model' element must contain either a 'type' or a 'model' attribute"));
+            Logger.error(new RuntimeException("The 'model' element must contain either a 'type' or a 'model' attribute"));
         }
         // Clear base material
         materials.get("base").clear();

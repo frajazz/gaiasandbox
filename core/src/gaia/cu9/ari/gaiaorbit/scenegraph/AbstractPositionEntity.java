@@ -108,7 +108,7 @@ public abstract class AbstractPositionEntity extends SceneGraphNode {
 
         this.transform.translate(pos);
 
-        this.distToCamera = (float) transform.getTranslation(auxVector3d.get()).len();
+        this.distToCamera = (float) transform.getTranslation(auxVector3d).len();
         this.viewAngle = (float) Math.atan(size / distToCamera);
         this.viewAngleApparent = this.viewAngle;
         if (!copy) {

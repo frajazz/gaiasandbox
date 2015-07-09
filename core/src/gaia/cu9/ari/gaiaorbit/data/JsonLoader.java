@@ -1,21 +1,30 @@
 package gaia.cu9.ari.gaiaorbit.data;
 
+import gaia.cu9.ari.gaiaorbit.scenegraph.Gaia;
+import gaia.cu9.ari.gaiaorbit.scenegraph.Grid;
+import gaia.cu9.ari.gaiaorbit.scenegraph.Loc;
+import gaia.cu9.ari.gaiaorbit.scenegraph.MilkyWay;
+import gaia.cu9.ari.gaiaorbit.scenegraph.Mw;
+import gaia.cu9.ari.gaiaorbit.scenegraph.Orbit;
+import gaia.cu9.ari.gaiaorbit.scenegraph.Planet;
 import gaia.cu9.ari.gaiaorbit.scenegraph.SceneGraphNode;
+import gaia.cu9.ari.gaiaorbit.scenegraph.component.AtmosphereComponent;
+import gaia.cu9.ari.gaiaorbit.scenegraph.component.ModelComponent;
+import gaia.cu9.ari.gaiaorbit.scenegraph.component.OrbitComponent;
+import gaia.cu9.ari.gaiaorbit.scenegraph.component.RotationComponent;
+import gaia.cu9.ari.gaiaorbit.scenegraph.component.TextureComponent;
 import gaia.cu9.ari.gaiaorbit.util.GlobalResources;
 import gaia.cu9.ari.gaiaorbit.util.I18n;
 import gaia.cu9.ari.gaiaorbit.util.Logger;
 
-import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
-import java.util.Properties;
 import java.util.TreeMap;
-import java.util.zip.DataFormatException;
 
+import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.utils.JsonReader;
 import com.badlogic.gdx.utils.JsonValue;
 import com.badlogic.gdx.utils.JsonValue.ValueType;
@@ -35,13 +44,8 @@ public class JsonLoader<T extends SceneGraphNode> implements ISceneGraphNodeProv
     /** Contains all the files to be loaded by this loader **/
     private String[] filePaths;
 
-    @Override
-    public void initialize(Properties properties) {
-        if (properties.getProperty("files") != null) {
-            filePaths = properties.getProperty("files").split("\\s+");
-        } else {
-            filePaths = new String[] {};
-        }
+    public void initialize(String... files) {
+        filePaths = files;
     }
 
     @Override
@@ -51,22 +55,18 @@ public class JsonLoader<T extends SceneGraphNode> implements ISceneGraphNodeProv
         try {
             JsonReader json = new JsonReader();
             for (String filePath : filePaths) {
-                JsonValue model = json.parse(FileLocator.getStream(filePath));
+                JsonValue model = json.parse(Gdx.files.internal(filePath).read());
                 JsonValue child = model.get("objects").child;
                 int size = 0;
                 while (child != null) {
                     size++;
                     String clazzName = child.getString("impl");
 
-                    @SuppressWarnings("unchecked")
-                    Class<Object> clazz = (Class<Object>) Class.forName(clazzName);
-
                     // Convert to object and add to list
-                    T object = (T) convertJsonToObject(child, clazz);
+                    T object = (T) convertJsonToObject(child, clazzName);
 
                     // Only load and add if it display is activated
-                    Method m = clazz.getMethod("initialize");
-                    m.invoke(object);
+                    object.initialize();
 
                     bodies.add(object);
 
@@ -82,6 +82,46 @@ public class JsonLoader<T extends SceneGraphNode> implements ISceneGraphNodeProv
         return bodies;
     }
 
+    private Object getInstance(String clazzName) {
+        switch (clazzName) {
+        case "gaia.cu9.ari.gaiaorbit.scenegraph.Orbit":
+            return new Orbit();
+        case "gaia.cu9.ari.gaiaorbit.scenegraph.Grid":
+            return new Grid();
+        case "gaia.cu9.ari.gaiaorbit.scenegraph.MilkyWay":
+            return new MilkyWay();
+        case "gaia.cu9.ari.gaiaorbit.scenegraph.Mw":
+            return new Mw();
+        case "gaia.cu9.ari.gaiaorbit.scenegraph.Planet":
+            return new Planet();
+        case "gaia.cu9.ari.gaiaorbit.scenegraph.Loc":
+            return new Loc();
+        case "gaia.cu9.ari.gaiaorbit.scenegraph.Gaia":
+            return new Gaia();
+        case "gaia.cu9.ari.gaiaorbit.scenegraph.component.TextureComponent":
+            return new TextureComponent();
+        case "gaia.cu9.ari.gaiaorbit.scenegraph.component.AtmosphereComponent":
+            return new AtmosphereComponent();
+        case "gaia.cu9.ari.gaiaorbit.scenegraph.component.RotationComponent":
+            return new RotationComponent();
+        case "gaia.cu9.ari.gaiaorbit.scenegraph.component.OrbitComponent":
+            return new OrbitComponent();
+        }
+        return null;
+    }
+
+    private Object getParamInstance(String className, Boolean argument) {
+        switch (className) {
+        case "gaia.cu9.ari.gaiaorbit.scenegraph.component.ModelComponent":
+            if (argument != null) {
+                return new ModelComponent(argument);
+            } else {
+                return new ModelComponent();
+            }
+        }
+        return null;
+    }
+
     /**
      * Converts the given {@link JsonValue} to a java object of the given {@link Class}.
      * @param json The {@link JsonValue} for the object to convert.
@@ -95,26 +135,20 @@ public class JsonLoader<T extends SceneGraphNode> implements ISceneGraphNodeProv
      * @throws ClassNotFoundException 
      * @throws InstantiationException 
      */
-    private Object convertJsonToObject(JsonValue json, Class<?> clazz) throws DataFormatException, NoSuchMethodException, SecurityException, IllegalAccessException, IllegalArgumentException, InvocationTargetException, ClassNotFoundException {
+    private Object convertJsonToObject(JsonValue json, String clazzName) throws NoSuchMethodException, SecurityException, IllegalAccessException, IllegalArgumentException, ClassNotFoundException {
         Object instance;
         try {
             if (json.has("args")) {
                 //Creator arguments
                 JsonValue args = json.get("args");
-                Class<?>[] argumentTypes = new Class<?>[args.size];
-                Object[] arguments = new Object[args.size];
-                for (int i = 0; i < args.size; i++) {
-                    JsonValue arg = args.get(i);
-                    argumentTypes[i] = getValueClass(arg);
-                    arguments[i] = getValue(arg);
-                }
-                Constructor<?> constructor = clazz.getConstructor(argumentTypes);
-                instance = constructor.newInstance(arguments);
+                JsonValue arg = args.get(0);
+                Boolean argument = arg.asBoolean();
+                instance = getParamInstance(clazzName, argument);
             } else {
-                instance = clazz.newInstance();
+                instance = getInstance(clazzName);
             }
         } catch (Exception e) {
-            throw new DataFormatException("Unable to instantiate class: " + e.getMessage());
+            throw new RuntimeException("Unable to instantiate class: " + e.getMessage());
         }
         JsonValue attribute = json.child;
         while (attribute != null) {
@@ -148,15 +182,12 @@ public class JsonLoader<T extends SceneGraphNode> implements ISceneGraphNodeProv
                     }
 
                 } else if (attribute.isObject()) {
-                    String clazzName = attribute.has("impl") ? attribute.getString("impl") : GlobalResources.capitalise(attribute.name) + "Component";
-                    try {
-                        valueClass = Class.forName(clazzName);
-                        value = convertJsonToObject(attribute, valueClass);
-                    } catch (ClassNotFoundException e1) {
+                    String objClazzName = attribute.has("impl") ? attribute.getString("impl") : COMPONENTS_PACKAGE + GlobalResources.capitalise(attribute.name) + "Component";
+                    value = convertJsonToObject(attribute, objClazzName);
+                    if (value == null) {
                         // Class not found, probably a component
                         try {
-                            valueClass = Class.forName(COMPONENTS_PACKAGE + clazzName);
-                            value = convertJsonToObject(attribute, valueClass);
+                            value = convertJsonToObject(attribute, objClazzName);
                         } catch (ClassNotFoundException e2) {
                             // We use a map
                             valueClass = Map.class;
@@ -165,12 +196,9 @@ public class JsonLoader<T extends SceneGraphNode> implements ISceneGraphNodeProv
                     }
 
                 }
-                String methodName = "set" + GlobalResources.propertyToMethodName(attribute.name);
-                Method m = searchMethod(methodName, valueClass, clazz);
-                if (m != null)
-                    m.invoke(instance, value);
-                else
-                    throw new NoSuchMethodException("No method " + methodName + " in class " + valueClass.toString() + " or its interfaces or superclass.");
+                String methodName = GlobalResources.propertyToMethodName(attribute.name);
+                invokeMethod(instance, methodName, value);
+
             }
             attribute = attribute.next;
         }
@@ -192,41 +220,11 @@ public class JsonLoader<T extends SceneGraphNode> implements ISceneGraphNodeProv
         return map;
     }
 
-    /**
-     * Searches for the given method with the given class. If none is found, it looks for fitting methods
-     * with the classe's interfaces and superclasses recursively.
-     * @param methodName
-     * @param clazz
-     * @return
-     */
-    private Method searchMethod(String methodName, Class<?> clazz, Class<?> source) {
-        Method m = null;
-        try {
-            m = source.getMethod(methodName, clazz);
-        } catch (NoSuchMethodException e) {
-            if (clazz == null) {
-                return null;
-            }
-            // Let's see if we find a method that fits one of the implementing interfaces
-            Class<?>[] interfaces = clazz.getInterfaces();
-            boolean found = false;
-            int i = 0;
-            while (!found && i < interfaces.length) {
-                Class<?> current = interfaces[i];
-                try {
-                    m = source.getMethod(methodName, current);
-                    found = true;
-                } catch (NoSuchMethodException e1) {
-                    // Not lucky
-                }
-                i++;
-            }
-            // Let's try recursively with the superclass
-            if (!found) {
-                return searchMethod(methodName, clazz.getSuperclass(), source);
-            }
+    private void invokeMethod(Object instance, String methodName, Object param) {
+        switch (methodName) {
+        case "color":
+
         }
-        return m;
     }
 
     private Object getValue(JsonValue val) {

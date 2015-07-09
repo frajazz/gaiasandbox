@@ -4,8 +4,6 @@ import gaia.cu9.ari.gaiaorbit.render.ComponentType;
 import gaia.cu9.ari.gaiaorbit.scenegraph.ISceneGraph;
 import gaia.cu9.ari.gaiaorbit.util.GlobalResources;
 
-import java.text.DecimalFormat;
-
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.assets.AssetManager;
 import com.badlogic.gdx.scenes.scene2d.Actor;
@@ -31,11 +29,6 @@ public class HUDGui implements IGui {
     protected MessagesInterface messagesInterface;
     protected DebugInterface debugInterface;
 
-    /**
-     * Number formats
-     */
-    private DecimalFormat format, sformat;
-
     /** Lock object for synchronization **/
     private Object lock;
 
@@ -49,21 +42,19 @@ public class HUDGui implements IGui {
     @Override
     public void doneLoading(AssetManager assetManager) {
         skin = GlobalResources.skin;
-        format = new DecimalFormat("0.0###");
-        sformat = new DecimalFormat("0.###E0");
 
         initialize();
     }
 
     private void initialize() {
         // FOCUS INFORMATION - BOTTOM RIGHT
-        focusInterface = new FocusInfoInterface(skin, format, sformat);
+        focusInterface = new FocusInfoInterface(skin);
         focusInterface.setFillParent(true);
         focusInterface.right().bottom();
         focusInterface.pad(0, 0, 5, 5);
 
         // CAMERA INFORMATION - BOTTOM CENTER
-        cameraInterface = new CameraInfoInterface(skin, sformat, lock);
+        cameraInterface = new CameraInfoInterface(skin, lock);
         cameraInterface.setFillParent(true);
         cameraInterface.center().bottom();
 

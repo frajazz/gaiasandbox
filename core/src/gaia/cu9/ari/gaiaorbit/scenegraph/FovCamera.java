@@ -64,7 +64,7 @@ public class FovCamera extends AbstractCamera implements IObserver {
     Vector3d dirMiddle, up;
     public Vector3d[] directions;
     public List<Vector3d[]> interpolatedDirections;
-    private ThreadLocal<Matrix4d> trf;
+    private Matrix4d trf;
 
     public long currentTime, lastTime;
     private Pool<Vector3d> vectorPool;
@@ -81,13 +81,8 @@ public class FovCamera extends AbstractCamera implements IObserver {
         interpolatedDirections = new ArrayList<Vector3d[]>();
         dirMiddle = new Vector3d();
         up = new Vector3d();
-        trf = new ThreadLocal<Matrix4d>() {
-            @Override
-            protected Matrix4d initialValue() {
-                return new Matrix4d();
-            }
+        trf = new Matrix4d();
 
-        };
         currentTime = 0l;
         lastTime = 0l;
         vectorPool = Pools.get(Vector3d.class);
@@ -160,7 +155,7 @@ public class FovCamera extends AbstractCamera implements IObserver {
 
         /** ORIENTATION - directions and up **/
         updateDirections(time);
-        up.mul(trf.get()).nor();
+        up.mul(trf).nor();
 
         // Update cameras
         updateCamera(directions[0], up, camera);
@@ -168,7 +163,7 @@ public class FovCamera extends AbstractCamera implements IObserver {
 
         updateCamera(directions[1], up, camera2);
 
-        dirMiddle.set(0, 0, 1).mul(trf.get());
+        dirMiddle.set(0, 0, 1).mul(trf);
 
     }
 
@@ -180,11 +175,11 @@ public class FovCamera extends AbstractCamera implements IObserver {
         lastTime = currentTime;
         currentTime = time.getTime().getTime();
 
-        trf.get().idt();
+        trf.idt();
         Quaterniond quat = GaiaAttitudeServer.instance.getAttitude(time.getTime()).getQuaternion();
-        trf.get().rotate(quat).rotate(0, 0, 1, 180);
-        directions[0].set(0, 0, 1).rotate(BAM_2, 0, 1, 0).mul(trf.get()).nor();
-        directions[1].set(0, 0, 1).rotate(-BAM_2, 0, 1, 0).mul(trf.get()).nor();
+        trf.rotate(quat).rotate(0, 0, 1, 180);
+        directions[0].set(0, 0, 1).rotate(BAM_2, 0, 1, 0).mul(trf).nor();
+        directions[1].set(0, 0, 1).rotate(-BAM_2, 0, 1, 0).mul(trf).nor();
 
         /** WORK OUT INTERPOLATED DIRECTIONS IN THE CASE OF FAST SCANNING **/
         for (Vector3d[] directions : interpolatedDirections) {
@@ -211,11 +206,11 @@ public class FovCamera extends AbstractCamera implements IObserver {
     }
 
     public Vector3d[] getDirections(Date d) {
-        trf.get().idt();
+        trf.idt();
         Quaterniond quat = GaiaAttitudeServer.instance.getAttitude(d).getQuaternion();
-        trf.get().rotate(quat).rotate(0, 0, 1, 180);
-        Vector3d dir1 = vectorPool.obtain().set(0, 0, 1).rotate(BAM_2, 0, 1, 0).mul(trf.get()).nor();
-        Vector3d dir2 = vectorPool.obtain().set(0, 0, 1).rotate(-BAM_2, 0, 1, 0).mul(trf.get()).nor();
+        trf.rotate(quat).rotate(0, 0, 1, 180);
+        Vector3d dir1 = vectorPool.obtain().set(0, 0, 1).rotate(BAM_2, 0, 1, 0).mul(trf).nor();
+        Vector3d dir2 = vectorPool.obtain().set(0, 0, 1).rotate(-BAM_2, 0, 1, 0).mul(trf).nor();
         return new Vector3d[] { dir1, dir2 };
     }
 

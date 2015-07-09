@@ -4,14 +4,11 @@ import gaia.cu9.ari.gaiaorbit.event.EventManager;
 import gaia.cu9.ari.gaiaorbit.event.Events;
 import gaia.cu9.ari.gaiaorbit.event.IObserver;
 import gaia.cu9.ari.gaiaorbit.interfce.DateDialog;
-import gaia.cu9.ari.gaiaorbit.util.I18n;
 import gaia.cu9.ari.gaiaorbit.util.scene2d.OwnImageButton;
 import gaia.cu9.ari.gaiaorbit.util.scene2d.OwnLabel;
 import gaia.cu9.ari.gaiaorbit.util.scene2d.OwnTextField;
-import gaia.cu9.ari.gaiaorbit.util.scene2d.Tooltip;
 import gaia.cu9.ari.gaiaorbit.util.time.GlobalClock;
 
-import java.text.DateFormat;
 import java.util.Date;
 
 import com.badlogic.gdx.scenes.scene2d.Event;
@@ -30,9 +27,6 @@ import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener.ChangeEvent;
 import com.badlogic.gdx.utils.Align;
 
 public class TimeComponent extends GuiComponent implements IObserver {
-    /** Date format **/
-    private DateFormat df/** = new SimpleDateFormat("dd-MM-yyyy HH:mm:ss")**/
-    ;
 
     protected OwnLabel date;
     protected Button plus, minus;
@@ -42,7 +36,6 @@ public class TimeComponent extends GuiComponent implements IObserver {
 
     public TimeComponent(Skin skin, Stage stage) {
         super(skin, stage);
-        df = DateFormat.getDateTimeInstance(DateFormat.MEDIUM, DateFormat.MEDIUM, I18n.locale);
         EventManager.instance.subscribe(this, Events.TIME_CHANGE_INFO, Events.TIME_CHANGE_CMD, Events.PACE_CHANGED_INFO);
     }
 
@@ -69,8 +62,8 @@ public class TimeComponent extends GuiComponent implements IObserver {
             }
 
         });
-        Label dateEditTooltip = new Label(txt("gui.tooltip.dateedit"), skin, "tooltip");
-        dateEdit.addListener(new Tooltip<Label>(dateEditTooltip, stage));
+        //Label dateEditTooltip = new Label(txt("gui.tooltip.dateedit"), skin, "tooltip");
+        //dateEdit.addListener(new Tooltip<Label>(dateEditTooltip, stage));
 
         // Pace
         Label paceLabel = new Label(txt("gui.pace"), skin);
@@ -153,7 +146,7 @@ public class TimeComponent extends GuiComponent implements IObserver {
         case TIME_CHANGE_CMD:
             // Update input time
             Date time = (Date) data[0];
-            date.setText(df.format(time));
+            date.setText(time.toString());
             break;
         case PACE_CHANGED_INFO:
             if (data.length == 1)

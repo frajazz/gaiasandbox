@@ -39,7 +39,8 @@ public class Days extends ConcreteDuration implements Serializable {
     /**
      * Default constructor
      */
-    public Days() {}
+    public Days() {
+    }
 
     /**
      * Construct object
@@ -57,7 +58,7 @@ public class Days extends ConcreteDuration implements Serializable {
      * @see gaia.cu9.ari.gaiaorbit.util.gaia.time.Duration#set(Duration)
      */
     @Override
-	public Duration set(final Duration d) {
+    public Duration set(final Duration d) {
         value = d.asDays();
 
         return this;
@@ -69,7 +70,7 @@ public class Days extends ConcreteDuration implements Serializable {
      */
     @Override
     public long asNanoSecs() {
-    	return Math.round(value * Duration.NS_PER_DAY);
+        return Math.round(value * Duration.NS_PER_DAY);
     }
 
     /**
@@ -86,7 +87,7 @@ public class Days extends ConcreteDuration implements Serializable {
      * @see gaia.cu9.ari.gaiaorbit.util.gaia.time.Duration#asSecs()
      */
     @Override
-	public double asSecs() {
+    public double asSecs() {
         return value * Duration.SECS_PER_DAY;
     }
 
@@ -104,7 +105,7 @@ public class Days extends ConcreteDuration implements Serializable {
      * @see gaia.cu9.ari.gaiaorbit.util.gaia.time.Duration#asMins()
      */
     @Override
-	public double asMins() {
+    public double asMins() {
         return value * Duration.MINS_PER_DAY;
     }
 
@@ -122,7 +123,7 @@ public class Days extends ConcreteDuration implements Serializable {
      * @see gaia.cu9.ari.gaiaorbit.util.gaia.time.Duration#asHours()
      */
     @Override
-	public double asHours() {
+    public double asHours() {
         return value * Duration.HOURS_PER_DAY;
     }
 
@@ -131,7 +132,7 @@ public class Days extends ConcreteDuration implements Serializable {
      * @see gaia.cu9.ari.gaiaorbit.util.gaia.time.Duration#asRevs
      */
     @Override
-	public double asRevs() {
+    public double asRevs() {
         return value * Duration.REVS_PER_DAY;
     }
 
@@ -143,7 +144,6 @@ public class Days extends ConcreteDuration implements Serializable {
     public static double asRevs(final double days) {
         return days * Duration.REVS_PER_DAY;
     }
-
 
     /**
      * @param days
@@ -159,7 +159,7 @@ public class Days extends ConcreteDuration implements Serializable {
      * @see gaia.cu9.ari.gaiaorbit.util.gaia.time.Duration#asDays()
      */
     @Override
-	public double asDays() {
+    public double asDays() {
         return value;
     }
 
@@ -168,7 +168,7 @@ public class Days extends ConcreteDuration implements Serializable {
      * @see gaia.cu9.ari.gaiaorbit.util.gaia.time.Duration#asJulianYears()
      */
     @Override
-	public double asJulianYears() {
+    public double asJulianYears() {
         return value / Duration.DAYS_PER_JULIAN_YEAR;
     }
 
@@ -186,7 +186,7 @@ public class Days extends ConcreteDuration implements Serializable {
      * @see gaia.cu9.ari.gaiaorbit.util.gaia.time.Duration#negate()
      */
     @Override
-	public Duration negate() {
+    public Duration negate() {
         value = -value;
 
         return this;
@@ -198,7 +198,7 @@ public class Days extends ConcreteDuration implements Serializable {
      * @see gaia.cu9.ari.gaiaorbit.util.gaia.time.Duration#sub(Duration)
      */
     @Override
-	public Duration add(final Duration d) {
+    public Duration add(final Duration d) {
         value += d.asDays();
 
         return this;
@@ -210,17 +210,16 @@ public class Days extends ConcreteDuration implements Serializable {
      * @see gaia.cu9.ari.gaiaorbit.util.gaia.time.Duration#sub(Duration)
      */
     @Override
-	public Duration sub(final Duration d) {
+    public Duration sub(final Duration d) {
         value -= d.asDays();
 
         return this;
     }
 
-	/**
-	 * @see gaia.cu9.ari.gaiaorbit.util.gaia.time.ConcreteDuration#clone()
-	 */
-	@Override
-	public Days clone() {
-		return new Days(value);
-	}
+    /**
+     * @see gaia.cu9.ari.gaiaorbit.util.gaia.time.ConcreteDuration#clone()
+     */
+    public Days clone() {
+        return new Days(value);
+    }
 }

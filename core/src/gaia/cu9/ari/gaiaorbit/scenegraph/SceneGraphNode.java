@@ -31,37 +31,17 @@ import com.badlogic.gdx.utils.Pools;
 public class SceneGraphNode implements ISceneGraphNode, IPosition {
     public static final String ROOT_NAME = "Universe";
 
-    /** Static Thread local auxiliary Vector3d **/
-    protected static ThreadLocal<Vector3d> auxVector3d = new ThreadLocal<Vector3d>() {
-        @Override
-        protected Vector3d initialValue() {
-            return new Vector3d();
-        }
-    };
+    /** Static auxiliary Vector3d **/
+    protected static Vector3d auxVector3d = new Vector3d();
 
-    /** Static Thread local auxiliary Vector3f **/
-    protected static ThreadLocal<Vector3> auxVector3f = new ThreadLocal<Vector3>() {
-        @Override
-        protected Vector3 initialValue() {
-            return new Vector3();
-        }
-    };
+    /** Static auxiliary Vector3f **/
+    protected static Vector3 auxVector3f = new Vector3();
 
-    /** Static Thread local auxiliary Vector3f **/
-    protected static ThreadLocal<Vector3> aux2Vector3f = new ThreadLocal<Vector3>() {
-        @Override
-        protected Vector3 initialValue() {
-            return new Vector3();
-        }
-    };
+    /** Static auxiliary Vector3f **/
+    protected static Vector3 aux2Vector3f = new Vector3();
 
-    /** Static Thread local auxiliary Vector2d **/
-    protected static ThreadLocal<Vector2d> auxVector2d = new ThreadLocal<Vector2d>() {
-        @Override
-        protected Vector2d initialValue() {
-            return new Vector2d();
-        }
-    };
+    /** Static auxiliary Vector2d **/
+    protected static Vector2d auxVector2d = new Vector2d();
 
     /**
      * Describes to which render group this node belongs at a particular time step.
@@ -481,38 +461,6 @@ public class SceneGraphNode implements ISceneGraphNode, IPosition {
         return numChildren + 1;
     }
 
-    /**
-     * Returns the number of nodes of the specified class contained in this node.
-     * @return
-     */
-    public int getNumNodes(Class<? extends SceneGraphNode> clazz) {
-        int n = 0;
-        if (clazz.isInstance(this)) {
-            n = 1;
-        }
-        if (children != null) {
-            int size = children.size();
-            for (int i = 0; i < size; i++) {
-                SceneGraphNode child = children.get(i);
-                n += child.getNumNodes(clazz);
-            }
-        }
-        return n;
-    }
-
-    public <T extends SceneGraphNode> void getNodes(Class<T> clazz, List<T> l) {
-        if (clazz.isInstance(this)) {
-            l.add(clazz.cast(this));
-        }
-        if (children != null) {
-            int size = children.size();
-            for (int i = 0; i < size; i++) {
-                SceneGraphNode child = children.get(i);
-                child.getNodes(clazz, l);
-            }
-        }
-    }
-
     public <T extends SceneGraphNode> T getLineCopy() {
         if (this.parent != null) {
             T parentCopy = parent.getLineCopy();
@@ -585,11 +533,11 @@ public class SceneGraphNode implements ISceneGraphNode, IPosition {
         return SceneGraphRenderer.render_lists.get(rg).contains(renderable, ThreadIndexer.inst().i());
     }
 
-    public SceneGraphNode getFirstAncestorOfType(Class<? extends SceneGraphNode> clazz) {
-        if (this.getClass().isAssignableFrom(clazz))
+    public SceneGraphNode getFirstStarAncestor() {
+        if (this instanceof Star) {
             return this;
-        else if (parent != null) {
-            return parent.getFirstAncestorOfType(clazz);
+        } else if (parent != null) {
+            return parent.getFirstStarAncestor();
         } else {
             return null;
         }

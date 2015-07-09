@@ -20,8 +20,6 @@ import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g3d.ModelBatch;
 import com.badlogic.gdx.graphics.glutils.ShaderProgram;
-import com.badlogic.gdx.math.Matrix4;
-import com.badlogic.gdx.math.Quaternion;
 
 /**
  * These are entities that have a model and is always loaded.
@@ -30,19 +28,6 @@ import com.badlogic.gdx.math.Quaternion;
  */
 public abstract class CelestialBody extends AbstractPositionEntity implements I3DTextRenderable, IQuadRenderable, IModelRenderable {
     private static float[] labelColour = new float[] { 1, 1, 1, 1 };
-
-    protected static ThreadLocal<Quaternion> rotation = new ThreadLocal<Quaternion>() {
-        @Override
-        public Quaternion initialValue() {
-            return new Quaternion();
-        }
-    };
-    protected static ThreadLocal<Matrix4> transf = new ThreadLocal<Matrix4>() {
-        @Override
-        public Matrix4 initialValue() {
-            return new Matrix4();
-        }
-    };
 
     /**
      * Angle limit for rendering at all. If angle is smaller than this quantity, no rendering happens.
@@ -125,7 +110,7 @@ public abstract class CelestialBody extends AbstractPositionEntity implements I3
 
         float size = getFuzzyRenderSize(camera);
 
-        shader.setUniformf("u_pos", transform.getTranslationf(auxVector3f.get()));
+        shader.setUniformf("u_pos", transform.getTranslationf(auxVector3f));
         shader.setUniformf("u_size", size);
 
         float[] col = ccPale;
@@ -167,7 +152,7 @@ public abstract class CelestialBody extends AbstractPositionEntity implements I3
      */
     @Override
     public void render(SpriteBatch batch, ShaderProgram shader, BitmapFont font, ICamera camera) {
-        Vector3d pos = auxVector3d.get();
+        Vector3d pos = auxVector3d;
         textPosition(pos);
         shader.setUniformf("a_viewAngle", viewAngle);
         shader.setUniformf("a_thOverFactor", TH_OVER_FACTOR);
@@ -272,8 +257,7 @@ public abstract class CelestialBody extends AbstractPositionEntity implements I3
             lastTransitIncrease = time.getTime().getTime();
             return true;
         } else {
-            return (time.getDt() > 0 && time.getTime().getTime() - lastTransitIncrease > 90000) ||
-                    (time.getDt() < 0 && lastTransitIncrease - time.getTime().getTime() > 90000);
+            return (time.getDt() > 0 && time.getTime().getTime() - lastTransitIncrease > 90000) || (time.getDt() < 0 && lastTransitIncrease - time.getTime().getTime() > 90000);
         }
     }
 

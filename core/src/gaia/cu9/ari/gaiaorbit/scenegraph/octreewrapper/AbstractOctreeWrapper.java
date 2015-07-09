@@ -7,7 +7,6 @@ import gaia.cu9.ari.gaiaorbit.render.system.AbstractRenderSystem;
 import gaia.cu9.ari.gaiaorbit.scenegraph.CelestialBody;
 import gaia.cu9.ari.gaiaorbit.scenegraph.ICamera;
 import gaia.cu9.ari.gaiaorbit.scenegraph.SceneGraphNode;
-import gaia.cu9.ari.gaiaorbit.scenegraph.Star;
 import gaia.cu9.ari.gaiaorbit.scenegraph.Transform;
 import gaia.cu9.ari.gaiaorbit.util.Logger;
 import gaia.cu9.ari.gaiaorbit.util.time.ITimeFrameProvider;
@@ -127,7 +126,7 @@ public abstract class AbstractOctreeWrapper extends SceneGraphNode implements It
             // Update focus, just in case
             CelestialBody focus = camera.getFocus();
             if (focus != null) {
-                SceneGraphNode star = focus.getFirstAncestorOfType(Star.class);
+                SceneGraphNode star = focus.getFirstStarAncestor();
                 OctreeNode<SceneGraphNode> parent = parenthood.get(star);
                 if (parent != null && !parent.isObserved()) {
                     star.update(time, star.parent.transform, camera);

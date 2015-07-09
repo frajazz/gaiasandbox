@@ -10,9 +10,6 @@ import gaia.cu9.ari.gaiaorbit.util.math.Matrix4d;
 import gaia.cu9.ari.gaiaorbit.util.math.Vector3d;
 import gaia.cu9.ari.gaiaorbit.util.time.ITimeFrameProvider;
 
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
-
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.assets.AssetManager;
 import com.badlogic.gdx.graphics.GL20;
@@ -52,14 +49,8 @@ public class MilkyWay extends Blob implements IModelRenderable, I3DTextRenderabl
         // Initialize transform
         if (transformName != null) {
             coordinateSystem = new Matrix4();
-            Class<Coordinates> c = Coordinates.class;
-            try {
-                Method m = c.getMethod(transformName);
-                Matrix4d trf = (Matrix4d) m.invoke(null);
-                coordinateSystem.set(trf.valuesf());
-            } catch (NoSuchMethodException | SecurityException | IllegalAccessException | IllegalArgumentException | InvocationTargetException e) {
-                Gdx.app.error(Mw.class.getName(), "Error getting/invoking method Coordinates." + transformName + "()");
-            }
+            Matrix4d trf = Coordinates.getTransformMatrix(transformName);
+            coordinateSystem.set(trf.valuesf());
         } else {
             // Equatorial, nothing
         }
@@ -124,7 +115,7 @@ public class MilkyWay extends Blob implements IModelRenderable, I3DTextRenderabl
      */
     @Override
     public void render(SpriteBatch batch, ShaderProgram shader, BitmapFont font, ICamera camera) {
-        Vector3d pos = auxVector3d.get();
+        Vector3d pos = auxVector3d;
         textPosition(pos);
         shader.setUniformf("a_viewAngle", 90f);
         shader.setUniformf("a_thOverFactor", 1f);

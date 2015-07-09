@@ -6,10 +6,6 @@ import gaia.cu9.ari.gaiaorbit.util.coord.Coordinates;
 import gaia.cu9.ari.gaiaorbit.util.math.Matrix4d;
 import gaia.cu9.ari.gaiaorbit.util.time.ITimeFrameProvider;
 
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
-
-import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.assets.AssetManager;
 import com.badlogic.gdx.graphics.g3d.ModelBatch;
 import com.badlogic.gdx.graphics.g3d.attributes.ColorAttribute;
@@ -39,15 +35,9 @@ public class Mw extends AbstractPositionEntity implements IModelRenderable {
         localTransform.scl(size);
 
         if (transformName != null) {
-            Class<Coordinates> c = Coordinates.class;
-            try {
-                Method m = c.getMethod(transformName);
-                Matrix4d trf = (Matrix4d) m.invoke(null);
-                Matrix4 aux = new Matrix4(trf.valuesf());
-                localTransform.mul(aux);
-            } catch (NoSuchMethodException | SecurityException | IllegalAccessException | IllegalArgumentException | InvocationTargetException e) {
-                Gdx.app.error(Mw.class.getName(), "Error getting/invoking method Coordinates." + transformName + "()");
-            }
+            Matrix4d trf = Coordinates.getTransformMatrix(transformName);
+            Matrix4 aux = new Matrix4(trf.valuesf());
+            localTransform.mul(aux);
         } else {
             // Equatorial, nothing
         }

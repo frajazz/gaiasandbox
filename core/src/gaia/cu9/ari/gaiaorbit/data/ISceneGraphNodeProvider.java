@@ -3,7 +3,6 @@ package gaia.cu9.ari.gaiaorbit.data;
 import gaia.cu9.ari.gaiaorbit.scenegraph.SceneGraphNode;
 
 import java.util.List;
-import java.util.Properties;
 
 /**
  * Interface that must be implemented by any provider of celestial objects, being
@@ -12,8 +11,6 @@ import java.util.Properties;
  *
  */
 public interface ISceneGraphNodeProvider {
-
-    public void initialize(Properties properties);
 
     public List<? extends SceneGraphNode> loadObjects();
 

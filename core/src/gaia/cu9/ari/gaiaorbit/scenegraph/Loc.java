@@ -47,7 +47,7 @@ public class Loc extends AbstractPositionEntity implements I3DTextRenderable {
 
             this.transform.translate(pos);
 
-            this.distToCamera = (float) transform.getTranslation(auxVector3d.get()).len();
+            this.distToCamera = (float) transform.getTranslation(auxVector3d).len();
             this.viewAngle = (float) Math.atan(size / distToCamera) / camera.getFovFactor();
             this.viewAngleApparent = this.viewAngle;
             if (!copy) {
@@ -86,7 +86,7 @@ public class Loc extends AbstractPositionEntity implements I3DTextRenderable {
         if (viewAngle < LOWER_LIMIT || viewAngle > UPPER_LIMIT) {
             return false;
         }
-        Vector3d aux = auxVector3d.get();
+        Vector3d aux = auxVector3d;
         transform.getTranslation(aux).scl(-1);
 
         double cosalpha = aux.add(location3d.x, location3d.y, location3d.z).nor().dot(GaiaSandbox.instance.cam.getDirection().nor());
@@ -98,7 +98,7 @@ public class Loc extends AbstractPositionEntity implements I3DTextRenderable {
      */
     @Override
     public void render(SpriteBatch batch, ShaderProgram shader, BitmapFont font, ICamera camera) {
-        Vector3d pos = auxVector3d.get();
+        Vector3d pos = auxVector3d;
         textPosition(pos);
         shader.setUniformf("a_viewAngle", viewAngle * (float) Constants.U_TO_KM);
         shader.setUniformf("a_thOverFactor", 1f);

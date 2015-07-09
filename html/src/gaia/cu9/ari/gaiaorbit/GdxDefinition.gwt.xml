@@ -5,7 +5,9 @@
 	<inherits name='com.badlogic.gdx.controllers.controllers-gwt' />
 
 	<inherits name='GaiaSandbox' />
+	<inherits name='postprocessing' />
 	<entry-point class='gaia.cu9.ari.gaiaorbit.client.HtmlLauncher' />
 	
 	<set-configuration-property name="gdx.assetpath" value="../android/assets" />
+	<set-configuration-property name='xsiframe.failIfScriptTag' value='FALSE'/>
 </module>

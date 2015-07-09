@@ -36,10 +36,6 @@ public interface ISceneGraph extends Serializable {
 
     public int getSize();
 
-    public int getSize(Class<? extends SceneGraphNode> clazz);
-
-    public <T extends SceneGraphNode> List<T> getNodes(Class<T> clazz);
-
     public void dispose();
 
 }

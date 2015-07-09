@@ -7,6 +7,7 @@ import gaia.cu9.ari.gaiaorbit.scenegraph.ICamera;
 import gaia.cu9.ari.gaiaorbit.scenegraph.Transform;
 import gaia.cu9.ari.gaiaorbit.util.GlobalResources;
 import gaia.cu9.ari.gaiaorbit.util.Pair;
+import gaia.cu9.ari.gaiaorbit.util.color.ColourUtils;
 import gaia.cu9.ari.gaiaorbit.util.math.BoundingBoxd;
 import gaia.cu9.ari.gaiaorbit.util.math.Intersectord;
 import gaia.cu9.ari.gaiaorbit.util.math.MathUtilsd;
@@ -14,7 +15,6 @@ import gaia.cu9.ari.gaiaorbit.util.math.Matrix4d;
 import gaia.cu9.ari.gaiaorbit.util.math.Rayd;
 import gaia.cu9.ari.gaiaorbit.util.math.Vector3d;
 
-import java.awt.Color;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -505,12 +505,12 @@ public class OctreeNode<T extends IPosition> implements ILineRenderable {
     @Override
     public void render(LineRenderSystem sr, ICamera camera, float alpha) {
         float maxDepth = OctreeNode.maxDepth * 2;
-        // Color depends on depth
-        Color col = new Color(Color.HSBtoRGB((float) depth / (float) maxDepth, 1f, 0.5f));
+        // Colour depends on depth
+        int rgb = 0xff000000 | ColourUtils.HSBtoRGB((float) depth / (float) maxDepth, 1f, 0.5f);
 
         alpha *= MathUtilsd.lint(depth, 0, maxDepth, 1.0, 0.5);
 
-        this.col.set(col.getRed() * alpha, col.getGreen() * alpha, col.getBlue() * alpha, alpha);
+        this.col.set(ColourUtils.getRed(rgb) * alpha, ColourUtils.getGreen(rgb) * alpha, ColourUtils.getBlue(rgb) * alpha, alpha);
 
         // Camera correction
         Vector3d loc = Pools.get(Vector3d.class).obtain();

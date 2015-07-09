@@ -8,8 +8,6 @@ import gaia.cu9.ari.gaiaorbit.util.I18n;
 import gaia.cu9.ari.gaiaorbit.util.math.Vector3d;
 import gaia.cu9.ari.gaiaorbit.util.scene2d.OwnLabel;
 
-import java.text.DecimalFormat;
-
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
 
@@ -21,13 +19,11 @@ import com.badlogic.gdx.scenes.scene2d.ui.Table;
 public class CameraInfoInterface extends Table implements IObserver {
 
     protected OwnLabel camVel, camPos;
-    private DecimalFormat format;
     /** Lock object for synchronization **/
     private Object lock;
 
-    public CameraInfoInterface(Skin skin, DecimalFormat sformat, Object lock) {
+    public CameraInfoInterface(Skin skin, Object lock) {
         super(skin);
-        this.format = sformat;
         camVel = new OwnLabel("", skin, "hud");
         camVel.setWidth(100);
         camPos = new OwnLabel("", skin, "hud");
@@ -47,8 +43,8 @@ public class CameraInfoInterface extends Table implements IObserver {
             switch (event) {
             case CAMERA_MOTION_UPDATED:
                 Vector3d campos = (Vector3d) data[0];
-                camPos.setText("X: " + format.format(campos.x * Constants.U_TO_KM) + "\nY: " + format.format(campos.y * Constants.U_TO_KM) + "\nZ: " + format.format(campos.z * Constants.U_TO_KM));
-                camVel.setText(format.format((double) data[1]) + " km/h");
+                camPos.setText("X: " + campos.x * Constants.U_TO_KM + "\nY: " + campos.y * Constants.U_TO_KM + "\nZ: " + campos.z * Constants.U_TO_KM);
+                camVel.setText((double) data[1] + " km/h");
                 break;
             }
         }

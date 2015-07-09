@@ -11,7 +11,6 @@ import gaia.cu9.ari.gaiaorbit.util.GlobalConf;
 import gaia.cu9.ari.gaiaorbit.util.I18n;
 import gaia.cu9.ari.gaiaorbit.util.scene2d.OwnLabel;
 
-import java.text.DateFormat;
 import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
@@ -29,7 +28,6 @@ import com.badlogic.gdx.scenes.scene2d.ui.Table;
 public class NotificationsInterface extends Table implements IObserver {
     private static final long DEFAULT_TIMEOUT = 5000;
     private static final String TAG_SEPARATOR = " - ";
-    DateFormat df;
     long msTimeout;
     Label message1;
     Label message2;
@@ -86,14 +84,12 @@ public class NotificationsInterface extends Table implements IObserver {
         message1 = new OwnLabel("", skin, "hud-med");
         this.add(message1).left();
         this.historical = new LinkedList<MessageBean>();
-        this.df = DateFormat.getTimeInstance(DateFormat.MEDIUM);
         EventManager.instance.subscribe(this, Events.POST_NOTIFICATION, Events.FOCUS_CHANGED, Events.TOGGLE_TIME_CMD, Events.TOGGLE_VISIBILITY_CMD, Events.CAMERA_MODE_CMD, Events.PACE_CHANGED_INFO, Events.FOCUS_LOCK_CMD, Events.TOGGLE_AMBIENT_LIGHT, Events.FOV_CHANGE_NOTIFICATION, Events.JAVA_EXCEPTION, Events.ORBIT_DATA_LOADED, Events.SCREENSHOT_INFO, Events.COMPUTE_GAIA_SCAN_CMD, Events.ONLY_OBSERVED_STARS_CMD, Events.TRANSIT_COLOUR_CMD, Events.LIMIT_MAG_CMD, Events.TOGGLE_STEREOSCOPIC, Events.TOGGLE_CLEANMODE, Events.FRAME_OUTPUT_CMD, Events.TOGGLE_STEREO_PROFILE);
     }
 
-    public void unsubscribe(){
+    public void unsubscribe() {
         EventManager.instance.unsubscribe(this, Events.POST_NOTIFICATION, Events.FOCUS_CHANGED, Events.TOGGLE_TIME_CMD, Events.TOGGLE_VISIBILITY_CMD, Events.CAMERA_MODE_CMD, Events.PACE_CHANGED_INFO, Events.FOCUS_LOCK_CMD, Events.TOGGLE_AMBIENT_LIGHT, Events.FOV_CHANGE_NOTIFICATION, Events.JAVA_EXCEPTION, Events.ORBIT_DATA_LOADED, Events.SCREENSHOT_INFO, Events.COMPUTE_GAIA_SCAN_CMD, Events.ONLY_OBSERVED_STARS_CMD, Events.TRANSIT_COLOUR_CMD, Events.LIMIT_MAG_CMD, Events.TOGGLE_STEREOSCOPIC, Events.TOGGLE_CLEANMODE, Events.FRAME_OUTPUT_CMD, Events.TOGGLE_STEREO_PROFILE);
     }
-
 
     private void addMessage(String msg) {
         addMessage(msg, false);
@@ -113,12 +109,12 @@ public class NotificationsInterface extends Table implements IObserver {
         this.displaying = true;
         this.permanent = permanent;
         if (consoleLog) {
-            Gdx.app.log(df.format(messageBean.date), msg);
+            Gdx.app.log(messageBean.date.toString(), msg);
         }
     }
 
     private String formatMessage(MessageBean msgBean) {
-        return (writeDates ? df.format(msgBean.date) + TAG_SEPARATOR : "") + msgBean.msg;
+        return (writeDates ? msgBean.date.toString() + TAG_SEPARATOR : "") + msgBean.msg;
     }
 
     public void update() {
@@ -264,7 +260,7 @@ public class NotificationsInterface extends Table implements IObserver {
         }
     }
 
-    public void dispose(){
+    public void dispose() {
         this.unsubscribe();
     }
 

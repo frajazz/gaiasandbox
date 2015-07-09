@@ -7,7 +7,6 @@ import gaia.cu9.ari.gaiaorbit.util.math.Vector3d;
 import java.io.FileNotFoundException;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Properties;
 
 /**
  * Adds the sun manually
@@ -24,11 +23,6 @@ public class SunLoader implements ICatalogLoader {
         sun.initialize();
         result.add(sun);
         return result;
-    }
-
-    @Override
-    public void initialize(Properties p) {
-
     }
 
 }

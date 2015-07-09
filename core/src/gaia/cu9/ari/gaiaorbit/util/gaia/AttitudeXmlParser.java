@@ -13,10 +13,6 @@ import gaia.cu9.ari.gaiaorbit.util.units.Quantity;
 import java.io.File;
 import java.io.FileFilter;
 import java.io.IOException;
-import java.lang.reflect.InvocationTargetException;
-import java.text.DateFormat;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
@@ -35,10 +31,8 @@ import com.badlogic.gdx.utils.XmlReader;
 public class AttitudeXmlParser {
 
     private static Date endOfMission;
-    private static DateFormat format;
 
     static {
-        format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
         endOfMission = getDate("2019-06-20 06:13:26");
     }
 
@@ -68,7 +62,7 @@ public class AttitudeXmlParser {
         FileHandle lastFH = null;
         Date lastDate = null;
         for (Date date : dates) {
-            if(lastDate != null && lastFH != null){
+            if (lastDate != null && lastFH != null) {
                 long elapsed = date.getTime() - lastDate.getTime();
                 Duration d = new Days(elapsed * Constants.MS_TO_H);
                 durationMap.put(lastFH, d);
@@ -80,7 +74,6 @@ public class AttitudeXmlParser {
         long elapsed = endOfMission.getTime() - lastDate.getTime();
         Duration d = new Hours(elapsed * Constants.MS_TO_H);
         durationMap.put(lastFH, d);
-
 
         // PARSE ATTITUDES
         for (FileHandle fh : list) {
@@ -113,7 +106,7 @@ public class AttitudeXmlParser {
         return getDate(activTime);
     }
 
-    private static AttitudeIntervalBean parseFile(FileHandle fh, Duration duration) throws IOException, ClassNotFoundException, NoSuchMethodException, IllegalAccessException, InvocationTargetException, InstantiationException {
+    private static AttitudeIntervalBean parseFile(FileHandle fh, Duration duration) throws IOException {
 
         BaseAttitudeDataServer result = null;
 
@@ -127,8 +120,6 @@ public class AttitudeXmlParser {
         String activTime = model.get("starttime");
         Date activationTime = getDate(activTime);
         double startTimeNsSince2010 = (AstroUtils.getJulianDate(activationTime) - AstroUtils.JD_J2010) * AstroUtils.DAY_TO_NS;
-
-        Class clazz = Class.forName(className);
 
         /** SCAN LAW ELEMENT **/
         XmlReader.Element scanlaw = model.getChildByName("scanlaw");
@@ -169,7 +160,7 @@ public class AttitudeXmlParser {
             msl.setRefXi(solarAspectAngle.get(Quantity.Angle.AngleUnit.RAD));
             msl.initialize();
 
-            MslAttitudeDataServer mslDatServ = (MslAttitudeDataServer) clazz.getConstructor(new Class[] { long.class, Duration.class, ModifiedScanningLaw.class }).newInstance(new Object[] { (long) startTimeNsSince2010, duration, msl });
+            MslAttitudeDataServer mslDatServ = new MslAttitudeDataServer((long) startTimeNsSince2010, duration, msl);
             mslDatServ.initialize();
             result = mslDatServ;
 
@@ -186,7 +177,7 @@ public class AttitudeXmlParser {
         } else if (className.contains("Epsl")) {
 
             Epsl.Mode mode = name.equals("EPSL_F") ? Epsl.Mode.FOLLOWING : Epsl.Mode.PRECEDING;
-            Epsl epsl = (Epsl) clazz.getConstructor(Epsl.Mode.class).newInstance(mode);
+            Epsl epsl = new Epsl(mode);
 
             epsl.setRefTime((long) refEpochJ2010);
             epsl.setNuRef(precessionPhase.get(Quantity.Angle.AngleUnit.RAD));
@@ -202,13 +193,13 @@ public class AttitudeXmlParser {
     }
 
     private static Date getDate(String date) {
-        try {
-            Date d = format.parse(date);
-            return d;
-        } catch (ParseException e) {
-            Logger.error(e);
-        }
-        return null;
+        // FORMAT: yyyy-MM-dd HH:mm:ss
+        String[] dayHour = date.split("\\s+");
+        String[] day = dayHour[0].split("-");
+        String[] hour = dayHour[1].split(":");
+
+        Date d = new Date(Integer.parseInt(day[0]), Integer.parseInt(day[1]) - 1, Integer.parseInt(day[2]), Integer.parseInt(hour[0]), Integer.parseInt(hour[1]), Integer.parseInt(hour[2]));
+        return d;
     }
 
     private static Double getDouble(XmlReader.Element e, String property) {

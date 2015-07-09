@@ -1,6 +1,5 @@
 package gaia.cu9.ari.gaiaorbit.data.stars;
 
-import gaia.cu9.ari.gaiaorbit.data.FileLocator;
 import gaia.cu9.ari.gaiaorbit.scenegraph.Particle;
 import gaia.cu9.ari.gaiaorbit.scenegraph.Star;
 import gaia.cu9.ari.gaiaorbit.util.GlobalConf;
@@ -16,7 +15,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Properties;
 
 /**
  * Loads the HYG catalog in binary (own) format. The format is defined as follows
@@ -41,12 +39,7 @@ public class HYGBinaryLoader extends AbstractCatalogLoader implements ICatalogLo
     @Override
     public List<Particle> loadCatalog() throws FileNotFoundException {
         List<Particle> stars = new ArrayList<Particle>();
-        InputStream data = null;
-        try {
-            data = FileLocator.getStream(file);
-        } catch (FileNotFoundException e) {
-            Logger.error(e);
-        }
+        InputStream data = file.read();
         DataInputStream data_in = new DataInputStream(data);
 
         Logger.info(this.getClass().getSimpleName(), I18n.bundle.format("notif.limitmag", GlobalConf.data.LIMIT_MAG_LOAD));
@@ -93,11 +86,6 @@ public class HYGBinaryLoader extends AbstractCatalogLoader implements ICatalogLo
 
         Logger.info(this.getClass().getSimpleName(), I18n.bundle.format("notif.catalog.init", stars.size()));
         return stars;
-    }
-
-    @Override
-    public void initialize(Properties p) {
-        super.initialize(p);
     }
 
 }

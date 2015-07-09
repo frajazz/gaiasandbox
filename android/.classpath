@@ -2,7 +2,6 @@
 <classpath>
 	<classpathentry kind="src" path="assets"/>
 	<classpathentry kind="src" path="gen"/>
-	<classpathentry exported="true" kind="con" path="com.android.ide.eclipse.adt.LIBRARIES"/>
 	<classpathentry exported="true" kind="con" path="com.android.ide.eclipse.adt.DEPENDENCIES"/>
 	<classpathentry exported="true" kind="con" path="com.android.ide.eclipse.adt.ANDROID_FRAMEWORK"/>
 	<classpathentry exported="true" kind="src" path="/GaiaSandbox-core"/>
@@ -12,6 +11,5 @@
 	<classpathentry exported="true" kind="lib" path="/home/tsagrista/.gradle/caches/modules-2/files-2.1/com.badlogicgames.gdx/gdx-controllers-android/1.6.3/e9a903a0531a4eeb92a4e9d2cc9de0f4f9953a76/gdx-controllers-android-1.6.3.jar" sourcepath="/home/tsagrista/.gradle/caches/modules-2/files-2.1/com.badlogicgames.gdx/gdx-controllers-android/1.6.3/e5fb6be7ec0100d4d2bc0c705e99843635289ab5/gdx-controllers-android-1.6.3-sources.jar"/>
 	<classpathentry exported="true" kind="lib" path="/home/tsagrista/.gradle/caches/modules-2/files-2.1/com.badlogicgames.gdx/gdx/1.6.3/f5848caaa3edeedce92361c61c716a1cb33587f/gdx-1.6.3.jar" sourcepath="/home/tsagrista/.gradle/caches/modules-2/files-2.1/com.badlogicgames.gdx/gdx/1.6.3/1606d3dacea2ce1d680407c24fa5bb3d108cf12e/gdx-1.6.3-sources.jar"/>
 	<classpathentry exported="true" kind="lib" path="/home/tsagrista/git/gaiasandbox/core/lib/postprocessing.jar"/>
-	<classpathentry exported="true" kind="lib" path="/home/tsagrista/git/gaiasandbox/core/lib/stil.jar"/>
 	<classpathentry kind="output" path="bin/classes"/>
 </classpath>

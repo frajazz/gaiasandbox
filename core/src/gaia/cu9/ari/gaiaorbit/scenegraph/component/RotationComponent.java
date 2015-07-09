@@ -92,7 +92,6 @@ public class RotationComponent {
         this.meridianAngle = ma;
     }
 
-    @Override
     public RotationComponent clone() {
         RotationComponent clone = new RotationComponent();
         clone.period = this.period;

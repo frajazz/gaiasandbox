@@ -275,9 +275,6 @@ public enum Events {
     /** Forces recalculation of main GUI window size **/
     RECALCULATE_OPTIONS_SIZE,
 
-    /** Contains the x and the y in pixels of the position of the mass **/
-    GRAVITATIONAL_LENSING_PARAMS,
-
     /** Contains the Gaia object [0] **/
     GAIA_LOADED,
     /** Issues the command to update the pixel render system. Contains no parameters. **/

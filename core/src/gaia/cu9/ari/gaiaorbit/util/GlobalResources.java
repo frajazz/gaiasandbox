@@ -4,9 +4,6 @@ import gaia.cu9.ari.gaiaorbit.util.coord.AstroUtils;
 import gaia.cu9.ari.gaiaorbit.util.math.MathUtilsd;
 import gaia.cu9.ari.gaiaorbit.util.math.Vector3d;
 
-import java.text.DecimalFormat;
-import java.text.NumberFormat;
-
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.assets.AssetManager;
 import com.badlogic.gdx.graphics.Pixmap;
@@ -26,8 +23,6 @@ public class GlobalResources {
     public static Pixmap linkCursor;
     /** The global skin **/
     public static Skin skin;
-    /** Number formats **/
-    public static NumberFormat oneDecimalFormat, twoDecimalsFormat;
 
     /**
      * Model for atmosphere scattering
@@ -38,10 +33,6 @@ public class GlobalResources {
 
         // Sprite batch
         spriteBatch = new SpriteBatch();
-
-        // Number formats
-        oneDecimalFormat = new DecimalFormat("#######0.0");
-        twoDecimalsFormat = new DecimalFormat("#######0.0#");
 
         // Create skin right now, it is needed.
         skin = new Skin(Gdx.files.internal("skins/" + GlobalConf.program.UI_THEME + ".json"));

@@ -22,9 +22,7 @@ import gaia.cu9.ari.gaiaorbit.util.scene2d.CollapsibleWindow;
 import gaia.cu9.ari.gaiaorbit.util.scene2d.OwnImageButton;
 import gaia.cu9.ari.gaiaorbit.util.scene2d.OwnScrollPane;
 import gaia.cu9.ari.gaiaorbit.util.scene2d.OwnTextButton;
-import gaia.cu9.ari.gaiaorbit.util.scene2d.Tooltip;
 
-import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -41,7 +39,6 @@ import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.Button;
 import com.badlogic.gdx.scenes.scene2d.ui.Container;
 import com.badlogic.gdx.scenes.scene2d.ui.Image;
-import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.scenes.scene2d.ui.ScrollPane;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
@@ -83,11 +80,6 @@ public class FullGui implements IGui, IObserver {
     protected CustomInterface customInterface;
 
     /**
-     * Number formats
-     */
-    private DecimalFormat format, sformat;
-
-    /**
      * The scene graph
      */
     private ISceneGraph sg;
@@ -123,8 +115,6 @@ public class FullGui implements IGui, IObserver {
         Logger.info(txt("notif.gui.init"));
 
         skin = GlobalResources.skin;
-        format = new DecimalFormat("0.0###");
-        sformat = new DecimalFormat("0.###E0");
 
         buildGui();
 
@@ -168,8 +158,8 @@ public class FullGui implements IGui, IObserver {
                 return false;
             }
         });
-        Label playstopTooltip = new Label(txt("gui.tooltip.playstop"), skin, "tooltip");
-        playstop.addListener(new Tooltip<Label>(playstopTooltip, ui));
+        //Label playstopTooltip = new Label(txt("gui.tooltip.playstop"), skin, "tooltip");
+        //playstop.addListener(new Tooltip<Label>(playstopTooltip, ui));
 
         TimeComponent timeComponent = new TimeComponent(skin, ui);
         timeComponent.initialize();
@@ -194,8 +184,8 @@ public class FullGui implements IGui, IObserver {
             }
         });
 
-        Label playTooltip = new Label(txt("gui.tooltip.playcamera"), skin, "tooltip");
-        playCamera.addListener(new Tooltip<Label>(playTooltip, ui));
+        //Label playTooltip = new Label(txt("gui.tooltip.playcamera"), skin, "tooltip");
+        //playCamera.addListener(new Tooltip<Label>(playTooltip, ui));
 
         CameraComponent cameraComponent = new CameraComponent(skin, ui);
         cameraComponent.initialize();
@@ -338,7 +328,7 @@ public class FullGui implements IGui, IObserver {
         options.pack();
 
         // FOCUS INFORMATION - BOTTOM RIGHT
-        focusInterface = new FocusInfoInterface(skin, format, sformat);
+        focusInterface = new FocusInfoInterface(skin);
         //focusInterface.setFillParent(true);
         focusInterface.left().top();
         fi = new Container<FocusInfoInterface>(focusInterface);

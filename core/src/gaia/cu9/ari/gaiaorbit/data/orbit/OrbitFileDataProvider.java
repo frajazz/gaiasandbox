@@ -1,6 +1,5 @@
 package gaia.cu9.ari.gaiaorbit.data.orbit;
 
-import gaia.cu9.ari.gaiaorbit.data.FileLocator;
 import gaia.cu9.ari.gaiaorbit.data.orbit.OrbitDataLoader.OrbitDataLoaderParameter;
 import gaia.cu9.ari.gaiaorbit.event.EventManager;
 import gaia.cu9.ari.gaiaorbit.event.Events;
@@ -19,7 +18,7 @@ public class OrbitFileDataProvider implements IOrbitDataProvider {
     public void load(String file, OrbitDataLoaderParameter parameter) {
         FileDataLoader odl = new FileDataLoader();
         try {
-            data = odl.load(FileLocator.getStream(file));
+            data = odl.load(Gdx.files.internal(file).read());
             EventManager.instance.post(Events.ORBIT_DATA_LOADED, data, file);
         } catch (Exception e) {
             Gdx.app.error(OrbitFileDataProvider.class.getName(), e.getMessage());

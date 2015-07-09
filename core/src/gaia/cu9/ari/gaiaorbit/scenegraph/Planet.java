@@ -87,7 +87,7 @@ public class Planet extends ModelBody implements IAtmosphereRenderable {
 
     protected void forceUpdateLocalValues(ITimeFrameProvider time, boolean force) {
         if (time.getDt() != 0 || force) {
-            Vector3d aux3 = auxVector3d.get();
+            Vector3d aux3 = auxVector3d;
             // Load this planet's spherical ecliptic coordinates into pos
             coordinates.getEquatorialCartesianCoordinates(time.getTime(), pos);
 

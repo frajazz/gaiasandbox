@@ -12,8 +12,6 @@ import gaia.cu9.ari.gaiaorbit.util.coord.Coordinates;
 import gaia.cu9.ari.gaiaorbit.util.math.Vector3d;
 import gaia.cu9.ari.gaiaorbit.util.scene2d.OwnLabel;
 
-import java.text.DecimalFormat;
-
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
 
@@ -21,17 +19,13 @@ public class FocusInfoInterface extends Table implements IObserver {
 
     protected OwnLabel focusName, focusRA, focusDEC, focusAngle, focusDist, focusAppMag, focusAbsMag, focusRadius;
     protected OwnLabel camName, camVel, camPos;
-    DecimalFormat format, sformat, format8;
 
     private Table focusInfo, cameraInfo;
 
     Vector3d pos;
 
-    public FocusInfoInterface(Skin skin, DecimalFormat format, DecimalFormat sformat) {
+    public FocusInfoInterface(Skin skin) {
         super(skin);
-        this.format = format;
-        this.sformat = sformat;
-        this.format8 = new DecimalFormat("#####0.0#######");
         this.setBackground("table-bg");
 
         focusInfo = new Table();
@@ -113,41 +107,41 @@ public class FocusInfoInterface extends Table implements IObserver {
 
             focusName.setText(objectName);
             if (cb.posSph != null && cb.posSph.len() > 0f) {
-                focusRA.setText(format.format(cb.posSph.x) + "°");
-                focusDEC.setText(format.format(cb.posSph.y) + "°");
+                focusRA.setText(cb.posSph.x + "°");
+                focusDEC.setText(cb.posSph.y + "°");
             } else {
                 Coordinates.cartesianToSpherical(cb.pos, pos);
 
-                focusRA.setText(format.format(cb.pos.x % 360) + "°");
-                focusDEC.setText(format.format(cb.pos.y % 360) + "°");
+                focusRA.setText(cb.pos.x % 360 + "°");
+                focusDEC.setText(cb.pos.y % 360 + "°");
             }
 
             Float appmag = cb.appmag;
 
             if (appmag != null) {
-                focusAppMag.setText(format.format(appmag));
+                focusAppMag.setText(appmag.toString());
             } else {
                 focusAppMag.setText("-");
             }
             Float absmag = cb.absmag;
 
             if (absmag != null) {
-                focusAbsMag.setText(format.format(absmag));
+                focusAbsMag.setText(absmag.toString());
             } else {
                 focusAbsMag.setText("-");
             }
-            focusRadius.setText(sformat.format(cb.getRadius() * Constants.U_TO_KM) + " km");
+            focusRadius.setText(cb.getRadius() * Constants.U_TO_KM + " km");
 
             break;
         case FOCUS_INFO_UPDATED:
-            focusAngle.setText(format8.format(Math.toDegrees((float) data[1]) % 360) + "°");
+            focusAngle.setText(Math.toDegrees((float) data[1]) % 360 + "°");
             Object[] dist = GlobalResources.floatToDistanceString((float) data[0]);
-            focusDist.setText(sformat.format((float) Math.max(0d, (float) dist[0])) + " " + dist[1]);
+            focusDist.setText((float) Math.max(0d, (float) dist[0]) + " " + dist[1]);
             break;
         case CAMERA_MOTION_UPDATED:
             Vector3d campos = (Vector3d) data[0];
-            camPos.setText("X: " + sformat.format(campos.x * Constants.U_TO_KM) + "\nY: " + sformat.format(campos.y * Constants.U_TO_KM) + "\nZ: " + sformat.format(campos.z * Constants.U_TO_KM));
-            camVel.setText(sformat.format((double) data[1]) + " km/h");
+            camPos.setText("X: " + campos.x * Constants.U_TO_KM + "\nY: " + campos.y * Constants.U_TO_KM + "\nZ: " + campos.z * Constants.U_TO_KM);
+            camVel.setText((double) data[1] + " km/h");
             break;
 
         }

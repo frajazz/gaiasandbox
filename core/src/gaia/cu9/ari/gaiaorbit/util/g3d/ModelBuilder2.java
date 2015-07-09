@@ -197,8 +197,7 @@ public class ModelBuilder2 {
      * not managed, use {@link Model#manageDisposable(Disposable)} to add those to the model.
      * @param attributes bitwise mask of the {@link com.badlogic.gdx.graphics.VertexAttributes.Usage}, only Position, Color, Normal
      *           and TextureCoordinates is supported. */
-    public Model createBox(float width, float height, float depth, int primitiveType, final Material material,
-            final long attributes) {
+    public Model createBox(float width, float height, float depth, int primitiveType, final Material material, final long attributes) {
         begin();
         part("box", primitiveType, attributes, material).box(width, height, depth);
         return end();
@@ -208,22 +207,17 @@ public class ModelBuilder2 {
      * contain are not managed, use {@link Model#manageDisposable(Disposable)} to add those to the model.
      * @param attributes bitwise mask of the {@link com.badlogic.gdx.graphics.VertexAttributes.Usage}, only Position, Color, Normal
      *           and TextureCoordinates is supported. */
-    public Model createRect(float x00, float y00, float z00, float x10, float y10, float z10, float x11, float y11, float z11,
-            float x01, float y01, float z01, float normalX, float normalY, float normalZ, final Material material, final long attributes) {
-        return createRect(x00, y00, z00, x10, y10, z10, x11, y11, z11, x01, y01, z01, normalX, normalY, normalZ, GL20.GL_TRIANGLES,
-                material, attributes);
+    public Model createRect(float x00, float y00, float z00, float x10, float y10, float z10, float x11, float y11, float z11, float x01, float y01, float z01, float normalX, float normalY, float normalZ, final Material material, final long attributes) {
+        return createRect(x00, y00, z00, x10, y10, z10, x11, y11, z11, x01, y01, z01, normalX, normalY, normalZ, GL20.GL_TRIANGLES, material, attributes);
     }
 
     /** Convenience method to create a model with a single node containing a rectangle shape. The resources the Material might
      * contain are not managed, use {@link Model#manageDisposable(Disposable)} to add those to the model.
      * @param attributes bitwise mask of the {@link com.badlogic.gdx.graphics.VertexAttributes.Usage}, only Position, Color, Normal
      *           and TextureCoordinates is supported. */
-    public Model createRect(float x00, float y00, float z00, float x10, float y10, float z10, float x11, float y11, float z11,
-            float x01, float y01, float z01, float normalX, float normalY, float normalZ, int primitiveType, final Material material,
-            final long attributes) {
+    public Model createRect(float x00, float y00, float z00, float x10, float y10, float z10, float x11, float y11, float z11, float x01, float y01, float z01, float normalX, float normalY, float normalZ, int primitiveType, final Material material, final long attributes) {
         begin();
-        part("rect", primitiveType, attributes, material).rect(x00, y00, z00, x10, y10, z10, x11, y11, z11, x01, y01, z01, normalX,
-                normalY, normalZ);
+        part("rect", primitiveType, attributes, material).rect(x00, y00, z00, x10, y10, z10, x11, y11, z11, x01, y01, z01, normalX, normalY, normalZ);
         return end();
     }
 
@@ -231,8 +225,7 @@ public class ModelBuilder2 {
      * contain are not managed, use {@link Model#manageDisposable(Disposable)} to add those to the model.
      * @param attributes bitwise mask of the {@link com.badlogic.gdx.graphics.VertexAttributes.Usage}, only Position, Color, Normal
      *           and TextureCoordinates is supported. */
-    public Model createCylinder(float width, float height, float depth, int divisions, final Material material,
-            final long attributes) {
+    public Model createCylinder(float width, float height, float depth, int divisions, final Material material, final long attributes) {
         return createCylinder(width, height, depth, divisions, GL20.GL_TRIANGLES, material, attributes);
     }
 
@@ -240,8 +233,7 @@ public class ModelBuilder2 {
      * contain are not managed, use {@link Model#manageDisposable(Disposable)} to add those to the model.
      * @param attributes bitwise mask of the {@link com.badlogic.gdx.graphics.VertexAttributes.Usage}, only Position, Color, Normal
      *           and TextureCoordinates is supported. */
-    public Model createCylinder(float width, float height, float depth, int divisions, int primitiveType,
-            final Material material, final long attributes) {
+    public Model createCylinder(float width, float height, float depth, int divisions, int primitiveType, final Material material, final long attributes) {
         return createCylinder(width, height, depth, divisions, primitiveType, material, attributes, 0, 360);
     }
 
@@ -249,8 +241,7 @@ public class ModelBuilder2 {
      * contain are not managed, use {@link Model#manageDisposable(Disposable)} to add those to the model.
      * @param attributes bitwise mask of the {@link com.badlogic.gdx.graphics.VertexAttributes.Usage}, only Position, Color, Normal
      *           and TextureCoordinates is supported. */
-    public Model createCylinder(float width, float height, float depth, int divisions, final Material material,
-            final long attributes, float angleFrom, float angleTo) {
+    public Model createCylinder(float width, float height, float depth, int divisions, final Material material, final long attributes, float angleFrom, float angleTo) {
         return createCylinder(width, height, depth, divisions, GL20.GL_TRIANGLES, material, attributes, angleFrom, angleTo);
     }
 
@@ -258,8 +249,7 @@ public class ModelBuilder2 {
      * contain are not managed, use {@link Model#manageDisposable(Disposable)} to add those to the model.
      * @param attributes bitwise mask of the {@link com.badlogic.gdx.graphics.VertexAttributes.Usage}, only Position, Color, Normal
      *           and TextureCoordinates is supported. */
-    public Model createCylinder(float width, float height, float depth, int divisions, int primitiveType,
-            final Material material, final long attributes, float angleFrom, float angleTo) {
+    public Model createCylinder(float width, float height, float depth, int divisions, int primitiveType, final Material material, final long attributes, float angleFrom, float angleTo) {
         begin();
         part("cylinder", primitiveType, attributes, material).cylinder(width, height, depth, divisions, angleFrom, angleTo);
         return end();
@@ -277,8 +267,7 @@ public class ModelBuilder2 {
      * are not managed, use {@link Model#manageDisposable(Disposable)} to add those to the model.
      * @param attributes bitwise mask of the {@link com.badlogic.gdx.graphics.VertexAttributes.Usage}, only Position, Color, Normal
      *           and TextureCoordinates is supported. */
-    public Model createCone(float width, float height, float depth, int divisions, int primitiveType, final Material material,
-            final long attributes) {
+    public Model createCone(float width, float height, float depth, int divisions, int primitiveType, final Material material, final long attributes) {
         return createCone(width, height, depth, divisions, primitiveType, material, attributes, 0, 360);
     }
 
@@ -286,8 +275,7 @@ public class ModelBuilder2 {
      * are not managed, use {@link Model#manageDisposable(Disposable)} to add those to the model.
      * @param attributes bitwise mask of the {@link com.badlogic.gdx.graphics.VertexAttributes.Usage}, only Position, Color, Normal
      *           and TextureCoordinates is supported. */
-    public Model createCone(float width, float height, float depth, int divisions, final Material material,
-            final long attributes, float angleFrom, float angleTo) {
+    public Model createCone(float width, float height, float depth, int divisions, final Material material, final long attributes, float angleFrom, float angleTo) {
         return createCone(width, height, depth, divisions, GL20.GL_TRIANGLES, material, attributes, angleFrom, angleTo);
     }
 
@@ -295,8 +283,7 @@ public class ModelBuilder2 {
      * are not managed, use {@link Model#manageDisposable(Disposable)} to add those to the model.
      * @param attributes bitwise mask of the {@link com.badlogic.gdx.graphics.VertexAttributes.Usage}, only Position, Color, Normal
      *           and TextureCoordinates is supported. */
-    public Model createCone(float width, float height, float depth, int divisions, int primitiveType, final Material material,
-            final long attributes, float angleFrom, float angleTo) {
+    public Model createCone(float width, float height, float depth, int divisions, int primitiveType, final Material material, final long attributes, float angleFrom, float angleTo) {
         begin();
         part("cone", primitiveType, attributes, material).cone(width, height, depth, divisions, angleFrom, angleTo);
         return end();
@@ -306,8 +293,7 @@ public class ModelBuilder2 {
      * are not managed, use {@link Model#manageDisposable(Disposable)} to add those to the model.
      * @param attributes bitwise mask of the {@link com.badlogic.gdx.graphics.VertexAttributes.Usage}, only Position, Color, Normal
      *           and TextureCoordinates is supported. */
-    public Model createSphere(float width, float height, float depth, int divisionsU, int divisionsV, final Material material,
-            final long attributes) {
+    public Model createSphere(float width, float height, float depth, int divisionsU, int divisionsV, final Material material, final long attributes) {
         return createSphere(width, height, depth, divisionsU, divisionsV, GL20.GL_TRIANGLES, material, attributes);
     }
 
@@ -315,8 +301,7 @@ public class ModelBuilder2 {
      * are not managed, use {@link Model#manageDisposable(Disposable)} to add those to the model.
      * @param attributes bitwise mask of the {@link com.badlogic.gdx.graphics.VertexAttributes.Usage}, only Position, Color, Normal
      *           and TextureCoordinates is supported. */
-    public Model createSphere(float width, float height, float depth, int divisionsU, int divisionsV, int primitiveType,
-            final Material material, final long attributes) {
+    public Model createSphere(float width, float height, float depth, int divisionsU, int divisionsV, int primitiveType, final Material material, final long attributes) {
         return createSphere(width, height, depth, divisionsU, divisionsV, primitiveType, material, attributes, 0, 360, 0, 180);
     }
 
@@ -324,21 +309,17 @@ public class ModelBuilder2 {
      * are not managed, use {@link Model#manageDisposable(Disposable)} to add those to the model.
      * @param attributes bitwise mask of the {@link com.badlogic.gdx.graphics.VertexAttributes.Usage}, only Position, Color, Normal
      *           and TextureCoordinates is supported. */
-    public Model createSphere(float width, float height, float depth, int divisionsU, int divisionsV, final Material material,
-            final long attributes, float angleUFrom, float angleUTo, float angleVFrom, float angleVTo) {
-        return createSphere(width, height, depth, divisionsU, divisionsV, GL20.GL_TRIANGLES, material, attributes, angleUFrom,
-                angleUTo, angleVFrom, angleVTo);
+    public Model createSphere(float width, float height, float depth, int divisionsU, int divisionsV, final Material material, final long attributes, float angleUFrom, float angleUTo, float angleVFrom, float angleVTo) {
+        return createSphere(width, height, depth, divisionsU, divisionsV, GL20.GL_TRIANGLES, material, attributes, angleUFrom, angleUTo, angleVFrom, angleVTo);
     }
 
     /** Convenience method to create a model with a single node containing a sphere shape. The resources the Material might contain
      * are not managed, use {@link Model#manageDisposable(Disposable)} to add those to the model.
      * @param attributes bitwise mask of the {@link com.badlogic.gdx.graphics.VertexAttributes.Usage}, only Position, Color, Normal
      *           and TextureCoordinates is supported. */
-    public Model createSphere(float width, float height, float depth, int divisionsU, int divisionsV, int primitiveType,
-            final Material material, final long attributes, float angleUFrom, float angleUTo, float angleVFrom, float angleVTo) {
+    public Model createSphere(float width, float height, float depth, int divisionsU, int divisionsV, int primitiveType, final Material material, final long attributes, float angleUFrom, float angleUTo, float angleVFrom, float angleVTo) {
         begin();
-        part("cylinder", primitiveType, attributes, material).sphere(width, height, depth, divisionsU, divisionsV, angleUFrom,
-                angleUTo, angleVFrom, angleVTo);
+        part("cylinder", primitiveType, attributes, material).sphere(width, height, depth, divisionsU, divisionsV, angleUFrom, angleUTo, angleVFrom, angleVTo);
         return end();
     }
 
@@ -354,8 +335,7 @@ public class ModelBuilder2 {
      * are not managed, use {@link Model#manageDisposable(Disposable)} to add those to the model.
      * @param attributes bitwise mask of the {@link com.badlogic.gdx.graphics.VertexAttributes.Usage}, only Position, Color, Normal
      *           and TextureCoordinates is supported. */
-    public Model createCapsule(float radius, float height, int divisions, int primitiveType, final Material material,
-            final long attributes) {
+    public Model createCapsule(float radius, float height, int divisions, int primitiveType, final Material material, final long attributes) {
         begin();
         part("capsule", primitiveType, attributes, material).capsule(radius, height, divisions);
         return end();
@@ -394,8 +374,7 @@ public class ModelBuilder2 {
     }
 
     @Deprecated
-    public static Model createFromMesh(final Mesh mesh, int indexOffset, int vertexCount, int primitiveType,
-            final Material material) {
+    public static Model createFromMesh(final Mesh mesh, int indexOffset, int vertexCount, int primitiveType, final Material material) {
         Model result = new Model();
         MeshPart meshPart = new MeshPart();
         meshPart.id = "part1";
@@ -420,8 +399,7 @@ public class ModelBuilder2 {
     }
 
     @Deprecated
-    public static Model createFromMesh(final float[] vertices, final VertexAttribute[] attributes, final short[] indices,
-            int primitiveType, final Material material) {
+    public static Model createFromMesh(final float[] vertices, final VertexAttribute[] attributes, final short[] indices, int primitiveType, final Material material) {
         final Mesh mesh = new Mesh(false, vertices.length, indices.length, attributes);
         mesh.setVertices(vertices);
         mesh.setIndices(indices);
@@ -434,8 +412,7 @@ public class ModelBuilder2 {
      * @param capLength is the height of the cap in percentage, must be in (0,1)
      * @param stemThickness is the percentage of stem diameter compared to cap diameter, must be in (0,1]
      * @param divisions the amount of vertices used to generate the cap and stem ellipsoidal bases */
-    public Model createXYZCoordinates(float axisLength, float capLength, float stemThickness, int divisions, int primitiveType,
-            Material material, long attributes) {
+    public Model createXYZCoordinates(float axisLength, float capLength, float stemThickness, int divisions, int primitiveType, Material material, long attributes) {
         begin();
         MeshPartBuilder2 partBuilder;
 
@@ -460,8 +437,7 @@ public class ModelBuilder2 {
      * @param capLength is the height of the cap in percentage, must be in (0,1)
      * @param stemThickness is the percentage of stem diameter compared to cap diameter, must be in (0,1]
      * @param divisions the amount of vertices used to generate the cap and stem ellipsoidal bases */
-    public Model createArrow(float x1, float y1, float z1, float x2, float y2, float z2, float capLength, float stemThickness,
-            int divisions, int primitiveType, Material material, long attributes) {
+    public Model createArrow(float x1, float y1, float z1, float x2, float y2, float z2, float capLength, float stemThickness, int divisions, int primitiveType, Material material, long attributes) {
         begin();
         part("arrow", primitiveType, attributes, material).arrow(x1, y1, z1, x2, y2, z2, capLength, stemThickness, divisions);
         return end();
@@ -509,8 +485,7 @@ public class ModelBuilder2 {
      * contain are not managed, use {@link Model#manageDisposable(Disposable)} to add those to the model.
      * @param attributes bitwise mask of the {@link com.badlogic.gdx.graphics.VertexAttributes.Usage}, only Position, Color, Normal
      *           and TextureCoordinates is supported. */
-    public Model createCylinder(float width, float height, float depth, int divisions, boolean flipNormals, final Material material,
-            final long attributes) {
+    public Model createCylinder(float width, float height, float depth, int divisions, boolean flipNormals, final Material material, final long attributes) {
         return createCylinder(width, height, depth, divisions, flipNormals, GL20.GL_TRIANGLES, material, attributes);
     }
 
@@ -518,40 +493,9 @@ public class ModelBuilder2 {
      * contain are not managed, use {@link Model#manageDisposable(Disposable)} to add those to the model.
      * @param attributes bitwise mask of the {@link com.badlogic.gdx.graphics.VertexAttributes.Usage}, only Position, Color, Normal
      *           and TextureCoordinates is supported. */
-    public Model createCylinder(float width, float height, float depth, int divisions, boolean flipNormals, int primitiveType,
-            final Material material, final long attributes) {
+    public Model createCylinder(float width, float height, float depth, int divisions, boolean flipNormals, int primitiveType, final Material material, final long attributes) {
         begin();
         part("cylinder", primitiveType, attributes, material).cylinder(width, height, depth, divisions, 0, 360, false, flipNormals);
-        return end();
-    }
-
-    /** Convenience method to create a model with a single node containing an ico-sphere shape. The resources the Material might contain
-     * are not managed, use {@link Model#manageDisposable(Disposable)} to add those to the model.
-     * @param attributes bitwise mask of the {@link com.badlogic.gdx.graphics.VertexAttributes.Usage}, only Position, Color, Normal
-     *           and TextureCoordinates is supported. */
-    public Model createIcoSphere(float radius, int recursion, boolean flipNormals, boolean hardEdges, final Material material,
-            final long attributes) {
-        return createIcoSphere(radius, recursion, flipNormals, hardEdges, GL20.GL_TRIANGLES, material, attributes);
-    }
-
-    public Model createIcoSphere(float radius, int recursion, boolean flipNormals, boolean hardEdges, int primitiveType, final Material material,
-            final long attributes) {
-        begin();
-        int nfaces = (int) (10 * Math.pow(2, 2 * recursion - 1));
-        if (nfaces * 3 <= Short.MAX_VALUE) {
-            // All in one part
-            part("icosphere", primitiveType, attributes, material).icosphere(radius, recursion, flipNormals, hardEdges);
-        } else {
-            // Separate in more than one part
-            int maxfaces = Short.MAX_VALUE / 3;
-            int chunks = nfaces / maxfaces + 1;
-            for (int i = 0; i < chunks; i++) {
-                // Chunk i
-                int startFace = i * maxfaces;
-                part("icosphere", primitiveType, attributes, material).icosphere(radius, recursion, flipNormals, hardEdges, startFace, maxfaces);
-            }
-
-        }
         return end();
     }
 
@@ -559,11 +503,9 @@ public class ModelBuilder2 {
      * are not managed, use {@link Model#manageDisposable(Disposable)} to add those to the model.
      * @param attributes bitwise mask of the {@link com.badlogic.gdx.graphics.VertexAttributes.Usage}, only Position, Color, Normal
      *           and TextureCoordinates is supported. */
-    public Model createSphereRing(float sphereDiameter, int divisionsU, int divisionsV, float innerRingRadius, float outerRingRadius, int ringDivisions, final Material materialShpere, final Material materialRing,
-            final long attributes) {
+    public Model createSphereRing(float sphereDiameter, int divisionsU, int divisionsV, float innerRingRadius, float outerRingRadius, int ringDivisions, final Material materialShpere, final Material materialRing, final long attributes) {
         begin();
-        part("sphere", GL20.GL_TRIANGLES, attributes, materialShpere).sphere(sphereDiameter, sphereDiameter, sphereDiameter, divisionsU, divisionsV, false, 0,
-                360, 0, 180);
+        part("sphere", GL20.GL_TRIANGLES, attributes, materialShpere).sphere(sphereDiameter, sphereDiameter, sphereDiameter, divisionsU, divisionsV, false, 0, 360, 0, 180);
         part("ring", GL20.GL_TRIANGLES, attributes, materialRing).ring(innerRingRadius, outerRingRadius, ringDivisions, false);
         part("ring", GL20.GL_TRIANGLES, attributes, materialRing).ring(new Matrix4().translate(0, -0.00001f, 0), innerRingRadius, outerRingRadius, ringDivisions, true);
         return end();
@@ -573,8 +515,7 @@ public class ModelBuilder2 {
      * are not managed, use {@link Model#manageDisposable(Disposable)} to add those to the model.
      * @param attributes bitwise mask of the {@link com.badlogic.gdx.graphics.VertexAttributes.Usage}, only Position, Color, Normal
      *           and TextureCoordinates is supported. */
-    public Model createSphere(float diameter, int divisionsU, int divisionsV, final Material material,
-            final long attributes) {
+    public Model createSphere(float diameter, int divisionsU, int divisionsV, final Material material, final long attributes) {
         return createSphere(diameter, diameter, diameter, divisionsU, divisionsV, false, GL20.GL_TRIANGLES, material, attributes);
     }
 
@@ -582,8 +523,7 @@ public class ModelBuilder2 {
      * are not managed, use {@link Model#manageDisposable(Disposable)} to add those to the model.
      * @param attributes bitwise mask of the {@link com.badlogic.gdx.graphics.VertexAttributes.Usage}, only Position, Color, Normal
      *           and TextureCoordinates is supported. */
-    public Model createSphere(float diameter, int divisionsU, int divisionsV, boolean flipNormals, final Material material,
-            final long attributes) {
+    public Model createSphere(float diameter, int divisionsU, int divisionsV, boolean flipNormals, final Material material, final long attributes) {
         return createSphere(diameter, diameter, diameter, divisionsU, divisionsV, flipNormals, GL20.GL_TRIANGLES, material, attributes);
     }
 
@@ -591,8 +531,7 @@ public class ModelBuilder2 {
      * are not managed, use {@link Model#manageDisposable(Disposable)} to add those to the model.
      * @param attributes bitwise mask of the {@link com.badlogic.gdx.graphics.VertexAttributes.Usage}, only Position, Color, Normal
      *           and TextureCoordinates is supported. */
-    public Model createSphere(float width, float height, float depth, int divisionsU, int divisionsV, boolean flipNormals, final Material material,
-            final long attributes) {
+    public Model createSphere(float width, float height, float depth, int divisionsU, int divisionsV, boolean flipNormals, final Material material, final long attributes) {
         return createSphere(width, height, depth, divisionsU, divisionsV, flipNormals, GL20.GL_TRIANGLES, material, attributes);
     }
 
@@ -600,8 +539,7 @@ public class ModelBuilder2 {
      * are not managed, use {@link Model#manageDisposable(Disposable)} to add those to the model.
      * @param attributes bitwise mask of the {@link com.badlogic.gdx.graphics.VertexAttributes.Usage}, only Position, Color, Normal
      *           and TextureCoordinates is supported. */
-    public Model createSphere(float width, float height, float depth, int divisionsU, int divisionsV, boolean flipNormals, int primitiveType,
-            final Material material, final long attributes) {
+    public Model createSphere(float width, float height, float depth, int divisionsU, int divisionsV, boolean flipNormals, int primitiveType, final Material material, final long attributes) {
         return createSphere(width, height, depth, divisionsU, divisionsV, flipNormals, primitiveType, material, attributes, 0, 360, 0, 180);
     }
 
@@ -609,21 +547,17 @@ public class ModelBuilder2 {
      * are not managed, use {@link Model#manageDisposable(Disposable)} to add those to the model.
      * @param attributes bitwise mask of the {@link com.badlogic.gdx.graphics.VertexAttributes.Usage}, only Position, Color, Normal
      *           and TextureCoordinates is supported. */
-    public Model createSphere(float width, float height, float depth, int divisionsU, int divisionsV, boolean flipNormals, final Material material,
-            final long attributes, float angleUFrom, float angleUTo, float angleVFrom, float angleVTo) {
-        return createSphere(width, height, depth, divisionsU, divisionsV, flipNormals, GL20.GL_TRIANGLES, material, attributes, angleUFrom,
-                angleUTo, angleVFrom, angleVTo);
+    public Model createSphere(float width, float height, float depth, int divisionsU, int divisionsV, boolean flipNormals, final Material material, final long attributes, float angleUFrom, float angleUTo, float angleVFrom, float angleVTo) {
+        return createSphere(width, height, depth, divisionsU, divisionsV, flipNormals, GL20.GL_TRIANGLES, material, attributes, angleUFrom, angleUTo, angleVFrom, angleVTo);
     }
 
     /** Convenience method to create a model with a single node containing a sphere shape. The resources the Material might contain
      * are not managed, use {@link Model#manageDisposable(Disposable)} to add those to the model.
      * @param attributes bitwise mask of the {@link com.badlogic.gdx.graphics.VertexAttributes.Usage}, only Position, Color, Normal
      *           and TextureCoordinates is supported. */
-    public Model createSphere(float width, float height, float depth, int divisionsU, int divisionsV, boolean flipNormals, int primitiveType,
-            final Material material, final long attributes, float angleUFrom, float angleUTo, float angleVFrom, float angleVTo) {
+    public Model createSphere(float width, float height, float depth, int divisionsU, int divisionsV, boolean flipNormals, int primitiveType, final Material material, final long attributes, float angleUFrom, float angleUTo, float angleVFrom, float angleVTo) {
         begin();
-        part("sphere", primitiveType, attributes, material).sphere(width, height, depth, divisionsU, divisionsV, flipNormals, angleUFrom,
-                angleUTo, angleVFrom, angleVTo);
+        part("sphere", primitiveType, attributes, material).sphere(width, height, depth, divisionsU, divisionsV, flipNormals, angleUFrom, angleUTo, angleVFrom, angleVTo);
         return end();
     }
 

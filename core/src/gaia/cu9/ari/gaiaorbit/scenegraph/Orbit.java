@@ -3,17 +3,18 @@ package gaia.cu9.ari.gaiaorbit.scenegraph;
 import gaia.cu9.ari.gaiaorbit.data.orbit.IOrbitDataProvider;
 import gaia.cu9.ari.gaiaorbit.data.orbit.OrbitData;
 import gaia.cu9.ari.gaiaorbit.data.orbit.OrbitDataLoader;
+import gaia.cu9.ari.gaiaorbit.data.orbit.OrbitFileDataProvider;
+import gaia.cu9.ari.gaiaorbit.data.orbit.OrbitSamplerDataProvider;
+import gaia.cu9.ari.gaiaorbit.data.orbit.OrbitalParametersProvider;
 import gaia.cu9.ari.gaiaorbit.render.system.LineRenderSystem;
 import gaia.cu9.ari.gaiaorbit.scenegraph.component.OrbitComponent;
 import gaia.cu9.ari.gaiaorbit.util.Constants;
-import gaia.cu9.ari.gaiaorbit.util.Logger;
 import gaia.cu9.ari.gaiaorbit.util.coord.Coordinates;
 import gaia.cu9.ari.gaiaorbit.util.math.MathUtilsd;
 import gaia.cu9.ari.gaiaorbit.util.math.Matrix4d;
 import gaia.cu9.ari.gaiaorbit.util.math.Vector3d;
 import gaia.cu9.ari.gaiaorbit.util.time.ITimeFrameProvider;
 
-import java.lang.reflect.Method;
 import java.util.Date;
 
 import com.badlogic.gdx.Gdx;
@@ -33,7 +34,7 @@ public class Orbit extends LineObject {
     protected float alpha;
     public Matrix4d localTransformD, transformFunction;
     protected String provider;
-    protected Class<? extends IOrbitDataProvider> providerClass;
+    protected String providerClass;
     public OrbitComponent oc;
 
     public Orbit() {
@@ -45,20 +46,25 @@ public class Orbit extends LineObject {
 
     @Override
     public void initialize() {
+        // Orbit data
+        IOrbitDataProvider provider = getOrbitProvider(this.provider);
         try {
-            providerClass = (Class<? extends IOrbitDataProvider>) Class.forName(provider);
-            // Orbit data
-            IOrbitDataProvider provider;
-            try {
-                provider = providerClass.newInstance();
-                provider.load(oc.source, new OrbitDataLoader.OrbitDataLoaderParameter(name, providerClass, oc));
-                orbitData = provider.getData();
-            } catch (Exception e) {
-                Gdx.app.error(getClass().getSimpleName(), e.getMessage());
-            }
-        } catch (ClassNotFoundException e) {
+            provider.load(oc.source, new OrbitDataLoader.OrbitDataLoaderParameter(name, providerClass, oc));
+            orbitData = provider.getData();
+        } catch (Exception e) {
             Gdx.app.error(getClass().getSimpleName(), e.getMessage());
         }
+    }
+
+    public IOrbitDataProvider getOrbitProvider(String provider) {
+        if (provider.contains("OrbitalParametersProvider")) {
+            return new OrbitalParametersProvider();
+        } else if (provider.contains("OrbitFileDataProvider")) {
+            return new OrbitFileDataProvider();
+        } else if (provider.contains("OrbitSamplerDataProvider")) {
+            return new OrbitSamplerDataProvider();
+        }
+        return null;
     }
 
     @Override
@@ -167,12 +173,7 @@ public class Orbit extends LineObject {
 
     public void setTransformFunction(String transformFunction) {
         if (transformFunction != null && !transformFunction.isEmpty()) {
-            try {
-                Method m = Coordinates.class.getMethod(transformFunction);
-                this.transformFunction = (Matrix4d) m.invoke(null);
-            } catch (Exception e) {
-                Logger.error(e);
-            }
+            this.transformFunction = Coordinates.getTransformMatrix(transformFunction);
 
         }
     }
