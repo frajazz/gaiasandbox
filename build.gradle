@@ -95,8 +95,7 @@ project(":core") {
 		compile "org.python:jython-standalone:$jythonVersion"
 		compile 'junit:junit:4.12'
 		compile files('lib/postprocessing.jar',
-                                        'lib/postprocessing-sources.jar',
-					'lib/stil.jar')
+                                        'lib/postprocessing-sources.jar')
     }
 }
 
