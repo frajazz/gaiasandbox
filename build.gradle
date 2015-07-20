@@ -113,8 +113,7 @@ project(":android") {
         compile "com.badlogicgames.gdx:gdx-controllers:$gdxVersion"
 		compile "org.python:jython-standalone:$jythonVersion"
         compile "com.badlogicgames.gdx:gdx-controllers-android:$gdxVersion"
-		compile files('../core/lib/postprocessing.jar',
-			'../core/lib/stil.jar')
+		compile files('../core/lib/postprocessing.jar')
     }
 }
 
