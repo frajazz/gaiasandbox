@@ -213,29 +213,17 @@
 	</target>
 
 	<!-- MAIN COMPILE -->
-	<target depends="compile_gs, compile_gs_desktop" name="compile" />
+	<target depends="compile_gs" name="compile" />
 	<!-- COMPILE GS -->
 	<target name="compile_gs">
 		<ant antfile="build.xml" dir="${gs.dir}" target="compile" />
 	</target>
-	<!-- COMPILE GS-DESKTOP -->
-	<target name="compile_gs_desktop">
-		<ant antfile="build.xml" dir="${gs-desktop.dir}" target="compile">
-			<property name="gs.dir" value="${gs.dir}" />
-		</ant>
-	</target>
 
 	<!-- MAIN RESOLVE -->
-	<target depends="resolve_gs, resolve_gs_desktop, resolve_gs_android" name="resolve" />
+	<target depends="resolve_gs, resolve_gs_android" name="resolve" />
 	<!-- RESOLVE GS -->
 	<target name="resolve_gs">
 		<ant antfile="build.xml" dir="${gs.dir}" target="resolve" />
-	</target>
-	<!-- RESOLVE GS-DESKTOP -->
-	<target name="resolve_gs_desktop">
-		<ant antfile="build.xml" dir="${gs-desktop.dir}" target="resolve">
-			<property name="gs.dir" value="../${gs.dir}" />
-		</ant>
 	</target>
 	<!-- RESOLVE GS-ANDROID -->
 	<target name="resolve_gs_android">
@@ -249,16 +237,10 @@
 	</target>
 
 	<!-- MAIN CLEAN -->
-	<target depends="clean_gs, clean_gs_desktop" name="clean" />
+	<target depends="clean_gs" name="clean" />
 	<!-- CLEAN GS -->
 	<target name="clean_gs">
 		<ant antfile="build.xml" dir="${gs.dir}" target="clean" />
-	</target>
-	<!-- CLEAN GS-DESKTOP -->
-	<target name="clean_gs_desktop">
-		<ant antfile="build.xml" dir="${gs-desktop.dir}" target="clean">
-			<property name="gs.dir" value="../${gs.dir}" />
-		</ant>
 	</target>
 
 	<!-- BUILDS THE VERSION FILE WITH THE BUILD INFO -->
