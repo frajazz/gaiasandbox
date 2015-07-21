@@ -206,7 +206,7 @@ public class GlobalConf {
             DATA_SOURCE_LOCAL = true;
             DATA_SG_FILE = "data/data.sg";
 
-            LIMIT_MAG_LOAD = 15;
+            LIMIT_MAG_LOAD = 8.5f;
         }
     }
 
@@ -315,7 +315,7 @@ public class GlobalConf {
         @Override
         public void initialize() {
             OBJECT_FADE_MS = 2000;
-            STAR_BRIGHTNESS = 3.12f;
+            STAR_BRIGHTNESS = 30f;
             AMBIENT_LIGHT = 0.0f;
             CAMERA_FOV = 50;
             CAMERA_SPEED_LIMIT_IDX = 13;
@@ -326,9 +326,9 @@ public class GlobalConf {
             ROTATION_SPEED = 2286f;
             LABEL_NUMBER_FACTOR = 2.0f;
             STAR_TH_ANGLE_QUAD = 0.0f;
-            STAR_TH_ANGLE_POINT = 2e-7f;
+            STAR_TH_ANGLE_POINT = 1e-7f;
             STAR_TH_ANGLE_NONE = 0.0f;
-            POINT_ALPHA_MIN = 0.05f;
+            POINT_ALPHA_MIN = 0.2f;
             POINT_ALPHA_MAX = 1.0f;
             PIXEL_RENDERER = 2;
             LINE_RENDERER = 0;

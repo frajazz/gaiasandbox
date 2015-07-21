@@ -1,3 +1,8 @@
+#ifdef GL_ES
+precision mediump float;
+precision mediump int;
+#endif
+
 attribute vec4 a_position;
 attribute vec4 a_color;
 attribute vec4 a_additional;
@@ -24,11 +29,8 @@ void main() {
     float a_size = a_additional.x;
     float a_thAnglePoint = a_additional.y;
     
-    //viewAngleApparent = (float) Math.atan((getRadius() * GlobalConf.scene.STAR_BRIGHTNESS) / distToCamera) / camera.getFovFactor();
     float viewAngleApparent = atan((a_size * u_starBrightness) / length(pos)) / u_fovFactor;
-
-    // opacity *= MathUtilsd.lint(viewAngleApparent, 0, THRESHOLD_ANGLE_POINT(), GlobalConf.scene.POINT_ALPHA_MIN, GlobalConf.scene.POINT_ALPHA_MAX);
-    float opacity = pow(lint(viewAngleApparent, 0, a_thAnglePoint, u_pointAlphaMin, u_pointAlphaMax), 1.0);
+    float opacity = pow(lint(viewAngleApparent, 0.0, a_thAnglePoint, u_pointAlphaMin, u_pointAlphaMax), 1.0);
     
     gl_Position = u_projModelView * vec4(pos, 0.0);
 

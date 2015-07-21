@@ -79,6 +79,7 @@ public class GaiaSandbox implements ApplicationListener, IObserver {
     private static String FILE_JSON = "data/planets.json data/moons.json data/satellites.json data/asteroids.json data/orbits.json data/extra.json data/locations.json data/earth_locations.json data/moon_locations.json";
     private static String FILE_CONSTELLATIONS = "data/constel.csv";
     private static String FILE_BOUNDARIES = "data/boundaries.csv";
+    private static String ATTITUDE_FOLDER = "data/attitudexml/";
 
     public static GaiaSandbox instance;
 
@@ -169,7 +170,7 @@ public class GaiaSandbox implements ApplicationListener, IObserver {
         cam = new CameraManager(manager, CameraMode.Focus);
 
         // Initialize Gaia attitudes
-        manager.load("data/attitudexml/", GaiaAttitudeServer.class);
+        //manager.load(ATTITUDE_FOLDER, GaiaAttitudeServer.class);
 
         // Set asset manager to asset bean
         AssetBean.setAssetManager(manager);
@@ -216,7 +217,9 @@ public class GaiaSandbox implements ApplicationListener, IObserver {
         loadingGui = null;
 
         // Get attitude
-        GaiaAttitudeServer.instance = manager.get("data/attitudexml/");
+        if (manager.containsAsset(ATTITUDE_FOLDER)) {
+            GaiaAttitudeServer.instance = manager.get(ATTITUDE_FOLDER);
+        }
 
         pp = new GSPostProcessor();
 

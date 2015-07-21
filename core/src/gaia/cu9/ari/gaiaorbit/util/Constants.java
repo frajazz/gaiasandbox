@@ -123,7 +123,7 @@ public class Constants {
     /** Minimum star brightness **/
     public static final float MIN_STAR_BRIGHT = 0f;
     /** Maximum star brightness **/
-    public static final float MAX_STAR_BRIGHT = 12f;
+    public static final float MAX_STAR_BRIGHT = 50f;
 
     /**
      * 
@@ -143,7 +143,7 @@ public class Constants {
     /**
      * Nature
      */
-    public static class Nature{
+    public static class Nature {
         /** Number of seconds per day */
         public static final double DAY_SECOND = 86400.0D;
         /** One degree in units of radians */

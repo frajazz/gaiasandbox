@@ -1,3 +1,7 @@
+#ifdef GL_ES
+precision mediump float;
+precision mediump int;
+#endif
 
 // UNIFORMS
 
@@ -7,6 +11,8 @@ uniform sampler2D u_diffuseTexture;
 uniform sampler2D u_normalTexture;
 // This contains the time in seconds!
 uniform float u_shininess;
+
+// VARYINGS
 
 // Ambient color (star color in this case)
 varying vec3 v_lightDiffuse;

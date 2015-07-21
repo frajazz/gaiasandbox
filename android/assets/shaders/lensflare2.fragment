@@ -44,8 +44,9 @@ void main() {
     vec3 distortion = vec3(-texelSize.x * u_distortion, 0.0, texelSize.x * u_distortion);
     
     // sample ghosts:  
+    vec2 g = vec2(u_ghosts);
     vec4 result = vec4(0.0);
-    for (int i = 0; i < 8; ++i) { 
+    for (int i = 0; i < g.x; ++i) { 
 		vec2 offset = fract(texcoord + ghostVec * float(i));
 		
 		float weight = length(vec2(0.5) - offset) / length(vec2(0.5));

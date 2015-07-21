@@ -8,13 +8,7 @@ import gaia.cu9.ari.gaiaorbit.util.I18n;
 import gaia.cu9.ari.gaiaorbit.util.Logger;
 
 import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.graphics.Texture;
 import com.bitfire.postprocessing.PostProcessor;
-import com.bitfire.postprocessing.effects.Bloom;
-import com.bitfire.postprocessing.effects.Fxaa;
-import com.bitfire.postprocessing.effects.LensFlare2;
-import com.bitfire.postprocessing.effects.MotionBlur;
-import com.bitfire.postprocessing.effects.Nfaa;
 import com.bitfire.utils.ShaderLoader;
 
 public class GSPostProcessor implements IPostProcessor, IObserver {
@@ -46,41 +40,41 @@ public class GSPostProcessor implements IPostProcessor, IObserver {
 
         ppb.pp = new PostProcessor(width, height, true, false, true);
 
-        // MOTION BLUR
-        ppb.motionblur = new MotionBlur();
-        ppb.motionblur.setBlurOpacity(GlobalConf.postprocess.POSTPROCESS_MOTION_BLUR);
-        ppb.pp.addEffect(ppb.motionblur);
-
-        // BLOOM
-        ppb.bloom = new Bloom((int) (width * bloomFboScale), (int) (height * bloomFboScale));
-        ppb.bloom.setBloomIntesity(GlobalConf.postprocess.POSTPROCESS_BLOOM_INTENSITY);
-        ppb.bloom.setThreshold(0f);
-        ppb.bloom.setEnabled(GlobalConf.postprocess.POSTPROCESS_BLOOM_INTENSITY > 0);
-        ppb.pp.addEffect(ppb.bloom);
-
-        // LENS FLARE
-        ppb.lens = new LensFlare2((int) (width * lensFboScale), (int) (height * lensFboScale));
-        ppb.lens.setGhosts(14);
-        ppb.lens.setHaloWidth(0.55f);
-        ppb.lens.setLensColorTexture(new Texture(Gdx.files.internal("img/lenscolor.png")));
-        ppb.lens.setFlareIntesity(.39f);
-        ppb.lens.setFlareSaturation(0.7f);
-        ppb.lens.setBaseIntesity(1f);
-        ppb.lens.setBias(-0.99f);
-        ppb.lens.setBlurAmount(0.0f);
-        ppb.lens.setBlurPasses(2);
-        ppb.lens.setEnabled(GlobalConf.postprocess.POSTPROCESS_LENS_FLARE);
-        ppb.pp.addEffect(ppb.lens);
-
-        // ANTIALIAS
-        if (GlobalConf.postprocess.POSTPROCESS_ANTIALIAS == -1) {
-            ppb.antialiasing = new Fxaa(width, height);
-            ((Fxaa) ppb.antialiasing).setSpanMax(2f);
-        } else {
-            ppb.antialiasing = new Nfaa(width, height);
-        }
-        ppb.antialiasing.setEnabled(GlobalConf.postprocess.POSTPROCESS_ANTIALIAS < 0);
-        ppb.pp.addEffect(ppb.antialiasing);
+        //        // MOTION BLUR
+        //        ppb.motionblur = new MotionBlur();
+        //        ppb.motionblur.setBlurOpacity(GlobalConf.postprocess.POSTPROCESS_MOTION_BLUR);
+        //        ppb.pp.addEffect(ppb.motionblur);
+        //
+        //        // BLOOM
+        //        ppb.bloom = new Bloom((int) (width * bloomFboScale), (int) (height * bloomFboScale));
+        //        ppb.bloom.setBloomIntesity(GlobalConf.postprocess.POSTPROCESS_BLOOM_INTENSITY);
+        //        ppb.bloom.setThreshold(0f);
+        //        ppb.bloom.setEnabled(GlobalConf.postprocess.POSTPROCESS_BLOOM_INTENSITY > 0);
+        //        ppb.pp.addEffect(ppb.bloom);
+        //
+        //        // LENS FLARE
+        //        ppb.lens = new LensFlare2((int) (width * lensFboScale), (int) (height * lensFboScale));
+        //        ppb.lens.setGhosts(14);
+        //        ppb.lens.setHaloWidth(0.55f);
+        //        ppb.lens.setLensColorTexture(new Texture(Gdx.files.internal("img/lenscolor.png")));
+        //        ppb.lens.setFlareIntesity(.39f);
+        //        ppb.lens.setFlareSaturation(0.7f);
+        //        ppb.lens.setBaseIntesity(1f);
+        //        ppb.lens.setBias(-0.99f);
+        //        ppb.lens.setBlurAmount(0.0f);
+        //        ppb.lens.setBlurPasses(2);
+        //        ppb.lens.setEnabled(GlobalConf.postprocess.POSTPROCESS_LENS_FLARE);
+        //        ppb.pp.addEffect(ppb.lens);
+        //
+        //        // ANTIALIAS
+        //        if (GlobalConf.postprocess.POSTPROCESS_ANTIALIAS == -1) {
+        //            ppb.antialiasing = new Fxaa(width, height);
+        //            ((Fxaa) ppb.antialiasing).setSpanMax(2f);
+        //        } else {
+        //            ppb.antialiasing = new Nfaa(width, height);
+        //        }
+        //        ppb.antialiasing.setEnabled(GlobalConf.postprocess.POSTPROCESS_ANTIALIAS < 0);
+        //        ppb.pp.addEffect(ppb.antialiasing);
 
         return ppb;
     }
