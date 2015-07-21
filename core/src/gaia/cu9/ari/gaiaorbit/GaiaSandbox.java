@@ -176,11 +176,11 @@ public class GaiaSandbox implements ApplicationListener, IObserver {
         // Load catalogue
         manager.load(FILE_CATALOGUE, HYGBean.class);
         // Load json files
-        manager.load(FILE_JSON, JsonBean.class);
+        //manager.load(FILE_JSON, JsonBean.class);
         // Load constellations
-        manager.load(FILE_CONSTELLATIONS, ConstellationsBean.class);
+        //manager.load(FILE_CONSTELLATIONS, ConstellationsBean.class);
         // Load boundaries
-        manager.load(FILE_BOUNDARIES, BoundariesBean.class);
+        //manager.load(FILE_BOUNDARIES, BoundariesBean.class);
 
         // Initialize timestamp for screenshots
         renderGui = new RenderGui();
@@ -231,17 +231,17 @@ public class GaiaSandbox implements ApplicationListener, IObserver {
          */
         List<SceneGraphNode> nodeList;
         HYGBean hygbean = manager.get(FILE_CATALOGUE);
-        JsonBean jsonbean = manager.get(FILE_JSON);
-        ConstellationsBean constelbean = manager.get(FILE_CONSTELLATIONS);
-        BoundariesBean boundbean = manager.get(FILE_BOUNDARIES);
+        //JsonBean jsonbean = manager.get(FILE_JSON);
+        //ConstellationsBean constelbean = manager.get(FILE_CONSTELLATIONS);
+        //BoundariesBean boundbean = manager.get(FILE_BOUNDARIES);
 
-        int n = hygbean.size() + jsonbean.size() + constelbean.size() + boundbean.size();
+        int n = hygbean.size() /*+ jsonbean.size() + constelbean.size() + boundbean.size()*/;
         nodeList = new ArrayList<SceneGraphNode>(n);
 
         nodeList.addAll(hygbean.list());
-        nodeList.addAll(jsonbean.list());
-        nodeList.addAll(constelbean.list());
-        nodeList.addAll(boundbean.list());
+        //nodeList.addAll(jsonbean.list());
+        //nodeList.addAll(constelbean.list());
+        //nodeList.addAll(boundbean.list());
 
         sg = new SceneGraph();
         sg.initialize(nodeList, GlobalClock.clock);

@@ -46,7 +46,7 @@ snoise(vec3 uv, float res)	// by trisomie21
     r = fract (sin ((v + uv1.z - uv0.z) * 1e-3) * 1e5);
     float r1 = mix (mix (r.x, r.y, f.x), mix (r.z, r.w, f.x), f.y);
 
-    return mix (r0, r1, f.z) - 1.;
+    return mix (r0, r1, f.z) - 1.0;
 }
 
 // Level is between 0 and 1

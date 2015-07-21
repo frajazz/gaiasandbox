@@ -37,21 +37,21 @@ public class AttitudeXmlParser {
 
     public static BinarySearchTree parseFolder(String folder) {
         final FileHandle[] list = new FileHandle[15];
-        list[0] = Gdx.files.internal(folder + "/OPS_RSLS_0021791_rsls_launch_minus_5_weeks_epsl_comm_following.xml");
-        list[1] = Gdx.files.internal(folder + "/OPS_RSLS_0021791_rsls_launch_minus_5_weeks_epsl_comm_following_TUNED2014-07-03.xml");
-        list[2] = Gdx.files.internal(folder + "/OPS_RSLS_0022916_rsls_nsl_gareq1_afterFirstSpinPhaseOptimization.2.xml");
-        list[3] = Gdx.files.internal(folder + "/OPS_RSLS_0023024_rsls_tsl_ecliptic_pole_scanning.xml");
-        list[4] = Gdx.files.internal(folder + "/OPS_RSLS_0023165_rsls_nls_comm_gps_may2014.xml");
-        list[5] = Gdx.files.internal(folder + "/OPS_RSLS_0023768_sa42deg_corrn.xml");
-        list[6] = Gdx.files.internal(folder + "/OPS_RSLS_0024158.xml");
-        list[7] = Gdx.files.internal(folder + "/OPS_RSLS_0026136_NSL_TUNEDfor2014-05-01.xml");
-        list[8] = Gdx.files.internal(folder + "/OPS_RSLS_0026139_EPSL-P_TUNEDfor2014-03-12.xml");
-        list[9] = Gdx.files.internal(folder + "/OPS_RSLS_0026141_EPSL-P_TUNEDfor2014-03-12.xml");
-        list[10] = Gdx.files.internal(folder + "/OPS_RSLS_0026624_EPSL-P_TUNEDfor2014-05-09.xml");
-        list[11] = Gdx.files.internal(folder + "/OPS_RSLS_0026767_EPSL-P_TUNEDfor2014-06-02.xml");
-        list[12] = Gdx.files.internal(folder + "/OPS_RSLS_0026877_EPSL-F_TUNEDfor2014-06-06.xml");
-        list[13] = Gdx.files.internal(folder + "/OPS_RSLS_0028463_epsl_following_FIXED_20140909.xml");
-        list[14] = Gdx.files.internal(folder + "/OPS_RSLS_0028750_rsls_epsl_comm_leading_nsl_cont_corrected.xml");
+        list[0] = Gdx.files.internal(folder + "OPS_RSLS_0021791_rsls_launch_minus_5_weeks_epsl_comm_following.xml");
+        list[1] = Gdx.files.internal(folder + "OPS_RSLS_0021791_rsls_launch_minus_5_weeks_epsl_comm_following_TUNED2014-07-03.xml");
+        list[2] = Gdx.files.internal(folder + "OPS_RSLS_0022916_rsls_nsl_gareq1_afterFirstSpinPhaseOptimization.2.xml");
+        list[3] = Gdx.files.internal(folder + "OPS_RSLS_0023024_rsls_tsl_ecliptic_pole_scanning.xml");
+        list[4] = Gdx.files.internal(folder + "OPS_RSLS_0023165_rsls_nls_comm_gps_may2014.xml");
+        list[5] = Gdx.files.internal(folder + "OPS_RSLS_0023768_sa42deg_corrn.xml");
+        list[6] = Gdx.files.internal(folder + "OPS_RSLS_0024158.xml");
+        list[7] = Gdx.files.internal(folder + "OPS_RSLS_0026136_NSL_TUNEDfor2014-05-01.xml");
+        list[8] = Gdx.files.internal(folder + "OPS_RSLS_0026139_EPSL-P_TUNEDfor2014-03-12.xml");
+        list[9] = Gdx.files.internal(folder + "OPS_RSLS_0026141_EPSL-P_TUNEDfor2014-03-12.xml");
+        list[10] = Gdx.files.internal(folder + "OPS_RSLS_0026624_EPSL-P_TUNEDfor2014-05-09.xml");
+        list[11] = Gdx.files.internal(folder + "OPS_RSLS_0026767_EPSL-P_TUNEDfor2014-06-02.xml");
+        list[12] = Gdx.files.internal(folder + "OPS_RSLS_0026877_EPSL-F_TUNEDfor2014-06-06.xml");
+        list[13] = Gdx.files.internal(folder + "OPS_RSLS_0028463_epsl_following_FIXED_20140909.xml");
+        list[14] = Gdx.files.internal(folder + "OPS_RSLS_0028750_rsls_epsl_comm_leading_nsl_cont_corrected.xml");
 
         BinarySearchTree bst = new BinarySearchTree();
 
