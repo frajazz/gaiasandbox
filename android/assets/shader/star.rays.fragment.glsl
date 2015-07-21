@@ -57,7 +57,6 @@ vec4 draw_simple_star(float distanceCenter) {
     float core = step(ang_th, u_apparent_angle) * smoothstep(u_inner_rad, 0.0, distanceCenter);
 
     return vec4 (v_color.rgb + core, v_color.a * (fac + core));
-    //return vec4 (vec3(1.0, 0.0, 0.0) + core, v_color.a * (fac + core));
 }
 
 vec4

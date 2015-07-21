@@ -29,7 +29,7 @@ public class PixelRenderSystem extends ImmediateRenderSystem implements IObserve
 
     public PixelRenderSystem(RenderGroup rg, int priority, float[] alphas) {
         super(rg, priority, alphas);
-
+        Gdx.gl.glEnable(Gdx.gl20.GL_VERTEX_PROGRAM_POINT_SIZE);
         EventManager.instance.subscribe(this, Events.TRANSIT_COLOUR_CMD, Events.ONLY_OBSERVED_STARS_CMD);
     }
 
@@ -44,6 +44,7 @@ public class PixelRenderSystem extends ImmediateRenderSystem implements IObserve
         shaderProgram.setUniformf("u_pointAlphaMin", GlobalConf.scene.POINT_ALPHA_MIN);
         shaderProgram.setUniformf("u_pointAlphaMax", GlobalConf.scene.POINT_ALPHA_MAX);
         shaderProgram.end();
+
     }
 
     @Override
@@ -62,10 +63,8 @@ public class PixelRenderSystem extends ImmediateRenderSystem implements IObserve
 
         curr.vertices = new float[maxVertices * (curr.mesh.getVertexAttributes().vertexSize / 4)];
         curr.vertexSize = curr.mesh.getVertexAttributes().vertexSize / 4;
-        curr.colorOffset = curr.mesh.getVertexAttribute(Usage.ColorPacked) != null ? curr.mesh.getVertexAttribute(Usage.ColorPacked).offset / 4
-                : 0;
-        additionalOffset = curr.mesh.getVertexAttribute(Usage.Generic) != null ? curr.mesh.getVertexAttribute(Usage.Generic).offset / 4
-                : 0;
+        curr.colorOffset = curr.mesh.getVertexAttribute(Usage.ColorPacked) != null ? curr.mesh.getVertexAttribute(Usage.ColorPacked).offset / 4 : 0;
+        additionalOffset = curr.mesh.getVertexAttribute(Usage.Generic) != null ? curr.mesh.getVertexAttribute(Usage.Generic).offset / 4 : 0;
     }
 
     @Override
@@ -99,7 +98,6 @@ public class PixelRenderSystem extends ImmediateRenderSystem implements IObserve
             // Put flag down
             POINT_UPDATE_FLAG = false;
         }
-
         shaderProgram.begin();
         shaderProgram.setUniformMatrix("u_projModelView", camera.getCamera().combined);
         shaderProgram.setUniformf("u_camPos", camera.getCurrent().getPos().setVector3(aux));
@@ -129,7 +127,7 @@ public class PixelRenderSystem extends ImmediateRenderSystem implements IObserve
         if (event == Events.TRANSIT_COLOUR_CMD) {
             starColorTransit = (boolean) data[1];
             POINT_UPDATE_FLAG = true;
-        }else if(event == Events.ONLY_OBSERVED_STARS_CMD){
+        } else if (event == Events.ONLY_OBSERVED_STARS_CMD) {
             POINT_UPDATE_FLAG = true;
         }
     }

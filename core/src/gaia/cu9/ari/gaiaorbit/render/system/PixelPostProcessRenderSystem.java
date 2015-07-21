@@ -38,6 +38,7 @@ public abstract class PixelPostProcessRenderSystem extends PixelRenderSystem imp
         fbmap = new HashMap<String, FrameBuffer>();
         getFrameBuffer(Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
 
+        Gdx.gl.glEnable(Gdx.gl20.GL_VERTEX_PROGRAM_POINT_SIZE);
         EventManager.instance.subscribe(this, Events.SCREEN_RESIZE, Events.TOGGLE_STEREOSCOPIC);
     }
 
