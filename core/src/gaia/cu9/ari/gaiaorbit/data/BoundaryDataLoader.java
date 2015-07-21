@@ -24,7 +24,7 @@ public class BoundaryDataLoader extends AsynchronousAssetLoader<BoundariesBean, 
         ConstelBoundariesLoader loader = new ConstelBoundariesLoader();
         loader.initialize(file);
         bean = new BoundariesBean();
-        bean.list.addAll(loader.loadObjects());
+        bean.addAll(loader.loadObjects());
     }
 
     @Override

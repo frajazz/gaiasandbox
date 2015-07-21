@@ -21,7 +21,6 @@ import gaia.cu9.ari.gaiaorbit.interfce.GaiaInputController;
 import gaia.cu9.ari.gaiaorbit.interfce.HUDGui;
 import gaia.cu9.ari.gaiaorbit.interfce.IGui;
 import gaia.cu9.ari.gaiaorbit.interfce.LoadingGui;
-import gaia.cu9.ari.gaiaorbit.interfce.MobileGui;
 import gaia.cu9.ari.gaiaorbit.interfce.RenderGui;
 import gaia.cu9.ari.gaiaorbit.render.AbstractRenderer;
 import gaia.cu9.ari.gaiaorbit.render.ComponentType;
@@ -36,7 +35,6 @@ import gaia.cu9.ari.gaiaorbit.scenegraph.ISceneGraph;
 import gaia.cu9.ari.gaiaorbit.scenegraph.SceneGraph;
 import gaia.cu9.ari.gaiaorbit.scenegraph.SceneGraphNode;
 import gaia.cu9.ari.gaiaorbit.scenegraph.component.ModelComponent;
-import gaia.cu9.ari.gaiaorbit.util.Constants;
 import gaia.cu9.ari.gaiaorbit.util.GlobalConf;
 import gaia.cu9.ari.gaiaorbit.util.GlobalResources;
 import gaia.cu9.ari.gaiaorbit.util.I18n;
@@ -128,9 +126,6 @@ public class GaiaSandbox implements ApplicationListener, IObserver {
     public void create() {
         Gdx.app.setLogLevel(Application.LOG_INFO);
 
-        boolean mobile = Constants.mobile;
-        boolean desktop = !mobile;
-
         fbmap = new HashMap<String, FrameBuffer>();
 
         // Disable all kinds of input
@@ -192,14 +187,7 @@ public class GaiaSandbox implements ApplicationListener, IObserver {
         renderGui.initialize(manager);
 
         if (GlobalConf.OPENGL_GUI) {
-            // Load scene graph
-            if (desktop) {
-                // Full GUI for desktop
-                gui = new FullGui();
-            } else {
-                // Reduced GUI for android/iOS/...
-                gui = new MobileGui();
-            }
+            gui = new FullGui();
         } else {
             // Only the HUD
             gui = new HUDGui();
@@ -247,13 +235,13 @@ public class GaiaSandbox implements ApplicationListener, IObserver {
         ConstellationsBean constelbean = manager.get(FILE_CONSTELLATIONS);
         BoundariesBean boundbean = manager.get(FILE_BOUNDARIES);
 
-        int n = hygbean.list.size() + jsonbean.list.size() + constelbean.list.size() + boundbean.list.size();
+        int n = hygbean.size() + jsonbean.size() + constelbean.size() + boundbean.size();
         nodeList = new ArrayList<SceneGraphNode>(n);
 
-        nodeList.addAll(hygbean.list);
-        nodeList.addAll(jsonbean.list);
-        nodeList.addAll(constelbean.list);
-        nodeList.addAll(boundbean.list);
+        nodeList.addAll(hygbean.list());
+        nodeList.addAll(jsonbean.list());
+        nodeList.addAll(constelbean.list());
+        nodeList.addAll(boundbean.list());
 
         sg = new SceneGraph();
         sg.initialize(nodeList, GlobalClock.clock);

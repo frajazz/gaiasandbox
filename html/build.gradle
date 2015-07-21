@@ -3,7 +3,7 @@ apply plugin: "jetty"
 
 gwt {
     gwtVersion='2.7.0' // Should match the gwt version used for building the gwt backend
-    maxHeapSize="5G" // Default 256m is not enough for gwt compiler. GWT is HUNGRY
+    maxHeapSize="4G" // Default 256m is not enough for gwt compiler. GWT is HUNGRY
     minHeapSize="4G"
 
     src = files(file("src/")) // Needs to be in front of "modules" below.

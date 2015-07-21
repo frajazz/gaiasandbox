@@ -24,7 +24,7 @@ public class ConstellationDataLoader extends AsynchronousAssetLoader<Constellati
         ConstellationsLoader loader = new ConstellationsLoader();
         loader.initialize(file);
         bean = new ConstellationsBean();
-        bean.list.addAll(loader.loadObjects());
+        bean.addAll(loader.loadObjects());
     }
 
     @Override

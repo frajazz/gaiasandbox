@@ -23,7 +23,7 @@ public class JsonDataLoader extends AsynchronousAssetLoader<JsonBean, JsonDataLo
         JsonLoader loader = new JsonLoader();
         loader.initialize(fileName.split("\\s+"));
         bean = new JsonBean();
-        bean.list = loader.loadObjects();
+        bean.addAll(loader.loadObjects());
 
     }
 

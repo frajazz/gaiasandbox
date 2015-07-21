@@ -526,7 +526,7 @@ public class GlobalConf {
             configurations.add(performance);
         }
 
-        initialize();
+        initializeProps();
 
         initialized = true;
 
