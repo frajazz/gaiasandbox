@@ -9,11 +9,11 @@ precision mediump int;
 uniform sampler2D u_diffuseTexture;
 // Grayscale lookup table
 uniform sampler2D u_normalTexture;
-// This contains the time in seconds!
-uniform float u_shininess;
 
 // VARYINGS
 
+// Time in seconds
+varying float v_time;
 // Ambient color (star color in this case)
 varying vec3 v_lightDiffuse;
 // The normal
@@ -26,7 +26,7 @@ varying float v_opacity;
 varying vec3 v_viewVec;
 
 
-#define time u_shininess * 0.001
+#define time v_time * 0.001
 
 void main() {
     // Perimeter is 1 when normal faces camera, 0 when normal is 90 degrees from view.

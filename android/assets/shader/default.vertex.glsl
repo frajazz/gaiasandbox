@@ -102,6 +102,7 @@ uniform float u_shininess;
 #else
 const float u_shininess = 20.0;
 #endif // shininessFlag
+varying float v_time;
 
 #ifdef blendedFlag
 uniform float u_opacity;
@@ -266,6 +267,7 @@ varying vec3 v_atmosphereColor;
 
 void main() {
 	v_atmosphereColor = calculateAtmosphereGroundColor();
+	v_time = u_shininess;
 	#ifdef textureFlag
 		v_texCoords0 = a_texCoord0;
 	#endif // textureFlag
