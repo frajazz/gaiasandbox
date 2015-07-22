@@ -304,7 +304,7 @@ public class FullGui implements IGui, IObserver {
 
         // Calculate new size
         guiLayout.pack();
-        windowScroll.setHeight(Math.min(guiLayout.getHeight(), Gdx.graphics.getHeight() - 100));
+        windowScroll.setHeight(Math.min(guiLayout.getHeight(), Gdx.graphics.getHeight() - 70));
         windowScroll.pack();
 
         mainVertical.setHeight(windowScroll.getHeight() + 30);
