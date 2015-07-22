@@ -60,10 +60,10 @@ public class HYGBinaryLoader extends AbstractCatalogLoader implements ICatalogLo
                     float appmag = data_in.readFloat();
                     float absmag = data_in.readFloat();
                     float colorbv = data_in.readFloat();
-                    double ra = data_in.readDouble();
-                    double dec = data_in.readDouble();
-                    double dist = data_in.readDouble();
-                    long id = data_in.readLong();
+                    float ra = data_in.readFloat();
+                    float dec = data_in.readFloat();
+                    float dist = data_in.readFloat();
+                    int id = data_in.readInt();
                     if (appmag < GlobalConf.data.LIMIT_MAG_LOAD) {
                         Vector3d pos = Coordinates.sphericalToCartesian(Math.toRadians(ra), Math.toRadians(dec), dist, new Vector3d());
                         stars.add(new Star(pos, appmag, absmag, colorbv, name, ra, dec, id));

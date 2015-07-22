@@ -31,7 +31,6 @@ public class HYGCSVLoader extends AbstractCatalogLoader implements ICatalogLoade
         List<Star> stars = new ArrayList<Star>();
         InputStream data = file.read();
         BufferedReader br = new BufferedReader(new InputStreamReader(data));
-        Logger.info(this.getClass().getSimpleName(), I18n.bundle.format("notif.limitmag", GlobalConf.data.LIMIT_MAG_LOAD));
 
         try {
             //Skip first line
@@ -95,7 +94,7 @@ public class HYGCSVLoader extends AbstractCatalogLoader implements ICatalogLoade
                 ad += 213;
             }
 
-            Star star = new Star(pos, appmag, absmag, colorbv, name, ra, dec, starid);
+            Star star = new Star(pos, appmag, absmag, colorbv, name, (float) ra, (float) dec, (int) starid);
             stars.add(star);
         }
     }

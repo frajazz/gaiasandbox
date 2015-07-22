@@ -77,7 +77,7 @@ public class PixelRenderSystem extends ImmediateRenderSystem implements IObserve
             for (int i = 0; i < size; i++) {
                 // 2 FPS gain
                 CelestialBody cb = (CelestialBody) renderables.get(i);
-                float[] col = starColorTransit ? cb.ccTransit : cb.ccPale;
+                float[] col = starColorTransit ? cb.ccTransit : cb.cc;
                 // COLOR
                 curr.vertices[curr.vertexIdx + curr.colorOffset] = Color.toFloatBits(col[0], col[1], col[2], 1.0f);
 
@@ -103,7 +103,8 @@ public class PixelRenderSystem extends ImmediateRenderSystem implements IObserve
         shaderProgram.setUniformf("u_camPos", camera.getCurrent().getPos().setVector3(aux));
         shaderProgram.setUniformf("u_fovFactor", camera.getFovFactor());
         shaderProgram.setUniformf("u_alpha", alphas[0]);
-        shaderProgram.setUniformf("u_starBrightness", GlobalConf.scene.STAR_BRIGHTNESS);
+        shaderProgram.setUniformf("u_starBrightness", GlobalConf.scene.STAR_BRIGHTNESS * 15f);
+        shaderProgram.setUniformf("u_pointSize", 1f);
         curr.mesh.setVertices(curr.vertices, 0, curr.vertexIdx);
         curr.mesh.render(shaderProgram, ShapeType.Point.getGlType());
         shaderProgram.end();

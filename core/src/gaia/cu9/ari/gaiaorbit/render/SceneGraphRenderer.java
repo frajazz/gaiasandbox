@@ -478,11 +478,19 @@ public class SceneGraphRenderer extends AbstractRenderer implements IProcessRend
         if (GlobalConf.scene.isNormalLineRenderer()) {
             // Normal
             sys = new LineRenderSystem(RenderGroup.LINE, 0, alphas);
-            sys.setPreRunnable(blendDepthRunnable);
+            sys.setPreRunnable(new Runnable() {
+                @Override
+                public void run() {
+                    Gdx.gl.glDisable(GL20.GL_BLEND);
+                    Gdx.gl.glDisable(GL20.GL_DEPTH_TEST);
+                    Gdx.gl.glDepthFunc(GL20.GL_LESS);
+                    Gdx.gl.glDepthMask(false);
+                }
+            });
         } else {
             // Quad
             sys = new LineQuadRenderSystem(RenderGroup.LINE, 0, alphas);
-            sys.setPreRunnable(blendDepthRunnable);
+            sys.setPreRunnable(blendNoDepthRunnable);
         }
         return sys;
     }

@@ -76,7 +76,7 @@ public class GaiaSandbox implements ApplicationListener, IObserver {
     private static boolean LOADING = true;
 
     private static String FILE_CATALOGUE = "data/hygxyz.bin";
-    private static String FILE_JSON = "data/planets.json data/moons.json data/satellites.json data/asteroids.json data/orbits.json data/extra.json data/locations.json data/earth_locations.json data/moon_locations.json";
+    private static String FILE_JSON = "data/extra.json"; /*"data/planets.json data/moons.json data/satellites.json data/asteroids.json data/orbits.json data/extra.json data/locations.json data/earth_locations.json data/moon_locations.json";*/
     private static String FILE_CONSTELLATIONS = "data/constel.csv";
     private static String FILE_BOUNDARIES = "data/boundaries.csv";
     private static String ATTITUDE_FOLDER = "data/attitudexml/";
@@ -179,9 +179,9 @@ public class GaiaSandbox implements ApplicationListener, IObserver {
         // Load json files
         //manager.load(FILE_JSON, JsonBean.class);
         // Load constellations
-        //manager.load(FILE_CONSTELLATIONS, ConstellationsBean.class);
+        manager.load(FILE_CONSTELLATIONS, ConstellationsBean.class);
         // Load boundaries
-        //manager.load(FILE_BOUNDARIES, BoundariesBean.class);
+        manager.load(FILE_BOUNDARIES, BoundariesBean.class);
 
         // Initialize timestamp for screenshots
         renderGui = new RenderGui();
@@ -235,16 +235,16 @@ public class GaiaSandbox implements ApplicationListener, IObserver {
         List<SceneGraphNode> nodeList;
         HYGBean hygbean = manager.get(FILE_CATALOGUE);
         //JsonBean jsonbean = manager.get(FILE_JSON);
-        //ConstellationsBean constelbean = manager.get(FILE_CONSTELLATIONS);
-        //BoundariesBean boundbean = manager.get(FILE_BOUNDARIES);
+        ConstellationsBean constelbean = manager.get(FILE_CONSTELLATIONS);
+        BoundariesBean boundbean = manager.get(FILE_BOUNDARIES);
 
         int n = hygbean.size() /*+ jsonbean.size() + constelbean.size() + boundbean.size()*/;
         nodeList = new ArrayList<SceneGraphNode>(n);
 
         nodeList.addAll(hygbean.list());
         //nodeList.addAll(jsonbean.list());
-        //nodeList.addAll(constelbean.list());
-        //nodeList.addAll(boundbean.list());
+        nodeList.addAll(constelbean.list());
+        nodeList.addAll(boundbean.list());
 
         sg = new SceneGraph();
         sg.initialize(nodeList, GlobalClock.clock);

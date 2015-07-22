@@ -206,7 +206,7 @@ public class GlobalConf {
             DATA_SOURCE_LOCAL = true;
             DATA_SG_FILE = "data/data.sg";
 
-            LIMIT_MAG_LOAD = 8f;
+            LIMIT_MAG_LOAD = 7f;
         }
     }
 
@@ -246,7 +246,7 @@ public class GlobalConf {
             LOCALE = "en-GB";
 
             DISPLAY_TUTORIAL = false;
-            SHOW_DEBUG_INFO = false;
+            SHOW_DEBUG_INFO = true;
             UI_THEME = "dark";
 
             STEREOSCOPIC_MODE = false;

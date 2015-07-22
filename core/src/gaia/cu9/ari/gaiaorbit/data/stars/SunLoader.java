@@ -19,7 +19,7 @@ public class SunLoader implements ICatalogLoader {
     public List<? extends SceneGraphNode> loadCatalog() throws FileNotFoundException {
         List<Star> result = new ArrayList<Star>(1);
         /** ADD SUN MANUALLY **/
-        Star sun = new Star(new Vector3d(0, 0, 0), 4.83f, 4.83f, 0.656f, "Sol", System.currentTimeMillis());
+        Star sun = new Star(new Vector3d(0, 0, 0), 4.83f, 4.83f, 0.656f, "Sol", (int) System.currentTimeMillis());
         sun.initialize();
         result.add(sun);
         return result;

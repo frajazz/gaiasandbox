@@ -111,7 +111,7 @@ public class SceneGraphNode implements ISceneGraphNode, IPosition {
     public static ISceneGraph sg;
 
     /** The identifier **/
-    public Long id;
+    public int id = -1;
 
     /**
      * The parent entity.
@@ -181,7 +181,7 @@ public class SceneGraphNode implements ISceneGraphNode, IPosition {
         this.transform.position = new Vector3d();
     }
 
-    public SceneGraphNode(long id) {
+    public SceneGraphNode(int id) {
         this();
         this.id = id;
     }
@@ -347,8 +347,8 @@ public class SceneGraphNode implements ISceneGraphNode, IPosition {
         return null;
     }
 
-    public SceneGraphNode getNode(Long id) {
-        if (this.id != null && this.id.equals(id)) {
+    public SceneGraphNode getNode(int id) {
+        if (this.id >= 0 && this.id == id) {
             return this;
         } else if (children != null) {
             int size = children.size();
