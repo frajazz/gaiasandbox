@@ -177,7 +177,7 @@ public class GaiaSandbox implements ApplicationListener, IObserver {
         // Load catalogue
         manager.load(FILE_CATALOGUE, HYGBean.class);
         // Load json files
-        //manager.load(FILE_JSON, JsonBean.class);
+        manager.load(FILE_JSON, JsonBean.class);
         // Load constellations
         manager.load(FILE_CONSTELLATIONS, ConstellationsBean.class);
         // Load boundaries
@@ -234,7 +234,7 @@ public class GaiaSandbox implements ApplicationListener, IObserver {
          */
         List<SceneGraphNode> nodeList;
         HYGBean hygbean = manager.get(FILE_CATALOGUE);
-        //JsonBean jsonbean = manager.get(FILE_JSON);
+        JsonBean jsonbean = manager.get(FILE_JSON);
         ConstellationsBean constelbean = manager.get(FILE_CONSTELLATIONS);
         BoundariesBean boundbean = manager.get(FILE_BOUNDARIES);
 
@@ -242,7 +242,7 @@ public class GaiaSandbox implements ApplicationListener, IObserver {
         nodeList = new ArrayList<SceneGraphNode>(n);
 
         nodeList.addAll(hygbean.list());
-        //nodeList.addAll(jsonbean.list());
+        nodeList.addAll(jsonbean.list());
         nodeList.addAll(constelbean.list());
         nodeList.addAll(boundbean.list());
 

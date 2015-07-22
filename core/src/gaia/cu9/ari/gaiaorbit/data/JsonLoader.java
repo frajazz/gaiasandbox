@@ -1,5 +1,6 @@
 package gaia.cu9.ari.gaiaorbit.data;
 
+import gaia.cu9.ari.gaiaorbit.scenegraph.AbstractPositionEntity;
 import gaia.cu9.ari.gaiaorbit.scenegraph.Gaia;
 import gaia.cu9.ari.gaiaorbit.scenegraph.Grid;
 import gaia.cu9.ari.gaiaorbit.scenegraph.Loc;
@@ -16,10 +17,16 @@ import gaia.cu9.ari.gaiaorbit.scenegraph.component.TextureComponent;
 import gaia.cu9.ari.gaiaorbit.util.GlobalResources;
 import gaia.cu9.ari.gaiaorbit.util.I18n;
 import gaia.cu9.ari.gaiaorbit.util.Logger;
+import gaia.cu9.ari.gaiaorbit.util.coord.GaiaCoordinates;
+import gaia.cu9.ari.gaiaorbit.util.coord.IBodyCoordinates;
+import gaia.cu9.ari.gaiaorbit.util.coord.MoonAACoordinates;
+import gaia.cu9.ari.gaiaorbit.util.coord.OrbitLintCoordinates;
+import gaia.cu9.ari.gaiaorbit.util.coord.StaticCoordinates;
 
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
@@ -106,6 +113,16 @@ public class JsonLoader<T extends SceneGraphNode> implements ISceneGraphNodeProv
             return new RotationComponent();
         case "gaia.cu9.ari.gaiaorbit.scenegraph.component.OrbitComponent":
             return new OrbitComponent();
+        case "gaia.cu9.ari.gaiaorbit.util.coord.StaticCoordinates":
+            return new StaticCoordinates();
+        case "gaia.cu9.ari.gaiaorbit.util.coord.OrbitLintCoordinates":
+            return new OrbitLintCoordinates();
+        case "gaia.cu9.ari.gaiaorbit.util.coord.MoonAACoordinates":
+            return new MoonAACoordinates();
+        case "gaia.cu9.ari.gaiaorbit.util.coord.GaiaCoordinates":
+            return new GaiaCoordinates();
+        case "Map":
+            return new HashMap<String, Object>();
         }
         return null;
     }
@@ -182,7 +199,7 @@ public class JsonLoader<T extends SceneGraphNode> implements ISceneGraphNodeProv
                     }
 
                 } else if (attribute.isObject()) {
-                    String objClazzName = attribute.has("impl") ? attribute.getString("impl") : COMPONENTS_PACKAGE + GlobalResources.capitalise(attribute.name) + "Component";
+                    String objClazzName = attribute.has("impl") ? attribute.getString("impl") : attribute.name.equals("params") ? "Map" : COMPONENTS_PACKAGE + GlobalResources.capitalise(attribute.name) + "Component";
                     value = convertJsonToObject(attribute, objClazzName);
                     if (value == null) {
                         // Class not found, probably a component
@@ -221,10 +238,109 @@ public class JsonLoader<T extends SceneGraphNode> implements ISceneGraphNodeProv
     }
 
     private void invokeMethod(Object instance, String methodName, Object param) {
-        switch (methodName) {
-        case "color":
-
+        if (instance instanceof SceneGraphNode) {
+            SceneGraphNode obj = (SceneGraphNode) instance;
+            switch (methodName) {
+            case "Name":
+                obj.setName((String) param);
+                return;
+            case "Ct":
+                obj.setCt((String) param);
+                return;
+            case "Parent":
+                obj.setParent((String) param);
+                return;
+            }
         }
+        if (instance instanceof AbstractPositionEntity) {
+            AbstractPositionEntity obj = (AbstractPositionEntity) instance;
+            switch (methodName) {
+            case "Color":
+                obj.setColor((double[]) param);
+                return;
+            case "Size":
+                obj.setSize((Double) param);
+                return;
+            case "Coordinates":
+                obj.setCoordinates((IBodyCoordinates) param);
+                return;
+            }
+        }
+        if (instance instanceof Grid) {
+            Grid obj = (Grid) instance;
+            switch (methodName) {
+            case "TransformName":
+                obj.setTransformName((String) param);
+                return;
+            }
+        }
+        if (instance instanceof MilkyWay) {
+            MilkyWay obj = (MilkyWay) instance;
+            switch (methodName) {
+            case "Labelcolor":
+                obj.setLabelcolor((double[]) param);
+                return;
+            case "TransformName":
+                obj.setTransformName((String) param);
+                return;
+            case "Model":
+                if (param instanceof String) {
+                    obj.setModel((String) param);
+                } else {
+                    obj.setModel((ModelComponent) param);
+                }
+                return;
+            }
+        }
+        if (instance instanceof Mw) {
+            Mw obj = (Mw) instance;
+            switch (methodName) {
+            case "TransformName":
+                obj.setTransformName((String) param);
+                return;
+            case "Model":
+                obj.setModel((ModelComponent) param);
+                return;
+            }
+        }
+        if (instance instanceof StaticCoordinates) {
+            StaticCoordinates obj = (StaticCoordinates) instance;
+            switch (methodName) {
+            case "Position":
+                obj.setPosition((double[]) param);
+                return;
+            }
+        }
+        if (instance instanceof ModelComponent) {
+            ModelComponent obj = (ModelComponent) instance;
+            switch (methodName) {
+            case "Type":
+                obj.setType((String) param);
+                return;
+            case "Params":
+                obj.setParams((Map<String, Object>) param);
+                return;
+            case "Texture":
+                obj.setTexture((TextureComponent) param);
+                return;
+            }
+        }
+        if (instance instanceof TextureComponent) {
+            TextureComponent obj = (TextureComponent) instance;
+            switch (methodName) {
+            case "Base":
+                obj.setBase((String) param);
+                return;
+            }
+        }
+        if (instance instanceof Map) {
+            Map<String, Object> obj = (Map<String, Object>) instance;
+            obj.put(methodName.toLowerCase(), param);
+            return;
+        }
+
+        int a = 435;
+        return;
     }
 
     private Object getValue(JsonValue val) {
