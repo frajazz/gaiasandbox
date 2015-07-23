@@ -113,7 +113,6 @@ public class SceneGraphRenderer extends AbstractRenderer implements IProcessRend
             render_lists.put(rg, new ArrayList<IRenderable>(100));
         }
 
-        ShaderProvider spnormal = new AtmosphereGroundShaderProvider(Gdx.files.internal("shader/normal.vertex.glsl"), Gdx.files.internal("shader/normal.fragment.glsl"));
         ShaderProvider sp = new AtmosphereGroundShaderProvider(Gdx.files.internal("shader/default.vertex.glsl"), Gdx.files.internal("shader/default.fragment.glsl"));
         ShaderProvider spatm = new AtmosphereShaderProvider(Gdx.files.internal("shader/atm.vertex.glsl"), Gdx.files.internal("shader/atm.fragment.glsl"));
         ShaderProvider spsurface = new DefaultShaderProvider(Gdx.files.internal("shader/default.vertex.glsl"), Gdx.files.internal("shader/starsurface.fragment.glsl"));
@@ -126,7 +125,6 @@ public class SceneGraphRenderer extends AbstractRenderer implements IProcessRend
         };
 
         ModelBatch modelBatchB = new ModelBatch(sp, noSorter);
-        ModelBatch modelBatchF = new ModelBatch(spnormal, noSorter);
         ModelBatch modelBatchAtm = new ModelBatch(spatm, noSorter);
         ModelBatch modelBatchS = new ModelBatch(spsurface, noSorter);
 

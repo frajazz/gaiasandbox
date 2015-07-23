@@ -218,46 +218,46 @@ varying vec3 v_atmosphereColor;
     }
     
     vec3 calculateAtmosphereGroundColor() {
-	// Get the ray from the camera to the vertex and its length (which is the far point of the ray passing through the atmosphere)
-	vec3 v3Pos = a_position * fOuterRadius;
-	vec3 v3Ray = v3Pos - v3CameraPos;
-	float fFar = length (v3Ray);
-	v3Ray /= fFar;
-
-	// Calculate the closest intersection of the ray with the outer atmosphere (which is the near point of the ray passing through the atmosphere)
-	float fNear = getNearIntersection (v3CameraPos, v3Ray, fCameraHeight2, fOuterRadius2);
-
-	// Calculate the ray's starting position, then calculate its scattering offset
-	vec3 v3Start = v3CameraPos + v3Ray * fNear;
-	fFar -= fNear;
-	float fStartDepth = exp((fInnerRadius - fOuterRadius) / fScaleDepth);
-	float fCameraAngle = dot(-v3Ray, a_position) / length(a_position);
-	float fLightAngle = dot(v3LightPos, a_position) / length(a_position);
-	float fCameraScale = scale(fCameraAngle);
-	float fLightScale = scale(fLightAngle);
-	float fCameraOffset = fStartDepth * fCameraScale;
-	float fTemp = (fLightScale + fCameraScale);
-
-	/* Initialize the scattering loop variables*/
-	float fSampleLength = fFar / fSamples;
-	float fScaledLength = fSampleLength * fScale;
-	vec3 v3SampleRay = v3Ray * fSampleLength;
-	vec3 v3SamplePoint = v3Start + v3SampleRay * 0.5;
-
-	// Now loop through the sample rays
-	vec3 v3FrontColor = vec3(0.0, 0.0, 0.0);
-	vec3 v3Attenuate;
-	for (int i = 0; i < nSamples; i++) {
-	    float fHeight = length (v3SamplePoint);
-	    float fDepth = exp (fScaleOverScaleDepth * (fInnerRadius - fHeight));
-	    float fScatter = fDepth * fTemp - fCameraOffset;
-	    
-	    v3Attenuate = exp(-fScatter * (v3InvWavelength * fKr4PI + fKm4PI));
-	    v3FrontColor += v3Attenuate * (fDepth * fScaledLength);
-	    v3SamplePoint += v3SampleRay;
-	}
+		// Get the ray from the camera to the vertex and its length (which is the far point of the ray passing through the atmosphere)
+		vec3 v3Pos = a_position * fOuterRadius;
+		vec3 v3Ray = v3Pos - v3CameraPos;
+		float fFar = length (v3Ray);
+		v3Ray /= fFar;
 	
-	return vec3(v3FrontColor * (v3InvWavelength * fKrESun + fKmESun));
+		// Calculate the closest intersection of the ray with the outer atmosphere (which is the near point of the ray passing through the atmosphere)
+		float fNear = getNearIntersection (v3CameraPos, v3Ray, fCameraHeight2, fOuterRadius2);
+	
+		// Calculate the ray's starting position, then calculate its scattering offset
+		vec3 v3Start = v3CameraPos + v3Ray * fNear;
+		fFar -= fNear;
+		float fStartDepth = exp((fInnerRadius - fOuterRadius) / fScaleDepth);
+		float fCameraAngle = dot(-v3Ray, a_position) / length(a_position);
+		float fLightAngle = dot(v3LightPos, a_position) / length(a_position);
+		float fCameraScale = scale(fCameraAngle);
+		float fLightScale = scale(fLightAngle);
+		float fCameraOffset = fStartDepth * fCameraScale;
+		float fTemp = (fLightScale + fCameraScale);
+	
+		/* Initialize the scattering loop variables*/
+		float fSampleLength = fFar / fSamples;
+		float fScaledLength = fSampleLength * fScale;
+		vec3 v3SampleRay = v3Ray * fSampleLength;
+		vec3 v3SamplePoint = v3Start + v3SampleRay * 0.5;
+	
+		// Now loop through the sample rays
+		vec3 v3FrontColor = vec3(0.0, 0.0, 0.0);
+		vec3 v3Attenuate;
+		for (int i = 0; i < 11; i++) {
+		    float fHeight = length (v3SamplePoint);
+		    float fDepth = exp (fScaleOverScaleDepth * (fInnerRadius - fHeight));
+		    float fScatter = fDepth * fTemp - fCameraOffset;
+		    
+		    v3Attenuate = exp(-fScatter * (v3InvWavelength * fKr4PI + fKm4PI));
+		    v3FrontColor += v3Attenuate * (fDepth * fScaledLength);
+		    v3SamplePoint += v3SampleRay;
+		}
+		
+		return vec3(v3FrontColor * (v3InvWavelength * fKrESun + fKmESun));
     }
 #else
     vec3 calculateAtmosphereGroundColor() {

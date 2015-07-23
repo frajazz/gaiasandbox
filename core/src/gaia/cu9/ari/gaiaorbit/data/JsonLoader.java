@@ -29,6 +29,7 @@ import gaia.cu9.ari.gaiaorbit.util.coord.vsop87.JupiterVSOP87;
 import gaia.cu9.ari.gaiaorbit.util.coord.vsop87.MarsVSOP87;
 import gaia.cu9.ari.gaiaorbit.util.coord.vsop87.MercuryVSOP87;
 import gaia.cu9.ari.gaiaorbit.util.coord.vsop87.NeptuneVSOP87;
+import gaia.cu9.ari.gaiaorbit.util.coord.vsop87.SaturnVSOP87;
 import gaia.cu9.ari.gaiaorbit.util.coord.vsop87.UranusVSOP87;
 import gaia.cu9.ari.gaiaorbit.util.coord.vsop87.VenusVSOP87;
 
@@ -140,6 +141,8 @@ public class JsonLoader<T extends SceneGraphNode> implements ISceneGraphNodeProv
             return new MarsVSOP87();
         case "gaia.cu9.ari.gaiaorbit.util.coord.vsop87.JupiterVSOP87":
             return new JupiterVSOP87();
+        case "gaia.cu9.ari.gaiaorbit.util.coord.vsop87.SaturnVSOP87":
+            return new SaturnVSOP87();
         case "gaia.cu9.ari.gaiaorbit.util.coord.vsop87.UranusVSOP87":
             return new UranusVSOP87();
         case "gaia.cu9.ari.gaiaorbit.util.coord.vsop87.NeptuneVSOP87":
@@ -305,6 +308,14 @@ public class JsonLoader<T extends SceneGraphNode> implements ISceneGraphNodeProv
                 return;
             }
         }
+        if (instance instanceof Planet) {
+            Planet obj = (Planet) instance;
+            switch (methodName) {
+            case "Atmosphere":
+                obj.setAtmosphere((AtmosphereComponent) param);
+                return;
+            }
+        }
         if (instance instanceof Orbit) {
             Orbit obj = (Orbit) instance;
             switch (methodName) {
@@ -381,6 +392,9 @@ public class JsonLoader<T extends SceneGraphNode> implements ISceneGraphNodeProv
             case "Base":
                 obj.setBase((String) param);
                 return;
+            case "Ring":
+                obj.setRing((String) param);
+                return;
             }
         }
         if (instance instanceof RotationComponent) {
@@ -414,6 +428,26 @@ public class JsonLoader<T extends SceneGraphNode> implements ISceneGraphNodeProv
             switch (methodName) {
             case "Source":
                 obj.setSource((String) param);
+                return;
+            }
+        }
+        if (instance instanceof AtmosphereComponent) {
+            AtmosphereComponent obj = (AtmosphereComponent) instance;
+            switch (methodName) {
+            case "Size":
+                obj.setSize((Double) param);
+                return;
+            case "Params":
+                obj.setParams((Map<String, Object>) param);
+                return;
+            case "Wavelengths":
+                obj.setWavelengths((double[]) param);
+                return;
+            case "M_Kr":
+                obj.setM_Kr((Double) param);
+                return;
+            case "M_Km":
+                obj.setM_Km((Double) param);
                 return;
             }
         }
