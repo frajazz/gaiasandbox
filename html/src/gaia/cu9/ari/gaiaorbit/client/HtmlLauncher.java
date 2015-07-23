@@ -2,6 +2,7 @@ package gaia.cu9.ari.gaiaorbit.client;
 
 import gaia.cu9.ari.gaiaorbit.GaiaSandbox;
 import gaia.cu9.ari.gaiaorbit.client.format.GwtNumberFormatFactory;
+import gaia.cu9.ari.gaiaorbit.util.GlobalConf;
 import gaia.cu9.ari.gaiaorbit.util.format.NumberFormatFactory;
 
 import com.badlogic.gdx.ApplicationListener;
@@ -13,7 +14,17 @@ public class HtmlLauncher extends GwtApplication {
     @Override
     public GwtApplicationConfiguration getConfig() {
         NumberFormatFactory.initialize(new GwtNumberFormatFactory());
-        return new GwtApplicationConfiguration(1024, 600);
+        GwtApplicationConfiguration config = new GwtApplicationConfiguration(1024, 600);
+
+        try {
+            GlobalConf.initialize();
+            config.antialiasing = GlobalConf.postprocess.POSTPROCESS_ANTIALIAS != 0 ? true : false;
+        } catch (Exception e) {
+            System.err.println("Error initializing GlobalConf");
+            e.printStackTrace(System.err);
+        }
+
+        return config;
     }
 
     @Override

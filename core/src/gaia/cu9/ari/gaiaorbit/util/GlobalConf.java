@@ -75,7 +75,7 @@ public class GlobalConf {
              * value = 0 - no AA
              * value > 0 - MSAA #samples = value
              */
-            POSTPROCESS_ANTIALIAS = 0;
+            POSTPROCESS_ANTIALIAS = 4;
             POSTPROCESS_BLOOM_INTENSITY = 0;
             POSTPROCESS_MOTION_BLUR = 0;
             POSTPROCESS_LENS_FLARE = false;
@@ -185,8 +185,6 @@ public class GlobalConf {
     public static class DataConf implements IConf {
         /** Whether we use the local data source (HYG binary) or the object server **/
         public boolean DATA_SOURCE_LOCAL = false;
-        /** The .sg file in case of local data source **/
-        public String DATA_SG_FILE;
         /** If we use the ObjectServer, this contains the visualization id **/
         public String VISUALIZATION_ID;
         /** Object server IP address/hostname **/
@@ -204,7 +202,6 @@ public class GlobalConf {
         public void initialize() {
             /** DATA **/
             DATA_SOURCE_LOCAL = true;
-            DATA_SG_FILE = "data/data.sg";
 
             LIMIT_MAG_LOAD = 7f;
         }
@@ -315,7 +312,7 @@ public class GlobalConf {
         @Override
         public void initialize() {
             OBJECT_FADE_MS = 2000;
-            STAR_BRIGHTNESS = 3f;
+            STAR_BRIGHTNESS = 1f;
             AMBIENT_LIGHT = 0.0f;
             CAMERA_FOV = 50;
             CAMERA_SPEED_LIMIT_IDX = 13;
@@ -324,11 +321,11 @@ public class GlobalConf {
             FOCUS_LOCK = true;
             TURNING_SPEED = 1866f;
             ROTATION_SPEED = 2286f;
-            LABEL_NUMBER_FACTOR = 2.0f;
+            LABEL_NUMBER_FACTOR = 7.0f;
             STAR_TH_ANGLE_QUAD = 0.0f;
-            STAR_TH_ANGLE_POINT = 2e-7f;
+            STAR_TH_ANGLE_POINT = 2e-8f;
             STAR_TH_ANGLE_NONE = 0f;
-            POINT_ALPHA_MIN = 0.1f;
+            POINT_ALPHA_MIN = 0.05f;
             POINT_ALPHA_MAX = 1f;
             PIXEL_RENDERER = 2;
             LINE_RENDERER = 0;
@@ -486,49 +483,50 @@ public class GlobalConf {
      * Initializes the properties
      */
     public static void initialize() throws Exception {
+        if (!initialized) {
+            if (configurations == null) {
+                configurations = new ArrayList<IConf>();
+            }
 
-        if (configurations == null) {
-            configurations = new ArrayList<IConf>();
+            if (version == null) {
+                version = new VersionConf();
+                version.initialize();
+            }
+
+            if (program == null) {
+                program = new ProgramConf();
+                configurations.add(program);
+            }
+
+            if (scene == null) {
+                scene = new SceneConf();
+                configurations.add(scene);
+            }
+
+            if (data == null) {
+                data = new DataConf();
+                configurations.add(data);
+            }
+
+            if (runtime == null) {
+                runtime = new RuntimeConf();
+                configurations.add(runtime);
+            }
+
+            if (postprocess == null) {
+                postprocess = new PostprocessConf();
+                configurations.add(postprocess);
+            }
+
+            if (performance == null) {
+                performance = new PerformanceConf();
+                configurations.add(performance);
+            }
+
+            initializeProps();
+
+            initialized = true;
         }
-
-        if (version == null) {
-            version = new VersionConf();
-            version.initialize();
-        }
-
-        if (program == null) {
-            program = new ProgramConf();
-            configurations.add(program);
-        }
-
-        if (scene == null) {
-            scene = new SceneConf();
-            configurations.add(scene);
-        }
-
-        if (data == null) {
-            data = new DataConf();
-            configurations.add(data);
-        }
-
-        if (runtime == null) {
-            runtime = new RuntimeConf();
-            configurations.add(runtime);
-        }
-
-        if (postprocess == null) {
-            postprocess = new PostprocessConf();
-            configurations.add(postprocess);
-        }
-
-        if (performance == null) {
-            performance = new PerformanceConf();
-            configurations.add(performance);
-        }
-
-        initializeProps();
-
-        initialized = true;
 
     }
 

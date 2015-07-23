@@ -170,11 +170,12 @@ public class NotificationsInterface extends Table implements IObserver {
                 }
                 break;
             case TOGGLE_VISIBILITY_CMD:
-                if (data.length == 2) {
-                    boolean on = (Boolean) data[1];
-                    addMessage(I18n.bundle.get("notif.visibility." + (on ? "on" : "off")));
-                } else
+                if (data.length >= 3) {
+                    boolean on = (Boolean) data[2];
+                    addMessage(I18n.bundle.format("notif.visibility." + (on ? "on" : "off"), (String) data[0]));
+                } else {
                     addMessage(I18n.bundle.format("notif.visibility.toggle", (String) data[0]));
+                }
                 break;
             case FOCUS_LOCK_CMD:
             case TOGGLE_AMBIENT_LIGHT:

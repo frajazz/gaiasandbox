@@ -31,9 +31,9 @@ void main() {
     float a_thAnglePoint = a_additional.y;
     
     float viewAngleApparent = atan((a_size * u_starBrightness) / length(pos)) / u_fovFactor;
-    float opacity = pow(lint(viewAngleApparent, 0.0, a_thAnglePoint, u_pointAlphaMin, u_pointAlphaMax), 0.5);
+    float opacity = pow(lint(viewAngleApparent, 0.0, a_thAnglePoint, u_pointAlphaMin, u_pointAlphaMax), 1.6);
     
-    v_col = vec4(a_color.rgb, opacity * u_alpha * step(viewAngleApparent, a_thAnglePoint * 10.0));
+    v_col = vec4(a_color.rgb, opacity * u_alpha * step(viewAngleApparent, a_thAnglePoint * 60.0));
 
 	gl_Position = u_projModelView * vec4(pos, 0.0);
     gl_PointSize = u_pointSize;

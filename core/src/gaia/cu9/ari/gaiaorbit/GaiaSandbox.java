@@ -76,7 +76,7 @@ public class GaiaSandbox implements ApplicationListener, IObserver {
     private static boolean LOADING = true;
 
     private static String FILE_CATALOGUE = "data/hygxyz.bin";
-    private static String FILE_JSON = "data/extra.json"; /*"data/planets.json data/moons.json data/satellites.json data/asteroids.json data/orbits.json data/extra.json data/locations.json data/earth_locations.json data/moon_locations.json";*/
+    private static String FILE_JSON = "data/extra.json data/planets.json data/orbits.json"; /*"data/planets.json data/moons.json data/satellites.json data/asteroids.json data/orbits.json data/extra.json data/locations.json data/earth_locations.json data/moon_locations.json";*/
     private static String FILE_CONSTELLATIONS = "data/constel.csv";
     private static String FILE_BOUNDARIES = "data/boundaries.csv";
     private static String ATTITUDE_FOLDER = "data/attitudexml/";
@@ -224,10 +224,6 @@ public class GaiaSandbox implements ApplicationListener, IObserver {
         pp = new GSPostProcessor();
 
         GlobalResources.doneLoading(manager);
-
-        if (manager.isLoaded(GlobalConf.data.DATA_SG_FILE)) {
-            sg = manager.get(GlobalConf.data.DATA_SG_FILE);
-        }
 
         /**
          * GET ALL NODES (stars, json, constel, boundaries)

@@ -4,7 +4,6 @@ import gaia.cu9.ari.gaiaorbit.render.ComponentType;
 import gaia.cu9.ari.gaiaorbit.render.IRenderable;
 import gaia.cu9.ari.gaiaorbit.render.SceneGraphRenderer;
 import gaia.cu9.ari.gaiaorbit.scenegraph.octreewrapper.AbstractOctreeWrapper;
-import gaia.cu9.ari.gaiaorbit.util.concurrent.ThreadIndexer;
 import gaia.cu9.ari.gaiaorbit.util.math.Matrix4d;
 import gaia.cu9.ari.gaiaorbit.util.math.Vector2d;
 import gaia.cu9.ari.gaiaorbit.util.math.Vector3d;
@@ -525,12 +524,12 @@ public class SceneGraphNode implements ISceneGraphNode, IPosition {
 
     protected void addToRender(IRenderable renderable, RenderGroup rg) {
         if (SceneGraphRenderer.visible[ct.ordinal()] || (!SceneGraphRenderer.visible[ct.ordinal()] && SceneGraphRenderer.alphas[ct.ordinal()] > 0)) {
-            SceneGraphRenderer.render_lists.get(rg).add(renderable, ThreadIndexer.inst().i());
+            SceneGraphRenderer.render_lists.get(rg).add(renderable);
         }
     }
 
     protected boolean isInRender(IRenderable renderable, RenderGroup rg) {
-        return SceneGraphRenderer.render_lists.get(rg).contains(renderable, ThreadIndexer.inst().i());
+        return SceneGraphRenderer.render_lists.get(rg).contains(renderable);
     }
 
     public SceneGraphNode getFirstStarAncestor() {

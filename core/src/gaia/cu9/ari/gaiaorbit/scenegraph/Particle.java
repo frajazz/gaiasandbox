@@ -217,7 +217,7 @@ public class Particle extends CelestialBody implements IPointRenderable {
 
     @Override
     public float labelSizeConcrete() {
-        return (float) computedSize;
+        return (float) computedSize * 3;
     }
 
     @Override

@@ -29,7 +29,6 @@ public class PixelRenderSystem extends ImmediateRenderSystem implements IObserve
 
     public PixelRenderSystem(RenderGroup rg, int priority, float[] alphas) {
         super(rg, priority, alphas);
-        Gdx.gl.glEnable(Gdx.gl20.GL_VERTEX_PROGRAM_POINT_SIZE);
         EventManager.instance.subscribe(this, Events.TRANSIT_COLOUR_CMD, Events.ONLY_OBSERVED_STARS_CMD);
     }
 

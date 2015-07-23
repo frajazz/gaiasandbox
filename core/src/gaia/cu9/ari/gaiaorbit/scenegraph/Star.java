@@ -86,22 +86,20 @@ public class Star extends Particle {
 
     @Override
     protected void addToRenderLists(ICamera camera) {
-        if (viewAngleApparent >= THRESHOLD_ANGLE_NONE() * camera.getFovFactor()) {
-            if (camera.getCurrent() instanceof FovCamera) {
-                // Only shader for FovCamera
+        if (camera.getCurrent() instanceof FovCamera) {
+            // Only shader for FovCamera
+            addToRender(this, RenderGroup.SHADER);
+        } else {
+            if (viewAngleApparent >= (THRESHOLD_ANGLE_POINT() / 3f) * camera.getFovFactor()) {
                 addToRender(this, RenderGroup.SHADER);
-            } else {
-                if (viewAngleApparent >= THRESHOLD_ANGLE_POINT() * camera.getFovFactor()) {
-                    addToRender(this, RenderGroup.SHADER);
-                    if (distToCamera < modelDistance) {
-                        camera.checkClosest(this);
-                        addToRender(this, RenderGroup.MODEL_S);
-                    }
+                if (distToCamera < modelDistance) {
+                    camera.checkClosest(this);
+                    addToRender(this, RenderGroup.MODEL_S);
                 }
             }
-            if (renderText()) {
-                addToRender(this, RenderGroup.LABEL);
-            }
+        }
+        if (renderText()) {
+            addToRender(this, RenderGroup.LABEL);
         }
 
     }
