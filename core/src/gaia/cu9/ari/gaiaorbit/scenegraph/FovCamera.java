@@ -85,7 +85,7 @@ public class FovCamera extends AbstractCamera implements IObserver {
 
         currentTime = 0l;
         lastTime = 0l;
-        vectorPool = MyPools.get(Vector3d.class.getName());
+        vectorPool = MyPools.get(Vector3d.class);
     }
 
     public void initialize(AssetManager assetManager) {

@@ -9,25 +9,29 @@ public class MyPools {
 
     /** Returns a new or existing pool for the specified type, stored in a Class to {@link Pool} map. Note the max size is ignored
      * if this is not the first time this pool has been requested. */
-    static public <T> Pool<T> get(String type, int max) {
-        Pool pool = typePools.get(type);
+    static public <T> Pool<T> get(Class<T> type, int max) {
+        Pool pool = typePools.get(type.getName());
+        if (pool == null) {
+            pool = new SimplePool(type, 10, max);
+            set(type, pool);
+        }
 
         return pool;
     }
 
     /** Returns a new or existing pool for the specified type, stored in a Class to {@link Pool} map. The max size of the pool used
      * is 100. */
-    static public <T> Pool<T> get(String type) {
+    static public <T> Pool<T> get(Class<T> type) {
         return get(type, 100);
     }
 
     /** Sets an existing pool for the specified type, stored in a Class to {@link Pool} map. */
-    static public <T> void set(String type, Pool<T> pool) {
-        typePools.put(type, pool);
+    static public <T> void set(Class<T> type, Pool<T> pool) {
+        typePools.put(type.getName(), pool);
     }
 
     /** Obtains an object from the {@link #get(Class) pool}. */
-    static public <T> T obtain(String type) {
+    static public <T> T obtain(Class<T> type) {
         return (T) get(type).obtain();
     }
 
