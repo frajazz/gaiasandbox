@@ -372,11 +372,22 @@ public class JsonLoader<T extends SceneGraphNode> implements ISceneGraphNodeProv
                 return;
             }
         }
+        if (instance instanceof OrbitLintCoordinates) {
+            OrbitLintCoordinates obj = (OrbitLintCoordinates) instance;
+            switch (methodName) {
+            case "Orbitname":
+                obj.setOrbitname((String) param);
+                return;
+            }
+        }
         if (instance instanceof ModelComponent) {
             ModelComponent obj = (ModelComponent) instance;
             switch (methodName) {
             case "Type":
                 obj.setType((String) param);
+                return;
+            case "Model":
+                obj.setModel((String) param);
                 return;
             case "Params":
                 obj.setParams((Map<String, Object>) param);
@@ -428,6 +439,33 @@ public class JsonLoader<T extends SceneGraphNode> implements ISceneGraphNodeProv
             switch (methodName) {
             case "Source":
                 obj.setSource((String) param);
+                return;
+            case "Period":
+                obj.setPeriod((Double) param);
+                return;
+            case "Epoch":
+                if (param instanceof Double)
+                    obj.setEpoch((Double) param);
+                else
+                    obj.setEpoch((Long) param);
+                return;
+            case "Semimajoraxis":
+                obj.setSemimajoraxis((Double) param);
+                return;
+            case "Eccentricity":
+                obj.setEccentricity((Double) param);
+                return;
+            case "Inclination":
+                obj.setInclination((Double) param);
+                return;
+            case "Ascendingnode":
+                obj.setAscendingnode((Double) param);
+                return;
+            case "Argofpericenter":
+                obj.setArgofpericenter((Double) param);
+                return;
+            case "Meananomaly":
+                obj.setMeananomaly((Double) param);
                 return;
             }
         }

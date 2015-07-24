@@ -10,4 +10,5 @@
 	
 	<set-configuration-property name="gdx.assetpath" value="../android/assets" />
 	<set-configuration-property name='xsiframe.failIfScriptTag' value='FALSE'/>
+	<set-property name="user.agent" value="safari" />
 </module>

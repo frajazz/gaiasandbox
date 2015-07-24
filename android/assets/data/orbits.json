@@ -132,5 +132,31 @@
 		"orbit" 		: {
 							"source" : "data/orb.MOON.dat",
 							}
+	},
+	
+	
+	{
+	"name" : "Phobos orbit",
+	"color" : [.7, .7, 1.0, 0.4],
+	"ct" : Orbits,
+	
+	"parent" : "Mars", 
+	"impl" : "gaia.cu9.ari.gaiaorbit.scenegraph.Orbit",
+	"provider" : "gaia.cu9.ari.gaiaorbit.data.orbit.OrbitalParametersProvider",
+		
+	"orbit" 		: {
+						// In days
+						"period" : 0.31891023,
+						// 2010 Jan 1 12:00
+						"epoch" : 2455198,
+						"semimajoraxis" : 9377.2,
+						"eccentricity" : 0.0151,
+						// Inclination of orbit with respect to the planet's Equator
+						"inclination" : 1.082,
+						"ascendingnode" : 16.946,
+						"argofpericenter" : 157.116,
+						"meananomaly" : 241.138
+						}
+						
 	}
 ]}

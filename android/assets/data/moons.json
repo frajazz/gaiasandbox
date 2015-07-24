@@ -40,5 +40,45 @@
 									"base" : "data/tex/moon.jpg"
 									}
 						}
+	},
+	
+	
+	{
+		"name" : "Phobos",
+		"color" : [.6, .4, .4, 1.0],
+		"size" : 11.2667,
+		"ct" : Moons,
+
+		"absmag" : -1.0,
+		"appmag" : -12.74,
+		
+		"parent" : "Mars", 
+		"impl" : "gaia.cu9.ari.gaiaorbit.scenegraph.Planet",
+		
+		"coordinates" : {
+						// This must implement gaia.cu9.ari.gaiaorbit.util.coord.IBodyCoordinates				
+						"impl" : "gaia.cu9.ari.gaiaorbit.util.coord.OrbitLintCoordinates",
+						"orbitname" : "Phobos orbit"
+						},
+			
+		"rotation" 		: {
+							// In hours
+							"period" : 7.65385,
+							// Angle between equatorial plane and orbital plane
+							"axialtilt" : 0.0,
+							// Inclination of orbital plane with respect to ecliptic  
+							"inclination" : 1.082,
+							"ascendingnode" : 47.68,
+							"meridianangle" : 35.06
+							},
+							
+		"model"			: {
+							"args" : [true],
+							"model" : "data/models/phobos.g3db",
+							"texture" : {
+										"base" : "data/tex/phobos.jpg",
+										"normal" : "data/tex/phobos-normal.jpg"
+										}
+							}
 	}
 ]}
