@@ -158,5 +158,298 @@
 						"meananomaly" : 241.138
 						}
 						
+	},
+	
+	
+	{
+		"name" : "Deimos orbit",
+		"color" : [.7, .7, 1.0, 0.4],
+		"ct" : Orbits,
+		
+		"parent" : "Mars", 
+		"impl" : "gaia.cu9.ari.gaiaorbit.scenegraph.Orbit",
+		"provider" : "gaia.cu9.ari.gaiaorbit.data.orbit.OrbitalParametersProvider",
+			
+		"orbit" 		: {
+							// In days
+							"period" : 1.2624407,
+							// 2010 Jan 1 12:00
+							"epoch" : 2455198,
+							"semimajoraxis" : 23463.2,
+							"eccentricity" : 0.00033,
+							// Inclination of orbit with respect to the planet's Equator
+							"inclination" : 1.791,
+							"ascendingnode" : 318.370,
+							"argofpericenter" : 358.233,
+							"meananomaly" : 158.554
+							}
+							
+	},
+	
+	
+	{
+		"name" : "Amalthea orbit",
+		"color" : [.7, .7, 1.0, 0.4],
+		"ct" : Orbits,
+		
+		"parent" : "Jupiter", 
+		"impl" : "gaia.cu9.ari.gaiaorbit.scenegraph.Orbit",
+		"provider" : "gaia.cu9.ari.gaiaorbit.data.orbit.OrbitalParametersProvider",
+			
+		"orbit" 		: {
+							// In days							
+							"period" : 0.498179,
+							// 2002 Nov 5 06:19UT (Galileo encounter)
+							"epoch" : 2452583.763194445,
+							"semimajoraxis" : 181994.78,
+							"eccentricity" : 0.0045045,
+							// Inclination of orbit with respect to the planet's Equator
+							"inclination" : 0.374,
+							"ascendingnode" : 220.288958,
+							"argofpericenter" : 301.622765,
+							"meananomaly" : 91.352094
+							}
+							
+	},
+	
+	
+	{
+		"name" : "Io orbit",
+		"color" : [.7, .7, 1.0, 0.4],
+		"ct" : Orbits,
+		
+		"parent" : "Jupiter", 
+		"impl" : "gaia.cu9.ari.gaiaorbit.scenegraph.Orbit",
+		"provider" : "gaia.cu9.ari.gaiaorbit.data.orbit.OrbitalParametersProvider",
+			
+		"orbit" 		: {
+							// In days
+							"period" : 1.769138,
+							"epoch" : 2443000.00038375,
+							"semimajoraxis" : 421600.0,
+							"eccentricity" : 0.0041,
+							// Inclination of orbit with respect to the planet's Equator
+							"inclination" : 0.040,
+							"ascendingnode" : 312.981,
+							"argofpericenter" : 97.735,
+							"meananomaly" : 106.724
+							}
+							
+	},
+	
+	
+	{
+		"name" : "Europa orbit",
+		"color" : [.7, .7, 1.0, 0.4],
+		"ct" : Orbits,
+		
+		"parent" : "Jupiter", 
+		"impl" : "gaia.cu9.ari.gaiaorbit.scenegraph.Orbit",
+		"provider" : "gaia.cu9.ari.gaiaorbit.data.orbit.OrbitalParametersProvider",
+			
+		"orbit" 		: {
+							// In days
+							"period" : 3.551810,
+							"epoch" : 2443000.00038375,
+							"semimajoraxis" : 670900.0,
+							"eccentricity" : 0.0101,
+							// Inclination of orbit with respect to the planet's Equator
+							"inclination" : 0.470,
+							"ascendingnode" : 101.087,
+							"argofpericenter" : 155.512,
+							"meananomaly" : 176.377
+							}
+							
+	},
+	
+	
+	{
+		"name" : "Ganymede orbit",
+		"color" : [.7, .7, 1.0, 0.4],
+		"ct" : Orbits,
+		
+		"parent" : "Jupiter", 
+		"impl" : "gaia.cu9.ari.gaiaorbit.scenegraph.Orbit",
+		"provider" : "gaia.cu9.ari.gaiaorbit.data.orbit.OrbitalParametersProvider",
+			
+		"orbit" 		: {
+							// In days
+							"period" : 7.154553,
+							"epoch" : 2443000.00038375,
+							"semimajoraxis" : 1070000.0,
+							"eccentricity" : 0.0015,
+							// Inclination of orbit with respect to the planet's Equator
+							"inclination" : 0.195,
+							"ascendingnode" : 119.841,
+							"argofpericenter" : 188.831,
+							"meananomaly" : 121.206
+							}
+							
+	},
+	
+	
+	{
+		"name" : "Callisto orbit",
+		"color" : [.7, .7, 1.0, 0.4],
+		"ct" : Orbits,
+		
+		"parent" : "Jupiter", 
+		"impl" : "gaia.cu9.ari.gaiaorbit.scenegraph.Orbit",
+		"provider" : "gaia.cu9.ari.gaiaorbit.data.orbit.OrbitalParametersProvider",
+			
+		"orbit" 		: {
+							// In days
+							"period" : 16.689018,
+							"epoch" : 2443000.00038375,
+							"semimajoraxis" : 1883000.0,
+							"eccentricity" : 0.007,
+							// Inclination of orbit with respect to the planet's Equator
+							"inclination" : 0.281,
+							"ascendingnode" : 323.265,
+							"argofpericenter" : 335.933,
+							"meananomaly" : 85.091
+							}
+							
+	},
+	
+	
+	{
+		"name" : "Prometheus orbit",
+		"color" : [.7, .7, 1.0, 0.4],
+		"ct" : Orbits,
+		
+		"parent" : "Saturn", 
+		"impl" : "gaia.cu9.ari.gaiaorbit.scenegraph.Orbit",
+		"provider" : "gaia.cu9.ari.gaiaorbit.data.orbit.OrbitalParametersProvider",
+			
+		"orbit" 		: {
+							// In days
+							"period" : 0.612986,
+							// 2004 Jan 1 00:00UT
+							"epoch" : 2453005.5,
+							"semimajoraxis" : 139380.0,
+							"eccentricity" : 0.0023,
+							// Inclination of orbit with respect to the planet's Equator
+							"inclination" : 0.0056,
+							"ascendingnode" : 226.1099,
+							"argofpericenter" : 23.3280,
+							"meananomaly" : 266.2144
+							}
+							
+	},
+	
+	
+	{
+		"name" : "Vesta orbit",
+		"color" : [1.0, 1.0, 1.0, 0.15],
+		"ct" : Orbits,
+		
+		"parent" : "Sol", 
+		"impl" : "gaia.cu9.ari.gaiaorbit.scenegraph.Orbit",
+		"provider" : "gaia.cu9.ari.gaiaorbit.data.orbit.OrbitalParametersProvider",
+		
+		"transformFunction" : "equatorialToEcliptic",
+			
+		"orbit" 		: {
+							// In days
+							"period" : 1325.85,
+							//  2010-Jul-23
+							"epoch" : 2455400.5,
+							"semimajoraxis" : 353350171.0,
+							"eccentricity" : 0.08862,
+							// Inclination of orbit with respect to the Ecliptic
+							"inclination" : 7.134,
+							"ascendingnode" : 103.91,
+							"argofpericenter" : 149.84,
+							"meananomaly" : 307.80
+							}
+							
+	},
+	
+	
+	{
+		"name" : "Ceres orbit",
+		"color" : [1.0, 1.0, 1.0, 0.15],
+		"ct" : Orbits,
+		
+		"parent" : "Sol", 
+		"impl" : "gaia.cu9.ari.gaiaorbit.scenegraph.Orbit",
+		"provider" : "gaia.cu9.ari.gaiaorbit.data.orbit.OrbitalParametersProvider",
+		
+		"transformFunction" : "equatorialToEcliptic",
+			
+		"orbit" 		: {
+							// In days
+							"period" : 1681.63,
+							//  2014-Dec-09
+							"epoch" : 2457000.5,
+							// In Km
+							"semimajoraxis" : 414010000.0,
+							"eccentricity" : 0.075823,
+							// Inclination of orbit with respect to the Ecliptic
+							"inclination" : 10.593,
+							"ascendingnode" : 80.3293,
+							"argofpericenter" : 72.5220,
+							"meananomaly" : 95.9891
+							}
+							
+	},
+	
+	
+	{
+		"name" : "Pallas orbit",
+		"color" : [1.0, 1.0, 1.0, 0.15],
+		"ct" : Orbits,
+		
+		"parent" : "Sol", 
+		"impl" : "gaia.cu9.ari.gaiaorbit.scenegraph.Orbit",
+		"provider" : "gaia.cu9.ari.gaiaorbit.data.orbit.OrbitalParametersProvider",
+		
+		"transformFunction" : "equatorialToEcliptic",
+			
+		"orbit" 		: {
+							// In days
+							"period" : 1685.371678,
+							//  2014-Dec-09
+							"epoch" : 2457000.5,
+							// In Km
+							"semimajoraxis" : 414626372.0,
+							"eccentricity" : 0.23127363,
+							// Inclination of orbit with respect to the Ecliptic
+							"inclination" : 34.840998,
+							"ascendingnode" : 173.096248,
+							"argofpericenter" : 309.930328,
+							"meananomaly" : 78.228704
+							}
+							
+	},
+	
+	
+	{
+		"name" : "Hygieia orbit",
+		"color" : [1.0, 1.0, 1.0, 0.15],
+		"ct" : Orbits,
+		
+		"parent" : "Sol", 
+		"impl" : "gaia.cu9.ari.gaiaorbit.scenegraph.Orbit",
+		"provider" : "gaia.cu9.ari.gaiaorbit.data.orbit.OrbitalParametersProvider",
+		
+		"transformFunction" : "equatorialToEcliptic",
+			
+		"orbit" 		: {
+							// In days
+							"period" : 2031.01,
+							//  2008-Nov-30
+							"epoch" : 2454800.5,
+							// In Km
+							"semimajoraxis" : 469587716.0,
+							"eccentricity" : 0.117,
+							// Inclination of orbit with respect to the Ecliptic
+							"inclination" : 3.842,
+							"ascendingnode" : 283.45,
+							"argofpericenter" : 313.19,
+							"meananomaly" : 197.96
+							}
+							
 	}
 ]}
