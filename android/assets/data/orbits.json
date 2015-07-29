@@ -136,6 +136,21 @@
 	
 	
 	{
+		"name" : "Gaia orbit",
+		"color" : [1.0, 1.0, 0.7, 0.5],
+		"ct" : Orbits,
+		
+		"parent" : "Gaia", 
+		"impl" : "gaia.cu9.ari.gaiaorbit.scenegraph.HeliotropicOrbit",
+		"provider" : "gaia.cu9.ari.gaiaorbit.data.orbit.OrbitFileDataProvider",
+			
+		"orbit" 		: {
+							"source" : "data/orb.GAIA.dat",
+							}
+	},
+	
+	
+	{
 	"name" : "Phobos orbit",
 	"color" : [.7, .7, 1.0, 0.4],
 	"ct" : Orbits,

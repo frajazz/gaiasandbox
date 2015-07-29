@@ -23,6 +23,7 @@ public class GaiaAttitudeServer {
     private BinarySearchTree attitudes;
     // Dummy attitude for launch sequence
     Attitude dummyAttitude;
+    Nsl37 nsl;
 
     // The previous attitude
     AttitudeIntervalBean prevAttitude = null, current;
@@ -36,6 +37,7 @@ public class GaiaAttitudeServer {
         current = new AttitudeIntervalBean("current", null, null, "dummy");
         // Dummy attitude
         dummyAttitude = new ConcreteAttitude(0, new Quaterniond(), false);
+        nsl = new Nsl37();
     }
 
     /**
@@ -44,6 +46,7 @@ public class GaiaAttitudeServer {
      * @return
      */
     public synchronized Attitude getAttitude(Date date) {
+
         // Find AttitudeType in timeSlots
         if (date.before(initialDate)) {
             return dummyAttitude;

@@ -4,6 +4,7 @@ import gaia.cu9.ari.gaiaorbit.scenegraph.AbstractPositionEntity;
 import gaia.cu9.ari.gaiaorbit.scenegraph.CelestialBody;
 import gaia.cu9.ari.gaiaorbit.scenegraph.Gaia;
 import gaia.cu9.ari.gaiaorbit.scenegraph.Grid;
+import gaia.cu9.ari.gaiaorbit.scenegraph.HeliotropicOrbit;
 import gaia.cu9.ari.gaiaorbit.scenegraph.Loc;
 import gaia.cu9.ari.gaiaorbit.scenegraph.MilkyWay;
 import gaia.cu9.ari.gaiaorbit.scenegraph.ModelBody;
@@ -103,6 +104,8 @@ public class JsonLoader<T extends SceneGraphNode> implements ISceneGraphNodeProv
         switch (clazzName) {
         case "gaia.cu9.ari.gaiaorbit.scenegraph.Orbit":
             return new Orbit();
+        case "gaia.cu9.ari.gaiaorbit.scenegraph.HeliotropicOrbit":
+            return new HeliotropicOrbit();
         case "gaia.cu9.ari.gaiaorbit.scenegraph.Grid":
             return new Grid();
         case "gaia.cu9.ari.gaiaorbit.scenegraph.MilkyWay":
@@ -509,7 +512,6 @@ public class JsonLoader<T extends SceneGraphNode> implements ISceneGraphNodeProv
             return;
         }
 
-        int a = 435;
         return;
     }
 

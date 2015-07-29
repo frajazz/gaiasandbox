@@ -76,7 +76,7 @@ public class GaiaSandbox implements ApplicationListener, IObserver {
     private static boolean LOADING = true;
 
     private static String FILE_CATALOGUE = "data/hygxyz.bin";
-    private static String FILE_JSON = "data/extra.json data/planets.json data/moons.json data/orbits.json data/asteroids.json data/earth_locations.json data/moon_locations.json"; /*"data/planets.json data/moons.json data/satellites.json data/asteroids.json data/orbits.json data/extra.json data/locations.json data/earth_locations.json data/moon_locations.json";*/
+    private static String FILE_JSON = "data/planets.json data/moons.json data/satellites.json data/asteroids.json data/orbits.json data/extra.json data/locations.json data/earth_locations.json data/moon_locations.json";
     private static String FILE_CONSTELLATIONS = "data/constel.csv";
     private static String FILE_BOUNDARIES = "data/boundaries.csv";
     private static String ATTITUDE_FOLDER = "data/attitudexml/";
@@ -169,11 +169,12 @@ public class GaiaSandbox implements ApplicationListener, IObserver {
         // Initialize Cameras
         cam = new CameraManager(manager, CameraMode.Focus);
 
-        // Initialize Gaia attitudes
-        //manager.load(ATTITUDE_FOLDER, GaiaAttitudeServer.class);
-
         // Set asset manager to asset bean
         AssetBean.setAssetManager(manager);
+
+        // Initialize Gaia attitudes
+        manager.load(ATTITUDE_FOLDER, GaiaAttitudeServer.class);
+
         // Load catalogue
         manager.load(FILE_CATALOGUE, HYGBean.class);
         // Load json files
@@ -217,7 +218,7 @@ public class GaiaSandbox implements ApplicationListener, IObserver {
         loadingGui = null;
 
         // Get attitude
-        if (manager.containsAsset(ATTITUDE_FOLDER)) {
+        if (manager.isLoaded(ATTITUDE_FOLDER)) {
             GaiaAttitudeServer.instance = manager.get(ATTITUDE_FOLDER);
         }
 
@@ -289,7 +290,7 @@ public class GaiaSandbox implements ApplicationListener, IObserver {
         EventManager.instance.post(Events.SCENE_GRAPH_LOADED, sg);
         EventManager.instance.post(Events.CAMERA_MODE_CMD, CameraMode.Focus);
 
-        AbstractPositionEntity focus = (AbstractPositionEntity) sg.getNode("Sol");
+        AbstractPositionEntity focus = (AbstractPositionEntity) sg.getNode("Earth");
         EventManager.instance.post(Events.FOCUS_CHANGE_CMD, focus, true);
         float dst = focus.size * 3;
         Vector3d newCameraPos = focus.pos.cpy().add(0, 0, -dst);
