@@ -76,7 +76,7 @@ public class GaiaSandbox implements ApplicationListener, IObserver {
     private static boolean LOADING = true;
 
     private static String FILE_CATALOGUE = "data/hygxyz.bin";
-    private static String FILE_JSON = "data/extra.json data/planets.json data/moons.json data/orbits.json data/asteroids.json"; /*"data/planets.json data/moons.json data/satellites.json data/asteroids.json data/orbits.json data/extra.json data/locations.json data/earth_locations.json data/moon_locations.json";*/
+    private static String FILE_JSON = "data/extra.json data/planets.json data/moons.json data/orbits.json data/asteroids.json data/earth_locations.json data/moon_locations.json"; /*"data/planets.json data/moons.json data/satellites.json data/asteroids.json data/orbits.json data/extra.json data/locations.json data/earth_locations.json data/moon_locations.json";*/
     private static String FILE_CONSTELLATIONS = "data/constel.csv";
     private static String FILE_BOUNDARIES = "data/boundaries.csv";
     private static String ATTITUDE_FOLDER = "data/attitudexml/";

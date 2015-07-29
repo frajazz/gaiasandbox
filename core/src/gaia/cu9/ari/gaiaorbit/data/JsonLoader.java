@@ -285,7 +285,10 @@ public class JsonLoader<T extends SceneGraphNode> implements ISceneGraphNodeProv
                 obj.setColor((double[]) param);
                 return;
             case "Size":
-                obj.setSize((Double) param);
+                if (param instanceof Long)
+                    obj.setSize((Long) param);
+                else
+                    obj.setSize((Double) param);
                 return;
             case "Coordinates":
                 obj.setCoordinates((IBodyCoordinates) param);
@@ -361,6 +364,17 @@ public class JsonLoader<T extends SceneGraphNode> implements ISceneGraphNodeProv
                 return;
             case "Model":
                 obj.setModel((ModelComponent) param);
+                return;
+            }
+        }
+        if (instance instanceof Loc) {
+            Loc obj = (Loc) instance;
+            switch (methodName) {
+            case "Location":
+                obj.setLocation((double[]) param);
+                return;
+            case "DistFactor":
+                obj.setDistFactor((Double) param);
                 return;
             }
         }

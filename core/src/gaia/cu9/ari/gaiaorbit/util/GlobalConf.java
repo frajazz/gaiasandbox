@@ -341,6 +341,7 @@ public class GlobalConf {
             VISIBILITY[ComponentType.MilkyWay.ordinal()] = true;
             VISIBILITY[ComponentType.Asteroids.ordinal()] = true;
             VISIBILITY[ComponentType.Galaxies.ordinal()] = true;
+            VISIBILITY[ComponentType.Others.ordinal()] = true;
 
         }
 
