@@ -9,7 +9,7 @@ precision mediump float;
 #define HIGH
 #endif
 
-#define TEXTURE_LOD_BIAS 1.0
+#define TEXTURE_LOD_BIAS 0.1
 
 // Ground atmospheric scattering
 varying vec3 v_atmosphereColor;
@@ -59,6 +59,10 @@ uniform sampler2D u_specularTexture;
 uniform sampler2D u_normalTexture;
 #endif
 
+#ifdef emissiveTextureFlag
+uniform sampler2D u_emissiveTexture;
+#endif
+
 #ifdef lightingFlag
 varying vec3 v_lightDiffuse;
 
@@ -103,7 +107,17 @@ uniform vec4 u_fogColor;
 varying float v_fog;
 #endif // fogFlag
 
+// COLOR NIGHT
+
+#if defined(emissiveTextureFlag)
+	#define fetchColorNight(texCoord) texture2D(u_emissiveTexture, texCoord, TEXTURE_LOD_BIAS)
+#else
+	#define fetchColorNight(texCoord) vec4(0.0, 0.0, 0.0, 0.0)
+#endif // emissiveTextureFlag
+
 void main() {
+	vec4 night = fetchColorNight(v_texCoords0);
+
 	#if defined(normalFlag) 
 		vec3 normal = v_normal;
 	#endif // normalFlag
@@ -163,7 +177,7 @@ void main() {
 			#ifdef shadowMapFlag
 				gl_FragColor.rgb = getShadow() * ((diffuse.rgb * v_lightDiffuse) + specular);
 			#else
-				gl_FragColor.rgb = (diffuse.rgb * v_lightDiffuse) + specular;
+				gl_FragColor.rgb = (diffuse.rgb * v_lightDiffuse) + (night.rgb * (max(0.0, (0.6 - length(v_lightDiffuse))))) + specular;
 			#endif //shadowMapFlag
 		#endif
 	#endif //lightingFlag

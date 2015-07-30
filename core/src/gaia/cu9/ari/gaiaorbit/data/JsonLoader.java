@@ -423,6 +423,12 @@ public class JsonLoader<T extends SceneGraphNode> implements ISceneGraphNodeProv
             case "Ring":
                 obj.setRing((String) param);
                 return;
+            case "Specular":
+                obj.setSpecular((String) param);
+                return;
+            case "Night":
+                obj.setNight((String) param);
+                return;
             }
         }
         if (instance instanceof RotationComponent) {
