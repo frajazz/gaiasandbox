@@ -4,7 +4,26 @@ canvas {
 }
 
 body {
-    background-color: #222222;
+    background-color: #000000;
+}
+
+div#gs-logo-frame{
+	width: 100%;
+	height: 120px;
+}
+
+div#gs-logo{
+	background-image: url('assets/img/banner.jpg');
+	width: 500px;
+	height: 120px;
+}
+
+.gwt-TextArea{
+	background-color: #000;
+}
+
+.gwt-TextArea-readonly{
+	color: #aaa;
 }
 
 .superdev {
