@@ -21,7 +21,6 @@ import gaia.cu9.ari.gaiaorbit.interfce.GaiaInputController;
 import gaia.cu9.ari.gaiaorbit.interfce.HUDGui;
 import gaia.cu9.ari.gaiaorbit.interfce.IGui;
 import gaia.cu9.ari.gaiaorbit.interfce.LoadingGui;
-import gaia.cu9.ari.gaiaorbit.interfce.MobileGui;
 import gaia.cu9.ari.gaiaorbit.interfce.RenderGui;
 import gaia.cu9.ari.gaiaorbit.render.AbstractRenderer;
 import gaia.cu9.ari.gaiaorbit.render.ComponentType;
@@ -36,7 +35,6 @@ import gaia.cu9.ari.gaiaorbit.scenegraph.ISceneGraph;
 import gaia.cu9.ari.gaiaorbit.scenegraph.SceneGraph;
 import gaia.cu9.ari.gaiaorbit.scenegraph.SceneGraphNode;
 import gaia.cu9.ari.gaiaorbit.scenegraph.component.ModelComponent;
-import gaia.cu9.ari.gaiaorbit.util.Constants;
 import gaia.cu9.ari.gaiaorbit.util.GlobalConf;
 import gaia.cu9.ari.gaiaorbit.util.GlobalResources;
 import gaia.cu9.ari.gaiaorbit.util.I18n;
@@ -81,6 +79,7 @@ public class GaiaSandbox implements ApplicationListener, IObserver {
     private static String FILE_JSON = "data/planets.json data/moons.json data/satellites.json data/asteroids.json data/orbits.json data/extra.json data/locations.json data/earth_locations.json data/moon_locations.json";
     private static String FILE_CONSTELLATIONS = "data/constel.csv";
     private static String FILE_BOUNDARIES = "data/boundaries.csv";
+    private static String ATTITUDE_FOLDER = "data/attitudexml/";
 
     public static GaiaSandbox instance;
 
@@ -128,9 +127,6 @@ public class GaiaSandbox implements ApplicationListener, IObserver {
     public void create() {
         Gdx.app.setLogLevel(Application.LOG_INFO);
 
-        boolean mobile = Constants.mobile;
-        boolean desktop = !mobile;
-
         fbmap = new HashMap<String, FrameBuffer>();
 
         // Disable all kinds of input
@@ -173,11 +169,12 @@ public class GaiaSandbox implements ApplicationListener, IObserver {
         // Initialize Cameras
         cam = new CameraManager(manager, CameraMode.Focus);
 
-        // Initialize Gaia attitudes
-        manager.load("data/attitudexml/", GaiaAttitudeServer.class);
-
         // Set asset manager to asset bean
         AssetBean.setAssetManager(manager);
+
+        // Initialize Gaia attitudes
+        manager.load(ATTITUDE_FOLDER, GaiaAttitudeServer.class);
+
         // Load catalogue
         manager.load(FILE_CATALOGUE, HYGBean.class);
         // Load json files
@@ -192,14 +189,7 @@ public class GaiaSandbox implements ApplicationListener, IObserver {
         renderGui.initialize(manager);
 
         if (GlobalConf.OPENGL_GUI) {
-            // Load scene graph
-            if (desktop) {
-                // Full GUI for desktop
-                gui = new FullGui();
-            } else {
-                // Reduced GUI for android/iOS/...
-                gui = new MobileGui();
-            }
+            gui = new FullGui();
         } else {
             // Only the HUD
             gui = new HUDGui();
@@ -228,15 +218,13 @@ public class GaiaSandbox implements ApplicationListener, IObserver {
         loadingGui = null;
 
         // Get attitude
-        GaiaAttitudeServer.instance = manager.get("data/attitudexml/");
+        if (manager.isLoaded(ATTITUDE_FOLDER)) {
+            GaiaAttitudeServer.instance = manager.get(ATTITUDE_FOLDER);
+        }
 
         pp = new GSPostProcessor();
 
         GlobalResources.doneLoading(manager);
-
-        if (manager.isLoaded(GlobalConf.data.DATA_SG_FILE)) {
-            sg = manager.get(GlobalConf.data.DATA_SG_FILE);
-        }
 
         /**
          * GET ALL NODES (stars, json, constel, boundaries)
@@ -247,13 +235,13 @@ public class GaiaSandbox implements ApplicationListener, IObserver {
         ConstellationsBean constelbean = manager.get(FILE_CONSTELLATIONS);
         BoundariesBean boundbean = manager.get(FILE_BOUNDARIES);
 
-        int n = hygbean.list.size() + jsonbean.list.size() + constelbean.list.size() + boundbean.list.size();
+        int n = hygbean.size() /*+ jsonbean.size() + constelbean.size() + boundbean.size()*/;
         nodeList = new ArrayList<SceneGraphNode>(n);
 
-        nodeList.addAll(hygbean.list);
-        nodeList.addAll(jsonbean.list);
-        nodeList.addAll(constelbean.list);
-        nodeList.addAll(boundbean.list);
+        nodeList.addAll(hygbean.list());
+        nodeList.addAll(jsonbean.list());
+        nodeList.addAll(constelbean.list());
+        nodeList.addAll(boundbean.list());
 
         sg = new SceneGraph();
         sg.initialize(nodeList, GlobalClock.clock);
@@ -302,7 +290,7 @@ public class GaiaSandbox implements ApplicationListener, IObserver {
         EventManager.instance.post(Events.SCENE_GRAPH_LOADED, sg);
         EventManager.instance.post(Events.CAMERA_MODE_CMD, CameraMode.Focus);
 
-        AbstractPositionEntity focus = (AbstractPositionEntity) sg.getNode("Sol");
+        AbstractPositionEntity focus = (AbstractPositionEntity) sg.getNode("Earth");
         EventManager.instance.post(Events.FOCUS_CHANGE_CMD, focus, true);
         float dst = focus.size * 3;
         Vector3d newCameraPos = focus.pos.cpy().add(0, 0, -dst);

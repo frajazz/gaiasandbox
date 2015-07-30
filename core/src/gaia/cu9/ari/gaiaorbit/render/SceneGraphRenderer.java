@@ -22,7 +22,7 @@ import gaia.cu9.ari.gaiaorbit.util.Constants;
 import gaia.cu9.ari.gaiaorbit.util.GlobalConf;
 import gaia.cu9.ari.gaiaorbit.util.GlobalConf.ProgramConf.StereoProfile;
 import gaia.cu9.ari.gaiaorbit.util.GlobalResources;
-import gaia.cu9.ari.gaiaorbit.util.ds.Multilist;
+import gaia.cu9.ari.gaiaorbit.util.MyPools;
 import gaia.cu9.ari.gaiaorbit.util.math.MathUtilsd;
 import gaia.cu9.ari.gaiaorbit.util.override.AtmosphereGroundShaderProvider;
 import gaia.cu9.ari.gaiaorbit.util.override.AtmosphereShaderProvider;
@@ -49,7 +49,6 @@ import com.badlogic.gdx.graphics.glutils.ShaderProgram;
 import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.Pool;
-import com.badlogic.gdx.utils.Pools;
 import com.badlogic.gdx.utils.viewport.ExtendViewport;
 import com.badlogic.gdx.utils.viewport.StretchViewport;
 import com.badlogic.gdx.utils.viewport.Viewport;
@@ -76,7 +75,7 @@ public class SceneGraphRenderer extends AbstractRenderer implements IProcessRend
     private RenderContext rc;
 
     /** Render lists for all render groups **/
-    public static Map<RenderGroup, Multilist<IRenderable>> render_lists;
+    public static Map<RenderGroup, List<IRenderable>> render_lists;
 
     // Two model batches, for front (models), back and atmospheres
     private SpriteBatch spriteBatch, fontBatch;
@@ -108,14 +107,12 @@ public class SceneGraphRenderer extends AbstractRenderer implements IProcessRend
             Gdx.app.error(this.getClass().getName(), "Font shader compilation failed:\n" + fontShader.getLog());
         }
 
-        int numLists = 1;
         RenderGroup[] renderGroups = RenderGroup.values();
-        render_lists = new HashMap<RenderGroup, Multilist<IRenderable>>(renderGroups.length);
+        render_lists = new HashMap<RenderGroup, List<IRenderable>>(renderGroups.length);
         for (RenderGroup rg : renderGroups) {
-            render_lists.put(rg, new Multilist<IRenderable>(numLists, 100));
+            render_lists.put(rg, new ArrayList<IRenderable>(100));
         }
 
-        ShaderProvider spnormal = new AtmosphereGroundShaderProvider(Gdx.files.internal("shader/normal.vertex.glsl"), Gdx.files.internal("shader/normal.fragment.glsl"));
         ShaderProvider sp = new AtmosphereGroundShaderProvider(Gdx.files.internal("shader/default.vertex.glsl"), Gdx.files.internal("shader/default.fragment.glsl"));
         ShaderProvider spatm = new AtmosphereShaderProvider(Gdx.files.internal("shader/atm.vertex.glsl"), Gdx.files.internal("shader/atm.fragment.glsl"));
         ShaderProvider spsurface = new DefaultShaderProvider(Gdx.files.internal("shader/default.vertex.glsl"), Gdx.files.internal("shader/starsurface.fragment.glsl"));
@@ -128,7 +125,6 @@ public class SceneGraphRenderer extends AbstractRenderer implements IProcessRend
         };
 
         ModelBatch modelBatchB = new ModelBatch(sp, noSorter);
-        ModelBatch modelBatchF = new ModelBatch(spnormal, noSorter);
         ModelBatch modelBatchAtm = new ModelBatch(spatm, noSorter);
         ModelBatch modelBatchS = new ModelBatch(spsurface, noSorter);
 
@@ -215,7 +211,7 @@ public class SceneGraphRenderer extends AbstractRenderer implements IProcessRend
         AbstractRenderSystem lineProc = getLineRenderSystem();
 
         // MODEL FRONT
-        AbstractRenderSystem modelFrontProc = new ModelBatchRenderSystem(RenderGroup.MODEL_F, priority++, alphas, modelBatchF, false);
+        AbstractRenderSystem modelFrontProc = new ModelBatchRenderSystem(RenderGroup.MODEL_F, priority++, alphas, modelBatchB, false);
         modelFrontProc.setPreRunnable(blendDepthRunnable);
 
         // MODEL STARS
@@ -308,7 +304,7 @@ public class SceneGraphRenderer extends AbstractRenderer implements IProcessRend
                 Viewport viewport = stretch ? stretchViewport : extendViewport;
 
                 PerspectiveCamera cam = camera.getCamera();
-                Pool<Vector3> vectorPool = Pools.get(Vector3.class);
+                Pool<Vector3> vectorPool = MyPools.get(Vector3.class);
                 // Vector of 1 meter length pointing to the side of the camera
                 Vector3 side = vectorPool.obtain().set(cam.direction);
                 float separation = (float) Constants.M_TO_U * GlobalConf.program.STEREOSCOPIC_EYE_SEPARATION_M;
@@ -398,7 +394,7 @@ public class SceneGraphRenderer extends AbstractRenderer implements IProcessRend
         int size = renderProcesses.size();
         for (int i = 0; i < size; i++) {
             IRenderSystem process = renderProcesses.get(i);
-            List<IRenderable> l = render_lists.get(process.getRenderGroup()).toList();
+            List<IRenderable> l = render_lists.get(process.getRenderGroup());
             process.render(l, camera, rc);
         }
 
@@ -478,11 +474,19 @@ public class SceneGraphRenderer extends AbstractRenderer implements IProcessRend
         if (GlobalConf.scene.isNormalLineRenderer()) {
             // Normal
             sys = new LineRenderSystem(RenderGroup.LINE, 0, alphas);
-            sys.setPreRunnable(blendDepthRunnable);
+            sys.setPreRunnable(/*new Runnable() {
+                               @Override
+                               public void run() {
+                               Gdx.gl.glDisable(GL20.GL_BLEND);
+                               Gdx.gl.glDisable(GL20.GL_DEPTH_TEST);
+                               Gdx.gl.glDepthFunc(GL20.GL_LESS);
+                               Gdx.gl.glDepthMask(false);
+                               }
+                               }*/blendNoDepthRunnable);
         } else {
             // Quad
             sys = new LineQuadRenderSystem(RenderGroup.LINE, 0, alphas);
-            sys.setPreRunnable(blendDepthRunnable);
+            sys.setPreRunnable(blendNoDepthRunnable);
         }
         return sys;
     }
@@ -496,7 +500,7 @@ public class SceneGraphRenderer extends AbstractRenderer implements IProcessRend
                 sys.setPreRunnable(blendNoDepthRunnable);
             } else if (GlobalConf.scene.isFuzzyPixelRenderer()) {
                 sys = new PixelFuzzyRenderSystem(RenderGroup.POINT, 0, alphas);
-                sys.setPreRunnable(blendNoDepthRunnable);
+                sys.setPreRunnable(blendDepthRunnable);
             } else {
                 sys = new PixelRenderSystem(RenderGroup.POINT, 0, alphas);
                 sys.setPreRunnable(blendNoDepthRunnable);

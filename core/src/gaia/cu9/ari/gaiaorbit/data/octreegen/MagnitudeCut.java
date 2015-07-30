@@ -10,10 +10,10 @@ import java.util.List;
 public class MagnitudeCut implements IAggregationAlgorithm<Particle> {
 
     private static final float START_MAG = 7;
-    long starId;
+    int starId;
 
     public MagnitudeCut() {
-        starId = System.currentTimeMillis();
+        starId = (int) System.currentTimeMillis();
     }
 
     @Override

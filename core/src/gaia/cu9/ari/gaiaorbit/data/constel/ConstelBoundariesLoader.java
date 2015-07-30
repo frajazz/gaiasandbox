@@ -68,7 +68,7 @@ public class ConstelBoundariesLoader<T extends SceneGraphNode> implements IScene
                             double ra = Parser.parseDouble(tokens[0].trim()) * 15d;
                             double dec = Parser.parseDouble(tokens[1].trim());
 
-                            double dist = 1 * Constants.AU_TO_U;
+                            double dist = 10 * Constants.AU_TO_U;
 
                             Vector3d point = Coordinates.sphericalToCartesian(Math.toRadians(ra), Math.toRadians(dec), dist, new Vector3d());
                             buffer.add(point);

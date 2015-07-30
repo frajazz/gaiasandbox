@@ -67,7 +67,7 @@ public class OctreeCatalogLoader implements ICatalogLoader {
          * MANUALLY ADD SUN
          */
         // Manually add sun
-        Star sun = new Star(new Vector3d(0, 0, 0), 4.83f, 4.83f, 0.656f, "Sol", System.currentTimeMillis());
+        Star sun = new Star(new Vector3d(0, 0, 0), 4.83f, 4.83f, 0.656f, "Sol", (int) System.currentTimeMillis());
         sun.initialize();
 
         // Find out octant of sun

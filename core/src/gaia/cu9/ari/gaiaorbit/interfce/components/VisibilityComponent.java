@@ -106,6 +106,8 @@ public class VisibilityComponent extends GuiComponent implements IObserver {
             if (!interf) {
                 String name = (String) data[0];
                 Button b = buttonMap.get(name);
+
+                b.setProgrammaticChangeEvents(false);
                 if (b != null) {
                     if (data.length == 3) {
                         b.setChecked((Boolean) data[2]);
@@ -113,6 +115,7 @@ public class VisibilityComponent extends GuiComponent implements IObserver {
                         b.setChecked(!b.isChecked());
                     }
                 }
+                b.setProgrammaticChangeEvents(true);
             }
             break;
         }

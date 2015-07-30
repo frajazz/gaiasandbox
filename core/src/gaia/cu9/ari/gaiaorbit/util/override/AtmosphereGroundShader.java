@@ -44,7 +44,8 @@ public class AtmosphereGroundShader extends DefaultShader {
 
             @Override
             public void set(BaseShader shader, int inputID, Renderable renderable, Attributes combinedAttributes) {
-                shader.set(inputID, ((AtmosphereAttribute) (combinedAttributes.get(AtmosphereAttribute.Alpha))).value);
+                if (combinedAttributes.has(AtmosphereAttribute.Alpha))
+                    shader.set(inputID, ((AtmosphereAttribute) (combinedAttributes.get(AtmosphereAttribute.Alpha))).value);
             }
         };
 
@@ -56,7 +57,8 @@ public class AtmosphereGroundShader extends DefaultShader {
 
             @Override
             public void set(BaseShader shader, int inputID, Renderable renderable, Attributes combinedAttributes) {
-                shader.set(inputID, ((AtmosphereAttribute) (combinedAttributes.get(AtmosphereAttribute.ColorOpacity))).value);
+                if (combinedAttributes.has(AtmosphereAttribute.ColorOpacity))
+                    shader.set(inputID, ((AtmosphereAttribute) (combinedAttributes.get(AtmosphereAttribute.ColorOpacity))).value);
             }
         };
 
@@ -68,7 +70,8 @@ public class AtmosphereGroundShader extends DefaultShader {
 
             @Override
             public void set(BaseShader shader, int inputID, Renderable renderable, Attributes combinedAttributes) {
-                shader.set(inputID, ((AtmosphereAttribute) (combinedAttributes.get(AtmosphereAttribute.CameraHeight))).value);
+                if (combinedAttributes.has(AtmosphereAttribute.CameraHeight))
+                    shader.set(inputID, ((AtmosphereAttribute) (combinedAttributes.get(AtmosphereAttribute.CameraHeight))).value);
             }
         };
 
@@ -80,7 +83,8 @@ public class AtmosphereGroundShader extends DefaultShader {
 
             @Override
             public void set(BaseShader shader, int inputID, Renderable renderable, Attributes combinedAttributes) {
-                shader.set(inputID, ((AtmosphereAttribute) (combinedAttributes.get(AtmosphereAttribute.CameraHeight2))).value);
+                if (combinedAttributes.has(AtmosphereAttribute.CameraHeight2))
+                    shader.set(inputID, ((AtmosphereAttribute) (combinedAttributes.get(AtmosphereAttribute.CameraHeight2))).value);
             }
         };
 
@@ -92,7 +96,8 @@ public class AtmosphereGroundShader extends DefaultShader {
 
             @Override
             public void set(BaseShader shader, int inputID, Renderable renderable, Attributes combinedAttributes) {
-                shader.set(inputID, ((AtmosphereAttribute) (combinedAttributes.get(AtmosphereAttribute.OuterRadius))).value);
+                if (combinedAttributes.has(AtmosphereAttribute.OuterRadius))
+                    shader.set(inputID, ((AtmosphereAttribute) (combinedAttributes.get(AtmosphereAttribute.OuterRadius))).value);
             }
         };
 
@@ -104,7 +109,8 @@ public class AtmosphereGroundShader extends DefaultShader {
 
             @Override
             public void set(BaseShader shader, int inputID, Renderable renderable, Attributes combinedAttributes) {
-                shader.set(inputID, ((AtmosphereAttribute) (combinedAttributes.get(AtmosphereAttribute.OuterRadius2))).value);
+                if (combinedAttributes.has(AtmosphereAttribute.OuterRadius2))
+                    shader.set(inputID, ((AtmosphereAttribute) (combinedAttributes.get(AtmosphereAttribute.OuterRadius2))).value);
             }
         };
 
@@ -116,7 +122,8 @@ public class AtmosphereGroundShader extends DefaultShader {
 
             @Override
             public void set(BaseShader shader, int inputID, Renderable renderable, Attributes combinedAttributes) {
-                shader.set(inputID, ((AtmosphereAttribute) (combinedAttributes.get(AtmosphereAttribute.InnerRadius))).value);
+                if (combinedAttributes.has(AtmosphereAttribute.InnerRadius))
+                    shader.set(inputID, ((AtmosphereAttribute) (combinedAttributes.get(AtmosphereAttribute.InnerRadius))).value);
             }
         };
 
@@ -128,7 +135,8 @@ public class AtmosphereGroundShader extends DefaultShader {
 
             @Override
             public void set(BaseShader shader, int inputID, Renderable renderable, Attributes combinedAttributes) {
-                shader.set(inputID, ((AtmosphereAttribute) (combinedAttributes.get(AtmosphereAttribute.InnerRadius2))).value);
+                if (combinedAttributes.has(AtmosphereAttribute.InnerRadius2))
+                    shader.set(inputID, ((AtmosphereAttribute) (combinedAttributes.get(AtmosphereAttribute.InnerRadius2))).value);
             }
         };
 
@@ -140,7 +148,8 @@ public class AtmosphereGroundShader extends DefaultShader {
 
             @Override
             public void set(BaseShader shader, int inputID, Renderable renderable, Attributes combinedAttributes) {
-                shader.set(inputID, ((AtmosphereAttribute) (combinedAttributes.get(AtmosphereAttribute.KrESun))).value);
+                if (combinedAttributes.has(AtmosphereAttribute.KrESun))
+                    shader.set(inputID, ((AtmosphereAttribute) (combinedAttributes.get(AtmosphereAttribute.KrESun))).value);
             }
         };
 
@@ -152,7 +161,8 @@ public class AtmosphereGroundShader extends DefaultShader {
 
             @Override
             public void set(BaseShader shader, int inputID, Renderable renderable, Attributes combinedAttributes) {
-                shader.set(inputID, ((AtmosphereAttribute) (combinedAttributes.get(AtmosphereAttribute.KmESun))).value);
+                if (combinedAttributes.has(AtmosphereAttribute.KmESun))
+                    shader.set(inputID, ((AtmosphereAttribute) (combinedAttributes.get(AtmosphereAttribute.KmESun))).value);
             }
         };
 
@@ -164,7 +174,8 @@ public class AtmosphereGroundShader extends DefaultShader {
 
             @Override
             public void set(BaseShader shader, int inputID, Renderable renderable, Attributes combinedAttributes) {
-                shader.set(inputID, ((AtmosphereAttribute) (combinedAttributes.get(AtmosphereAttribute.Kr4PI))).value);
+                if (combinedAttributes.has(AtmosphereAttribute.Kr4PI))
+                    shader.set(inputID, ((AtmosphereAttribute) (combinedAttributes.get(AtmosphereAttribute.Kr4PI))).value);
             }
         };
 
@@ -176,7 +187,8 @@ public class AtmosphereGroundShader extends DefaultShader {
 
             @Override
             public void set(BaseShader shader, int inputID, Renderable renderable, Attributes combinedAttributes) {
-                shader.set(inputID, ((AtmosphereAttribute) (combinedAttributes.get(AtmosphereAttribute.Km4PI))).value);
+                if (combinedAttributes.has(AtmosphereAttribute.Km4PI))
+                    shader.set(inputID, ((AtmosphereAttribute) (combinedAttributes.get(AtmosphereAttribute.Km4PI))).value);
             }
         };
 
@@ -188,7 +200,8 @@ public class AtmosphereGroundShader extends DefaultShader {
 
             @Override
             public void set(BaseShader shader, int inputID, Renderable renderable, Attributes combinedAttributes) {
-                shader.set(inputID, ((AtmosphereAttribute) (combinedAttributes.get(AtmosphereAttribute.Scale))).value);
+                if (combinedAttributes.has(AtmosphereAttribute.Scale))
+                    shader.set(inputID, ((AtmosphereAttribute) (combinedAttributes.get(AtmosphereAttribute.Scale))).value);
             }
         };
 
@@ -200,7 +213,8 @@ public class AtmosphereGroundShader extends DefaultShader {
 
             @Override
             public void set(BaseShader shader, int inputID, Renderable renderable, Attributes combinedAttributes) {
-                shader.set(inputID, ((AtmosphereAttribute) (combinedAttributes.get(AtmosphereAttribute.ScaleDepth))).value);
+                if (combinedAttributes.has(AtmosphereAttribute.ScaleDepth))
+                    shader.set(inputID, ((AtmosphereAttribute) (combinedAttributes.get(AtmosphereAttribute.ScaleDepth))).value);
             }
         };
 
@@ -212,7 +226,8 @@ public class AtmosphereGroundShader extends DefaultShader {
 
             @Override
             public void set(BaseShader shader, int inputID, Renderable renderable, Attributes combinedAttributes) {
-                shader.set(inputID, ((AtmosphereAttribute) (combinedAttributes.get(AtmosphereAttribute.ScaleOverScaleDepth))).value);
+                if (combinedAttributes.has(AtmosphereAttribute.ScaleOverScaleDepth))
+                    shader.set(inputID, ((AtmosphereAttribute) (combinedAttributes.get(AtmosphereAttribute.ScaleOverScaleDepth))).value);
             }
         };
 
@@ -224,7 +239,8 @@ public class AtmosphereGroundShader extends DefaultShader {
 
             @Override
             public void set(BaseShader shader, int inputID, Renderable renderable, Attributes combinedAttributes) {
-                shader.set(inputID, (int) ((AtmosphereAttribute) (combinedAttributes.get(AtmosphereAttribute.nSamples))).value);
+                if (combinedAttributes.has(AtmosphereAttribute.nSamples))
+                    shader.set(inputID, (int) ((AtmosphereAttribute) (combinedAttributes.get(AtmosphereAttribute.nSamples))).value);
             }
         };
 
@@ -236,7 +252,8 @@ public class AtmosphereGroundShader extends DefaultShader {
 
             @Override
             public void set(BaseShader shader, int inputID, Renderable renderable, Attributes combinedAttributes) {
-                shader.set(inputID, ((AtmosphereAttribute) (combinedAttributes.get(AtmosphereAttribute.fSamples))).value);
+                if (combinedAttributes.has(AtmosphereAttribute.fSamples))
+                    shader.set(inputID, ((AtmosphereAttribute) (combinedAttributes.get(AtmosphereAttribute.fSamples))).value);
             }
         };
 
@@ -248,7 +265,8 @@ public class AtmosphereGroundShader extends DefaultShader {
 
             @Override
             public void set(BaseShader shader, int inputID, Renderable renderable, Attributes combinedAttributes) {
-                shader.set(inputID, ((AtmosphereAttribute) (combinedAttributes.get(AtmosphereAttribute.G))).value);
+                if (combinedAttributes.has(AtmosphereAttribute.G))
+                    shader.set(inputID, ((AtmosphereAttribute) (combinedAttributes.get(AtmosphereAttribute.G))).value);
             }
         };
 
@@ -260,7 +278,8 @@ public class AtmosphereGroundShader extends DefaultShader {
 
             @Override
             public void set(BaseShader shader, int inputID, Renderable renderable, Attributes combinedAttributes) {
-                shader.set(inputID, ((AtmosphereAttribute) (combinedAttributes.get(AtmosphereAttribute.G2))).value);
+                if (combinedAttributes.has(AtmosphereAttribute.G2))
+                    shader.set(inputID, ((AtmosphereAttribute) (combinedAttributes.get(AtmosphereAttribute.G2))).value);
             }
         };
         public final static Setter planetPos = new Setter() {
@@ -271,7 +290,8 @@ public class AtmosphereGroundShader extends DefaultShader {
 
             @Override
             public void set(BaseShader shader, int inputID, Renderable renderable, Attributes combinedAttributes) {
-                shader.set(inputID, ((Vector3Attribute) (combinedAttributes.get(Vector3Attribute.PlanetPos))).value);
+                if (combinedAttributes.has(Vector3Attribute.PlanetPos))
+                    shader.set(inputID, ((Vector3Attribute) (combinedAttributes.get(Vector3Attribute.PlanetPos))).value);
             }
         };
         public final static Setter cameraPos = new Setter() {
@@ -282,7 +302,8 @@ public class AtmosphereGroundShader extends DefaultShader {
 
             @Override
             public void set(BaseShader shader, int inputID, Renderable renderable, Attributes combinedAttributes) {
-                shader.set(inputID, ((Vector3Attribute) (combinedAttributes.get(Vector3Attribute.CameraPos))).value);
+                if (combinedAttributes.has(Vector3Attribute.CameraPos))
+                    shader.set(inputID, ((Vector3Attribute) (combinedAttributes.get(Vector3Attribute.CameraPos))).value);
             }
         };
         public final static Setter lightPos = new Setter() {
@@ -293,7 +314,8 @@ public class AtmosphereGroundShader extends DefaultShader {
 
             @Override
             public void set(BaseShader shader, int inputID, Renderable renderable, Attributes combinedAttributes) {
-                shader.set(inputID, ((Vector3Attribute) (combinedAttributes.get(Vector3Attribute.LightPos))).value);
+                if (combinedAttributes.has(Vector3Attribute.LightPos))
+                    shader.set(inputID, ((Vector3Attribute) (combinedAttributes.get(Vector3Attribute.LightPos))).value);
             }
         };
         public final static Setter invWavelength = new Setter() {
@@ -304,7 +326,8 @@ public class AtmosphereGroundShader extends DefaultShader {
 
             @Override
             public void set(BaseShader shader, int inputID, Renderable renderable, Attributes combinedAttributes) {
-                shader.set(inputID, ((Vector3Attribute) (combinedAttributes.get(Vector3Attribute.InvWavelength))).value);
+                if (combinedAttributes.has(Vector3Attribute.InvWavelength))
+                    shader.set(inputID, ((Vector3Attribute) (combinedAttributes.get(Vector3Attribute.InvWavelength))).value);
             }
         };
     }
@@ -346,12 +369,10 @@ public class AtmosphereGroundShader extends DefaultShader {
     }
 
     public AtmosphereGroundShader(final Renderable renderable, final Config config, final String prefix) {
-        this(renderable, config, prefix, config.vertexShader != null ? config.vertexShader : getDefaultVertexShader(),
-                config.fragmentShader != null ? config.fragmentShader : getDefaultFragmentShader());
+        this(renderable, config, prefix, config.vertexShader != null ? config.vertexShader : getDefaultVertexShader(), config.fragmentShader != null ? config.fragmentShader : getDefaultFragmentShader());
     }
 
-    public AtmosphereGroundShader(final Renderable renderable, final Config config, final String prefix, final String vertexShader,
-            final String fragmentShader) {
+    public AtmosphereGroundShader(final Renderable renderable, final Config config, final String prefix, final String vertexShader, final String fragmentShader) {
         this(renderable, config, new ShaderProgram(prefix + vertexShader, prefix + fragmentShader));
     }
 

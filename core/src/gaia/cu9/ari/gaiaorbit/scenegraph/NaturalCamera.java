@@ -25,9 +25,9 @@ import com.badlogic.gdx.utils.viewport.Viewport;
 public class NaturalCamera extends AbstractCamera implements IObserver {
 
     /** Camera far value **/
-    public static final double CAM_FAR = 1e15 * Constants.KM_TO_U;
+    public static final double CAM_FAR = 1e6 * Constants.PC_TO_U;
     /** Camera near values **/
-    public static final double CAM_NEAR = 1e7 * Constants.KM_TO_U;
+    public static final double CAM_NEAR = 1e8 * Constants.KM_TO_U;
 
     /** Acceleration, velocity and position of the entity **/
     public Vector3d accel, vel;
@@ -210,7 +210,7 @@ public class NaturalCamera extends AbstractCamera implements IObserver {
     private void updatePerspectiveCamera() {
 
         if (closest != null) {
-            camera.near = (float) Math.min(CAM_NEAR, (closest.distToCamera - closest.getRadius()) / 2);
+            camera.near = (float) Math.min(CAM_NEAR, (closest.distToCamera - closest.getRadius()) / 1.5f);
         }
         camera.position.set(0f, 0f, 0f);
         camera.direction.set(direction.valuesf());

@@ -2,7 +2,6 @@ package gaia.cu9.ari.gaiaorbit.data;
 
 import gaia.cu9.ari.gaiaorbit.util.gaia.GaiaAttitudeServer;
 
-import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.assets.AssetDescriptor;
 import com.badlogic.gdx.assets.AssetLoaderParameters;
 import com.badlogic.gdx.assets.AssetManager;
@@ -25,7 +24,7 @@ public class GaiaAttitudeLoader extends AsynchronousAssetLoader<GaiaAttitudeServ
 
     @Override
     public void loadAsync(AssetManager manager, String fileName, FileHandle file, GaiaAttitudeLoaderParameter parameter) {
-        server = new GaiaAttitudeServer(Gdx.files.internal(fileName));
+        server = new GaiaAttitudeServer(fileName);
     }
 
     @Override

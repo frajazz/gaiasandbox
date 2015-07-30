@@ -9,6 +9,8 @@ import gaia.cu9.ari.gaiaorbit.util.Constants;
 import gaia.cu9.ari.gaiaorbit.util.GlobalResources;
 import gaia.cu9.ari.gaiaorbit.util.I18n;
 import gaia.cu9.ari.gaiaorbit.util.coord.Coordinates;
+import gaia.cu9.ari.gaiaorbit.util.format.INumberFormat;
+import gaia.cu9.ari.gaiaorbit.util.format.NumberFormatFactory;
 import gaia.cu9.ari.gaiaorbit.util.math.Vector3d;
 import gaia.cu9.ari.gaiaorbit.util.scene2d.OwnLabel;
 
@@ -24,9 +26,14 @@ public class FocusInfoInterface extends Table implements IObserver {
 
     Vector3d pos;
 
+    INumberFormat nf, sf;
+
     public FocusInfoInterface(Skin skin) {
         super(skin);
         this.setBackground("table-bg");
+
+        nf = NumberFormatFactory.getFormatter("#0.###");
+        sf = NumberFormatFactory.getFormatter("##0.###E0");
 
         focusInfo = new Table();
         focusInfo.pad(5);
@@ -107,41 +114,41 @@ public class FocusInfoInterface extends Table implements IObserver {
 
             focusName.setText(objectName);
             if (cb.posSph != null && cb.posSph.len() > 0f) {
-                focusRA.setText(cb.posSph.x + "°");
-                focusDEC.setText(cb.posSph.y + "°");
+                focusRA.setText(nf.format(cb.posSph.x) + "°");
+                focusDEC.setText(nf.format(cb.posSph.y) + "°");
             } else {
                 Coordinates.cartesianToSpherical(cb.pos, pos);
 
-                focusRA.setText(cb.pos.x % 360 + "°");
-                focusDEC.setText(cb.pos.y % 360 + "°");
+                focusRA.setText(nf.format(cb.pos.x % 360) + "°");
+                focusDEC.setText(nf.format(cb.pos.y % 360) + "°");
             }
 
             Float appmag = cb.appmag;
 
             if (appmag != null) {
-                focusAppMag.setText(appmag.toString());
+                focusAppMag.setText(nf.format(appmag));
             } else {
                 focusAppMag.setText("-");
             }
             Float absmag = cb.absmag;
 
             if (absmag != null) {
-                focusAbsMag.setText(absmag.toString());
+                focusAbsMag.setText(nf.format(absmag));
             } else {
                 focusAbsMag.setText("-");
             }
-            focusRadius.setText(cb.getRadius() * Constants.U_TO_KM + " km");
+            focusRadius.setText(sf.format(cb.getRadius() * Constants.U_TO_KM) + " km");
 
             break;
         case FOCUS_INFO_UPDATED:
-            focusAngle.setText(Math.toDegrees((float) data[1]) % 360 + "°");
+            focusAngle.setText(sf.format(Math.toDegrees((float) data[1]) % 360) + "°");
             Object[] dist = GlobalResources.floatToDistanceString((float) data[0]);
-            focusDist.setText((float) Math.max(0d, (float) dist[0]) + " " + dist[1]);
+            focusDist.setText(sf.format(Math.max(0d, (float) dist[0])) + " " + dist[1]);
             break;
         case CAMERA_MOTION_UPDATED:
             Vector3d campos = (Vector3d) data[0];
-            camPos.setText("X: " + campos.x * Constants.U_TO_KM + "\nY: " + campos.y * Constants.U_TO_KM + "\nZ: " + campos.z * Constants.U_TO_KM);
-            camVel.setText((double) data[1] + " km/h");
+            camPos.setText("X: " + nf.format(campos.x * Constants.U_TO_PC) + " pc\nY: " + nf.format(campos.y * Constants.U_TO_PC) + " pc\nZ: " + nf.format(campos.z * Constants.U_TO_PC) + " pc");
+            camVel.setText(sf.format((double) data[1]) + " km/h");
             break;
 
         }

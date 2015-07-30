@@ -29,7 +29,6 @@ public class MilkyWay extends Blob implements IModelRenderable, I3DTextRenderabl
     public MilkyWay() {
         super();
         localTransform = new Matrix4();
-
         lowAngle = (float) Math.toRadians(60);
         highAngle = (float) Math.toRadians(75.51);
     }

@@ -93,7 +93,7 @@ public class Planet extends ModelBody implements IAtmosphereRenderable {
 
             // Convert to cartesian coordinates and put them in aux3 vector
             Coordinates.cartesianToSpherical(pos, aux3);
-            posSph.set(AstroUtils.TO_DEG * aux3.x, AstroUtils.TO_DEG * aux3.y);
+            posSph.set((float) (AstroUtils.TO_DEG * aux3.x), (float) (AstroUtils.TO_DEG * aux3.y));
 
             // Update angle
             rc.update(time);

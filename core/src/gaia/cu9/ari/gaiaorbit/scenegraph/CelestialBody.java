@@ -7,7 +7,6 @@ import gaia.cu9.ari.gaiaorbit.scenegraph.component.RotationComponent;
 import gaia.cu9.ari.gaiaorbit.util.Constants;
 import gaia.cu9.ari.gaiaorbit.util.GlobalConf;
 import gaia.cu9.ari.gaiaorbit.util.color.ColourUtils;
-import gaia.cu9.ari.gaiaorbit.util.math.Vector2d;
 import gaia.cu9.ari.gaiaorbit.util.math.Vector3d;
 import gaia.cu9.ari.gaiaorbit.util.time.ITimeFrameProvider;
 
@@ -20,6 +19,7 @@ import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g3d.ModelBatch;
 import com.badlogic.gdx.graphics.glutils.ShaderProgram;
+import com.badlogic.gdx.math.Vector2;
 
 /**
  * These are entities that have a model and is always loaded.
@@ -50,8 +50,6 @@ public abstract class CelestialBody extends AbstractPositionEntity implements I3
     public float absmag;
     /** Apparent magnitude, m = -2.5 log10(flux) **/
     public float appmag;
-    /** Red, green and blue colors and their revamped cousins **/
-    public float[] ccPale;
     /** Colour for stars that have been observed by Gaia **/
     public float[] ccTransit;
     /** The B-V color index, calculated as the magnitude in B minus the magnitude in V **/
@@ -113,7 +111,7 @@ public abstract class CelestialBody extends AbstractPositionEntity implements I3
         shader.setUniformf("u_pos", transform.getTranslationf(auxVector3f));
         shader.setUniformf("u_size", size);
 
-        float[] col = ccPale;
+        float[] col = cc;
         if (colorTransit)
             col = ccTransit;
         shader.setUniformf("u_color", col[0], col[1], col[2], alpha * opacity);
@@ -160,9 +158,7 @@ public abstract class CelestialBody extends AbstractPositionEntity implements I3
     }
 
     protected void setColor2Data() {
-        final float plus = 0.15f;
-        ccPale = new float[] { Math.min(1, cc[0] + plus), Math.min(1, cc[1] + plus), Math.min(1, cc[2] + plus) };
-        ccTransit = new float[] { ccPale[0], ccPale[1], ccPale[2], cc[3] };
+        ccTransit = new float[] { cc[0], cc[1], cc[2], cc[3] };
     }
 
     public abstract float getInnerRad();
@@ -180,7 +176,7 @@ public abstract class CelestialBody extends AbstractPositionEntity implements I3
         this.appmag = appmag.floatValue();
     }
 
-    public Vector2d getPositionSph() {
+    public Vector2 getPositionSph() {
         return posSph;
     }
 

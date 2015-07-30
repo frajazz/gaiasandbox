@@ -226,7 +226,7 @@ public class KeyMappings {
             public void run() {
                 EventManager.instance.post(Events.SHOW_DEBUG_CMD);
             }
-        }), Keys.CONTROL_LEFT, Keys.D);
+        }), Keys.SHIFT_LEFT, Keys.D);
 
         // CTRL + F -> Search dialog
         addMapping(new ProgramAction(txt("action.search"), new Runnable() {
@@ -234,7 +234,7 @@ public class KeyMappings {
             public void run() {
                 EventManager.instance.post(Events.SHOW_SEARCH_ACTION);
             }
-        }), Keys.CONTROL_LEFT, Keys.F);
+        }), Keys.SHIFT_LEFT, Keys.F);
 
         // CTRL + S -> Toggle stereoscopic mode
         addMapping(new ProgramAction(txt("action.toggle", txt("element.stereomode")), new Runnable() {
@@ -242,7 +242,7 @@ public class KeyMappings {
             public void run() {
                 EventManager.instance.post(Events.TOGGLE_STEREOSCOPIC, txt("notif.stereoscopic"));
             }
-        }), Keys.CONTROL_LEFT, Keys.S);
+        }), Keys.SHIFT_LEFT, Keys.S);
 
         // CTRL + SHIFT + S -> Switch stereoscopic profile
         addMapping(new ProgramAction(txt("action.switchstereoprofile"), new Runnable() {
@@ -250,7 +250,7 @@ public class KeyMappings {
             public void run() {
                 EventManager.instance.post(Events.TOGGLE_STEREO_PROFILE);
             }
-        }), Keys.CONTROL_LEFT, Keys.SHIFT_LEFT, Keys.S);
+        }), Keys.SHIFT_LEFT, Keys.SHIFT_LEFT, Keys.S);
 
         // CTRL + U -> Toggle clean (no GUI) mode
         addMapping(new ProgramAction(txt("action.toggle", txt("element.cleanmode")), new Runnable() {
@@ -258,7 +258,7 @@ public class KeyMappings {
             public void run() {
                 EventManager.instance.post(Events.TOGGLE_CLEANMODE, txt("notif.cleanmode"));
             }
-        }), Keys.CONTROL_LEFT, Keys.U);
+        }), Keys.SHIFT_LEFT, Keys.U);
 
         // CTRL + P -> Change pixel renderer
         addMapping(new ProgramAction(txt("action.toggle", txt("element.pixelrenderer")), new Runnable() {
@@ -267,7 +267,7 @@ public class KeyMappings {
                 EventManager.instance.post(Events.PIXEL_RENDERER_CMD, (GlobalConf.scene.PIXEL_RENDERER + 1) % 3);
                 EventManager.instance.post(Events.PIXEL_RENDERER_UPDATE);
             }
-        }), Keys.CONTROL_LEFT, Keys.P);
+        }), Keys.SHIFT_LEFT, Keys.P);
 
         // CTRL + G -> Travel to focus object
         addMapping(new ProgramAction(txt("action.gotoobject"), new Runnable() {
@@ -275,7 +275,7 @@ public class KeyMappings {
             public void run() {
                 EventManager.instance.post(Events.GO_TO_OBJECT_CMD);
             }
-        }), Keys.CONTROL_LEFT, Keys.G);
+        }), Keys.SHIFT_LEFT, Keys.G);
 
     }
 

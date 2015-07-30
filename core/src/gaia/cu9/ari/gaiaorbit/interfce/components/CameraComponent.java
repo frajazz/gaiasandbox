@@ -24,9 +24,9 @@ import com.badlogic.gdx.utils.Align;
 
 public class CameraComponent extends GuiComponent implements IObserver {
 
-    protected OwnLabel fov, speed, turn, rotate, date;
+    protected OwnLabel /*fov,*/speed, turn, rotate, date;
     protected SelectBox<String> cameraMode, cameraSpeedLimit;
-    protected Slider fieldOfView, cameraSpeed, turnSpeed, rotateSpeed;
+    protected Slider /*fieldOfView,*/cameraSpeed, turnSpeed, rotateSpeed;
     protected CheckBox focusLock;
 
     public CameraComponent(Skin skin, Stage stage) {
@@ -66,24 +66,24 @@ public class CameraComponent extends GuiComponent implements IObserver {
             }
         });
 
-        Label fovLabel = new Label(txt("gui.camera.fov"), skin, "default");
-        fieldOfView = new Slider(Constants.MIN_FOV, Constants.MAX_FOV, 1, false, skin);
-        fieldOfView.setName("field of view");
-        fieldOfView.setValue(GlobalConf.scene.CAMERA_FOV);
-        fieldOfView.addListener(new EventListener() {
-            @Override
-            public boolean handle(Event event) {
-                if (event instanceof ChangeEvent) {
-                    float value = MathUtilsd.clamp(fieldOfView.getValue(), Constants.MIN_FOV, Constants.MAX_FOV);
-                    EventManager.instance.post(Events.FOV_CHANGED_CMD, value);
-                    fov.setText(Integer.toString((int) value) + "°");
-                    return true;
-                }
-                return false;
-            }
-
-        });
-        fov = new OwnLabel(Integer.toString((int) GlobalConf.scene.CAMERA_FOV) + "°", skin, "default");
+        //        Label fovLabel = new Label(txt("gui.camera.fov"), skin, "default");
+        //        fieldOfView = new Slider(Constants.MIN_FOV, Constants.MAX_FOV, 1, false, skin);
+        //        fieldOfView.setName("field of view");
+        //        fieldOfView.setValue(GlobalConf.scene.CAMERA_FOV);
+        //        fieldOfView.addListener(new EventListener() {
+        //            @Override
+        //            public boolean handle(Event event) {
+        //                if (event instanceof ChangeEvent) {
+        //                    float value = MathUtilsd.clamp(fieldOfView.getValue(), Constants.MIN_FOV, Constants.MAX_FOV);
+        //                    EventManager.instance.post(Events.FOV_CHANGED_CMD, value);
+        //                    fov.setText(Integer.toString((int) value) + "°");
+        //                    return true;
+        //                }
+        //                return false;
+        //            }
+        //
+        //        });
+        //        fov = new OwnLabel(Integer.toString((int) GlobalConf.scene.CAMERA_FOV) + "°", skin, "default");
 
         /** CAMERA SPEED LIMIT **/
         String[] speedLimits = new String[14];
@@ -190,12 +190,12 @@ public class CameraComponent extends GuiComponent implements IObserver {
         VerticalGroup cameraGroup = new VerticalGroup().align(Align.left);
         cameraGroup.addActor(modeLabel);
         cameraGroup.addActor(cameraMode);
-        cameraGroup.addActor(fovLabel);
+        //cameraGroup.addActor(fovLabel);
 
-        HorizontalGroup fovGroup = new HorizontalGroup();
-        fovGroup.space(3);
-        fovGroup.addActor(fieldOfView);
-        fovGroup.addActor(fov);
+        //HorizontalGroup fovGroup = new HorizontalGroup();
+        //fovGroup.space(3);
+        //fovGroup.addActor(fieldOfView);
+        //fovGroup.addActor(fov);
 
         HorizontalGroup speedGroup = new HorizontalGroup();
         speedGroup.space(3);
@@ -212,7 +212,7 @@ public class CameraComponent extends GuiComponent implements IObserver {
         turnGroup.addActor(turnSpeed);
         turnGroup.addActor(turn);
 
-        cameraGroup.addActor(fovGroup);
+        //cameraGroup.addActor(fovGroup);
         cameraGroup.addActor(new Label(txt("gui.camera.speedlimit"), skin, "default"));
         cameraGroup.addActor(cameraSpeedLimit);
         cameraGroup.addActor(new Label(txt("gui.camera.speed"), skin, "default"));

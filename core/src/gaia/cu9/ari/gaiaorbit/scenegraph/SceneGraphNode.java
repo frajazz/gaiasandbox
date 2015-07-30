@@ -4,7 +4,7 @@ import gaia.cu9.ari.gaiaorbit.render.ComponentType;
 import gaia.cu9.ari.gaiaorbit.render.IRenderable;
 import gaia.cu9.ari.gaiaorbit.render.SceneGraphRenderer;
 import gaia.cu9.ari.gaiaorbit.scenegraph.octreewrapper.AbstractOctreeWrapper;
-import gaia.cu9.ari.gaiaorbit.util.concurrent.ThreadIndexer;
+import gaia.cu9.ari.gaiaorbit.util.MyPools;
 import gaia.cu9.ari.gaiaorbit.util.math.Matrix4d;
 import gaia.cu9.ari.gaiaorbit.util.math.Vector2d;
 import gaia.cu9.ari.gaiaorbit.util.math.Vector3d;
@@ -20,7 +20,6 @@ import com.badlogic.gdx.math.Matrix4;
 import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.utils.Bits;
 import com.badlogic.gdx.utils.Pool;
-import com.badlogic.gdx.utils.Pools;
 
 /**
  * A scene graph entity.
@@ -111,7 +110,7 @@ public class SceneGraphNode implements ISceneGraphNode, IPosition {
     public static ISceneGraph sg;
 
     /** The identifier **/
-    public Long id;
+    public int id = -1;
 
     /**
      * The parent entity.
@@ -181,7 +180,7 @@ public class SceneGraphNode implements ISceneGraphNode, IPosition {
         this.transform.position = new Vector3d();
     }
 
-    public SceneGraphNode(long id) {
+    public SceneGraphNode(int id) {
         this();
         this.id = id;
     }
@@ -347,8 +346,8 @@ public class SceneGraphNode implements ISceneGraphNode, IPosition {
         return null;
     }
 
-    public SceneGraphNode getNode(Long id) {
-        if (this.id != null && this.id.equals(id)) {
+    public SceneGraphNode getNode(int id) {
+        if (this.id >= 0 && this.id == id) {
             return this;
         } else if (children != null) {
             int size = children.size();
@@ -478,7 +477,7 @@ public class SceneGraphNode implements ISceneGraphNode, IPosition {
      * @return
      */
     public <T extends SceneGraphNode> T getSimpleCopy() {
-        Pool<? extends SceneGraphNode> pool = Pools.get(this.getClass());
+        Pool<? extends SceneGraphNode> pool = MyPools.get(this.getClass());
         T copy = (T) pool.obtain();
         copy.name = this.name;
         copy.parentName = this.parentName;
@@ -504,7 +503,7 @@ public class SceneGraphNode implements ISceneGraphNode, IPosition {
         if (this.children != null)
             this.children.clear();
         Class clazz = this.getClass();
-        Pools.get(clazz).free(this);
+        MyPools.get(clazz).free(this);
     }
 
     /**
@@ -525,12 +524,12 @@ public class SceneGraphNode implements ISceneGraphNode, IPosition {
 
     protected void addToRender(IRenderable renderable, RenderGroup rg) {
         if (SceneGraphRenderer.visible[ct.ordinal()] || (!SceneGraphRenderer.visible[ct.ordinal()] && SceneGraphRenderer.alphas[ct.ordinal()] > 0)) {
-            SceneGraphRenderer.render_lists.get(rg).add(renderable, ThreadIndexer.inst().i());
+            SceneGraphRenderer.render_lists.get(rg).add(renderable);
         }
     }
 
     protected boolean isInRender(IRenderable renderable, RenderGroup rg) {
-        return SceneGraphRenderer.render_lists.get(rg).contains(renderable, ThreadIndexer.inst().i());
+        return SceneGraphRenderer.render_lists.get(rg).contains(renderable);
     }
 
     public SceneGraphNode getFirstStarAncestor() {

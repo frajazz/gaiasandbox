@@ -55,8 +55,7 @@ project(":desktop") {
         compile "com.badlogicgames.gdx:gdx-controllers-platform:$gdxVersion:natives-desktop"
 		compile "org.python:jython-standalone:$jythonVersion"
 		compile "com.miglayout:miglayout-swing:$miglayoutVersion"
-		compile files('lib/pgslookandfeel-1.1.2.jar',
-					'../core/lib/postprocessing.jar',
+		compile files('../core/lib/postprocessing.jar',
 					'../android/assets')
     }
 }

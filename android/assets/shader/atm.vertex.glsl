@@ -1,8 +1,6 @@
 #ifdef GL_ES
-#define LOWP lowp
 precision mediump float;
-#else
-#define LOWP 
+precision mediump int;
 #endif
 
 attribute vec3 a_position;
@@ -87,7 +85,7 @@ void main(void) {
 
     // Now loop through the sample rays
     vec3 v3FrontColor = vec3 (0.0);
-    for (int i = 0; i < nSamples; i++) {
+    for (int i = 0; i < 11; i++) {
 	float fHeight = length (v3SamplePoint);
 	float fDepth = exp (fScaleOverScaleDepth * (fInnerRadius - fHeight));
 	float fLightAngle = dot (v3LightPos, v3SamplePoint) / fHeight;

@@ -1,4 +1,8 @@
-#version 120
+#ifdef GL_ES
+precision mediump float;
+precision mediump int;
+#endif
+
 varying vec4 v_color;
 varying vec2 v_texCoords;
 varying float v_opacity;

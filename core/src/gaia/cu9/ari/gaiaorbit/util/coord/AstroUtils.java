@@ -434,14 +434,14 @@ public class AstroUtils {
     }
 
     public static double getJulianDate(Date date) {
-        int year = date.getYear();
-        int month = date.getMonth();
+        int year = date.getYear() + 1900;
+        int month = date.getMonth() + 1;
         int day = date.getDate();
 
         int hour = date.getHours();
         int min = date.getMinutes();
         int sec = date.getSeconds();
-        int nanos = ((Timestamp) date).getNanos();
+        int nanos = 0;
         return getJulianDate(year, month, day, hour, min, sec, nanos, true);
     }
 

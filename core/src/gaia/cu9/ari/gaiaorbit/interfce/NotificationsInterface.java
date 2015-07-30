@@ -166,14 +166,16 @@ public class NotificationsInterface extends Table implements IObserver {
                 if (bool == null) {
                     addMessage(I18n.bundle.format("notif.toggle", I18n.bundle.format("gui.time")));
                 } else {
-                    addMessage(I18n.bundle.format("notif.simulation.pause", (bool ? 0 : 1)));
+                    addMessage(I18n.bundle.get("notif.simulation." + (bool ? "resume" : "pause")));
                 }
                 break;
             case TOGGLE_VISIBILITY_CMD:
-                if (data.length == 2)
-                    addMessage(I18n.bundle.format("notif.visibility.onoff", (String) data[0], ((Boolean) data[1]) ? 1 : 0));
-                else
+                if (data.length >= 3) {
+                    boolean on = (Boolean) data[2];
+                    addMessage(I18n.bundle.format("notif.visibility." + (on ? "on" : "off"), (String) data[0]));
+                } else {
                     addMessage(I18n.bundle.format("notif.visibility.toggle", (String) data[0]));
+                }
                 break;
             case FOCUS_LOCK_CMD:
             case TOGGLE_AMBIENT_LIGHT:

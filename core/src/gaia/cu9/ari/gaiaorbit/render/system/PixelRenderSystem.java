@@ -29,7 +29,6 @@ public class PixelRenderSystem extends ImmediateRenderSystem implements IObserve
 
     public PixelRenderSystem(RenderGroup rg, int priority, float[] alphas) {
         super(rg, priority, alphas);
-
         EventManager.instance.subscribe(this, Events.TRANSIT_COLOUR_CMD, Events.ONLY_OBSERVED_STARS_CMD);
     }
 
@@ -44,6 +43,7 @@ public class PixelRenderSystem extends ImmediateRenderSystem implements IObserve
         shaderProgram.setUniformf("u_pointAlphaMin", GlobalConf.scene.POINT_ALPHA_MIN);
         shaderProgram.setUniformf("u_pointAlphaMax", GlobalConf.scene.POINT_ALPHA_MAX);
         shaderProgram.end();
+
     }
 
     @Override
@@ -62,10 +62,8 @@ public class PixelRenderSystem extends ImmediateRenderSystem implements IObserve
 
         curr.vertices = new float[maxVertices * (curr.mesh.getVertexAttributes().vertexSize / 4)];
         curr.vertexSize = curr.mesh.getVertexAttributes().vertexSize / 4;
-        curr.colorOffset = curr.mesh.getVertexAttribute(Usage.ColorPacked) != null ? curr.mesh.getVertexAttribute(Usage.ColorPacked).offset / 4
-                : 0;
-        additionalOffset = curr.mesh.getVertexAttribute(Usage.Generic) != null ? curr.mesh.getVertexAttribute(Usage.Generic).offset / 4
-                : 0;
+        curr.colorOffset = curr.mesh.getVertexAttribute(Usage.ColorPacked) != null ? curr.mesh.getVertexAttribute(Usage.ColorPacked).offset / 4 : 0;
+        additionalOffset = curr.mesh.getVertexAttribute(Usage.Generic) != null ? curr.mesh.getVertexAttribute(Usage.Generic).offset / 4 : 0;
     }
 
     @Override
@@ -78,7 +76,7 @@ public class PixelRenderSystem extends ImmediateRenderSystem implements IObserve
             for (int i = 0; i < size; i++) {
                 // 2 FPS gain
                 CelestialBody cb = (CelestialBody) renderables.get(i);
-                float[] col = starColorTransit ? cb.ccTransit : cb.ccPale;
+                float[] col = starColorTransit ? cb.ccTransit : cb.cc;
                 // COLOR
                 curr.vertices[curr.vertexIdx + curr.colorOffset] = Color.toFloatBits(col[0], col[1], col[2], 1.0f);
 
@@ -99,13 +97,13 @@ public class PixelRenderSystem extends ImmediateRenderSystem implements IObserve
             // Put flag down
             POINT_UPDATE_FLAG = false;
         }
-
         shaderProgram.begin();
         shaderProgram.setUniformMatrix("u_projModelView", camera.getCamera().combined);
         shaderProgram.setUniformf("u_camPos", camera.getCurrent().getPos().setVector3(aux));
         shaderProgram.setUniformf("u_fovFactor", camera.getFovFactor());
         shaderProgram.setUniformf("u_alpha", alphas[0]);
-        shaderProgram.setUniformf("u_starBrightness", GlobalConf.scene.STAR_BRIGHTNESS);
+        shaderProgram.setUniformf("u_starBrightness", GlobalConf.scene.STAR_BRIGHTNESS * 15f);
+        shaderProgram.setUniformf("u_pointSize", 1f);
         curr.mesh.setVertices(curr.vertices, 0, curr.vertexIdx);
         curr.mesh.render(shaderProgram, ShapeType.Point.getGlType());
         shaderProgram.end();
@@ -129,7 +127,7 @@ public class PixelRenderSystem extends ImmediateRenderSystem implements IObserve
         if (event == Events.TRANSIT_COLOUR_CMD) {
             starColorTransit = (boolean) data[1];
             POINT_UPDATE_FLAG = true;
-        }else if(event == Events.ONLY_OBSERVED_STARS_CMD){
+        } else if (event == Events.ONLY_OBSERVED_STARS_CMD) {
             POINT_UPDATE_FLAG = true;
         }
     }

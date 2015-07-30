@@ -15,11 +15,11 @@ public class BrightestStars implements IAggregationAlgorithm<Particle> {
     // Minimum number of objects under which we do not need to break the octree further
     private static final int MIN_PART = 1500;
     Comparator<Particle> comp;
-    long starId;
+    int starId;
 
     public BrightestStars() {
         comp = new StarBrightnessComparator();
-        starId = System.currentTimeMillis();
+        starId = (int) System.currentTimeMillis();
     }
 
     @Override

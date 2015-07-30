@@ -9,6 +9,7 @@ import gaia.cu9.ari.gaiaorbit.scenegraph.ICamera;
 import gaia.cu9.ari.gaiaorbit.scenegraph.SceneGraphNode;
 import gaia.cu9.ari.gaiaorbit.scenegraph.Transform;
 import gaia.cu9.ari.gaiaorbit.util.Logger;
+import gaia.cu9.ari.gaiaorbit.util.MyPools;
 import gaia.cu9.ari.gaiaorbit.util.time.ITimeFrameProvider;
 import gaia.cu9.ari.gaiaorbit.util.tree.OctreeNode;
 
@@ -18,7 +19,6 @@ import java.util.List;
 import java.util.Map;
 
 import com.badlogic.gdx.utils.Pool;
-import com.badlogic.gdx.utils.Pools;
 
 /**
  * Abstract Octree wrapper with the common parts of the regular Octree wrapper and
@@ -195,7 +195,7 @@ public abstract class AbstractOctreeWrapper extends SceneGraphNode implements It
     @Override
     public <T extends SceneGraphNode> T getSimpleCopy() {
         Class<? extends AbstractOctreeWrapper> clazz = this.getClass();
-        Pool<? extends AbstractOctreeWrapper> pool = Pools.get(clazz);
+        Pool<? extends AbstractOctreeWrapper> pool = MyPools.get(clazz);
         try {
             AbstractOctreeWrapper instance = pool.obtain();
             instance.copy = true;

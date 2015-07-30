@@ -2,6 +2,7 @@ package gaia.cu9.ari.gaiaorbit.data;
 
 import gaia.cu9.ari.gaiaorbit.data.bean.HYGBean;
 import gaia.cu9.ari.gaiaorbit.data.stars.HYGBinaryLoader;
+import gaia.cu9.ari.gaiaorbit.scenegraph.SceneGraphNode;
 import gaia.cu9.ari.gaiaorbit.util.Logger;
 
 import java.io.FileNotFoundException;
@@ -28,9 +29,12 @@ public class HYGCatalogLoader extends AsynchronousAssetLoader<HYGBean, HYGCatalo
         loader.initialize(file);
         bean = new HYGBean();
         try {
-            bean.list.addAll(loader.loadCatalog());
+            bean.addAll(loader.loadCatalog());
         } catch (FileNotFoundException e) {
             Logger.error(e);
+        }
+        for (SceneGraphNode n : bean.list()) {
+            n.initialize();
         }
 
     }

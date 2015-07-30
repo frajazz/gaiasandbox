@@ -26,6 +26,10 @@ public class I18n {
         }
     }
 
+    public static void initialize(FileHandle fh) {
+        forceinit(fh);
+    }
+
     public static boolean forceinit(FileHandle baseFileHandle) {
         if (GlobalConf.program == null || GlobalConf.program.LOCALE.isEmpty()) {
             // Use system default
