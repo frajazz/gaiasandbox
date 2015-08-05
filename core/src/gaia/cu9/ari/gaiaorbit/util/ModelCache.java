@@ -47,18 +47,8 @@ public class ModelCache {
                 float diameter2 = ((Double) params.get("diameter")).floatValue() / 2f;
                 // Initialize milky way model
                 mb.begin();
-                mb.part("mw-up", GL20.GL_TRIANGLES, attributes, mat).
-                        rect(diameter2, 0, -diameter2,
-                                diameter2, 0, diameter2,
-                                -diameter2, 0, diameter2,
-                                -diameter2, 0, -diameter2,
-                                0, 1, 0);
-                mb.part("mw-down", GL20.GL_TRIANGLES, attributes, mat).
-                        rect(-diameter2, -0.001f, diameter2,
-                                diameter2, -0.001f, diameter2,
-                                diameter2, -0.001f, -diameter2,
-                                -diameter2, -0.001f, -diameter2,
-                                0, 1, 0);
+                mb.part("mw-up", GL20.GL_TRIANGLES, attributes, mat).rect(diameter2, 0, -diameter2, diameter2, 0, diameter2, -diameter2, 0, diameter2, -diameter2, 0, -diameter2, 0, 1, 0);
+                mb.part("mw-down", GL20.GL_TRIANGLES, attributes, mat).rect(diameter2, 0, -diameter2, -diameter2, 0, -diameter2, -diameter2, 0, diameter2, diameter2, 0, diameter2, 0, 1, 0);
                 model = mb.end();
                 break;
             case "cylinder":
@@ -82,8 +72,7 @@ public class ModelCache {
                 Float innerRad = ((Double) params.get("innerradius")).floatValue();
                 Float outerRad = ((Double) params.get("outerradius")).floatValue();
 
-                model = ModelCache.cache.mb.createSphereRing(1, quality, quality, innerRad, outerRad, divisions,
-                        mat, ringMat, Usage.Position | Usage.Normal | Usage.TextureCoordinates);
+                model = ModelCache.cache.mb.createSphereRing(1, quality, quality, innerRad, outerRad, divisions, mat, ringMat, Usage.Position | Usage.Normal | Usage.TextureCoordinates);
                 break;
             }
         }

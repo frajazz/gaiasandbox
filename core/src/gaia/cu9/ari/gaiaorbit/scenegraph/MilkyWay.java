@@ -19,6 +19,7 @@ import com.badlogic.gdx.graphics.g3d.ModelBatch;
 import com.badlogic.gdx.graphics.g3d.attributes.ColorAttribute;
 import com.badlogic.gdx.graphics.glutils.ShaderProgram;
 import com.badlogic.gdx.math.Matrix4;
+import com.badlogic.gdx.math.Vector3;
 
 public class MilkyWay extends Blob implements IModelRenderable, I3DTextRenderable {
     float[] labelColour = new float[] { 1f, 1f, 1f, 1f };
@@ -70,12 +71,16 @@ public class MilkyWay extends Blob implements IModelRenderable, I3DTextRenderabl
     @Override
     public void updateLocal(ITimeFrameProvider time, ICamera camera) {
         super.updateLocal(time, camera);
-        // Directional light comes from camera
-        if (mc != null) {
-            float[] camdir = camera.getDirection().valuesf();
-            mc.dlight.direction.set(-camdir[0], -camdir[1], -camdir[2]);
-        }
+        // Directional light comes from up
         updateLocalTransform();
+        if (mc != null) {
+            Vector3 d = auxVector3f;
+            d.set(0, 1, 0);
+            d.mul(coordinateSystem);
+
+            mc.dlight.direction.set(d);
+        }
+
     }
 
     /**

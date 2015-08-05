@@ -61,7 +61,7 @@
 							"diameter" : 1.0
 							},
 				"texture" : {
-							"base" : "data/tex/milky_way.png"
+							"base" : "data/tex/milky_way_small.png"
 							}
 				}
 	},
