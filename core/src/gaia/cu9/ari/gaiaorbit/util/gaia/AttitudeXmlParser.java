@@ -112,7 +112,7 @@ public class AttitudeXmlParser {
     }
 
     private static AttitudeIntervalBean parseFile(FileHandle fh, Duration duration) throws IOException {
-        BaseAttitudeDataServer result = null;
+        BaseAttitudeDataServer<?> result = null;
 
         XmlReader reader = new XmlReader();
         XmlReader.Element element = reader.parse(fh);
