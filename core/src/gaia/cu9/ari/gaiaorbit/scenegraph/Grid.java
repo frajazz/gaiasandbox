@@ -12,9 +12,6 @@ import gaia.cu9.ari.gaiaorbit.util.math.Matrix4d;
 import gaia.cu9.ari.gaiaorbit.util.math.Vector3d;
 import gaia.cu9.ari.gaiaorbit.util.time.ITimeFrameProvider;
 
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
-
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.assets.AssetManager;
 import com.badlogic.gdx.graphics.GL20;
@@ -29,6 +26,9 @@ import com.badlogic.gdx.graphics.g3d.attributes.BlendingAttribute;
 import com.badlogic.gdx.graphics.g3d.attributes.ColorAttribute;
 import com.badlogic.gdx.math.Matrix4;
 import com.badlogic.gdx.math.Vector3;
+import com.badlogic.gdx.utils.reflect.ClassReflection;
+import com.badlogic.gdx.utils.reflect.Method;
+import com.badlogic.gdx.utils.reflect.ReflectionException;
 
 public class Grid extends AbstractPositionEntity implements IModelRenderable, IAnnotationsRenderable {
     private static final float ANNOTATIONS_ALPHA = 0.8f;
@@ -56,8 +56,7 @@ public class Grid extends AbstractPositionEntity implements IModelRenderable, IA
 
     @Override
     public void doneLoading(AssetManager manager) {
-        Material material = new Material(new BlendingAttribute(cc[3]),
-                new ColorAttribute(ColorAttribute.Diffuse, cc[0], cc[1], cc[2], cc[3]));
+        Material material = new Material(new BlendingAttribute(cc[3]), new ColorAttribute(ColorAttribute.Diffuse, cc[0], cc[1], cc[2], cc[3]));
         // Load model
         ModelBuilder2 modelBuilder = ModelCache.cache.mb;
         modelBuilder.begin();
@@ -71,11 +70,11 @@ public class Grid extends AbstractPositionEntity implements IModelRenderable, IA
         if (transformName != null) {
             Class<Coordinates> c = Coordinates.class;
             try {
-                Method m = c.getMethod(transformName);
+                Method m = ClassReflection.getMethod(c, transformName);
                 Matrix4d trf = (Matrix4d) m.invoke(null);
                 Matrix4 aux = new Matrix4(trf.valuesf());
                 localTransform.mul(aux);
-            } catch (NoSuchMethodException | SecurityException | IllegalAccessException | IllegalArgumentException | InvocationTargetException e) {
+            } catch (ReflectionException e) {
                 Gdx.app.error(Grid.class.getName(), "Error getting/invoking method Coordinates." + transformName + "()");
             }
         } else {

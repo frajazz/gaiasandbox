@@ -13,12 +13,12 @@ import gaia.cu9.ari.gaiaorbit.util.math.Matrix4d;
 import gaia.cu9.ari.gaiaorbit.util.math.Vector3d;
 import gaia.cu9.ari.gaiaorbit.util.time.ITimeFrameProvider;
 
-import java.lang.reflect.Method;
 import java.util.Date;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.assets.AssetManager;
 import com.badlogic.gdx.utils.reflect.ClassReflection;
+import com.badlogic.gdx.utils.reflect.Method;
 import com.badlogic.gdx.utils.reflect.ReflectionException;
 
 public class Orbit extends LineObject {
@@ -170,7 +170,7 @@ public class Orbit extends LineObject {
     public void setTransformFunction(String transformFunction) {
         if (transformFunction != null && !transformFunction.isEmpty()) {
             try {
-                Method m = Coordinates.class.getMethod(transformFunction);
+                Method m = ClassReflection.getMethod(Coordinates.class, transformFunction);
                 this.transformFunction = (Matrix4d) m.invoke(null);
             } catch (Exception e) {
                 Logger.error(e);

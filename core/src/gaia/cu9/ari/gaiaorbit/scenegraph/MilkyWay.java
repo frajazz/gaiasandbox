@@ -10,9 +10,6 @@ import gaia.cu9.ari.gaiaorbit.util.math.Matrix4d;
 import gaia.cu9.ari.gaiaorbit.util.math.Vector3d;
 import gaia.cu9.ari.gaiaorbit.util.time.ITimeFrameProvider;
 
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
-
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.assets.AssetManager;
 import com.badlogic.gdx.graphics.GL20;
@@ -22,6 +19,9 @@ import com.badlogic.gdx.graphics.g3d.ModelBatch;
 import com.badlogic.gdx.graphics.g3d.attributes.ColorAttribute;
 import com.badlogic.gdx.graphics.glutils.ShaderProgram;
 import com.badlogic.gdx.math.Matrix4;
+import com.badlogic.gdx.utils.reflect.ClassReflection;
+import com.badlogic.gdx.utils.reflect.Method;
+import com.badlogic.gdx.utils.reflect.ReflectionException;
 
 public class MilkyWay extends Blob implements IModelRenderable, I3DTextRenderable {
     float[] labelColour = new float[] { 1f, 1f, 1f, 1f };
@@ -54,10 +54,10 @@ public class MilkyWay extends Blob implements IModelRenderable, I3DTextRenderabl
             coordinateSystem = new Matrix4();
             Class<Coordinates> c = Coordinates.class;
             try {
-                Method m = c.getMethod(transformName);
+                Method m = ClassReflection.getMethod(c, transformName);
                 Matrix4d trf = (Matrix4d) m.invoke(null);
                 coordinateSystem.set(trf.valuesf());
-            } catch (NoSuchMethodException | SecurityException | IllegalAccessException | IllegalArgumentException | InvocationTargetException e) {
+            } catch (ReflectionException e) {
                 Gdx.app.error(Mw.class.getName(), "Error getting/invoking method Coordinates." + transformName + "()");
             }
         } else {

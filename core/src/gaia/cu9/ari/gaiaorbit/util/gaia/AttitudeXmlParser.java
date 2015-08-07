@@ -13,7 +13,6 @@ import gaia.cu9.ari.gaiaorbit.util.units.Quantity;
 import java.io.File;
 import java.io.FileFilter;
 import java.io.IOException;
-import java.lang.reflect.InvocationTargetException;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -114,7 +113,7 @@ public class AttitudeXmlParser {
         return getDate(activTime);
     }
 
-    private static AttitudeIntervalBean parseFile(FileHandle fh, Duration duration) throws IOException, ReflectionException, NoSuchMethodException, IllegalAccessException, InvocationTargetException, InstantiationException {
+    private static AttitudeIntervalBean parseFile(FileHandle fh, Duration duration) throws IOException, ReflectionException {
 
         BaseAttitudeDataServer result = null;
 

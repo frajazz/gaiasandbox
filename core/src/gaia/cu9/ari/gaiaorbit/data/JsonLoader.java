@@ -5,21 +5,19 @@ import gaia.cu9.ari.gaiaorbit.util.GlobalResources;
 import gaia.cu9.ari.gaiaorbit.util.I18n;
 import gaia.cu9.ari.gaiaorbit.util.Logger;
 
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 import java.util.TreeMap;
-import java.util.zip.DataFormatException;
 
 import com.badlogic.gdx.utils.JsonReader;
 import com.badlogic.gdx.utils.JsonValue;
 import com.badlogic.gdx.utils.JsonValue.ValueType;
 import com.badlogic.gdx.utils.reflect.ClassReflection;
 import com.badlogic.gdx.utils.reflect.Constructor;
+import com.badlogic.gdx.utils.reflect.Method;
 import com.badlogic.gdx.utils.reflect.ReflectionException;
 
 /**
@@ -67,7 +65,7 @@ public class JsonLoader<T extends SceneGraphNode> implements ISceneGraphNodeProv
                     T object = (T) convertJsonToObject(child, clazz);
 
                     // Only load and add if it display is activated
-                    Method m = clazz.getMethod("initialize");
+                    Method m = ClassReflection.getMethod(clazz, "initialize");
                     m.invoke(object);
 
                     bodies.add(object);
@@ -89,15 +87,15 @@ public class JsonLoader<T extends SceneGraphNode> implements ISceneGraphNodeProv
      * @param json The {@link JsonValue} for the object to convert.
      * @param clazz The class of the object.
      * @return The java object of the given class.
+     * @throws ReflectionException 
      * @throws SecurityException 
      * @throws NoSuchMethodException 
-     * @throws InvocationTargetException 
      * @throws IllegalArgumentException 
      * @throws IllegalAccessException 
      * @throws ClassNotFoundException 
      * @throws InstantiationException 
      */
-    private Object convertJsonToObject(JsonValue json, Class<?> clazz) throws DataFormatException, NoSuchMethodException, SecurityException, IllegalAccessException, IllegalArgumentException, InvocationTargetException, ClassNotFoundException {
+    private Object convertJsonToObject(JsonValue json, Class<?> clazz) throws ReflectionException {
         Object instance;
         try {
             if (json.has("args")) {
@@ -116,7 +114,7 @@ public class JsonLoader<T extends SceneGraphNode> implements ISceneGraphNodeProv
                 instance = ClassReflection.newInstance(clazz);
             }
         } catch (Exception e) {
-            throw new DataFormatException("Unable to instantiate class: " + e.getMessage());
+            throw new RuntimeException("Unable to instantiate class: " + e.getMessage());
         }
         JsonValue attribute = json.child;
         while (attribute != null) {
@@ -172,7 +170,7 @@ public class JsonLoader<T extends SceneGraphNode> implements ISceneGraphNodeProv
                 if (m != null)
                     m.invoke(instance, value);
                 else
-                    throw new NoSuchMethodException("No method " + methodName + " in class " + valueClass.toString() + " or its interfaces or superclass.");
+                    throw new ReflectionException("No method " + methodName + " in class " + valueClass.toString() + " or its interfaces or superclass.");
             }
             attribute = attribute.next;
         }
@@ -204,8 +202,8 @@ public class JsonLoader<T extends SceneGraphNode> implements ISceneGraphNodeProv
     private Method searchMethod(String methodName, Class<?> clazz, Class<?> source) {
         Method m = null;
         try {
-            m = source.getMethod(methodName, clazz);
-        } catch (NoSuchMethodException e) {
+            m = ClassReflection.getMethod(source, methodName, clazz);
+        } catch (ReflectionException e) {
             if (clazz == null) {
                 return null;
             }
@@ -216,9 +214,9 @@ public class JsonLoader<T extends SceneGraphNode> implements ISceneGraphNodeProv
             while (!found && i < interfaces.length) {
                 Class<?> current = interfaces[i];
                 try {
-                    m = source.getMethod(methodName, current);
+                    m = ClassReflection.getMethod(source, methodName, current);
                     found = true;
-                } catch (NoSuchMethodException e1) {
+                } catch (ReflectionException e1) {
                     // Not lucky
                 }
                 i++;
