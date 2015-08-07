@@ -12,6 +12,8 @@ import java.util.Set;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.assets.AssetManager;
+import com.badlogic.gdx.utils.reflect.ClassReflection;
+import com.badlogic.gdx.utils.reflect.ReflectionException;
 
 /**
  * Manages celestial body providers and gets their data.
@@ -33,7 +35,7 @@ public class SceneGraphNodeProviderManager {
         int i = 0;
         try {
             for (String className : providerClassNames) {
-                Class clazz = Class.forName(className);
+                Class clazz = ClassReflection.forName(className);
                 if (!ISceneGraphNodeProvider.class.isAssignableFrom(clazz)) {
                     Gdx.app.error("SceneGraphNodeProviderManager", "Class " + clazz + " not instance of " + ISceneGraphNodeProvider.class.getCanonicalName());
                 } else {
@@ -55,14 +57,14 @@ public class SceneGraphNodeProviderManager {
             // No repeated providers
             if (!clazzes.contains(clazz)) {
                 try {
-                    ISceneGraphNodeProvider provider = clazz.newInstance();
+                    ISceneGraphNodeProvider provider = ClassReflection.newInstance(clazz);
 
                     PrefixedProperties pp = new PrefixedProperties(prop, clazz.getName() + ".");
 
                     provider.initialize(pp);
                     providers.add(provider);
                     clazzes.add(clazz);
-                } catch (InstantiationException | IllegalAccessException e) {
+                } catch (ReflectionException e) {
                     Gdx.app.log(SceneGraphNodeProviderManager.class.getSimpleName(), e.getLocalizedMessage());
                 }
             }

@@ -12,6 +12,7 @@ import com.badlogic.gdx.assets.loaders.AsynchronousAssetLoader;
 import com.badlogic.gdx.assets.loaders.FileHandleResolver;
 import com.badlogic.gdx.files.FileHandle;
 import com.badlogic.gdx.utils.Array;
+import com.badlogic.gdx.utils.reflect.ClassReflection;
 
 /**
  * Abstract data loader to rule them all.
@@ -35,7 +36,7 @@ public class OrbitDataLoader extends AsynchronousAssetLoader<OrbitData, OrbitDat
     public void loadAsync(AssetManager manager, String fileName, FileHandle file, OrbitDataLoaderParameter parameter) {
         IOrbitDataProvider provider;
         try {
-            provider = parameter.providerClass.newInstance();
+            provider = ClassReflection.newInstance(parameter.providerClass);
             provider.load(fileName, parameter);
             data = provider.getData();
         } catch (Exception e) {

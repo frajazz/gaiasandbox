@@ -9,6 +9,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Properties;
 
+import com.badlogic.gdx.utils.reflect.ClassReflection;
+
 /**
  * {@link ISceneGraphNodeProvider} that loads stars. It gets the stars from an implementation
  * of {@link ICatalogLoader}.
@@ -31,7 +33,7 @@ public class StarLoader implements ISceneGraphNodeProvider {
             String[] classes = properties.getProperty("loader").split("\\s+");
             loaders = new ICatalogLoader[classes.length];
             for (int i = 0; i < classes.length; i++) {
-                loaders[i] = (ICatalogLoader) Class.forName(classes[i]).newInstance();
+                loaders[i] = (ICatalogLoader) ClassReflection.forName(classes[i]).newInstance();
                 PrefixedProperties props = new PrefixedProperties(properties, loaders[i].getClass().getSimpleName() + ".");
                 loaders[i].initialize(props);
             }

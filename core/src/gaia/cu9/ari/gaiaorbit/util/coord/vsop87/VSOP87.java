@@ -6,6 +6,8 @@ import java.util.HashMap;
 import java.util.Map;
 
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.utils.reflect.ClassReflection;
+import com.badlogic.gdx.utils.reflect.ReflectionException;
 
 public class VSOP87 {
     public static VSOP87 instance;
@@ -28,13 +30,13 @@ public class VSOP87 {
             String name = GlobalResources.trueCapitalise(cb) + "VSOP87";
             Class<?> clazz = null;
             try {
-                clazz = Class.forName(pkg + name);
-            } catch (ClassNotFoundException e) {
+                clazz = ClassReflection.forName(pkg + name);
+            } catch (ReflectionException e) {
                 clazz = DummyVSOP87.class;
             }
             try {
-                elements.put(cb, (iVSOP87) clazz.newInstance());
-            } catch (InstantiationException | IllegalAccessException e) {
+                elements.put(cb, (iVSOP87) ClassReflection.newInstance(clazz));
+            } catch (ReflectionException e) {
                 Gdx.app.error("VSOP87", e.getLocalizedMessage());
             }
             tried.put(cb, true);

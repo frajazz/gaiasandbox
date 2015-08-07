@@ -7,8 +7,6 @@ import gaia.cu9.ari.gaiaorbit.util.Logger;
 import gaia.cu9.ari.gaiaorbit.util.PrefixedProperties;
 import gaia.cu9.ari.gaiaorbit.util.parse.Parser;
 
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -16,6 +14,9 @@ import java.util.Properties;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.math.Vector3;
+import com.badlogic.gdx.utils.reflect.ClassReflection;
+import com.badlogic.gdx.utils.reflect.Method;
+import com.badlogic.gdx.utils.reflect.ReflectionException;
 
 /**
  * Class that loads scene graph nodes.
@@ -47,8 +48,8 @@ public class NodeLoader<T extends SceneGraphNode> implements ISceneGraphNodeProv
                     String clazzName = pp.getProperty("impl");
 
                     @SuppressWarnings("unchecked")
-                    Class<T> clazz = (Class<T>) Class.forName(clazzName);
-                    T instance = clazz.newInstance();
+                    Class<T> clazz = (Class<T>) ClassReflection.forName(clazzName);
+                    T instance = ClassReflection.newInstance(clazz);
 
                     for (String key : keys) {
                         if (!key.equals("impl")) {
@@ -82,9 +83,9 @@ public class NodeLoader<T extends SceneGraphNode> implements ISceneGraphNodeProv
                                 }
 
                                 try {
-                                    Method m = clazz.getMethod("set" + GlobalResources.propertyToMethodName(key), valueClass);
+                                    Method m = ClassReflection.getMethod(clazz, "set" + GlobalResources.propertyToMethodName(key), valueClass);
                                     m.invoke(instance, val);
-                                } catch (NoSuchMethodException e) {
+                                } catch (ReflectionException e) {
                                     Logger.error(e);
                                 }
                             }
@@ -93,7 +94,7 @@ public class NodeLoader<T extends SceneGraphNode> implements ISceneGraphNodeProv
                     }
 
                     // Only load and add if it display is activated
-                    Method m = clazz.getMethod("initialize");
+                    Method m = ClassReflection.getMethod(clazz, "initialize");
                     m.invoke(instance);
 
                     bodies.add(instance);
@@ -103,8 +104,6 @@ public class NodeLoader<T extends SceneGraphNode> implements ISceneGraphNodeProv
                 Logger.info(this.getClass().getSimpleName(), I18n.bundle.format("notif.nodeloader", pnames.length, filePath));
 
             }
-        } catch (InvocationTargetException e) {
-            Gdx.app.error(NodeLoader.class.getSimpleName(), e.getTargetException().getLocalizedMessage());
         } catch (Exception e) {
             Gdx.app.error(NodeLoader.class.getSimpleName(), e.getLocalizedMessage());
         }

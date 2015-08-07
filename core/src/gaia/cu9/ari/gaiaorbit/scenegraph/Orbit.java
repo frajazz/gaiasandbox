@@ -18,6 +18,8 @@ import java.util.Date;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.assets.AssetManager;
+import com.badlogic.gdx.utils.reflect.ClassReflection;
+import com.badlogic.gdx.utils.reflect.ReflectionException;
 
 public class Orbit extends LineObject {
 
@@ -46,17 +48,17 @@ public class Orbit extends LineObject {
     @Override
     public void initialize() {
         try {
-            providerClass = (Class<? extends IOrbitDataProvider>) Class.forName(provider);
+            providerClass = (Class<? extends IOrbitDataProvider>) ClassReflection.forName(provider);
             // Orbit data
             IOrbitDataProvider provider;
             try {
-                provider = providerClass.newInstance();
+                provider = ClassReflection.newInstance(providerClass);
                 provider.load(oc.source, new OrbitDataLoader.OrbitDataLoaderParameter(name, providerClass, oc));
                 orbitData = provider.getData();
             } catch (Exception e) {
                 Gdx.app.error(getClass().getSimpleName(), e.getMessage());
             }
-        } catch (ClassNotFoundException e) {
+        } catch (ReflectionException e) {
             Gdx.app.error(getClass().getSimpleName(), e.getMessage());
         }
     }

@@ -26,6 +26,8 @@ import java.util.TreeMap;
 
 import com.badlogic.gdx.files.FileHandle;
 import com.badlogic.gdx.utils.XmlReader;
+import com.badlogic.gdx.utils.reflect.ClassReflection;
+import com.badlogic.gdx.utils.reflect.ReflectionException;
 
 /**
  * Parses the XML files with the attitudes and their activaton times into a binary search tree.
@@ -68,7 +70,7 @@ public class AttitudeXmlParser {
         FileHandle lastFH = null;
         Date lastDate = null;
         for (Date date : dates) {
-            if(lastDate != null && lastFH != null){
+            if (lastDate != null && lastFH != null) {
                 long elapsed = date.getTime() - lastDate.getTime();
                 Duration d = new Days(elapsed * Constants.MS_TO_H);
                 durationMap.put(lastFH, d);
@@ -80,7 +82,6 @@ public class AttitudeXmlParser {
         long elapsed = endOfMission.getTime() - lastDate.getTime();
         Duration d = new Hours(elapsed * Constants.MS_TO_H);
         durationMap.put(lastFH, d);
-
 
         // PARSE ATTITUDES
         for (FileHandle fh : list) {
@@ -113,7 +114,7 @@ public class AttitudeXmlParser {
         return getDate(activTime);
     }
 
-    private static AttitudeIntervalBean parseFile(FileHandle fh, Duration duration) throws IOException, ClassNotFoundException, NoSuchMethodException, IllegalAccessException, InvocationTargetException, InstantiationException {
+    private static AttitudeIntervalBean parseFile(FileHandle fh, Duration duration) throws IOException, ReflectionException, NoSuchMethodException, IllegalAccessException, InvocationTargetException, InstantiationException {
 
         BaseAttitudeDataServer result = null;
 
@@ -128,7 +129,7 @@ public class AttitudeXmlParser {
         Date activationTime = getDate(activTime);
         double startTimeNsSince2010 = (AstroUtils.getJulianDate(activationTime) - AstroUtils.JD_J2010) * AstroUtils.DAY_TO_NS;
 
-        Class clazz = Class.forName(className);
+        Class clazz = ClassReflection.forName(className);
 
         /** SCAN LAW ELEMENT **/
         XmlReader.Element scanlaw = model.getChildByName("scanlaw");
@@ -169,7 +170,7 @@ public class AttitudeXmlParser {
             msl.setRefXi(solarAspectAngle.get(Quantity.Angle.AngleUnit.RAD));
             msl.initialize();
 
-            MslAttitudeDataServer mslDatServ = (MslAttitudeDataServer) clazz.getConstructor(new Class[] { long.class, Duration.class, ModifiedScanningLaw.class }).newInstance(new Object[] { (long) startTimeNsSince2010, duration, msl });
+            MslAttitudeDataServer mslDatServ = (MslAttitudeDataServer) ClassReflection.getConstructor(clazz, new Class[] { long.class, Duration.class, ModifiedScanningLaw.class }).newInstance(new Object[] { (long) startTimeNsSince2010, duration, msl });
             mslDatServ.initialize();
             result = mslDatServ;
 
@@ -186,7 +187,7 @@ public class AttitudeXmlParser {
         } else if (className.contains("Epsl")) {
 
             Epsl.Mode mode = name.equals("EPSL_F") ? Epsl.Mode.FOLLOWING : Epsl.Mode.PRECEDING;
-            Epsl epsl = (Epsl) clazz.getConstructor(Epsl.Mode.class).newInstance(mode);
+            Epsl epsl = (Epsl) ClassReflection.getConstructor(clazz, Epsl.Mode.class).newInstance(mode);
 
             epsl.setRefTime((long) refEpochJ2010);
             epsl.setNuRef(precessionPhase.get(Quantity.Angle.AngleUnit.RAD));

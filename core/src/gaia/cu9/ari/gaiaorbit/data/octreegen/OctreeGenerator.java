@@ -10,6 +10,9 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
+import com.badlogic.gdx.utils.reflect.ClassReflection;
+import com.badlogic.gdx.utils.reflect.ReflectionException;
+
 public class OctreeGenerator {
 
     /** Is the octree centred at the sun? **/
@@ -22,8 +25,8 @@ public class OctreeGenerator {
 
     public OctreeGenerator(Class<? extends IAggregationAlgorithm> clazz) {
         try {
-            this.aggregation = clazz.newInstance();
-        } catch (InstantiationException | IllegalAccessException e) {
+            this.aggregation = ClassReflection.newInstance(clazz);
+        } catch (ReflectionException e) {
             e.printStackTrace();
         }
         this.pageid = new Longref(0l);

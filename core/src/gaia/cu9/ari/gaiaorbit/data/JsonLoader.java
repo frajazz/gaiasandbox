@@ -5,7 +5,6 @@ import gaia.cu9.ari.gaiaorbit.util.GlobalResources;
 import gaia.cu9.ari.gaiaorbit.util.I18n;
 import gaia.cu9.ari.gaiaorbit.util.Logger;
 
-import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
@@ -19,6 +18,9 @@ import java.util.zip.DataFormatException;
 import com.badlogic.gdx.utils.JsonReader;
 import com.badlogic.gdx.utils.JsonValue;
 import com.badlogic.gdx.utils.JsonValue.ValueType;
+import com.badlogic.gdx.utils.reflect.ClassReflection;
+import com.badlogic.gdx.utils.reflect.Constructor;
+import com.badlogic.gdx.utils.reflect.ReflectionException;
 
 /**
  * Implements the loading of scene graph nodes using libgdx's json library.
@@ -59,7 +61,7 @@ public class JsonLoader<T extends SceneGraphNode> implements ISceneGraphNodeProv
                     String clazzName = child.getString("impl");
 
                     @SuppressWarnings("unchecked")
-                    Class<Object> clazz = (Class<Object>) Class.forName(clazzName);
+                    Class<Object> clazz = (Class<Object>) ClassReflection.forName(clazzName);
 
                     // Convert to object and add to list
                     T object = (T) convertJsonToObject(child, clazz);
@@ -108,10 +110,10 @@ public class JsonLoader<T extends SceneGraphNode> implements ISceneGraphNodeProv
                     argumentTypes[i] = getValueClass(arg);
                     arguments[i] = getValue(arg);
                 }
-                Constructor<?> constructor = clazz.getConstructor(argumentTypes);
+                Constructor constructor = ClassReflection.getConstructor(clazz, argumentTypes);
                 instance = constructor.newInstance(arguments);
             } else {
-                instance = clazz.newInstance();
+                instance = ClassReflection.newInstance(clazz);
             }
         } catch (Exception e) {
             throw new DataFormatException("Unable to instantiate class: " + e.getMessage());
@@ -150,14 +152,14 @@ public class JsonLoader<T extends SceneGraphNode> implements ISceneGraphNodeProv
                 } else if (attribute.isObject()) {
                     String clazzName = attribute.has("impl") ? attribute.getString("impl") : GlobalResources.capitalise(attribute.name) + "Component";
                     try {
-                        valueClass = Class.forName(clazzName);
+                        valueClass = ClassReflection.forName(clazzName);
                         value = convertJsonToObject(attribute, valueClass);
-                    } catch (ClassNotFoundException e1) {
+                    } catch (ReflectionException e1) {
                         // Class not found, probably a component
                         try {
-                            valueClass = Class.forName(COMPONENTS_PACKAGE + clazzName);
+                            valueClass = ClassReflection.forName(COMPONENTS_PACKAGE + clazzName);
                             value = convertJsonToObject(attribute, valueClass);
-                        } catch (ClassNotFoundException e2) {
+                        } catch (ReflectionException e2) {
                             // We use a map
                             valueClass = Map.class;
                             value = convertJsonToMap(attribute);
