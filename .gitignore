@@ -38,10 +38,6 @@
    ehthumbs.db
    Thumbs.db
 
-# Desktop folder #
-##################
-desktop/
-
 # Output folder #
 #################
 releases/
