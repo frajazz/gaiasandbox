@@ -3,6 +3,7 @@ package gaia.cu9.ari.gaiaorbit.desktop;
 import gaia.cu9.ari.gaiaorbit.GaiaSandbox;
 import gaia.cu9.ari.gaiaorbit.data.FileLocator;
 import gaia.cu9.ari.gaiaorbit.desktop.concurrent.MultiThreadIndexer;
+import gaia.cu9.ari.gaiaorbit.desktop.format.DesktopNumberFormatFactory;
 import gaia.cu9.ari.gaiaorbit.desktop.gui.swing.ConfigDialog;
 import gaia.cu9.ari.gaiaorbit.desktop.gui.swing.HelpDialog;
 import gaia.cu9.ari.gaiaorbit.desktop.gui.swing.IconManager;
@@ -17,6 +18,7 @@ import gaia.cu9.ari.gaiaorbit.util.I18n;
 import gaia.cu9.ari.gaiaorbit.util.Logger;
 import gaia.cu9.ari.gaiaorbit.util.SysUtils;
 import gaia.cu9.ari.gaiaorbit.util.concurrent.ThreadIndexer;
+import gaia.cu9.ari.gaiaorbit.util.format.NumberFormatFactory;
 import gaia.cu9.ari.gaiaorbit.util.math.MathUtilsd;
 
 import java.awt.Font;
@@ -107,6 +109,9 @@ public class GaiaSandboxDesktop implements IObserver {
 
             // Initialize icons
             IconManager.initialise(new File("./data/ui/"));
+
+            // Initialize number format
+            NumberFormatFactory.initialize(new DesktopNumberFormatFactory());
 
             // Initialize key mappings
             KeyMappings.initialize();

@@ -3,8 +3,8 @@ package gaia.cu9.ari.gaiaorbit.interfce;
 import gaia.cu9.ari.gaiaorbit.render.ComponentType;
 import gaia.cu9.ari.gaiaorbit.scenegraph.ISceneGraph;
 import gaia.cu9.ari.gaiaorbit.util.GlobalResources;
-
-import java.text.DecimalFormat;
+import gaia.cu9.ari.gaiaorbit.util.format.INumberFormat;
+import gaia.cu9.ari.gaiaorbit.util.format.NumberFormatFactory;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.assets.AssetManager;
@@ -35,7 +35,7 @@ public class HUDGui implements IGui {
     /**
      * Number formats
      */
-    private DecimalFormat format, sformat;
+    private INumberFormat format, sformat;
 
     /** Lock object for synchronization **/
     private Object lock;
@@ -50,8 +50,8 @@ public class HUDGui implements IGui {
     @Override
     public void doneLoading(AssetManager assetManager) {
         skin = GlobalResources.skin;
-        format = new DecimalFormat("0.0###");
-        sformat = new DecimalFormat("0.###E0");
+        format = NumberFormatFactory.getFormatter("0.0###");
+        sformat = NumberFormatFactory.getFormatter("0.###E0");
 
         initialize();
     }

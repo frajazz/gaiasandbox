@@ -5,6 +5,7 @@ import gaia.cu9.ari.gaiaorbit.util.GlobalResources;
 import gaia.cu9.ari.gaiaorbit.util.I18n;
 import gaia.cu9.ari.gaiaorbit.util.Logger;
 import gaia.cu9.ari.gaiaorbit.util.PrefixedProperties;
+import gaia.cu9.ari.gaiaorbit.util.parse.Parser;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
@@ -56,7 +57,7 @@ public class NodeLoader<T extends SceneGraphNode> implements ISceneGraphNodeProv
                                 boolean isVector = key.contains(".vec.");
                                 boolean isFloat = true;
                                 try {
-                                    Float.parseFloat(value);
+                                    Parser.parseFloat(value);
                                 } catch (NumberFormatException e) {
                                     isFloat = false;
                                 }

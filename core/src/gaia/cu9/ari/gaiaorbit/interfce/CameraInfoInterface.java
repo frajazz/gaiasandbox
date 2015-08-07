@@ -5,10 +5,9 @@ import gaia.cu9.ari.gaiaorbit.event.Events;
 import gaia.cu9.ari.gaiaorbit.event.IObserver;
 import gaia.cu9.ari.gaiaorbit.util.Constants;
 import gaia.cu9.ari.gaiaorbit.util.I18n;
+import gaia.cu9.ari.gaiaorbit.util.format.INumberFormat;
 import gaia.cu9.ari.gaiaorbit.util.math.Vector3d;
 import gaia.cu9.ari.gaiaorbit.util.scene2d.OwnLabel;
-
-import java.text.DecimalFormat;
 
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
@@ -21,11 +20,11 @@ import com.badlogic.gdx.scenes.scene2d.ui.Table;
 public class CameraInfoInterface extends Table implements IObserver {
 
     protected OwnLabel camVel, camPos;
-    private DecimalFormat format;
+    private INumberFormat format;
     /** Lock object for synchronization **/
     private Object lock;
 
-    public CameraInfoInterface(Skin skin, DecimalFormat sformat, Object lock) {
+    public CameraInfoInterface(Skin skin, INumberFormat sformat, Object lock) {
         super(skin);
         this.format = sformat;
         camVel = new OwnLabel("", skin, "hud");

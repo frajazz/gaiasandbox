@@ -1,10 +1,11 @@
 package gaia.cu9.ari.gaiaorbit.util.g3d;
 
+import gaia.cu9.ari.gaiaorbit.util.format.INumberFormat;
+import gaia.cu9.ari.gaiaorbit.util.format.NumberFormatFactory;
+
 import java.io.IOException;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
-import java.text.DecimalFormat;
-import java.text.NumberFormat;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -25,8 +26,7 @@ public abstract class ModelCreator {
      * @author Toni Sagrista
      *
      */
-    public class Face implements IFace
-    {
+    public class Face implements IFace {
         /** This stores the indices for both the vertices and the UV coordinates **/
         public int[] v;
 
@@ -37,8 +37,7 @@ public abstract class ModelCreator {
          * Constructs a face with the indeces of the vertices.
          * @param v Indeces of the vertices.
          */
-        public Face(int... v)
-        {
+        public Face(int... v) {
             this.v = v;
         }
 
@@ -70,8 +69,7 @@ public abstract class ModelCreator {
     }
 
     private int[] flip(int[] v, int startIndex) {
-        for (int i = startIndex; i < v.length / 2; i++)
-        {
+        for (int i = startIndex; i < v.length / 2; i++) {
             int temp = v[i];
             v[i] = v[v.length - i + startIndex - 1];
             v[v.length - i + startIndex - 1] = temp;
@@ -102,7 +100,7 @@ public abstract class ModelCreator {
      * @throws IOException
      */
     public void dumpObj(OutputStream os) throws IOException {
-        NumberFormat nf = new DecimalFormat("########0.000000");
+        INumberFormat nf = NumberFormatFactory.getFormatter("########0.000000");
         OutputStreamWriter osw = new OutputStreamWriter(os);
         osw.append("# Created by " + this.getClass().getSimpleName() + " - ARI - ZAH - Heidelberg Universitat\n");
         osw.append("o " + name + "\n");

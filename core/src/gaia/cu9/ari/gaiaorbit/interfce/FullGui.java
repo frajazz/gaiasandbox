@@ -16,6 +16,8 @@ import gaia.cu9.ari.gaiaorbit.util.GlobalConf;
 import gaia.cu9.ari.gaiaorbit.util.GlobalResources;
 import gaia.cu9.ari.gaiaorbit.util.I18n;
 import gaia.cu9.ari.gaiaorbit.util.Logger;
+import gaia.cu9.ari.gaiaorbit.util.format.INumberFormat;
+import gaia.cu9.ari.gaiaorbit.util.format.NumberFormatFactory;
 import gaia.cu9.ari.gaiaorbit.util.math.MathUtilsd;
 import gaia.cu9.ari.gaiaorbit.util.scene2d.CollapsiblePane;
 import gaia.cu9.ari.gaiaorbit.util.scene2d.CollapsibleWindow;
@@ -24,7 +26,6 @@ import gaia.cu9.ari.gaiaorbit.util.scene2d.OwnScrollPane;
 import gaia.cu9.ari.gaiaorbit.util.scene2d.OwnTextButton;
 import gaia.cu9.ari.gaiaorbit.util.scene2d.Tooltip;
 
-import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -86,7 +87,7 @@ public class FullGui implements IGui, IObserver {
     /**
      * Number formats
      */
-    private DecimalFormat format, sformat;
+    private INumberFormat format, sformat;
 
     /**
      * The scene graph
@@ -124,8 +125,8 @@ public class FullGui implements IGui, IObserver {
         Logger.info(txt("notif.gui.init"));
 
         skin = GlobalResources.skin;
-        format = new DecimalFormat("0.0###");
-        sformat = new DecimalFormat("0.###E0");
+        format = NumberFormatFactory.getFormatter("0.0###");
+        sformat = NumberFormatFactory.getFormatter("0.###E0");
 
         buildGui();
 

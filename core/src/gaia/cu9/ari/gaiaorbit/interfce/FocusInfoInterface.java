@@ -9,10 +9,10 @@ import gaia.cu9.ari.gaiaorbit.util.Constants;
 import gaia.cu9.ari.gaiaorbit.util.GlobalResources;
 import gaia.cu9.ari.gaiaorbit.util.I18n;
 import gaia.cu9.ari.gaiaorbit.util.coord.Coordinates;
+import gaia.cu9.ari.gaiaorbit.util.format.INumberFormat;
+import gaia.cu9.ari.gaiaorbit.util.format.NumberFormatFactory;
 import gaia.cu9.ari.gaiaorbit.util.math.Vector3d;
 import gaia.cu9.ari.gaiaorbit.util.scene2d.OwnLabel;
-
-import java.text.DecimalFormat;
 
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
@@ -21,17 +21,17 @@ public class FocusInfoInterface extends Table implements IObserver {
 
     protected OwnLabel focusName, focusRA, focusDEC, focusAngle, focusDist, focusAppMag, focusAbsMag, focusRadius;
     protected OwnLabel camName, camVel, camPos;
-    DecimalFormat format, sformat, format8;
+    INumberFormat format, sformat, format8;
 
     private Table focusInfo, cameraInfo;
 
     Vector3d pos;
 
-    public FocusInfoInterface(Skin skin, DecimalFormat format, DecimalFormat sformat) {
+    public FocusInfoInterface(Skin skin, INumberFormat format, INumberFormat sformat) {
         super(skin);
         this.format = format;
         this.sformat = sformat;
-        this.format8 = new DecimalFormat("#####0.0#######");
+        this.format8 = NumberFormatFactory.getFormatter("#####0.0#######");
         this.setBackground("table-bg");
 
         focusInfo = new Table();

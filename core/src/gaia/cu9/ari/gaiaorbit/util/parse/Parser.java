@@ -18,8 +18,7 @@ public final class Parser {
      * @param input String to parse
      * @return Parsed long or 0 if the parsing fails
      */
-    public static long parseLong(String input)
-    {
+    public static long parseLong(String input) {
         long result = 0;
         int pos = 0;
         int len = input.length();
@@ -29,8 +28,7 @@ public final class Parser {
         long sign = 1;
 
         // skip any starting white space
-        while (c == ' ' || c == '\t' || c == '\r' || c == '\n' || c == '\0')
-        {
+        while (c == ' ' || c == '\t' || c == '\r' || c == '\n' || c == '\0') {
             ++pos;
             if (pos >= len)
                 return 0;
@@ -38,15 +36,12 @@ public final class Parser {
         }
 
         // handle both - and + signs
-        if (c == '-')
-        {
+        if (c == '-') {
             sign = -1;
             ++pos;
             if (pos >= len)
                 return 0;
-        }
-        else if (c == '+')
-        {
+        } else if (c == '+') {
             sign = 1;
             ++pos;
             if (pos >= len)
@@ -77,8 +72,7 @@ public final class Parser {
      * @return Parsed long or 0 if the parsing fails
      * @throws NumberFormatException If the given input can not be parsed
      */
-    public static long parseLongException(String input) throws NumberFormatException
-    {
+    public static long parseLongException(String input) throws NumberFormatException {
         long result = 0;
         int pos = 0;
         int len = input.length();
@@ -88,8 +82,7 @@ public final class Parser {
         long sign = 1;
 
         // skip any starting white space
-        while (c == ' ' || c == '\t' || c == '\r' || c == '\n' || c == '\0')
-        {
+        while (c == ' ' || c == '\t' || c == '\r' || c == '\n' || c == '\0') {
             ++pos;
             if (pos >= len)
                 throw new NumberFormatException("Invalid input");
@@ -97,15 +90,12 @@ public final class Parser {
         }
 
         // handle both - and + signs
-        if (c == '-')
-        {
+        if (c == '-') {
             sign = -1;
             ++pos;
             if (pos >= len)
                 throw new NumberFormatException("Invalid input");
-        }
-        else if (c == '+')
-        {
+        } else if (c == '+') {
             sign = 1;
             ++pos;
             if (pos >= len)
@@ -137,8 +127,7 @@ public final class Parser {
      * @return Parsed double or Double.NaN if the parsing fails
      * @see {@link Parser#parseDoubleException(String)} If exceptions on invalid input is necessary
      */
-    public static double parseDouble(String input)
-    {
+    public static double parseDouble(String input) {
         double result = 0;
         int pos = 0;
         int len = input.length();
@@ -148,8 +137,7 @@ public final class Parser {
         double sign = 1;
 
         // skip any starting white space
-        while (c == ' ' || c == '\t' || c == '\r' || c == '\n' || c == '\0')
-        {
+        while (c == ' ' || c == '\t' || c == '\r' || c == '\n' || c == '\0') {
             ++pos;
             if (pos >= len)
                 return Double.NaN;
@@ -157,21 +145,17 @@ public final class Parser {
         }
 
         // if input looks like N, it probably is
-        if (c == 'N' || c == 'n')
-        {
+        if (c == 'N' || c == 'n') {
             return Double.NaN;
         }
 
         // handle both - and + signs
-        if (c == '-')
-        {
+        if (c == '-') {
             sign = -1;
             ++pos;
             if (pos >= len)
                 return Double.NaN;
-        }
-        else if (c == '+')
-        {
+        } else if (c == '+') {
             sign = 1;
             ++pos;
             if (pos >= len)
@@ -193,8 +177,7 @@ public final class Parser {
             c = input.charAt(pos);
             if (!(c == 'F' || c == 'f'))
                 return Double.NaN;
-            else
-            {
+            else {
                 if (sign == -1)
                     return Double.NEGATIVE_INFINITY;
                 else
@@ -218,8 +201,7 @@ public final class Parser {
         if (c != '.' && c != ',')
             return Double.NaN;
         double exp = 0.1;
-        while (pos < len)
-        {
+        while (pos < len) {
             c = input.charAt(pos++);
             if (c < '0' || c > '9') {
                 if (c == 'e' || c == 'E' || c == ' ' || c == '\t' || c == '\r' || c == '\n' || c == '\0') // break on trailing white space or exponent
@@ -237,15 +219,12 @@ public final class Parser {
         c = input.charAt(pos);
 
         // handle both - and + signs
-        if (c == '-')
-        {
+        if (c == '-') {
             expSign = -1;
             ++pos;
             if (pos >= len)
                 return sign * result;
-        }
-        else if (c == '+')
-        {
+        } else if (c == '+') {
             expSign = 1;
             ++pos;
             if (pos >= len)
@@ -268,8 +247,7 @@ public final class Parser {
             return sign * result * Math.pow(10.0, expSign * expResult);
 
         double expExp = 0.1;
-        while (pos < len)
-        {
+        while (pos < len) {
             c = input.charAt(pos++);
             if (c < '0' || c > '9') {
                 if (c == ' ' || c == '\t' || c == '\r' || c == '\n' || c == '\0') // break on trailing white space or exponent
@@ -292,8 +270,7 @@ public final class Parser {
      * @return Parsed double or Double.NaN if the parsing fails
      * @throws NumberFormatException If the input string is invalid
      */
-    public static double parseDoubleException(String input) throws NumberFormatException
-    {
+    public static double parseDoubleException(String input) throws NumberFormatException {
         double result = 0;
         int pos = 0;
         int len = input.length();
@@ -303,8 +280,7 @@ public final class Parser {
         double sign = 1;
 
         // skip any starting white space
-        while (c == ' ' || c == '\t' || c == '\r' || c == '\n' || c == '\0')
-        {
+        while (c == ' ' || c == '\t' || c == '\r' || c == '\n' || c == '\0') {
             ++pos;
             if (pos >= len)
                 throw new NumberFormatException("Invalid input");
@@ -312,21 +288,17 @@ public final class Parser {
         }
 
         // if input looks like N, it probably is
-        if (c == 'N' || c == 'n')
-        {
+        if (c == 'N' || c == 'n') {
             return Double.NaN;
         }
 
         // handle both - and + signs
-        if (c == '-')
-        {
+        if (c == '-') {
             sign = -1;
             ++pos;
             if (pos >= len)
                 throw new NumberFormatException("Invalid input");
-        }
-        else if (c == '+')
-        {
+        } else if (c == '+') {
             sign = 1;
             ++pos;
             if (pos >= len)
@@ -348,8 +320,7 @@ public final class Parser {
             c = input.charAt(pos);
             if (!(c == 'F' || c == 'f'))
                 throw new NumberFormatException("Invalid input");
-            else
-            {
+            else {
                 if (sign == -1)
                     return Double.NEGATIVE_INFINITY;
                 else
@@ -373,8 +344,7 @@ public final class Parser {
         if (c != '.' && c != ',')
             throw new NumberFormatException("Invalid input");
         double exp = 0.1;
-        while (pos < len)
-        {
+        while (pos < len) {
             c = input.charAt(pos++);
             if (c < '0' || c > '9') {
                 if (c == 'e' || c == 'E' || c == ' ' || c == '\t' || c == '\r' || c == '\n' || c == '\0') // break on trailing white space or exponent
@@ -392,15 +362,12 @@ public final class Parser {
         c = input.charAt(pos);
 
         // handle both - and + signs
-        if (c == '-')
-        {
+        if (c == '-') {
             expSign = -1;
             ++pos;
             if (pos >= len)
                 return sign * result;
-        }
-        else if (c == '+')
-        {
+        } else if (c == '+') {
             expSign = 1;
             ++pos;
             if (pos >= len)
@@ -423,8 +390,7 @@ public final class Parser {
             return sign * result * Math.pow(10.0, expSign * expResult);
 
         double expExp = 0.1;
-        while (pos < len)
-        {
+        while (pos < len) {
             c = input.charAt(pos++);
             if (c < '0' || c > '9') {
                 if (c == ' ' || c == '\t' || c == '\r' || c == '\n' || c == '\0') // break on trailing white space or exponent
@@ -444,14 +410,11 @@ public final class Parser {
      * @param what What to parse
      * @return True or false (also default return) depending on the value of what
      */
-    public static boolean parseBoolean(Object what)
-    {
-        if (what instanceof String)
-        {
+    public static boolean parseBoolean(Object what) {
+        if (what instanceof String) {
             String text = ((String) what).toLowerCase(Locale.ENGLISH);
             return (text.startsWith("t") || text == "1" || text == "on" || text == "yes");
-        }
-        else if (what instanceof Boolean)
+        } else if (what instanceof Boolean)
             return (Boolean) what;
         else
             return false;
@@ -467,13 +430,10 @@ public final class Parser {
         boolean sign = false;
         char ch;
 
-        if (str == null || (end = str.length()) == 0 ||
-                ((ch = str.charAt(0)) < '0' || ch > '9')
-                && (!(sign = ch == '-') || ++idx == end || ((ch = str.charAt(idx)) < '0' || ch > '9')))
+        if (str == null || (end = str.length()) == 0 || ((ch = str.charAt(0)) < '0' || ch > '9') && (!(sign = ch == '-') || ++idx == end || ((ch = str.charAt(idx)) < '0' || ch > '9')))
             return 0;
 
-        for (;; ival *= 10)
-        {
+        for (;; ival *= 10) {
             ival += '0' - ch;
             if (++idx == end)
                 return sign ? ival : -ival;
@@ -493,13 +453,10 @@ public final class Parser {
         boolean sign = false;
         char ch;
 
-        if (str == null || (end = str.length()) == 0 ||
-                ((ch = str.charAt(0)) < '0' || ch > '9')
-                && (!(sign = ch == '-') || ++idx == end || ((ch = str.charAt(idx)) < '0' || ch > '9')))
+        if (str == null || (end = str.length()) == 0 || ((ch = str.charAt(0)) < '0' || ch > '9') && (!(sign = ch == '-') || ++idx == end || ((ch = str.charAt(idx)) < '0' || ch > '9')))
             throw new NumberFormatException(str);
 
-        for (;; ival *= 10)
-        {
+        for (;; ival *= 10) {
             ival += '0' - ch;
             if (++idx == end)
                 return sign ? ival : -ival;
@@ -529,252 +486,4 @@ public final class Parser {
         return (float) parseDouble(input);
     }
 
-    public static void main(String[] args) {
-        //	testPerformance(args);
-        parseIntTest();
-    }
-
-    private static void testPerformance(String[] args) {
-        boolean testPerformance = true;
-        if (args.length > 0)
-            testPerformance = true;
-        System.out.println("Double parsing tests: ");
-        String[] doubleTests = new String[] {
-                "    ",
-                "0.41415678167461873648172341234141413421",
-                ".41415678167461873648172341234141413421",
-                "   0,41415678167461873648172341234141413421  ",
-                "   0.41415678167461873648172341234141413421  ",
-                "00001.1414134141",
-                "NaN",
-                "nAn",
-                "+Inf",
-                "-Inf",
-                "inf",
-                "1.0e5",
-                "1.0e5.8",
-                "-1.0e5.8",
-                "1.0e-5.8",
-                "-1.0e-5.8",
-                "-0.1514",
-                "FailString",
-                "014Fail"
-        };
-        // test validity
-        for (String test : doubleTests) {
-            System.out.println("Parsing: \"" + test + "\"...");
-            double quickParserValue = parseDouble(test);
-            System.out.println("\tQuickParser:\t" + quickParserValue);
-            try {
-                double javaParserValue = parseDoubleException(test);
-                System.out.println("\tQuickParserE:\t" + javaParserValue);
-            } catch (NumberFormatException e) {
-                System.out.println("\tQuickParserE:\tNumberFormatException");
-            }
-            try {
-                double javaParserValue = Double.parseDouble(test);
-                System.out.println("\tJavaParser:\t" + javaParserValue);
-            } catch (NumberFormatException e) {
-                System.out.println("\tJavaParser:\tNumberFormatException");
-            }
-        }
-        if (testPerformance) {
-            System.out.println("Performance benchmark:");
-            // test speed
-            long startTime = System.nanoTime();
-            for (int i = 0; i < 1000000; i++) {
-                for (String test : doubleTests) {
-                    parseDouble(test);
-                }
-            }
-            System.out.println("\tQuickParser:\t" + (System.nanoTime() - startTime) + "ns (" + ((System.nanoTime() - startTime) / 1000000) + " ms)");
-            startTime = System.nanoTime();
-            for (int i = 0; i < 1000000; i++) {
-                for (String test : doubleTests) {
-                    try {
-                        parseDoubleException(test);
-                    } catch (NumberFormatException e) {
-                        // ignore it 
-                    }
-                }
-            }
-            System.out.println("\tQuickParserE:\t" + (System.nanoTime() - startTime) + "ns (" + ((System.nanoTime() - startTime) / 1000000) + " ms)");
-            startTime = System.nanoTime();
-            for (int i = 0; i < 1000000; i++) {
-                for (String test : doubleTests) {
-                    try {
-                        Double.parseDouble(test);
-                    } catch (NumberFormatException e) {
-                        // ignore it 
-                    }
-                }
-            }
-            System.out.println("\tJavaParser:\t" + (System.nanoTime() - startTime) + "ns (" + ((System.nanoTime() - startTime) / 1000000) + " ms)");
-        }
-        System.out.println("Long parsing tests: ");
-        String[] longTests = new String[] {
-                "   ",
-                "413421",
-                "  413421",
-                "  413421  ",
-                "-413421",
-                "3147483647",
-                "-3147483647",
-                "9223372036854775804",
-                "NaN",
-        };
-        // test validity
-        for (String test : longTests) {
-            System.out.println("Parsing: \"" + test + "\"...");
-            long quickParserValue = parseLong(test);
-            System.out.println("\tQuickParser:\t" + quickParserValue);
-            try {
-                long javaParserValue = parseLongException(test);
-                System.out.println("\tQuickParserE:\t" + javaParserValue);
-            } catch (NumberFormatException e) {
-                System.out.println("\tQuickParserE:\tNumberFormatException");
-            }
-            try {
-                long javaParserValue = Long.parseLong(test);
-                System.out.println("\tJavaParser:\t" + javaParserValue);
-            } catch (NumberFormatException e) {
-                System.out.println("\tJavaParser:\tNumberFormatException");
-            }
-        }
-        if (testPerformance) {
-            System.out.println("Performance benchmark:");
-            // test speed
-            long startTime = System.nanoTime();
-            for (int i = 0; i < 1000000; i++) {
-                for (String test : longTests) {
-                    parseLong(test);
-                }
-            }
-            System.out.println("\tQuickParser:\t" + (System.nanoTime() - startTime) + "ns (" + ((System.nanoTime() - startTime) / 1000000) + " ms)");
-            startTime = System.nanoTime();
-            for (int i = 0; i < 1000000; i++) {
-                for (String test : longTests) {
-                    try {
-                        parseLongException(test);
-                    } catch (NumberFormatException e) {
-                        // ignore it 
-                    }
-                }
-            }
-            System.out.println("\tQuickParserE:\t" + (System.nanoTime() - startTime) + "ns (" + ((System.nanoTime() - startTime) / 1000000) + " ms)");
-            startTime = System.nanoTime();
-            for (int i = 0; i < 1000000; i++) {
-                for (String test : longTests) {
-                    try {
-                        Long.parseLong(test);
-                    } catch (NumberFormatException e) {
-                        // ignore it 
-                    }
-                }
-            }
-            System.out.println("\tJavaParser:\t" + (System.nanoTime() - startTime) + "ns (" + ((System.nanoTime() - startTime) / 1000000) + " ms)");
-        }
-        System.out.println("Integer parsing tests: ");
-        String[] intTests = new String[] {
-                "   ",
-                "413421",
-                "  413421",
-                "  413421  ",
-                "-413421",
-                "3147483647",
-                "-3147483647",
-                "9223372036854775804",
-                "NaN",
-        };
-        // test validity
-        for (String test : intTests) {
-            System.out.println("Parsing: \"" + test + "\"...");
-            int quickParserValue = (int) parseLong(test);
-            System.out.println("\tQuickParser:\t" + quickParserValue);
-            try {
-                int javaParserValue = (int) parseLongException(test);
-                System.out.println("\tQuickParserE:\t" + javaParserValue);
-            } catch (NumberFormatException e) {
-                System.out.println("\tQuickParserE:\tNumberFormatException");
-            }
-            try {
-                int javaParserValue = Integer.parseInt(test);
-                System.out.println("\tJavaParser:\t" + javaParserValue);
-            } catch (NumberFormatException e) {
-                System.out.println("\tJavaParser:\tNumberFormatException");
-            }
-        }
-        if (testPerformance) {
-            System.out.println("Performance benchmark:");
-            // test speed
-            long startTime = System.nanoTime();
-            for (int i = 0; i < 1000000; i++) {
-                for (String test : doubleTests) {
-                    parseLong(test);
-                }
-            }
-            System.out.println("\tQuickParser:\t" + (System.nanoTime() - startTime) + "ns (" + ((System.nanoTime() - startTime) / 1000000) + " ms)");
-            startTime = System.nanoTime();
-            for (int i = 0; i < 1000000; i++) {
-                for (String test : intTests) {
-                    try {
-                        parseLongException(test);
-                    } catch (NumberFormatException e) {
-                        // ignore it 
-                    }
-                }
-            }
-            System.out.println("\tQuickParserE:\t" + (System.nanoTime() - startTime) + "ns (" + ((System.nanoTime() - startTime) / 1000000) + " ms)");
-            startTime = System.nanoTime();
-            for (int i = 0; i < 1000000; i++) {
-                for (String test : intTests) {
-                    try {
-                        Long.parseLong(test);
-                    } catch (NumberFormatException e) {
-                        // ignore it 
-                    }
-                }
-            }
-            System.out.println("\tJavaParser:\t" + (System.nanoTime() - startTime) + "ns (" + ((System.nanoTime() - startTime) / 1000000) + " ms)");
-        }
-    }
-
-    public static void parseIntTest() {
-        String[] tests = { "2323", "1009938775645", "-23234", "0", "10994877", "-09230", "32", "000", "-1", "8923784" };
-        long startTime = System.nanoTime();
-        for (int i = 0; i < 1000000; i++) {
-            for (String test : tests) {
-                try {
-                    Integer.parseInt(test);
-                } catch (NumberFormatException e) {
-                    // ignore it 
-                }
-            }
-        }
-        System.out.println("\tJavaParser:\t" + ((System.nanoTime() - startTime) / 1000000) + " ms");
-
-        startTime = System.nanoTime();
-        for (int i = 0; i < 1000000; i++) {
-            for (String test : tests) {
-                try {
-                    parseInt(test);
-                } catch (NumberFormatException e) {
-                    // ignore it 
-                }
-            }
-        }
-        System.out.println("\tparseInt() Time:\t" + ((System.nanoTime() - startTime) / 1000000) + " ms");
-
-        startTime = System.nanoTime();
-        for (int i = 0; i < 1000000; i++) {
-            for (String test : tests) {
-                try {
-                    parseDouble(test);
-                } catch (NumberFormatException e) {
-                    // ignore it 
-                }
-            }
-        }
-        System.out.println("\tparseDouble() Time:\t" + ((System.nanoTime() - startTime) / 1000000) + " ms");
-    }
 }

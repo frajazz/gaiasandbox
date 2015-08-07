@@ -1,8 +1,10 @@
 package gaia.cu9.ari.gaiaorbit.util.screenshot;
 
+import gaia.cu9.ari.gaiaorbit.util.format.INumberFormat;
+import gaia.cu9.ari.gaiaorbit.util.format.NumberFormatFactory;
+
 import java.io.File;
 import java.nio.ByteBuffer;
-import java.text.DecimalFormat;
 import java.util.Arrays;
 
 import com.badlogic.gdx.Gdx;
@@ -22,9 +24,10 @@ import com.badlogic.gdx.utils.ScreenUtils;
 public class ImageRenderer {
     private static int sequenceNumber = 0;
 
-    enum ImageType{
+    enum ImageType {
         PNG, JPG;
     }
+
     private static ImageType imageType = ImageType.JPG;
 
     /**
@@ -50,7 +53,7 @@ public class ImageRenderer {
 
     public static String writePixmapToImage(String absoluteLocation, String baseFileName, Pixmap pixmap) {
         FileHandle fh = getTarget(absoluteLocation, baseFileName);
-        switch(imageType){
+        switch (imageType) {
         case PNG:
             PixmapIO.writePNG(fh, pixmap);
             break;
@@ -137,7 +140,7 @@ public class ImageRenderer {
         char[] zeros = new char[digits];
         Arrays.fill(zeros, '0');
         // format number as String
-        DecimalFormat df = new DecimalFormat(String.valueOf(zeros));
+        INumberFormat df = NumberFormatFactory.getFormatter(String.valueOf(zeros));
 
         return df.format(num);
     }
