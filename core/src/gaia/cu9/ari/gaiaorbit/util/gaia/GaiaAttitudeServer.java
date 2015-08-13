@@ -1,9 +1,6 @@
 package gaia.cu9.ari.gaiaorbit.util.gaia;
 
-import gaia.cu9.ari.gaiaorbit.event.EventManager;
-import gaia.cu9.ari.gaiaorbit.event.Events;
 import gaia.cu9.ari.gaiaorbit.util.BinarySearchTree;
-import gaia.cu9.ari.gaiaorbit.util.I18n;
 import gaia.cu9.ari.gaiaorbit.util.math.Quaterniond;
 
 import java.util.Date;
@@ -32,9 +29,9 @@ public class GaiaAttitudeServer {
     Date initialDate;
 
     public GaiaAttitudeServer(String folder) {
-        attitudes = AttitudeXmlParser.parseFolder(folder);
-        initialDate = ((AttitudeIntervalBean) attitudes.findMin()).activationTime;
-        current = new AttitudeIntervalBean("current", null, null, "dummy");
+        //        attitudes = AttitudeXmlParser.parseFolder(folder);
+        //        initialDate = ((AttitudeIntervalBean) attitudes.findMin()).activationTime;
+        //        current = new AttitudeIntervalBean("current", null, null, "dummy");
         // Dummy attitude
         dummyAttitude = new ConcreteAttitude(0, new Quaterniond(), false);
         nsl = new Nsl37();
@@ -46,25 +43,24 @@ public class GaiaAttitudeServer {
      * @return
      */
     public synchronized Attitude getAttitude(Date date) {
-
-        //return nsl.getAttitude(date);
+        return nsl.getAttitude(date);
         // Find AttitudeType in timeSlots
-        if (date.before(initialDate)) {
-            return dummyAttitude;
-        } else {
-            current.activationTime = date;
-            AttitudeIntervalBean att = (AttitudeIntervalBean) attitudes.findIntervalStart(current);
-
-            if (prevAttitude != null && !att.equals(prevAttitude)) {
-                // Change!
-                EventManager.instance.post(Events.POST_NOTIFICATION, I18n.bundle.format("notif.attitude.changed", att.toString(), att.activationTime));
-            }
-
-            prevAttitude = att;
-
-            // Get actual attitude
-            return att.get(date);
-        }
+        //        if (date.before(initialDate)) {
+        //            return dummyAttitude;
+        //        } else {
+        //            current.activationTime = date;
+        //            AttitudeIntervalBean att = (AttitudeIntervalBean) attitudes.findIntervalStart(current);
+        //
+        //            if (prevAttitude != null && !att.equals(prevAttitude)) {
+        //                // Change!
+        //                EventManager.instance.post(Events.POST_NOTIFICATION, I18n.bundle.format("notif.attitude.changed", att.toString(), att.activationTime));
+        //            }
+        //
+        //            prevAttitude = att;
+        //
+        //            // Get actual attitude
+        //            return att.get(date);
+        //        }
 
     }
 

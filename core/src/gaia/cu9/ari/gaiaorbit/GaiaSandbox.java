@@ -294,8 +294,6 @@ public class GaiaSandbox implements ApplicationListener, IObserver {
         //        Vector3d newCameraPos = focus.pos.cpy().add(0, 0, -dst);
         //        EventManager.instance.post(Events.CAMERA_POS_CMD, newCameraPos.values());
 
-        // Set current date
-        EventManager.instance.post(Events.TIME_CHANGE_CMD, new Date());
         EventManager.instance.post(Events.CAMERA_MODE_CMD, CameraMode.Gaia_FOV1and2);
 
         // Update whole tree to reinitialize positions with the new camera
@@ -316,6 +314,9 @@ public class GaiaSandbox implements ApplicationListener, IObserver {
 
         // Re-enable input
         EventManager.instance.post(Events.INPUT_ENABLED_CMD, true);
+
+        // Set current date
+        EventManager.instance.post(Events.TIME_CHANGE_CMD, new Date());
 
         // Activate time
         EventManager.instance.post(Events.TOGGLE_TIME_CMD, true, false);

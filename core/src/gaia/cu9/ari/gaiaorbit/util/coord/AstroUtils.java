@@ -441,7 +441,7 @@ public class AstroUtils {
         int hour = date.getHours();
         int min = date.getMinutes();
         int sec = date.getSeconds();
-        int nanos = 0;
+        int nanos = (int) (date.getTime() % 1000) * 1000000;
         return getJulianDate(year, month, day, hour, min, sec, nanos, true);
     }
 
