@@ -94,8 +94,62 @@ public abstract class AbstractPositionEntity extends SceneGraphNode {
             coordinates.doneLoading(sg);
     }
 
+    /**
+     * Returns the position of this entity in the camera reference system (i.e. to get the total position
+     * you need to add the camera position) into the aux vector.
+     * @param aux
+     * @return
+     */
     public Vector3d getPosition(Vector3d aux) {
         return transform.getTranslation(aux);
+    }
+
+    /**
+     * Gets the predicted position of this entity in the next time step
+     * in the camera reference system (i.e. to get the total position
+     * you need to add the camera position) using the given time provider and the given camera.
+     * @param aux The out vector where the result will be stored.
+     * @param time The time frame provider.
+     * @param camera The camera.
+     * @return The aux vector for chaining.
+     */
+    public Vector3d getPredictedPosition(Vector3d aux, ITimeFrameProvider time, ICamera camera, boolean force) {
+        if (time.getDt() == 0 && !force) {
+            return getPosition(aux);
+        } else {
+            // Get copy of focus and update it to know where it will be in the next step
+            AbstractPositionEntity fc = (AbstractPositionEntity) this;
+            AbstractPositionEntity fccopy = fc.getLineCopy();
+            fccopy.getRoot().transform.position.set(camera.getInversePos());
+            fccopy.getRoot().update(time, null, camera);
+
+            aux.set(fccopy.transform.getTranslation());
+
+            // Return to poolvec
+            SceneGraphNode ape = fccopy;
+            do {
+                ape.returnToPool();
+                ape = ape.parent;
+            } while (ape != null);
+
+            return aux;
+        }
+    }
+
+    /**
+     * Returns the absolute position of this entity in the sandbox native coordinates 
+     * (equatorial system).
+     * @param aux
+     * @return
+     */
+    public Vector3d getAbsolutePosition(Vector3d aux) {
+        aux.set(pos);
+        AbstractPositionEntity entity = this;
+        while (entity.parent != null && entity.parent instanceof AbstractPositionEntity) {
+            entity = (AbstractPositionEntity) entity.parent;
+            aux.add(entity.pos);
+        }
+        return aux;
     }
 
     /**

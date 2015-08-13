@@ -14,6 +14,7 @@ import gaia.cu9.ari.gaiaorbit.util.scene2d.OwnScrollPane;
 
 import java.util.List;
 
+import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.Event;
@@ -64,9 +65,15 @@ public class ObjectsComponent extends GuiComponent implements IObserver {
                     if (ie.getType() == Type.keyUp) {
                         String text = searchBox.getText();
                         if (sg.containsNode(text.toLowerCase())) {
-                            SceneGraphNode node = sg.getNode(text.toLowerCase());
+                            final SceneGraphNode node = sg.getNode(text.toLowerCase());
                             if (node instanceof CelestialBody) {
-                                EventManager.instance.post(Events.FOCUS_CHANGE_CMD, node, true);
+                                Gdx.app.postRunnable(new Runnable() {
+                                    @Override
+                                    public void run() {
+                                        EventManager.instance.post(Events.FOCUS_CHANGE_CMD, node, true);
+                                    }
+                                });
+
                             }
                         }
                         GaiaInputController.pressedKeys.remove(ie.getKeyCode());
@@ -99,9 +106,15 @@ public class ObjectsComponent extends GuiComponent implements IObserver {
                         if (objectsTree.getSelection().hasItems()) {
                             if (objectsTree.getSelection().hasItems()) {
                                 Node n = objectsTree.getSelection().first();
-                                SceneGraphNode sgn = treeToModel.getBackward(n);
-                                EventManager.instance.post(Events.CAMERA_MODE_CMD, CameraMode.Focus);
-                                EventManager.instance.post(Events.FOCUS_CHANGE_CMD, sgn, false);
+                                final SceneGraphNode sgn = treeToModel.getBackward(n);
+                                Gdx.app.postRunnable(new Runnable() {
+                                    @Override
+                                    public void run() {
+                                        EventManager.instance.post(Events.CAMERA_MODE_CMD, CameraMode.Focus);
+                                        EventManager.instance.post(Events.FOCUS_CHANGE_CMD, sgn, false);
+                                    }
+                                });
+
                             }
 
                         }
@@ -131,12 +144,17 @@ public class ObjectsComponent extends GuiComponent implements IObserver {
                     if (event instanceof ChangeEvent) {
                         ChangeEvent ce = (ChangeEvent) event;
                         Actor actor = ce.getTarget();
-                        String name = ((com.badlogic.gdx.scenes.scene2d.ui.List<String>) actor).getSelected();
+                        final String name = ((com.badlogic.gdx.scenes.scene2d.ui.List<String>) actor).getSelected();
                         if (name != null) {
-                            // Change focus
-                            EventManager.instance.post(Events.FOCUS_CHANGE_CMD, sg.getNode(name), false);
-                            // Change camera mode to focus
-                            EventManager.instance.post(Events.CAMERA_MODE_CMD, CameraMode.Focus);
+                            Gdx.app.postRunnable(new Runnable() {
+                                @Override
+                                public void run() {
+                                    // Change focus
+                                    EventManager.instance.post(Events.FOCUS_CHANGE_CMD, sg.getNode(name), false);
+                                    // Change camera mode to focus
+                                    EventManager.instance.post(Events.CAMERA_MODE_CMD, CameraMode.Focus);
+                                }
+                            });
                         }
                         return true;
                     }

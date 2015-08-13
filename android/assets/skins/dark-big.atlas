@@ -292,6 +292,13 @@ table-bg
   orig: 1, 1
   offset: 0, 0
   index: -1
+table-bg-inv
+  rotate: false
+  xy: 1, 15
+  size: 1, 1
+  orig: 1, 1
+  offset: 0, 0
+  index: -1
 grid-icon
   rotate: false
   xy: 118, 4

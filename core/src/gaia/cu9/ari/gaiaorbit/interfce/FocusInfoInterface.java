@@ -4,6 +4,7 @@ import gaia.cu9.ari.gaiaorbit.GaiaSandbox;
 import gaia.cu9.ari.gaiaorbit.event.EventManager;
 import gaia.cu9.ari.gaiaorbit.event.Events;
 import gaia.cu9.ari.gaiaorbit.event.IObserver;
+import gaia.cu9.ari.gaiaorbit.scenegraph.CameraManager.CameraMode;
 import gaia.cu9.ari.gaiaorbit.scenegraph.CelestialBody;
 import gaia.cu9.ari.gaiaorbit.util.Constants;
 import gaia.cu9.ari.gaiaorbit.util.GlobalResources;
@@ -96,7 +97,7 @@ public class FocusInfoInterface extends Table implements IObserver {
         pack();
 
         pos = new Vector3d();
-        EventManager.instance.subscribe(this, Events.FOCUS_CHANGED, Events.FOCUS_INFO_UPDATED, Events.CAMERA_MOTION_UPDATED);
+        EventManager.instance.subscribe(this, Events.FOCUS_CHANGED, Events.FOCUS_INFO_UPDATED, Events.CAMERA_MOTION_UPDATED, Events.CAMERA_MODE_CMD);
     }
 
     @Override
@@ -150,7 +151,15 @@ public class FocusInfoInterface extends Table implements IObserver {
             camPos.setText("X: " + nf.format(campos.x * Constants.U_TO_PC) + " pc\nY: " + nf.format(campos.y * Constants.U_TO_PC) + " pc\nZ: " + nf.format(campos.z * Constants.U_TO_PC) + " pc");
             camVel.setText(sf.format((double) data[1]) + " km/h");
             break;
-
+        case CAMERA_MODE_CMD:
+            // Update camera mode selection
+            CameraMode mode = (CameraMode) data[0];
+            if (mode.equals(CameraMode.Focus)) {
+                displayFocusInfo();
+            } else {
+                hideFocusInfo();
+            }
+            break;
         }
     }
 

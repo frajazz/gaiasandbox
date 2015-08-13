@@ -9,6 +9,7 @@ import gaia.cu9.ari.gaiaorbit.util.Constants;
 import gaia.cu9.ari.gaiaorbit.util.GlobalConf;
 import gaia.cu9.ari.gaiaorbit.util.math.MathUtilsd;
 import gaia.cu9.ari.gaiaorbit.util.math.Vector3d;
+import gaia.cu9.ari.gaiaorbit.util.time.GlobalClock;
 import gaia.cu9.ari.gaiaorbit.util.time.ITimeFrameProvider;
 
 import com.badlogic.gdx.Gdx;
@@ -49,6 +50,9 @@ public class NaturalCamera extends AbstractCamera implements IObserver {
 
     /** Info about whether the previous state is saved **/
     protected boolean stateSaved = false;
+
+    /** Entities for the Gaia_Scene mode **/
+    protected CelestialBody entity1 = null, entity2 = null;
 
     private CameraMode lastMode;
 
@@ -148,24 +152,13 @@ public class NaturalCamera extends AbstractCamera implements IObserver {
                 focusBak = focus;
                 focus = (CelestialBody) focus.getComputedAncestor();
                 focus.getPosition(focusPos);
-                if (GlobalConf.scene.FOCUS_LOCK && time.getDt() != 0) {
-                    // Get copy of focus and update it to know where it will be in the next step
-                    AbstractPositionEntity fc = (AbstractPositionEntity) focus;
-                    AbstractPositionEntity fccopy = fc.getLineCopy();
-                    fccopy.getRoot().transform.position.set(posinv);
-                    fccopy.getRoot().update(time, null, this);
-                    // Work out difference vector
-                    aux1.set(fccopy.transform.getTranslation());
-                    aux1.sub(focusPos);
-                    // Add displacement
-                    pos.add(aux1);
 
-                    // Return to poolvec
-                    SceneGraphNode ape = fccopy;
-                    do {
-                        ape.returnToPool();
-                        ape = ape.parent;
-                    } while (ape != null);
+                if (GlobalConf.scene.FOCUS_LOCK) {
+                    focus.getPredictedPosition(aux1, time, this, false);
+                    // Get dx
+                    aux1.sub(focusPos);
+                    // Add dx to camera position
+                    pos.add(aux1);
                 }
 
                 // Update direction to follow focus and activate custom input listener
@@ -196,6 +189,21 @@ public class NaturalCamera extends AbstractCamera implements IObserver {
             updateRoll(dt, GlobalConf.scene.TURNING_SPEED);
             updateLateral(dt, translateUnits);
             break;
+        case Gaia_Scene:
+            if (entity1 == null || entity2 == null) {
+                entity1 = (CelestialBody) GaiaSandbox.instance.sg.getNode("Gaia");
+                entity2 = (CelestialBody) GaiaSandbox.instance.sg.getNode("Sol");
+            }
+            AbstractPositionEntity fccopy = entity1.getLineCopy();
+            fccopy.getRoot().transform.position.set(0f, 0f, 0f);
+            fccopy.getRoot().update(GlobalClock.clock, null, this);
+            this.pos.set(fccopy.transform.getTranslation());
+            this.pos.add(0, 0, entity1.getRadius() * 5);
+            this.posinv.set(this.pos).scl(-1);
+            this.direction.set(0, 0, -1);
+            this.up.set(0, 1, 0);
+            closest = entity1;
+            break;
         default:
             break;
         }
@@ -205,6 +213,7 @@ public class NaturalCamera extends AbstractCamera implements IObserver {
         lastMode = m;
 
         updatePerspectiveCamera();
+
     }
 
     private void updatePerspectiveCamera() {
@@ -216,9 +225,6 @@ public class NaturalCamera extends AbstractCamera implements IObserver {
         camera.direction.set(direction.valuesf());
         camera.up.set(up.valuesf());
         camera.update();
-
-        posinv.set(pos).scl(-1);
-
     }
 
     /**
@@ -445,6 +451,7 @@ public class NaturalCamera extends AbstractCamera implements IObserver {
 
             lastvel.set(vel);
         }
+        posinv.set(pos).scl(-1);
     }
 
     /**
@@ -656,17 +663,15 @@ public class NaturalCamera extends AbstractCamera implements IObserver {
             break;
         case GO_TO_OBJECT_CMD:
             if (this.focus != null) {
+
                 // Position camera near focus
                 stopTotalMovement();
-                float dst = this.focus.size * 3;
-                pos.set(this.focus.pos);
-                CelestialBody fc = this.focus;
-                while (fc.parent != null && fc.parent instanceof CelestialBody) {
-                    fc = (CelestialBody) fc.parent;
-                    pos.add(fc.pos);
-                }
-                pos.add(0, 0, -dst);
-                posinv.set(pos).scl(-1d);
+
+                this.focus.getAbsolutePosition(aux1);
+                pos.set(aux1);
+
+                pos.add(0, 0, -this.focus.size * 6);
+                posinv.set(pos).scl(-1);
                 direction.set(0, 0, 1);
 
             }
@@ -727,6 +732,7 @@ public class NaturalCamera extends AbstractCamera implements IObserver {
     public void restoreState() {
         if (state != null && stateSaved && focus != null) {
             pos.set(focus.pos).add(state);
+            posinv.set(pos).scl(-1);
             direction.set(focus.pos).sub(pos).nor();
             stateSaved = false;
         }
@@ -820,6 +826,15 @@ public class NaturalCamera extends AbstractCamera implements IObserver {
     @Override
     public CelestialBody getFocus() {
         return getMode().equals(CameraMode.Focus) ? focus : null;
+    }
+
+    public void resetState() {
+        pos.scl(0);
+        posinv.scl(0);
+        direction.set(0, 0, -1);
+        camera.position.scl(0);
+        camera.direction.set(0, 0, -1);
+        camera.update();
     }
 
 }

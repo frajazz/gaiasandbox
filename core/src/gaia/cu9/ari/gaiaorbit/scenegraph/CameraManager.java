@@ -7,6 +7,7 @@ import gaia.cu9.ari.gaiaorbit.util.Constants;
 import gaia.cu9.ari.gaiaorbit.util.GlobalConf;
 import gaia.cu9.ari.gaiaorbit.util.TwoWayHashmap;
 import gaia.cu9.ari.gaiaorbit.util.math.Vector3d;
+import gaia.cu9.ari.gaiaorbit.util.time.GlobalClock;
 import gaia.cu9.ari.gaiaorbit.util.time.ITimeFrameProvider;
 
 import com.badlogic.gdx.Gdx;
@@ -26,6 +27,8 @@ public class CameraManager implements ICamera, IObserver {
         Free_Camera,
         /** Focus **/
         Focus,
+        /** Gaia Scene **/
+        Gaia_Scene,
         /** FOV1 **/
         Gaia_FOV1,
         /** FOV2 **/
@@ -38,6 +41,7 @@ public class CameraManager implements ICamera, IObserver {
         static {
             String fc = "Free camera";
             String foc = "Focus object";
+            String gs = "Gaia scene";
             String f1 = "Gaia FoV 1";
             String f2 = "Gaia FoV 2";
             String f12 = "Gaia FoV1 and FoV2";
@@ -45,6 +49,7 @@ public class CameraManager implements ICamera, IObserver {
             equivalences = new TwoWayHashmap<String, CameraMode>();
             equivalences.add(fc, Free_Camera);
             equivalences.add(foc, Focus);
+            equivalences.add(gs, Gaia_Scene);
             equivalences.add(f1, Gaia_FOV1);
             equivalences.add(f2, Gaia_FOV2);
             equivalences.add(f12, Gaia_FOV1and2);
@@ -68,7 +73,7 @@ public class CameraManager implements ICamera, IObserver {
             return equivalences.getForward(str);
         }
 
-        public  boolean isGaiaFov(){
+        public boolean isGaiaFov() {
             return this.equals(CameraMode.Gaia_FOV1) || this.equals(CameraMode.Gaia_FOV2) || this.equals(CameraMode.Gaia_FOV1and2);
         }
     }
@@ -100,7 +105,7 @@ public class CameraManager implements ICamera, IObserver {
 
         updateCurrentCamera();
 
-        EventManager.instance.subscribe(this, Events.CAMERA_MODE_CMD, Events.FOV_CHANGE_NOTIFICATION);
+        EventManager.instance.subscribe(this, Events.CAMERA_MODE_CMD, Events.CAMERA_UPDATE_CMD, Events.FOV_CHANGE_NOTIFICATION);
     }
 
     public void updateCurrentCamera() {
@@ -109,7 +114,10 @@ public class CameraManager implements ICamera, IObserver {
         switch (mode) {
         case Free_Camera:
         case Focus:
+        case Gaia_Scene:
             current = naturalCamera;
+            // Reset state
+            naturalCamera.resetState();
             break;
         case Gaia_FOV1:
         case Gaia_FOV2:
@@ -187,6 +195,7 @@ public class CameraManager implements ICamera, IObserver {
     }
 
     int pxRendererBackup = -1;
+
     /**
      * Sets the new camera mode and updates the frustum
      * @param mode
@@ -212,12 +221,12 @@ public class CameraManager implements ICamera, IObserver {
             EventManager.instance.post(Events.FOV_CHANGE_NOTIFICATION, this.getCamera().fieldOfView);
 
             // In fov1and2 mode we can only use the normal pixel renderer
-            if(mode.isGaiaFov() && !prevMode.isGaiaFov() && GlobalConf.scene.PIXEL_RENDERER != 0){
+            if (mode.isGaiaFov() && !prevMode.isGaiaFov() && GlobalConf.scene.PIXEL_RENDERER != 0) {
                 // We change to FOV1and2 and the current renderer is not normal
                 pxRendererBackup = GlobalConf.scene.PIXEL_RENDERER;
                 EventManager.instance.post(Events.PIXEL_RENDERER_CMD, 0);
                 EventManager.instance.post(Events.PIXEL_RENDERER_UPDATE);
-            }else if (!mode.isGaiaFov() && prevMode.isGaiaFov() && pxRendererBackup >= 0){
+            } else if (!mode.isGaiaFov() && prevMode.isGaiaFov() && pxRendererBackup >= 0) {
                 // We get out of Fov1and2
                 EventManager.instance.post(Events.PIXEL_RENDERER_CMD, pxRendererBackup);
                 EventManager.instance.post(Events.PIXEL_RENDERER_UPDATE);
@@ -235,6 +244,10 @@ public class CameraManager implements ICamera, IObserver {
             break;
         case FOV_CHANGE_NOTIFICATION:
             updateAngleEdge(Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
+            break;
+        case CAMERA_UPDATE_CMD:
+            current.update(0, GlobalClock.clock);
+            break;
         default:
             break;
         }

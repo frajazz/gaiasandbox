@@ -340,7 +340,7 @@ public class FovCamera extends AbstractCamera implements IObserver {
     @Override
     public void render() {
         // Renders the focal plane CCDs
-        fpstages[parent.mode.ordinal() - 2].draw();
+        fpstages[parent.mode.ordinal() - 3].draw();
     }
 
     @Override

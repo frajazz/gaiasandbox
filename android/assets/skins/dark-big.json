@@ -29,7 +29,8 @@ com.badlogic.gdx.scenes.scene2d.ui.Button$ButtonStyle: {
 },
 com.badlogic.gdx.scenes.scene2d.ui.TextButton$TextButtonStyle: {
 	default: { down: default-round-down, up: default-round, font: ui-12, fontColor: white },
-	toggle: { down: default-round-down, up: default-round, checked: default-round-down, font: ui-12, fontColor: white, downFontColor: orange }
+	toggle: { down: default-round-down, up: default-round, checked: default-round-down, font: ui-12, fontColor: white, downFontColor: orange },
+	link: { font: ui-12, fontColor: blue, downFontColor: orange }
 },
 com.badlogic.gdx.scenes.scene2d.ui.ImageButton$ImageButtonStyle: {
 	edit: { imageUp: edit-icon },
@@ -68,6 +69,7 @@ com.badlogic.gdx.scenes.scene2d.ui.Label$LabelStyle: {
 	header:  { font: ui-14, fontColor: orange },
 	default: { font: ui-13, fontColor: white },
 	default-blue: { font: ui-12, fontColor: blue },
+	default-inv: { font: ui-12, fontColor: black },
 	ui-10:   { font: ui-10, fontColor: white},
 	ui-11:   { font: ui-11, fontColor: white},
 	ui-12:   { font: ui-12, fontColor: white},

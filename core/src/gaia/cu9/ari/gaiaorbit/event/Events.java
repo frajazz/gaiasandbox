@@ -17,6 +17,8 @@ public enum Events {
     // CAMERA
     /** Contains the new CameraMode object **/
     CAMERA_MODE_CMD,
+    /** Tells the camera to update **/
+    CAMERA_UPDATE_CMD,
     /** Contains a double[] with the new position **/
     CAMERA_POS_CMD,
     /** Contains a double[] with the new direction **/
