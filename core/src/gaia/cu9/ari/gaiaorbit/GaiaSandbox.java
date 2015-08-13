@@ -27,7 +27,6 @@ import gaia.cu9.ari.gaiaorbit.render.ComponentType;
 import gaia.cu9.ari.gaiaorbit.render.GSPostProcessor;
 import gaia.cu9.ari.gaiaorbit.render.IPostProcessor;
 import gaia.cu9.ari.gaiaorbit.render.SceneGraphRenderer;
-import gaia.cu9.ari.gaiaorbit.scenegraph.AbstractPositionEntity;
 import gaia.cu9.ari.gaiaorbit.scenegraph.CameraManager;
 import gaia.cu9.ari.gaiaorbit.scenegraph.CameraManager.CameraMode;
 import gaia.cu9.ari.gaiaorbit.scenegraph.CelestialBody;
@@ -42,7 +41,6 @@ import gaia.cu9.ari.gaiaorbit.util.Logger;
 import gaia.cu9.ari.gaiaorbit.util.ModelCache;
 import gaia.cu9.ari.gaiaorbit.util.gaia.GaiaAttitudeServer;
 import gaia.cu9.ari.gaiaorbit.util.math.MathUtilsd;
-import gaia.cu9.ari.gaiaorbit.util.math.Vector3d;
 import gaia.cu9.ari.gaiaorbit.util.time.GlobalClock;
 import gaia.cu9.ari.gaiaorbit.util.tree.OctreeNode;
 
@@ -133,8 +131,8 @@ public class GaiaSandbox implements ApplicationListener, IObserver {
         EventManager.instance.post(Events.INPUT_ENABLED_CMD, false);
 
         if (!GlobalClock.initialized()) {
-            // Initialize clock with a pace of 2 simulation hours/second
-            GlobalClock.initialize(0.01, new Date());
+            // Initialize clock with a real time pace
+            GlobalClock.initialize(0.000277778, new Date());
         }
 
         if (!GlobalConf.initialized()) {
@@ -288,23 +286,27 @@ public class GaiaSandbox implements ApplicationListener, IObserver {
         Gdx.input.setInputProcessor(inputMultiplexer);
 
         EventManager.instance.post(Events.SCENE_GRAPH_LOADED, sg);
-        EventManager.instance.post(Events.CAMERA_MODE_CMD, CameraMode.Focus);
 
-        AbstractPositionEntity focus = (AbstractPositionEntity) sg.getNode("Earth");
-        EventManager.instance.post(Events.FOCUS_CHANGE_CMD, focus, true);
-        float dst = focus.size * 3;
-        Vector3d newCameraPos = focus.pos.cpy().add(0, 0, -dst);
-        EventManager.instance.post(Events.CAMERA_POS_CMD, newCameraPos.values());
+        //EventManager.instance.post(Events.CAMERA_MODE_CMD, CameraMode.Focus);
+        //        AbstractPositionEntity focus = (AbstractPositionEntity) sg.getNode("Earth");
+        //        EventManager.instance.post(Events.FOCUS_CHANGE_CMD, focus, true);
+        //        float dst = focus.size * 3;
+        //        Vector3d newCameraPos = focus.pos.cpy().add(0, 0, -dst);
+        //        EventManager.instance.post(Events.CAMERA_POS_CMD, newCameraPos.values());
+
+        // Set current date
+        EventManager.instance.post(Events.TIME_CHANGE_CMD, new Date());
+        EventManager.instance.post(Events.CAMERA_MODE_CMD, CameraMode.Gaia_FOV1and2);
 
         // Update whole tree to reinitialize positions with the new camera
         // position
-        GlobalClock.clock.update(0.00000001f);
+        GlobalClock.clock.update(0.0000000001f);
         sg.update(GlobalClock.clock, cam);
         sgr.clearLists();
         GlobalClock.clock.update(0);
 
-        Vector3d newCameraDir = focus.pos.cpy().sub(newCameraPos);
-        EventManager.instance.post(Events.CAMERA_DIR_CMD, newCameraDir.values());
+        //        Vector3d newCameraDir = focus.pos.cpy().sub(newCameraPos);
+        //        EventManager.instance.post(Events.CAMERA_DIR_CMD, newCameraDir.values());
 
         // Initialize time in GUI
         EventManager.instance.post(Events.TIME_CHANGE_INFO, GlobalClock.clock.time);
@@ -315,14 +317,10 @@ public class GaiaSandbox implements ApplicationListener, IObserver {
         // Re-enable input
         EventManager.instance.post(Events.INPUT_ENABLED_CMD, true);
 
+        // Activate time
+        EventManager.instance.post(Events.TOGGLE_TIME_CMD, true, false);
+
         initialized = true;
-
-        // Run tutorial
-        if (GlobalConf.program.DISPLAY_TUTORIAL) {
-            EventManager.instance.post(Events.RUN_SCRIPT_PATH, "scripts/tutorial/tutorial-pointer.py");
-            GlobalConf.program.DISPLAY_TUTORIAL = false;
-        }
-
     }
 
     @Override

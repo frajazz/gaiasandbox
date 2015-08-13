@@ -20,7 +20,7 @@ default-window
   index: -1
 default-select
   rotate: false
-  xy: 30, 29
+  xy: 30, 30
   size: 23, 18
   split: 2, 12, 2, 2
   orig: 23, 18
