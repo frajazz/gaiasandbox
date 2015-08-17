@@ -7,10 +7,10 @@ import gaia.cu9.ari.gaiaorbit.render.ComponentType;
 import gaia.cu9.ari.gaiaorbit.scenegraph.ISceneGraph;
 import gaia.cu9.ari.gaiaorbit.util.GlobalResources;
 import gaia.cu9.ari.gaiaorbit.util.Logger;
+import gaia.cu9.ari.gaiaorbit.util.format.DateFormatFactory;
+import gaia.cu9.ari.gaiaorbit.util.format.IDateFormat;
 import gaia.cu9.ari.gaiaorbit.util.scene2d.OwnLabel;
 
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
 import java.util.Date;
 
 import com.badlogic.gdx.Gdx;
@@ -38,14 +38,14 @@ public class RenderGui implements IGui, IObserver {
 
     protected MessagesInterface messagesInterface;
 
-    protected DateFormat df;
+    protected IDateFormat df;
     /** Lock object for synchronization **/
     private Object lock;
 
     @Override
     public void initialize(AssetManager assetManager) {
         ui = new Stage(new ScreenViewport(), GlobalResources.spriteBatch);
-        df = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss");
+        df = DateFormatFactory.getFormatter("dd/MM/yyyy HH:mm:ss");
         lock = new Object();
     }
 

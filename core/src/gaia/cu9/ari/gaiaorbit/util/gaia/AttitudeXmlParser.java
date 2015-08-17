@@ -5,6 +5,8 @@ import gaia.cu9.ari.gaiaorbit.util.Constants;
 import gaia.cu9.ari.gaiaorbit.util.I18n;
 import gaia.cu9.ari.gaiaorbit.util.Logger;
 import gaia.cu9.ari.gaiaorbit.util.coord.AstroUtils;
+import gaia.cu9.ari.gaiaorbit.util.format.DateFormatFactory;
+import gaia.cu9.ari.gaiaorbit.util.format.IDateFormat;
 import gaia.cu9.ari.gaiaorbit.util.gaia.time.Days;
 import gaia.cu9.ari.gaiaorbit.util.gaia.time.Duration;
 import gaia.cu9.ari.gaiaorbit.util.gaia.time.Hours;
@@ -13,9 +15,6 @@ import gaia.cu9.ari.gaiaorbit.util.units.Quantity;
 import java.io.File;
 import java.io.FileFilter;
 import java.io.IOException;
-import java.text.DateFormat;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
@@ -36,10 +35,10 @@ import com.badlogic.gdx.utils.reflect.ReflectionException;
 public class AttitudeXmlParser {
 
     private static Date endOfMission;
-    private static DateFormat format;
+    private static IDateFormat format;
 
     static {
-        format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+        format = DateFormatFactory.getFormatter("yyyy-MM-dd HH:mm:ss");
         endOfMission = getDate("2019-06-20 06:13:26");
     }
 
@@ -202,13 +201,8 @@ public class AttitudeXmlParser {
     }
 
     private static Date getDate(String date) {
-        try {
-            Date d = format.parse(date);
-            return d;
-        } catch (ParseException e) {
-            Logger.error(e);
-        }
-        return null;
+        Date d = format.parse(date);
+        return d;
     }
 
     private static Double getDouble(XmlReader.Element e, String property) {

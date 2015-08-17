@@ -3,6 +3,8 @@ package gaia.cu9.ari.gaiaorbit.util;
 import gaia.cu9.ari.gaiaorbit.event.EventManager;
 import gaia.cu9.ari.gaiaorbit.event.Events;
 import gaia.cu9.ari.gaiaorbit.event.IObserver;
+import gaia.cu9.ari.gaiaorbit.util.format.DateFormatFactory;
+import gaia.cu9.ari.gaiaorbit.util.format.IDateFormat;
 import gaia.cu9.ari.gaiaorbit.util.math.Vector3d;
 import gaia.cu9.ari.gaiaorbit.util.parse.Parser;
 import gaia.cu9.ari.gaiaorbit.util.time.GlobalClock;
@@ -14,9 +16,6 @@ import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.text.DateFormat;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
 
 /** 
  * Contains the logic to record the camera state at each frame. The format is as follows:
@@ -32,9 +31,7 @@ public class CamRecorder implements IObserver {
     private static final String sep = " ";
 
     public enum RecorderMode {
-        RECORDING,
-        PLAYING,
-        IDLE
+        RECORDING, PLAYING, IDLE
     }
 
     private RecorderMode mode;
@@ -43,7 +40,7 @@ public class CamRecorder implements IObserver {
     private File f;
     private long startMs;
     float time;
-    private DateFormat df;
+    private IDateFormat df;
 
     public static void initialize() {
         instance = new CamRecorder();
@@ -52,7 +49,7 @@ public class CamRecorder implements IObserver {
 
     public CamRecorder() {
         this.mode = RecorderMode.IDLE;
-        df = new SimpleDateFormat("yyyy-MM-dd_HH:mm:ss");
+        df = DateFormatFactory.getFormatter("yyyy-MM-dd_HH:mm:ss");
         EventManager.instance.subscribe(this, Events.RECORD_CAMERA_CMD, Events.PLAY_CAMERA_CMD);
     }
 
@@ -79,11 +76,7 @@ public class CamRecorder implements IObserver {
                     if ((line = is.readLine()) != null) {
                         String[] tokens = line.split("\\s+");
                         if (tokens.length != 0 && tokens[0].equals("settime")) {
-                            try {
-                                EventManager.instance.post(Events.TIME_CHANGE_CMD, df.parse(tokens[1]));
-                            } catch (ParseException e) {
-                                Logger.error(e);
-                            }
+                            EventManager.instance.post(Events.TIME_CHANGE_CMD, df.parse(tokens[1]));
 
                         } else {
                             // TODO use time to adapt FPS

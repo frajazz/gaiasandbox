@@ -1,13 +1,13 @@
 package gaia.cu9.ari.gaiaorbit.data.orbit;
 
 import gaia.cu9.ari.gaiaorbit.util.Constants;
+import gaia.cu9.ari.gaiaorbit.util.format.DateFormatFactory;
+import gaia.cu9.ari.gaiaorbit.util.format.IDateFormat;
 
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
 
 public class OrbitDataWriter {
     /**
@@ -16,7 +16,7 @@ public class OrbitDataWriter {
      * @throws IOException
      */
     public static void writeOrbitData(String filePath, OrbitData data) throws IOException {
-        DateFormat df = new SimpleDateFormat("yyyy-MM-dd_HH:mm:ss");
+        IDateFormat df = DateFormatFactory.getFormatter("yyyy-MM-dd_HH:mm:ss");
 
         File f = new File(filePath);
         if (f.exists() && f.isFile()) {

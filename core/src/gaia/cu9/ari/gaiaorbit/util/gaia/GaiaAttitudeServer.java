@@ -4,12 +4,10 @@ import gaia.cu9.ari.gaiaorbit.event.EventManager;
 import gaia.cu9.ari.gaiaorbit.event.Events;
 import gaia.cu9.ari.gaiaorbit.util.BinarySearchTree;
 import gaia.cu9.ari.gaiaorbit.util.I18n;
-import gaia.cu9.ari.gaiaorbit.util.Logger;
+import gaia.cu9.ari.gaiaorbit.util.format.DateFormatFactory;
+import gaia.cu9.ari.gaiaorbit.util.format.IDateFormat;
 import gaia.cu9.ari.gaiaorbit.util.math.Quaterniond;
 
-import java.text.DateFormat;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
 
@@ -47,14 +45,9 @@ public class GaiaAttitudeServer {
 
     private Date getDate(String date) {
         String fmt = "yyyy-MM-dd HH:mm:ss";
-        DateFormat format = new SimpleDateFormat(fmt);
-        try {
-            Date d = format.parse(date);
-            return d;
-        } catch (ParseException e) {
-            Logger.error(e);
-        }
-        return null;
+        IDateFormat format = DateFormatFactory.getFormatter(fmt);
+        Date d = format.parse(date);
+        return d;
     }
 
     private Date getDate(int day, int month, int year, int hour, int min, int sec) {
@@ -90,8 +83,8 @@ public class GaiaAttitudeServer {
 
     }
 
-    public synchronized String getCurrentAttitudeName(){
-        if(prevAttitude != null){
+    public synchronized String getCurrentAttitudeName() {
+        if (prevAttitude != null) {
             return prevAttitude.file;
         }
         return null;

@@ -6,14 +6,14 @@ import gaia.cu9.ari.gaiaorbit.event.Events;
 import gaia.cu9.ari.gaiaorbit.event.IObserver;
 import gaia.cu9.ari.gaiaorbit.render.ComponentType;
 import gaia.cu9.ari.gaiaorbit.render.system.AbstractRenderSystem;
+import gaia.cu9.ari.gaiaorbit.util.format.DateFormatFactory;
+import gaia.cu9.ari.gaiaorbit.util.format.DateFormatFactory.DateType;
+import gaia.cu9.ari.gaiaorbit.util.format.IDateFormat;
 import gaia.cu9.ari.gaiaorbit.util.math.MathUtilsd;
 
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.InputStream;
-import java.text.DateFormat;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -473,7 +473,7 @@ public class GlobalConf {
         /** This controls the side of the images in the stereoscopic mode **/
         public StereoProfile STEREO_PROFILE = StereoProfile.VR_HEADSET;
 
-        private SimpleDateFormat df = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss");
+        private IDateFormat df = DateFormatFactory.getFormatter("dd/MM/yyyy HH:mm:ss");
 
         public ProgramConf() {
             EventManager.instance.subscribe(this, Events.TOGGLE_STEREOSCOPIC, Events.TOGGLE_STEREO_PROFILE);
@@ -503,11 +503,7 @@ public class GlobalConf {
             TUTORIAL_SCRIPT_LOCATION = p.getProperty("program.tutorial.script");
             SHOW_CONFIG_DIALOG = Boolean.parseBoolean(p.getProperty("program.configdialog"));
             SHOW_DEBUG_INFO = Boolean.parseBoolean(p.getProperty("program.debuginfo"));
-            try {
-                LAST_CHECKED = p.getProperty("program.lastchecked").isEmpty() ? null : df.parse(p.getProperty("program.lastchecked"));
-            } catch (ParseException e) {
-                Logger.error(e);
-            }
+            LAST_CHECKED = p.getProperty("program.lastchecked").isEmpty() ? null : df.parse(p.getProperty("program.lastchecked"));
             LAST_VERSION = p.getProperty("program.lastversion");
             VERSION_CHECK_URL = p.getProperty("program.versioncheckurl");
             UI_THEME = p.getProperty("program.ui.theme");
@@ -518,7 +514,7 @@ public class GlobalConf {
         }
 
         public String getLastCheckedString() {
-            DateFormat df = DateFormat.getDateTimeInstance(DateFormat.MEDIUM, DateFormat.MEDIUM, I18n.locale);
+            IDateFormat df = DateFormatFactory.getFormatter(I18n.locale, DateType.DATE);
             return df.format(LAST_CHECKED);
         }
 
