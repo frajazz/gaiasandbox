@@ -20,7 +20,7 @@ default-window
   index: -1
 default-select
   rotate: false
-  xy: 30, 29
+  xy: 30, 30
   size: 23, 18
   split: 2, 12, 2, 2
   orig: 23, 18
@@ -288,6 +288,13 @@ separator
 table-bg
   rotate: false
   xy: 1, 13
+  size: 1, 1
+  orig: 1, 1
+  offset: 0, 0
+  index: -1
+table-bg-inv
+  rotate: false
+  xy: 1, 15
   size: 1, 1
   orig: 1, 1
   offset: 0, 0
