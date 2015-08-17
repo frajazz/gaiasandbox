@@ -18,7 +18,6 @@
  */
 package gaia.cu9.ari.gaiaorbit.util.gaia.time;
 
-
 import java.io.Serializable;
 
 /**
@@ -57,7 +56,7 @@ public class Secs extends ConcreteDuration implements Serializable {
      * @see Duration#set(Duration)
      */
     @Override
-	public Duration set(final Duration d) {
+    public Duration set(final Duration d) {
         value = d.asSecs();
 
         return this;
@@ -67,7 +66,7 @@ public class Secs extends ConcreteDuration implements Serializable {
      * @see Duration#asNanoSecs()
      */
     @Override
-	public long asNanoSecs() {
+    public long asNanoSecs() {
         return Math.round(value * Duration.NS_PER_SEC);
     }
 
@@ -84,7 +83,7 @@ public class Secs extends ConcreteDuration implements Serializable {
      * @see Duration#asSecs()
      */
     @Override
-	public double asSecs() {
+    public double asSecs() {
         return value;
     }
 
@@ -92,7 +91,7 @@ public class Secs extends ConcreteDuration implements Serializable {
      * @see Duration#asMins()
      */
     @Override
-	public double asMins() {
+    public double asMins() {
         return value / Duration.SECS_PER_MIN;
     }
 
@@ -109,7 +108,7 @@ public class Secs extends ConcreteDuration implements Serializable {
      * @see Duration#asHours()
      */
     @Override
-	public double asHours() {
+    public double asHours() {
         return value / Duration.SECS_PER_HOUR;
     }
 
@@ -122,13 +121,13 @@ public class Secs extends ConcreteDuration implements Serializable {
         return secs / Duration.SECS_PER_HOUR;
     }
 
-	/**
-	 * @see Duration#asRevs()
-	 */
-	@Override
-	public double asRevs() {
-		return value / Duration.SECS_PER_REV;
-	}
+    /**
+     * @see Duration#asRevs()
+     */
+    @Override
+    public double asRevs() {
+        return value / Duration.SECS_PER_REV;
+    }
 
     /**
      * @param secs
@@ -143,7 +142,7 @@ public class Secs extends ConcreteDuration implements Serializable {
      * @see Duration#asDays()
      */
     @Override
-	public double asDays() {
+    public double asDays() {
         return this.asSecs() / 86400.0D;
     }
 
@@ -160,7 +159,7 @@ public class Secs extends ConcreteDuration implements Serializable {
      * @see Duration#asJulianYears()
      */
     @Override
-	public double asJulianYears() {
+    public double asJulianYears() {
         return value / Duration.SECS_PER_JULIAN_YEAR;
     }
 
@@ -177,7 +176,7 @@ public class Secs extends ConcreteDuration implements Serializable {
      * @see Duration#sub(Duration)
      */
     @Override
-	public Duration add(final Duration d) {
+    public Duration add(final Duration d) {
         value += d.asSecs();
 
         return this;
@@ -187,18 +186,17 @@ public class Secs extends ConcreteDuration implements Serializable {
      * @see Duration#sub(Duration)
      */
     @Override
-	public Duration sub(final Duration d) {
+    public Duration sub(final Duration d) {
         value -= d.asSecs();
 
         return this;
     }
-    
-	/**
-	 * @see ConcreteDuration#clone()
-	 */
-	@Override
-	public Secs clone() {
-		return new Secs(value);
-	}
+
+    /**
+     * @see ConcreteDuration#clone()
+     */
+    public Secs clone() {
+        return new Secs(value);
+    }
 
 }

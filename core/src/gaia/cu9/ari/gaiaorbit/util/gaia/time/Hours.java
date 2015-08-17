@@ -56,7 +56,7 @@ public class Hours extends ConcreteDuration implements Serializable {
      * @see gaia.cu9.ari.gaiaorbit.util.gaia.time.Duration#set(Duration)
      */
     @Override
-	public Duration set(final Duration d) {
+    public Duration set(final Duration d) {
         value = d.asHours();
 
         return this;
@@ -66,7 +66,7 @@ public class Hours extends ConcreteDuration implements Serializable {
      * @see gaia.cu9.ari.gaiaorbit.util.gaia.time.Duration#asNanoSecs()
      */
     @Override
-	public long asNanoSecs() {
+    public long asNanoSecs() {
         return Math.round(value * Duration.NS_PER_HOUR);
     }
 
@@ -83,7 +83,7 @@ public class Hours extends ConcreteDuration implements Serializable {
      * @see gaia.cu9.ari.gaiaorbit.util.gaia.time.Duration#asSecs()
      */
     @Override
-	public double asSecs() {
+    public double asSecs() {
         return value * Duration.SECS_PER_HOUR;
     }
 
@@ -100,7 +100,7 @@ public class Hours extends ConcreteDuration implements Serializable {
      * @see gaia.cu9.ari.gaiaorbit.util.gaia.time.Duration#asMins()
      */
     @Override
-	public double asMins() {
+    public double asMins() {
         return value * Duration.MINS_PER_HOUR;
     }
 
@@ -117,17 +117,17 @@ public class Hours extends ConcreteDuration implements Serializable {
      * @see gaia.cu9.ari.gaiaorbit.util.gaia.time.Duration#asHours()
      */
     @Override
-	public double asHours() {
+    public double asHours() {
         return value;
     }
 
     /**
-	 * @see gaia.cu9.ari.gaiaorbit.util.gaia.time.Duration#asRevs()
-	 */
-	@Override
-	public double asRevs() {
-		return value / Duration.HOURS_PER_REV;
-	}
+     * @see gaia.cu9.ari.gaiaorbit.util.gaia.time.Duration#asRevs()
+     */
+    @Override
+    public double asRevs() {
+        return value / Duration.HOURS_PER_REV;
+    }
 
     /**
      * @param hours
@@ -138,11 +138,11 @@ public class Hours extends ConcreteDuration implements Serializable {
         return hours / Duration.HOURS_PER_REV;
     }
 
-	/**
+    /**
      * @see gaia.cu9.ari.gaiaorbit.util.gaia.time.Duration#asDays()
      */
     @Override
-	public double asDays() {
+    public double asDays() {
         return value / Duration.HOURS_PER_DAY;
     }
 
@@ -159,7 +159,7 @@ public class Hours extends ConcreteDuration implements Serializable {
      * @see gaia.cu9.ari.gaiaorbit.util.gaia.time.Duration#asJulianYears()
      */
     @Override
-	public double asJulianYears() {
+    public double asJulianYears() {
         return value / Duration.HOURS_PER_JULIAN_YEAR;
     }
 
@@ -172,11 +172,11 @@ public class Hours extends ConcreteDuration implements Serializable {
         return hours / Duration.HOURS_PER_JULIAN_YEAR;
     }
 
-	/**
+    /**
      * @see gaia.cu9.ari.gaiaorbit.util.gaia.time.Duration#sub(Duration)
      */
     @Override
-	public Duration add(final Duration d) {
+    public Duration add(final Duration d) {
         value += d.asHours();
 
         return this;
@@ -186,18 +186,17 @@ public class Hours extends ConcreteDuration implements Serializable {
      * @see gaia.cu9.ari.gaiaorbit.util.gaia.time.Duration#sub(Duration)
      */
     @Override
-	public Duration sub(final Duration d) {
+    public Duration sub(final Duration d) {
         value -= d.asHours();
 
         return this;
     }
-    
-	/**
-	 * @see gaia.cu9.ari.gaiaorbit.util.gaia.time.ConcreteDuration#clone()
-	 */
-	@Override
-	public Hours clone() {
-		return new Hours(value);
-	}
+
+    /**
+     * @see gaia.cu9.ari.gaiaorbit.util.gaia.time.ConcreteDuration#clone()
+     */
+    public Hours clone() {
+        return new Hours(value);
+    }
 
 }

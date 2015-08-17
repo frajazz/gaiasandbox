@@ -59,7 +59,7 @@ public class NanoSecs extends ConcreteDuration implements Serializable {
      * @see gaia.cu9.ari.gaiaorbit.util.gaia.time.Duration#set(Duration)
      */
     @Override
-	public Duration set(final Duration d) {
+    public Duration set(final Duration d) {
         this.ns = d.asNanoSecs();
 
         return this;
@@ -69,7 +69,7 @@ public class NanoSecs extends ConcreteDuration implements Serializable {
      * @see gaia.cu9.ari.gaiaorbit.util.gaia.time.Duration#asNanoSecs()
      */
     @Override
-	public long asNanoSecs() {
+    public long asNanoSecs() {
         return this.ns;
     }
 
@@ -77,7 +77,7 @@ public class NanoSecs extends ConcreteDuration implements Serializable {
      * @see gaia.cu9.ari.gaiaorbit.util.gaia.time.Duration#asSecs()
      */
     @Override
-	public double asSecs() {
+    public double asSecs() {
         return (double) this.ns / (double) Duration.NS_PER_SEC;
     }
 
@@ -93,8 +93,8 @@ public class NanoSecs extends ConcreteDuration implements Serializable {
      * @see gaia.cu9.ari.gaiaorbit.util.gaia.time.Duration#asMins()
      */
     @Override
-	public double asMins() {
-        return (double)this.ns / Duration.NS_PER_MIN;
+    public double asMins() {
+        return (double) this.ns / Duration.NS_PER_MIN;
     }
 
     /**
@@ -102,46 +102,46 @@ public class NanoSecs extends ConcreteDuration implements Serializable {
      * @return nanoSecs expressed in mins
      */
     static public double asMins(final long nanoSecs) {
-        return (double)nanoSecs / Duration.NS_PER_MIN;
+        return (double) nanoSecs / Duration.NS_PER_MIN;
     }
 
     /**
      * @see gaia.cu9.ari.gaiaorbit.util.gaia.time.Duration#asHours()
      */
     @Override
-	public double asHours() {
-        return (double)this.ns / Duration.NS_PER_HOUR;
+    public double asHours() {
+        return (double) this.ns / Duration.NS_PER_HOUR;
     }
 
-	/**
-	 * @see gaia.cu9.ari.gaiaorbit.util.gaia.time.Duration#asRevs()
-	 */
-	@Override
-	public double asRevs() {
-		return (double) this.ns/Duration.NS_PER_REV;
-	}
+    /**
+     * @see gaia.cu9.ari.gaiaorbit.util.gaia.time.Duration#asRevs()
+     */
+    @Override
+    public double asRevs() {
+        return (double) this.ns / Duration.NS_PER_REV;
+    }
 
     /**
      * @see gaia.cu9.ari.gaiaorbit.util.gaia.time.Duration#asDays()
      */
     @Override
-	public double asDays() {
-        return (double)this.ns / Duration.NS_PER_DAY;
+    public double asDays() {
+        return (double) this.ns / Duration.NS_PER_DAY;
     }
 
     /**
      * @see gaia.cu9.ari.gaiaorbit.util.gaia.time.Duration#asJulianYears()
      */
     @Override
-	public double asJulianYears() {
-        return (double)this.ns / Duration.NS_PER_JULIAN_YEAR;
+    public double asJulianYears() {
+        return (double) this.ns / Duration.NS_PER_JULIAN_YEAR;
     }
 
     /**
      * @see gaia.cu9.ari.gaiaorbit.util.gaia.time.Duration#negate()
      */
     @Override
-	public NanoSecs negate() {
+    public NanoSecs negate() {
         this.ns = -this.ns;
 
         return this;
@@ -151,7 +151,7 @@ public class NanoSecs extends ConcreteDuration implements Serializable {
      * @see gaia.cu9.ari.gaiaorbit.util.gaia.time.Duration#add(Duration)
      */
     @Override
-	public Duration add(final Duration d) {
+    public Duration add(final Duration d) {
         this.ns += d.asNanoSecs();
 
         return this;
@@ -161,29 +161,28 @@ public class NanoSecs extends ConcreteDuration implements Serializable {
      * @see gaia.cu9.ari.gaiaorbit.util.gaia.time.Duration#sub(Duration)
      */
     @Override
-	public Duration sub(final Duration d) {
+    public Duration sub(final Duration d) {
         this.ns -= d.asNanoSecs();
 
         return this;
     }
 
+    /**
+     * @see gaia.cu9.ari.gaiaorbit.util.gaia.time.ConcreteDuration#mult(double)
+     */
+    @Override
+    public Duration mult(double s) {
+        ns = Math.round((double) ns * s);
+
+        return this;
+    }
 
     /**
-	 * @see gaia.cu9.ari.gaiaorbit.util.gaia.time.ConcreteDuration#mult(double)
-	 */
-	@Override
-	public Duration mult(double s) {
-		ns = Math.round((double)ns * s);
-
-		return this;
-	}
-
-	/**
      * @param nanoSecs
      * @return nanoSecs expressed in hours
      */
     static public double asHours(final long nanoSecs) {
-        return (double)nanoSecs / Duration.NS_PER_HOUR;
+        return (double) nanoSecs / Duration.NS_PER_HOUR;
     }
 
     /**
@@ -191,7 +190,7 @@ public class NanoSecs extends ConcreteDuration implements Serializable {
      * @return nanoSecs expressed in revs
      */
     static public double asRevs(final long nanoSecs) {
-        return (double)nanoSecs / Duration.NS_PER_REV;
+        return (double) nanoSecs / Duration.NS_PER_REV;
     }
 
     /**
@@ -200,7 +199,7 @@ public class NanoSecs extends ConcreteDuration implements Serializable {
      * @return nanoSecs expressed in days.
      */
     static public double asDays(final long nanoSecs) {
-        return (double)nanoSecs / Duration.NS_PER_DAY;
+        return (double) nanoSecs / Duration.NS_PER_DAY;
     }
 
     /**
@@ -209,16 +208,14 @@ public class NanoSecs extends ConcreteDuration implements Serializable {
      * @return nanoSecs expressed in years.
      */
     static public double asJulianYears(final long nanoSecs) {
-        return (double)nanoSecs / Duration.NS_PER_JULIAN_YEAR;
+        return (double) nanoSecs / Duration.NS_PER_JULIAN_YEAR;
     }
 
-
-	/**
-	 * @see gaia.cu9.ari.gaiaorbit.util.gaia.time.ConcreteDuration#clone()
-	 */
-	@Override
-	public NanoSecs clone() {
-		return new NanoSecs(ns);
-	}
+    /**
+     * @see gaia.cu9.ari.gaiaorbit.util.gaia.time.ConcreteDuration#clone()
+     */
+    public NanoSecs clone() {
+        return new NanoSecs(ns);
+    }
 
 }
