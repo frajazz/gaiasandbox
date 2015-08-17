@@ -90,10 +90,9 @@ public class NotificationsInterface extends Table implements IObserver {
         EventManager.instance.subscribe(this, Events.POST_NOTIFICATION, Events.FOCUS_CHANGED, Events.TOGGLE_TIME_CMD, Events.TOGGLE_VISIBILITY_CMD, Events.CAMERA_MODE_CMD, Events.PACE_CHANGED_INFO, Events.FOCUS_LOCK_CMD, Events.TOGGLE_AMBIENT_LIGHT, Events.FOV_CHANGE_NOTIFICATION, Events.JAVA_EXCEPTION, Events.ORBIT_DATA_LOADED, Events.SCREENSHOT_INFO, Events.COMPUTE_GAIA_SCAN_CMD, Events.ONLY_OBSERVED_STARS_CMD, Events.TRANSIT_COLOUR_CMD, Events.LIMIT_MAG_CMD, Events.TOGGLE_STEREOSCOPIC, Events.TOGGLE_CLEANMODE, Events.FRAME_OUTPUT_CMD, Events.TOGGLE_STEREO_PROFILE);
     }
 
-    public void unsubscribe(){
+    public void unsubscribe() {
         EventManager.instance.unsubscribe(this, Events.POST_NOTIFICATION, Events.FOCUS_CHANGED, Events.TOGGLE_TIME_CMD, Events.TOGGLE_VISIBILITY_CMD, Events.CAMERA_MODE_CMD, Events.PACE_CHANGED_INFO, Events.FOCUS_LOCK_CMD, Events.TOGGLE_AMBIENT_LIGHT, Events.FOV_CHANGE_NOTIFICATION, Events.JAVA_EXCEPTION, Events.ORBIT_DATA_LOADED, Events.SCREENSHOT_INFO, Events.COMPUTE_GAIA_SCAN_CMD, Events.ONLY_OBSERVED_STARS_CMD, Events.TRANSIT_COLOUR_CMD, Events.LIMIT_MAG_CMD, Events.TOGGLE_STEREOSCOPIC, Events.TOGGLE_CLEANMODE, Events.FRAME_OUTPUT_CMD, Events.TOGGLE_STEREO_PROFILE);
     }
-
 
     private void addMessage(String msg) {
         addMessage(msg, false);
@@ -170,12 +169,12 @@ public class NotificationsInterface extends Table implements IObserver {
                 if (bool == null) {
                     addMessage(I18n.bundle.format("notif.toggle", I18n.bundle.format("gui.time")));
                 } else {
-                    addMessage(I18n.bundle.format("notif.simulation.pause", (bool ? 0 : 1)));
+                    addMessage(I18n.bundle.format("notif.simulation." + (bool ? "resume" : "pause")));
                 }
                 break;
             case TOGGLE_VISIBILITY_CMD:
                 if (data.length == 2)
-                    addMessage(I18n.bundle.format("notif.visibility.onoff", (String) data[0], ((Boolean) data[1]) ? 1 : 0));
+                    addMessage(I18n.bundle.format("notif.visibility." + (((Boolean) data[1]) ? "on" : "off"), (String) data[0]));
                 else
                     addMessage(I18n.bundle.format("notif.visibility.toggle", (String) data[0]));
                 break;
@@ -264,7 +263,7 @@ public class NotificationsInterface extends Table implements IObserver {
         }
     }
 
-    public void dispose(){
+    public void dispose() {
         this.unsubscribe();
     }
 
