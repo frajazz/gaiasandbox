@@ -12,4 +12,6 @@
 	<set-configuration-property name="gdx.assetpath" value="../android/assets" />
 	<set-configuration-property name='xsiframe.failIfScriptTag' value='FALSE'/>
 	
+	<extend-configuration-property name="gdx.reflect.include" value="gaia.cu9.ari.gaiaorbit.interfce.FullGui" />
+	
 </module>

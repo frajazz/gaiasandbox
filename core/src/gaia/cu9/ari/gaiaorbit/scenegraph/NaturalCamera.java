@@ -581,7 +581,7 @@ public class NaturalCamera extends AbstractCamera implements IObserver {
      */
     public double getTranslateUnits() {
         double dist;
-        if (parent.mode == CameraMode.Focus) {
+        if (parent.mode == CameraMode.Focus && focus != null) {
             AbstractPositionEntity ancestor = focus.getComputedAncestor();
             dist = ancestor.distToCamera - ancestor.getRadius();
         } else {

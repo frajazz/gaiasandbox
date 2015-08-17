@@ -1,5 +1,6 @@
 package gaia.cu9.ari.gaiaorbit.interfce.components;
 
+import gaia.cu9.ari.gaiaorbit.GaiaSandbox;
 import gaia.cu9.ari.gaiaorbit.event.EventManager;
 import gaia.cu9.ari.gaiaorbit.event.Events;
 import gaia.cu9.ari.gaiaorbit.event.IObserver;
@@ -45,6 +46,7 @@ public class CameraComponent extends GuiComponent implements IObserver {
         cameraMode = new SelectBox<String>(skin);
         cameraMode.setName("camera mode");
         cameraMode.setItems(cameraOptions);
+        cameraMode.setSelectedIndex(GaiaSandbox.instance.cam.getMode().ordinal());
         cameraMode.addListener(new EventListener() {
             @Override
             public boolean handle(Event event) {
