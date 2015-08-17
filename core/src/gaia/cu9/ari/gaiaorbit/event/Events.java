@@ -282,6 +282,10 @@ public enum Events {
     /** Issues the command to update the pixel render system. Contains no parameters. **/
     PIXEL_RENDERER_UPDATE,
     /** Removes the keyboard focus in the GUI **/
-    REMOVE_KEYBOARD_FOCUS;
+    REMOVE_KEYBOARD_FOCUS,
+    /** Removes the gui component identified by the given name **/
+    REMOVE_GUI_COMPONENT,
+    /** Adds the gui component identified by the given name **/
+    ADD_GUI_COMPONENT;
 
 }

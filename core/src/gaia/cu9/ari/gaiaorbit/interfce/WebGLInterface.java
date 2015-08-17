@@ -77,6 +77,17 @@ public class WebGLInterface extends Table implements IObserver {
         });
 
         switchFull = new OwnTextButton(txt("gui.webgl.switchfull"), skin, "link");
+        switchFull.addListener(new EventListener() {
+            @Override
+            public boolean handle(Event event) {
+                if (event instanceof ChangeEvent) {
+                    // Remove webgl, add controls window
+                    EventManager.instance.post(Events.REMOVE_GUI_COMPONENT, "webglInterface");
+                    EventManager.instance.post(Events.ADD_GUI_COMPONENT, "controlsWindow");
+                }
+                return true;
+            }
+        });
 
         HorizontalGroup hg = new HorizontalGroup().space(3);
         hg.addActor(gaiaObsLabel);

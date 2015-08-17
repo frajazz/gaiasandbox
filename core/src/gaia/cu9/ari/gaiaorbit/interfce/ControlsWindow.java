@@ -18,6 +18,7 @@ import gaia.cu9.ari.gaiaorbit.util.scene2d.CollapsiblePane;
 import gaia.cu9.ari.gaiaorbit.util.scene2d.CollapsibleWindow;
 import gaia.cu9.ari.gaiaorbit.util.scene2d.OwnImageButton;
 import gaia.cu9.ari.gaiaorbit.util.scene2d.OwnScrollPane;
+import gaia.cu9.ari.gaiaorbit.util.scene2d.OwnTextButton;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -29,6 +30,7 @@ import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.Event;
 import com.badlogic.gdx.scenes.scene2d.EventListener;
 import com.badlogic.gdx.scenes.scene2d.Stage;
+import com.badlogic.gdx.scenes.scene2d.ui.Button;
 import com.badlogic.gdx.scenes.scene2d.ui.Image;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
@@ -163,6 +165,21 @@ public class ControlsWindow extends CollapsibleWindow implements IObserver {
         CollapsiblePane gaia = new CollapsiblePane(ui, txt("gui.gaiascan"), gaiaComponent.getActor(), skin);
         gaia.align(Align.left);
         mainActors.add(gaia);
+
+        /** ----BACK TO WEBGL LINK---- **/
+        Button switchWebgl = new OwnTextButton(txt("gui.webgl.back"), skin, "link");
+        switchWebgl.addListener(new EventListener() {
+            @Override
+            public boolean handle(Event event) {
+                if (event instanceof ChangeEvent) {
+                    // Remove webgl, add controls window
+                    EventManager.instance.post(Events.REMOVE_GUI_COMPONENT, "controlsWindow");
+                    EventManager.instance.post(Events.ADD_GUI_COMPONENT, "webglInterface");
+                }
+                return true;
+            }
+        });
+        mainActors.add(switchWebgl);
 
         /** ADD GROUPS TO VERTICAL LAYOUT **/
         int pad = 10;

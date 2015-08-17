@@ -25,6 +25,9 @@ import com.badlogic.gdx.scenes.scene2d.ui.ScrollPane;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.scenes.scene2d.ui.TextField;
 import com.badlogic.gdx.utils.Align;
+import com.badlogic.gdx.utils.reflect.ClassReflection;
+import com.badlogic.gdx.utils.reflect.Method;
+import com.badlogic.gdx.utils.reflect.ReflectionException;
 import com.badlogic.gdx.utils.viewport.ScreenViewport;
 
 /**
@@ -39,10 +42,7 @@ public class FullGui implements IGui, IObserver {
      */
     protected Stage ui;
 
-    protected ControlsWindow controls;
-
-    protected SearchDialog searchDialog;
-    protected VisualEffectsComponent visualEffectsWindow;
+    protected ControlsWindow controlsWindow;
 
     protected Container<FocusInfoInterface> fi;
     protected FocusInfoInterface focusInterface;
@@ -52,6 +52,9 @@ public class FullGui implements IGui, IObserver {
     protected CustomInterface customInterface;
     protected Container<WebGLInterface> wgl;
     protected WebGLInterface webglInterface;
+
+    protected SearchDialog searchDialog;
+    protected VisualEffectsComponent visualEffectsComponent;
 
     protected ISceneGraph sg;
     private ComponentType[] visibilityEntities;
@@ -86,7 +89,7 @@ public class FullGui implements IGui, IObserver {
         buildGui();
 
         // We must subscribe to the desired events
-        EventManager.instance.subscribe(this, Events.FOV_CHANGED_CMD, Events.SHOW_TUTORIAL_ACTION, Events.SHOW_SEARCH_ACTION, Events.REMOVE_KEYBOARD_FOCUS);
+        EventManager.instance.subscribe(this, Events.FOV_CHANGED_CMD, Events.SHOW_TUTORIAL_ACTION, Events.SHOW_SEARCH_ACTION, Events.REMOVE_KEYBOARD_FOCUS, Events.REMOVE_GUI_COMPONENT, Events.ADD_GUI_COMPONENT);
     }
 
     private void buildGui() {
@@ -99,15 +102,11 @@ public class FullGui implements IGui, IObserver {
         if (/**type.equals(ApplicationType.WebGL)**/
         true) {
             // WEBGL INTERFACE - TOP LEFT
-            webglInterface = new WebGLInterface(skin);
-            wgl = new Container<WebGLInterface>(webglInterface);
-            wgl.setFillParent(true);
-            wgl.left().top();
-            wgl.pad(5, 5, 0, 0);
+            addWebglInterface();
 
         } else {
             // CONTROLS WINDOW
-            initControlsWindow();
+            addControlsWindow();
         }
 
         // FOCUS INFORMATION - BOTTOM RIGHT
@@ -145,22 +144,8 @@ public class FullGui implements IGui, IObserver {
         //controls.collapse();
     }
 
-    private void initControlsWindow() {
-        controls = new ControlsWindow(txt("gui.controls"), skin, ui);
-        controls.setSceneGraph(sg);
-        controls.setVisibilityToggles(visibilityEntities, visible);
-        controls.initialize();
-        controls.left();
-        controls.getTitleTable().align(Align.left);
-        controls.setFillParent(false);
-        controls.setMovable(true);
-        controls.setResizable(false);
-        controls.padRight(5);
-        controls.padBottom(5);
-    }
-
     public void recalculateOptionsSize() {
-        controls.recalculateSize();
+        controlsWindow.recalculateSize();
     }
 
     private void rebuildGui() {
@@ -168,13 +153,13 @@ public class FullGui implements IGui, IObserver {
         if (ui != null) {
             ui.clear();
             boolean collapsed = false;
-            if (controls != null) {
-                collapsed = controls.isCollapsed();
+            if (controlsWindow != null) {
+                collapsed = controlsWindow.isCollapsed();
                 recalculateOptionsSize();
                 if (collapsed)
-                    controls.collapse();
-                controls.setPosition(0, Gdx.graphics.getHeight() - controls.getHeight());
-                ui.addActor(controls);
+                    controlsWindow.collapse();
+                controlsWindow.setPosition(0, Gdx.graphics.getHeight() - controlsWindow.getHeight());
+                ui.addActor(controlsWindow);
             }
             if (webglInterface != null)
                 ui.addActor(wgl);
@@ -200,12 +185,12 @@ public class FullGui implements IGui, IObserver {
                         InputEvent ie = (InputEvent) event;
 
                         if (ie.getType() == Type.mouseMoved) {
-                            if (controls != null) {
-                                if (ie.getTarget().isDescendantOf(controls)) {
+                            if (controlsWindow != null) {
+                                if (ie.getTarget().isDescendantOf(controlsWindow)) {
                                     Actor scrollPanelAncestor = getScrollPanelAncestor(ie.getTarget());
                                     ui.setScrollFocus(scrollPanelAncestor);
                                 } else {
-                                    ui.setScrollFocus(controls);
+                                    ui.setScrollFocus(controlsWindow);
                                 }
                             }
                         } else if (ie.getType() == Type.touchDown) {
@@ -284,6 +269,28 @@ public class FullGui implements IGui, IObserver {
         case REMOVE_KEYBOARD_FOCUS:
             ui.setKeyboardFocus(null);
             break;
+        case REMOVE_GUI_COMPONENT:
+            String name = (String) data[0];
+            String method = "remove" + TextUtils.capitalise(name);
+            try {
+                Method m = ClassReflection.getMethod(this.getClass(), method);
+                m.invoke(this);
+            } catch (ReflectionException e) {
+                Logger.error(e);
+            }
+            rebuildGui();
+            break;
+        case ADD_GUI_COMPONENT:
+            name = (String) data[0];
+            method = "add" + TextUtils.capitalise(name);
+            try {
+                Method m = ClassReflection.getMethod(this.getClass(), method);
+                m.invoke(this);
+            } catch (ReflectionException e) {
+                Logger.error(e);
+            }
+            rebuildGui();
+            break;
         }
 
     }
@@ -328,5 +335,43 @@ public class FullGui implements IGui, IObserver {
 
     private String txt(String key, Object... params) {
         return I18n.bundle.format(key, params);
+    }
+
+    public void removeWebglInterface() {
+        if (webglInterface != null) {
+            webglInterface.remove();
+            webglInterface = null;
+            wgl.remove();
+            wgl = null;
+        }
+    }
+
+    public void addWebglInterface() {
+        webglInterface = new WebGLInterface(skin);
+        wgl = new Container<WebGLInterface>(webglInterface);
+        wgl.setFillParent(true);
+        wgl.left().top();
+        wgl.pad(5, 5, 0, 0);
+    }
+
+    public void removeControlsWindow() {
+        if (controlsWindow != null) {
+            controlsWindow.remove();
+            controlsWindow = null;
+        }
+    }
+
+    public void addControlsWindow() {
+        controlsWindow = new ControlsWindow(txt("gui.controls"), skin, ui);
+        controlsWindow.setSceneGraph(sg);
+        controlsWindow.setVisibilityToggles(visibilityEntities, visible);
+        controlsWindow.initialize();
+        controlsWindow.left();
+        controlsWindow.getTitleTable().align(Align.left);
+        controlsWindow.setFillParent(false);
+        controlsWindow.setMovable(true);
+        controlsWindow.setResizable(false);
+        controlsWindow.padRight(5);
+        controlsWindow.padBottom(5);
     }
 }

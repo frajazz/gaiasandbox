@@ -40,7 +40,7 @@ public class NaturalCamera extends AbstractCamera implements IObserver {
     public boolean facingFocus;
 
     /** Auxiliary vectors **/
-    private Vector3d aux1, aux2, aux3, state;
+    private Vector3d aux1, aux2, aux3, aux4, aux5, state;
     /** Acceleration, velocity and position for pitch, yaw and roll **/
     private Vector3d pitch, yaw, roll;
     /** Acceleration, velocity and position for the horizontal and vertical rotation around the focus **/
@@ -52,7 +52,7 @@ public class NaturalCamera extends AbstractCamera implements IObserver {
     protected boolean stateSaved = false;
 
     /** Entities for the Gaia_Scene mode **/
-    protected CelestialBody entity1 = null, entity2 = null;
+    protected CelestialBody entity1 = null, entity2 = null, entity3 = null;
 
     private CameraMode lastMode;
 
@@ -117,6 +117,8 @@ public class NaturalCamera extends AbstractCamera implements IObserver {
         aux1 = new Vector3d();
         aux2 = new Vector3d();
         aux3 = new Vector3d();
+        aux4 = new Vector3d();
+        aux5 = new Vector3d();
         state = new Vector3d();
 
         //viewport = new ExtendViewport(200, 200, camera);
@@ -192,7 +194,8 @@ public class NaturalCamera extends AbstractCamera implements IObserver {
         case Gaia_Scene:
             if (entity1 == null || entity2 == null) {
                 entity1 = (CelestialBody) GaiaSandbox.instance.sg.getNode("Gaia");
-                entity2 = (CelestialBody) GaiaSandbox.instance.sg.getNode("Sol");
+                entity2 = (CelestialBody) GaiaSandbox.instance.sg.getNode("Earth");
+                entity3 = (CelestialBody) GaiaSandbox.instance.sg.getNode("Mars");
             }
             AbstractPositionEntity fccopy = entity1.getLineCopy();
             fccopy.getRoot().transform.position.set(0f, 0f, 0f);
