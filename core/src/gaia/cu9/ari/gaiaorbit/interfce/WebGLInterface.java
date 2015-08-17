@@ -5,6 +5,9 @@ import gaia.cu9.ari.gaiaorbit.event.Events;
 import gaia.cu9.ari.gaiaorbit.event.IObserver;
 import gaia.cu9.ari.gaiaorbit.scenegraph.CameraManager.CameraMode;
 import gaia.cu9.ari.gaiaorbit.util.I18n;
+import gaia.cu9.ari.gaiaorbit.util.format.DateFormatFactory;
+import gaia.cu9.ari.gaiaorbit.util.format.DateFormatFactory.DateType;
+import gaia.cu9.ari.gaiaorbit.util.format.IDateFormat;
 import gaia.cu9.ari.gaiaorbit.util.scene2d.OwnLabel;
 import gaia.cu9.ari.gaiaorbit.util.scene2d.OwnSlider;
 import gaia.cu9.ari.gaiaorbit.util.scene2d.OwnTextButton;
@@ -29,11 +32,14 @@ public class WebGLInterface extends Table implements IObserver {
     protected Button switchFull;
 
     int prevVal = 0;
+    private IDateFormat df;
 
     public WebGLInterface(Skin skin) {
         super(skin);
         this.setBackground("table-bg-inv");
         this.pad(5);
+
+        df = DateFormatFactory.getFormatter(I18n.locale, DateType.DATE);
 
         date = new OwnLabel("", skin, "default-inv");
 
@@ -112,7 +118,7 @@ public class WebGLInterface extends Table implements IObserver {
         case TIME_CHANGE_INFO:
             // Update input time
             Date time = (Date) data[0];
-            date.setText(time.toString());
+            date.setText(df.format(time));
             break;
         }
 

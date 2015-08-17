@@ -4,6 +4,10 @@ import gaia.cu9.ari.gaiaorbit.event.EventManager;
 import gaia.cu9.ari.gaiaorbit.event.Events;
 import gaia.cu9.ari.gaiaorbit.event.IObserver;
 import gaia.cu9.ari.gaiaorbit.interfce.DateDialog;
+import gaia.cu9.ari.gaiaorbit.util.I18n;
+import gaia.cu9.ari.gaiaorbit.util.format.DateFormatFactory;
+import gaia.cu9.ari.gaiaorbit.util.format.DateFormatFactory.DateType;
+import gaia.cu9.ari.gaiaorbit.util.format.IDateFormat;
 import gaia.cu9.ari.gaiaorbit.util.scene2d.OwnImageButton;
 import gaia.cu9.ari.gaiaorbit.util.scene2d.OwnLabel;
 import gaia.cu9.ari.gaiaorbit.util.scene2d.OwnTextField;
@@ -22,11 +26,15 @@ import com.badlogic.gdx.scenes.scene2d.ui.ImageButton;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.scenes.scene2d.ui.TextField;
+import com.badlogic.gdx.scenes.scene2d.ui.Tooltip;
 import com.badlogic.gdx.scenes.scene2d.ui.VerticalGroup;
 import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener.ChangeEvent;
 import com.badlogic.gdx.utils.Align;
 
 public class TimeComponent extends GuiComponent implements IObserver {
+
+    /** Date format **/
+    private IDateFormat df;
 
     protected OwnLabel date;
     protected Button plus, minus;
@@ -36,6 +44,8 @@ public class TimeComponent extends GuiComponent implements IObserver {
 
     public TimeComponent(Skin skin, Stage stage) {
         super(skin, stage);
+
+        df = DateFormatFactory.getFormatter(I18n.locale, DateType.DATE);
         EventManager.instance.subscribe(this, Events.TIME_CHANGE_INFO, Events.TIME_CHANGE_CMD, Events.PACE_CHANGED_INFO);
     }
 
@@ -62,8 +72,7 @@ public class TimeComponent extends GuiComponent implements IObserver {
             }
 
         });
-        //Label dateEditTooltip = new Label(txt("gui.tooltip.dateedit"), skin, "tooltip");
-        //dateEdit.addListener(new Tooltip<Label>(dateEditTooltip, stage));
+        dateEdit.addListener(new Tooltip(txt("gui.tooltip.dateedit"), skin));
 
         // Pace
         Label paceLabel = new Label(txt("gui.pace"), skin);
@@ -146,7 +155,7 @@ public class TimeComponent extends GuiComponent implements IObserver {
         case TIME_CHANGE_CMD:
             // Update input time
             Date time = (Date) data[0];
-            date.setText(time.toString());
+            date.setText(df.format(time));
             break;
         case PACE_CHANGED_INFO:
             if (data.length == 1)
