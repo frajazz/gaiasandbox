@@ -11,7 +11,6 @@ import gaia.cu9.ari.gaiaorbit.util.format.IDateFormat;
 import gaia.cu9.ari.gaiaorbit.util.scene2d.OwnImageButton;
 import gaia.cu9.ari.gaiaorbit.util.scene2d.OwnLabel;
 import gaia.cu9.ari.gaiaorbit.util.scene2d.OwnTextField;
-import gaia.cu9.ari.gaiaorbit.util.scene2d.Tooltip;
 import gaia.cu9.ari.gaiaorbit.util.time.GlobalClock;
 
 import java.util.Date;
@@ -27,6 +26,7 @@ import com.badlogic.gdx.scenes.scene2d.ui.ImageButton;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.scenes.scene2d.ui.TextField;
+import com.badlogic.gdx.scenes.scene2d.ui.Tooltip;
 import com.badlogic.gdx.scenes.scene2d.ui.VerticalGroup;
 import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener.ChangeEvent;
 import com.badlogic.gdx.utils.Align;
@@ -70,8 +70,7 @@ public class TimeComponent extends GuiComponent implements IObserver {
             }
 
         });
-        Label dateEditTooltip = new Label(txt("gui.tooltip.dateedit"), skin, "tooltip");
-        dateEdit.addListener(new Tooltip<Label>(dateEditTooltip, stage));
+        dateEdit.addListener(new Tooltip(txt("gui.tooltip.dateedit"), skin));
 
         // Pace
         Label paceLabel = new Label(txt("gui.pace"), skin);

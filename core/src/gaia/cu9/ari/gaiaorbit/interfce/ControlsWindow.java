@@ -19,7 +19,6 @@ import gaia.cu9.ari.gaiaorbit.util.scene2d.CollapsibleWindow;
 import gaia.cu9.ari.gaiaorbit.util.scene2d.OwnImageButton;
 import gaia.cu9.ari.gaiaorbit.util.scene2d.OwnScrollPane;
 import gaia.cu9.ari.gaiaorbit.util.scene2d.OwnTextButton;
-import gaia.cu9.ari.gaiaorbit.util.scene2d.Tooltip;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -33,9 +32,9 @@ import com.badlogic.gdx.scenes.scene2d.EventListener;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.Button;
 import com.badlogic.gdx.scenes.scene2d.ui.Image;
-import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
+import com.badlogic.gdx.scenes.scene2d.ui.Tooltip;
 import com.badlogic.gdx.scenes.scene2d.ui.VerticalGroup;
 import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener.ChangeEvent;
 import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
@@ -98,8 +97,7 @@ public class ControlsWindow extends CollapsibleWindow implements IObserver {
                 return false;
             }
         });
-        Label playstopTooltip = new Label(txt("gui.tooltip.playstop"), skin, "tooltip");
-        playstop.addListener(new Tooltip<Label>(playstopTooltip, ui));
+        playstop.addListener(new Tooltip(txt("gui.tooltip.playstop"), skin));
 
         TimeComponent timeComponent = new TimeComponent(skin, ui);
         timeComponent.initialize();
@@ -123,8 +121,7 @@ public class ControlsWindow extends CollapsibleWindow implements IObserver {
                 return false;
             }
         });
-        Label recTooltip = new Label(txt("gui.tooltip.reccamera"), skin, "tooltip");
-        recCamera.addListener(new Tooltip<Label>(recTooltip, ui));
+        recCamera.addListener(new Tooltip(txt("gui.tooltip.reccamera"), skin));
 
         // Play camera button
         playCamera = new OwnImageButton(skin, "play");
@@ -141,8 +138,7 @@ public class ControlsWindow extends CollapsibleWindow implements IObserver {
             }
         });
 
-        Label playTooltip = new Label(txt("gui.tooltip.playcamera"), skin, "tooltip");
-        playCamera.addListener(new Tooltip<Label>(playTooltip, ui));
+        playCamera.addListener(new Tooltip(txt("gui.tooltip.playcamera"), skin));
 
         CameraComponent cameraComponent = new CameraComponent(skin, ui);
         cameraComponent.initialize();
