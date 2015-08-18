@@ -11,6 +11,7 @@ import gaia.cu9.ari.gaiaorbit.util.format.IDateFormat;
 import gaia.cu9.ari.gaiaorbit.util.scene2d.OwnLabel;
 import gaia.cu9.ari.gaiaorbit.util.scene2d.OwnSlider;
 import gaia.cu9.ari.gaiaorbit.util.scene2d.OwnTextButton;
+import gaia.cu9.ari.gaiaorbit.util.time.GlobalClock;
 
 import java.util.Date;
 
@@ -41,7 +42,7 @@ public class WebGLInterface extends Table implements IObserver {
 
         df = DateFormatFactory.getFormatter(I18n.locale, DateType.DATE);
 
-        date = new OwnLabel("", skin, "default-inv");
+        date = new OwnLabel(df.format(GlobalClock.clock.getTime()), skin, "default-inv");
 
         gaiaObsLabel = new OwnLabel(txt("gui.webgl.gaiaobs"), skin, "default-inv");
         sceneModeLabel = new OwnLabel(txt("gui.webgl.scenemode"), skin, "default-inv");

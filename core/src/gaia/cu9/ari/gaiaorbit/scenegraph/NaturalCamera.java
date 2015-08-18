@@ -40,7 +40,7 @@ public class NaturalCamera extends AbstractCamera implements IObserver {
     public boolean facingFocus;
 
     /** Auxiliary vectors **/
-    private Vector3d aux1, aux2, aux3, aux4, aux5, state;
+    private Vector3d aux1, aux2, aux3, aux4, aux5, dx, state;
     /** Acceleration, velocity and position for pitch, yaw and roll **/
     private Vector3d pitch, yaw, roll;
     /** Acceleration, velocity and position for the horizontal and vertical rotation around the focus **/
@@ -119,6 +119,7 @@ public class NaturalCamera extends AbstractCamera implements IObserver {
         aux3 = new Vector3d();
         aux4 = new Vector3d();
         aux5 = new Vector3d();
+        dx = new Vector3d();
         state = new Vector3d();
 
         //viewport = new ExtendViewport(200, 200, camera);
@@ -155,12 +156,13 @@ public class NaturalCamera extends AbstractCamera implements IObserver {
                 focus = (CelestialBody) focus.getComputedAncestor();
                 focus.getPosition(focusPos);
 
+                dx.set(0, 0, 0);
                 if (GlobalConf.scene.FOCUS_LOCK) {
                     focus.getPredictedPosition(aux1, time, this, false);
                     // Get dx
-                    aux1.sub(focusPos);
+                    dx.set(aux1).sub(focusPos);
                     // Add dx to camera position
-                    pos.add(aux1);
+                    pos.add(dx);
                 }
 
                 // Update direction to follow focus and activate custom input listener
@@ -177,6 +179,15 @@ public class NaturalCamera extends AbstractCamera implements IObserver {
                 // Update focus direction
                 focus.transform.getTranslation(focusDirection);
                 focus = focusBak;
+
+                this.focus.getAbsolutePosition(aux1).add(dx);
+                double dist = aux1.dst(pos);
+                if (dist < focus.getRadius()) {
+                    // aux2 <- focus-cam with a length of radius
+                    aux2.set(pos).sub(aux1).nor().scl(focus.getRadius());
+                    // Correct camera position
+                    pos.set(aux1).add(aux2);
+                }
 
                 EventManager.instance.post(Events.FOCUS_INFO_UPDATED, focus.distToCamera - focus.getRadius(), ((AbstractPositionEntity) focus).viewAngle);
             } else {
@@ -564,6 +575,7 @@ public class NaturalCamera extends AbstractCamera implements IObserver {
     public void updateMode(CameraMode mode, boolean postEvent) {
         if (mode.equals(CameraMode.Focus)) {
             diverted = false;
+            checkFocus();
         }
     }
 
@@ -624,6 +636,9 @@ public class NaturalCamera extends AbstractCamera implements IObserver {
             if (focus != null) {
                 setFocus(focus);
             }
+
+            checkFocus();
+
             break;
         case FOV_CHANGED_CMD:
             float fov = MathUtilsd.clamp((float) data[0], Constants.MIN_FOV, Constants.MAX_FOV);
@@ -829,6 +844,27 @@ public class NaturalCamera extends AbstractCamera implements IObserver {
     @Override
     public CelestialBody getFocus() {
         return getMode().equals(CameraMode.Focus) ? focus : null;
+    }
+
+    /**
+     * Checks the position of the camera does not collide with the focus object.
+     */
+    public void checkFocus() {
+        if (focus != null) {
+            // Move camera if too close to focus
+            this.focus.getAbsolutePosition(aux1);
+            if (pos.dst(aux1) < this.focus.size * 2) {
+                // Position camera near focus
+                stopTotalMovement();
+
+                this.focus.getAbsolutePosition(aux1);
+                pos.set(aux1);
+
+                pos.add(0, 0, -this.focus.size * 6);
+                posinv.set(pos).scl(-1);
+                direction.set(0, 0, 1);
+            }
+        }
     }
 
     public void resetState() {

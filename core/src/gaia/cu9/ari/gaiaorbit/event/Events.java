@@ -65,7 +65,8 @@ public enum Events {
     /** Focus change command.
      * <ul><li>
      * [0] - The new focus object OR its name.
-     * </li></ul>
+     * </li>
+     * </ul>
      * **/
     FOCUS_CHANGE_CMD,
     /** Informs that the focus has somehow changed and the GUI must be updated.
