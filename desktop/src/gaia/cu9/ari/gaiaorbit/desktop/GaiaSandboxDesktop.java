@@ -3,6 +3,8 @@ package gaia.cu9.ari.gaiaorbit.desktop;
 import gaia.cu9.ari.gaiaorbit.GaiaSandbox;
 import gaia.cu9.ari.gaiaorbit.desktop.format.DesktopDateFormatFactory;
 import gaia.cu9.ari.gaiaorbit.desktop.format.DesktopNumberFormatFactory;
+import gaia.cu9.ari.gaiaorbit.desktop.util.DesktopDataFilesFactory;
+import gaia.cu9.ari.gaiaorbit.util.DataFilesFactory;
 import gaia.cu9.ari.gaiaorbit.util.GlobalConf;
 import gaia.cu9.ari.gaiaorbit.util.format.DateFormatFactory;
 import gaia.cu9.ari.gaiaorbit.util.format.NumberFormatFactory;
@@ -17,6 +19,7 @@ public class GaiaSandboxDesktop {
     public static void main(String[] args) {
         NumberFormatFactory.initialize(new DesktopNumberFormatFactory());
         DateFormatFactory.initialize(new DesktopDateFormatFactory());
+        DataFilesFactory.initialize(new DesktopDataFilesFactory());
         try {
             GlobalConf.initialize();
         } catch (Exception e) {

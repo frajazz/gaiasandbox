@@ -89,11 +89,6 @@ public class HYGCSVLoader extends AbstractCatalogLoader implements ICatalogLoade
             }
             long starid = Parser.parseLong(st[0].trim());
 
-            if (name != null && name.equalsIgnoreCase("Betelgeuse")) {
-                int ad = 34;
-                ad += 213;
-            }
-
             Star star = new Star(pos, appmag, absmag, colorbv, name, (float) ra, (float) dec, (int) starid);
             stars.add(star);
         }

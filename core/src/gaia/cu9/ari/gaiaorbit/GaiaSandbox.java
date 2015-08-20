@@ -34,9 +34,11 @@ import gaia.cu9.ari.gaiaorbit.scenegraph.ISceneGraph;
 import gaia.cu9.ari.gaiaorbit.scenegraph.SceneGraph;
 import gaia.cu9.ari.gaiaorbit.scenegraph.SceneGraphNode;
 import gaia.cu9.ari.gaiaorbit.scenegraph.component.ModelComponent;
+import gaia.cu9.ari.gaiaorbit.util.DataFilesFactory;
 import gaia.cu9.ari.gaiaorbit.util.GlobalConf;
 import gaia.cu9.ari.gaiaorbit.util.GlobalResources;
 import gaia.cu9.ari.gaiaorbit.util.I18n;
+import gaia.cu9.ari.gaiaorbit.util.IDataFiles;
 import gaia.cu9.ari.gaiaorbit.util.Logger;
 import gaia.cu9.ari.gaiaorbit.util.ModelCache;
 import gaia.cu9.ari.gaiaorbit.util.gaia.GaiaAttitudeServer;
@@ -62,6 +64,7 @@ import com.badlogic.gdx.controllers.Controllers;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.Pixmap.Format;
 import com.badlogic.gdx.graphics.glutils.FrameBuffer;
+import com.badlogic.gdx.utils.GdxRuntimeException;
 
 /**
  * The main class. Holds all the entities manages the update/draw cycle as well
@@ -73,13 +76,14 @@ import com.badlogic.gdx.graphics.glutils.FrameBuffer;
 public class GaiaSandbox implements ApplicationListener, IObserver {
     private static boolean LOADING = true;
 
-    private static String FILE_CATALOGUE = "data/hygxyz.bin";
-    private static String FILE_JSON = "data/planets.json data/moons.json data/satellites.json data/asteroids.json data/orbits.json data/extra.json data/locations.json data/earth_locations.json data/moon_locations.json";
-    private static String FILE_CONSTELLATIONS = "data/constel.csv";
-    private static String FILE_BOUNDARIES = "data/boundaries.csv";
+    /** Attitude folder **/
     private static String ATTITUDE_FOLDER = "data/attitudexml/";
 
+    /** Singleton instance **/
     public static GaiaSandbox instance;
+
+    /** Data files to load **/
+    private IDataFiles dataFiles;
 
     // Asset manager
     public AssetManager manager;
@@ -145,6 +149,9 @@ public class GaiaSandbox implements ApplicationListener, IObserver {
             }
         }
 
+        // Init data files
+        dataFiles = DataFilesFactory.getDataFiles();
+
         // Precompute some math functions
         MathUtilsd.initialize();
 
@@ -174,13 +181,17 @@ public class GaiaSandbox implements ApplicationListener, IObserver {
         manager.load(ATTITUDE_FOLDER, GaiaAttitudeServer.class);
 
         // Load catalogue
-        manager.load(FILE_CATALOGUE, HYGBean.class);
+        if (dataFiles.getCatalogFiles() != null)
+            manager.load(dataFiles.getCatalogFiles(), HYGBean.class);
         // Load json files
-        manager.load(FILE_JSON, JsonBean.class);
+        if (dataFiles.getJsonFiles() != null)
+            manager.load(dataFiles.getJsonFiles(), JsonBean.class);
         // Load constellations
-        manager.load(FILE_CONSTELLATIONS, ConstellationsBean.class);
+        if (dataFiles.getConstellationFiles() != null)
+            manager.load(dataFiles.getConstellationFiles(), ConstellationsBean.class);
         // Load boundaries
-        manager.load(FILE_BOUNDARIES, BoundariesBean.class);
+        if (dataFiles.getBoundaryFiles() != null)
+            manager.load(dataFiles.getBoundaryFiles(), BoundariesBean.class);
 
         // Initialize timestamp for screenshots
         renderGui = new RenderGui();
@@ -228,12 +239,32 @@ public class GaiaSandbox implements ApplicationListener, IObserver {
          * GET ALL NODES (stars, json, constel, boundaries)
          */
         List<SceneGraphNode> nodeList;
-        HYGBean hygbean = manager.get(FILE_CATALOGUE);
-        JsonBean jsonbean = manager.get(FILE_JSON);
-        ConstellationsBean constelbean = manager.get(FILE_CONSTELLATIONS);
-        BoundariesBean boundbean = manager.get(FILE_BOUNDARIES);
+        HYGBean hygbean;
+        JsonBean jsonbean;
+        ConstellationsBean constelbean;
+        BoundariesBean boundbean;
+        try {
+            hygbean = manager.get(dataFiles.getCatalogFiles());
+        } catch (GdxRuntimeException | NullPointerException e) {
+            hygbean = new HYGBean();
+        }
+        try {
+            jsonbean = manager.get(dataFiles.getJsonFiles());
+        } catch (GdxRuntimeException | NullPointerException e) {
+            jsonbean = new JsonBean();
+        }
+        try {
+            constelbean = manager.get(dataFiles.getConstellationFiles());
+        } catch (GdxRuntimeException | NullPointerException e) {
+            constelbean = new ConstellationsBean();
+        }
+        try {
+            boundbean = manager.get(dataFiles.getBoundaryFiles());
+        } catch (GdxRuntimeException | NullPointerException e) {
+            boundbean = new BoundariesBean();
+        }
 
-        int n = hygbean.size() /*+ jsonbean.size() + constelbean.size() + boundbean.size()*/;
+        int n = hygbean.size() + jsonbean.size() + constelbean.size() + boundbean.size();
         nodeList = new ArrayList<SceneGraphNode>(n);
 
         nodeList.addAll(hygbean.list());

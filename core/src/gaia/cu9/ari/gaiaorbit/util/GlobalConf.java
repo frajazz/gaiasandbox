@@ -203,7 +203,7 @@ public class GlobalConf {
             /** DATA **/
             DATA_SOURCE_LOCAL = true;
 
-            LIMIT_MAG_LOAD = 7.6f;
+            LIMIT_MAG_LOAD = 20f;
         }
     }
 

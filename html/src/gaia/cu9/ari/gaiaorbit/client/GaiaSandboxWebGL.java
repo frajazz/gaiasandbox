@@ -3,10 +3,12 @@ package gaia.cu9.ari.gaiaorbit.client;
 import gaia.cu9.ari.gaiaorbit.GaiaSandbox;
 import gaia.cu9.ari.gaiaorbit.client.format.GwtDateFormatFactory;
 import gaia.cu9.ari.gaiaorbit.client.format.GwtNumberFormatFactory;
+import gaia.cu9.ari.gaiaorbit.client.util.WebGLDataFilesFactory;
 import gaia.cu9.ari.gaiaorbit.event.EventManager;
 import gaia.cu9.ari.gaiaorbit.event.Events;
 import gaia.cu9.ari.gaiaorbit.event.IObserver;
 import gaia.cu9.ari.gaiaorbit.scenegraph.CelestialBody;
+import gaia.cu9.ari.gaiaorbit.util.DataFilesFactory;
 import gaia.cu9.ari.gaiaorbit.util.GlobalConf;
 import gaia.cu9.ari.gaiaorbit.util.format.DateFormatFactory;
 import gaia.cu9.ari.gaiaorbit.util.format.NumberFormatFactory;
@@ -17,12 +19,14 @@ import com.badlogic.gdx.backends.gwt.GwtApplicationConfiguration;
 import com.google.gwt.dom.client.Element;
 import com.google.gwt.user.client.DOM;
 
-public class HtmlLauncher extends GwtApplication implements IObserver {
+public class GaiaSandboxWebGL extends GwtApplication implements IObserver {
 
     @Override
     public GwtApplicationConfiguration getConfig() {
         NumberFormatFactory.initialize(new GwtNumberFormatFactory());
         DateFormatFactory.initialize(new GwtDateFormatFactory());
+        DataFilesFactory.initialize(new WebGLDataFilesFactory());
+
         GwtApplicationConfiguration config = new GwtApplicationConfiguration(1024, 600);
 
         try {

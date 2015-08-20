@@ -9,11 +9,11 @@ public abstract class AbstractBean {
     protected List<SceneGraphNode> list;
 
     public List<SceneGraphNode> list() {
-        return list;
+        return list != null ? list : new ArrayList<SceneGraphNode>(1);
     }
 
     public int size() {
-        return list.size();
+        return list != null ? list.size() : 0;
     }
 
     public void addAll(List<? extends SceneGraphNode> l) {
