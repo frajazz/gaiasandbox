@@ -26,7 +26,7 @@ public class DesktopConfInitLite extends ConfInit {
         ppc.initialize(4, 0, 0, false);
 
         RuntimeConf rc = new RuntimeConf();
-        rc.initialize(true, false, false, true, false, 20);
+        rc.initialize(false, false, true, false, true, false, 20);
 
         DataConf dc = new DataConf();
         dc.initialize(true, 20f);
@@ -41,13 +41,14 @@ public class DesktopConfInitLite extends ConfInit {
         VISIBILITY[ComponentType.Planets.ordinal()] = true;
         VISIBILITY[ComponentType.Moons.ordinal()] = false;
         VISIBILITY[ComponentType.Orbits.ordinal()] = false;
-        VISIBILITY[ComponentType.Satellites.ordinal()] = false;
+        VISIBILITY[ComponentType.Satellites.ordinal()] = true;
         VISIBILITY[ComponentType.MilkyWay.ordinal()] = true;
         VISIBILITY[ComponentType.Asteroids.ordinal()] = false;
         VISIBILITY[ComponentType.Galaxies.ordinal()] = false;
         VISIBILITY[ComponentType.Others.ordinal()] = true;
+
         SceneConf sc = new SceneConf();
-        sc.initialize(2000, 1f, 0f, 50, 2.1f, 1866f, 2286f, 13, true, 7.0f, VISIBILITY, 2, 0, 0f, 2e-8f, 0f, 0.05f, 1f);
+        sc.initialize(2000, 2f, 0f, 50, 2.1f, 1866f, 2286f, 13, true, 7.0f, VISIBILITY, 2, 0, 0f, 2e-8f, 0f, 0.05f, 1f);
 
         GlobalConf.initialize(vc, prc, sc, dc, rc, ppc, pc);
     }

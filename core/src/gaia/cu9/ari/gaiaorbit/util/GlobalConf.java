@@ -118,23 +118,25 @@ public class GlobalConf {
         public boolean RECORD_CAMERA;
         public float LIMIT_MAG_RUNTIME;
         public int OUTPUT_FRAME_BUFFER_SIZE = 250;
+        public boolean STRIPPED_FOV_MODE = false;
 
         public RuntimeConf() {
             EventManager.instance.subscribe(this, Events.LIMIT_MAG_CMD, Events.INPUT_ENABLED_CMD, Events.TOGGLE_CLEANMODE, Events.TOGGLE_UPDATEPAUSE, Events.TOGGLE_TIME_CMD);
         }
 
-        public void initialize(boolean cLEAN_MODE, boolean uPDATE_PAUSE, boolean tIME_ON, boolean iNPUT_ENABLED, boolean rECORD_CAMERA, float lIMIT_MAG_RUNTIME) {
+        public void initialize(boolean cLEAN_MODE, boolean uPDATE_PAUSE, boolean sTRIPPED_FOV_MODE, boolean tIME_ON, boolean iNPUT_ENABLED, boolean rECORD_CAMERA, float lIMIT_MAG_RUNTIME) {
             CLEAN_MODE = cLEAN_MODE;
             UPDATE_PAUSE = uPDATE_PAUSE;
             TIME_ON = tIME_ON;
             INPUT_ENABLED = iNPUT_ENABLED;
             RECORD_CAMERA = rECORD_CAMERA;
             LIMIT_MAG_RUNTIME = lIMIT_MAG_RUNTIME;
+            STRIPPED_FOV_MODE = sTRIPPED_FOV_MODE;
         }
 
         @Override
         public void initialize() {
-            initialize(false, false, false, true, false, 20);
+            initialize(false, false, false, false, true, false, 20);
         }
 
         @Override

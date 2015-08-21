@@ -26,7 +26,7 @@ public class DesktopConfInit extends ConfInit {
         ppc.initialize(4, 0, 0, false);
 
         RuntimeConf rc = new RuntimeConf();
-        rc.initialize(false, false, false, true, false, 20);
+        rc.initialize(false, false, false, false, true, false, 20);
 
         DataConf dc = new DataConf();
         dc.initialize(true, 20f);

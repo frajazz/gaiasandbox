@@ -4,6 +4,7 @@ import gaia.cu9.ari.gaiaorbit.data.AssetBean;
 import gaia.cu9.ari.gaiaorbit.data.BoundaryDataLoader;
 import gaia.cu9.ari.gaiaorbit.data.ConstellationDataLoader;
 import gaia.cu9.ari.gaiaorbit.data.GaiaAttitudeLoader;
+import gaia.cu9.ari.gaiaorbit.data.GaiaAttitudeLoader.GaiaAttitudeLoaderParameter;
 import gaia.cu9.ari.gaiaorbit.data.HYGCatalogLoader;
 import gaia.cu9.ari.gaiaorbit.data.JsonDataLoader;
 import gaia.cu9.ari.gaiaorbit.data.bean.BoundariesBean;
@@ -172,7 +173,7 @@ public class GaiaSandbox implements ApplicationListener, IObserver {
         AssetBean.setAssetManager(manager);
 
         // Initialize Gaia attitudes
-        manager.load(ATTITUDE_FOLDER, GaiaAttitudeServer.class);
+        manager.load(ATTITUDE_FOLDER, GaiaAttitudeServer.class, new GaiaAttitudeLoaderParameter(GlobalConf.runtime.STRIPPED_FOV_MODE ? new String[] { "OPS_RSLS_0022916_rsls_nsl_gareq1_afterFirstSpinPhaseOptimization.2.xml" } : new String[] {}));
 
         // Load catalogue
         if (dataFiles.getCatalogFiles() != null)

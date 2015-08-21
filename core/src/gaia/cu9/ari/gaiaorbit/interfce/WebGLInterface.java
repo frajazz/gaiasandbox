@@ -4,6 +4,7 @@ import gaia.cu9.ari.gaiaorbit.event.EventManager;
 import gaia.cu9.ari.gaiaorbit.event.Events;
 import gaia.cu9.ari.gaiaorbit.event.IObserver;
 import gaia.cu9.ari.gaiaorbit.scenegraph.CameraManager.CameraMode;
+import gaia.cu9.ari.gaiaorbit.util.GlobalConf;
 import gaia.cu9.ari.gaiaorbit.util.I18n;
 import gaia.cu9.ari.gaiaorbit.util.format.DateFormatFactory;
 import gaia.cu9.ari.gaiaorbit.util.format.DateFormatFactory.DateType;
@@ -102,10 +103,12 @@ public class WebGLInterface extends Table implements IObserver {
         hg.addActor(sceneModeLabel);
 
         add(date).left().padBottom(10);
-        row();
-        add(hg).left();
-        row();
-        add(switchFull).left();
+        if (!GlobalConf.runtime.STRIPPED_FOV_MODE) {
+            row();
+            add(hg).left();
+            row();
+            add(switchFull).left();
+        }
 
         pack();
 

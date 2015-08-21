@@ -3,6 +3,7 @@ package gaia.cu9.ari.gaiaorbit.util.gaia;
 import gaia.cu9.ari.gaiaorbit.event.EventManager;
 import gaia.cu9.ari.gaiaorbit.event.Events;
 import gaia.cu9.ari.gaiaorbit.util.BinarySearchTree;
+import gaia.cu9.ari.gaiaorbit.util.GlobalConf;
 import gaia.cu9.ari.gaiaorbit.util.I18n;
 import gaia.cu9.ari.gaiaorbit.util.math.Quaterniond;
 
@@ -32,7 +33,7 @@ public class GaiaAttitudeServer {
     Date initialDate;
 
     public GaiaAttitudeServer(String folder, String... files) {
-        attitudes = AttitudeXmlParser.parseFolder(folder, files);
+        attitudes = AttitudeXmlParser.parseFolder(folder, GlobalConf.runtime.STRIPPED_FOV_MODE, files);
         initialDate = ((AttitudeIntervalBean) attitudes.findMin()).activationTime;
         current = new AttitudeIntervalBean("current", null, null, "dummy");
         // Dummy attitude

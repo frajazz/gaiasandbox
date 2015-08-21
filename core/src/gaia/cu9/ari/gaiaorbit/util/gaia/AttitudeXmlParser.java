@@ -5,9 +5,9 @@ import gaia.cu9.ari.gaiaorbit.util.Constants;
 import gaia.cu9.ari.gaiaorbit.util.I18n;
 import gaia.cu9.ari.gaiaorbit.util.Logger;
 import gaia.cu9.ari.gaiaorbit.util.coord.AstroUtils;
-import gaia.cu9.ari.gaiaorbit.util.gaia.time.Days;
 import gaia.cu9.ari.gaiaorbit.util.gaia.time.Duration;
 import gaia.cu9.ari.gaiaorbit.util.gaia.time.Hours;
+import gaia.cu9.ari.gaiaorbit.util.gaia.time.Secs;
 import gaia.cu9.ari.gaiaorbit.util.units.Quantity;
 
 import java.io.IOException;
@@ -35,7 +35,7 @@ public class AttitudeXmlParser {
         endOfMission = getDate("2019-06-20 06:13:26");
     }
 
-    public static BinarySearchTree parseFolder(String folder, String... files) {
+    public static BinarySearchTree parseFolder(String folder, boolean oneDayDuration, String... files) {
         final FileHandle[] list;
         if (files == null || files.length == 0) {
             list = new FileHandle[15];
@@ -65,12 +65,30 @@ public class AttitudeXmlParser {
 
         BinarySearchTree bst = new BinarySearchTree();
 
+        final long overlapMs = 10 * 60 * 1000;
+        final long daySec = 86400;
         // GENERATE LIST OF DURATIONS
         SortedMap<Date, FileHandle> datesMap = new TreeMap<Date, FileHandle>();
         for (FileHandle fh : list) {
             try {
-                Date date = parseActivationTime(fh);
-                datesMap.put(date, fh);
+                if (oneDayDuration) {
+                    /** 
+                     * Hack to get the stripped FOV mode to load fast.
+                     * We set the activation time to ten minutes before today starts. 
+                     */
+
+                    Date date = new Date();
+                    date.setHours(0);
+                    date.setMinutes(0);
+                    date.setSeconds(0);
+                    // Date is the start of today. Lets subtract 10 minutes
+                    long time = date.getTime() - overlapMs;
+                    date.setTime(time);
+                    datesMap.put(date, fh);
+                } else {
+                    Date date = parseActivationTime(fh);
+                    datesMap.put(date, fh);
+                }
             } catch (IOException e) {
                 Logger.error(e, I18n.bundle.format("error.file.parse", fh.name()));
             }
@@ -81,23 +99,34 @@ public class AttitudeXmlParser {
         Date lastDate = null;
         for (Date date : dates) {
             if (lastDate != null && lastFH != null) {
-                long elapsed = date.getTime() - lastDate.getTime();
-                Duration d = new Days(elapsed * Constants.MS_TO_H);
-                durationMap.put(lastFH, d);
+                if (oneDayDuration) {
+                    Duration d = new Secs(daySec + overlapMs * 2 / 1000);
+                    durationMap.put(lastFH, d);
+                } else {
+                    long elapsed = date.getTime() - lastDate.getTime();
+
+                    Duration d = new Hours(elapsed * Constants.MS_TO_H);
+                    durationMap.put(lastFH, d);
+                }
             }
             lastDate = date;
             lastFH = datesMap.get(date);
         }
         // Last element
-        long elapsed = endOfMission.getTime() - lastDate.getTime();
-        Duration d = new Hours(elapsed * Constants.MS_TO_H);
-        durationMap.put(lastFH, d);
+        if (oneDayDuration) {
+            Duration d = new Secs(daySec + overlapMs * 2 / 1000);
+            durationMap.put(lastFH, d);
+        } else {
+            long elapsed = endOfMission.getTime() - lastDate.getTime();
+            Duration d = new Hours(elapsed * Constants.MS_TO_H);
+            durationMap.put(lastFH, d);
+        }
 
         // PARSE ATTITUDES
         for (FileHandle fh : list) {
             Logger.info(I18n.bundle.format("notif.attitude.loadingfile", fh.name()));
             try {
-                AttitudeIntervalBean att = parseFile(fh, durationMap.get(fh));
+                AttitudeIntervalBean att = parseFile(fh, durationMap.get(fh), findActivationDate(fh, datesMap));
                 bst.insert(att);
             } catch (IOException e) {
                 Logger.error(e, I18n.bundle.format("error.file.parse", fh.name()));
@@ -108,6 +137,16 @@ public class AttitudeXmlParser {
 
         Logger.info(I18n.bundle.format("notif.attitude.initialized", list.length));
         return bst;
+    }
+
+    private static Date findActivationDate(FileHandle fh, SortedMap<Date, FileHandle> datesMap) {
+        Set<Date> keys = datesMap.keySet();
+        for (Date d : keys) {
+            if (datesMap.get(d).equals(fh)) {
+                return d;
+            }
+        }
+        return null;
     }
 
     private static Date parseActivationTime(FileHandle fh) throws IOException {
@@ -121,7 +160,7 @@ public class AttitudeXmlParser {
         return getDate(activTime);
     }
 
-    private static AttitudeIntervalBean parseFile(FileHandle fh, Duration duration) throws IOException {
+    private static AttitudeIntervalBean parseFile(FileHandle fh, Duration duration, Date activationTime) throws IOException {
         BaseAttitudeDataServer<?> result = null;
 
         XmlReader reader = new XmlReader();
@@ -132,7 +171,6 @@ public class AttitudeXmlParser {
         String name = model.get("name");
         String className = model.get("classname");
         String activTime = model.get("starttime");
-        Date activationTime = getDate(activTime);
         double startTimeNsSince2010 = (AstroUtils.getJulianDate(activationTime) - AstroUtils.JD_J2010) * AstroUtils.DAY_TO_NS;
 
         /** SCAN LAW ELEMENT **/
