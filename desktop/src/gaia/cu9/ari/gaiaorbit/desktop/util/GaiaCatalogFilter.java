@@ -97,6 +97,8 @@ public class GaiaCatalogFilter {
     public void filterCatalog(int iniY, int iniM, int iniD, int endY, int endM, int endD) {
         // Some constants
         final long msDay = 24 * 60 * 60 * 1000;
+        // 5 min overlap
+        final long overlap = 5 * 60 * 1000;
 
         GregorianCalendar iniCal = new GregorianCalendar(iniY, iniM - 1, iniD);
         GregorianCalendar endCal = new GregorianCalendar(endY, endM - 1, endD);
@@ -111,7 +113,7 @@ public class GaiaCatalogFilter {
             out.clear();
             long dayStart = current.getTime();
             // Process day
-            for (long t = dayStart; t < dayStart + msDay; t += MAX_OVERLAP_TIME) {
+            for (long t = dayStart - overlap; t < dayStart + msDay + overlap * 2; t += MAX_OVERLAP_TIME) {
                 Pair<Vector3d, Vector3d> dirs = getDirections(new Date(t));
 
                 for (Particle p : catalog) {

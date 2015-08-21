@@ -64,7 +64,6 @@ import com.badlogic.gdx.controllers.Controllers;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.Pixmap.Format;
 import com.badlogic.gdx.graphics.glutils.FrameBuffer;
-import com.badlogic.gdx.utils.GdxRuntimeException;
 
 /**
  * The main class. Holds all the entities manages the update/draw cycle as well
@@ -240,22 +239,22 @@ public class GaiaSandbox implements ApplicationListener, IObserver {
         BoundariesBean boundbean;
         try {
             hygbean = manager.get(dataFiles.getCatalogFiles());
-        } catch (GdxRuntimeException | NullPointerException e) {
+        } catch (Exception e) {
             hygbean = new HYGBean();
         }
         try {
             jsonbean = manager.get(dataFiles.getJsonFiles());
-        } catch (GdxRuntimeException | NullPointerException e) {
+        } catch (Exception e) {
             jsonbean = new JsonBean();
         }
         try {
             constelbean = manager.get(dataFiles.getConstellationFiles());
-        } catch (GdxRuntimeException | NullPointerException e) {
+        } catch (Exception e) {
             constelbean = new ConstellationsBean();
         }
         try {
             boundbean = manager.get(dataFiles.getBoundaryFiles());
-        } catch (GdxRuntimeException | NullPointerException e) {
+        } catch (Exception e) {
             boundbean = new BoundariesBean();
         }
 

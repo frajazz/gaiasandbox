@@ -18,7 +18,6 @@ import com.badlogic.gdx.ApplicationListener;
 import com.badlogic.gdx.backends.gwt.GwtApplication;
 import com.badlogic.gdx.backends.gwt.GwtApplicationConfiguration;
 import com.google.gwt.dom.client.Element;
-import com.google.gwt.user.client.DOM;
 
 public class GaiaSandboxWebGL extends GwtApplication implements IObserver {
 
@@ -60,9 +59,9 @@ public class GaiaSandboxWebGL extends GwtApplication implements IObserver {
                 name = cb.name;
             }
 
-            Element iframe = DOM.getElementById("wikip-info-ifr");
-            iframe.setAttribute("scr", "https://en.m.wikipedia.org/wiki/" + name);
-            reloadIFrame(iframe);
+            //            Element iframe = DOM.getElementById("wikip-info-ifr");
+            //            iframe.setAttribute("scr", "https://en.m.wikipedia.org/wiki/" + name);
+            //            reloadIFrame(iframe);
         }
 
     }
