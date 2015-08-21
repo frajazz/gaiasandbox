@@ -18,7 +18,7 @@ import java.util.List;
  */
 public class GlobalConf {
     public static final String APPLICATION_NAME = "Gaia Sandbox";
-    public static final String WEBPAGE = "http://www.zah.uni-heidelberg.de/gaia2/outreach/gaiasandbox/";
+    public static final String WEBPAGE = "http://www.zah.uni-heidelberg.de/gaia/outreach/gaiasandbox/";
     public static final String WIKI = "https://github.com/ari-zah/gaiasandbox/wiki";
     public static final String ICON_URL = "http://www.zah.uni-heidelberg.de/uploads/pics/gaiasandboxlogo_02.png";
 
@@ -45,11 +45,14 @@ public class GlobalConf {
         public boolean MULTITHREADING;
         public int NUMBER_THREADS;
 
+        public void initialize(boolean MULTITHREADING, int NUMBER_THREADS) {
+            this.MULTITHREADING = MULTITHREADING;
+            this.NUMBER_THREADS = NUMBER_THREADS;
+        }
+
         @Override
         public void initialize() {
-            MULTITHREADING = false;
-
-            NUMBER_THREADS = 1;
+            initialize(false, 1);
         }
 
     }
@@ -66,6 +69,13 @@ public class GlobalConf {
             EventManager.instance.subscribe(this, Events.BLOOM_CMD, Events.LENS_FLARE_CMD, Events.MOTION_BLUR_CMD);
         }
 
+        public void initialize(int POSTPROCESS_ANTIALIAS, float POSTPROCESS_BLOOM_INTENSITY, float POSTPROCESS_MOTION_BLUR, boolean POSTPROCESS_LENS_FLARE) {
+            this.POSTPROCESS_ANTIALIAS = POSTPROCESS_ANTIALIAS;
+            this.POSTPROCESS_BLOOM_INTENSITY = POSTPROCESS_BLOOM_INTENSITY;
+            this.POSTPROCESS_MOTION_BLUR = POSTPROCESS_MOTION_BLUR;
+            this.POSTPROCESS_LENS_FLARE = POSTPROCESS_LENS_FLARE;
+        }
+
         @Override
         public void initialize() {
             /** POSTPROCESS **/
@@ -75,10 +85,7 @@ public class GlobalConf {
              * value = 0 - no AA
              * value > 0 - MSAA #samples = value
              */
-            POSTPROCESS_ANTIALIAS = 4;
-            POSTPROCESS_BLOOM_INTENSITY = 0;
-            POSTPROCESS_MOTION_BLUR = 0;
-            POSTPROCESS_LENS_FLARE = false;
+            initialize(4, 0, 0, false);
         }
 
         @Override
@@ -116,15 +123,18 @@ public class GlobalConf {
             EventManager.instance.subscribe(this, Events.LIMIT_MAG_CMD, Events.INPUT_ENABLED_CMD, Events.TOGGLE_CLEANMODE, Events.TOGGLE_UPDATEPAUSE, Events.TOGGLE_TIME_CMD);
         }
 
+        public void initialize(boolean cLEAN_MODE, boolean uPDATE_PAUSE, boolean tIME_ON, boolean iNPUT_ENABLED, boolean rECORD_CAMERA, float lIMIT_MAG_RUNTIME) {
+            CLEAN_MODE = cLEAN_MODE;
+            UPDATE_PAUSE = uPDATE_PAUSE;
+            TIME_ON = tIME_ON;
+            INPUT_ENABLED = iNPUT_ENABLED;
+            RECORD_CAMERA = rECORD_CAMERA;
+            LIMIT_MAG_RUNTIME = lIMIT_MAG_RUNTIME;
+        }
+
         @Override
         public void initialize() {
-            // Input always enabled by default
-            INPUT_ENABLED = true;
-            LIMIT_MAG_RUNTIME = 20;
-            UPDATE_PAUSE = false;
-            TIME_ON = false;
-            RECORD_CAMERA = false;
-
+            initialize(false, false, false, true, false, 20);
         }
 
         @Override
@@ -198,12 +208,14 @@ public class GlobalConf {
         /** Limit magnitude used for loading stars. All stars above this magnitude will not even be loaded by the sandbox. **/
         public float LIMIT_MAG_LOAD;
 
+        public void initialize(boolean dATA_SOURCE_LOCAL, float lIMIT_MAG_LOAD) {
+            this.DATA_SOURCE_LOCAL = dATA_SOURCE_LOCAL;
+            this.LIMIT_MAG_LOAD = lIMIT_MAG_LOAD;
+        }
+
         @Override
         public void initialize() {
-            /** DATA **/
-            DATA_SOURCE_LOCAL = true;
-
-            LIMIT_MAG_LOAD = 20f;
+            initialize(true, 20f);
         }
     }
 
@@ -238,16 +250,18 @@ public class GlobalConf {
             EventManager.instance.subscribe(this, Events.TOGGLE_STEREOSCOPIC, Events.TOGGLE_STEREO_PROFILE);
         }
 
+        public void initialize(boolean dISPLAY_TUTORIAL, boolean sHOW_DEBUG_INFO, String uI_THEME, String lOCALE, boolean sTEREOSCOPIC_MODE, StereoProfile sTEREO_PROFILE) {
+            DISPLAY_TUTORIAL = dISPLAY_TUTORIAL;
+            SHOW_DEBUG_INFO = sHOW_DEBUG_INFO;
+            UI_THEME = uI_THEME;
+            LOCALE = lOCALE;
+            STEREOSCOPIC_MODE = sTEREOSCOPIC_MODE;
+            STEREO_PROFILE = sTEREO_PROFILE;
+        }
+
         @Override
         public void initialize() {
-            LOCALE = "en-GB";
-
-            DISPLAY_TUTORIAL = false;
-            SHOW_DEBUG_INFO = true;
-            UI_THEME = "dark";
-
-            STEREOSCOPIC_MODE = false;
-            STEREO_PROFILE = StereoProfile.CROSSEYE;
+            initialize(false, true, "dark", "en-GB", false, StereoProfile.CROSSEYE);
         }
 
         @Override
@@ -270,9 +284,13 @@ public class GlobalConf {
     public static class VersionConf implements IConf {
         public String version;
 
+        public void initialize(String version) {
+            this.version = version;
+        }
+
         @Override
         public void initialize() {
-            version = "0.706b";
+            initialize("0.706b");
         }
 
     }
@@ -309,29 +327,33 @@ public class GlobalConf {
             EventManager.instance.subscribe(this, Events.FOCUS_LOCK_CMD, Events.STAR_BRIGHTNESS_CMD, Events.FOV_CHANGED_CMD, Events.CAMERA_SPEED_CMD, Events.ROTATION_SPEED_CMD, Events.TURNING_SPEED_CMD, Events.SPEED_LIMIT_CMD, Events.TRANSIT_COLOUR_CMD, Events.ONLY_OBSERVED_STARS_CMD, Events.COMPUTE_GAIA_SCAN_CMD, Events.PIXEL_RENDERER_CMD);
         }
 
+        public void initialize(long oBJECT_FADE_MS, float sTAR_BRIGHTNESS, float aMBIENT_LIGHT, int cAMERA_FOV, float cAMERA_SPEED, float tURNING_SPEED, float rOTATION_SPEED, int cAMERA_SPEED_LIMIT_IDX, boolean fOCUS_LOCK, float lABEL_NUMBER_FACTOR, boolean[] vISIBILITY, int pIXEL_RENDERER, int lINE_RENDERER, double sTAR_TH_ANGLE_NONE, double sTAR_TH_ANGLE_POINT, double sTAR_TH_ANGLE_QUAD, float pOINT_ALPHA_MIN, float pOINT_ALPHA_MAX) {
+            OBJECT_FADE_MS = oBJECT_FADE_MS;
+            STAR_BRIGHTNESS = sTAR_BRIGHTNESS;
+            AMBIENT_LIGHT = aMBIENT_LIGHT;
+            CAMERA_FOV = cAMERA_FOV;
+            CAMERA_SPEED = cAMERA_SPEED;
+            TURNING_SPEED = tURNING_SPEED;
+            ROTATION_SPEED = rOTATION_SPEED;
+            CAMERA_SPEED_LIMIT_IDX = cAMERA_SPEED_LIMIT_IDX;
+            this.updateSpeedLimit();
+            FOCUS_LOCK = fOCUS_LOCK;
+            LABEL_NUMBER_FACTOR = lABEL_NUMBER_FACTOR;
+            VISIBILITY = vISIBILITY;
+            PIXEL_RENDERER = pIXEL_RENDERER;
+            LINE_RENDERER = lINE_RENDERER;
+            STAR_TH_ANGLE_NONE = sTAR_TH_ANGLE_NONE;
+            STAR_TH_ANGLE_POINT = sTAR_TH_ANGLE_POINT;
+            STAR_TH_ANGLE_QUAD = sTAR_TH_ANGLE_QUAD;
+            POINT_ALPHA_MIN = pOINT_ALPHA_MIN;
+            POINT_ALPHA_MAX = pOINT_ALPHA_MAX;
+        }
+
         @Override
         public void initialize() {
-            OBJECT_FADE_MS = 2000;
-            STAR_BRIGHTNESS = 1f;
-            AMBIENT_LIGHT = 0.0f;
-            CAMERA_FOV = 50;
-            CAMERA_SPEED_LIMIT_IDX = 13;
-            this.updateSpeedLimit();
-            CAMERA_SPEED = 2.1f;
-            FOCUS_LOCK = true;
-            TURNING_SPEED = 1866f;
-            ROTATION_SPEED = 2286f;
-            LABEL_NUMBER_FACTOR = 7.0f;
-            STAR_TH_ANGLE_QUAD = 0.0f;
-            STAR_TH_ANGLE_POINT = 2e-8f;
-            STAR_TH_ANGLE_NONE = 0f;
-            POINT_ALPHA_MIN = 0.05f;
-            POINT_ALPHA_MAX = 1f;
-            PIXEL_RENDERER = 2;
-            LINE_RENDERER = 0;
             //Visibility of components
             ComponentType[] cts = ComponentType.values();
-            VISIBILITY = new boolean[cts.length];
+            boolean[] VISIBILITY = new boolean[cts.length];
             VISIBILITY[ComponentType.Stars.ordinal()] = true;
             VISIBILITY[ComponentType.Atmospheres.ordinal()] = true;
             VISIBILITY[ComponentType.Planets.ordinal()] = true;
@@ -343,6 +365,7 @@ public class GlobalConf {
             VISIBILITY[ComponentType.Galaxies.ordinal()] = true;
             VISIBILITY[ComponentType.Others.ordinal()] = true;
 
+            this.initialize(2000, 1f, 0f, 50, 2.1f, 1866f, 2286f, 13, true, 7.0f, VISIBILITY, 2, 0, 0f, 2e-8f, 0f, 0.05f, 1f);
         }
 
         public void updateSpeedLimit() {
@@ -483,48 +506,26 @@ public class GlobalConf {
     /**
      * Initializes the properties
      */
-    public static void initialize() throws Exception {
+    public static void initialize(VersionConf vc, ProgramConf pc, SceneConf sc, DataConf dc, RuntimeConf rc, PostprocessConf ppc, PerformanceConf pfc) throws Exception {
         if (!initialized) {
             if (configurations == null) {
                 configurations = new ArrayList<IConf>();
             }
 
-            if (version == null) {
-                version = new VersionConf();
-                version.initialize();
-            }
+            version = vc;
+            program = pc;
+            scene = sc;
+            data = dc;
+            runtime = rc;
+            postprocess = ppc;
+            performance = pfc;
 
-            if (program == null) {
-                program = new ProgramConf();
-                configurations.add(program);
-            }
-
-            if (scene == null) {
-                scene = new SceneConf();
-                configurations.add(scene);
-            }
-
-            if (data == null) {
-                data = new DataConf();
-                configurations.add(data);
-            }
-
-            if (runtime == null) {
-                runtime = new RuntimeConf();
-                configurations.add(runtime);
-            }
-
-            if (postprocess == null) {
-                postprocess = new PostprocessConf();
-                configurations.add(postprocess);
-            }
-
-            if (performance == null) {
-                performance = new PerformanceConf();
-                configurations.add(performance);
-            }
-
-            initializeProps();
+            configurations.add(program);
+            configurations.add(scene);
+            configurations.add(data);
+            configurations.add(runtime);
+            configurations.add(postprocess);
+            configurations.add(performance);
 
             initialized = true;
         }

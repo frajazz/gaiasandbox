@@ -116,8 +116,6 @@ public class CameraManager implements ICamera, IObserver {
         case Focus:
         case Gaia_Scene:
             current = naturalCamera;
-            // Reset state
-            naturalCamera.resetState();
             break;
         case Gaia_FOV1:
         case Gaia_FOV2:

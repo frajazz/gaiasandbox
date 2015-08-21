@@ -24,7 +24,7 @@ public class GaiaAttitudeLoader extends AsynchronousAssetLoader<GaiaAttitudeServ
 
     @Override
     public void loadAsync(AssetManager manager, String fileName, FileHandle file, GaiaAttitudeLoaderParameter parameter) {
-        server = new GaiaAttitudeServer(fileName);
+        server = new GaiaAttitudeServer(fileName, "OPS_RSLS_0022916_rsls_nsl_gareq1_afterFirstSpinPhaseOptimization.2.xml");
     }
 
     @Override

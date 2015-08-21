@@ -11,17 +11,17 @@ public class WebGLDataFilesLite implements IDataFiles {
 
     @Override
     public String getCatalogFiles() {
-        return "data/hygxyz.bin";
+        return "data/daycatalogs/hygxyz-20150820.bin";
     }
 
     @Override
     public String getConstellationFiles() {
-        return "";
+        return null;
     }
 
     @Override
     public String getBoundaryFiles() {
-        return "";
+        return null;
     }
 
 }

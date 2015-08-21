@@ -2,6 +2,7 @@ package gaia.cu9.ari.gaiaorbit.data;
 
 import gaia.cu9.ari.gaiaorbit.data.stars.HYGBinaryLoader;
 import gaia.cu9.ari.gaiaorbit.data.stars.HYGCSVLoader;
+import gaia.cu9.ari.gaiaorbit.desktop.util.DesktopConfInit;
 import gaia.cu9.ari.gaiaorbit.event.EventManager;
 import gaia.cu9.ari.gaiaorbit.event.Events;
 import gaia.cu9.ari.gaiaorbit.event.IObserver;
@@ -45,7 +46,9 @@ public class HYGToBinary implements IObserver {
         I18n.initialize(new FileHandle("/home/tsagrista/git/gaiasandbox/android/assets/i18n/gsbundle"));
 
         try {
-            GlobalConf.initialize();
+            DesktopConfInit confInit = new DesktopConfInit();
+            confInit.initConf();
+
             GlobalConf.data.LIMIT_MAG_LOAD = 20;
         } catch (IOException e) {
             Logger.error(e);

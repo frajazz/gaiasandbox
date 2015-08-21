@@ -7,7 +7,7 @@ public class WebGLDataFilesFactory extends DataFilesFactory {
 
     @Override
     protected IDataFiles getDataFilesConcrete() {
-        return new WebGLDataFiles();
+        return new WebGLDataFilesLite();
     }
 
 }

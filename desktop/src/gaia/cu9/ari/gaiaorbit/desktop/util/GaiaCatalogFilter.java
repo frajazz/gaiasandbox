@@ -2,7 +2,6 @@ package gaia.cu9.ari.gaiaorbit.desktop.util;
 
 import gaia.cu9.ari.gaiaorbit.data.stars.HYGBinaryLoader;
 import gaia.cu9.ari.gaiaorbit.scenegraph.Particle;
-import gaia.cu9.ari.gaiaorbit.util.GlobalConf;
 import gaia.cu9.ari.gaiaorbit.util.I18n;
 import gaia.cu9.ari.gaiaorbit.util.Pair;
 import gaia.cu9.ari.gaiaorbit.util.gaia.GaiaAttitudeServer;
@@ -56,7 +55,8 @@ public class GaiaCatalogFilter {
         lw = new LogWriter();
 
         // Init global conf
-        GlobalConf.initialize();
+        DesktopConfInit confInit = new DesktopConfInit();
+        confInit.initConf();
 
         // Precompute some math functions
         MathUtilsd.initialize();

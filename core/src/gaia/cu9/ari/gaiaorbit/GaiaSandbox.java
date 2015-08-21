@@ -140,13 +140,8 @@ public class GaiaSandbox implements ApplicationListener, IObserver {
         }
 
         if (!GlobalConf.initialized()) {
-            // Initialise the configuration if needed
-            try {
-                GlobalConf.initialize();
-            } catch (Exception e) {
-                // Android
-                Logger.error(e);
-            }
+            Logger.error(new RuntimeException("FATAL: Global configuration not initlaized"));
+            return;
         }
 
         // Init data files
