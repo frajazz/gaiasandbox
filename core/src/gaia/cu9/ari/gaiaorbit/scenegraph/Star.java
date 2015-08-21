@@ -98,7 +98,7 @@ public class Star extends Particle {
                 }
             }
         }
-        if (renderText()) {
+        if (renderText() || camera.getCurrent() instanceof FovCamera) {
             addToRender(this, RenderGroup.LABEL);
         }
 

@@ -14,6 +14,7 @@ import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.glutils.ShaderProgram;
 import com.badlogic.gdx.math.Vector2;
+import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.utils.Pool;
 
 /**
@@ -249,7 +250,15 @@ public abstract class AbstractPositionEntity extends SceneGraphNode {
         return distToCamera;
     }
 
-    protected void renderLabel(SpriteBatch batch, ShaderProgram shader, BitmapFont font, ICamera camera, String label, Vector3d pos, float scale, float size, float[] colour) {
+    protected void render2DLabel(SpriteBatch batch, BitmapFont font, ICamera camera, String label, Vector3d pos) {
+        Vector3 p = pos.setVector3(auxVector3f);
+        camera.getCamera().project(p);
+        p.x += 5;
+        p.y -= 5;
+        DecalUtils.drawFont2D(font, batch, label, p);
+    }
+
+    protected void render3DLabel(SpriteBatch batch, ShaderProgram shader, BitmapFont font, ICamera camera, String label, Vector3d pos, float scale, float size, float[] colour) {
         // The smoothing scale must be set according to the distance
         shader.setUniformf("scale", scale / camera.getFovFactor());
 

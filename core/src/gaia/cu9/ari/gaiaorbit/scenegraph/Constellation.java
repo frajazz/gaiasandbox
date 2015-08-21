@@ -104,7 +104,7 @@ public class Constellation extends LineObject implements I3DTextRenderable {
         textPosition(pos);
         shader.setUniformf("a_viewAngle", 90f);
         shader.setUniformf("a_thOverFactor", 1f);
-        renderLabel(batch, shader, font, camera, text(), pos, textScale(), textSize(), textColour());
+        render3DLabel(batch, shader, font, camera, text(), pos, textScale(), textSize(), textColour());
     }
 
     @Override

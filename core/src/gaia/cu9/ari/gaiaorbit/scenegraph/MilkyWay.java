@@ -123,7 +123,7 @@ public class MilkyWay extends Blob implements IModelRenderable, I3DTextRenderabl
         textPosition(pos);
         shader.setUniformf("a_viewAngle", 90f);
         shader.setUniformf("a_thOverFactor", 1f);
-        renderLabel(batch, shader, font, camera, text(), pos, textScale(), textSize(), textColour());
+        render3DLabel(batch, shader, font, camera, text(), pos, textScale(), textSize(), textColour());
     }
 
     @Override
