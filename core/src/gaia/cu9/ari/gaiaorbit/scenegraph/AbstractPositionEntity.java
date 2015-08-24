@@ -250,11 +250,14 @@ public abstract class AbstractPositionEntity extends SceneGraphNode {
         return distToCamera;
     }
 
-    protected void render2DLabel(SpriteBatch batch, BitmapFont font, ICamera camera, String label, Vector3d pos) {
+    protected void render2DLabel(SpriteBatch batch, ShaderProgram shader, BitmapFont font, ICamera camera, String label, Vector3d pos) {
         Vector3 p = pos.setVector3(auxVector3f);
+
         camera.getCamera().project(p);
         p.x += 5;
         p.y -= 5;
+
+        shader.setUniformf("scale", .5f);
         DecalUtils.drawFont2D(font, batch, label, p);
     }
 

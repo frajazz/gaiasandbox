@@ -151,7 +151,8 @@ public abstract class CelestialBody extends AbstractPositionEntity implements I3
     @Override
     public void render(SpriteBatch batch, ShaderProgram shader, BitmapFont font, ICamera camera) {
         if (camera.getCurrent() instanceof FovCamera) {
-            render2DLabel(batch, font, camera, text(), pos);
+
+            render2DLabel(batch, shader, font, camera, text(), pos);
         } else {
             // 3D distance font
             Vector3d pos = auxVector3d;

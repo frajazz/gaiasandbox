@@ -45,6 +45,7 @@ public class DesktopConfInitLite extends ConfInit {
         VISIBILITY[ComponentType.MilkyWay.ordinal()] = true;
         VISIBILITY[ComponentType.Asteroids.ordinal()] = false;
         VISIBILITY[ComponentType.Galaxies.ordinal()] = false;
+        VISIBILITY[ComponentType.Labels.ordinal()] = true;
         VISIBILITY[ComponentType.Others.ordinal()] = true;
 
         SceneConf sc = new SceneConf();

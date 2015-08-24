@@ -66,7 +66,7 @@ public class AttitudeXmlParser {
         BinarySearchTree bst = new BinarySearchTree();
 
         final long overlapMs = 10 * 60 * 1000;
-        final long daySec = 86400;
+        final long threeHoursSec = 10800;
         // GENERATE LIST OF DURATIONS
         SortedMap<Date, FileHandle> datesMap = new TreeMap<Date, FileHandle>();
         for (FileHandle fh : list) {
@@ -78,7 +78,6 @@ public class AttitudeXmlParser {
                      */
 
                     Date date = new Date();
-                    date.setHours(0);
                     date.setMinutes(0);
                     date.setSeconds(0);
                     // Date is the start of today. Lets subtract 10 minutes
@@ -100,7 +99,7 @@ public class AttitudeXmlParser {
         for (Date date : dates) {
             if (lastDate != null && lastFH != null) {
                 if (oneDayDuration) {
-                    Duration d = new Secs(daySec + overlapMs * 2 / 1000);
+                    Duration d = new Secs(threeHoursSec + overlapMs * 2 / 1000);
                     durationMap.put(lastFH, d);
                 } else {
                     long elapsed = date.getTime() - lastDate.getTime();
@@ -114,7 +113,7 @@ public class AttitudeXmlParser {
         }
         // Last element
         if (oneDayDuration) {
-            Duration d = new Secs(daySec + overlapMs * 2 / 1000);
+            Duration d = new Secs(threeHoursSec + overlapMs * 2 / 1000);
             durationMap.put(lastFH, d);
         } else {
             long elapsed = endOfMission.getTime() - lastDate.getTime();

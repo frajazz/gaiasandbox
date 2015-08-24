@@ -11,7 +11,7 @@ public class DesktopDataFilesLite implements IDataFiles {
 
     @Override
     public String getCatalogFiles() {
-        return "data/daycatalogs/hygxyz-20150821.bin";
+        return "data/daycatalogs/hygxyz-20150824.bin";
     }
 
     @Override
