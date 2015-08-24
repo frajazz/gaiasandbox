@@ -167,11 +167,18 @@ public abstract class CelestialBody extends AbstractPositionEntity implements I3
      */
     @Override
     public void render(SpriteBatch batch, ShaderProgram shader, BitmapFont font, ICamera camera) {
-        Vector3d pos = auxVector3d.get();
-        textPosition(pos);
-        shader.setUniformf("a_viewAngle", viewAngle);
-        shader.setUniformf("a_thOverFactor", TH_OVER_FACTOR);
-        renderLabel(batch, shader, font, camera, text(), pos, textScale(), textSize(), textColour());
+        if (camera.getCurrent() instanceof FovCamera) {
+
+            render2DLabel(batch, shader, font, camera, text(), pos);
+        } else {
+            // 3D distance font
+            Vector3d pos = auxVector3d.get();
+            textPosition(pos);
+            shader.setUniformf("a_viewAngle", viewAngle);
+            shader.setUniformf("a_thOverFactor", TH_OVER_FACTOR);
+            render3DLabel(batch, shader, font, camera, text(), pos, textScale(), textSize(), textColour());
+        }
+
     }
 
     protected void setColor2Data() {
@@ -272,8 +279,7 @@ public abstract class CelestialBody extends AbstractPositionEntity implements I3
             lastTransitIncrease = time.getTime().getTime();
             return true;
         } else {
-            return (time.getDt() > 0 && time.getTime().getTime() - lastTransitIncrease > 90000) ||
-                    (time.getDt() < 0 && lastTransitIncrease - time.getTime().getTime() > 90000);
+            return (time.getDt() > 0 && time.getTime().getTime() - lastTransitIncrease > 90000) || (time.getDt() < 0 && lastTransitIncrease - time.getTime().getTime() > 90000);
         }
     }
 

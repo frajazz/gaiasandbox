@@ -90,6 +90,7 @@ public class Star extends Particle {
             if (camera.getCurrent() instanceof FovCamera) {
                 // Only shader for FovCamera
                 addToRender(this, RenderGroup.SHADER);
+                addToRender(this, RenderGroup.LABEL);
             } else {
                 if (viewAngleApparent >= THRESHOLD_ANGLE_POINT() * camera.getFovFactor()) {
                     addToRender(this, RenderGroup.SHADER);

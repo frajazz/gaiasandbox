@@ -50,6 +50,8 @@ import gaia.cu9.ari.gaiaorbit.util.screenshot.BufferedFileImageRenderer;
 import gaia.cu9.ari.gaiaorbit.util.screenshot.IFileImageRenderer;
 import gaia.cu9.ari.gaiaorbit.util.screenshot.ImageRenderer;
 import gaia.cu9.ari.gaiaorbit.util.time.GlobalClock;
+import gaia.cu9.ari.gaiaorbit.util.time.ITimeFrameProvider;
+import gaia.cu9.ari.gaiaorbit.util.time.RealTimeClock;
 import gaia.cu9.ari.gaiaorbit.util.tree.OctreeNode;
 
 import java.io.File;
@@ -104,6 +106,12 @@ public class GaiaSandbox implements ApplicationListener, IObserver {
      * The user interface
      */
     public IGui gui, loadingGui, renderGui;
+
+    /**
+     * Time
+     */
+    public ITimeFrameProvider current;
+    private ITimeFrameProvider clock, real;
 
     private boolean initialized = false;
 
@@ -182,6 +190,11 @@ public class GaiaSandbox implements ApplicationListener, IObserver {
                 Logger.error(e);
             }
         }
+
+        // Initialize times
+        clock = new GlobalClock(0.000277778, new Date());
+        real = new RealTimeClock();
+        current = GlobalConf.runtime.REAL_TIME ? real : clock;
 
         // Precompute some math functions
         MathUtilsd.initialize();

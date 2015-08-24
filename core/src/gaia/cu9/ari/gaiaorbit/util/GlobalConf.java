@@ -26,7 +26,7 @@ import java.util.Properties;
  */
 public class GlobalConf {
     public static final String APPLICATION_NAME = "Gaia Sandbox";
-    public static final String WEBPAGE = "http://www.zah.uni-heidelberg.de/gaia2/outreach/gaiasandbox/";
+    public static final String WEBPAGE = "http://www.zah.uni-heidelberg.de/gaia/outreach/gaiasandbox/";
     public static final String WIKI = "https://github.com/ari-zah/gaiasandbox/wiki";
     public static final String ICON_URL = "http://www.zah.uni-heidelberg.de/uploads/pics/gaiasandboxlogo_02.png";
 
@@ -191,10 +191,13 @@ public class GlobalConf {
         public boolean CLEAN_MODE;
         public boolean UPDATE_PAUSE;
         public boolean TIME_ON;
+        /** Whether we use the RealTimeClock or the GlobalClock **/
+        public boolean REAL_TIME;
         public boolean INPUT_ENABLED;
         public boolean RECORD_CAMERA;
         public float LIMIT_MAG_RUNTIME;
         public int OUTPUT_FRAME_BUFFER_SIZE = 250;
+        public boolean STRIPPED_FOV_MODE = false;
 
         public RuntimeConf() {
             EventManager.instance.subscribe(this, Events.LIMIT_MAG_CMD, Events.INPUT_ENABLED_CMD, Events.TOGGLE_CLEANMODE, Events.TOGGLE_UPDATEPAUSE, Events.TOGGLE_TIME_CMD, Events.RECORD_CAMERA_CMD);
