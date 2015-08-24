@@ -45,6 +45,8 @@ import gaia.cu9.ari.gaiaorbit.util.ModelCache;
 import gaia.cu9.ari.gaiaorbit.util.gaia.GaiaAttitudeServer;
 import gaia.cu9.ari.gaiaorbit.util.math.MathUtilsd;
 import gaia.cu9.ari.gaiaorbit.util.time.GlobalClock;
+import gaia.cu9.ari.gaiaorbit.util.time.ITimeFrameProvider;
+import gaia.cu9.ari.gaiaorbit.util.time.RealTimeClock;
 import gaia.cu9.ari.gaiaorbit.util.tree.OctreeNode;
 
 import java.util.ArrayList;
@@ -106,6 +108,12 @@ public class GaiaSandbox implements ApplicationListener, IObserver {
      */
     public IGui gui, loadingGui, renderGui;
 
+    /**
+     * Time
+     */
+    public ITimeFrameProvider current;
+    private ITimeFrameProvider clock, real;
+
     private boolean initialized = false;
 
     /**
@@ -134,15 +142,15 @@ public class GaiaSandbox implements ApplicationListener, IObserver {
         // Disable all kinds of input
         EventManager.instance.post(Events.INPUT_ENABLED_CMD, false);
 
-        if (!GlobalClock.initialized()) {
-            // Initialize clock with a real time pace
-            GlobalClock.initialize(0.000277778, new Date());
-        }
-
         if (!GlobalConf.initialized()) {
             Logger.error(new RuntimeException("FATAL: Global configuration not initlaized"));
             return;
         }
+
+        // Initialize times
+        clock = new GlobalClock(0.000277778, new Date());
+        real = new RealTimeClock();
+        current = GlobalConf.runtime.REAL_TIME ? real : clock;
 
         // Init data files
         dataFiles = DataFilesFactory.getDataFiles();
@@ -268,7 +276,7 @@ public class GaiaSandbox implements ApplicationListener, IObserver {
         nodeList.addAll(boundbean.list());
 
         sg = new SceneGraph();
-        sg.initialize(nodeList, GlobalClock.clock);
+        sg.initialize(nodeList, current);
 
         /** 
          * INITIALIZE RENDERER
@@ -285,9 +293,9 @@ public class GaiaSandbox implements ApplicationListener, IObserver {
 
         // Update whole tree to initialize positions
         OctreeNode.LOAD_ACTIVE = false;
-        GlobalClock.clock.update(0.000000001f);
-        sg.update(GlobalClock.clock, cam);
-        GlobalClock.clock.update(0);
+        current.update(0.000000001f);
+        sg.update(current, cam);
+        current.update(0);
         OctreeNode.LOAD_ACTIVE = true;
 
         // Initialize input handlers
@@ -320,16 +328,16 @@ public class GaiaSandbox implements ApplicationListener, IObserver {
 
         // Update whole tree to reinitialize positions with the new camera
         // position
-        GlobalClock.clock.update(0.0000000001f);
-        sg.update(GlobalClock.clock, cam);
+        current.update(0.0000000001f);
+        sg.update(current, cam);
         sgr.clearLists();
-        GlobalClock.clock.update(0);
+        current.update(0);
 
         //        Vector3d newCameraDir = focus.pos.cpy().sub(newCameraPos);
         //        EventManager.instance.post(Events.CAMERA_DIR_CMD, newCameraDir.values());
 
         // Initialize time in GUI
-        EventManager.instance.post(Events.TIME_CHANGE_INFO, GlobalClock.clock.time);
+        EventManager.instance.post(Events.TIME_CHANGE_INFO, current.getTime());
 
         // Subscribe to events
         EventManager.instance.subscribe(this, Events.TOGGLE_AMBIENT_LIGHT, Events.AMBIENT_LIGHT_CMD);
@@ -417,16 +425,16 @@ public class GaiaSandbox implements ApplicationListener, IObserver {
             dtScene = 0;
         }
         // Update clock
-        GlobalClock.clock.update(dtScene);
+        current.update(dtScene);
 
         // Update events
         EventManager.instance.dispatchDelayedMessages();
 
         // Update cameras
-        cam.update(dt, GlobalClock.clock);
+        cam.update(dt, current);
 
         // Update scene graph
-        sg.update(GlobalClock.clock, cam);
+        sg.update(current, cam);
 
     }
 

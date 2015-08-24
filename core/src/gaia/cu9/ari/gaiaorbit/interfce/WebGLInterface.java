@@ -12,7 +12,7 @@ import gaia.cu9.ari.gaiaorbit.util.format.IDateFormat;
 import gaia.cu9.ari.gaiaorbit.util.scene2d.OwnLabel;
 import gaia.cu9.ari.gaiaorbit.util.scene2d.OwnSlider;
 import gaia.cu9.ari.gaiaorbit.util.scene2d.OwnTextButton;
-import gaia.cu9.ari.gaiaorbit.util.time.GlobalClock;
+import gaia.cu9.ari.gaiaorbit.util.time.ITimeFrameProvider;
 
 import java.util.Date;
 
@@ -36,14 +36,14 @@ public class WebGLInterface extends Table implements IObserver {
     int prevVal = 0;
     private IDateFormat df;
 
-    public WebGLInterface(Skin skin) {
+    public WebGLInterface(Skin skin, ITimeFrameProvider time) {
         super(skin);
         this.setBackground("table-bg-inv");
         this.pad(5);
 
         df = DateFormatFactory.getFormatter(I18n.locale, DateType.DATE);
 
-        date = new OwnLabel(df.format(GlobalClock.clock.getTime()), skin, "default-inv");
+        date = new OwnLabel(df.format(time.getTime()), skin, "default-inv");
 
         gaiaObsLabel = new OwnLabel(txt("gui.webgl.gaiaobs"), skin, "default-inv");
         sceneModeLabel = new OwnLabel(txt("gui.webgl.scenemode"), skin, "default-inv");
@@ -102,8 +102,9 @@ public class WebGLInterface extends Table implements IObserver {
         hg.addActor(slider);
         hg.addActor(sceneModeLabel);
 
-        add(date).left().padBottom(10);
+        add(date).left();
         if (!GlobalConf.runtime.STRIPPED_FOV_MODE) {
+            padBottom(10);
             row();
             add(hg).left();
             row();

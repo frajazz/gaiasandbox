@@ -1,5 +1,6 @@
 package gaia.cu9.ari.gaiaorbit.scenegraph;
 
+import gaia.cu9.ari.gaiaorbit.GaiaSandbox;
 import gaia.cu9.ari.gaiaorbit.event.EventManager;
 import gaia.cu9.ari.gaiaorbit.event.Events;
 import gaia.cu9.ari.gaiaorbit.event.IObserver;
@@ -7,7 +8,6 @@ import gaia.cu9.ari.gaiaorbit.util.Constants;
 import gaia.cu9.ari.gaiaorbit.util.GlobalConf;
 import gaia.cu9.ari.gaiaorbit.util.TwoWayHashmap;
 import gaia.cu9.ari.gaiaorbit.util.math.Vector3d;
-import gaia.cu9.ari.gaiaorbit.util.time.GlobalClock;
 import gaia.cu9.ari.gaiaorbit.util.time.ITimeFrameProvider;
 
 import com.badlogic.gdx.Gdx;
@@ -244,7 +244,7 @@ public class CameraManager implements ICamera, IObserver {
             updateAngleEdge(Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
             break;
         case CAMERA_UPDATE_CMD:
-            current.update(0, GlobalClock.clock);
+            current.update(0, GaiaSandbox.instance.current);
             break;
         default:
             break;

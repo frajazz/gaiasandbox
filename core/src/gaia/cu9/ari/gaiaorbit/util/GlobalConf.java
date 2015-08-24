@@ -114,6 +114,8 @@ public class GlobalConf {
         public boolean CLEAN_MODE;
         public boolean UPDATE_PAUSE;
         public boolean TIME_ON;
+        /** Whether we use the RealTimeClock or the GlobalClock **/
+        public boolean REAL_TIME;
         public boolean INPUT_ENABLED;
         public boolean RECORD_CAMERA;
         public float LIMIT_MAG_RUNTIME;
@@ -124,7 +126,7 @@ public class GlobalConf {
             EventManager.instance.subscribe(this, Events.LIMIT_MAG_CMD, Events.INPUT_ENABLED_CMD, Events.TOGGLE_CLEANMODE, Events.TOGGLE_UPDATEPAUSE, Events.TOGGLE_TIME_CMD);
         }
 
-        public void initialize(boolean cLEAN_MODE, boolean uPDATE_PAUSE, boolean sTRIPPED_FOV_MODE, boolean tIME_ON, boolean iNPUT_ENABLED, boolean rECORD_CAMERA, float lIMIT_MAG_RUNTIME) {
+        public void initialize(boolean cLEAN_MODE, boolean uPDATE_PAUSE, boolean sTRIPPED_FOV_MODE, boolean tIME_ON, boolean iNPUT_ENABLED, boolean rECORD_CAMERA, float lIMIT_MAG_RUNTIME, boolean rEAL_TIME) {
             CLEAN_MODE = cLEAN_MODE;
             UPDATE_PAUSE = uPDATE_PAUSE;
             TIME_ON = tIME_ON;
@@ -132,11 +134,12 @@ public class GlobalConf {
             RECORD_CAMERA = rECORD_CAMERA;
             LIMIT_MAG_RUNTIME = lIMIT_MAG_RUNTIME;
             STRIPPED_FOV_MODE = sTRIPPED_FOV_MODE;
+            REAL_TIME = rEAL_TIME;
         }
 
         @Override
         public void initialize() {
-            initialize(false, false, false, false, true, false, 20);
+            initialize(false, false, false, false, true, false, 20, false);
         }
 
         @Override

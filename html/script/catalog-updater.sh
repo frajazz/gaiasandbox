@@ -5,11 +5,13 @@ FOLDER=/home/tsagrista/Gaia/data/HYG/hyg-days
 DATE=`date +%Y%m%d -d "today"`
 FILE=$FOLDER/hygxyz-$DATE.bin
 
-echo "Copying file $FILE to hercules host"
+USER=tsagrista
+SERVER=hercules
 
-
-# Copy file to server via SCP
-sshpass -f ./passfile scp $FILE "tsagrista@hercules:/work/www-staff/html/gaiasandbox/fov/"
+# Copy catalog file to server via SCP
+echo "Copying $FILE to $SERVER host"
+CMD2=`sshpass -f ./passfile scp $FILE "$USER@$SERVER:/work/www-staff/html/gaiasandbox/fov/android/assets/data/hygxyz.bin"`
 
 # Grant read permissions
-sshpass -f ./passfile ssh "tsagrista@hercules" 'cd /work/www-staff/html/gaiasandbox/fov/ && chmod ugo+r *.bin && exit'
+echo "Granting read permissions to $USER@$SERVER:$SERV_FOLDER/hygxyz.bin"
+CMD3=`sshpass -f ./passfile ssh "$USER@$SERVER" 'chmod ugo+r /work/www-staff/html/gaiasandbox/fov/android/assets/data/hygxyz.bin && exit'`

@@ -9,7 +9,6 @@ import gaia.cu9.ari.gaiaorbit.util.Constants;
 import gaia.cu9.ari.gaiaorbit.util.GlobalConf;
 import gaia.cu9.ari.gaiaorbit.util.math.MathUtilsd;
 import gaia.cu9.ari.gaiaorbit.util.math.Vector3d;
-import gaia.cu9.ari.gaiaorbit.util.time.GlobalClock;
 import gaia.cu9.ari.gaiaorbit.util.time.ITimeFrameProvider;
 
 import com.badlogic.gdx.Gdx;
@@ -210,7 +209,7 @@ public class NaturalCamera extends AbstractCamera implements IObserver {
             }
             AbstractPositionEntity fccopy = entity1.getLineCopy();
             fccopy.getRoot().transform.position.set(0f, 0f, 0f);
-            fccopy.getRoot().update(GlobalClock.clock, null, this);
+            fccopy.getRoot().update(time, null, this);
             this.pos.set(fccopy.transform.getTranslation());
             this.pos.add(0, 0, entity1.getRadius() * 5);
             this.posinv.set(this.pos).scl(-1);

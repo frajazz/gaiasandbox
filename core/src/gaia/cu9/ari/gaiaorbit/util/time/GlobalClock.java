@@ -27,25 +27,6 @@ public class GlobalClock implements IObserver, ITimeFrameProvider {
     /** The fixed frame rate when not in real time. Set negative to use real time **/
     public float fps = -1;
 
-    /** The singleton pattern **/
-    public static GlobalClock clock;
-
-    /**
-     * Initializes the singleton pattern
-     * @param pace The pace of the clock in [simulation hours/real seconds]
-     */
-    public static void initialize(double pace) {
-        clock = new GlobalClock(pace, new Date());
-    }
-
-    public static void initialize(double pace, Date date) {
-        clock = new GlobalClock(pace, date);
-    }
-
-    public static boolean initialized() {
-        return clock != null;
-    }
-
     /**
      * Creates a new GlobalClock
      * @param pace The pace of the clock in [simulation hours/real seconds]

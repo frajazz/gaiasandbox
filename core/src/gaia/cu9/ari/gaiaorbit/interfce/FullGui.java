@@ -1,5 +1,6 @@
 package gaia.cu9.ari.gaiaorbit.interfce;
 
+import gaia.cu9.ari.gaiaorbit.GaiaSandbox;
 import gaia.cu9.ari.gaiaorbit.event.EventManager;
 import gaia.cu9.ari.gaiaorbit.event.Events;
 import gaia.cu9.ari.gaiaorbit.event.IObserver;
@@ -169,7 +170,7 @@ public class FullGui implements IGui, IObserver {
                 ui.addActor(notificationsInterface);
             if (messagesInterface != null)
                 ui.addActor(messagesInterface);
-            if (focusInterface != null)
+            if (focusInterface != null && !GlobalConf.runtime.STRIPPED_FOV_MODE)
                 ui.addActor(fi);
 
             if (customInterface != null) {
@@ -347,7 +348,7 @@ public class FullGui implements IGui, IObserver {
     }
 
     public void addWebglInterface() {
-        webglInterface = new WebGLInterface(skin);
+        webglInterface = new WebGLInterface(skin, GaiaSandbox.instance.current);
         wgl = new Container<WebGLInterface>(webglInterface);
         wgl.setFillParent(true);
         wgl.left().top();
