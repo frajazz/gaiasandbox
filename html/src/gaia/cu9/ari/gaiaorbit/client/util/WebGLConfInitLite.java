@@ -26,13 +26,13 @@ public class WebGLConfInitLite extends ConfInit {
         ppc.initialize(4, 0, 0, false);
 
         RuntimeConf rc = new RuntimeConf();
-        rc.initialize(false, false, true, false, true, false, 20, true);
+        rc.initialize(false, false, true, false, false, false, 20, true);
 
         DataConf dc = new DataConf();
         dc.initialize(true, 20f);
 
         ProgramConf prc = new ProgramConf();
-        prc.initialize(false, true, "dark", "en-GB", false, StereoProfile.CROSSEYE);
+        prc.initialize(false, false, "dark", "en-GB", false, StereoProfile.CROSSEYE);
 
         ComponentType[] cts = ComponentType.values();
         boolean[] VISIBILITY = new boolean[cts.length];
@@ -45,6 +45,7 @@ public class WebGLConfInitLite extends ConfInit {
         VISIBILITY[ComponentType.MilkyWay.ordinal()] = true;
         VISIBILITY[ComponentType.Asteroids.ordinal()] = false;
         VISIBILITY[ComponentType.Galaxies.ordinal()] = false;
+        VISIBILITY[ComponentType.Labels.ordinal()] = true;
         VISIBILITY[ComponentType.Others.ordinal()] = true;
 
         SceneConf sc = new SceneConf();

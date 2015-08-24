@@ -22,8 +22,8 @@ import com.badlogic.gdx.graphics.glutils.ShaderProgram;
 
 public class FontRenderSystem extends AbstractRenderSystem {
     private SpriteBatch batch;
-    private ShaderProgram shaderProgram, shaderProgramBak;
-    private BitmapFont distanceFont, fovFont;
+    private ShaderProgram shaderProgram;
+    private BitmapFont distanceFont;
     private Comparator<IRenderable> comp;
 
     public FontRenderSystem(RenderGroup rg, int priority, float[] alphas, SpriteBatch batch) {
@@ -42,11 +42,6 @@ public class FontRenderSystem extends AbstractRenderSystem {
         texture.setFilter(TextureFilter.Linear, TextureFilter.Linear);
         distanceFont = new BitmapFont(Gdx.files.internal("font/main-font.fnt"), new TextureRegion(texture), false);
         distanceFont.getData().setScale(12f / 32f);
-
-        // Init fov font
-        Texture texture2 = new Texture(Gdx.files.internal("font/fov-font.png"), true);
-        texture2.setFilter(TextureFilter.Linear, TextureFilter.Linear);
-        fovFont = new BitmapFont(Gdx.files.internal("font/fov-font.fnt"), new TextureRegion(texture2), false);
     }
 
     @Override
@@ -68,7 +63,6 @@ public class FontRenderSystem extends AbstractRenderSystem {
                 // Font opacity multiplier
                 shaderProgram.setUniformf("u_opacity", 0.8f);
                 s.render(batch, shaderProgram, distanceFont, camera);
-
             }
         }
         batch.end();

@@ -343,7 +343,8 @@ public class GaiaSandbox implements ApplicationListener, IObserver {
         EventManager.instance.subscribe(this, Events.TOGGLE_AMBIENT_LIGHT, Events.AMBIENT_LIGHT_CMD);
 
         // Re-enable input
-        EventManager.instance.post(Events.INPUT_ENABLED_CMD, true);
+        if (!GlobalConf.runtime.STRIPPED_FOV_MODE)
+            EventManager.instance.post(Events.INPUT_ENABLED_CMD, true);
 
         // Set current date
         EventManager.instance.post(Events.TIME_CHANGE_CMD, new Date());
