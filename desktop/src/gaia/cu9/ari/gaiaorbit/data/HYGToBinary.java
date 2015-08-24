@@ -47,7 +47,7 @@ public class HYGToBinary implements IObserver {
 
         try {
             DesktopConfInit confInit = new DesktopConfInit();
-            confInit.initConf();
+            confInit.initGlobalConf();
 
             GlobalConf.data.LIMIT_MAG_LOAD = 20;
         } catch (IOException e) {

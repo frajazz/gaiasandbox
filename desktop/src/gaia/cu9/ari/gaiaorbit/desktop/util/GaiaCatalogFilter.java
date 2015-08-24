@@ -56,7 +56,7 @@ public class GaiaCatalogFilter {
 
         // Init global conf
         DesktopConfInit confInit = new DesktopConfInit();
-        confInit.initConf();
+        confInit.initGlobalConf();
 
         // Precompute some math functions
         MathUtilsd.initialize();
@@ -187,6 +187,6 @@ public class GaiaCatalogFilter {
     public static void main(String[] args) throws Exception {
         GaiaCatalogFilter gcf = new GaiaCatalogFilter();
         gcf.initialize();
-        gcf.filterCatalog(2015, 8, 20, 2015, 8, 25);
+        gcf.filterCatalog(2016, 8, 25, 2017, 8, 26);
     }
 }
