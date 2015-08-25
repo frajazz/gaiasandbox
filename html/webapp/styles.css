@@ -3,13 +3,81 @@ canvas {
     outline: none;
 }
 
+html, body{
+	height: 99%;
+}
+
 body {
     background-color: #000000;
+    color: #aaa;
+    font-family: sans-serif;
+    font-variant: small-caps;
+}
+
+.wrapper {
+	min-height: 100%;
+	height: auto !important;
+	height: 100%;
+	margin: 0 auto -15px;
+	background-color: #000;
 }
 
 div#embed-html{
 	width: 1024px;
 	float: left;
+}
+
+div#controls{
+	margin-top: 5px;
+}
+
+div#title{
+	width: 1024px;
+    text-align: center;
+    font-size: xx-large;
+}
+
+div#disclaimer{
+    width: 1000px;
+    margin-top: 15px;
+    padding: 10px;
+    border-radius: 10px;
+    border-width: 1px;
+    border-color: #444;
+    border-style: dashed;
+    font-variant: normal;
+    font-size: 11px;
+    color: #777;
+}
+
+div#credits{
+	height: 15px;
+	position: relative;
+	text-align: center;
+    width: 1024px;
+    font-size: small;
+}
+
+a#hide-console{
+	
+}
+
+a#hide-console:hover{
+	color: yellow;
+}
+
+.link-tab{
+	margin-left: 10px;
+	margin-right: 10px;
+}
+
+a.link{
+	color: #999;
+    text-decoration: none;
+}
+
+a.link:hover{
+	color: yellow;
 }
 
 div#wikip-info{
@@ -25,10 +93,14 @@ iframe#wikip-info-ifr{
 
 .gwt-TextArea{
 	background-color: #000;
+	display: none;
+	font-family: monospace;
+    font-size: smaller;
+    border: 1px solid #555;
 }
 
 .gwt-TextArea-readonly{
-	color: #aaa;
+	color: #999;
 }
 
 .superdev {
