@@ -19,14 +19,13 @@ import gaia.cu9.ari.gaiaorbit.util.tree.OctreeNode;
 import java.io.FileNotFoundException;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Properties;
 
-public class OctreeCatalogLoader implements ICatalogLoader {
+public class OctreeCatalogLoader implements ISceneGraphLoader {
 
     String metadata, particles;
 
     @Override
-    public List<? extends SceneGraphNode> loadCatalog() throws FileNotFoundException {
+    public List<? extends SceneGraphNode> loadData() throws FileNotFoundException {
         Logger.info(this.getClass().getSimpleName(), I18n.bundle.format("notif.limitmag", GlobalConf.data.LIMIT_MAG_LOAD));
 
         MetadataBinaryIO metadataReader = new MetadataBinaryIO();
@@ -88,9 +87,12 @@ public class OctreeCatalogLoader implements ICatalogLoader {
     }
 
     @Override
-    public void initialize(Properties p) {
-        metadata = p.getProperty("metadata");
-        particles = p.getProperty("particles");
+    public void initialize(String[] files) {
+        if (files.length != 2) {
+            new RuntimeException(getClass().getSimpleName() + " needs exactly two files: particles and metadata. Review your data.json file.");
+        }
+        particles = files[0];
+        metadata = files[1];
 
     }
 

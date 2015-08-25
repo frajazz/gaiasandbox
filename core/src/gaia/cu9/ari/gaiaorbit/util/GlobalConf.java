@@ -362,8 +362,8 @@ public class GlobalConf {
     public static class DataConf implements IConf {
         /** Whether we use the local data source (HYG binary) or the object server **/
         public boolean DATA_SOURCE_LOCAL = false;
-        /** The .sg file in case of local data source **/
-        public String DATA_SG_FILE;
+        /** The json data file in case of local data source **/
+        public String DATA_JSON_FILE;
         /** If we use the ObjectServer, this contains the visualization id **/
         public String VISUALIZATION_ID;
         /** Object server IP address/hostname **/
@@ -380,7 +380,7 @@ public class GlobalConf {
         @Override
         public void persist(Properties p) {
             p.setProperty("data.source.local", Boolean.toString(DATA_SOURCE_LOCAL));
-            p.setProperty("data.sg.file", DATA_SG_FILE);
+            p.setProperty("data.json.file", DATA_JSON_FILE);
             p.setProperty("data.source.hostname", OBJECT_SERVER_HOSTNAME);
             p.setProperty("data.source.port", Integer.toString(OBJECT_SERVER_PORT));
             p.setProperty("data.source.visid", VISUALIZATION_ID);
@@ -391,7 +391,7 @@ public class GlobalConf {
         public void initialize(Properties p) {
             /** DATA **/
             DATA_SOURCE_LOCAL = Boolean.parseBoolean(p.getProperty("data.source.local"));
-            DATA_SG_FILE = p.getProperty("data.sg.file");
+            DATA_JSON_FILE = p.getProperty("data.json.file");
             OBJECT_SERVER_HOSTNAME = p.getProperty("data.source.hostname");
             OBJECT_SERVER_PORT = Integer.parseInt(p.getProperty("data.source.port"));
             VISUALIZATION_ID = p.getProperty("data.source.visid");

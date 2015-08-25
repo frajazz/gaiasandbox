@@ -59,17 +59,16 @@ public class HYGToBinary implements IObserver {
 
     }
 
-
     public void compareCSVtoBinary(String csv, String bin) {
 
         try {
             HYGCSVLoader csvLoader = new HYGCSVLoader();
             HYGBinaryLoader binLoader = new HYGBinaryLoader();
 
-            csvLoader.file = csv;
-            List<? extends CelestialBody> csvStars = csvLoader.loadCatalog();
-            binLoader.file = bin;
-            List<? extends CelestialBody> binStars = binLoader.loadCatalog();
+            csvLoader.files = new String[] { csv };
+            List<? extends CelestialBody> csvStars = csvLoader.loadData();
+            binLoader.files = new String[] { bin };
+            List<? extends CelestialBody> binStars = binLoader.loadData();
 
             if (csvStars.size() != binStars.size()) {
                 System.err.println("Different sizes");
@@ -100,8 +99,8 @@ public class HYGToBinary implements IObserver {
         try {
             GlobalConf.data = new GlobalConf.DataConf();
             GlobalConf.data.LIMIT_MAG_LOAD = 20;
-            cat.file = csv;
-            List<? extends CelestialBody> stars = cat.loadCatalog();
+            cat.files = new String[] { csv };
+            List<? extends CelestialBody> stars = cat.loadData();
 
             // Write to binary
             File binFile = new File(bin);
@@ -139,8 +138,8 @@ public class HYGToBinary implements IObserver {
     public void loadBinaryFile(String fileIn) {
         HYGBinaryLoader cat = new HYGBinaryLoader();
         try {
-            cat.file = fileIn;
-            List<? extends CelestialBody> stars = cat.loadCatalog();
+            cat.files = new String[] { fileIn };
+            List<? extends CelestialBody> stars = cat.loadData();
 
         } catch (FileNotFoundException e) {
             e.printStackTrace();
@@ -168,13 +167,7 @@ public class HYGToBinary implements IObserver {
 
     }
 
-    private boolean equals(CelestialBody s1, CelestialBody s2){
-        return s1.id.equals(s2.id) &&
-                s1.posSph.x == s2.posSph.x &&
-                s1.posSph.y == s2.posSph.y &&
-                s1.pos.x == s2.pos.x &&
-                s1.pos.y == s2.pos.y &&
-                s1.pos.z == s2.pos.z &&
-                s1.absmag == s2.absmag;
+    private boolean equals(CelestialBody s1, CelestialBody s2) {
+        return s1.id.equals(s2.id) && s1.posSph.x == s2.posSph.x && s1.posSph.y == s2.posSph.y && s1.pos.x == s2.pos.x && s1.pos.y == s2.pos.y && s1.pos.z == s2.pos.z && s1.absmag == s2.absmag;
     }
 }

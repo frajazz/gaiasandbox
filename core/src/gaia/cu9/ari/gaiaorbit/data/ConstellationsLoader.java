@@ -1,5 +1,6 @@
 package gaia.cu9.ari.gaiaorbit.data;
 
+import gaia.cu9.ari.gaiaorbit.data.stars.ISceneGraphLoader;
 import gaia.cu9.ari.gaiaorbit.render.ComponentType;
 import gaia.cu9.ari.gaiaorbit.scenegraph.Constellation;
 import gaia.cu9.ari.gaiaorbit.scenegraph.SceneGraphNode;
@@ -12,24 +13,22 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Properties;
 
-public class ConstellationsLoader<T extends SceneGraphNode> implements ISceneGraphNodeProvider {
+public class ConstellationsLoader<T extends SceneGraphNode> implements ISceneGraphLoader {
     private static final String separator = "\\t|,";
     private String dataPath;
 
     @Override
-    public void initialize(Properties properties) {
-        try {
-            dataPath = properties.getProperty("file");
-
-        } catch (Exception e) {
-            Logger.error(e, this.getClass().getSimpleName());
+    public void initialize(String[] files) throws RuntimeException {
+        if (files == null || files.length != 1) {
+            throw new RuntimeException(getClass().getSimpleName() + " needs only one data file, got " + files.length);
         }
+        dataPath = files[0];
+
     }
 
     @Override
-    public List<Constellation> loadObjects() {
+    public List<Constellation> loadData() {
         List<Constellation> constellations = new ArrayList<Constellation>();
         try {
             // load constellations

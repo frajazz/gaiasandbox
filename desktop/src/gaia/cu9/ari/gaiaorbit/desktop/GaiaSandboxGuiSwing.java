@@ -2,7 +2,7 @@ package gaia.cu9.ari.gaiaorbit.desktop;
 
 import gaia.cu9.ari.gaiaorbit.GaiaSandbox;
 import gaia.cu9.ari.gaiaorbit.data.FileLocator;
-import gaia.cu9.ari.gaiaorbit.data.SceneGraphLoader;
+import gaia.cu9.ari.gaiaorbit.data.SceneGraphJsonLoader;
 import gaia.cu9.ari.gaiaorbit.desktop.gui.swing.Gui;
 import gaia.cu9.ari.gaiaorbit.desktop.gui.swing.IconManager;
 import gaia.cu9.ari.gaiaorbit.desktop.gui.swing.Observer;
@@ -22,7 +22,6 @@ import java.net.URL;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.SwingUtilities;
-import javax.swing.UIManager;
 
 import com.badlogic.gdx.Files;
 import com.badlogic.gdx.Gdx;
@@ -114,7 +113,7 @@ public class GaiaSandboxGuiSwing extends JFrame {
 
             GlobalClock.initialize(0.01f);
             FileLocator.initialize();
-            sg = SceneGraphLoader.loadSceneGraph(new FileInputStream(FileLocator.getFile(GlobalConf.data.DATA_SG_FILE)), GlobalClock.clock, GlobalConf.performance.MULTITHREADING, GlobalConf.performance.NUMBER_THREADS());
+            sg = SceneGraphJsonLoader.loadSceneGraph(new FileInputStream(FileLocator.getFile(GlobalConf.data.DATA_JSON_FILE)), GlobalClock.clock, GlobalConf.performance.MULTITHREADING, GlobalConf.performance.NUMBER_THREADS());
             IconManager.initialise(new File("data/ui/"));
             splash.splashOff();
             splash.dispose();

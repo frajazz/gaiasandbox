@@ -48,4 +48,8 @@ public class ConstellationBoundaries extends LineObject {
     public void updateLocalValues(ITimeFrameProvider time, ICamera camera) {
     }
 
+    @Override
+    public void initialize() {
+    }
+
 }

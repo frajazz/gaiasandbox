@@ -18,51 +18,51 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Properties;
 
 /**
  * Loads the HYG catalog in CSV format
  * @author Toni Sagrista
  *
  */
-public class HYGCSVLoader extends AbstractCatalogLoader implements ICatalogLoader {
+public class HYGCSVLoader extends AbstractCatalogLoader implements ISceneGraphLoader {
     private static final String separator = "\t";
 
     @Override
-    public List<Star> loadCatalog() throws FileNotFoundException {
+    public List<Star> loadData() throws FileNotFoundException {
         List<Star> stars = new ArrayList<Star>();
         InputStream data = null;
-        try {
-            data = FileLocator.getStream(file);
-        } catch (FileNotFoundException e) {
-            Logger.error(e);
-        }
-        BufferedReader br = new BufferedReader(new InputStreamReader(data));
-        Logger.info(this.getClass().getSimpleName(), I18n.bundle.format("notif.limitmag", GlobalConf.data.LIMIT_MAG_LOAD));
-
-        try {
-            //Skip first line
-            String[] header = br.readLine().split(separator);
-
-            for (String head : header) {
-                head = head.trim();
-            }
-            String line;
-            while ((line = br.readLine()) != null) {
-                //Add star
-                addStar(line, stars);
-            }
-        } catch (IOException e) {
-            e.printStackTrace();
-        } finally {
+        for (String file : files) {
             try {
-                br.close();
-            } catch (IOException e) {
+                data = FileLocator.getStream(file);
+            } catch (FileNotFoundException e) {
                 Logger.error(e);
             }
+            BufferedReader br = new BufferedReader(new InputStreamReader(data));
+            Logger.info(this.getClass().getSimpleName(), I18n.bundle.format("notif.datafile", file));
 
+            try {
+                //Skip first line
+                String[] header = br.readLine().split(separator);
+
+                for (String head : header) {
+                    head = head.trim();
+                }
+                String line;
+                while ((line = br.readLine()) != null) {
+                    //Add star
+                    addStar(line, stars);
+                }
+            } catch (IOException e) {
+                e.printStackTrace();
+            } finally {
+                try {
+                    br.close();
+                } catch (IOException e) {
+                    Logger.error(e);
+                }
+
+            }
         }
-
         Logger.info(this.getClass().getSimpleName(), I18n.bundle.format("notif.catalog.init", stars.size()));
         return stars;
     }
@@ -97,7 +97,7 @@ public class HYGCSVLoader extends AbstractCatalogLoader implements ICatalogLoade
             }
             long starid = Parser.parseLong(st[0].trim());
 
-            if(name != null && name.equalsIgnoreCase("Betelgeuse")){
+            if (name != null && name.equalsIgnoreCase("Betelgeuse")) {
                 int ad = 34;
                 ad += 213;
             }
@@ -108,7 +108,7 @@ public class HYGCSVLoader extends AbstractCatalogLoader implements ICatalogLoade
     }
 
     @Override
-    public void initialize(Properties p) {
-        super.initialize(p);
+    public void initialize(String[] files) {
+        super.initialize(files);
     }
 }

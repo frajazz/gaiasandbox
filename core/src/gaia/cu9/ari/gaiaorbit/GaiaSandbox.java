@@ -233,7 +233,7 @@ public class GaiaSandbox implements ApplicationListener, IObserver {
         if (sg == null) {
             // Set asset manager to asset bean
             AssetBean.setAssetManager(manager);
-            manager.load(GlobalConf.data.DATA_SG_FILE, ISceneGraph.class, new SGLoaderParameter(GlobalClock.clock, GlobalConf.performance.MULTITHREADING, GlobalConf.performance.NUMBER_THREADS()));
+            manager.load(GlobalConf.data.DATA_JSON_FILE, ISceneGraph.class, new SGLoaderParameter(GlobalClock.clock, GlobalConf.performance.MULTITHREADING, GlobalConf.performance.NUMBER_THREADS()));
         }
 
         // Load jython
@@ -288,8 +288,8 @@ public class GaiaSandbox implements ApplicationListener, IObserver {
 
         GlobalResources.doneLoading(manager);
 
-        if (manager.isLoaded(GlobalConf.data.DATA_SG_FILE)) {
-            sg = manager.get(GlobalConf.data.DATA_SG_FILE);
+        if (manager.isLoaded(GlobalConf.data.DATA_JSON_FILE)) {
+            sg = manager.get(GlobalConf.data.DATA_JSON_FILE);
         }
 
         AbstractRenderer.initialize(sg);

@@ -4,7 +4,6 @@ import gaia.cu9.ari.gaiaorbit.scenegraph.CelestialBody;
 
 import java.io.FileNotFoundException;
 import java.util.List;
-import java.util.Properties;
 
 /**
  * Abstract catalog loader with the transformation from spherical to cartesian coordinates
@@ -12,11 +11,11 @@ import java.util.Properties;
  *
  */
 public abstract class AbstractCatalogLoader {
-    public String file;
+    public String[] files;
 
-    public void initialize(Properties p) {
-        file = p.getProperty("file");
+    public void initialize(String[] files) {
+        this.files = files;
     }
 
-    public abstract List<? extends CelestialBody> loadCatalog() throws FileNotFoundException;
+    public abstract List<? extends CelestialBody> loadData() throws FileNotFoundException;
 }

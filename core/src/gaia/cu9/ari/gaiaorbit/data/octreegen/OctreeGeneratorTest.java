@@ -2,7 +2,7 @@ package gaia.cu9.ari.gaiaorbit.data.octreegen;
 
 import gaia.cu9.ari.gaiaorbit.data.FileLocator;
 import gaia.cu9.ari.gaiaorbit.data.stars.HYGBinaryLoader;
-import gaia.cu9.ari.gaiaorbit.data.stars.ICatalogLoader;
+import gaia.cu9.ari.gaiaorbit.data.stars.ISceneGraphLoader;
 import gaia.cu9.ari.gaiaorbit.data.stars.OctreeCatalogLoader;
 import gaia.cu9.ari.gaiaorbit.event.EventManager;
 import gaia.cu9.ari.gaiaorbit.event.Events;
@@ -20,7 +20,6 @@ import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.List;
-import java.util.Properties;
 
 public class OctreeGeneratorTest implements IObserver {
 
@@ -63,8 +62,8 @@ public class OctreeGeneratorTest implements IObserver {
 
         HYGBinaryLoader starLoader = new HYGBinaryLoader();
 
-        starLoader.file = "../android/assets/data/hygxyz.bin";
-        List<Particle> list = (List<Particle>) starLoader.loadCatalog();
+        starLoader.files = new String[] { "../android/assets/data/hygxyz.bin" };
+        List<Particle> list = (List<Particle>) starLoader.loadData();
         OctreeNode<Particle> octree = og.generateOctree(list);
 
         // Put all new particles in list
@@ -101,12 +100,10 @@ public class OctreeGeneratorTest implements IObserver {
     }
 
     private static void loadOctree() throws FileNotFoundException {
-        Properties p = new Properties();
-        p.put("metadata", "data/hyg_metadata.bin");
-        p.put("particles", "data/hyg_particles.bin");
-        ICatalogLoader loader = new OctreeCatalogLoader();
-        loader.initialize(p);
-        List<? extends SceneGraphNode> l = loader.loadCatalog();
+        String[] files = new String[] { "data/hyg_particles.bin", "data/hyg_metadata.bin" };
+        ISceneGraphLoader loader = new OctreeCatalogLoader();
+        loader.initialize(files);
+        List<? extends SceneGraphNode> l = loader.loadData();
         AbstractOctreeWrapper ow = null;
         for (SceneGraphNode n : l) {
             if (n instanceof AbstractOctreeWrapper) {

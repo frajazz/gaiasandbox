@@ -1,5 +1,6 @@
 package gaia.cu9.ari.gaiaorbit.data;
 
+import gaia.cu9.ari.gaiaorbit.data.stars.ISceneGraphLoader;
 import gaia.cu9.ari.gaiaorbit.scenegraph.SceneGraphNode;
 import gaia.cu9.ari.gaiaorbit.util.GlobalResources;
 import gaia.cu9.ari.gaiaorbit.util.I18n;
@@ -9,7 +10,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
-import java.util.Properties;
 import java.util.TreeMap;
 
 import com.badlogic.gdx.utils.JsonReader;
@@ -27,7 +27,7 @@ import com.badlogic.gdx.utils.reflect.ReflectionException;
  *
  * @param <T>
  */
-public class JsonLoader<T extends SceneGraphNode> implements ISceneGraphNodeProvider {
+public class JsonLoader<T extends SceneGraphNode> implements ISceneGraphLoader {
     private static final String COMPONENTS_PACKAGE = "gaia.cu9.ari.gaiaorbit.scenegraph.component.";
     /** Params to skip in the normal processing **/
     private static final List<String> PARAM_SKIP = Arrays.asList("args", "impl", "comment", "comments");
@@ -36,16 +36,12 @@ public class JsonLoader<T extends SceneGraphNode> implements ISceneGraphNodeProv
     private String[] filePaths;
 
     @Override
-    public void initialize(Properties properties) {
-        if (properties.getProperty("files") != null) {
-            filePaths = properties.getProperty("files").split("\\s+");
-        } else {
-            filePaths = new String[] {};
-        }
+    public void initialize(String[] files) {
+        filePaths = files;
     }
 
     @Override
-    public List<? extends SceneGraphNode> loadObjects() {
+    public List<? extends SceneGraphNode> loadData() {
         List<T> bodies = new ArrayList<T>();
 
         try {

@@ -1,5 +1,6 @@
 package gaia.cu9.ari.gaiaorbit.data;
 
+import gaia.cu9.ari.gaiaorbit.data.stars.ISceneGraphLoader;
 import gaia.cu9.ari.gaiaorbit.scenegraph.SceneGraphNode;
 import gaia.cu9.ari.gaiaorbit.util.GlobalResources;
 import gaia.cu9.ari.gaiaorbit.util.I18n;
@@ -21,17 +22,17 @@ import com.badlogic.gdx.utils.reflect.ReflectionException;
 /**
  * Class that loads scene graph nodes.
  * @author Toni Sagrista
- *
+ * @deprecated Using {@link gaia.cu9.ari.gaiaorbit.data.JsonLoader} instead.
  * @param <T>
  */
-public class NodeLoader<T extends SceneGraphNode> implements ISceneGraphNodeProvider {
+public class NodeLoader<T extends SceneGraphNode> implements ISceneGraphLoader {
     private String[] filePaths;
 
     public NodeLoader() {
         super();
     }
 
-    public List<T> loadObjects() {
+    public List<T> loadData() {
         List<T> bodies = new ArrayList<T>();
 
         Properties p = new Properties();
@@ -112,7 +113,7 @@ public class NodeLoader<T extends SceneGraphNode> implements ISceneGraphNodeProv
     }
 
     @Override
-    public void initialize(Properties properties) {
-        filePaths = properties.getProperty("files").split("\\s+");
+    public void initialize(String[] files) {
+        filePaths = files;
     }
 }

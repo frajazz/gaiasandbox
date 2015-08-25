@@ -3,6 +3,7 @@ package gaia.cu9.ari.gaiaorbit.data.stars;
 import gaia.cu9.ari.gaiaorbit.data.FileLocator;
 import gaia.cu9.ari.gaiaorbit.scenegraph.CelestialBody;
 import gaia.cu9.ari.gaiaorbit.scenegraph.Star;
+import gaia.cu9.ari.gaiaorbit.util.I18n;
 import gaia.cu9.ari.gaiaorbit.util.Logger;
 import gaia.cu9.ari.gaiaorbit.util.coord.Coordinates;
 import gaia.cu9.ari.gaiaorbit.util.math.Vector3d;
@@ -15,48 +16,48 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Properties;
-
-import com.badlogic.gdx.Gdx;
 
 /**
  * Loads the converted BSC.
  * @author Toni Sagrista
  *
  */
-public class BrightStarsCatalogLoader extends AbstractCatalogLoader implements ICatalogLoader {
+public class BrightStarsCatalogLoader extends AbstractCatalogLoader implements ISceneGraphLoader {
     private static final String separator = ",";
 
     @Override
-    public List<CelestialBody> loadCatalog() throws FileNotFoundException {
+    public List<CelestialBody> loadData() throws FileNotFoundException {
         List<CelestialBody> stars = new ArrayList<CelestialBody>();
         InputStream data = null;
-        try {
-            data = FileLocator.getStream(file);
-        } catch (FileNotFoundException e) {
-            Logger.error(e);
-        }
-        BufferedReader br = new BufferedReader(new InputStreamReader(data));
-
-        try {
-            //Skip first line
-            br.readLine();
-            String line;
-            while ((line = br.readLine()) != null) {
-                //Add star
-                addStar(line, stars);
-            }
-        } catch (IOException e) {
-            e.printStackTrace();
-        } finally {
+        for (String file : files) {
+            Logger.info(this.getClass().getSimpleName(), I18n.bundle.format("notif.datafile", file));
             try {
-                br.close();
-            } catch (IOException e) {
+                data = FileLocator.getStream(file);
+            } catch (FileNotFoundException e) {
                 Logger.error(e);
             }
+            BufferedReader br = new BufferedReader(new InputStreamReader(data));
 
+            try {
+                //Skip first line
+                br.readLine();
+                String line;
+                while ((line = br.readLine()) != null) {
+                    //Add star
+                    addStar(line, stars);
+                }
+            } catch (IOException e) {
+                e.printStackTrace();
+            } finally {
+                try {
+                    br.close();
+                } catch (IOException e) {
+                    Logger.error(e);
+                }
+
+            }
         }
-        Gdx.app.log(this.getClass().getCanonicalName(), "Catalog initialized, " + stars.size() + " stars.");
+        Logger.info(this.getClass().getSimpleName(), I18n.bundle.format("notif.catalog.init", stars.size()));
         return stars;
     }
 
@@ -73,8 +74,8 @@ public class BrightStarsCatalogLoader extends AbstractCatalogLoader implements I
     }
 
     @Override
-    public void initialize(Properties p) {
-        super.initialize(p);
+    public void initialize(String[] files) {
+        super.initialize(files);
     }
 
 }
