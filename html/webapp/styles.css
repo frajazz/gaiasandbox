@@ -14,6 +14,14 @@ body {
     font-variant: small-caps;
 }
 
+a{
+	color: #999;
+}
+
+a:hover{
+	color: yellow;
+}
+
 .wrapper {
 	min-height: 100%;
 	height: auto !important;
@@ -35,6 +43,12 @@ div#title{
 	width: 1024px;
     text-align: center;
     font-size: xx-large;
+}
+
+div#subtitle{
+	text-align: center;
+    width: 1024px;
+    font-size: 12px;
 }
 
 div#disclaimer{
@@ -72,12 +86,7 @@ a#hide-console:hover{
 }
 
 a.link{
-	color: #999;
     text-decoration: none;
-}
-
-a.link:hover{
-	color: yellow;
 }
 
 div#wikip-info{
