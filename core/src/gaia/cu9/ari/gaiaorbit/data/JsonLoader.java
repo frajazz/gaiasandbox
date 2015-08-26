@@ -54,7 +54,7 @@ import com.badlogic.gdx.utils.JsonValue.ValueType;
  *
  * @param <T>
  */
-public class JsonLoader<T extends SceneGraphNode> implements ISceneGraphNodeProvider {
+public class JsonLoader<T extends SceneGraphNode> implements ISceneGraphLoader {
     private static final String COMPONENTS_PACKAGE = "gaia.cu9.ari.gaiaorbit.scenegraph.component.";
     /** Params to skip in the normal processing **/
     private static final List<String> PARAM_SKIP = Arrays.asList("args", "impl", "comment", "comments");
@@ -62,12 +62,12 @@ public class JsonLoader<T extends SceneGraphNode> implements ISceneGraphNodeProv
     /** Contains all the files to be loaded by this loader **/
     private String[] filePaths;
 
-    public void initialize(String... files) {
+    public void initialize(String[] files) {
         filePaths = files;
     }
 
     @Override
-    public List<? extends SceneGraphNode> loadObjects() {
+    public List<? extends SceneGraphNode> loadData() {
         List<T> bodies = new ArrayList<T>();
 
         try {

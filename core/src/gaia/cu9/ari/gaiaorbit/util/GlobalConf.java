@@ -50,6 +50,10 @@ public class GlobalConf {
             this.NUMBER_THREADS = NUMBER_THREADS;
         }
 
+        public int NUMBER_THREADS() {
+            return NUMBER_THREADS;
+        }
+
         @Override
         public void initialize() {
             initialize(false, 1);
@@ -200,6 +204,8 @@ public class GlobalConf {
     public static class DataConf implements IConf {
         /** Whether we use the local data source (HYG binary) or the object server **/
         public boolean DATA_SOURCE_LOCAL = false;
+        /** The json data file in case of local data source **/
+        public String DATA_JSON_FILE;
         /** If we use the ObjectServer, this contains the visualization id **/
         public String VISUALIZATION_ID;
         /** Object server IP address/hostname **/
@@ -213,14 +219,15 @@ public class GlobalConf {
         /** Limit magnitude used for loading stars. All stars above this magnitude will not even be loaded by the sandbox. **/
         public float LIMIT_MAG_LOAD;
 
-        public void initialize(boolean dATA_SOURCE_LOCAL, float lIMIT_MAG_LOAD) {
+        public void initialize(String dATA_JSON_FILE, boolean dATA_SOURCE_LOCAL, float lIMIT_MAG_LOAD) {
+            this.DATA_JSON_FILE = dATA_JSON_FILE;
             this.DATA_SOURCE_LOCAL = dATA_SOURCE_LOCAL;
             this.LIMIT_MAG_LOAD = lIMIT_MAG_LOAD;
         }
 
         @Override
         public void initialize() {
-            initialize(true, 20f);
+            initialize("data/data.json", true, 20f);
         }
     }
 

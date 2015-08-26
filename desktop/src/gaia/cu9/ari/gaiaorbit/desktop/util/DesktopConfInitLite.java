@@ -29,7 +29,7 @@ public class DesktopConfInitLite extends ConfInit {
         rc.initialize(false, false, true, false, false, false, 20, true);
 
         DataConf dc = new DataConf();
-        dc.initialize(true, 20f);
+        dc.initialize("data/data-lite.json", true, 20f);
 
         ProgramConf prc = new ProgramConf();
         prc.initialize(false, false, "dark", "en-GB", false, StereoProfile.CROSSEYE);
@@ -49,7 +49,7 @@ public class DesktopConfInitLite extends ConfInit {
         VISIBILITY[ComponentType.Others.ordinal()] = true;
 
         SceneConf sc = new SceneConf();
-        sc.initialize(2000, 6f, 0f, 50, 2.1f, 1866f, 2286f, 13, true, 7.0f, VISIBILITY, 2, 0, 0f, 2e-8f, 0f, 0.3f, 1f);
+        sc.initialize(2000, 2f, 0f, 50, 2.1f, 1866f, 2286f, 13, true, 7.0f, VISIBILITY, 2, 0, 0f, 2e-8f, 0f, 0.05f, 1f);
 
         GlobalConf.initialize(vc, prc, sc, dc, rc, ppc, pc);
     }

@@ -76,8 +76,8 @@ public class GaiaCatalogFilter {
         // Load catalog
         if (catal.equals("hyg")) {
             HYGBinaryLoader loader = new HYGBinaryLoader();
-            loader.initialize(Gdx.files.internal("data/hygxyz.bin"));
-            catalog = loader.loadCatalog();
+            loader.initialize(new String[] { "data/hygxyz.bin" });
+            catalog = loader.loadData();
         } else if (catal.equals("tycho")) {
             STILCatalogLoader loader = new STILCatalogLoader();
             loader.initialize(new String[] { "/home/tsagrista/Workspaces/objectserver/data/tycho.vot.gz" });

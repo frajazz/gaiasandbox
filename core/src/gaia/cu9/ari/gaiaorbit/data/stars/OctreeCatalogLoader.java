@@ -1,5 +1,6 @@
 package gaia.cu9.ari.gaiaorbit.data.stars;
 
+import gaia.cu9.ari.gaiaorbit.data.ISceneGraphLoader;
 import gaia.cu9.ari.gaiaorbit.data.octreegen.MetadataBinaryIO;
 import gaia.cu9.ari.gaiaorbit.data.octreegen.ParticleDataBinaryIO;
 import gaia.cu9.ari.gaiaorbit.scenegraph.CelestialBody;
@@ -21,12 +22,12 @@ import java.util.List;
 
 import com.badlogic.gdx.Gdx;
 
-public class OctreeCatalogLoader implements ICatalogLoader {
+public class OctreeCatalogLoader implements ISceneGraphLoader {
 
     String metadata, particles;
 
     @Override
-    public List<? extends SceneGraphNode> loadCatalog() throws FileNotFoundException {
+    public List<? extends SceneGraphNode> loadData() throws FileNotFoundException {
         Logger.info(this.getClass().getSimpleName(), I18n.bundle.format("notif.limitmag", GlobalConf.data.LIMIT_MAG_LOAD));
 
         MetadataBinaryIO metadataReader = new MetadataBinaryIO();
@@ -85,6 +86,11 @@ public class OctreeCatalogLoader implements ICatalogLoader {
         Logger.info(this.getClass().getSimpleName(), I18n.bundle.format("notif.catalog.init", particleList.size()));
 
         return result;
+    }
+
+    @Override
+    public void initialize(String[] files) throws RuntimeException {
+
     }
 
 }

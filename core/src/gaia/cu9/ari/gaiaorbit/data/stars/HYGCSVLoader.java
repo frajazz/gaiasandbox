@@ -1,5 +1,6 @@
 package gaia.cu9.ari.gaiaorbit.data.stars;
 
+import gaia.cu9.ari.gaiaorbit.data.ISceneGraphLoader;
 import gaia.cu9.ari.gaiaorbit.scenegraph.Star;
 import gaia.cu9.ari.gaiaorbit.util.Constants;
 import gaia.cu9.ari.gaiaorbit.util.GlobalConf;
@@ -18,41 +19,47 @@ import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.files.FileHandle;
+
 /**
  * Loads the HYG catalog in CSV format
  * @author Toni Sagrista
  *
  */
-public class HYGCSVLoader extends AbstractCatalogLoader implements ICatalogLoader {
+public class HYGCSVLoader extends AbstractCatalogLoader implements ISceneGraphLoader {
     private static final String separator = "\t";
 
     @Override
-    public List<Star> loadCatalog() throws FileNotFoundException {
+    public List<Star> loadData() throws FileNotFoundException {
         List<Star> stars = new ArrayList<Star>();
-        InputStream data = file.read();
-        BufferedReader br = new BufferedReader(new InputStreamReader(data));
+        for (String file : files) {
+            FileHandle f = Gdx.files.internal(file);
+            InputStream data = f.read();
+            BufferedReader br = new BufferedReader(new InputStreamReader(data));
 
-        try {
-            //Skip first line
-            String[] header = br.readLine().split(separator);
-
-            for (String head : header) {
-                head = head.trim();
-            }
-            String line;
-            while ((line = br.readLine()) != null) {
-                //Add star
-                addStar(line, stars);
-            }
-        } catch (IOException e) {
-            e.printStackTrace();
-        } finally {
             try {
-                br.close();
-            } catch (IOException e) {
-                Logger.error(e);
-            }
+                //Skip first line
+                String[] header = br.readLine().split(separator);
 
+                for (String head : header) {
+                    head = head.trim();
+                }
+                String line;
+                while ((line = br.readLine()) != null) {
+                    //Add star
+                    addStar(line, stars);
+                }
+            } catch (IOException e) {
+                e.printStackTrace();
+            } finally {
+                try {
+                    br.close();
+                } catch (IOException e) {
+                    Logger.error(e);
+                }
+
+            }
         }
 
         Logger.info(this.getClass().getSimpleName(), I18n.bundle.format("notif.catalog.init", stars.size()));

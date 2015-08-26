@@ -29,7 +29,7 @@ public class WebGLConfInit extends ConfInit {
         rc.initialize(false, false, false, false, true, false, 20, false);
 
         DataConf dc = new DataConf();
-        dc.initialize(true, 20f);
+        dc.initialize("data/data.json", true, 20f);
 
         ProgramConf prc = new ProgramConf();
         prc.initialize(false, true, "dark", "en-GB", false, StereoProfile.CROSSEYE);

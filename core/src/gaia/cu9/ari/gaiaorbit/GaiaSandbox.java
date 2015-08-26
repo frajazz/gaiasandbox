@@ -1,16 +1,10 @@
 package gaia.cu9.ari.gaiaorbit;
 
 import gaia.cu9.ari.gaiaorbit.data.AssetBean;
-import gaia.cu9.ari.gaiaorbit.data.BoundaryDataLoader;
-import gaia.cu9.ari.gaiaorbit.data.ConstellationDataLoader;
 import gaia.cu9.ari.gaiaorbit.data.GaiaAttitudeLoader;
 import gaia.cu9.ari.gaiaorbit.data.GaiaAttitudeLoader.GaiaAttitudeLoaderParameter;
-import gaia.cu9.ari.gaiaorbit.data.HYGCatalogLoader;
-import gaia.cu9.ari.gaiaorbit.data.JsonDataLoader;
-import gaia.cu9.ari.gaiaorbit.data.bean.BoundariesBean;
-import gaia.cu9.ari.gaiaorbit.data.bean.ConstellationsBean;
-import gaia.cu9.ari.gaiaorbit.data.bean.HYGBean;
-import gaia.cu9.ari.gaiaorbit.data.bean.JsonBean;
+import gaia.cu9.ari.gaiaorbit.data.SGLoader;
+import gaia.cu9.ari.gaiaorbit.data.SGLoader.SGLoaderParameter;
 import gaia.cu9.ari.gaiaorbit.data.orbit.OrbitData;
 import gaia.cu9.ari.gaiaorbit.data.orbit.OrbitDataLoader;
 import gaia.cu9.ari.gaiaorbit.event.EventManager;
@@ -32,14 +26,11 @@ import gaia.cu9.ari.gaiaorbit.scenegraph.CameraManager;
 import gaia.cu9.ari.gaiaorbit.scenegraph.CameraManager.CameraMode;
 import gaia.cu9.ari.gaiaorbit.scenegraph.CelestialBody;
 import gaia.cu9.ari.gaiaorbit.scenegraph.ISceneGraph;
-import gaia.cu9.ari.gaiaorbit.scenegraph.SceneGraph;
 import gaia.cu9.ari.gaiaorbit.scenegraph.SceneGraphNode;
 import gaia.cu9.ari.gaiaorbit.scenegraph.component.ModelComponent;
-import gaia.cu9.ari.gaiaorbit.util.DataFilesFactory;
 import gaia.cu9.ari.gaiaorbit.util.GlobalConf;
 import gaia.cu9.ari.gaiaorbit.util.GlobalResources;
 import gaia.cu9.ari.gaiaorbit.util.I18n;
-import gaia.cu9.ari.gaiaorbit.util.IDataFiles;
 import gaia.cu9.ari.gaiaorbit.util.Logger;
 import gaia.cu9.ari.gaiaorbit.util.ModelCache;
 import gaia.cu9.ari.gaiaorbit.util.gaia.GaiaAttitudeServer;
@@ -49,7 +40,6 @@ import gaia.cu9.ari.gaiaorbit.util.time.ITimeFrameProvider;
 import gaia.cu9.ari.gaiaorbit.util.time.RealTimeClock;
 import gaia.cu9.ari.gaiaorbit.util.tree.OctreeNode;
 
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -83,9 +73,6 @@ public class GaiaSandbox implements ApplicationListener, IObserver {
 
     /** Singleton instance **/
     public static GaiaSandbox instance;
-
-    /** Data files to load **/
-    private IDataFiles dataFiles;
 
     // Asset manager
     public AssetManager manager;
@@ -152,9 +139,6 @@ public class GaiaSandbox implements ApplicationListener, IObserver {
         real = new RealTimeClock();
         current = GlobalConf.runtime.REAL_TIME ? real : clock;
 
-        // Init data files
-        dataFiles = DataFilesFactory.getDataFiles();
-
         // Precompute some math functions
         MathUtilsd.initialize();
 
@@ -164,10 +148,7 @@ public class GaiaSandbox implements ApplicationListener, IObserver {
         // Initialize asset manager
         FileHandleResolver resolver = new InternalFileHandleResolver();
         manager = new AssetManager(resolver);
-        manager.setLoader(HYGBean.class, new HYGCatalogLoader(resolver));
-        manager.setLoader(JsonBean.class, new JsonDataLoader(resolver));
-        manager.setLoader(ConstellationsBean.class, new ConstellationDataLoader(resolver));
-        manager.setLoader(BoundariesBean.class, new BoundaryDataLoader(resolver));
+        manager.setLoader(ISceneGraph.class, new SGLoader(resolver));
         manager.setLoader(OrbitData.class, new OrbitDataLoader(resolver));
         manager.setLoader(GaiaAttitudeServer.class, new GaiaAttitudeLoader(resolver));
 
@@ -183,18 +164,12 @@ public class GaiaSandbox implements ApplicationListener, IObserver {
         // Initialize Gaia attitudes
         manager.load(ATTITUDE_FOLDER, GaiaAttitudeServer.class, new GaiaAttitudeLoaderParameter(GlobalConf.runtime.STRIPPED_FOV_MODE ? new String[] { "OPS_RSLS_0022916_rsls_nsl_gareq1_afterFirstSpinPhaseOptimization.2.xml" } : new String[] {}));
 
-        // Load catalogue
-        if (dataFiles.getCatalogFiles() != null)
-            manager.load(dataFiles.getCatalogFiles(), HYGBean.class);
-        // Load json files
-        if (dataFiles.getJsonFiles() != null)
-            manager.load(dataFiles.getJsonFiles(), JsonBean.class);
-        // Load constellations
-        if (dataFiles.getConstellationFiles() != null)
-            manager.load(dataFiles.getConstellationFiles(), ConstellationsBean.class);
-        // Load boundaries
-        if (dataFiles.getBoundaryFiles() != null)
-            manager.load(dataFiles.getBoundaryFiles(), BoundariesBean.class);
+        /** LOAD SCENE GRAPH **/
+        if (sg == null) {
+            // Set asset manager to asset bean
+            AssetBean.setAssetManager(manager);
+            manager.load(GlobalConf.data.DATA_JSON_FILE, ISceneGraph.class, new SGLoaderParameter(clock, GlobalConf.performance.MULTITHREADING, GlobalConf.performance.NUMBER_THREADS()));
+        }
 
         // Initialize timestamp for screenshots
         renderGui = new RenderGui();
@@ -239,44 +214,11 @@ public class GaiaSandbox implements ApplicationListener, IObserver {
         GlobalResources.doneLoading(manager);
 
         /**
-         * GET ALL NODES (stars, json, constel, boundaries)
+         * GET SCENE GRAPH
          */
-        List<SceneGraphNode> nodeList;
-        HYGBean hygbean;
-        JsonBean jsonbean;
-        ConstellationsBean constelbean;
-        BoundariesBean boundbean;
-        try {
-            hygbean = manager.get(dataFiles.getCatalogFiles());
-        } catch (Exception e) {
-            hygbean = new HYGBean();
+        if (manager.isLoaded(GlobalConf.data.DATA_JSON_FILE)) {
+            sg = manager.get(GlobalConf.data.DATA_JSON_FILE);
         }
-        try {
-            jsonbean = manager.get(dataFiles.getJsonFiles());
-        } catch (Exception e) {
-            jsonbean = new JsonBean();
-        }
-        try {
-            constelbean = manager.get(dataFiles.getConstellationFiles());
-        } catch (Exception e) {
-            constelbean = new ConstellationsBean();
-        }
-        try {
-            boundbean = manager.get(dataFiles.getBoundaryFiles());
-        } catch (Exception e) {
-            boundbean = new BoundariesBean();
-        }
-
-        int n = hygbean.size() + jsonbean.size() + constelbean.size() + boundbean.size();
-        nodeList = new ArrayList<SceneGraphNode>(n);
-
-        nodeList.addAll(hygbean.list());
-        nodeList.addAll(jsonbean.list());
-        nodeList.addAll(constelbean.list());
-        nodeList.addAll(boundbean.list());
-
-        sg = new SceneGraph();
-        sg.initialize(nodeList, current);
 
         /** 
          * INITIALIZE RENDERER
@@ -287,7 +229,7 @@ public class GaiaSandbox implements ApplicationListener, IObserver {
         sgr.resize(Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
 
         // First time, set assets
-        for (SceneGraphNode sgn : nodeList) {
+        for (SceneGraphNode sgn : sg.getNodes()) {
             sgn.doneLoading(manager);
         }
 
