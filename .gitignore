@@ -27,7 +27,7 @@
   *.log
   *.sql
   *.sqlite
-  nohup.out
+nohup.out
 
    # OS generated files #
    ######################
