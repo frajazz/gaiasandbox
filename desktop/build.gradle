@@ -20,7 +20,16 @@ task run(dependsOn: classes, type: JavaExec) {
 systemProperties['properties.file'] = '../android/assets/conf/global.properties'
 systemProperties['assets.location'] = '../android/assets/'
     classpath = sourceSets.main.runtimeClasspath
-classpath += files(project.assetsDir)
+    classpath += files(project.assetsDir)
+    standardInput = System.in
+    workingDir = project.workDir
+    ignoreExitValue = true
+}
+
+task runCatalogFilter(dependsOn: classes, type: JavaExec) {
+    main = "gaia.cu9.ari.gaiaorbit.desktop.util.GaiaCatalogFilter"
+    classpath = sourceSets.main.runtimeClasspath
+    classpath += files(project.assetsDir)
     standardInput = System.in
     workingDir = project.workDir
     ignoreExitValue = true

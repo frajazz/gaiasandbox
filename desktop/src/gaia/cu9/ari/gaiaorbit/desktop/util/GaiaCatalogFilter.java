@@ -1,7 +1,9 @@
 package gaia.cu9.ari.gaiaorbit.desktop.util;
 
 import gaia.cu9.ari.gaiaorbit.data.stars.HYGBinaryLoader;
-import gaia.cu9.ari.gaiaorbit.scenegraph.Particle;
+import gaia.cu9.ari.gaiaorbit.data.stars.STILCatalogLoader;
+import gaia.cu9.ari.gaiaorbit.scenegraph.CelestialBody;
+import gaia.cu9.ari.gaiaorbit.scenegraph.Star;
 import gaia.cu9.ari.gaiaorbit.util.I18n;
 import gaia.cu9.ari.gaiaorbit.util.Pair;
 import gaia.cu9.ari.gaiaorbit.util.gaia.GaiaAttitudeServer;
@@ -34,7 +36,7 @@ import com.badlogic.gdx.backends.lwjgl.LwjglFiles;
  */
 public class GaiaCatalogFilter {
 
-    List<Particle> catalog;
+    List<? extends CelestialBody> catalog;
     long MAX_OVERLAP_TIME;
     double BAM_2;
     double angleEdgeRad;
@@ -42,6 +44,10 @@ public class GaiaCatalogFilter {
 
     NumberFormat nf;
     LogWriter lw;
+
+    String catal = "tycho";
+
+    //    String catal = "hygxyz";
 
     public GaiaCatalogFilter() {
         super();
@@ -68,9 +74,19 @@ public class GaiaCatalogFilter {
         GaiaAttitudeServer.instance = new GaiaAttitudeServer("data/attitudexml/", "OPS_RSLS_0022916_rsls_nsl_gareq1_afterFirstSpinPhaseOptimization.2.xml");
 
         // Load catalog
-        HYGBinaryLoader loader = new HYGBinaryLoader();
-        loader.initialize(Gdx.files.internal("data/hygxyz.bin"));
-        catalog = loader.loadCatalog();
+        if (catal.equals("hyg")) {
+            HYGBinaryLoader loader = new HYGBinaryLoader();
+            loader.initialize(Gdx.files.internal("data/hygxyz.bin"));
+            catalog = loader.loadCatalog();
+        } else if (catal.equals("tycho")) {
+            STILCatalogLoader loader = new STILCatalogLoader();
+            loader.initialize(new String[] { "/home/tsagrista/Workspaces/objectserver/data/tycho.vot.gz" });
+            catalog = loader.loadData();
+            // Add Sun
+            CelestialBody sun = new Star(new Vector3d(0, 0, 0), 4.83f, 4.83f, 0.656f, "Sol", (int) System.currentTimeMillis());
+            sun.initialize();
+            ((List<CelestialBody>) catalog).add(sun);
+        }
 
         // Format
         nf = new DecimalFormat("##00");
@@ -107,7 +123,7 @@ public class GaiaCatalogFilter {
 
         Date current = new Date(ini.getTime());
 
-        Set<Particle> out = new HashSet<Particle>(10000);
+        Set<CelestialBody> out = new HashSet<CelestialBody>(10000);
 
         while (current.getTime() < end.getTime()) {
             out.clear();
@@ -116,7 +132,7 @@ public class GaiaCatalogFilter {
             for (long t = dayStart - overlap; t < dayStart + msDay + overlap * 2; t += MAX_OVERLAP_TIME) {
                 Pair<Vector3d, Vector3d> dirs = getDirections(new Date(t));
 
-                for (Particle p : catalog) {
+                for (CelestialBody p : catalog) {
                     double poslen = p.pos.len();
                     boolean observed = MathUtilsd.acos(p.pos.dot(dirs.getFirst()) / poslen) < angleEdgeRad || MathUtilsd.acos(p.pos.dot(dirs.getSecond()) / poslen) < angleEdgeRad;
                     // Sun should always be there because of the scene graph
@@ -130,7 +146,7 @@ public class GaiaCatalogFilter {
             // Write out to file
             Calendar cal = Calendar.getInstance();
             cal.setTime(current);
-            String bin = System.getProperty("java.io.tmpdir") + File.separator + "hygxyz-" + nf.format(cal.get(Calendar.YEAR)) + nf.format(cal.get(Calendar.MONTH) + 1) + nf.format(cal.get(Calendar.DAY_OF_MONTH)) + ".bin";
+            String bin = System.getProperty("java.io.tmpdir") + File.separator + catal + "-" + nf.format(cal.get(Calendar.YEAR)) + nf.format(cal.get(Calendar.MONTH) + 1) + nf.format(cal.get(Calendar.DAY_OF_MONTH)) + ".bin";
 
             try {
                 writeToBinary(out, bin);
@@ -145,7 +161,7 @@ public class GaiaCatalogFilter {
 
     }
 
-    public void writeToBinary(Set<Particle> catalog, String bin) throws IOException {
+    public void writeToBinary(Set<CelestialBody> catalog, String bin) throws IOException {
         File binFile = new File(bin);
         binFile.mkdirs();
         if (binFile.exists()) {
@@ -159,7 +175,7 @@ public class GaiaCatalogFilter {
 
         // Size of stars
         data_out.writeInt(catalog.size());
-        for (Particle s : catalog) {
+        for (CelestialBody s : catalog) {
             // name_length, name, appmag, absmag, colorbv, ra, dec, dist
             data_out.writeInt(s.name.length());
             data_out.writeChars(s.name);
@@ -172,7 +188,7 @@ public class GaiaCatalogFilter {
             data_out.writeInt(s.id);
         }
         file_output.close();
-        System.out.println(catalog.size() + " particles written to binary file " + bin);
+        System.out.println(new Date() + " - " + catalog.size() + " particles written to binary file " + bin);
     }
 
     public Pair<Vector3d, Vector3d> getDirections(Date d) {
@@ -187,6 +203,6 @@ public class GaiaCatalogFilter {
     public static void main(String[] args) throws Exception {
         GaiaCatalogFilter gcf = new GaiaCatalogFilter();
         gcf.initialize();
-        gcf.filterCatalog(2016, 8, 25, 2017, 8, 26);
+        gcf.filterCatalog(2015, 8, 25, 2016, 8, 26);
     }
 }

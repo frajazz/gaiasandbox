@@ -56,7 +56,8 @@ project(":desktop") {
 		compile "org.python:jython-standalone:$jythonVersion"
 		compile "com.miglayout:miglayout-swing:$miglayoutVersion"
 		compile files('../core/lib/postprocessing.jar',
-					'../android/assets')
+					'../android/assets',
+                                        'lib/stil.jar')
     }
 }
 
