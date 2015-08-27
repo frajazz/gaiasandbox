@@ -1,6 +1,6 @@
 package gaia.cu9.ari.gaiaorbit.event;
 
-import gaia.cu9.ari.gaiaorbit.util.time.GlobalClock;
+import gaia.cu9.ari.gaiaorbit.GaiaSandbox;
 
 import java.util.LinkedHashSet;
 import java.util.Set;
@@ -29,7 +29,7 @@ public class EventManager implements IObserver {
             if (this.equals(REAL_TIME)) {
                 return System.currentTimeMillis();
             } else if (this.equals(SIMULATION_TIME)) {
-                return GlobalClock.clock.time.getTime();
+                return GaiaSandbox.instance.current.getTime().getTime();
             }
             return -1;
         }
@@ -234,7 +234,7 @@ public class EventManager implements IObserver {
         pool.free(telegram);
     }
 
-    public boolean hasSubscriptors(Events event){
+    public boolean hasSubscriptors(Events event) {
         return !subscriptions.get(event.ordinal()).isEmpty();
     }
 

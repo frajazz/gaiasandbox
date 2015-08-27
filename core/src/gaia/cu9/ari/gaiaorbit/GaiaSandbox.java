@@ -69,7 +69,6 @@ import com.badlogic.gdx.assets.AssetManager;
 import com.badlogic.gdx.assets.loaders.FileHandleResolver;
 import com.badlogic.gdx.assets.loaders.resolvers.InternalFileHandleResolver;
 import com.badlogic.gdx.controllers.Controllers;
-import com.badlogic.gdx.files.FileHandle;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.Pixmap.Format;
 import com.badlogic.gdx.graphics.glutils.FrameBuffer;
@@ -172,7 +171,6 @@ public class GaiaSandbox implements ApplicationListener, IObserver {
             return;
         }
 
-
         // Initialize times
         clock = new GlobalClock(0.000277778, new Date());
         real = new RealTimeClock();
@@ -215,7 +213,7 @@ public class GaiaSandbox implements ApplicationListener, IObserver {
         if (sg == null) {
             // Set asset manager to asset bean
             AssetBean.setAssetManager(manager);
-            manager.load(GlobalConf.data.DATA_JSON_FILE, ISceneGraph.class, new SGLoaderParameter(GlobalClock.clock, GlobalConf.performance.MULTITHREADING, GlobalConf.performance.NUMBER_THREADS()));
+            manager.load(GlobalConf.data.DATA_JSON_FILE, ISceneGraph.class, new SGLoaderParameter(current, GlobalConf.performance.MULTITHREADING, GlobalConf.performance.NUMBER_THREADS()));
         }
 
         // Load jython
@@ -287,9 +285,9 @@ public class GaiaSandbox implements ApplicationListener, IObserver {
 
         // Update whole tree to initialize positions
         OctreeNode.LOAD_ACTIVE = false;
-        GlobalClock.clock.update(0.000000001f);
-        sg.update(GlobalClock.clock, cam);
-        GlobalClock.clock.update(0);
+        clock.update(0.000000001f);
+        sg.update(clock, cam);
+        clock.update(0);
         OctreeNode.LOAD_ACTIVE = true;
 
         // Initialize input handlers
@@ -324,16 +322,16 @@ public class GaiaSandbox implements ApplicationListener, IObserver {
 
         // Update whole tree to reinitialize positions with the new camera
         // position
-        GlobalClock.clock.update(0.00000001f);
-        sg.update(GlobalClock.clock, cam);
+        current.update(0.00000001f);
+        sg.update(current, cam);
         sgr.clearLists();
-        GlobalClock.clock.update(0);
+        current.update(0);
 
         Vector3d newCameraDir = focus.pos.cpy().sub(newCameraPos);
         EventManager.instance.post(Events.CAMERA_DIR_CMD, newCameraDir.values());
 
         // Initialize time in GUI
-        EventManager.instance.post(Events.TIME_CHANGE_INFO, GlobalClock.clock.time);
+        EventManager.instance.post(Events.TIME_CHANGE_INFO, current.getTime());
 
         // Subscribe to events
         EventManager.instance.subscribe(this, Events.TOGGLE_AMBIENT_LIGHT, Events.AMBIENT_LIGHT_CMD, Events.SCREENSHOT_CMD, Events.FULLSCREEN_CMD);
@@ -471,16 +469,16 @@ public class GaiaSandbox implements ApplicationListener, IObserver {
             dtScene = 0;
         }
         // Update clock
-        GlobalClock.clock.update(dtScene);
+        current.update(dtScene);
 
         // Update events
         EventManager.instance.dispatchDelayedMessages();
 
         // Update cameras
-        cam.update(dt, GlobalClock.clock);
+        cam.update(dt, current);
 
         // Update scene graph
-        sg.update(GlobalClock.clock, cam);
+        sg.update(current, cam);
 
     }
 

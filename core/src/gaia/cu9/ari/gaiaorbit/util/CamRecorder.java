@@ -1,5 +1,6 @@
 package gaia.cu9.ari.gaiaorbit.util;
 
+import gaia.cu9.ari.gaiaorbit.GaiaSandbox;
 import gaia.cu9.ari.gaiaorbit.event.EventManager;
 import gaia.cu9.ari.gaiaorbit.event.Events;
 import gaia.cu9.ari.gaiaorbit.event.IObserver;
@@ -7,7 +8,6 @@ import gaia.cu9.ari.gaiaorbit.util.format.DateFormatFactory;
 import gaia.cu9.ari.gaiaorbit.util.format.IDateFormat;
 import gaia.cu9.ari.gaiaorbit.util.math.Vector3d;
 import gaia.cu9.ari.gaiaorbit.util.parse.Parser;
-import gaia.cu9.ari.gaiaorbit.util.time.GlobalClock;
 
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
@@ -138,7 +138,7 @@ public class CamRecorder implements IObserver {
                 }
                 try {
                     // Write time command
-                    os.append("settime").append(sep).append(df.format(GlobalClock.clock.getTime())).append("\n");
+                    os.append("settime").append(sep).append(df.format(GaiaSandbox.instance.current.getTime())).append("\n");
                 } catch (Exception e) {
                     Logger.error(e);
                 }

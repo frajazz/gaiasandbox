@@ -1,5 +1,6 @@
 package gaia.cu9.ari.gaiaorbit.interfce.components;
 
+import gaia.cu9.ari.gaiaorbit.GaiaSandbox;
 import gaia.cu9.ari.gaiaorbit.event.EventManager;
 import gaia.cu9.ari.gaiaorbit.event.Events;
 import gaia.cu9.ari.gaiaorbit.event.IObserver;
@@ -11,7 +12,6 @@ import gaia.cu9.ari.gaiaorbit.util.format.IDateFormat;
 import gaia.cu9.ari.gaiaorbit.util.scene2d.OwnImageButton;
 import gaia.cu9.ari.gaiaorbit.util.scene2d.OwnLabel;
 import gaia.cu9.ari.gaiaorbit.util.scene2d.OwnTextField;
-import gaia.cu9.ari.gaiaorbit.util.time.GlobalClock;
 
 import java.util.Date;
 
@@ -63,7 +63,7 @@ public class TimeComponent extends GuiComponent implements IObserver {
                     if (dateDialog == null) {
                         dateDialog = new DateDialog(stage, skin);
                     }
-                    dateDialog.updateTime(GlobalClock.clock.time);
+                    dateDialog.updateTime(GaiaSandbox.instance.current.getTime());
                     dateDialog.display();
                 }
                 return false;
@@ -101,7 +101,7 @@ public class TimeComponent extends GuiComponent implements IObserver {
                 return false;
             }
         });
-        inputPace = new OwnTextField(Double.toString(GlobalClock.clock.pace), skin);
+        inputPace = new OwnTextField(Double.toString(GaiaSandbox.instance.current.getPace()), skin);
         inputPace.setName("input pace");
         inputPace.setMaxLength(15);
         inputPace.setWidth(60f);

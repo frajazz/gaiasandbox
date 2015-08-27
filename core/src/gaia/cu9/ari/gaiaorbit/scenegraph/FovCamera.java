@@ -1,5 +1,6 @@
 package gaia.cu9.ari.gaiaorbit.scenegraph;
 
+import gaia.cu9.ari.gaiaorbit.GaiaSandbox;
 import gaia.cu9.ari.gaiaorbit.event.EventManager;
 import gaia.cu9.ari.gaiaorbit.event.Events;
 import gaia.cu9.ari.gaiaorbit.event.IObserver;
@@ -153,7 +154,7 @@ public class FovCamera extends AbstractCamera implements IObserver {
         /** POSITION **/
         AbstractPositionEntity fccopy = gaia.getLineCopy();
         fccopy.getRoot().transform.position.set(0f, 0f, 0f);
-        fccopy.getRoot().update(GlobalClock.clock, null, this);
+        fccopy.getRoot().update(GaiaSandbox.instance.current, null, this);
 
         this.pos.set(fccopy.transform.getTranslation());
         this.posinv.set(this.pos).scl(-1);
