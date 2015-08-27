@@ -4,13 +4,18 @@ import gaia.cu9.ari.gaiaorbit.render.ComponentType;
 import gaia.cu9.ari.gaiaorbit.util.ConfInit;
 import gaia.cu9.ari.gaiaorbit.util.GlobalConf;
 import gaia.cu9.ari.gaiaorbit.util.GlobalConf.DataConf;
+import gaia.cu9.ari.gaiaorbit.util.GlobalConf.FrameConf;
 import gaia.cu9.ari.gaiaorbit.util.GlobalConf.PerformanceConf;
 import gaia.cu9.ari.gaiaorbit.util.GlobalConf.PostprocessConf;
 import gaia.cu9.ari.gaiaorbit.util.GlobalConf.ProgramConf;
 import gaia.cu9.ari.gaiaorbit.util.GlobalConf.ProgramConf.StereoProfile;
 import gaia.cu9.ari.gaiaorbit.util.GlobalConf.RuntimeConf;
 import gaia.cu9.ari.gaiaorbit.util.GlobalConf.SceneConf;
+import gaia.cu9.ari.gaiaorbit.util.GlobalConf.ScreenConf;
+import gaia.cu9.ari.gaiaorbit.util.GlobalConf.ScreenshotConf;
 import gaia.cu9.ari.gaiaorbit.util.GlobalConf.VersionConf;
+
+import java.io.File;
 
 public class WebGLConfInitLite extends ConfInit {
 
@@ -51,7 +56,18 @@ public class WebGLConfInitLite extends ConfInit {
         SceneConf sc = new SceneConf();
         sc.initialize(2000, 2f, 0f, 50, 2.1f, 1866f, 2286f, 13, true, 7.0f, VISIBILITY, 2, 0, 0f, 2e-8f, 0f, 0.05f, 1f);
 
-        GlobalConf.initialize(vc, prc, sc, dc, rc, ppc, pc);
+        FrameConf fc = new FrameConf();
+
+        ScreenConf scrc = new ScreenConf();
+
+        ScreenshotConf shc = new ScreenshotConf();
+
+        GlobalConf.initialize(vc, prc, sc, dc, rc, ppc, pc, fc, scrc, shc);
+    }
+
+    @Override
+    public void persistGlobalConf(File propsFile) {
+
     }
 
 }

@@ -4,8 +4,10 @@ import gaia.cu9.ari.gaiaorbit.GaiaSandbox;
 import gaia.cu9.ari.gaiaorbit.event.EventManager;
 import gaia.cu9.ari.gaiaorbit.event.Events;
 import gaia.cu9.ari.gaiaorbit.event.IObserver;
-import gaia.cu9.ari.gaiaorbit.render.ComponentType;
 import gaia.cu9.ari.gaiaorbit.render.system.AbstractRenderSystem;
+import gaia.cu9.ari.gaiaorbit.util.format.DateFormatFactory;
+import gaia.cu9.ari.gaiaorbit.util.format.DateFormatFactory.DateType;
+import gaia.cu9.ari.gaiaorbit.util.format.IDateFormat;
 import gaia.cu9.ari.gaiaorbit.util.math.MathUtilsd;
 
 import java.util.ArrayList;
@@ -28,13 +30,6 @@ public class GlobalConf {
     public static final String TEXTURES_FOLDER = "data/tex/";
 
     public static interface IConf {
-
-        /**
-         * Initializes this configuration from the given properties object.
-         * @param p
-         */
-        public void initialize();
-
     }
 
     public enum ScreenshotMode {
@@ -48,9 +43,11 @@ public class GlobalConf {
         public String SCREENSHOT_FOLDER;
         public ScreenshotMode SCREENSHOT_MODE;
 
-        @Override
-        public void initialize() {
-
+        public void initialize(int sCREENSHOT_WIDTH, int sCREENSHOT_HEIGHT, String sCREENSHOT_FOLDER, ScreenshotMode sCREENSHOT_MODE) {
+            SCREENSHOT_WIDTH = sCREENSHOT_WIDTH;
+            SCREENSHOT_HEIGHT = sCREENSHOT_HEIGHT;
+            SCREENSHOT_FOLDER = sCREENSHOT_FOLDER;
+            SCREENSHOT_MODE = sCREENSHOT_MODE;
         }
 
         public boolean isSimpleMode() {
@@ -77,11 +74,6 @@ public class GlobalConf {
             return NUMBER_THREADS;
         }
 
-        @Override
-        public void initialize() {
-            initialize(false, 1);
-        }
-
     }
 
     public static class PostprocessConf implements IConf, IObserver {
@@ -101,18 +93,6 @@ public class GlobalConf {
             this.POSTPROCESS_BLOOM_INTENSITY = POSTPROCESS_BLOOM_INTENSITY;
             this.POSTPROCESS_MOTION_BLUR = POSTPROCESS_MOTION_BLUR;
             this.POSTPROCESS_LENS_FLARE = POSTPROCESS_LENS_FLARE;
-        }
-
-        @Override
-        public void initialize() {
-            /** POSTPROCESS **/
-            /**
-             * aa
-             * value < 0 - FXAA
-             * value = 0 - no AA
-             * value > 0 - MSAA #samples = value
-             */
-            initialize(4, 0, 0, false);
         }
 
         @Override
@@ -150,7 +130,7 @@ public class GlobalConf {
         public boolean STRIPPED_FOV_MODE = false;
 
         public RuntimeConf() {
-            EventManager.instance.subscribe(this, Events.LIMIT_MAG_CMD, Events.INPUT_ENABLED_CMD, Events.TOGGLE_CLEANMODE, Events.TOGGLE_UPDATEPAUSE, Events.TOGGLE_TIME_CMD);
+            EventManager.instance.subscribe(this, Events.LIMIT_MAG_CMD, Events.INPUT_ENABLED_CMD, Events.TOGGLE_CLEANMODE, Events.TOGGLE_UPDATEPAUSE, Events.TOGGLE_TIME_CMD, Events.RECORD_CAMERA_CMD);
         }
 
         public void initialize(boolean cLEAN_MODE, boolean uPDATE_PAUSE, boolean sTRIPPED_FOV_MODE, boolean tIME_ON, boolean iNPUT_ENABLED, boolean rECORD_CAMERA, float lIMIT_MAG_RUNTIME, boolean rEAL_TIME) {
@@ -162,11 +142,6 @@ public class GlobalConf {
             LIMIT_MAG_RUNTIME = lIMIT_MAG_RUNTIME;
             STRIPPED_FOV_MODE = sTRIPPED_FOV_MODE;
             REAL_TIME = rEAL_TIME;
-        }
-
-        @Override
-        public void initialize() {
-            initialize(false, false, false, false, true, false, 20, false);
         }
 
         @Override
@@ -190,6 +165,9 @@ public class GlobalConf {
                 break;
             case TOGGLE_TIME_CMD:
                 toggleTimeOn((Boolean) data[0]);
+                break;
+            case RECORD_CAMERA_CMD:
+                toggleRecord((Boolean) data[0]);
                 break;
             }
 
@@ -246,10 +224,15 @@ public class GlobalConf {
             EventManager.instance.subscribe(this, Events.CONFIG_PIXEL_RENDERER, Events.FRAME_OUTPUT_CMD);
         }
 
-        @Override
-        public void initialize() {
-            // TODO Auto-generated method stub
-
+        public void initialize(int rENDER_WIDTH, int rENDER_HEIGHT, int rENDER_TARGET_FPS, String rENDER_FOLDER, String rENDER_FILE_NAME, boolean rENDER_SCREENSHOT_TIME, boolean rENDER_OUTPUT, ScreenshotMode fRAME_MODE) {
+            RENDER_WIDTH = rENDER_WIDTH;
+            RENDER_HEIGHT = rENDER_HEIGHT;
+            RENDER_TARGET_FPS = rENDER_TARGET_FPS;
+            RENDER_FOLDER = rENDER_FOLDER;
+            RENDER_FILE_NAME = rENDER_FILE_NAME;
+            RENDER_SCREENSHOT_TIME = rENDER_SCREENSHOT_TIME;
+            RENDER_OUTPUT = rENDER_OUTPUT;
+            FRAME_MODE = fRAME_MODE;
         }
 
         @Override
@@ -274,7 +257,6 @@ public class GlobalConf {
                 }
             }
         }
-
     }
 
     /**
@@ -300,15 +282,19 @@ public class GlobalConf {
         /** Limit magnitude used for loading stars. All stars above this magnitude will not even be loaded by the sandbox. **/
         public float LIMIT_MAG_LOAD;
 
+        public void initialize(boolean dATA_SOURCE_LOCAL, String dATA_JSON_FILE, String oBJECT_SERVER_HOSTNAME, int oBJECT_SERVER_PORT, String vISUALIZATION_ID, float lIMIT_MAG_LOAD) {
+            DATA_SOURCE_LOCAL = dATA_SOURCE_LOCAL;
+            DATA_JSON_FILE = dATA_JSON_FILE;
+            OBJECT_SERVER_HOSTNAME = oBJECT_SERVER_HOSTNAME;
+            OBJECT_SERVER_PORT = oBJECT_SERVER_PORT;
+            VISUALIZATION_ID = vISUALIZATION_ID;
+            LIMIT_MAG_LOAD = lIMIT_MAG_LOAD;
+        }
+
         public void initialize(String dATA_JSON_FILE, boolean dATA_SOURCE_LOCAL, float lIMIT_MAG_LOAD) {
             this.DATA_JSON_FILE = dATA_JSON_FILE;
             this.DATA_SOURCE_LOCAL = dATA_SOURCE_LOCAL;
             this.LIMIT_MAG_LOAD = lIMIT_MAG_LOAD;
-        }
-
-        @Override
-        public void initialize() {
-            initialize("data/data.json", true, 20f);
         }
     }
 
@@ -323,10 +309,15 @@ public class GlobalConf {
         public boolean VSYNC;
         public boolean SCREEN_OUTPUT;
 
-        @Override
-        public void initialize() {
-            // TODO Auto-generated method stub
-
+        public void initialize(int sCREEN_WIDTH, int sCREEN_HEIGHT, int fULLSCREEN_WIDTH, int fULLSCREEN_HEIGHT, boolean fULLSCREEN, boolean rESIZABLE, boolean vSYNC, boolean sCREEN_OUTPUT) {
+            SCREEN_WIDTH = sCREEN_WIDTH;
+            SCREEN_HEIGHT = sCREEN_HEIGHT;
+            FULLSCREEN_WIDTH = fULLSCREEN_WIDTH;
+            FULLSCREEN_HEIGHT = fULLSCREEN_HEIGHT;
+            FULLSCREEN = fULLSCREEN;
+            RESIZABLE = rESIZABLE;
+            VSYNC = vSYNC;
+            SCREEN_OUTPUT = sCREEN_OUTPUT;
         }
 
         public int getScreenWidth() {
@@ -370,6 +361,21 @@ public class GlobalConf {
             EventManager.instance.subscribe(this, Events.TOGGLE_STEREOSCOPIC, Events.TOGGLE_STEREO_PROFILE);
         }
 
+        public void initialize(boolean dISPLAY_TUTORIAL, String tUTORIAL_SCRIPT_LOCATION, boolean sHOW_CONFIG_DIALOG, boolean sHOW_DEBUG_INFO, Date lAST_CHECKED, String lAST_VERSION, String vERSION_CHECK_URL, String uI_THEME, String sCRIPT_LOCATION, String lOCALE, boolean sTEREOSCOPIC_MODE, StereoProfile sTEREO_PROFILE) {
+            DISPLAY_TUTORIAL = dISPLAY_TUTORIAL;
+            TUTORIAL_SCRIPT_LOCATION = tUTORIAL_SCRIPT_LOCATION;
+            SHOW_CONFIG_DIALOG = sHOW_CONFIG_DIALOG;
+            SHOW_DEBUG_INFO = sHOW_DEBUG_INFO;
+            LAST_CHECKED = lAST_CHECKED;
+            LAST_VERSION = lAST_VERSION;
+            VERSION_CHECK_URL = vERSION_CHECK_URL;
+            UI_THEME = uI_THEME;
+            SCRIPT_LOCATION = sCRIPT_LOCATION;
+            LOCALE = lOCALE;
+            STEREOSCOPIC_MODE = sTEREOSCOPIC_MODE;
+            STEREO_PROFILE = sTEREO_PROFILE;
+        }
+
         public void initialize(boolean dISPLAY_TUTORIAL, boolean sHOW_DEBUG_INFO, String uI_THEME, String lOCALE, boolean sTEREOSCOPIC_MODE, StereoProfile sTEREO_PROFILE) {
             DISPLAY_TUTORIAL = dISPLAY_TUTORIAL;
             SHOW_DEBUG_INFO = sHOW_DEBUG_INFO;
@@ -379,9 +385,9 @@ public class GlobalConf {
             STEREO_PROFILE = sTEREO_PROFILE;
         }
 
-        @Override
-        public void initialize() {
-            initialize(false, true, "dark", "en-GB", false, StereoProfile.CROSSEYE);
+        public String getLastCheckedString() {
+            IDateFormat df = DateFormatFactory.getFormatter(I18n.locale, DateType.DATE);
+            return df.format(LAST_CHECKED);
         }
 
         @Override
@@ -418,11 +424,6 @@ public class GlobalConf {
             this.build = build;
             this.major = major;
             this.minor = minor;
-        }
-
-        @Override
-        public void initialize() {
-            initialize("0.706b", null, null, null, null, 0, 706);
         }
 
         public static int[] getMajorMinorFromString(String version) {
@@ -495,25 +496,6 @@ public class GlobalConf {
             STAR_TH_ANGLE_QUAD = sTAR_TH_ANGLE_QUAD;
             POINT_ALPHA_MIN = pOINT_ALPHA_MIN;
             POINT_ALPHA_MAX = pOINT_ALPHA_MAX;
-        }
-
-        @Override
-        public void initialize() {
-            //Visibility of components
-            ComponentType[] cts = ComponentType.values();
-            boolean[] VISIBILITY = new boolean[cts.length];
-            VISIBILITY[ComponentType.Stars.ordinal()] = true;
-            VISIBILITY[ComponentType.Atmospheres.ordinal()] = true;
-            VISIBILITY[ComponentType.Planets.ordinal()] = true;
-            VISIBILITY[ComponentType.Moons.ordinal()] = true;
-            VISIBILITY[ComponentType.Orbits.ordinal()] = true;
-            VISIBILITY[ComponentType.Satellites.ordinal()] = true;
-            VISIBILITY[ComponentType.MilkyWay.ordinal()] = true;
-            VISIBILITY[ComponentType.Asteroids.ordinal()] = true;
-            VISIBILITY[ComponentType.Galaxies.ordinal()] = true;
-            VISIBILITY[ComponentType.Others.ordinal()] = true;
-
-            this.initialize(2000, 1f, 0f, 50, 2.1f, 1866f, 2286f, 13, true, 7.0f, VISIBILITY, 2, 0, 0f, 2e-8f, 0f, 0.05f, 1f);
         }
 
         public void updateSpeedLimit() {
@@ -685,54 +667,6 @@ public class GlobalConf {
             configurations.add(screen);
 
             initialized = true;
-        }
-
-    }
-
-    /**
-     * Initializes the properties
-     */
-    public static void initialize(VersionConf vc, ProgramConf pc, SceneConf sc, DataConf dc, RuntimeConf rc, PostprocessConf ppc, PerformanceConf pfc) throws Exception {
-        if (!initialized) {
-            if (configurations == null) {
-                configurations = new ArrayList<IConf>();
-            }
-
-            version = vc;
-            program = pc;
-            scene = sc;
-            data = dc;
-            runtime = rc;
-            postprocess = ppc;
-            performance = pfc;
-
-            configurations.add(program);
-            configurations.add(scene);
-            configurations.add(data);
-            configurations.add(runtime);
-            configurations.add(postprocess);
-            configurations.add(performance);
-
-            initialized = true;
-        }
-
-    }
-
-    /**
-     * Runs the initialize method in all the configurations using the given properties file stream.
-     * @param propsFile An input stream sourced in the configuration file.
-     * @throws Exception
-     */
-    public static void initializeProps() throws Exception {
-
-        try {
-            for (IConf conf : configurations) {
-                conf.initialize();
-            }
-
-        } catch (Exception e) {
-            Logger.error(e);
-            throw (e);
         }
 
     }

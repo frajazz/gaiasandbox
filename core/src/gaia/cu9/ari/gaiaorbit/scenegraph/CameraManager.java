@@ -1,6 +1,5 @@
 package gaia.cu9.ari.gaiaorbit.scenegraph;
 
-import gaia.cu9.ari.gaiaorbit.GaiaSandbox;
 import gaia.cu9.ari.gaiaorbit.event.EventManager;
 import gaia.cu9.ari.gaiaorbit.event.Events;
 import gaia.cu9.ari.gaiaorbit.event.IObserver;
@@ -105,7 +104,7 @@ public class CameraManager implements ICamera, IObserver {
 
         updateCurrentCamera();
 
-        EventManager.instance.subscribe(this, Events.CAMERA_MODE_CMD, Events.CAMERA_UPDATE_CMD, Events.FOV_CHANGE_NOTIFICATION);
+        EventManager.instance.subscribe(this, Events.CAMERA_MODE_CMD, Events.FOV_CHANGE_NOTIFICATION);
     }
 
     public void updateCurrentCamera() {
@@ -242,9 +241,6 @@ public class CameraManager implements ICamera, IObserver {
             break;
         case FOV_CHANGE_NOTIFICATION:
             updateAngleEdge(Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
-            break;
-        case CAMERA_UPDATE_CMD:
-            current.update(0, GaiaSandbox.instance.current);
             break;
         default:
             break;

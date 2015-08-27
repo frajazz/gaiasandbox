@@ -17,8 +17,6 @@ public enum Events {
     // CAMERA
     /** Contains the new CameraMode object **/
     CAMERA_MODE_CMD,
-    /** Tells the camera to update **/
-    CAMERA_UPDATE_CMD,
     /** Contains a double[] with the new position **/
     CAMERA_POS_CMD,
     /** Contains a double[] with the new direction **/
@@ -65,8 +63,7 @@ public enum Events {
     /** Focus change command.
      * <ul><li>
      * [0] - The new focus object OR its name.
-     * </li>
-     * </ul>
+     * </li></ul>
      * **/
     FOCUS_CHANGE_CMD,
     /** Informs that the focus has somehow changed and the GUI must be updated.
@@ -108,6 +105,8 @@ public enum Events {
     PACE_DIVIDE_CMD,
     /** Contains the new pace **/
     PACE_CHANGED_INFO,
+    /** Issues the command to enable camera recording. Contains the boolean indicating the state (may be null) and a boolean indicating whether this comes from the interface. **/
+    RECORD_CAMERA_CMD,
 
     /** Issues the play command. Contains the path to the file to play **/
     PLAY_CAMERA_CMD,
@@ -244,7 +243,12 @@ public enum Events {
     /** Removes all the custom objects **/
     REMOVE_ALL_OBJECTS,
     /** Contains the star brightness multiplier **/
-    STAR_BRIGHTNESS_CMD, FPS_INFO, SCENE_GRAPH_LOADED,
+    STAR_BRIGHTNESS_CMD, FPS_INFO,
+    /** Contains an optional boolean indicating whether full screen must be activated (true) or deactivated (false). If no
+     * boolean is attached, it functions as a toggle. **/
+    FULLSCREEN_CMD, SCENE_GRAPH_LOADED,
+    /** Contains the width, height (integers) and the folder name and filename (strings) **/
+    SCREENSHOT_CMD,
     /** Contains the path where the screenshot has been saved */
     SCREENSHOT_INFO,
     /** Contains an array of booleans with the visibility of each ComponentType, in the same order returned by ComponentType.values() **/
@@ -277,6 +281,9 @@ public enum Events {
     CONFIG_PIXEL_RENDERER,
     /** Forces recalculation of main GUI window size **/
     RECALCULATE_OPTIONS_SIZE,
+
+    /** Contains the x and the y in pixels of the position of the mass **/
+    GRAVITATIONAL_LENSING_PARAMS,
 
     /** Contains the Gaia object [0] **/
     GAIA_LOADED,
