@@ -93,7 +93,7 @@ public abstract class AbstractSceneGraph implements ISceneGraph {
     @Override
     public void update(ITimeFrameProvider time, ICamera camera) {
         // Check if we need to update the points
-        if (GlobalConf.scene.COMPUTE_GAIA_SCAN && time.getDt() != 0) {
+        if(GlobalConf.scene.COMPUTE_GAIA_SCAN && time.getDt() != 0){
             PixelRenderSystem.POINT_UPDATE_FLAG = true;
         }
     }
@@ -136,6 +136,16 @@ public abstract class AbstractSceneGraph implements ISceneGraph {
 
     public int getSize() {
         return root.getAggregatedChildren();
+    }
+
+    public int getSize(Class<? extends SceneGraphNode> clazz) {
+        return root.getNumNodes(clazz);
+    }
+
+    public <T extends SceneGraphNode> List<T> getNodes(Class<T> clazz) {
+        List<T> l = new ArrayList<T>(getSize(clazz));
+        root.getNodes(clazz, l);
+        return l;
     }
 
     public void dispose() {

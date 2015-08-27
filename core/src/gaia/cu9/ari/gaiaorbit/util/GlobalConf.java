@@ -357,6 +357,8 @@ public class GlobalConf {
         /** This controls the side of the images in the stereoscopic mode **/
         public StereoProfile STEREO_PROFILE = StereoProfile.VR_HEADSET;
 
+        private IDateFormat df = DateFormatFactory.getFormatter("dd/MM/yyyy HH:mm:ss");
+
         public ProgramConf() {
             EventManager.instance.subscribe(this, Events.TOGGLE_STEREOSCOPIC, Events.TOGGLE_STEREO_PROFILE);
         }

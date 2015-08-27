@@ -460,6 +460,38 @@ public class SceneGraphNode implements ISceneGraphNode, IPosition {
         return numChildren + 1;
     }
 
+    /**
+     * Returns the number of nodes of the specified class contained in this node.
+     * @return
+     */
+    public int getNumNodes(Class<? extends SceneGraphNode> clazz) {
+        int n = 0;
+        if (clazz.isInstance(this)) {
+            n = 1;
+        }
+        if (children != null) {
+            int size = children.size();
+            for (int i = 0; i < size; i++) {
+                SceneGraphNode child = children.get(i);
+                n += child.getNumNodes(clazz);
+            }
+        }
+        return n;
+    }
+
+    public <T extends SceneGraphNode> void getNodes(Class<T> clazz, List<T> l) {
+        if (clazz.isInstance(this)) {
+            l.add(clazz.cast(this));
+        }
+        if (children != null) {
+            int size = children.size();
+            for (int i = 0; i < size; i++) {
+                SceneGraphNode child = children.get(i);
+                child.getNodes(clazz, l);
+            }
+        }
+    }
+
     public <T extends SceneGraphNode> T getLineCopy() {
         if (this.parent != null) {
             T parentCopy = parent.getLineCopy();

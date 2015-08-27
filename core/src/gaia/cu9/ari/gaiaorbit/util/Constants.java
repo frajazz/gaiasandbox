@@ -140,7 +140,6 @@ public class Constants {
             desktop = Gdx.app.getType() == ApplicationType.Desktop && !GlobalConf.runtime.STRIPPED_FOV_MODE;
             webgl = Gdx.app.getType() == ApplicationType.WebGL || GlobalConf.runtime.STRIPPED_FOV_MODE;
         }
-
     }
 
     /**
