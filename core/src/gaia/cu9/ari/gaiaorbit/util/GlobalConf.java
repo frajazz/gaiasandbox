@@ -1,5 +1,6 @@
 package gaia.cu9.ari.gaiaorbit.util;
 
+import gaia.cu9.ari.gaiaorbit.GaiaSandbox;
 import gaia.cu9.ari.gaiaorbit.event.EventManager;
 import gaia.cu9.ari.gaiaorbit.event.Events;
 import gaia.cu9.ari.gaiaorbit.event.IObserver;
@@ -38,6 +39,28 @@ public class GlobalConf {
 
     public enum ScreenshotMode {
         simple, redraw
+    }
+
+    public static class ScreenshotConf implements IConf {
+
+        public int SCREENSHOT_WIDTH;
+        public int SCREENSHOT_HEIGHT;
+        public String SCREENSHOT_FOLDER;
+        public ScreenshotMode SCREENSHOT_MODE;
+
+        @Override
+        public void initialize() {
+
+        }
+
+        public boolean isSimpleMode() {
+            return SCREENSHOT_MODE.equals(ScreenshotMode.simple);
+        }
+
+        public boolean isRedrawMode() {
+            return SCREENSHOT_MODE.equals(ScreenshotMode.redraw);
+        }
+
     }
 
     public static class PerformanceConf implements IConf {
@@ -197,6 +220,64 @@ public class GlobalConf {
     }
 
     /**
+     * Holds the configuration for the output frame subsystem.
+     * @author Toni Sagrista
+     *
+     */
+    public static class FrameConf implements IConf, IObserver {
+        /** The width of the image frames **/
+        public int RENDER_WIDTH;
+        /** The height of the image frames **/
+        public int RENDER_HEIGHT;
+        /** The number of images per second to produce **/
+        public int RENDER_TARGET_FPS;
+        /** The output folder **/
+        public String RENDER_FOLDER;
+        /** The prefix for the image files **/
+        public String RENDER_FILE_NAME;
+        /** Should we write the simulation time to the images? **/
+        public boolean RENDER_SCREENSHOT_TIME;
+        /** Whether the frame system is activated or not **/
+        public boolean RENDER_OUTPUT = false;
+        /** The frame output screenshot mode **/
+        public ScreenshotMode FRAME_MODE;
+
+        public FrameConf() {
+            EventManager.instance.subscribe(this, Events.CONFIG_PIXEL_RENDERER, Events.FRAME_OUTPUT_CMD);
+        }
+
+        @Override
+        public void initialize() {
+            // TODO Auto-generated method stub
+
+        }
+
+        @Override
+        public void notify(Events event, Object... data) {
+            switch (event) {
+            case CONFIG_PIXEL_RENDERER:
+                RENDER_WIDTH = (int) data[0];
+                RENDER_HEIGHT = (int) data[1];
+                RENDER_TARGET_FPS = (int) data[2];
+                RENDER_FOLDER = (String) data[3];
+                RENDER_FILE_NAME = (String) data[4];
+                break;
+            case FRAME_OUTPUT_CMD:
+                if (data.length > 0) {
+                    RENDER_OUTPUT = (Boolean) data[0];
+                } else {
+                    RENDER_OUTPUT = !RENDER_OUTPUT;
+                }
+                // Flush buffer if needed
+                if (!RENDER_OUTPUT && GaiaSandbox.instance != null) {
+                    //GaiaSandbox.instance.frameRenderer.flush();
+                }
+            }
+        }
+
+    }
+
+    /**
      * Holds all configuration values related to data.
      * @author Toni Sagrista
      *
@@ -229,6 +310,33 @@ public class GlobalConf {
         public void initialize() {
             initialize("data/data.json", true, 20f);
         }
+    }
+
+    public static class ScreenConf implements IConf {
+
+        public int SCREEN_WIDTH;
+        public int SCREEN_HEIGHT;
+        public int FULLSCREEN_WIDTH;
+        public int FULLSCREEN_HEIGHT;
+        public boolean FULLSCREEN;
+        public boolean RESIZABLE;
+        public boolean VSYNC;
+        public boolean SCREEN_OUTPUT;
+
+        @Override
+        public void initialize() {
+            // TODO Auto-generated method stub
+
+        }
+
+        public int getScreenWidth() {
+            return FULLSCREEN ? FULLSCREEN_WIDTH : SCREEN_WIDTH;
+        }
+
+        public int getScreenHeight() {
+            return FULLSCREEN ? FULLSCREEN_HEIGHT : SCREEN_HEIGHT;
+        }
+
     }
 
     public static class ProgramConf implements IConf, IObserver {
@@ -295,16 +403,44 @@ public class GlobalConf {
 
     public static class VersionConf implements IConf {
         public String version;
+        public String buildtime;
+        public String builder;
+        public String system;
+        public String build;
+        public int major;
+        public int minor;
 
-        public void initialize(String version) {
+        public void initialize(String version, String buildtime, String builder, String system, String build, int major, int minor) {
             this.version = version;
+            this.buildtime = buildtime;
+            this.builder = builder;
+            this.system = system;
+            this.build = build;
+            this.major = major;
+            this.minor = minor;
         }
 
         @Override
         public void initialize() {
-            initialize("0.706b");
+            initialize("0.706b", null, null, null, null, 0, 706);
         }
 
+        public static int[] getMajorMinorFromString(String version) {
+            String majorS = version.substring(0, version.indexOf("."));
+            String minorS = version.substring(version.indexOf(".") + 1, version.length());
+            if (majorS.matches("^\\D{1}\\d+$")) {
+                majorS = majorS.substring(1, majorS.length());
+            }
+            if (minorS.matches("^\\d+\\D{1}$")) {
+                minorS = minorS.substring(0, minorS.length() - 1);
+            }
+            return new int[] { Integer.parseInt(majorS), Integer.parseInt(minorS) };
+        }
+
+        @Override
+        public String toString() {
+            return version;
+        }
     }
 
     public static class SceneConf implements IConf, IObserver {
@@ -497,10 +633,13 @@ public class GlobalConf {
 
     public static List<IConf> configurations;
 
+    public static FrameConf frame;
+    public static ScreenConf screen;
     public static ProgramConf program;
     public static DataConf data;
     public static SceneConf scene;
     public static RuntimeConf runtime;
+    public static ScreenshotConf screenshot;
     public static PerformanceConf performance;
     public static PostprocessConf postprocess;
     public static VersionConf version;
@@ -513,6 +652,41 @@ public class GlobalConf {
 
     public static boolean initialized() {
         return initialized;
+    }
+
+    /**
+     * Initializes the properties
+     */
+    public static void initialize(VersionConf vc, ProgramConf pc, SceneConf sc, DataConf dc, RuntimeConf rc, PostprocessConf ppc, PerformanceConf pfc, FrameConf fc, ScreenConf scrc, ScreenshotConf shc) throws Exception {
+        if (!initialized) {
+            if (configurations == null) {
+                configurations = new ArrayList<IConf>();
+            }
+
+            version = vc;
+            program = pc;
+            scene = sc;
+            data = dc;
+            runtime = rc;
+            postprocess = ppc;
+            performance = pfc;
+            frame = fc;
+            screenshot = shc;
+            screen = scrc;
+
+            configurations.add(program);
+            configurations.add(scene);
+            configurations.add(data);
+            configurations.add(runtime);
+            configurations.add(postprocess);
+            configurations.add(performance);
+            configurations.add(frame);
+            configurations.add(screenshot);
+            configurations.add(screen);
+
+            initialized = true;
+        }
+
     }
 
     /**
