@@ -83,6 +83,10 @@ import com.badlogic.gdx.graphics.glutils.FrameBuffer;
 public class GaiaSandbox implements ApplicationListener, IObserver {
     private static boolean LOADING = true;
 
+    /** Attitude folder **/
+    private static String ATTITUDE_FOLDER = "data/attitudexml/";
+
+    /** Singleton instance **/
     public static GaiaSandbox instance;
 
     // Asset manager
@@ -158,9 +162,6 @@ public class GaiaSandbox implements ApplicationListener, IObserver {
     public void create() {
         Gdx.app.setLogLevel(Application.LOG_INFO);
 
-        boolean mobile = Constants.mobile;
-        boolean desktop = !mobile;
-
         fbmap = new HashMap<String, FrameBuffer>();
 
         // Disable all kinds of input
@@ -225,10 +226,10 @@ public class GaiaSandbox implements ApplicationListener, IObserver {
 
         if (GlobalConf.OPENGL_GUI) {
             // Load scene graph
-            if (desktop) {
+            if (Constants.desktop || Constants.webgl) {
                 // Full GUI for desktop
                 gui = new FullGui();
-            } else {
+            } else if (Constants.mobile) {
                 // Reduced GUI for android/iOS/...
                 gui = new MobileGui();
             }
@@ -262,32 +263,39 @@ public class GaiaSandbox implements ApplicationListener, IObserver {
         loadingGui = null;
 
         // Get attitude
-        GaiaAttitudeServer.instance = manager.get("data/attitudexml/");
+        if (manager.isLoaded(ATTITUDE_FOLDER)) {
+            GaiaAttitudeServer.instance = manager.get(ATTITUDE_FOLDER);
+        }
 
         pp = new GSPostProcessor();
 
         GlobalResources.doneLoading(manager);
 
+        /**
+         * GET SCENE GRAPH
+         */
         if (manager.isLoaded(GlobalConf.data.DATA_JSON_FILE)) {
             sg = manager.get(GlobalConf.data.DATA_JSON_FILE);
         }
 
+        /** 
+         * INITIALIZE RENDERER
+         */
         AbstractRenderer.initialize(sg);
         sgr = new SceneGraphRenderer();
         sgr.initialize(manager);
         sgr.resize(Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
 
         // First time, set assets
-        List<SceneGraphNode> nodes = sg.getNodes();
-        for (SceneGraphNode sgn : nodes) {
+        for (SceneGraphNode sgn : sg.getNodes()) {
             sgn.doneLoading(manager);
         }
 
         // Update whole tree to initialize positions
         OctreeNode.LOAD_ACTIVE = false;
-        clock.update(0.000000001f);
-        sg.update(clock, cam);
-        clock.update(0);
+        current.update(0.000000001f);
+        sg.update(current, cam);
+        current.update(0);
         OctreeNode.LOAD_ACTIVE = true;
 
         // Initialize input handlers
@@ -314,21 +322,32 @@ public class GaiaSandbox implements ApplicationListener, IObserver {
         EventManager.instance.post(Events.SCENE_GRAPH_LOADED, sg);
         EventManager.instance.post(Events.CAMERA_MODE_CMD, CameraMode.Focus);
 
-        AbstractPositionEntity focus = (AbstractPositionEntity) sg.getNode("Sol");
-        EventManager.instance.post(Events.FOCUS_CHANGE_CMD, focus, true);
-        float dst = focus.size * 3;
-        Vector3d newCameraPos = focus.pos.cpy().add(0, 0, -dst);
-        EventManager.instance.post(Events.CAMERA_POS_CMD, newCameraPos.values());
+        AbstractPositionEntity focus = null;
+        Vector3d newCameraPos = null;
+        if (!Constants.webgl) {
+            focus = (AbstractPositionEntity) sg.getNode("Sol");
+            EventManager.instance.post(Events.FOCUS_CHANGE_CMD, focus, true);
+            float dst = focus.size * 3;
+            newCameraPos = focus.pos.cpy().add(0, 0, -dst);
+            EventManager.instance.post(Events.CAMERA_POS_CMD, newCameraPos.values());
+
+        } else {
+            focus = (AbstractPositionEntity) sg.getNode("Gaia");
+            EventManager.instance.post(Events.FOCUS_CHANGE_CMD, focus, true);
+            EventManager.instance.post(Events.CAMERA_MODE_CMD, CameraMode.Gaia_FOV1and2);
+        }
 
         // Update whole tree to reinitialize positions with the new camera
         // position
-        current.update(0.00000001f);
+        current.update(0.0000000001f);
         sg.update(current, cam);
         sgr.clearLists();
         current.update(0);
 
-        Vector3d newCameraDir = focus.pos.cpy().sub(newCameraPos);
-        EventManager.instance.post(Events.CAMERA_DIR_CMD, newCameraDir.values());
+        if (!Constants.webgl) {
+            Vector3d newCameraDir = focus.pos.cpy().sub(newCameraPos);
+            EventManager.instance.post(Events.CAMERA_DIR_CMD, newCameraDir.values());
+        }
 
         // Initialize time in GUI
         EventManager.instance.post(Events.TIME_CHANGE_INFO, current.getTime());
