@@ -57,7 +57,8 @@ project(":desktop") {
 		compile "com.miglayout:miglayout-swing:$miglayoutVersion"
 		compile files('lib/pgslookandfeel-1.1.2.jar',
 					'../core/lib/postprocessing.jar',
-					'../android/assets')
+					'../android/assets',
+                                        'lib/stil.jar')
     }
 }
 
@@ -94,8 +95,7 @@ project(":core") {
         compile "com.badlogicgames.gdx:gdx-controllers:$gdxVersion"
 		compile "org.python:jython-standalone:$jythonVersion"
 		compile 'junit:junit:4.12'
-		compile files('lib/postprocessing.jar',
-					'lib/stil.jar')
+		compile files('lib/postprocessing.jar')
     }
 }
 

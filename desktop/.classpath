@@ -27,5 +27,6 @@
   <classpathentry kind="lib" path="/home/tsagrista/git/gaiasandbox/desktop/lib/pgslookandfeel-1.1.2.jar" exported="true"/>
   <classpathentry kind="lib" path="/home/tsagrista/git/gaiasandbox/core/lib/postprocessing.jar" exported="true"/>
   <classpathentry kind="lib" path="/home/tsagrista/git/gaiasandbox/android/assets" exported="true"/>
+  <classpathentry kind="lib" path="/home/tsagrista/git/gaiasandbox/desktop/lib/stil.jar" exported="true"/>
   <classpathentry kind="src" path="assets"/>
 </classpath>
