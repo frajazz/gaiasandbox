@@ -3,11 +3,14 @@ package gaia.cu9.ari.gaiaorbit.client;
 import gaia.cu9.ari.gaiaorbit.GaiaSandbox;
 import gaia.cu9.ari.gaiaorbit.client.format.GwtDateFormatFactory;
 import gaia.cu9.ari.gaiaorbit.client.format.GwtNumberFormatFactory;
+import gaia.cu9.ari.gaiaorbit.client.script.DummyFactory;
 import gaia.cu9.ari.gaiaorbit.client.util.WebGLConfInitLite;
 import gaia.cu9.ari.gaiaorbit.event.EventManager;
 import gaia.cu9.ari.gaiaorbit.event.Events;
 import gaia.cu9.ari.gaiaorbit.event.IObserver;
 import gaia.cu9.ari.gaiaorbit.scenegraph.CelestialBody;
+import gaia.cu9.ari.gaiaorbit.script.ScriptingFactory;
+import gaia.cu9.ari.gaiaorbit.util.ConfInit;
 import gaia.cu9.ari.gaiaorbit.util.GlobalConf;
 import gaia.cu9.ari.gaiaorbit.util.format.DateFormatFactory;
 import gaia.cu9.ari.gaiaorbit.util.format.NumberFormatFactory;
@@ -23,12 +26,13 @@ public class GaiaSandboxWebGL extends GwtApplication implements IObserver {
     public GwtApplicationConfiguration getConfig() {
         NumberFormatFactory.initialize(new GwtNumberFormatFactory());
         DateFormatFactory.initialize(new GwtDateFormatFactory());
+        ScriptingFactory.initialize(new DummyFactory());
 
         GwtApplicationConfiguration config = new GwtApplicationConfiguration(1024, 600);
 
         try {
-            WebGLConfInitLite confInit = new WebGLConfInitLite();
-            confInit.initGlobalConf();
+            ConfInit.initialize(new WebGLConfInitLite());
+            ConfInit.instance.initGlobalConf();
             config.antialiasing = GlobalConf.postprocess.POSTPROCESS_ANTIALIAS != 0 ? true : false;
         } catch (Exception e) {
             System.err.println("Error initializing GlobalConf");

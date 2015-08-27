@@ -280,6 +280,7 @@ public class GaiaSandbox implements ApplicationListener, IObserver {
         if (!Constants.webgl) {
             focus = (AbstractPositionEntity) sg.getNode("Sol");
             EventManager.instance.post(Events.FOCUS_CHANGE_CMD, focus, true);
+            EventManager.instance.post(Events.CAMERA_MODE_CMD, CameraMode.Focus);
             float dst = focus.size * 3;
             newCameraPos = focus.pos.cpy().add(0, 0, -dst);
             EventManager.instance.post(Events.CAMERA_POS_CMD, newCameraPos.values());
@@ -297,8 +298,10 @@ public class GaiaSandbox implements ApplicationListener, IObserver {
         sgr.clearLists();
         current.update(0);
 
-        //        Vector3d newCameraDir = focus.pos.cpy().sub(newCameraPos);
-        //        EventManager.instance.post(Events.CAMERA_DIR_CMD, newCameraDir.values());
+        if (!Constants.webgl) {
+            Vector3d newCameraDir = focus.pos.cpy().sub(newCameraPos);
+            EventManager.instance.post(Events.CAMERA_DIR_CMD, newCameraDir.values());
+        }
 
         // Initialize time in GUI
         EventManager.instance.post(Events.TIME_CHANGE_INFO, current.getTime());

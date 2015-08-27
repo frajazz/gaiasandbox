@@ -24,7 +24,7 @@ import com.badlogic.gdx.files.FileHandle;
  * @author Toni Sagrista
  *
  */
-public class JythonFactory implements IObserver {
+public class JythonFactory extends ScriptingFactory implements IObserver {
     /** Singleton pattern **/
     private static JythonFactory instance = null;
 

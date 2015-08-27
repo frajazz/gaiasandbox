@@ -15,6 +15,7 @@ import gaia.cu9.ari.gaiaorbit.event.Events;
 import gaia.cu9.ari.gaiaorbit.event.IObserver;
 import gaia.cu9.ari.gaiaorbit.interfce.KeyMappings;
 import gaia.cu9.ari.gaiaorbit.script.JythonFactory;
+import gaia.cu9.ari.gaiaorbit.script.ScriptingFactory;
 import gaia.cu9.ari.gaiaorbit.util.ConfInit;
 import gaia.cu9.ari.gaiaorbit.util.GlobalConf;
 import gaia.cu9.ari.gaiaorbit.util.I18n;
@@ -87,6 +88,9 @@ public class GaiaSandboxDesktop implements IObserver {
 
             // Initialize key mappings
             KeyMappings.initialize();
+
+            // Jython
+            ScriptingFactory.initialize(JythonFactory.getInstance());
 
             // Init cam recorder
             CamRecorder.initialize();
