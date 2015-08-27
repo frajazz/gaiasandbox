@@ -61,7 +61,7 @@ public class GaiaCatalogFilter {
         lw = new LogWriter();
 
         // Init global conf
-        DesktopConfInit confInit = new DesktopConfInit();
+        WebGLConfInit confInit = new WebGLConfInit();
         confInit.initGlobalConf();
 
         // Precompute some math functions
