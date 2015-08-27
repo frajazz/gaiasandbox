@@ -849,7 +849,7 @@ public class NaturalCamera extends AbstractCamera implements IObserver {
      * Checks the position of the camera does not collide with the focus object.
      */
     public void checkFocus() {
-        if (focus != null) {
+        if (focus != null && !(focus instanceof Star)) {
             // Move camera if too close to focus
             this.focus.getAbsolutePosition(aux1);
             if (pos.dst(aux1) < this.focus.size * 2) {
