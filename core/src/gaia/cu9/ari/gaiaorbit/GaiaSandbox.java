@@ -209,7 +209,7 @@ public class GaiaSandbox implements ApplicationListener, IObserver {
         cam = new CameraManager(manager, CameraMode.Focus);
 
         // Initialize Gaia attitudes
-        manager.load("data/attitudexml/", GaiaAttitudeServer.class);
+        manager.load(ATTITUDE_FOLDER, GaiaAttitudeServer.class);
 
         if (sg == null) {
             // Set asset manager to asset bean
@@ -320,13 +320,13 @@ public class GaiaSandbox implements ApplicationListener, IObserver {
         Gdx.input.setInputProcessor(inputMultiplexer);
 
         EventManager.instance.post(Events.SCENE_GRAPH_LOADED, sg);
-        EventManager.instance.post(Events.CAMERA_MODE_CMD, CameraMode.Focus);
 
         AbstractPositionEntity focus = null;
         Vector3d newCameraPos = null;
         if (!Constants.webgl) {
             focus = (AbstractPositionEntity) sg.getNode("Sol");
             EventManager.instance.post(Events.FOCUS_CHANGE_CMD, focus, true);
+            EventManager.instance.post(Events.CAMERA_MODE_CMD, CameraMode.Focus);
             float dst = focus.size * 3;
             newCameraPos = focus.pos.cpy().add(0, 0, -dst);
             EventManager.instance.post(Events.CAMERA_POS_CMD, newCameraPos.values());
