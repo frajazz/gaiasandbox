@@ -130,14 +130,17 @@ public class Constants {
      * SYSTEM DEPENDANT STUFF
      * 
      */
-    public static boolean mobile;
+    public static boolean mobile = false;
+    public static boolean webgl = false;
+    public static boolean desktop = false;
 
     static {
         if (Gdx.app != null) {
             mobile = Gdx.app.getType() == ApplicationType.Android || Gdx.app.getType() == ApplicationType.iOS;
-        } else {
-            mobile = false;
+            desktop = Gdx.app.getType() == ApplicationType.Desktop;
+            webgl = Gdx.app.getType() == ApplicationType.WebGL;
         }
+
     }
 
     /**

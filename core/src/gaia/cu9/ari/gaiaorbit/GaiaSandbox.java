@@ -16,18 +16,21 @@ import gaia.cu9.ari.gaiaorbit.interfce.GaiaInputController;
 import gaia.cu9.ari.gaiaorbit.interfce.HUDGui;
 import gaia.cu9.ari.gaiaorbit.interfce.IGui;
 import gaia.cu9.ari.gaiaorbit.interfce.LoadingGui;
+import gaia.cu9.ari.gaiaorbit.interfce.MobileGui;
 import gaia.cu9.ari.gaiaorbit.interfce.RenderGui;
 import gaia.cu9.ari.gaiaorbit.render.AbstractRenderer;
 import gaia.cu9.ari.gaiaorbit.render.ComponentType;
 import gaia.cu9.ari.gaiaorbit.render.GSPostProcessor;
 import gaia.cu9.ari.gaiaorbit.render.IPostProcessor;
 import gaia.cu9.ari.gaiaorbit.render.SceneGraphRenderer;
+import gaia.cu9.ari.gaiaorbit.scenegraph.AbstractPositionEntity;
 import gaia.cu9.ari.gaiaorbit.scenegraph.CameraManager;
 import gaia.cu9.ari.gaiaorbit.scenegraph.CameraManager.CameraMode;
 import gaia.cu9.ari.gaiaorbit.scenegraph.CelestialBody;
 import gaia.cu9.ari.gaiaorbit.scenegraph.ISceneGraph;
 import gaia.cu9.ari.gaiaorbit.scenegraph.SceneGraphNode;
 import gaia.cu9.ari.gaiaorbit.scenegraph.component.ModelComponent;
+import gaia.cu9.ari.gaiaorbit.util.Constants;
 import gaia.cu9.ari.gaiaorbit.util.GlobalConf;
 import gaia.cu9.ari.gaiaorbit.util.GlobalResources;
 import gaia.cu9.ari.gaiaorbit.util.I18n;
@@ -35,6 +38,7 @@ import gaia.cu9.ari.gaiaorbit.util.Logger;
 import gaia.cu9.ari.gaiaorbit.util.ModelCache;
 import gaia.cu9.ari.gaiaorbit.util.gaia.GaiaAttitudeServer;
 import gaia.cu9.ari.gaiaorbit.util.math.MathUtilsd;
+import gaia.cu9.ari.gaiaorbit.util.math.Vector3d;
 import gaia.cu9.ari.gaiaorbit.util.time.GlobalClock;
 import gaia.cu9.ari.gaiaorbit.util.time.ITimeFrameProvider;
 import gaia.cu9.ari.gaiaorbit.util.time.RealTimeClock;
@@ -168,7 +172,7 @@ public class GaiaSandbox implements ApplicationListener, IObserver {
         if (sg == null) {
             // Set asset manager to asset bean
             AssetBean.setAssetManager(manager);
-            manager.load(GlobalConf.data.DATA_JSON_FILE, ISceneGraph.class, new SGLoaderParameter(clock, GlobalConf.performance.MULTITHREADING, GlobalConf.performance.NUMBER_THREADS()));
+            manager.load(GlobalConf.data.DATA_JSON_FILE, ISceneGraph.class, new SGLoaderParameter(current, GlobalConf.performance.MULTITHREADING, GlobalConf.performance.NUMBER_THREADS()));
         }
 
         // Initialize timestamp for screenshots
@@ -177,6 +181,14 @@ public class GaiaSandbox implements ApplicationListener, IObserver {
 
         if (GlobalConf.OPENGL_GUI) {
             gui = new FullGui();
+            // Load scene graph
+            if (Constants.desktop || Constants.webgl) {
+                // Full GUI for desktop
+                gui = new FullGui();
+            } else if (Constants.mobile) {
+                // Reduced GUI for android/iOS/...
+                gui = new MobileGui();
+            }
         } else {
             // Only the HUD
             gui = new HUDGui();
@@ -263,10 +275,20 @@ public class GaiaSandbox implements ApplicationListener, IObserver {
 
         EventManager.instance.post(Events.SCENE_GRAPH_LOADED, sg);
 
-        // Set focus to Gaia
-        EventManager.instance.post(Events.FOCUS_CHANGE_CMD, "Gaia", true);
+        AbstractPositionEntity focus = null;
+        Vector3d newCameraPos = null;
+        if (!Constants.webgl) {
+            focus = (AbstractPositionEntity) sg.getNode("Sol");
+            EventManager.instance.post(Events.FOCUS_CHANGE_CMD, focus, true);
+            float dst = focus.size * 3;
+            newCameraPos = focus.pos.cpy().add(0, 0, -dst);
+            EventManager.instance.post(Events.CAMERA_POS_CMD, newCameraPos.values());
 
-        EventManager.instance.post(Events.CAMERA_MODE_CMD, CameraMode.Gaia_FOV1and2);
+        } else {
+            focus = (AbstractPositionEntity) sg.getNode("Gaia");
+            EventManager.instance.post(Events.FOCUS_CHANGE_CMD, focus, true);
+            EventManager.instance.post(Events.CAMERA_MODE_CMD, CameraMode.Gaia_FOV1and2);
+        }
 
         // Update whole tree to reinitialize positions with the new camera
         // position
