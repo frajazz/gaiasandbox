@@ -5,6 +5,9 @@ import gaia.cu9.ari.gaiaorbit.util.Constants;
 import gaia.cu9.ari.gaiaorbit.util.I18n;
 import gaia.cu9.ari.gaiaorbit.util.Logger;
 import gaia.cu9.ari.gaiaorbit.util.coord.AstroUtils;
+
+import gaia.cu9.ari.gaiaorbit.util.format.DateFormatFactory;
+import gaia.cu9.ari.gaiaorbit.util.format.IDateFormat;
 import gaia.cu9.ari.gaiaorbit.util.gaia.time.Duration;
 import gaia.cu9.ari.gaiaorbit.util.gaia.time.Hours;
 import gaia.cu9.ari.gaiaorbit.util.gaia.time.Secs;
@@ -31,7 +34,11 @@ public class AttitudeXmlParser {
 
     private static Date endOfMission;
 
+    private static IDateFormat format;
+
     static {
+
+        format = DateFormatFactory.getFormatter("yyyy-MM-dd HH:mm:ss");
         endOfMission = getDate("2019-06-20 06:13:26");
     }
 
@@ -244,12 +251,7 @@ public class AttitudeXmlParser {
     }
 
     private static Date getDate(String date) {
-        // FORMAT: yyyy-MM-dd HH:mm:ss
-        String[] dayHour = date.split("\\s+");
-        String[] day = dayHour[0].split("-");
-        String[] hour = dayHour[1].split(":");
-
-        Date d = new Date(Integer.parseInt(day[0]) - 1900, Integer.parseInt(day[1]) - 1, Integer.parseInt(day[2]), Integer.parseInt(hour[0]), Integer.parseInt(hour[1]), Integer.parseInt(hour[2]));
+        Date d = format.parse(date);
         return d;
     }
 
