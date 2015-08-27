@@ -2,7 +2,6 @@ package gaia.cu9.ari.gaiaorbit.desktop.util;
 
 import gaia.cu9.ari.gaiaorbit.desktop.GaiaSandboxDesktop;
 import gaia.cu9.ari.gaiaorbit.render.ComponentType;
-import gaia.cu9.ari.gaiaorbit.util.CommentedProperties;
 import gaia.cu9.ari.gaiaorbit.util.ConfInit;
 import gaia.cu9.ari.gaiaorbit.util.GlobalConf;
 import gaia.cu9.ari.gaiaorbit.util.GlobalConf.DataConf;

@@ -1,4 +1,4 @@
-package gaia.cu9.ari.gaiaorbit.util;
+package gaia.cu9.ari.gaiaorbit.desktop.util;
 
 import java.io.BufferedReader;
 import java.io.IOException;
