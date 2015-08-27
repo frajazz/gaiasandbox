@@ -3,7 +3,7 @@ package gaia.cu9.ari.gaiaorbit.interfce;
 import gaia.cu9.ari.gaiaorbit.event.EventManager;
 import gaia.cu9.ari.gaiaorbit.event.Events;
 import gaia.cu9.ari.gaiaorbit.event.IObserver;
-import gaia.cu9.ari.gaiaorbit.script.JythonFactory;
+import gaia.cu9.ari.gaiaorbit.script.ScriptingFactory;
 import gaia.cu9.ari.gaiaorbit.util.GlobalConf;
 import gaia.cu9.ari.gaiaorbit.util.I18n;
 import gaia.cu9.ari.gaiaorbit.util.scene2d.OwnTextButton;
@@ -29,7 +29,7 @@ public class ScriptStateInterface extends Table implements IObserver {
         this.add(img).left().row();
         img.setVisible(!GlobalConf.runtime.INPUT_ENABLED);
 
-        int num = JythonFactory.getInstance().getNumRunningScripts();
+        int num = ScriptingFactory.getInstance().getNumRunningScripts();
         cancelScript = new OwnTextButton(I18n.bundle.format("gui.script.stop", num), skin);
         this.add(cancelScript).left();
         cancelScript.setVisible(num > 0);

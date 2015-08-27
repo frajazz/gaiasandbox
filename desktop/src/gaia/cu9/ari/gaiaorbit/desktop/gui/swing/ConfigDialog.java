@@ -77,6 +77,7 @@ import javax.swing.event.DocumentListener;
 
 import net.miginfocom.swing.MigLayout;
 
+import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Graphics.DisplayMode;
 import com.badlogic.gdx.Input.Keys;
 import com.badlogic.gdx.backends.lwjgl.LwjglApplicationConfiguration;
@@ -817,8 +818,7 @@ public class ConfigDialog extends I18nJFrame {
                     // Interface
                     LangComboBoxBean lbean = (LangComboBoxBean) lang.getSelectedItem();
                     GlobalConf.program.LOCALE = lbean.locale.toLanguageTag();
-                    if (!I18n.forceinit("./data/i18n/gsbundle"))
-                        I18n.forceinit("../android/assets/i18n/gsbundle");
+                    I18n.forceinit(Gdx.files.internal("data/i18n/gsbundle"));
                     GlobalConf.program.UI_THEME = (String) theme.getSelectedItem();
 
                     // Performance

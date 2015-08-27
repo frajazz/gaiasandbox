@@ -3,7 +3,6 @@ package gaia.cu9.ari.gaiaorbit;
 import gaia.cu9.ari.gaiaorbit.data.AssetBean;
 import gaia.cu9.ari.gaiaorbit.data.GaiaAttitudeLoader;
 import gaia.cu9.ari.gaiaorbit.data.GaiaAttitudeLoader.GaiaAttitudeLoaderParameter;
-import gaia.cu9.ari.gaiaorbit.data.JythonFactoryLoader;
 import gaia.cu9.ari.gaiaorbit.data.SGLoader;
 import gaia.cu9.ari.gaiaorbit.data.SGLoader.SGLoaderParameter;
 import gaia.cu9.ari.gaiaorbit.data.orbit.OrbitData;
@@ -34,7 +33,6 @@ import gaia.cu9.ari.gaiaorbit.scenegraph.ICamera;
 import gaia.cu9.ari.gaiaorbit.scenegraph.ISceneGraph;
 import gaia.cu9.ari.gaiaorbit.scenegraph.SceneGraphNode;
 import gaia.cu9.ari.gaiaorbit.scenegraph.component.ModelComponent;
-import gaia.cu9.ari.gaiaorbit.script.JythonFactory;
 import gaia.cu9.ari.gaiaorbit.util.ConfInit;
 import gaia.cu9.ari.gaiaorbit.util.Constants;
 import gaia.cu9.ari.gaiaorbit.util.GlobalConf;
@@ -197,7 +195,6 @@ public class GaiaSandbox implements ApplicationListener, IObserver {
         manager = new AssetManager(resolver);
         manager.setLoader(ISceneGraph.class, new SGLoader(resolver));
         manager.setLoader(OrbitData.class, new OrbitDataLoader(resolver));
-        manager.setLoader(JythonFactory.class, new JythonFactoryLoader(resolver));
         manager.setLoader(GaiaAttitudeServer.class, new GaiaAttitudeLoader(resolver));
 
         // Init global resources
@@ -214,9 +211,6 @@ public class GaiaSandbox implements ApplicationListener, IObserver {
             AssetBean.setAssetManager(manager);
             manager.load(GlobalConf.data.DATA_JSON_FILE, ISceneGraph.class, new SGLoaderParameter(current, GlobalConf.performance.MULTITHREADING, GlobalConf.performance.NUMBER_THREADS()));
         }
-
-        // Load jython
-        manager.load(".", JythonFactory.class);
 
         // Initialize timestamp for screenshots
         renderGui = new RenderGui();

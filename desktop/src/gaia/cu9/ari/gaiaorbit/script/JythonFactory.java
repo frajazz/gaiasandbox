@@ -24,7 +24,7 @@ import com.badlogic.gdx.files.FileHandle;
  * @author Toni Sagrista
  *
  */
-public class JythonFactory implements IObserver {
+public class JythonFactory extends ScriptingFactory implements IObserver {
     /** Singleton pattern **/
     private static JythonFactory instance = null;
 
@@ -167,16 +167,12 @@ public class JythonFactory implements IObserver {
 
         JythonThreadFactory() {
             SecurityManager s = System.getSecurityManager();
-            group = (s != null) ? s.getThreadGroup() :
-                    Thread.currentThread().getThreadGroup();
-            namePrefix = "scripting-thread-" +
-                    poolNumber.getAndIncrement();
+            group = (s != null) ? s.getThreadGroup() : Thread.currentThread().getThreadGroup();
+            namePrefix = "scripting-thread-" + poolNumber.getAndIncrement();
         }
 
         public Thread newThread(Runnable r) {
-            Thread t = new Thread(group, r,
-                    namePrefix + threadNumber.getAndIncrement(),
-                    0);
+            Thread t = new Thread(group, r, namePrefix + threadNumber.getAndIncrement(), 0);
             if (t.isDaemon())
                 t.setDaemon(false);
             if (t.getPriority() != Thread.NORM_PRIORITY)

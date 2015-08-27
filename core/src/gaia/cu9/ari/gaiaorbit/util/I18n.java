@@ -26,22 +26,8 @@ public class I18n {
         }
     }
 
-    /**
-     * Initialises the i18n system.
-     * @param fileName The file name, without the '.properties' extension.
-     */
-    public static void initialize(String fileName) {
-        try {
-            if (bundle == null) {
-                forceinit(fileName);
-            }
-        } catch (Exception e) {
-        }
-
-    }
-
-    public static boolean forceinit(String fileName) {
-        return forceinit(new FileHandle(fileName));
+    public static void initialize(FileHandle fh) {
+        forceinit(fh);
     }
 
     public static boolean forceinit(FileHandle baseFileHandle) {

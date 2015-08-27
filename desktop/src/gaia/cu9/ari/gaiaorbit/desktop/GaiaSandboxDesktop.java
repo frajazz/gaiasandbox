@@ -1,7 +1,6 @@
 package gaia.cu9.ari.gaiaorbit.desktop;
 
 import gaia.cu9.ari.gaiaorbit.GaiaSandbox;
-import gaia.cu9.ari.gaiaorbit.desktop.concurrent.MultiThreadIndexer;
 import gaia.cu9.ari.gaiaorbit.desktop.format.DesktopDateFormatFactory;
 import gaia.cu9.ari.gaiaorbit.desktop.format.DesktopNumberFormatFactory;
 import gaia.cu9.ari.gaiaorbit.desktop.gui.swing.ConfigDialog;
@@ -16,10 +15,10 @@ import gaia.cu9.ari.gaiaorbit.event.Events;
 import gaia.cu9.ari.gaiaorbit.event.IObserver;
 import gaia.cu9.ari.gaiaorbit.interfce.KeyMappings;
 import gaia.cu9.ari.gaiaorbit.script.JythonFactory;
+import gaia.cu9.ari.gaiaorbit.script.ScriptingFactory;
 import gaia.cu9.ari.gaiaorbit.util.ConfInit;
 import gaia.cu9.ari.gaiaorbit.util.GlobalConf;
 import gaia.cu9.ari.gaiaorbit.util.I18n;
-import gaia.cu9.ari.gaiaorbit.util.concurrent.ThreadIndexer;
 import gaia.cu9.ari.gaiaorbit.util.format.DateFormatFactory;
 import gaia.cu9.ari.gaiaorbit.util.format.NumberFormatFactory;
 import gaia.cu9.ari.gaiaorbit.util.math.MathUtilsd;
@@ -42,6 +41,7 @@ import com.badlogic.gdx.Files;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.backends.lwjgl.LwjglApplication;
 import com.badlogic.gdx.backends.lwjgl.LwjglApplicationConfiguration;
+import com.badlogic.gdx.backends.lwjgl.LwjglFiles;
 
 /**
  * Main class for the desktop launcher
@@ -55,6 +55,7 @@ public class GaiaSandboxDesktop implements IObserver {
 
         try {
             gsd = new GaiaSandboxDesktop();
+            Gdx.files = new LwjglFiles();
 
             // Initialize number format
             NumberFormatFactory.initialize(new DesktopNumberFormatFactory());
@@ -78,15 +79,18 @@ public class GaiaSandboxDesktop implements IObserver {
             ConfInit.initialize(new DesktopConfInit());
 
             // Initialize i18n
-            I18n.initialize("./data/i18n/gsbundle");
+            I18n.initialize(Gdx.files.internal("data/i18n/gsbundle"));
             // Dev mode
-            I18n.initialize(System.getProperty("assets.location") + "i18n/gsbundle");
+            I18n.initialize(Gdx.files.absolute(System.getProperty("assets.location") + "i18n/gsbundle"));
 
             // Initialize icons
-            IconManager.initialise(new File("./data/ui/"));
+            IconManager.initialise(Gdx.files.internal("data/ui/"));
 
             // Initialize key mappings
             KeyMappings.initialize();
+
+            // Jython
+            ScriptingFactory.initialize(JythonFactory.getInstance());
 
             // Init cam recorder
             CamRecorder.initialize();
@@ -141,11 +145,6 @@ public class GaiaSandboxDesktop implements IObserver {
 
         // Init scripting
         JythonFactory.initialize();
-
-        // Init thread indexer
-        if (GlobalConf.performance.MULTITHREADING) {
-            ThreadIndexer.setInstance(new MultiThreadIndexer());
-        }
 
         // Launch app
         new LwjglApplication(new GaiaSandbox(true), cfg);

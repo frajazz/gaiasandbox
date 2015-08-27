@@ -2,26 +2,23 @@ package gaia.cu9.ari.gaiaorbit.data;
 
 import gaia.cu9.ari.gaiaorbit.data.stars.HYGBinaryLoader;
 import gaia.cu9.ari.gaiaorbit.data.stars.HYGCSVLoader;
-import gaia.cu9.ari.gaiaorbit.desktop.util.DesktopConfInit;
+import gaia.cu9.ari.gaiaorbit.desktop.util.WebGLConfInit;
 import gaia.cu9.ari.gaiaorbit.event.EventManager;
 import gaia.cu9.ari.gaiaorbit.event.Events;
 import gaia.cu9.ari.gaiaorbit.event.IObserver;
 import gaia.cu9.ari.gaiaorbit.scenegraph.CelestialBody;
-import gaia.cu9.ari.gaiaorbit.util.ConfInit;
 import gaia.cu9.ari.gaiaorbit.util.GlobalConf;
 import gaia.cu9.ari.gaiaorbit.util.I18n;
 import gaia.cu9.ari.gaiaorbit.util.Logger;
 
 import java.io.DataOutputStream;
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.List;
 
-import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.backends.lwjgl.LwjglFiles;
+import com.badlogic.gdx.files.FileHandle;
 
 /**
  * Small utility to convert a the HYG CSV catalog to binary in the following format:
@@ -45,14 +42,14 @@ public class HYGToBinary implements IObserver {
     public static void main(String[] args) {
         HYGToBinary hyg = new HYGToBinary();
         EventManager.instance.subscribe(hyg, Events.POST_NOTIFICATION, Events.JAVA_EXCEPTION);
-        Gdx.files = new LwjglFiles();
 
-        I18n.initialize("/home/tsagrista/git/gaiasandbox/android/assets/i18n/gsbundle");
+        I18n.initialize(new FileHandle("/home/tsagrista/git/gaiasandbox/android/assets/i18n/gsbundle"));
 
         try {
-            File props = new File("/home/tsagrista/git/gaiasandbox/android/assets/conf/global.properties");
-            File version = new File("/home/tsagrista/git/gaiasandbox/android/assets/data/dummyversion");
-            ConfInit.initialize(new DesktopConfInit(new FileInputStream(props), new FileInputStream(version)));
+            WebGLConfInit confInit = new WebGLConfInit();
+            confInit.initGlobalConf();
+
+            GlobalConf.data.LIMIT_MAG_LOAD = 20;
         } catch (IOException e) {
             Logger.error(e);
         } catch (Exception e) {
@@ -87,7 +84,6 @@ public class HYGToBinary implements IObserver {
 
                 if (!equals(csvs, bins) && csvs.name.equals("Betelgeuse")) {
                     Logger.info("Different stars: " + csvs + " // " + bins);
-                    boolean b = equals(csvs, bins);
                     different++;
                 }
             }
@@ -103,8 +99,6 @@ public class HYGToBinary implements IObserver {
     public void convertToBinary(String csv, String bin) {
         HYGCSVLoader cat = new HYGCSVLoader();
         try {
-            GlobalConf.data = new GlobalConf.DataConf();
-            GlobalConf.data.LIMIT_MAG_LOAD = 20;
             cat.files = new String[] { csv };
             List<? extends CelestialBody> stars = cat.loadData();
 
@@ -174,6 +168,6 @@ public class HYGToBinary implements IObserver {
     }
 
     private boolean equals(CelestialBody s1, CelestialBody s2) {
-        return s1.id.equals(s2.id) && s1.posSph.x == s2.posSph.x && s1.posSph.y == s2.posSph.y && s1.pos.x == s2.pos.x && s1.pos.y == s2.pos.y && s1.pos.z == s2.pos.z && s1.absmag == s2.absmag;
+        return s1.id == s2.id && s1.posSph.x == s2.posSph.x && s1.posSph.y == s2.posSph.y && s1.pos.x == s2.pos.x && s1.pos.y == s2.pos.y && s1.pos.z == s2.pos.z && s1.absmag == s2.absmag;
     }
 }

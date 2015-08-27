@@ -6,7 +6,6 @@ import gaia.cu9.ari.gaiaorbit.render.ComponentType;
 import gaia.cu9.ari.gaiaorbit.util.I18n;
 import gaia.cu9.ari.gaiaorbit.util.Logger;
 
-import java.io.File;
 import java.net.URL;
 import java.util.HashMap;
 import java.util.Map;
@@ -14,12 +13,14 @@ import java.util.Map;
 import javax.swing.Icon;
 import javax.swing.ImageIcon;
 
+import com.badlogic.gdx.files.FileHandle;
+
 public class IconManager {
 
     public static Map<String, Icon> icons;
 
-    public static void initialise(File folder) {
-        if (folder.exists() && folder.isDirectory() && folder.canRead()) {
+    public static void initialise(FileHandle folder) {
+        if (folder.exists() && folder.isDirectory()) {
             icons = new HashMap<String, Icon>();
             Logger.info(I18n.bundle.get("notif.icon.initialising"));
 
@@ -29,16 +30,16 @@ public class IconManager {
         }
     }
 
-    private static void initialiseDirectory(File dir, String prefix) {
-        String[] names = dir.list();
-        for (String name : names) {
-            File f = new File(dir, name);
+    private static void initialiseDirectory(FileHandle dir, String prefix) {
+        FileHandle[] files = dir.list();
+        for (FileHandle f : files) {
+            String name = f.name();
             if (f.isDirectory()) {
-                initialiseDirectory(f, prefix + f.getName() + "/");
+                initialiseDirectory(f, prefix + f.name() + "/");
             } else {
                 if (name.endsWith(".png")) {
                     try {
-                        URL iconURL = new File(dir, name).toURI().toURL();
+                        URL iconURL = f.file().toURI().toURL();
 
                         icons.put(prefix + name.substring(0, name.lastIndexOf('.')), new ImageIcon(iconURL));
                     } catch (Exception e) {

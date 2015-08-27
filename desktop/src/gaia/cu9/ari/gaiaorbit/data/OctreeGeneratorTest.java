@@ -27,6 +27,7 @@ import java.util.List;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.backends.lwjgl.LwjglFiles;
+import com.badlogic.gdx.files.FileHandle;
 
 public class OctreeGeneratorTest implements IObserver {
 
@@ -40,7 +41,7 @@ public class OctreeGeneratorTest implements IObserver {
         try {
             ConfInit.initialize(new DesktopConfInit(new FileInputStream(new File("../android/assets/conf/global.properties")), new FileInputStream(new File("../android/assets/data/dummyversion"))));
 
-            I18n.initialize("../android/assets/i18n/gsbundle_en_GB");
+            I18n.initialize(new FileHandle("/home/tsagrista/git/gaiasandbox/android/assets/i18n/gsbundle"));
 
             // Add notif watch
             EventManager.instance.subscribe(new OctreeGeneratorTest(), Events.POST_NOTIFICATION, Events.JAVA_EXCEPTION);

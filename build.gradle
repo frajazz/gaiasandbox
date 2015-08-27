@@ -53,9 +53,9 @@ project(":desktop") {
         compile "com.badlogicgames.gdx:gdx-platform:$gdxVersion:natives-desktop"
         compile "com.badlogicgames.gdx:gdx-controllers-desktop:$gdxVersion"
         compile "com.badlogicgames.gdx:gdx-controllers-platform:$gdxVersion:natives-desktop"
-		compile "org.python:jython-standalone:$jythonVersion"
-		compile "com.miglayout:miglayout-swing:$miglayoutVersion"
-		compile files('lib/pgslookandfeel-1.1.2.jar',
+	compile "org.python:jython-standalone:$jythonVersion"
+	compile "com.miglayout:miglayout-swing:$miglayoutVersion"
+	compile files('lib/pgslookandfeel-1.1.2.jar',
 					'../core/lib/postprocessing.jar',
 					'../android/assets',
                                         'lib/stil.jar')
@@ -93,9 +93,9 @@ project(":core") {
     dependencies {
         compile "com.badlogicgames.gdx:gdx:$gdxVersion"
         compile "com.badlogicgames.gdx:gdx-controllers:$gdxVersion"
-		compile "org.python:jython-standalone:$jythonVersion"
-		compile 'junit:junit:4.12'
-		compile files('lib/postprocessing.jar')
+	compile 'junit:junit:4.12'
+	compile files('lib/postprocessing.jar',
+                                        'lib/postprocessing-sources.jar')
     }
 }
 
@@ -111,10 +111,9 @@ project(":android") {
         natives "com.badlogicgames.gdx:gdx-platform:$gdxVersion:natives-armeabi-v7a"
         natives "com.badlogicgames.gdx:gdx-platform:$gdxVersion:natives-x86"
         compile "com.badlogicgames.gdx:gdx-controllers:$gdxVersion"
-		compile "org.python:jython-standalone:$jythonVersion"
+	compile "org.python:jython-standalone:$jythonVersion"
         compile "com.badlogicgames.gdx:gdx-controllers-android:$gdxVersion"
-		compile files('../core/lib/postprocessing.jar',
-			'../core/lib/stil.jar')
+	compile files('../core/lib/postprocessing.jar')
     }
 }
 
