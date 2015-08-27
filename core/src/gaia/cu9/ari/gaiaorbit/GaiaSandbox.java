@@ -35,6 +35,7 @@ import gaia.cu9.ari.gaiaorbit.scenegraph.SceneGraphNode;
 import gaia.cu9.ari.gaiaorbit.scenegraph.component.ModelComponent;
 import gaia.cu9.ari.gaiaorbit.script.JythonFactory;
 import gaia.cu9.ari.gaiaorbit.util.CamRecorder;
+import gaia.cu9.ari.gaiaorbit.util.ConfInit;
 import gaia.cu9.ari.gaiaorbit.util.Constants;
 import gaia.cu9.ari.gaiaorbit.util.GlobalConf;
 import gaia.cu9.ari.gaiaorbit.util.GlobalResources;
@@ -372,7 +373,7 @@ public class GaiaSandbox implements ApplicationListener, IObserver {
     public void dispose() {
 
         if (!Constants.mobile)
-            GlobalConf.saveProperties(new File(System.getProperty("properties.file")));
+            ConfInit.instance.persistGlobalConf(new File(System.getProperty("properties.file")));
 
         frameRenderer.flush();
         gui.dispose();

@@ -4,20 +4,15 @@ import gaia.cu9.ari.gaiaorbit.GaiaSandbox;
 import gaia.cu9.ari.gaiaorbit.event.EventManager;
 import gaia.cu9.ari.gaiaorbit.event.Events;
 import gaia.cu9.ari.gaiaorbit.event.IObserver;
-import gaia.cu9.ari.gaiaorbit.render.ComponentType;
 import gaia.cu9.ari.gaiaorbit.render.system.AbstractRenderSystem;
 import gaia.cu9.ari.gaiaorbit.util.format.DateFormatFactory;
 import gaia.cu9.ari.gaiaorbit.util.format.DateFormatFactory.DateType;
 import gaia.cu9.ari.gaiaorbit.util.format.IDateFormat;
 import gaia.cu9.ari.gaiaorbit.util.math.MathUtilsd;
 
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
-import java.util.Properties;
 
 /**
  * Holds the global configuration options
@@ -32,24 +27,9 @@ public class GlobalConf {
 
     public static boolean OPENGL_GUI;
 
-    /** Properties object **/
-    public static CommentedProperties p;
-
     public static final String TEXTURES_FOLDER = "data/tex/";
 
     public static interface IConf {
-        /**
-         * Persists this configuration in the given properties object.
-         * @param p
-         */
-        public void persist(Properties p);
-
-        /**
-         * Initializes this configuration from the given properties object.
-         * @param p
-         */
-        public void initialize(Properties p);
-
     }
 
     public enum ScreenshotMode {
@@ -63,28 +43,11 @@ public class GlobalConf {
         public String SCREENSHOT_FOLDER;
         public ScreenshotMode SCREENSHOT_MODE;
 
-        @Override
-        public void persist(Properties p) {
-            p.setProperty("screenshot.folder", SCREENSHOT_FOLDER);
-            p.setProperty("screenshot.width", Integer.toString(SCREENSHOT_WIDTH));
-            p.setProperty("screenshot.height", Integer.toString(SCREENSHOT_HEIGHT));
-            p.setProperty("screenshot.mode", SCREENSHOT_MODE.toString());
-        }
-
-        @Override
-        public void initialize(Properties p) {
-            String screenshotFolder = null;
-            if (p.getProperty("screenshot.folder") == null || p.getProperty("screenshot.folder").isEmpty()) {
-                File screenshotDir = SysUtils.getDefaultScreenshotsDir();
-                screenshotDir.mkdirs();
-                screenshotFolder = screenshotDir.getAbsolutePath();
-            } else {
-                screenshotFolder = p.getProperty("screenshot.folder");
-            }
-            SCREENSHOT_FOLDER = screenshotFolder;
-            SCREENSHOT_WIDTH = Integer.parseInt(p.getProperty("screenshot.width"));
-            SCREENSHOT_HEIGHT = Integer.parseInt(p.getProperty("screenshot.height"));
-            SCREENSHOT_MODE = ScreenshotMode.valueOf(p.getProperty("screenshot.mode"));
+        public void initialize(int sCREENSHOT_WIDTH, int sCREENSHOT_HEIGHT, String sCREENSHOT_FOLDER, ScreenshotMode sCREENSHOT_MODE) {
+            SCREENSHOT_WIDTH = sCREENSHOT_WIDTH;
+            SCREENSHOT_HEIGHT = sCREENSHOT_HEIGHT;
+            SCREENSHOT_FOLDER = sCREENSHOT_FOLDER;
+            SCREENSHOT_MODE = sCREENSHOT_MODE;
         }
 
         public boolean isSimpleMode() {
@@ -102,22 +65,9 @@ public class GlobalConf {
         public boolean MULTITHREADING;
         public int NUMBER_THREADS;
 
-        @Override
-        public void persist(Properties p) {
-            p.setProperty("global.conf.multithreading", Boolean.toString(MULTITHREADING));
-            p.setProperty("global.conf.numthreads", Integer.toString(NUMBER_THREADS));
-        }
-
         public void initialize(boolean MULTITHREADING, int NUMBER_THREADS) {
             this.MULTITHREADING = MULTITHREADING;
             this.NUMBER_THREADS = NUMBER_THREADS;
-        }
-
-        @Override
-        public void initialize(Properties p) {
-            MULTITHREADING = Boolean.parseBoolean(p.getProperty("global.conf.multithreading"));
-            String propNumthreads = p.getProperty("global.conf.numthreads");
-            NUMBER_THREADS = Integer.parseInt((propNumthreads == null || propNumthreads.isEmpty()) ? "0" : propNumthreads);
         }
 
         /**
@@ -151,30 +101,6 @@ public class GlobalConf {
             this.POSTPROCESS_BLOOM_INTENSITY = POSTPROCESS_BLOOM_INTENSITY;
             this.POSTPROCESS_MOTION_BLUR = POSTPROCESS_MOTION_BLUR;
             this.POSTPROCESS_LENS_FLARE = POSTPROCESS_LENS_FLARE;
-        }
-
-        @Override
-        public void persist(Properties p) {
-            p.setProperty("postprocess.antialiasing", Integer.toString(POSTPROCESS_ANTIALIAS));
-            p.setProperty("postprocess.bloom.intensity", Float.toString(POSTPROCESS_BLOOM_INTENSITY));
-            p.setProperty("postprocess.motionblur", Float.toString(POSTPROCESS_MOTION_BLUR));
-            p.setProperty("postprocess.lensflare", Boolean.toString(POSTPROCESS_LENS_FLARE));
-
-        }
-
-        @Override
-        public void initialize(Properties p) {
-            /** POSTPROCESS **/
-            /**
-             * aa
-             * value < 0 - FXAA
-             * value = 0 - no AA
-             * value > 0 - MSAA #samples = value
-             */
-            POSTPROCESS_ANTIALIAS = Integer.parseInt(p.getProperty("postprocess.antialiasing"));
-            POSTPROCESS_BLOOM_INTENSITY = Float.parseFloat(p.getProperty("postprocess.bloom.intensity"));
-            POSTPROCESS_MOTION_BLUR = Float.parseFloat(p.getProperty("postprocess.motionblur"));
-            POSTPROCESS_LENS_FLARE = Boolean.parseBoolean(p.getProperty("postprocess.lensflare"));
         }
 
         @Override
@@ -224,22 +150,6 @@ public class GlobalConf {
             LIMIT_MAG_RUNTIME = lIMIT_MAG_RUNTIME;
             STRIPPED_FOV_MODE = sTRIPPED_FOV_MODE;
             REAL_TIME = rEAL_TIME;
-        }
-
-        @Override
-        public void persist(Properties p) {
-            // Runtime configuration is not persisted
-        }
-
-        @Override
-        public void initialize(Properties p) {
-            // Input always enabled by default
-            INPUT_ENABLED = true;
-            LIMIT_MAG_RUNTIME = 20;
-            UPDATE_PAUSE = false;
-            TIME_ON = false;
-            RECORD_CAMERA = false;
-
         }
 
         @Override
@@ -322,35 +232,15 @@ public class GlobalConf {
             EventManager.instance.subscribe(this, Events.CONFIG_PIXEL_RENDERER, Events.FRAME_OUTPUT_CMD);
         }
 
-        @Override
-        public void persist(Properties p) {
-
-            p.setProperty("graphics.render.folder", RENDER_FOLDER);
-            p.setProperty("graphics.render.filename", RENDER_FILE_NAME);
-            p.setProperty("graphics.render.width", Integer.toString(RENDER_WIDTH));
-            p.setProperty("graphics.render.height", Integer.toString(RENDER_HEIGHT));
-            p.setProperty("graphics.render.targetfps", Integer.toString(RENDER_TARGET_FPS));
-            p.setProperty("graphics.render.time", Boolean.toString(RENDER_SCREENSHOT_TIME));
-            p.setProperty("graphics.render.mode", FRAME_MODE.toString());
-        }
-
-        @Override
-        public void initialize(Properties p) {
-            String renderFolder = null;
-            if (p.getProperty("graphics.render.folder") == null || p.getProperty("graphics.render.folder").isEmpty()) {
-                File framesDir = SysUtils.getDefaultFramesDir();
-                framesDir.mkdirs();
-                renderFolder = framesDir.getAbsolutePath();
-            } else {
-                renderFolder = p.getProperty("graphics.render.folder");
-            }
-            RENDER_FOLDER = renderFolder;
-            RENDER_FILE_NAME = p.getProperty("graphics.render.filename");
-            RENDER_WIDTH = Integer.parseInt(p.getProperty("graphics.render.width"));
-            RENDER_HEIGHT = Integer.parseInt(p.getProperty("graphics.render.height"));
-            RENDER_TARGET_FPS = Integer.parseInt(p.getProperty("graphics.render.targetfps"));
-            RENDER_SCREENSHOT_TIME = Boolean.parseBoolean(p.getProperty("graphics.render.time"));
-            FRAME_MODE = ScreenshotMode.valueOf(p.getProperty("graphics.render.mode"));
+        public void initialize(int rENDER_WIDTH, int rENDER_HEIGHT, int rENDER_TARGET_FPS, String rENDER_FOLDER, String rENDER_FILE_NAME, boolean rENDER_SCREENSHOT_TIME, boolean rENDER_OUTPUT, ScreenshotMode fRAME_MODE) {
+            RENDER_WIDTH = rENDER_WIDTH;
+            RENDER_HEIGHT = rENDER_HEIGHT;
+            RENDER_TARGET_FPS = rENDER_TARGET_FPS;
+            RENDER_FOLDER = rENDER_FOLDER;
+            RENDER_FILE_NAME = rENDER_FILE_NAME;
+            RENDER_SCREENSHOT_TIME = rENDER_SCREENSHOT_TIME;
+            RENDER_OUTPUT = rENDER_OUTPUT;
+            FRAME_MODE = fRAME_MODE;
         }
 
         @Override
@@ -400,36 +290,19 @@ public class GlobalConf {
         /** Limit magnitude used for loading stars. All stars above this magnitude will not even be loaded by the sandbox. **/
         public float LIMIT_MAG_LOAD;
 
+        public void initialize(boolean dATA_SOURCE_LOCAL, String dATA_JSON_FILE, String oBJECT_SERVER_HOSTNAME, int oBJECT_SERVER_PORT, String vISUALIZATION_ID, float lIMIT_MAG_LOAD) {
+            DATA_SOURCE_LOCAL = dATA_SOURCE_LOCAL;
+            DATA_JSON_FILE = dATA_JSON_FILE;
+            OBJECT_SERVER_HOSTNAME = oBJECT_SERVER_HOSTNAME;
+            OBJECT_SERVER_PORT = oBJECT_SERVER_PORT;
+            VISUALIZATION_ID = vISUALIZATION_ID;
+            LIMIT_MAG_LOAD = lIMIT_MAG_LOAD;
+        }
+
         public void initialize(String dATA_JSON_FILE, boolean dATA_SOURCE_LOCAL, float lIMIT_MAG_LOAD) {
             this.DATA_JSON_FILE = dATA_JSON_FILE;
             this.DATA_SOURCE_LOCAL = dATA_SOURCE_LOCAL;
             this.LIMIT_MAG_LOAD = lIMIT_MAG_LOAD;
-        }
-
-        @Override
-        public void persist(Properties p) {
-            p.setProperty("data.source.local", Boolean.toString(DATA_SOURCE_LOCAL));
-            p.setProperty("data.json.file", DATA_JSON_FILE);
-            p.setProperty("data.source.hostname", OBJECT_SERVER_HOSTNAME);
-            p.setProperty("data.source.port", Integer.toString(OBJECT_SERVER_PORT));
-            p.setProperty("data.source.visid", VISUALIZATION_ID);
-            p.setProperty("data.limit.mag", Float.toString(LIMIT_MAG_LOAD));
-        }
-
-        @Override
-        public void initialize(Properties p) {
-            /** DATA **/
-            DATA_SOURCE_LOCAL = Boolean.parseBoolean(p.getProperty("data.source.local"));
-            DATA_JSON_FILE = p.getProperty("data.json.file");
-            OBJECT_SERVER_HOSTNAME = p.getProperty("data.source.hostname");
-            OBJECT_SERVER_PORT = Integer.parseInt(p.getProperty("data.source.port"));
-            VISUALIZATION_ID = p.getProperty("data.source.visid");
-
-            if (p.getProperty("data.limit.mag") != null && !p.getProperty("data.limit.mag").isEmpty()) {
-                LIMIT_MAG_LOAD = Float.parseFloat(p.getProperty("data.limit.mag"));
-            } else {
-                LIMIT_MAG_LOAD = Float.MAX_VALUE;
-            }
         }
     }
 
@@ -444,28 +317,15 @@ public class GlobalConf {
         public boolean VSYNC;
         public boolean SCREEN_OUTPUT;
 
-        @Override
-        public void persist(Properties p) {
-            p.setProperty("graphics.screen.width", Integer.toString(SCREEN_WIDTH));
-            p.setProperty("graphics.screen.height", Integer.toString(SCREEN_HEIGHT));
-            p.setProperty("graphics.screen.fullscreen.width", Integer.toString(FULLSCREEN_WIDTH));
-            p.setProperty("graphics.screen.fullscreen.height", Integer.toString(FULLSCREEN_HEIGHT));
-            p.setProperty("graphics.screen.fullscreen", Boolean.toString(FULLSCREEN));
-            p.setProperty("graphics.screen.resizable", Boolean.toString(RESIZABLE));
-            p.setProperty("graphics.screen.vsync", Boolean.toString(VSYNC));
-            p.setProperty("graphics.screen.screenoutput", Boolean.toString(SCREEN_OUTPUT));
-        }
-
-        @Override
-        public void initialize(Properties p) {
-            SCREEN_WIDTH = Integer.parseInt(p.getProperty("graphics.screen.width"));
-            SCREEN_HEIGHT = Integer.parseInt(p.getProperty("graphics.screen.height"));
-            FULLSCREEN_WIDTH = Integer.parseInt(p.getProperty("graphics.screen.fullscreen.width"));
-            FULLSCREEN_HEIGHT = Integer.parseInt(p.getProperty("graphics.screen.fullscreen.height"));
-            FULLSCREEN = Boolean.parseBoolean(p.getProperty("graphics.screen.fullscreen"));
-            RESIZABLE = Boolean.parseBoolean(p.getProperty("graphics.screen.resizable"));
-            VSYNC = Boolean.parseBoolean(p.getProperty("graphics.screen.vsync"));
-            SCREEN_OUTPUT = Boolean.parseBoolean(p.getProperty("graphics.screen.screenoutput"));
+        public void initialize(int sCREEN_WIDTH, int sCREEN_HEIGHT, int fULLSCREEN_WIDTH, int fULLSCREEN_HEIGHT, boolean fULLSCREEN, boolean rESIZABLE, boolean vSYNC, boolean sCREEN_OUTPUT) {
+            SCREEN_WIDTH = sCREEN_WIDTH;
+            SCREEN_HEIGHT = sCREEN_HEIGHT;
+            FULLSCREEN_WIDTH = fULLSCREEN_WIDTH;
+            FULLSCREEN_HEIGHT = fULLSCREEN_HEIGHT;
+            FULLSCREEN = fULLSCREEN;
+            RESIZABLE = rESIZABLE;
+            VSYNC = vSYNC;
+            SCREEN_OUTPUT = sCREEN_OUTPUT;
         }
 
         public int getScreenWidth() {
@@ -511,6 +371,21 @@ public class GlobalConf {
             EventManager.instance.subscribe(this, Events.TOGGLE_STEREOSCOPIC, Events.TOGGLE_STEREO_PROFILE);
         }
 
+        public void initialize(boolean dISPLAY_TUTORIAL, String tUTORIAL_SCRIPT_LOCATION, boolean sHOW_CONFIG_DIALOG, boolean sHOW_DEBUG_INFO, Date lAST_CHECKED, String lAST_VERSION, String vERSION_CHECK_URL, String uI_THEME, String sCRIPT_LOCATION, String lOCALE, boolean sTEREOSCOPIC_MODE, StereoProfile sTEREO_PROFILE) {
+            DISPLAY_TUTORIAL = dISPLAY_TUTORIAL;
+            TUTORIAL_SCRIPT_LOCATION = tUTORIAL_SCRIPT_LOCATION;
+            SHOW_CONFIG_DIALOG = sHOW_CONFIG_DIALOG;
+            SHOW_DEBUG_INFO = sHOW_DEBUG_INFO;
+            LAST_CHECKED = lAST_CHECKED;
+            LAST_VERSION = lAST_VERSION;
+            VERSION_CHECK_URL = vERSION_CHECK_URL;
+            UI_THEME = uI_THEME;
+            SCRIPT_LOCATION = sCRIPT_LOCATION;
+            LOCALE = lOCALE;
+            STEREOSCOPIC_MODE = sTEREOSCOPIC_MODE;
+            STEREO_PROFILE = sTEREO_PROFILE;
+        }
+
         public void initialize(boolean dISPLAY_TUTORIAL, boolean sHOW_DEBUG_INFO, String uI_THEME, String lOCALE, boolean sTEREOSCOPIC_MODE, StereoProfile sTEREO_PROFILE) {
             DISPLAY_TUTORIAL = dISPLAY_TUTORIAL;
             SHOW_DEBUG_INFO = sHOW_DEBUG_INFO;
@@ -518,40 +393,6 @@ public class GlobalConf {
             LOCALE = lOCALE;
             STEREOSCOPIC_MODE = sTEREOSCOPIC_MODE;
             STEREO_PROFILE = sTEREO_PROFILE;
-        }
-
-        @Override
-        public void persist(Properties p) {
-            p.setProperty("program.tutorial", Boolean.toString(DISPLAY_TUTORIAL));
-            p.setProperty("program.tutorial.script", TUTORIAL_SCRIPT_LOCATION);
-            p.setProperty("program.configdialog", Boolean.toString(SHOW_CONFIG_DIALOG));
-            p.setProperty("program.debuginfo", Boolean.toString(SHOW_DEBUG_INFO));
-            p.setProperty("program.lastchecked", df.format(LAST_CHECKED));
-            p.setProperty("program.lastversion", LAST_VERSION);
-            p.setProperty("program.versioncheckurl", VERSION_CHECK_URL);
-            p.setProperty("program.ui.theme", UI_THEME);
-            p.setProperty("program.scriptlocation", SCRIPT_LOCATION);
-            p.setProperty("program.locale", LOCALE);
-            p.setProperty("program.stereoscopic", Boolean.toString(STEREOSCOPIC_MODE));
-            p.setProperty("program.stereoscopic.profile", Integer.toString(STEREO_PROFILE.ordinal()));
-        }
-
-        @Override
-        public void initialize(Properties p) {
-            LOCALE = p.getProperty("program.locale");
-
-            DISPLAY_TUTORIAL = Boolean.parseBoolean(p.getProperty("program.tutorial"));
-            TUTORIAL_SCRIPT_LOCATION = p.getProperty("program.tutorial.script");
-            SHOW_CONFIG_DIALOG = Boolean.parseBoolean(p.getProperty("program.configdialog"));
-            SHOW_DEBUG_INFO = Boolean.parseBoolean(p.getProperty("program.debuginfo"));
-            LAST_CHECKED = p.getProperty("program.lastchecked").isEmpty() ? null : df.parse(p.getProperty("program.lastchecked"));
-            LAST_VERSION = p.getProperty("program.lastversion");
-            VERSION_CHECK_URL = p.getProperty("program.versioncheckurl");
-            UI_THEME = p.getProperty("program.ui.theme");
-            SCRIPT_LOCATION = p.getProperty("program.scriptlocation").isEmpty() ? System.getProperty("user.dir") : p.getProperty("program.scriptlocation");
-
-            STEREOSCOPIC_MODE = Boolean.parseBoolean(p.getProperty("program.stereoscopic"));
-            STEREO_PROFILE = StereoProfile.values()[Integer.parseInt(p.getProperty("program.stereoscopic.profile"))];
         }
 
         public String getLastCheckedString() {
@@ -593,25 +434,6 @@ public class GlobalConf {
             this.build = build;
             this.major = major;
             this.minor = minor;
-        }
-
-        @Override
-        public void persist(Properties p) {
-            // The version info can not be modified
-        }
-
-        @Override
-        public void initialize(Properties p) {
-            version = p.getProperty("version");
-            buildtime = p.getProperty("buildtime");
-            builder = p.getProperty("builder");
-            build = p.getProperty("build");
-            system = p.getProperty("system");
-
-            int[] majmin = getMajorMinorFromString(version);
-            major = majmin[0];
-            minor = majmin[1];
-
         }
 
         public static int[] getMajorMinorFromString(String version) {
@@ -684,66 +506,6 @@ public class GlobalConf {
             STAR_TH_ANGLE_QUAD = sTAR_TH_ANGLE_QUAD;
             POINT_ALPHA_MIN = pOINT_ALPHA_MIN;
             POINT_ALPHA_MAX = pOINT_ALPHA_MAX;
-        }
-
-        @Override
-        public void persist(Properties p) {
-            p.setProperty("scene.object.fadems", Long.toString(OBJECT_FADE_MS));
-            p.setProperty("scene.star.brightness", Float.toString(STAR_BRIGHTNESS));
-            p.setProperty("scene.ambient", Float.toString(AMBIENT_LIGHT));
-            p.setProperty("scene.camera.fov", Integer.toString(CAMERA_FOV));
-            p.setProperty("scene.camera.speedlimit", Integer.toString(CAMERA_SPEED_LIMIT_IDX));
-            p.setProperty("scene.camera.focus.vel", Float.toString(CAMERA_SPEED));
-            p.setProperty("scene.camera.turn.vel", Float.toString(TURNING_SPEED));
-            p.setProperty("scene.camera.rotate.vel", Float.toString(ROTATION_SPEED));
-            p.setProperty("scene.focuslock", Boolean.toString(FOCUS_LOCK));
-            p.setProperty("scene.labelfactor", Float.toString(LABEL_NUMBER_FACTOR));
-            p.setProperty("scene.star.thresholdangle.quad", Double.toString(Math.toDegrees(STAR_TH_ANGLE_QUAD)));
-            p.setProperty("scene.star.thresholdangle.point", Double.toString(Math.toDegrees(STAR_TH_ANGLE_POINT)));
-            p.setProperty("scene.star.thresholdangle.none", Double.toString(Math.toDegrees(STAR_TH_ANGLE_NONE)));
-            p.setProperty("scene.point.alpha.min", Float.toString(POINT_ALPHA_MIN));
-            p.setProperty("scene.point.alpha.max", Float.toString(POINT_ALPHA_MAX));
-            p.setProperty("scene.renderer.star", Integer.toString(PIXEL_RENDERER));
-            p.setProperty("scene.renderer.line", Integer.toString(LINE_RENDERER));
-            // Visibility of components
-            int idx = 0;
-            ComponentType[] cts = ComponentType.values();
-            for (boolean b : VISIBILITY) {
-                ComponentType ct = cts[idx];
-                p.setProperty("scene.visibility." + ct.name(), Boolean.toString(b));
-                idx++;
-            }
-        }
-
-        @Override
-        public void initialize(Properties p) {
-            OBJECT_FADE_MS = Long.parseLong(p.getProperty("scene.object.fadems"));
-            STAR_BRIGHTNESS = Float.parseFloat(p.getProperty("scene.star.brightness"));
-            AMBIENT_LIGHT = Float.parseFloat(p.getProperty("scene.ambient"));
-            CAMERA_FOV = Integer.parseInt(p.getProperty("scene.camera.fov"));
-            CAMERA_SPEED_LIMIT_IDX = Integer.parseInt(p.getProperty("scene.camera.speedlimit"));
-            updateSpeedLimit();
-            CAMERA_SPEED = Float.parseFloat(p.getProperty("scene.camera.focus.vel"));
-            FOCUS_LOCK = Boolean.parseBoolean(p.getProperty("scene.focuslock"));
-            TURNING_SPEED = Float.parseFloat(p.getProperty("scene.camera.turn.vel"));
-            ROTATION_SPEED = Float.parseFloat(p.getProperty("scene.camera.rotate.vel"));
-            LABEL_NUMBER_FACTOR = Float.parseFloat(p.getProperty("scene.labelfactor"));
-            STAR_TH_ANGLE_QUAD = Math.toRadians(Double.parseDouble(p.getProperty("scene.star.thresholdangle.quad")));
-            STAR_TH_ANGLE_POINT = Math.toRadians(Double.parseDouble(p.getProperty("scene.star.thresholdangle.point")));
-            STAR_TH_ANGLE_NONE = Math.toRadians(Double.parseDouble(p.getProperty("scene.star.thresholdangle.none")));
-            POINT_ALPHA_MIN = Float.parseFloat(p.getProperty("scene.point.alpha.min"));
-            POINT_ALPHA_MAX = Float.parseFloat(p.getProperty("scene.point.alpha.max"));
-            PIXEL_RENDERER = Integer.parseInt(p.getProperty("scene.renderer.star"));
-            LINE_RENDERER = Integer.parseInt(p.getProperty("scene.renderer.line"));
-            //Visibility of components
-            ComponentType[] cts = ComponentType.values();
-            VISIBILITY = new boolean[cts.length];
-            for (ComponentType ct : cts) {
-                String key = "scene.visibility." + ct.name();
-                if (p.containsKey(key)) {
-                    VISIBILITY[ct.ordinal()] = Boolean.parseBoolean(p.getProperty(key));
-                }
-            }
         }
 
         public void updateSpeedLimit() {
@@ -917,123 +679,6 @@ public class GlobalConf {
             initialized = true;
         }
 
-    }
-
-    /**
-     * Initializes the properties
-     */
-    public static void initialize(InputStream propsFile, InputStream versionFile) throws Exception {
-
-        if (configurations == null) {
-            configurations = new ArrayList<IConf>();
-        }
-
-        if (version == null) {
-            version = new VersionConf();
-
-            Properties versionProps = new Properties();
-            versionProps.load(versionFile);
-            version.initialize(versionProps);
-        }
-
-        if (frame == null) {
-            frame = new FrameConf();
-            configurations.add(frame);
-        }
-
-        if (screen == null) {
-            screen = new ScreenConf();
-            configurations.add(screen);
-        }
-
-        if (program == null) {
-            program = new ProgramConf();
-            configurations.add(program);
-        }
-
-        if (scene == null) {
-            scene = new SceneConf();
-            configurations.add(scene);
-        }
-
-        if (data == null) {
-            data = new DataConf();
-            configurations.add(data);
-        }
-
-        if (runtime == null) {
-            runtime = new RuntimeConf();
-            configurations.add(runtime);
-        }
-
-        if (screenshot == null) {
-            screenshot = new ScreenshotConf();
-            configurations.add(screenshot);
-        }
-
-        if (postprocess == null) {
-            postprocess = new PostprocessConf();
-            configurations.add(postprocess);
-        }
-
-        if (performance == null) {
-            performance = new PerformanceConf();
-            configurations.add(performance);
-        }
-
-        initialize(propsFile);
-
-        initialized = true;
-
-    }
-
-    /**
-     * Runs the initialize method in all the configurations using the given properties file stream.
-     * @param propsFile An input stream sourced in the configuration file.
-     * @throws Exception
-     */
-    public static void initialize(InputStream propsFile) throws Exception {
-        p = new CommentedProperties();
-        try {
-            p.load(propsFile);
-
-            for (IConf conf : configurations) {
-                conf.initialize(p);
-            }
-
-        } catch (Exception e) {
-            Logger.error(e);
-            throw (e);
-        }
-
-    }
-
-    /**
-     * Saves the current state of the properties to the properties file.
-     */
-    public static void saveProperties(File propsFile) {
-        updatePropertiesValues();
-        try {
-            FileOutputStream fos = new FileOutputStream(propsFile);
-            p.store(fos, null);
-            fos.close();
-            Logger.info("Configuration saved to " + propsFile.getAbsolutePath());
-        } catch (Exception e) {
-            Logger.error(e);
-        }
-    }
-
-    /**
-     * Updates the Properties object with the values of the actual property variables.
-     */
-    private static void updatePropertiesValues() {
-        if (p != null && !p.isEmpty()) {
-
-            for (IConf conf : configurations) {
-                conf.persist(p);
-            }
-
-        }
     }
 
     public static String getFullApplicationName() {

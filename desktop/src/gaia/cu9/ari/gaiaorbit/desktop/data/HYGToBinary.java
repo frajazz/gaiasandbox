@@ -1,10 +1,14 @@
-package gaia.cu9.ari.gaiaorbit.data.stars;
+package gaia.cu9.ari.gaiaorbit.desktop.data;
 
 import gaia.cu9.ari.gaiaorbit.data.FileLocator;
+import gaia.cu9.ari.gaiaorbit.data.stars.HYGBinaryLoader;
+import gaia.cu9.ari.gaiaorbit.data.stars.HYGCSVLoader;
+import gaia.cu9.ari.gaiaorbit.desktop.util.DesktopConfInit;
 import gaia.cu9.ari.gaiaorbit.event.EventManager;
 import gaia.cu9.ari.gaiaorbit.event.Events;
 import gaia.cu9.ari.gaiaorbit.event.IObserver;
 import gaia.cu9.ari.gaiaorbit.scenegraph.CelestialBody;
+import gaia.cu9.ari.gaiaorbit.util.ConfInit;
 import gaia.cu9.ari.gaiaorbit.util.GlobalConf;
 import gaia.cu9.ari.gaiaorbit.util.I18n;
 import gaia.cu9.ari.gaiaorbit.util.Logger;
@@ -46,7 +50,7 @@ public class HYGToBinary implements IObserver {
         try {
             File props = new File("/home/tsagrista/git/gaiasandbox/android/assets/conf/global.properties");
             File version = new File("/home/tsagrista/git/gaiasandbox/android/assets/data/dummyversion");
-            GlobalConf.initialize(new FileInputStream(props), new FileInputStream(version));
+            ConfInit.initialize(new DesktopConfInit(new FileInputStream(props), new FileInputStream(version)));
         } catch (IOException e) {
             Logger.error(e);
         } catch (Exception e) {

@@ -8,6 +8,7 @@ import gaia.cu9.ari.gaiaorbit.event.EventManager;
 import gaia.cu9.ari.gaiaorbit.event.Events;
 import gaia.cu9.ari.gaiaorbit.event.IObserver;
 import gaia.cu9.ari.gaiaorbit.scenegraph.CelestialBody;
+import gaia.cu9.ari.gaiaorbit.util.ConfInit;
 import gaia.cu9.ari.gaiaorbit.util.GlobalConf;
 import gaia.cu9.ari.gaiaorbit.util.format.DateFormatFactory;
 import gaia.cu9.ari.gaiaorbit.util.format.NumberFormatFactory;
@@ -27,8 +28,8 @@ public class GaiaSandboxWebGL extends GwtApplication implements IObserver {
         GwtApplicationConfiguration config = new GwtApplicationConfiguration(1024, 600);
 
         try {
-            WebGLConfInitLite confInit = new WebGLConfInitLite();
-            confInit.initGlobalConf();
+            ConfInit.initialize(new WebGLConfInitLite());
+            ConfInit.instance.initGlobalConf();
             config.antialiasing = GlobalConf.postprocess.POSTPROCESS_ANTIALIAS != 0 ? true : false;
         } catch (Exception e) {
             System.err.println("Error initializing GlobalConf");

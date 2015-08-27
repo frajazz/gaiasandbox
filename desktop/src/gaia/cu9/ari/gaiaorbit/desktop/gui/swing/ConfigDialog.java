@@ -11,6 +11,7 @@ import gaia.cu9.ari.gaiaorbit.event.EventManager;
 import gaia.cu9.ari.gaiaorbit.event.Events;
 import gaia.cu9.ari.gaiaorbit.interfce.KeyMappings;
 import gaia.cu9.ari.gaiaorbit.interfce.KeyMappings.ProgramAction;
+import gaia.cu9.ari.gaiaorbit.util.ConfInit;
 import gaia.cu9.ari.gaiaorbit.util.GlobalConf;
 import gaia.cu9.ari.gaiaorbit.util.GlobalResources;
 import gaia.cu9.ari.gaiaorbit.util.I18n;
@@ -848,8 +849,7 @@ public class ConfigDialog extends I18nJFrame {
                     GlobalConf.frame.RENDER_TARGET_FPS = ((Integer) targetFPS.getValue());
 
                     // Save configuration
-
-                    GlobalConf.saveProperties(new File(System.getProperty("properties.file")));
+                    ConfInit.instance.persistGlobalConf(new File(System.getProperty("properties.file")));
 
                     EventManager.instance.post(Events.PROPERTIES_WRITTEN);
 

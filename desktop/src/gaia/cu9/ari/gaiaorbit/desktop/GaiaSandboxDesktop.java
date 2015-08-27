@@ -9,14 +9,15 @@ import gaia.cu9.ari.gaiaorbit.desktop.gui.swing.ConfigDialog;
 import gaia.cu9.ari.gaiaorbit.desktop.gui.swing.HelpDialog;
 import gaia.cu9.ari.gaiaorbit.desktop.gui.swing.IconManager;
 import gaia.cu9.ari.gaiaorbit.desktop.gui.swing.ScriptDialog;
+import gaia.cu9.ari.gaiaorbit.desktop.util.DesktopConfInit;
 import gaia.cu9.ari.gaiaorbit.event.EventManager;
 import gaia.cu9.ari.gaiaorbit.event.Events;
 import gaia.cu9.ari.gaiaorbit.event.IObserver;
 import gaia.cu9.ari.gaiaorbit.interfce.KeyMappings;
 import gaia.cu9.ari.gaiaorbit.script.JythonFactory;
+import gaia.cu9.ari.gaiaorbit.util.ConfInit;
 import gaia.cu9.ari.gaiaorbit.util.GlobalConf;
 import gaia.cu9.ari.gaiaorbit.util.I18n;
-import gaia.cu9.ari.gaiaorbit.util.Logger;
 import gaia.cu9.ari.gaiaorbit.util.SysUtils;
 import gaia.cu9.ari.gaiaorbit.util.concurrent.ThreadIndexer;
 import gaia.cu9.ari.gaiaorbit.util.format.DateFormatFactory;
@@ -28,7 +29,6 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.InputStream;
 import java.nio.channels.FileChannel;
 
 import javax.swing.JFileChooser;
@@ -77,37 +77,7 @@ public class GaiaSandboxDesktop implements IObserver {
                 props = initConfigFile(false);
             }
 
-            File confFile = new File(props);
-            FileInputStream fis = new FileInputStream(confFile);
-            // This should work for the normal execution
-            InputStream version = GaiaSandboxDesktop.class.getResourceAsStream("/version");
-            if (version == null) {
-                // In case of running in 'developer' mode
-                version = new FileInputStream(FileLocator.getFile("data/dummyversion"));
-            }
-            try {
-                GlobalConf.initialize(fis, version);
-            } catch (Exception e) {
-                // Retry
-                FileInputStream fis2 = null;
-                try {
-                    confFile = new File(initConfigFile(true));
-                    fis2 = new FileInputStream(confFile);
-
-                    GlobalConf.initialize(fis2, version);
-                } catch (Exception e1) {
-                    // Total error!
-                    Logger.error(e1);
-                    return;
-                } finally {
-                    if (fis2 != null)
-                        fis2.close();
-
-                }
-                Logger.info("Overwritten outated configuration file in " + confFile.getAbsolutePath());
-            } finally {
-                fis.close();
-            }
+            ConfInit.initialize(new DesktopConfInit());
 
             // Initialize i18n
             I18n.initialize("./data/i18n/gsbundle");

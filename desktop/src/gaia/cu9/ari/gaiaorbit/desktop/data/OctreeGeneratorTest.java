@@ -1,16 +1,21 @@
-package gaia.cu9.ari.gaiaorbit.data.octreegen;
+package gaia.cu9.ari.gaiaorbit.desktop.data;
 
 import gaia.cu9.ari.gaiaorbit.data.FileLocator;
+import gaia.cu9.ari.gaiaorbit.data.octreegen.BrightestStars;
+import gaia.cu9.ari.gaiaorbit.data.octreegen.MetadataBinaryIO;
+import gaia.cu9.ari.gaiaorbit.data.octreegen.OctreeGenerator;
+import gaia.cu9.ari.gaiaorbit.data.octreegen.ParticleDataBinaryIO;
 import gaia.cu9.ari.gaiaorbit.data.stars.HYGBinaryLoader;
 import gaia.cu9.ari.gaiaorbit.data.stars.ISceneGraphLoader;
 import gaia.cu9.ari.gaiaorbit.data.stars.OctreeCatalogLoader;
+import gaia.cu9.ari.gaiaorbit.desktop.util.DesktopConfInit;
 import gaia.cu9.ari.gaiaorbit.event.EventManager;
 import gaia.cu9.ari.gaiaorbit.event.Events;
 import gaia.cu9.ari.gaiaorbit.event.IObserver;
 import gaia.cu9.ari.gaiaorbit.scenegraph.Particle;
 import gaia.cu9.ari.gaiaorbit.scenegraph.SceneGraphNode;
 import gaia.cu9.ari.gaiaorbit.scenegraph.octreewrapper.AbstractOctreeWrapper;
-import gaia.cu9.ari.gaiaorbit.util.GlobalConf;
+import gaia.cu9.ari.gaiaorbit.util.ConfInit;
 import gaia.cu9.ari.gaiaorbit.util.I18n;
 import gaia.cu9.ari.gaiaorbit.util.tree.OctreeNode;
 
@@ -31,7 +36,7 @@ public class OctreeGeneratorTest implements IObserver {
 
     public static void main(String[] args) {
         try {
-            GlobalConf.initialize(new FileInputStream(new File("../android/assets/conf/global.properties")), new FileInputStream(new File("../android/assets/data/dummyversion")));
+            ConfInit.initialize(new DesktopConfInit(new FileInputStream(new File("../android/assets/conf/global.properties")), new FileInputStream(new File("../android/assets/data/dummyversion"))));
 
             I18n.initialize("../android/assets/i18n/gsbundle_en_GB");
 

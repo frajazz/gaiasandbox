@@ -15,6 +15,8 @@ import gaia.cu9.ari.gaiaorbit.util.GlobalConf.ScreenConf;
 import gaia.cu9.ari.gaiaorbit.util.GlobalConf.ScreenshotConf;
 import gaia.cu9.ari.gaiaorbit.util.GlobalConf.VersionConf;
 
+import java.io.File;
+
 public class WebGLConfInitLite extends ConfInit {
 
     @Override
@@ -61,6 +63,10 @@ public class WebGLConfInitLite extends ConfInit {
         ScreenshotConf shc = new ScreenshotConf();
 
         GlobalConf.initialize(vc, prc, sc, dc, rc, ppc, pc, fc, scrc, shc);
+    }
+
+    @Override
+    public void persistGlobalConf(File propsFile) {
     }
 
 }
