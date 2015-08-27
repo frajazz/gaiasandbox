@@ -167,29 +167,11 @@ public class GaiaSandbox implements ApplicationListener, IObserver {
         // Disable all kinds of input
         EventManager.instance.post(Events.INPUT_ENABLED_CMD, false);
 
-        if (!GlobalClock.initialized()) {
-            // Initialize clock with a pace of 2 simulation hours/second
-            GlobalClock.initialize(0.01, new Date());
+        if (!GlobalConf.initialized()) {
+            Logger.error(new RuntimeException("FATAL: Global configuration not initlaized"));
+            return;
         }
 
-        if (!GlobalConf.initialized()) {
-            // Initialise the configuration if needed
-            try {
-                if (mobile) {
-                    GlobalConf.initialize(Gdx.files.internal("conf/android/global.properties").read(), Gdx.files.internal("version").read());
-                } else {
-                    FileHandle confFile = Gdx.files.external(System.getProperty("properties.file"));
-                    FileHandle versionfile = Gdx.files.internal("version");
-                    if (!versionfile.exists()) {
-                        versionfile = Gdx.files.internal("data/dummyversion");
-                    }
-                    GlobalConf.initialize(confFile.read(), versionfile.read());
-                }
-            } catch (Exception e) {
-                // Android
-                Logger.error(e);
-            }
-        }
 
         // Initialize times
         clock = new GlobalClock(0.000277778, new Date());
