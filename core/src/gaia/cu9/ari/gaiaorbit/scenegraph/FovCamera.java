@@ -1,6 +1,5 @@
 package gaia.cu9.ari.gaiaorbit.scenegraph;
 
-import gaia.cu9.ari.gaiaorbit.GaiaSandbox;
 import gaia.cu9.ari.gaiaorbit.event.EventManager;
 import gaia.cu9.ari.gaiaorbit.event.Events;
 import gaia.cu9.ari.gaiaorbit.event.IObserver;
@@ -154,7 +153,7 @@ public class FovCamera extends AbstractCamera implements IObserver {
         /** POSITION **/
         AbstractPositionEntity fccopy = gaia.getLineCopy();
         fccopy.getRoot().transform.position.set(0f, 0f, 0f);
-        fccopy.getRoot().update(GaiaSandbox.instance.current, null, this);
+        fccopy.getRoot().update(time, null, this);
 
         this.pos.set(fccopy.transform.getTranslation());
         this.posinv.set(this.pos).scl(-1);
@@ -346,7 +345,7 @@ public class FovCamera extends AbstractCamera implements IObserver {
     @Override
     public void render() {
         // Renders the focal plane CCDs
-        fpstages[parent.mode.ordinal() - 2].draw();
+        fpstages[parent.mode.ordinal() - 3].draw();
     }
 
     @Override
