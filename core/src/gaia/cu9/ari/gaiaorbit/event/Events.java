@@ -111,6 +111,9 @@ public enum Events {
     /** Issues the play command. Contains the path to the file to play **/
     PLAY_CAMERA_CMD,
 
+    /** Updates the camera recorder. Contains dt (float), position (vector3d), direction (vector3d) and up (vector3d)**/
+    UPDATE_CAM_RECORDER,
+
     /** Issues the frame output command. Contains an optional boolean with the state. Otherwise, the state is toggled **/
     FRAME_OUTPUT_CMD,
 

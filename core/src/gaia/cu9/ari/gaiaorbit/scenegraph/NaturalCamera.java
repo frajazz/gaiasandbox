@@ -39,7 +39,7 @@ public class NaturalCamera extends AbstractCamera implements IObserver {
     public boolean facingFocus;
 
     /** Auxiliary vectors **/
-    private Vector3d aux1, aux2, aux3, aux4, aux5, dx, state;
+    private Vector3d aux1, aux2, aux3, dx, state;
     /** Acceleration, velocity and position for pitch, yaw and roll **/
     private Vector3d pitch, yaw, roll;
     /** Acceleration, velocity and position for the horizontal and vertical rotation around the focus **/
@@ -116,8 +116,6 @@ public class NaturalCamera extends AbstractCamera implements IObserver {
         aux1 = new Vector3d();
         aux2 = new Vector3d();
         aux3 = new Vector3d();
-        aux4 = new Vector3d();
-        aux5 = new Vector3d();
         dx = new Vector3d();
         state = new Vector3d();
 
@@ -221,12 +219,14 @@ public class NaturalCamera extends AbstractCamera implements IObserver {
             break;
         }
 
+        // Update camera recorder
+        EventManager.instance.post(Events.UPDATE_CAM_RECORDER, dt, pos, direction, up);
+
         // Update actual camera
         lastFwdTime += dt;
         lastMode = m;
 
         updatePerspectiveCamera();
-
     }
 
     private void updatePerspectiveCamera() {
