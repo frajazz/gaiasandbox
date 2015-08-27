@@ -108,6 +108,11 @@ public class GlobalConf {
             p.setProperty("global.conf.numthreads", Integer.toString(NUMBER_THREADS));
         }
 
+        public void initialize(boolean MULTITHREADING, int NUMBER_THREADS) {
+            this.MULTITHREADING = MULTITHREADING;
+            this.NUMBER_THREADS = NUMBER_THREADS;
+        }
+
         @Override
         public void initialize(Properties p) {
             MULTITHREADING = Boolean.parseBoolean(p.getProperty("global.conf.multithreading"));
@@ -139,6 +144,13 @@ public class GlobalConf {
 
         public PostprocessConf() {
             EventManager.instance.subscribe(this, Events.BLOOM_CMD, Events.LENS_FLARE_CMD, Events.MOTION_BLUR_CMD);
+        }
+
+        public void initialize(int POSTPROCESS_ANTIALIAS, float POSTPROCESS_BLOOM_INTENSITY, float POSTPROCESS_MOTION_BLUR, boolean POSTPROCESS_LENS_FLARE) {
+            this.POSTPROCESS_ANTIALIAS = POSTPROCESS_ANTIALIAS;
+            this.POSTPROCESS_BLOOM_INTENSITY = POSTPROCESS_BLOOM_INTENSITY;
+            this.POSTPROCESS_MOTION_BLUR = POSTPROCESS_MOTION_BLUR;
+            this.POSTPROCESS_LENS_FLARE = POSTPROCESS_LENS_FLARE;
         }
 
         @Override
@@ -201,6 +213,17 @@ public class GlobalConf {
 
         public RuntimeConf() {
             EventManager.instance.subscribe(this, Events.LIMIT_MAG_CMD, Events.INPUT_ENABLED_CMD, Events.TOGGLE_CLEANMODE, Events.TOGGLE_UPDATEPAUSE, Events.TOGGLE_TIME_CMD, Events.RECORD_CAMERA_CMD);
+        }
+
+        public void initialize(boolean cLEAN_MODE, boolean uPDATE_PAUSE, boolean sTRIPPED_FOV_MODE, boolean tIME_ON, boolean iNPUT_ENABLED, boolean rECORD_CAMERA, float lIMIT_MAG_RUNTIME, boolean rEAL_TIME) {
+            CLEAN_MODE = cLEAN_MODE;
+            UPDATE_PAUSE = uPDATE_PAUSE;
+            TIME_ON = tIME_ON;
+            INPUT_ENABLED = iNPUT_ENABLED;
+            RECORD_CAMERA = rECORD_CAMERA;
+            LIMIT_MAG_RUNTIME = lIMIT_MAG_RUNTIME;
+            STRIPPED_FOV_MODE = sTRIPPED_FOV_MODE;
+            REAL_TIME = rEAL_TIME;
         }
 
         @Override
@@ -377,6 +400,12 @@ public class GlobalConf {
         /** Limit magnitude used for loading stars. All stars above this magnitude will not even be loaded by the sandbox. **/
         public float LIMIT_MAG_LOAD;
 
+        public void initialize(String dATA_JSON_FILE, boolean dATA_SOURCE_LOCAL, float lIMIT_MAG_LOAD) {
+            this.DATA_JSON_FILE = dATA_JSON_FILE;
+            this.DATA_SOURCE_LOCAL = dATA_SOURCE_LOCAL;
+            this.LIMIT_MAG_LOAD = lIMIT_MAG_LOAD;
+        }
+
         @Override
         public void persist(Properties p) {
             p.setProperty("data.source.local", Boolean.toString(DATA_SOURCE_LOCAL));
@@ -482,6 +511,15 @@ public class GlobalConf {
             EventManager.instance.subscribe(this, Events.TOGGLE_STEREOSCOPIC, Events.TOGGLE_STEREO_PROFILE);
         }
 
+        public void initialize(boolean dISPLAY_TUTORIAL, boolean sHOW_DEBUG_INFO, String uI_THEME, String lOCALE, boolean sTEREOSCOPIC_MODE, StereoProfile sTEREO_PROFILE) {
+            DISPLAY_TUTORIAL = dISPLAY_TUTORIAL;
+            SHOW_DEBUG_INFO = sHOW_DEBUG_INFO;
+            UI_THEME = uI_THEME;
+            LOCALE = lOCALE;
+            STEREOSCOPIC_MODE = sTEREOSCOPIC_MODE;
+            STEREO_PROFILE = sTEREO_PROFILE;
+        }
+
         @Override
         public void persist(Properties p) {
             p.setProperty("program.tutorial", Boolean.toString(DISPLAY_TUTORIAL));
@@ -538,6 +576,62 @@ public class GlobalConf {
 
     }
 
+    public static class VersionConf implements IConf {
+        public String version;
+        public String buildtime;
+        public String builder;
+        public String system;
+        public String build;
+        public int major;
+        public int minor;
+
+        public void initialize(String version, String buildtime, String builder, String system, String build, int major, int minor) {
+            this.version = version;
+            this.buildtime = buildtime;
+            this.builder = builder;
+            this.system = system;
+            this.build = build;
+            this.major = major;
+            this.minor = minor;
+        }
+
+        @Override
+        public void persist(Properties p) {
+            // The version info can not be modified
+        }
+
+        @Override
+        public void initialize(Properties p) {
+            version = p.getProperty("version");
+            buildtime = p.getProperty("buildtime");
+            builder = p.getProperty("builder");
+            build = p.getProperty("build");
+            system = p.getProperty("system");
+
+            int[] majmin = getMajorMinorFromString(version);
+            major = majmin[0];
+            minor = majmin[1];
+
+        }
+
+        public static int[] getMajorMinorFromString(String version) {
+            String majorS = version.substring(0, version.indexOf("."));
+            String minorS = version.substring(version.indexOf(".") + 1, version.length());
+            if (majorS.matches("^\\D{1}\\d+$")) {
+                majorS = majorS.substring(1, majorS.length());
+            }
+            if (minorS.matches("^\\d+\\D{1}$")) {
+                minorS = minorS.substring(0, minorS.length() - 1);
+            }
+            return new int[] { Integer.parseInt(majorS), Integer.parseInt(minorS) };
+        }
+
+        @Override
+        public String toString() {
+            return version;
+        }
+    }
+
     public static class SceneConf implements IConf, IObserver {
         public long OBJECT_FADE_MS;
         public float STAR_BRIGHTNESS;
@@ -568,6 +662,28 @@ public class GlobalConf {
 
         public SceneConf() {
             EventManager.instance.subscribe(this, Events.FOCUS_LOCK_CMD, Events.STAR_BRIGHTNESS_CMD, Events.FOV_CHANGED_CMD, Events.CAMERA_SPEED_CMD, Events.ROTATION_SPEED_CMD, Events.TURNING_SPEED_CMD, Events.SPEED_LIMIT_CMD, Events.TRANSIT_COLOUR_CMD, Events.ONLY_OBSERVED_STARS_CMD, Events.COMPUTE_GAIA_SCAN_CMD, Events.PIXEL_RENDERER_CMD);
+        }
+
+        public void initialize(long oBJECT_FADE_MS, float sTAR_BRIGHTNESS, float aMBIENT_LIGHT, int cAMERA_FOV, float cAMERA_SPEED, float tURNING_SPEED, float rOTATION_SPEED, int cAMERA_SPEED_LIMIT_IDX, boolean fOCUS_LOCK, float lABEL_NUMBER_FACTOR, boolean[] vISIBILITY, int pIXEL_RENDERER, int lINE_RENDERER, double sTAR_TH_ANGLE_NONE, double sTAR_TH_ANGLE_POINT, double sTAR_TH_ANGLE_QUAD, float pOINT_ALPHA_MIN, float pOINT_ALPHA_MAX) {
+            OBJECT_FADE_MS = oBJECT_FADE_MS;
+            STAR_BRIGHTNESS = sTAR_BRIGHTNESS;
+            AMBIENT_LIGHT = aMBIENT_LIGHT;
+            CAMERA_FOV = cAMERA_FOV;
+            CAMERA_SPEED = cAMERA_SPEED;
+            TURNING_SPEED = tURNING_SPEED;
+            ROTATION_SPEED = rOTATION_SPEED;
+            CAMERA_SPEED_LIMIT_IDX = cAMERA_SPEED_LIMIT_IDX;
+            this.updateSpeedLimit();
+            FOCUS_LOCK = fOCUS_LOCK;
+            LABEL_NUMBER_FACTOR = lABEL_NUMBER_FACTOR;
+            VISIBILITY = vISIBILITY;
+            PIXEL_RENDERER = pIXEL_RENDERER;
+            LINE_RENDERER = lINE_RENDERER;
+            STAR_TH_ANGLE_NONE = sTAR_TH_ANGLE_NONE;
+            STAR_TH_ANGLE_POINT = sTAR_TH_ANGLE_POINT;
+            STAR_TH_ANGLE_QUAD = sTAR_TH_ANGLE_QUAD;
+            POINT_ALPHA_MIN = pOINT_ALPHA_MIN;
+            POINT_ALPHA_MAX = pOINT_ALPHA_MAX;
         }
 
         @Override
@@ -745,52 +861,6 @@ public class GlobalConf {
         }
     }
 
-    public static class VersionConf implements IConf {
-        public String version;
-        public String buildtime;
-        public String builder;
-        public String system;
-        public String build;
-        public int major;
-        public int minor;
-
-        @Override
-        public void persist(Properties p) {
-            // The version info can not be modified
-        }
-
-        @Override
-        public void initialize(Properties p) {
-            version = p.getProperty("version");
-            buildtime = p.getProperty("buildtime");
-            builder = p.getProperty("builder");
-            build = p.getProperty("build");
-            system = p.getProperty("system");
-
-            int[] majmin = getMajorMinorFromString(version);
-            major = majmin[0];
-            minor = majmin[1];
-
-        }
-
-        public static int[] getMajorMinorFromString(String version) {
-            String majorS = version.substring(0, version.indexOf("."));
-            String minorS = version.substring(version.indexOf(".") + 1, version.length());
-            if (majorS.matches("^\\D{1}\\d+$")) {
-                majorS = majorS.substring(1, majorS.length());
-            }
-            if (minorS.matches("^\\d+\\D{1}$")) {
-                minorS = minorS.substring(0, minorS.length() - 1);
-            }
-            return new int[] { Integer.parseInt(majorS), Integer.parseInt(minorS) };
-        }
-
-        @Override
-        public String toString() {
-            return version;
-        }
-    }
-
     public static List<IConf> configurations;
 
     public static FrameConf frame;
@@ -812,6 +882,41 @@ public class GlobalConf {
 
     public static boolean initialized() {
         return initialized;
+    }
+
+    /**
+     * Initializes the properties
+     */
+    public static void initialize(VersionConf vc, ProgramConf pc, SceneConf sc, DataConf dc, RuntimeConf rc, PostprocessConf ppc, PerformanceConf pfc, FrameConf fc, ScreenConf scrc, ScreenshotConf shc) throws Exception {
+        if (!initialized) {
+            if (configurations == null) {
+                configurations = new ArrayList<IConf>();
+            }
+
+            version = vc;
+            program = pc;
+            scene = sc;
+            data = dc;
+            runtime = rc;
+            postprocess = ppc;
+            performance = pfc;
+            frame = fc;
+            screenshot = shc;
+            screen = scrc;
+
+            configurations.add(program);
+            configurations.add(scene);
+            configurations.add(data);
+            configurations.add(runtime);
+            configurations.add(postprocess);
+            configurations.add(performance);
+            configurations.add(frame);
+            configurations.add(screenshot);
+            configurations.add(screen);
+
+            initialized = true;
+        }
+
     }
 
     /**
