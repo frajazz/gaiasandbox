@@ -1,4 +1,4 @@
-package gaia.cu9.ari.gaiaorbit.desktop.data;
+package gaia.cu9.ari.gaiaorbit.data;
 
 import gaia.cu9.ari.gaiaorbit.data.stars.HYGBinaryLoader;
 import gaia.cu9.ari.gaiaorbit.data.stars.HYGCSVLoader;
