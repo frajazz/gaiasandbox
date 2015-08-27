@@ -1,6 +1,5 @@
-package gaia.cu9.ari.gaiaorbit.desktop.util;
+package gaia.cu9.ari.gaiaorbit.android.util;
 
-import gaia.cu9.ari.gaiaorbit.desktop.GaiaSandboxDesktop;
 import gaia.cu9.ari.gaiaorbit.render.ComponentType;
 import gaia.cu9.ari.gaiaorbit.util.ConfInit;
 import gaia.cu9.ari.gaiaorbit.util.GlobalConf;
@@ -35,13 +34,13 @@ import java.util.Properties;
  * @author tsagrista
  *
  */
-public class DesktopConfInit extends ConfInit {
+public class AndroidConfInit extends ConfInit {
     CommentedProperties p;
     Properties vp;
 
     IDateFormat df = DateFormatFactory.getFormatter("dd/MM/yyyy HH:mm:ss");
 
-    public DesktopConfInit() {
+    public AndroidConfInit() {
         super();
         try {
             String propsFileProperty = System.getProperty("properties.file");
@@ -52,7 +51,7 @@ public class DesktopConfInit extends ConfInit {
             File confFile = new File(propsFileProperty);
             InputStream fis = new FileInputStream(confFile);
             // This should work for the normal execution
-            InputStream vis = GaiaSandboxDesktop.class.getResourceAsStream("/version");
+            InputStream vis = AndroidConfInit.class.getResourceAsStream("/version");
             if (vis == null) {
                 // In case of running in 'developer' mode
                 vis = new FileInputStream(new File(System.getProperty("assets.location") + "data/dummyversion"));
@@ -67,7 +66,7 @@ public class DesktopConfInit extends ConfInit {
         }
     }
 
-    public DesktopConfInit(InputStream fis, InputStream vis) {
+    public AndroidConfInit(InputStream fis, InputStream vis) {
         super();
         try {
             vp = new Properties();

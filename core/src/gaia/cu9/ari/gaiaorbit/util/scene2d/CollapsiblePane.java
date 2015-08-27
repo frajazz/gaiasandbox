@@ -97,7 +97,8 @@ public class CollapsiblePane extends VerticalGroup {
 
         if (topIcons != null && topIcons.length > 0) {
             for (Actor topIcon : topIcons) {
-                headerGroup.addActor(topIcon);
+                if (topIcon != null)
+                    headerGroup.addActor(topIcon);
             }
         }
 

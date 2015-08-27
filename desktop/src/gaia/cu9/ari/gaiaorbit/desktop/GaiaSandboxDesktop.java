@@ -8,7 +8,9 @@ import gaia.cu9.ari.gaiaorbit.desktop.gui.swing.ConfigDialog;
 import gaia.cu9.ari.gaiaorbit.desktop.gui.swing.HelpDialog;
 import gaia.cu9.ari.gaiaorbit.desktop.gui.swing.IconManager;
 import gaia.cu9.ari.gaiaorbit.desktop.gui.swing.ScriptDialog;
+import gaia.cu9.ari.gaiaorbit.desktop.util.CamRecorder;
 import gaia.cu9.ari.gaiaorbit.desktop.util.DesktopConfInit;
+import gaia.cu9.ari.gaiaorbit.desktop.util.SysUtils;
 import gaia.cu9.ari.gaiaorbit.event.EventManager;
 import gaia.cu9.ari.gaiaorbit.event.Events;
 import gaia.cu9.ari.gaiaorbit.event.IObserver;
@@ -17,7 +19,6 @@ import gaia.cu9.ari.gaiaorbit.script.JythonFactory;
 import gaia.cu9.ari.gaiaorbit.util.ConfInit;
 import gaia.cu9.ari.gaiaorbit.util.GlobalConf;
 import gaia.cu9.ari.gaiaorbit.util.I18n;
-import gaia.cu9.ari.gaiaorbit.util.SysUtils;
 import gaia.cu9.ari.gaiaorbit.util.concurrent.ThreadIndexer;
 import gaia.cu9.ari.gaiaorbit.util.format.DateFormatFactory;
 import gaia.cu9.ari.gaiaorbit.util.format.NumberFormatFactory;
@@ -86,6 +87,9 @@ public class GaiaSandboxDesktop implements IObserver {
 
             // Initialize key mappings
             KeyMappings.initialize();
+
+            // Init cam recorder
+            CamRecorder.initialize();
 
             gsd.init();
         } catch (Exception e) {

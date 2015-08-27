@@ -1,7 +1,9 @@
 package gaia.cu9.ari.gaiaorbit.android;
 
 import gaia.cu9.ari.gaiaorbit.GaiaSandbox;
+import gaia.cu9.ari.gaiaorbit.android.util.AndroidConfInit;
 import gaia.cu9.ari.gaiaorbit.scenegraph.NaturalCamera;
+import gaia.cu9.ari.gaiaorbit.util.ConfInit;
 import gaia.cu9.ari.gaiaorbit.util.GlobalConf;
 import gaia.cu9.ari.gaiaorbit.util.math.MathUtilsd;
 
@@ -42,7 +44,7 @@ public class GaiaSandboxActivity extends AndroidApplication {
                 // In case of running in 'developer' mode
                 version = this.getAssets().open("data/dummyversion");
             }
-            GlobalConf.initialize(this.getAssets().open("conf/android/global.properties"), version);
+            ConfInit.initialize(new AndroidConfInit(this.getAssets().open("conf/android/global.properties"), version));
         } catch (Exception e) {
             Log.e(this.getApplicationInfo().name, "Error initializing global configuration");
             this.finish();

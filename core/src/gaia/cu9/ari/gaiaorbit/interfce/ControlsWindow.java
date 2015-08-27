@@ -11,6 +11,7 @@ import gaia.cu9.ari.gaiaorbit.interfce.components.VisibilityComponent;
 import gaia.cu9.ari.gaiaorbit.interfce.components.VisualEffectsComponent;
 import gaia.cu9.ari.gaiaorbit.render.ComponentType;
 import gaia.cu9.ari.gaiaorbit.scenegraph.ISceneGraph;
+import gaia.cu9.ari.gaiaorbit.util.Constants;
 import gaia.cu9.ari.gaiaorbit.util.GlobalConf;
 import gaia.cu9.ari.gaiaorbit.util.I18n;
 import gaia.cu9.ari.gaiaorbit.util.math.MathUtilsd;
@@ -50,7 +51,7 @@ public class ControlsWindow extends CollapsibleWindow implements IObserver {
     protected VerticalGroup mainVertical;
     protected OwnScrollPane windowScroll;
     protected Table guiLayout;
-    protected OwnImageButton recCamera, playCamera, playstop;
+    protected OwnImageButton recCamera = null, playCamera = null, playstop = null;
     protected TiledDrawable separator;
     /**
      * The scene graph
@@ -107,43 +108,45 @@ public class ControlsWindow extends CollapsibleWindow implements IObserver {
         mainActors.add(time);
 
         /** ----CAMERA---- **/
-        // Record camera button
-        recCamera = new OwnImageButton(skin, "rec");
-        recCamera.setName("recCam");
-        recCamera.setChecked(GlobalConf.runtime.RECORD_CAMERA);
-        recCamera.addListener(new EventListener() {
-            @Override
-            public boolean handle(Event event) {
-                if (event instanceof ChangeEvent) {
-                    EventManager.instance.post(Events.RECORD_CAMERA_CMD, recCamera.isChecked(), true);
-                    return true;
+        if (Constants.desktop) {
+            // Record camera button
+            recCamera = new OwnImageButton(skin, "rec");
+            recCamera.setName("recCam");
+            recCamera.setChecked(GlobalConf.runtime.RECORD_CAMERA);
+            recCamera.addListener(new EventListener() {
+                @Override
+                public boolean handle(Event event) {
+                    if (event instanceof ChangeEvent) {
+                        EventManager.instance.post(Events.RECORD_CAMERA_CMD, recCamera.isChecked(), true);
+                        return true;
+                    }
+                    return false;
                 }
-                return false;
-            }
-        });
-        recCamera.addListener(new Tooltip(txt("gui.tooltip.reccamera"), skin));
+            });
+            recCamera.addListener(new Tooltip(txt("gui.tooltip.reccamera"), skin));
 
-        // Play camera button
-        playCamera = new OwnImageButton(skin, "play");
-        playCamera.setName("playCam");
-        playCamera.setChecked(false);
-        playCamera.addListener(new EventListener() {
-            @Override
-            public boolean handle(Event event) {
-                if (event instanceof ChangeEvent) {
-                    EventManager.instance.post(Events.SHOW_PLAYCAMERA_ACTION);
-                    return true;
+            // Play camera button
+            playCamera = new OwnImageButton(skin, "play");
+            playCamera.setName("playCam");
+            playCamera.setChecked(false);
+            playCamera.addListener(new EventListener() {
+                @Override
+                public boolean handle(Event event) {
+                    if (event instanceof ChangeEvent) {
+                        EventManager.instance.post(Events.SHOW_PLAYCAMERA_ACTION);
+                        return true;
+                    }
+                    return false;
                 }
-                return false;
-            }
-        });
+            });
 
-        playCamera.addListener(new Tooltip(txt("gui.tooltip.playcamera"), skin));
+            playCamera.addListener(new Tooltip(txt("gui.tooltip.playcamera"), skin));
+        }
 
         CameraComponent cameraComponent = new CameraComponent(skin, ui);
         cameraComponent.initialize();
 
-        CollapsiblePane camera = new CollapsiblePane(ui, txt("gui.camera"), cameraComponent.getActor(), skin/*, playCamera*/);
+        CollapsiblePane camera = new CollapsiblePane(ui, txt("gui.camera"), cameraComponent.getActor(), skin, recCamera, playCamera);
         camera.align(Align.left);
         mainActors.add(camera);
 
@@ -196,51 +199,69 @@ public class ControlsWindow extends CollapsibleWindow implements IObserver {
         });
         mainActors.add(switchWebgl);
 
-        /** BUTTONS **/
-        Button preferences = new OwnTextButton(txt("gui.preferences"), skin);
-        preferences.setName("preferences");
-        preferences.addListener(new EventListener() {
-            @Override
-            public boolean handle(Event event) {
-                if (event instanceof ChangeEvent) {
-                    EventManager.instance.post(Events.SHOW_PREFERENCES_ACTION);
+        Table buttonsTable = null;
+        if (Constants.desktop) {
+            /** BUTTONS **/
+            Button preferences = new OwnTextButton(txt("gui.preferences"), skin);
+            preferences.setName("preferences");
+            preferences.addListener(new EventListener() {
+                @Override
+                public boolean handle(Event event) {
+                    if (event instanceof ChangeEvent) {
+                        EventManager.instance.post(Events.SHOW_PREFERENCES_ACTION);
+                    }
+                    return false;
                 }
-                return false;
-            }
-        });
-        Button tutorial = new OwnTextButton(txt("gui.tutorial"), skin);
-        tutorial.setName("tutorial");
-        tutorial.addListener(new EventListener() {
-            @Override
-            public boolean handle(Event event) {
-                if (event instanceof ChangeEvent) {
-                    EventManager.instance.post(Events.SHOW_TUTORIAL_ACTION);
+            });
+            Button tutorial = new OwnTextButton(txt("gui.tutorial"), skin);
+            tutorial.setName("tutorial");
+            tutorial.addListener(new EventListener() {
+                @Override
+                public boolean handle(Event event) {
+                    if (event instanceof ChangeEvent) {
+                        EventManager.instance.post(Events.SHOW_TUTORIAL_ACTION);
+                    }
+                    return false;
                 }
-                return false;
-            }
-        });
-        Button about = new OwnTextButton(txt("gui.help"), skin);
-        about.setName("about");
-        about.addListener(new EventListener() {
-            @Override
-            public boolean handle(Event event) {
-                if (event instanceof ChangeEvent) {
-                    EventManager.instance.post(Events.SHOW_ABOUT_ACTION);
+            });
+            Button about = new OwnTextButton(txt("gui.help"), skin);
+            about.setName("about");
+            about.addListener(new EventListener() {
+                @Override
+                public boolean handle(Event event) {
+                    if (event instanceof ChangeEvent) {
+                        EventManager.instance.post(Events.SHOW_ABOUT_ACTION);
+                    }
+                    return false;
                 }
-                return false;
-            }
-        });
-        Button runScript = new OwnTextButton(txt("gui.script.runscript"), skin);
-        runScript.setName("run script");
-        runScript.addListener(new EventListener() {
-            @Override
-            public boolean handle(Event event) {
-                if (event instanceof ChangeEvent) {
-                    EventManager.instance.post(Events.SHOW_RUNSCRIPT_ACTION);
+            });
+            Button runScript = new OwnTextButton(txt("gui.script.runscript"), skin);
+            runScript.setName("run script");
+            runScript.addListener(new EventListener() {
+                @Override
+                public boolean handle(Event event) {
+                    if (event instanceof ChangeEvent) {
+                        EventManager.instance.post(Events.SHOW_RUNSCRIPT_ACTION);
+                    }
+                    return false;
                 }
-                return false;
-            }
-        });
+            });
+
+            buttonsTable = new Table(skin);
+            buttonsTable.add(runScript).pad(1).top().left();
+            buttonsTable.add(preferences).pad(1).top().left();
+            buttonsTable.row();
+            buttonsTable.add(tutorial).pad(1).top().left();
+            buttonsTable.add(about).pad(1).top().left();
+
+            int buttonwidth = 85;
+            int buttonheight = 20;
+            runScript.setSize(buttonwidth, buttonheight);
+            preferences.setSize(buttonwidth, buttonheight);
+            tutorial.setSize(buttonwidth, buttonheight);
+            about.setSize(buttonwidth, buttonheight);
+            buttonsTable.pack();
+        }
 
         /** ADD GROUPS TO VERTICAL LAYOUT **/
         int pad = 10;
@@ -266,26 +287,13 @@ public class ControlsWindow extends CollapsibleWindow implements IObserver {
         windowScroll.pack();
         windowScroll.setWidth(guiLayout.getWidth() + windowScroll.getStyle().vScroll.getMinWidth());
 
-        Table buttonsTable = new Table(skin);
-        buttonsTable.add(runScript).pad(1).top().left();
-        buttonsTable.add(preferences).pad(1).top().left();
-        buttonsTable.row();
-        buttonsTable.add(tutorial).pad(1).top().left();
-        buttonsTable.add(about).pad(1).top().left();
-
-        int buttonwidth = 85;
-        int buttonheight = 20;
-        runScript.setSize(buttonwidth, buttonheight);
-        preferences.setSize(buttonwidth, buttonheight);
-        tutorial.setSize(buttonwidth, buttonheight);
-        about.setSize(buttonwidth, buttonheight);
-        buttonsTable.pack();
-
         mainVertical = new VerticalGroup();
         mainVertical.space(5f);
         mainVertical.align(Align.right).align(Align.top);
         mainVertical.addActor(windowScroll);
-        mainVertical.addActor(buttonsTable);
+        // Add buttons only in desktop version
+        if (Constants.desktop)
+            mainVertical.addActor(buttonsTable);
         mainVertical.pack();
 
         /** ADD TO MAIN WINDOW **/

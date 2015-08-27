@@ -1,9 +1,11 @@
-package gaia.cu9.ari.gaiaorbit.util;
+package gaia.cu9.ari.gaiaorbit.desktop.util;
 
 import gaia.cu9.ari.gaiaorbit.GaiaSandbox;
 import gaia.cu9.ari.gaiaorbit.event.EventManager;
 import gaia.cu9.ari.gaiaorbit.event.Events;
 import gaia.cu9.ari.gaiaorbit.event.IObserver;
+import gaia.cu9.ari.gaiaorbit.util.I18n;
+import gaia.cu9.ari.gaiaorbit.util.Logger;
 import gaia.cu9.ari.gaiaorbit.util.format.DateFormatFactory;
 import gaia.cu9.ari.gaiaorbit.util.format.IDateFormat;
 import gaia.cu9.ari.gaiaorbit.util.math.Vector3d;
@@ -50,7 +52,7 @@ public class CamRecorder implements IObserver {
     public CamRecorder() {
         this.mode = RecorderMode.IDLE;
         df = DateFormatFactory.getFormatter("yyyy-MM-dd_HH:mm:ss");
-        EventManager.instance.subscribe(this, Events.RECORD_CAMERA_CMD, Events.PLAY_CAMERA_CMD);
+        EventManager.instance.subscribe(this, Events.RECORD_CAMERA_CMD, Events.PLAY_CAMERA_CMD, Events.UPDATE_CAM_RECORDER);
     }
 
     public void update(float dt, Vector3d position, Vector3d direction, Vector3d up) {
@@ -185,6 +187,13 @@ public class CamRecorder implements IObserver {
             Logger.info(I18n.bundle.format("notif.cameraplay.start", filepath));
             mode = RecorderMode.PLAYING;
 
+            break;
+        case UPDATE_CAM_RECORDER:
+            float dt = (Float) data[0];
+            Vector3d pos = (Vector3d) data[1];
+            Vector3d dir = (Vector3d) data[2];
+            Vector3d up = (Vector3d) data[3];
+            update(dt, pos, dir, up);
             break;
         }
 
