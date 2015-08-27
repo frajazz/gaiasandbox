@@ -2,6 +2,7 @@ package gaia.cu9.ari.gaiaorbit;
 
 import gaia.cu9.ari.gaiaorbit.data.AssetBean;
 import gaia.cu9.ari.gaiaorbit.data.GaiaAttitudeLoader;
+import gaia.cu9.ari.gaiaorbit.data.GaiaAttitudeLoader.GaiaAttitudeLoaderParameter;
 import gaia.cu9.ari.gaiaorbit.data.JythonFactoryLoader;
 import gaia.cu9.ari.gaiaorbit.data.SGLoader;
 import gaia.cu9.ari.gaiaorbit.data.SGLoader.SGLoaderParameter;
@@ -210,7 +211,7 @@ public class GaiaSandbox implements ApplicationListener, IObserver {
         cam = new CameraManager(manager, CameraMode.Focus);
 
         // Initialize Gaia attitudes
-        manager.load(ATTITUDE_FOLDER, GaiaAttitudeServer.class);
+        manager.load(ATTITUDE_FOLDER, GaiaAttitudeServer.class, new GaiaAttitudeLoaderParameter(GlobalConf.runtime.STRIPPED_FOV_MODE ? new String[] { "OPS_RSLS_0022916_rsls_nsl_gareq1_afterFirstSpinPhaseOptimization.2.xml" } : new String[] {}));
 
         if (sg == null) {
             // Set asset manager to asset bean

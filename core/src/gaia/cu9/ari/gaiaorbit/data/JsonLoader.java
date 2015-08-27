@@ -12,6 +12,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
 
+import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.files.FileHandle;
 import com.badlogic.gdx.utils.JsonReader;
 import com.badlogic.gdx.utils.JsonValue;
 import com.badlogic.gdx.utils.JsonValue.ValueType;
@@ -47,7 +49,8 @@ public class JsonLoader<T extends SceneGraphNode> implements ISceneGraphLoader {
         try {
             JsonReader json = new JsonReader();
             for (String filePath : filePaths) {
-                JsonValue model = json.parse(FileLocator.getStream(filePath));
+                FileHandle file = Gdx.files.internal(filePath);
+                JsonValue model = json.parse(file.read());
                 JsonValue child = model.get("objects").child;
                 int size = 0;
                 while (child != null) {

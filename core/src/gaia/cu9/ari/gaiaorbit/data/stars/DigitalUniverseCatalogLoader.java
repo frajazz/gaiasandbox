@@ -1,6 +1,5 @@
 package gaia.cu9.ari.gaiaorbit.data.stars;
 
-import gaia.cu9.ari.gaiaorbit.data.FileLocator;
 import gaia.cu9.ari.gaiaorbit.scenegraph.CelestialBody;
 import gaia.cu9.ari.gaiaorbit.scenegraph.Star;
 import gaia.cu9.ari.gaiaorbit.util.I18n;
@@ -16,6 +15,9 @@ import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.files.FileHandle;
+
 public class DigitalUniverseCatalogLoader extends AbstractCatalogLoader implements ISceneGraphLoader {
     private static final String separator = "\\s+";
 
@@ -27,13 +29,10 @@ public class DigitalUniverseCatalogLoader extends AbstractCatalogLoader implemen
     public List<CelestialBody> loadData() throws FileNotFoundException {
         List<CelestialBody> stars = new ArrayList<CelestialBody>();
         InputStream data = null;
-        for (String file : files) {
-            Logger.info(this.getClass().getSimpleName(), I18n.bundle.format("notif.datafile", file));
-            try {
-                data = FileLocator.getStream(file);
-            } catch (FileNotFoundException e) {
-                Logger.error(e);
-            }
+        for (String f : files) {
+            Logger.info(this.getClass().getSimpleName(), I18n.bundle.format("notif.datafile", f));
+            FileHandle file = Gdx.files.internal(f);
+            data = file.read();
             BufferedReader br = new BufferedReader(new InputStreamReader(data));
 
             try {

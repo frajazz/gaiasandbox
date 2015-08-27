@@ -1,6 +1,5 @@
 package gaia.cu9.ari.gaiaorbit.data.stars;
 
-import gaia.cu9.ari.gaiaorbit.data.FileLocator;
 import gaia.cu9.ari.gaiaorbit.scenegraph.Star;
 import gaia.cu9.ari.gaiaorbit.util.Constants;
 import gaia.cu9.ari.gaiaorbit.util.GlobalConf;
@@ -19,6 +18,9 @@ import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.files.FileHandle;
+
 /**
  * Loads the HYG catalog in CSV format
  * @author Toni Sagrista
@@ -31,14 +33,11 @@ public class HYGCSVLoader extends AbstractCatalogLoader implements ISceneGraphLo
     public List<Star> loadData() throws FileNotFoundException {
         List<Star> stars = new ArrayList<Star>();
         InputStream data = null;
-        for (String file : files) {
-            try {
-                data = FileLocator.getStream(file);
-            } catch (FileNotFoundException e) {
-                Logger.error(e);
-            }
+        for (String f : files) {
+            FileHandle file = Gdx.files.internal(f);
+            data = file.read();
             BufferedReader br = new BufferedReader(new InputStreamReader(data));
-            Logger.info(this.getClass().getSimpleName(), I18n.bundle.format("notif.datafile", file));
+            Logger.info(this.getClass().getSimpleName(), I18n.bundle.format("notif.datafile", f));
 
             try {
                 //Skip first line

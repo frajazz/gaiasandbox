@@ -1,6 +1,5 @@
 package gaia.cu9.ari.gaiaorbit.desktop.data;
 
-import gaia.cu9.ari.gaiaorbit.data.FileLocator;
 import gaia.cu9.ari.gaiaorbit.data.octreegen.BrightestStars;
 import gaia.cu9.ari.gaiaorbit.data.octreegen.MetadataBinaryIO;
 import gaia.cu9.ari.gaiaorbit.data.octreegen.OctreeGenerator;
@@ -26,6 +25,9 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.List;
 
+import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.backends.lwjgl.LwjglFiles;
+
 public class OctreeGeneratorTest implements IObserver {
 
     public static enum Operation {
@@ -48,7 +50,7 @@ public class OctreeGeneratorTest implements IObserver {
                 generateOctree();
                 break;
             case LOAD_OCTREE:
-                FileLocator.initialize();
+                Gdx.files = new LwjglFiles();
                 loadOctree();
                 break;
             }

@@ -1,6 +1,5 @@
 package gaia.cu9.ari.gaiaorbit.desktop.data;
 
-import gaia.cu9.ari.gaiaorbit.data.FileLocator;
 import gaia.cu9.ari.gaiaorbit.data.stars.HYGBinaryLoader;
 import gaia.cu9.ari.gaiaorbit.data.stars.HYGCSVLoader;
 import gaia.cu9.ari.gaiaorbit.desktop.util.DesktopConfInit;
@@ -20,6 +19,9 @@ import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.List;
+
+import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.backends.lwjgl.LwjglFiles;
 
 /**
  * Small utility to convert a the HYG CSV catalog to binary in the following format:
@@ -43,8 +45,8 @@ public class HYGToBinary implements IObserver {
     public static void main(String[] args) {
         HYGToBinary hyg = new HYGToBinary();
         EventManager.instance.subscribe(hyg, Events.POST_NOTIFICATION, Events.JAVA_EXCEPTION);
+        Gdx.files = new LwjglFiles();
 
-        FileLocator.initialize();
         I18n.initialize("/home/tsagrista/git/gaiasandbox/android/assets/i18n/gsbundle");
 
         try {

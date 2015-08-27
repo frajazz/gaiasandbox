@@ -3,6 +3,7 @@ package gaia.cu9.ari.gaiaorbit.util.gaia;
 import gaia.cu9.ari.gaiaorbit.event.EventManager;
 import gaia.cu9.ari.gaiaorbit.event.Events;
 import gaia.cu9.ari.gaiaorbit.util.BinarySearchTree;
+import gaia.cu9.ari.gaiaorbit.util.GlobalConf;
 import gaia.cu9.ari.gaiaorbit.util.I18n;
 import gaia.cu9.ari.gaiaorbit.util.format.DateFormatFactory;
 import gaia.cu9.ari.gaiaorbit.util.format.IDateFormat;
@@ -10,8 +11,6 @@ import gaia.cu9.ari.gaiaorbit.util.math.Quaterniond;
 
 import java.util.Calendar;
 import java.util.Date;
-
-import com.badlogic.gdx.files.FileHandle;
 
 /**
  * Provides caching of the last Nsl37 attitude requested.
@@ -28,6 +27,7 @@ public class GaiaAttitudeServer {
     private BinarySearchTree attitudes;
     // Dummy attitude for launch sequence
     Attitude dummyAttitude;
+    Nsl37 nsl;
 
     // The previous attitude
     AttitudeIntervalBean prevAttitude = null, current;
@@ -35,12 +35,13 @@ public class GaiaAttitudeServer {
     // The first activation date
     Date initialDate;
 
-    public GaiaAttitudeServer(FileHandle xmlFolder) {
-        attitudes = AttitudeXmlParser.parseFolder(xmlFolder);
+    public GaiaAttitudeServer(String folder, String... files) {
+        attitudes = AttitudeXmlParser.parseFolder(folder, GlobalConf.runtime.STRIPPED_FOV_MODE, files);
         initialDate = ((AttitudeIntervalBean) attitudes.findMin()).activationTime;
         current = new AttitudeIntervalBean("current", null, null, "dummy");
         // Dummy attitude
         dummyAttitude = new ConcreteAttitude(0, new Quaterniond(), false);
+        nsl = new Nsl37();
     }
 
     private Date getDate(String date) {
@@ -63,6 +64,7 @@ public class GaiaAttitudeServer {
      * @return
      */
     public synchronized Attitude getAttitude(Date date) {
+
         // Find AttitudeType in timeSlots
         if (date.before(initialDate)) {
             return dummyAttitude;

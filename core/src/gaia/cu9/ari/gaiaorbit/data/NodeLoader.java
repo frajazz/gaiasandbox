@@ -14,6 +14,7 @@ import java.util.List;
 import java.util.Properties;
 
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.files.FileHandle;
 import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.utils.reflect.ClassReflection;
 import com.badlogic.gdx.utils.reflect.Method;
@@ -38,7 +39,8 @@ public class NodeLoader<T extends SceneGraphNode> implements ISceneGraphLoader {
         Properties p = new Properties();
         try {
             for (String filePath : filePaths) {
-                p.load(FileLocator.getStream(filePath));
+                FileHandle file = Gdx.files.internal(filePath);
+                p.load(file.read());
                 String[] pnames = p.getProperty("entities.all").split("\\s+");
 
                 for (String pname : pnames) {

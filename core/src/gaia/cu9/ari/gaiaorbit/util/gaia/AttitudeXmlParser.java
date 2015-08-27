@@ -7,13 +7,11 @@ import gaia.cu9.ari.gaiaorbit.util.Logger;
 import gaia.cu9.ari.gaiaorbit.util.coord.AstroUtils;
 import gaia.cu9.ari.gaiaorbit.util.format.DateFormatFactory;
 import gaia.cu9.ari.gaiaorbit.util.format.IDateFormat;
-import gaia.cu9.ari.gaiaorbit.util.gaia.time.Days;
 import gaia.cu9.ari.gaiaorbit.util.gaia.time.Duration;
 import gaia.cu9.ari.gaiaorbit.util.gaia.time.Hours;
+import gaia.cu9.ari.gaiaorbit.util.gaia.time.Secs;
 import gaia.cu9.ari.gaiaorbit.util.units.Quantity;
 
-import java.io.File;
-import java.io.FileFilter;
 import java.io.IOException;
 import java.util.Date;
 import java.util.HashMap;
@@ -22,10 +20,9 @@ import java.util.Set;
 import java.util.SortedMap;
 import java.util.TreeMap;
 
+import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.files.FileHandle;
 import com.badlogic.gdx.utils.XmlReader;
-import com.badlogic.gdx.utils.reflect.ClassReflection;
-import com.badlogic.gdx.utils.reflect.ReflectionException;
 
 /**
  * Parses the XML files with the attitudes and their activaton times into a binary search tree.
@@ -42,23 +39,59 @@ public class AttitudeXmlParser {
         endOfMission = getDate("2019-06-20 06:13:26");
     }
 
-    public static BinarySearchTree parseFolder(FileHandle folder) {
-        final FileHandle[] list = folder.list(new FileFilter() {
-
-            @Override
-            public boolean accept(File pathname) {
-                return pathname.isFile() && pathname.canRead() && pathname.getName().matches("OPS_RSLS_[\\d+][\\w|\\W]*.xml");
+    public static BinarySearchTree parseFolder(String folder, boolean oneDayDuration, String... files) {
+        final FileHandle[] list;
+        if (files == null || files.length == 0) {
+            list = new FileHandle[15];
+            list[0] = Gdx.files.internal(folder + "OPS_RSLS_0021791_rsls_launch_minus_5_weeks_epsl_comm_following.xml");
+            list[1] = Gdx.files.internal(folder + "OPS_RSLS_0021791_rsls_launch_minus_5_weeks_epsl_comm_following_TUNED2014-07-03.xml");
+            list[2] = Gdx.files.internal(folder + "OPS_RSLS_0022916_rsls_nsl_gareq1_afterFirstSpinPhaseOptimization.2.xml");
+            list[3] = Gdx.files.internal(folder + "OPS_RSLS_0023024_rsls_tsl_ecliptic_pole_scanning.xml");
+            list[4] = Gdx.files.internal(folder + "OPS_RSLS_0023165_rsls_nls_comm_gps_may2014.xml");
+            list[5] = Gdx.files.internal(folder + "OPS_RSLS_0023768_sa42deg_corrn.xml");
+            list[6] = Gdx.files.internal(folder + "OPS_RSLS_0024158.xml");
+            list[7] = Gdx.files.internal(folder + "OPS_RSLS_0026136_NSL_TUNEDfor2014-05-01.xml");
+            list[8] = Gdx.files.internal(folder + "OPS_RSLS_0026139_EPSL-P_TUNEDfor2014-03-12.xml");
+            list[9] = Gdx.files.internal(folder + "OPS_RSLS_0026141_EPSL-P_TUNEDfor2014-03-12.xml");
+            list[10] = Gdx.files.internal(folder + "OPS_RSLS_0026624_EPSL-P_TUNEDfor2014-05-09.xml");
+            list[11] = Gdx.files.internal(folder + "OPS_RSLS_0026767_EPSL-P_TUNEDfor2014-06-02.xml");
+            list[12] = Gdx.files.internal(folder + "OPS_RSLS_0026877_EPSL-F_TUNEDfor2014-06-06.xml");
+            list[13] = Gdx.files.internal(folder + "OPS_RSLS_0028463_epsl_following_FIXED_20140909.xml");
+            list[14] = Gdx.files.internal(folder + "OPS_RSLS_0028750_rsls_epsl_comm_leading_nsl_cont_corrected.xml");
+        } else {
+            list = new FileHandle[files.length];
+            int i = 0;
+            for (String file : files) {
+                list[i] = Gdx.files.internal(folder + file);
+                i++;
             }
-        });
+        }
 
         BinarySearchTree bst = new BinarySearchTree();
 
+        final long overlapMs = 10 * 60 * 1000;
+        final long threeHoursSec = 10800;
         // GENERATE LIST OF DURATIONS
         SortedMap<Date, FileHandle> datesMap = new TreeMap<Date, FileHandle>();
         for (FileHandle fh : list) {
             try {
-                Date date = parseActivationTime(fh);
-                datesMap.put(date, fh);
+                if (oneDayDuration) {
+                    /** 
+                     * Hack to get the stripped FOV mode to load fast.
+                     * We set the activation time to ten minutes before today starts. 
+                     */
+
+                    Date date = new Date();
+                    date.setMinutes(0);
+                    date.setSeconds(0);
+                    // Date is the start of today. Lets subtract 10 minutes
+                    long time = date.getTime() - overlapMs;
+                    date.setTime(time);
+                    datesMap.put(date, fh);
+                } else {
+                    Date date = parseActivationTime(fh);
+                    datesMap.put(date, fh);
+                }
             } catch (IOException e) {
                 Logger.error(e, I18n.bundle.format("error.file.parse", fh.name()));
             }
@@ -69,23 +102,34 @@ public class AttitudeXmlParser {
         Date lastDate = null;
         for (Date date : dates) {
             if (lastDate != null && lastFH != null) {
-                long elapsed = date.getTime() - lastDate.getTime();
-                Duration d = new Days(elapsed * Constants.MS_TO_H);
-                durationMap.put(lastFH, d);
+                if (oneDayDuration) {
+                    Duration d = new Secs(threeHoursSec + overlapMs * 2 / 1000);
+                    durationMap.put(lastFH, d);
+                } else {
+                    long elapsed = date.getTime() - lastDate.getTime();
+
+                    Duration d = new Hours(elapsed * Constants.MS_TO_H);
+                    durationMap.put(lastFH, d);
+                }
             }
             lastDate = date;
             lastFH = datesMap.get(date);
         }
         // Last element
-        long elapsed = endOfMission.getTime() - lastDate.getTime();
-        Duration d = new Hours(elapsed * Constants.MS_TO_H);
-        durationMap.put(lastFH, d);
+        if (oneDayDuration) {
+            Duration d = new Secs(threeHoursSec + overlapMs * 2 / 1000);
+            durationMap.put(lastFH, d);
+        } else {
+            long elapsed = endOfMission.getTime() - lastDate.getTime();
+            Duration d = new Hours(elapsed * Constants.MS_TO_H);
+            durationMap.put(lastFH, d);
+        }
 
         // PARSE ATTITUDES
         for (FileHandle fh : list) {
             Logger.info(I18n.bundle.format("notif.attitude.loadingfile", fh.name()));
             try {
-                AttitudeIntervalBean att = parseFile(fh, durationMap.get(fh));
+                AttitudeIntervalBean att = parseFile(fh, durationMap.get(fh), findActivationDate(fh, datesMap));
                 bst.insert(att);
             } catch (IOException e) {
                 Logger.error(e, I18n.bundle.format("error.file.parse", fh.name()));
@@ -98,23 +142,29 @@ public class AttitudeXmlParser {
         return bst;
     }
 
+    private static Date findActivationDate(FileHandle fh, SortedMap<Date, FileHandle> datesMap) {
+        Set<Date> keys = datesMap.keySet();
+        for (Date d : keys) {
+            if (datesMap.get(d).equals(fh)) {
+                return d;
+            }
+        }
+        return null;
+    }
+
     private static Date parseActivationTime(FileHandle fh) throws IOException {
-        BaseAttitudeDataServer result = null;
 
         XmlReader reader = new XmlReader();
         XmlReader.Element element = reader.parse(fh);
         XmlReader.Element model = element.getChildByName("model");
 
         /** MODEL ELEMENT **/
-        String name = model.get("name");
-        String className = model.get("classname");
         String activTime = model.get("starttime");
         return getDate(activTime);
     }
 
-    private static AttitudeIntervalBean parseFile(FileHandle fh, Duration duration) throws IOException, ReflectionException {
-
-        BaseAttitudeDataServer result = null;
+    private static AttitudeIntervalBean parseFile(FileHandle fh, Duration duration, Date activationTime) throws IOException {
+        BaseAttitudeDataServer<?> result = null;
 
         XmlReader reader = new XmlReader();
         XmlReader.Element element = reader.parse(fh);
@@ -124,10 +174,7 @@ public class AttitudeXmlParser {
         String name = model.get("name");
         String className = model.get("classname");
         String activTime = model.get("starttime");
-        Date activationTime = getDate(activTime);
         double startTimeNsSince2010 = (AstroUtils.getJulianDate(activationTime) - AstroUtils.JD_J2010) * AstroUtils.DAY_TO_NS;
-
-        Class clazz = ClassReflection.forName(className);
 
         /** SCAN LAW ELEMENT **/
         XmlReader.Element scanlaw = model.getChildByName("scanlaw");
@@ -168,7 +215,7 @@ public class AttitudeXmlParser {
             msl.setRefXi(solarAspectAngle.get(Quantity.Angle.AngleUnit.RAD));
             msl.initialize();
 
-            MslAttitudeDataServer mslDatServ = (MslAttitudeDataServer) ClassReflection.getConstructor(clazz, new Class[] { long.class, Duration.class, ModifiedScanningLaw.class }).newInstance(new Object[] { (long) startTimeNsSince2010, duration, msl });
+            MslAttitudeDataServer mslDatServ = new MslAttitudeDataServer((long) startTimeNsSince2010, duration, msl);
             mslDatServ.initialize();
             result = mslDatServ;
 
@@ -185,7 +232,7 @@ public class AttitudeXmlParser {
         } else if (className.contains("Epsl")) {
 
             Epsl.Mode mode = name.equals("EPSL_F") ? Epsl.Mode.FOLLOWING : Epsl.Mode.PRECEDING;
-            Epsl epsl = (Epsl) ClassReflection.getConstructor(clazz, Epsl.Mode.class).newInstance(mode);
+            Epsl epsl = new Epsl(mode);
 
             epsl.setRefTime((long) refEpochJ2010);
             epsl.setNuRef(precessionPhase.get(Quantity.Angle.AngleUnit.RAD));

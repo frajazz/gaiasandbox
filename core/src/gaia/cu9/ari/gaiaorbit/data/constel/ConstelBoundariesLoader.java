@@ -1,6 +1,5 @@
 package gaia.cu9.ari.gaiaorbit.data.constel;
 
-import gaia.cu9.ari.gaiaorbit.data.FileLocator;
 import gaia.cu9.ari.gaiaorbit.data.stars.ISceneGraphLoader;
 import gaia.cu9.ari.gaiaorbit.render.ComponentType;
 import gaia.cu9.ari.gaiaorbit.scenegraph.ConstellationBoundaries;
@@ -18,6 +17,9 @@ import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.files.FileHandle;
+
 public class ConstelBoundariesLoader<T extends SceneGraphNode> implements ISceneGraphLoader {
     private static final String separator = "\\t";
     private static final boolean LOAD_INTERPOLATED = true;
@@ -34,10 +36,11 @@ public class ConstelBoundariesLoader<T extends SceneGraphNode> implements IScene
         List<ConstellationBoundaries> boundaries = new ArrayList<ConstellationBoundaries>();
         try {
             int n = 0;
-            for (String file : files) {
-                Logger.info(this.getClass().getSimpleName(), I18n.bundle.format("notif.datafile", file));
+            for (String f : files) {
+                Logger.info(this.getClass().getSimpleName(), I18n.bundle.format("notif.datafile", f));
                 // load constellations
-                BufferedReader br = new BufferedReader(new InputStreamReader(FileLocator.getStream(file)));
+                FileHandle file = Gdx.files.internal(f);
+                BufferedReader br = new BufferedReader(new InputStreamReader(file.read()));
                 try {
                     //Skip first line
                     String line;

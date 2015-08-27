@@ -1,6 +1,5 @@
 package gaia.cu9.ari.gaiaorbit.desktop.gui.swing;
 
-import gaia.cu9.ari.gaiaorbit.data.FileLocator;
 import gaia.cu9.ari.gaiaorbit.desktop.GaiaSandboxDesktop;
 import gaia.cu9.ari.gaiaorbit.desktop.gui.swing.callback.Callback;
 import gaia.cu9.ari.gaiaorbit.desktop.gui.swing.callback.CallbackTask;
@@ -363,7 +362,7 @@ public class ConfigDialog extends I18nJFrame {
             @Override
             public void actionPerformed(ActionEvent e) {
                 String selected = (String) theme.getSelectedItem();
-                ImageIcon icon = new ImageIcon(FileLocator.getFileString("img/themes/" + selected + ".png"));
+                ImageIcon icon = new ImageIcon(System.getProperty("assets.location") + "img/themes/" + selected + ".png");
                 sampleImage.setIcon(icon);
             }
         });

@@ -1,6 +1,5 @@
 package gaia.cu9.ari.gaiaorbit.desktop.util;
 
-import gaia.cu9.ari.gaiaorbit.data.FileLocator;
 import gaia.cu9.ari.gaiaorbit.desktop.GaiaSandboxDesktop;
 import gaia.cu9.ari.gaiaorbit.render.ComponentType;
 import gaia.cu9.ari.gaiaorbit.util.CommentedProperties;
@@ -58,7 +57,7 @@ public class DesktopConfInit extends ConfInit {
             InputStream vis = GaiaSandboxDesktop.class.getResourceAsStream("/version");
             if (vis == null) {
                 // In case of running in 'developer' mode
-                vis = new FileInputStream(FileLocator.getFile("data/dummyversion"));
+                vis = new FileInputStream(new File(System.getProperty("assets.location") + "data/dummyversion"));
             }
             vp = new Properties();
             vp.load(vis);

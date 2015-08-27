@@ -1,7 +1,6 @@
 package gaia.cu9.ari.gaiaorbit.desktop;
 
 import gaia.cu9.ari.gaiaorbit.GaiaSandbox;
-import gaia.cu9.ari.gaiaorbit.data.FileLocator;
 import gaia.cu9.ari.gaiaorbit.desktop.concurrent.MultiThreadIndexer;
 import gaia.cu9.ari.gaiaorbit.desktop.format.DesktopDateFormatFactory;
 import gaia.cu9.ari.gaiaorbit.desktop.format.DesktopNumberFormatFactory;
@@ -55,8 +54,6 @@ public class GaiaSandboxDesktop implements IObserver {
 
         try {
             gsd = new GaiaSandboxDesktop();
-            // Init file locator
-            FileLocator.initialize();
 
             // Initialize number format
             NumberFormatFactory.initialize(new DesktopNumberFormatFactory());
@@ -82,7 +79,7 @@ public class GaiaSandboxDesktop implements IObserver {
             // Initialize i18n
             I18n.initialize("./data/i18n/gsbundle");
             // Dev mode
-            I18n.initialize(FileLocator.getFileString("i18n/gsbundle"));
+            I18n.initialize(System.getProperty("assets.location") + "i18n/gsbundle");
 
             // Initialize icons
             IconManager.initialise(new File("./data/ui/"));

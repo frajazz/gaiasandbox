@@ -1,6 +1,5 @@
 package gaia.cu9.ari.gaiaorbit.data.constel;
 
-import gaia.cu9.ari.gaiaorbit.data.FileLocator;
 import gaia.cu9.ari.gaiaorbit.data.stars.ISceneGraphLoader;
 import gaia.cu9.ari.gaiaorbit.render.ComponentType;
 import gaia.cu9.ari.gaiaorbit.scenegraph.Constellation;
@@ -14,6 +13,9 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.List;
+
+import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.files.FileHandle;
 
 public class ConstellationsLoader<T extends SceneGraphNode> implements ISceneGraphLoader {
     private static final String separator = "\\t|,";
@@ -33,7 +35,8 @@ public class ConstellationsLoader<T extends SceneGraphNode> implements ISceneGra
         List<Constellation> constellations = new ArrayList<Constellation>();
         try {
             // load constellations
-            BufferedReader br = new BufferedReader(new InputStreamReader(FileLocator.getStream(dataPath)));
+            FileHandle file = Gdx.files.internal(dataPath);
+            BufferedReader br = new BufferedReader(new InputStreamReader(file.read()));
 
             try {
                 //Skip first line

@@ -1,6 +1,5 @@
 package gaia.cu9.ari.gaiaorbit.data.stars;
 
-import gaia.cu9.ari.gaiaorbit.data.FileLocator;
 import gaia.cu9.ari.gaiaorbit.data.octreegen.MetadataBinaryIO;
 import gaia.cu9.ari.gaiaorbit.data.octreegen.ParticleDataBinaryIO;
 import gaia.cu9.ari.gaiaorbit.scenegraph.CelestialBody;
@@ -20,6 +19,9 @@ import java.io.FileNotFoundException;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.files.FileHandle;
+
 public class OctreeCatalogLoader implements ISceneGraphLoader {
 
     String metadata, particles;
@@ -29,10 +31,12 @@ public class OctreeCatalogLoader implements ISceneGraphLoader {
         Logger.info(this.getClass().getSimpleName(), I18n.bundle.format("notif.limitmag", GlobalConf.data.LIMIT_MAG_LOAD));
 
         MetadataBinaryIO metadataReader = new MetadataBinaryIO();
-        OctreeNode<SceneGraphNode> root = (OctreeNode<SceneGraphNode>) metadataReader.readMetadata(FileLocator.getStream(metadata));
+        FileHandle metadataFile = Gdx.files.internal(metadata);
+        OctreeNode<SceneGraphNode> root = (OctreeNode<SceneGraphNode>) metadataReader.readMetadata(metadataFile.read());
 
         ParticleDataBinaryIO particleReader = new ParticleDataBinaryIO();
-        List<CelestialBody> particleList = particleReader.readParticles(FileLocator.getStream(particles));
+        FileHandle particlesFile = Gdx.files.internal(particles);
+        List<CelestialBody> particleList = particleReader.readParticles(particlesFile.read());
 
         /**
          * CREATE OCTREE WRAPPER WITH ROOT NODE
