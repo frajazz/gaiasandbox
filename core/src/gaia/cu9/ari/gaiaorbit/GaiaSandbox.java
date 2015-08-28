@@ -203,12 +203,14 @@ public class GaiaSandbox implements ApplicationListener, IObserver {
         // Initialize Cameras
         cam = new CameraManager(manager, CameraMode.Focus);
 
+        // Set asset manager to asset bean
+        AssetBean.setAssetManager(manager);
+
         // Initialize Gaia attitudes
         manager.load(ATTITUDE_FOLDER, GaiaAttitudeServer.class, new GaiaAttitudeLoaderParameter(GlobalConf.runtime.STRIPPED_FOV_MODE ? new String[] { "OPS_RSLS_0022916_rsls_nsl_gareq1_afterFirstSpinPhaseOptimization.2.xml" } : new String[] {}));
 
+        /** LOAD SCENE GRAPH **/
         if (sg == null) {
-            // Set asset manager to asset bean
-            AssetBean.setAssetManager(manager);
             manager.load(GlobalConf.data.DATA_JSON_FILE, ISceneGraph.class, new SGLoaderParameter(current, GlobalConf.performance.MULTITHREADING, GlobalConf.performance.NUMBER_THREADS()));
         }
 
@@ -348,10 +350,17 @@ public class GaiaSandbox implements ApplicationListener, IObserver {
         EventManager.instance.subscribe(this, Events.TOGGLE_AMBIENT_LIGHT, Events.AMBIENT_LIGHT_CMD, Events.SCREENSHOT_CMD, Events.FULLSCREEN_CMD);
 
         // Re-enable input
-        EventManager.instance.post(Events.INPUT_ENABLED_CMD, true);
+        if (!GlobalConf.runtime.STRIPPED_FOV_MODE)
+            EventManager.instance.post(Events.INPUT_ENABLED_CMD, true);
+
+        // Set current date
+        EventManager.instance.post(Events.TIME_CHANGE_CMD, new Date());
+
+     // Activate time
+        EventManager.instance.post(Events.TOGGLE_TIME_CMD, true, false);
 
         initialized = true;
-
+        
         // Run tutorial
         if (GlobalConf.program.DISPLAY_TUTORIAL) {
             EventManager.instance.post(Events.RUN_SCRIPT_PATH, "scripts/tutorial/tutorial-pointer.py");
@@ -363,7 +372,7 @@ public class GaiaSandbox implements ApplicationListener, IObserver {
     @Override
     public void dispose() {
 
-        if (!Constants.mobile)
+        if (Constants.desktop)
             ConfInit.instance.persistGlobalConf(new File(System.getProperty("properties.file")));
 
         frameRenderer.flush();

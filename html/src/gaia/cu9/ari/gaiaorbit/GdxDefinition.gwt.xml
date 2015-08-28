@@ -14,11 +14,9 @@
 	
 	<extend-configuration-property name="gdx.reflect.include" value="gaia.cu9.ari.gaiaorbit.interfce.FullGui" />
 	<extend-configuration-property name="gdx.reflect.include" value="gaia.cu9.ari.gaiaorbit.data.stars.HYGBinaryLoader" />
-	<extend-configuration-property name="gdx.reflect.include" value="gaia.cu9.ari.gaiaorbit.data.stars.STILCatalogLoader" />
 	<extend-configuration-property name="gdx.reflect.include" value="gaia.cu9.ari.gaiaorbit.data.stars.OctreeCatalogLoader" />
 	<extend-configuration-property name="gdx.reflect.include" value="gaia.cu9.ari.gaiaorbit.data.JsonLoader" />
-	<extend-configuration-property name="gdx.reflect.include" value="gaia.cu9.ari.gaiaorbit.data.ConstellationsLoader" />
-	<extend-configuration-property name="gdx.reflect.include" value="gaia.cu9.ari.gaiaorbit.data.ConstelBoundariesLoader" />
+	<extend-configuration-property name="gdx.reflect.include" value="gaia.cu9.ari.gaiaorbit.data.constel.ConstellationsLoader" />
+	<extend-configuration-property name="gdx.reflect.include" value="gaia.cu9.ari.gaiaorbit.data.constel.ConstelBoundariesLoader" />
 	
-	<set-configuration-property name="gdx.assetpath" value="../android/assets" />
 </module>

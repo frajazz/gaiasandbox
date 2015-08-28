@@ -10,9 +10,9 @@ import gaia.cu9.ari.gaiaorbit.event.EventManager;
 import gaia.cu9.ari.gaiaorbit.event.Events;
 import gaia.cu9.ari.gaiaorbit.interfce.KeyMappings;
 import gaia.cu9.ari.gaiaorbit.interfce.KeyMappings.ProgramAction;
+import gaia.cu9.ari.gaiaorbit.interfce.TextUtils;
 import gaia.cu9.ari.gaiaorbit.util.ConfInit;
 import gaia.cu9.ari.gaiaorbit.util.GlobalConf;
-import gaia.cu9.ari.gaiaorbit.util.GlobalResources;
 import gaia.cu9.ari.gaiaorbit.util.I18n;
 
 import java.awt.BorderLayout;
@@ -946,7 +946,7 @@ public class ConfigDialog extends I18nJFrame {
         public LangComboBoxBean(Locale locale) {
             super();
             this.locale = locale;
-            this.name = GlobalResources.capitalise(locale.getDisplayName(locale));
+            this.name = TextUtils.capitalise(locale.getDisplayName(locale));
         }
 
         @Override

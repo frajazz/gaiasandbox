@@ -7,24 +7,31 @@ import gaia.cu9.ari.gaiaorbit.util.Constants;
 import gaia.cu9.ari.gaiaorbit.util.GlobalConf;
 import gaia.cu9.ari.gaiaorbit.util.I18n;
 import gaia.cu9.ari.gaiaorbit.util.Logger;
+import gaia.cu9.ari.gaiaorbit.util.coord.Coordinates;
+import gaia.cu9.ari.gaiaorbit.util.math.Vector3d;
 import gaia.cu9.ari.gaiaorbit.util.units.Position;
 import gaia.cu9.ari.gaiaorbit.util.units.Position.PositionType;
 
 import java.io.FileNotFoundException;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
 import uk.ac.starlink.table.ColumnInfo;
 import uk.ac.starlink.table.StarTable;
 import uk.ac.starlink.table.StarTableFactory;
+import uk.ac.starlink.table.TableSequence;
+import uk.ac.starlink.util.DataSource;
+import uk.ac.starlink.util.FileDataSource;
 
-public class STILCatalogLoader extends AbstractCatalogLoader implements ISceneGraphLoader {
+public class STILCatalogLoader implements ISceneGraphLoader {
 
-    @Override
+    String files[];
+
     public void initialize(String[] files) throws RuntimeException {
-        super.initialize(files);
+        this.files = files;
     }
 
     @Override
@@ -40,7 +47,21 @@ public class STILCatalogLoader extends AbstractCatalogLoader implements ISceneGr
             try {
                 Map<String, ColumnInfo> ucds = new HashMap<String, ColumnInfo>();
                 Map<String, Integer> ucdsi = new HashMap<String, Integer>();
-                StarTable table = factory.makeStarTable(file);
+                DataSource ds = new FileDataSource(file);
+                TableSequence ts = factory.makeStarTables(ds);
+                // Find table
+                List<StarTable> tables = new LinkedList<StarTable>();
+                StarTable table = null;
+                long maxElems = 0;
+                for (StarTable t; (t = ts.nextTable()) != null;) {
+                    tables.add(t);
+                    if (t.getRowCount() > maxElems) {
+                        maxElems = t.getRowCount();
+                        table = t;
+                    }
+                }
+                Logger.info(this.getClass().getSimpleName(), "Selected table " + table.getName() + ": " + table.getRowCount() + " elements");
+
                 int count = table.getColumnCount();
                 ColumnInfo[] colInfo = new ColumnInfo[count];
                 for (int i = 0; i < count; i++) {
@@ -161,6 +182,9 @@ public class STILCatalogLoader extends AbstractCatalogLoader implements ISceneGr
                     Position p = new Position(a, ac.getUnitString(), b, bc.getUnitString(), c, cc.getUnitString(), type);
                     double dist = p.gsposition.len();
                     p.gsposition.scl(Constants.PC_TO_U);
+                    // Find out RA/DEC/Dist
+                    Vector3d sph = new Vector3d();
+                    Coordinates.cartesianToSpherical(p.gsposition, sph);
 
                     float mag = ((Number) row[magi]).floatValue();
                     float absmag = ((Number) row[abmagi]).floatValue();
@@ -175,9 +199,9 @@ public class STILCatalogLoader extends AbstractCatalogLoader implements ISceneGr
                     CelestialBody s = null;
                     if (dist > 2.2e5) {
                         // Galaxy
-                        s = new Particle(p.gsposition, mag, absmag, color, idstr, id);
+                        s = new Particle(p.gsposition, mag, absmag, color, idstr, (float) Math.toDegrees(sph.x), (float) Math.toDegrees(sph.y), id.intValue());
                     } else {
-                        s = new Star(p.gsposition, mag, absmag, color, idstr, id);
+                        s = new Star(p.gsposition, mag, absmag, color, idstr, (float) Math.toDegrees(sph.x), (float) Math.toDegrees(sph.y), id.intValue());
                     }
                     s.initialize();
                     result.add(s);

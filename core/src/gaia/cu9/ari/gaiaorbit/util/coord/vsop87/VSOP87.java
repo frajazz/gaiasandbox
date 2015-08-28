@@ -1,6 +1,6 @@
 package gaia.cu9.ari.gaiaorbit.util.coord.vsop87;
 
-import gaia.cu9.ari.gaiaorbit.util.GlobalResources;
+import gaia.cu9.ari.gaiaorbit.interfce.TextUtils;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -27,7 +27,7 @@ public class VSOP87 {
         if (!tried.containsKey(cb) || !tried.get(cb)) {
             // Initialize
             String pkg = "gaia.cu9.ari.gaiaorbit.util.coord.vsop87.";
-            String name = GlobalResources.trueCapitalise(cb) + "VSOP87";
+            String name = TextUtils.trueCapitalise(cb) + "VSOP87";
             Class<?> clazz = null;
             try {
                 clazz = ClassReflection.forName(pkg + name);

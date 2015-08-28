@@ -315,7 +315,7 @@ public class GlobalConf {
         public boolean FULLSCREEN;
         public boolean RESIZABLE;
         public boolean VSYNC;
-        public boolean SCREEN_OUTPUT;
+        public boolean SCREEN_OUTPUT = true;
 
         public void initialize(int sCREEN_WIDTH, int sCREEN_HEIGHT, int fULLSCREEN_WIDTH, int fULLSCREEN_HEIGHT, boolean fULLSCREEN, boolean rESIZABLE, boolean vSYNC, boolean sCREEN_OUTPUT) {
             SCREEN_WIDTH = sCREEN_WIDTH;
@@ -576,7 +576,7 @@ public class GlobalConf {
                 break;
 
             case STAR_BRIGHTNESS_CMD:
-                STAR_BRIGHTNESS = (float) data[0];
+                STAR_BRIGHTNESS = Math.max(0.01f, (float) data[0]);
                 break;
             case FOV_CHANGED_CMD:
                 CAMERA_FOV = MathUtilsd.clamp(((Float) data[0]).intValue(), Constants.MIN_FOV, Constants.MAX_FOV);

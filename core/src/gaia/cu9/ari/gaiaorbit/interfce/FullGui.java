@@ -1,18 +1,17 @@
 package gaia.cu9.ari.gaiaorbit.interfce;
 
+import gaia.cu9.ari.gaiaorbit.GaiaSandbox;
 import gaia.cu9.ari.gaiaorbit.event.EventManager;
 import gaia.cu9.ari.gaiaorbit.event.Events;
 import gaia.cu9.ari.gaiaorbit.event.IObserver;
 import gaia.cu9.ari.gaiaorbit.interfce.components.VisualEffectsComponent;
 import gaia.cu9.ari.gaiaorbit.render.ComponentType;
-import gaia.cu9.ari.gaiaorbit.scenegraph.CameraManager.CameraMode;
 import gaia.cu9.ari.gaiaorbit.scenegraph.ISceneGraph;
+import gaia.cu9.ari.gaiaorbit.util.Constants;
 import gaia.cu9.ari.gaiaorbit.util.GlobalConf;
 import gaia.cu9.ari.gaiaorbit.util.GlobalResources;
 import gaia.cu9.ari.gaiaorbit.util.I18n;
 import gaia.cu9.ari.gaiaorbit.util.Logger;
-import gaia.cu9.ari.gaiaorbit.util.format.INumberFormat;
-import gaia.cu9.ari.gaiaorbit.util.format.NumberFormatFactory;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.assets.AssetManager;
@@ -27,6 +26,9 @@ import com.badlogic.gdx.scenes.scene2d.ui.ScrollPane;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.scenes.scene2d.ui.TextField;
 import com.badlogic.gdx.utils.Align;
+import com.badlogic.gdx.utils.reflect.ClassReflection;
+import com.badlogic.gdx.utils.reflect.Method;
+import com.badlogic.gdx.utils.reflect.ReflectionException;
 import com.badlogic.gdx.utils.viewport.ScreenViewport;
 
 /**
@@ -41,36 +43,25 @@ public class FullGui implements IGui, IObserver {
      */
     protected Stage ui;
 
-    protected ControlsWindow optionsWindow;
-
-    protected SearchDialog searchDialog;
-    protected VisualEffectsComponent visualEffectsWindow;
+    protected ControlsWindow controlsWindow;
 
     protected Container<FocusInfoInterface> fi;
     protected FocusInfoInterface focusInterface;
     protected NotificationsInterface notificationsInterface;
     protected MessagesInterface messagesInterface;
     protected DebugInterface debugInterface;
-    protected ScriptStateInterface inputInterface;
     protected CustomInterface customInterface;
+    protected Container<WebGLInterface> wgl;
+    protected WebGLInterface webglInterface;
 
-    /**
-     * Number formats
-     */
-    private INumberFormat format, sformat;
+    protected SearchDialog searchDialog;
+    protected VisualEffectsComponent visualEffectsComponent;
 
-    /**
-     * The scene graph
-     */
-    private ISceneGraph sg;
-
-    /**
-     * Entities that will go in the visibility check boxes
-     */
+    protected ISceneGraph sg;
     private ComponentType[] visibilityEntities;
     private boolean[] visible;
 
-    /** Lock object for synchronization **/
+    /** Lock object for synchronisation **/
     private Object lock;
 
     public void setSceneGraph(ISceneGraph sg) {
@@ -95,37 +86,35 @@ public class FullGui implements IGui, IObserver {
         Logger.info(txt("notif.gui.init"));
 
         skin = GlobalResources.skin;
-        format = NumberFormatFactory.getFormatter("0.0###");
-        sformat = NumberFormatFactory.getFormatter("0.###E0");
 
         buildGui();
 
         // We must subscribe to the desired events
-        EventManager.instance.subscribe(this, Events.FOV_CHANGED_CMD, Events.CAMERA_MODE_CMD, Events.SHOW_TUTORIAL_ACTION, Events.SHOW_SEARCH_ACTION, Events.REMOVE_KEYBOARD_FOCUS);
+        EventManager.instance.subscribe(this, Events.FOV_CHANGED_CMD, Events.SHOW_TUTORIAL_ACTION, Events.SHOW_SEARCH_ACTION, Events.REMOVE_KEYBOARD_FOCUS, Events.REMOVE_GUI_COMPONENT, Events.ADD_GUI_COMPONENT);
     }
 
     private void buildGui() {
-        /** OPTIONS WINDOW **/
-        optionsWindow = new ControlsWindow(txt("gui.controls"), skin, ui);
-        optionsWindow.setVisibilityToggles(visibilityEntities, visible);
-        optionsWindow.setSceneGraph(sg);
-        optionsWindow.initialize();
-        optionsWindow.left();
-        optionsWindow.getTitleTable().align(Align.left);
-        optionsWindow.setFillParent(false);
-        optionsWindow.setMovable(true);
-        optionsWindow.setResizable(false);
-        optionsWindow.padRight(5);
-        optionsWindow.padBottom(5);
+        // Component types name init
+        for (ComponentType ct : ComponentType.values()) {
+            ct.getName();
+        }
+
+        if (Constants.webgl) {
+            // WEBGL INTERFACE - TOP LEFT
+            addWebglInterface();
+        } else {
+            // CONTROLS WINDOW
+            addControlsWindow();
+        }
 
         // FOCUS INFORMATION - BOTTOM RIGHT
-        focusInterface = new FocusInfoInterface(skin, format, sformat);
+        focusInterface = new FocusInfoInterface(skin);
         //focusInterface.setFillParent(true);
         focusInterface.left().top();
         fi = new Container<FocusInfoInterface>(focusInterface);
         fi.setFillParent(true);
         fi.bottom().right();
-        fi.padBottom(10).padRight(10);
+        fi.pad(0, 0, 10, 10);
 
         // DEBUG INFO - TOP RIGHT
         debugInterface = new DebugInterface(skin, lock);
@@ -145,23 +134,16 @@ public class FullGui implements IGui, IObserver {
         messagesInterface.left().bottom();
         messagesInterface.pad(0, 300, 150, 0);
 
-        // INPUT STATE
-        inputInterface = new ScriptStateInterface(skin);
-        inputInterface.setFillParent(true);
-        inputInterface.right().top();
-        inputInterface.pad(100, 0, 0, 5);
-
         // CUSTOM OBJECTS INTERFACE
         customInterface = new CustomInterface(ui, skin, lock);
 
         /** ADD TO UI **/
         rebuildGui();
-        optionsWindow.collapse();
+        //controls.collapse();
     }
 
     public void recalculateOptionsSize() {
-        optionsWindow.recalculateSize();
-
+        controlsWindow.recalculateSize();
     }
 
     private void rebuildGui() {
@@ -169,25 +151,25 @@ public class FullGui implements IGui, IObserver {
         if (ui != null) {
             ui.clear();
             boolean collapsed = false;
-            if (optionsWindow != null) {
-                collapsed = optionsWindow.isCollapsed();
+            if (controlsWindow != null) {
+                collapsed = controlsWindow.isCollapsed();
                 recalculateOptionsSize();
                 if (collapsed)
-                    optionsWindow.collapse();
-                optionsWindow.setPosition(0, Gdx.graphics.getHeight() - optionsWindow.getHeight());
-                ui.addActor(optionsWindow);
+                    controlsWindow.collapse();
+                controlsWindow.setPosition(0, Gdx.graphics.getHeight() - controlsWindow.getHeight());
+                ui.addActor(controlsWindow);
             }
+            if (webglInterface != null)
+                ui.addActor(wgl);
             if (debugInterface != null)
                 ui.addActor(debugInterface);
             if (notificationsInterface != null)
                 ui.addActor(notificationsInterface);
             if (messagesInterface != null)
                 ui.addActor(messagesInterface);
-            if (focusInterface != null)
+            if (focusInterface != null && !GlobalConf.runtime.STRIPPED_FOV_MODE)
                 ui.addActor(fi);
-            if (inputInterface != null) {
-                ui.addActor(inputInterface);
-            }
+
             if (customInterface != null) {
                 customInterface.reAddObjects();
             }
@@ -201,12 +183,13 @@ public class FullGui implements IGui, IObserver {
                         InputEvent ie = (InputEvent) event;
 
                         if (ie.getType() == Type.mouseMoved) {
-                            if (ie.getTarget().isDescendantOf(optionsWindow)) {
-                                Actor scrollPanelAncestor = getScrollPanelAncestor(ie.getTarget());
-                                ui.setScrollFocus(scrollPanelAncestor);
-                            } else {
-                                ui.setScrollFocus(optionsWindow);
-
+                            if (controlsWindow != null) {
+                                if (ie.getTarget().isDescendantOf(controlsWindow)) {
+                                    Actor scrollPanelAncestor = getScrollPanelAncestor(ie.getTarget());
+                                    ui.setScrollFocus(scrollPanelAncestor);
+                                } else {
+                                    ui.setScrollFocus(controlsWindow);
+                                }
                             }
                         } else if (ie.getType() == Type.touchDown) {
                             if (ie.getTarget() instanceof TextField)
@@ -269,15 +252,7 @@ public class FullGui implements IGui, IObserver {
     @Override
     public void notify(Events event, Object... data) {
         switch (event) {
-        case CAMERA_MODE_CMD:
-            // Update camera mode selection
-            CameraMode mode = (CameraMode) data[0];
-            if (mode.equals(CameraMode.Focus)) {
-                focusInterface.displayFocusInfo();
-            } else {
-                focusInterface.hideFocusInfo();
-            }
-            break;
+
         case SHOW_TUTORIAL_ACTION:
             EventManager.instance.post(Events.RUN_SCRIPT_PATH, GlobalConf.program.TUTORIAL_SCRIPT_LOCATION);
             break;
@@ -291,6 +266,28 @@ public class FullGui implements IGui, IObserver {
             break;
         case REMOVE_KEYBOARD_FOCUS:
             ui.setKeyboardFocus(null);
+            break;
+        case REMOVE_GUI_COMPONENT:
+            String name = (String) data[0];
+            String method = "remove" + TextUtils.capitalise(name);
+            try {
+                Method m = ClassReflection.getMethod(this.getClass(), method);
+                m.invoke(this);
+            } catch (ReflectionException e) {
+                Logger.error(e);
+            }
+            rebuildGui();
+            break;
+        case ADD_GUI_COMPONENT:
+            name = (String) data[0];
+            method = "add" + TextUtils.capitalise(name);
+            try {
+                Method m = ClassReflection.getMethod(this.getClass(), method);
+                m.invoke(this);
+            } catch (ReflectionException e) {
+                Logger.error(e);
+            }
+            rebuildGui();
             break;
         }
 
@@ -336,5 +333,43 @@ public class FullGui implements IGui, IObserver {
 
     private String txt(String key, Object... params) {
         return I18n.bundle.format(key, params);
+    }
+
+    public void removeWebglInterface() {
+        if (webglInterface != null) {
+            webglInterface.remove();
+            webglInterface = null;
+            wgl.remove();
+            wgl = null;
+        }
+    }
+
+    public void addWebglInterface() {
+        webglInterface = new WebGLInterface(skin, GaiaSandbox.instance.current);
+        wgl = new Container<WebGLInterface>(webglInterface);
+        wgl.setFillParent(true);
+        wgl.left().bottom();
+        wgl.pad(0, 5, 45, 0);
+    }
+
+    public void removeControlsWindow() {
+        if (controlsWindow != null) {
+            controlsWindow.remove();
+            controlsWindow = null;
+        }
+    }
+
+    public void addControlsWindow() {
+        controlsWindow = new ControlsWindow(txt("gui.controls"), skin, ui);
+        controlsWindow.setSceneGraph(sg);
+        controlsWindow.setVisibilityToggles(visibilityEntities, visible);
+        controlsWindow.initialize();
+        controlsWindow.left();
+        controlsWindow.getTitleTable().align(Align.left);
+        controlsWindow.setFillParent(false);
+        controlsWindow.setMovable(true);
+        controlsWindow.setResizable(false);
+        controlsWindow.padRight(5);
+        controlsWindow.padBottom(5);
     }
 }

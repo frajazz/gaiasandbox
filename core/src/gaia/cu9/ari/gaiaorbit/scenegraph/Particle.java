@@ -5,7 +5,6 @@ import gaia.cu9.ari.gaiaorbit.render.IPointRenderable;
 import gaia.cu9.ari.gaiaorbit.util.Constants;
 import gaia.cu9.ari.gaiaorbit.util.GlobalConf;
 import gaia.cu9.ari.gaiaorbit.util.color.ColourUtils;
-import gaia.cu9.ari.gaiaorbit.util.math.Vector2d;
 import gaia.cu9.ari.gaiaorbit.util.math.Vector3d;
 import gaia.cu9.ari.gaiaorbit.util.time.ITimeFrameProvider;
 import gaia.cu9.ari.gaiaorbit.util.tree.OctreeNode;
@@ -15,6 +14,7 @@ import java.util.Random;
 import com.badlogic.gdx.assets.AssetManager;
 import com.badlogic.gdx.graphics.g3d.ModelBatch;
 import com.badlogic.gdx.graphics.glutils.ImmediateModeRenderer;
+import com.badlogic.gdx.math.Vector2;
 
 /**
  * A point particle which may represent a star, a galaxy, etc.
@@ -24,6 +24,7 @@ import com.badlogic.gdx.graphics.glutils.ImmediateModeRenderer;
 public class Particle extends CelestialBody implements IPointRenderable {
 
     private static final float DISC_FACTOR = 1.5f;
+    private static final float LABEL_FACTOR = Constants.webgl ? 3f : 1f;
 
     private static ThreadLocal<Random> rnd = new ThreadLocal<Random>() {
         @Override
@@ -79,7 +80,7 @@ public class Particle extends CelestialBody implements IPointRenderable {
      * @param name The label or name.
      * @param starid The star unique id.
      */
-    public Particle(Vector3d pos, float appmag, float absmag, float colorbv, String name, long starid) {
+    public Particle(Vector3d pos, float appmag, float absmag, float colorbv, String name, int starid) {
         this();
         this.pos = pos;
         this.name = name;
@@ -94,9 +95,9 @@ public class Particle extends CelestialBody implements IPointRenderable {
         }
     }
 
-    public Particle(Vector3d pos, float appmag, float absmag, float colorbv, String name, double ra, double dec, long starid) {
+    public Particle(Vector3d pos, float appmag, float absmag, float colorbv, String name, float ra, float dec, int starid) {
         this(pos, appmag, absmag, colorbv, name, starid);
-        this.posSph = new Vector2d(ra, dec);
+        this.posSph = new Vector2(ra, dec);
 
     }
 
@@ -222,7 +223,7 @@ public class Particle extends CelestialBody implements IPointRenderable {
 
     @Override
     public float labelSizeConcrete() {
-        return (float) computedSize;
+        return (float) computedSize * LABEL_FACTOR;
     }
 
     @Override

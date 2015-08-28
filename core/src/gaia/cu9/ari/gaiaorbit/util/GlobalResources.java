@@ -1,5 +1,6 @@
 package gaia.cu9.ari.gaiaorbit.util;
 
+import gaia.cu9.ari.gaiaorbit.interfce.TextUtils;
 import gaia.cu9.ari.gaiaorbit.util.coord.AstroUtils;
 import gaia.cu9.ari.gaiaorbit.util.format.INumberFormat;
 import gaia.cu9.ari.gaiaorbit.util.format.NumberFormatFactory;
@@ -25,8 +26,6 @@ public class GlobalResources {
     public static Pixmap linkCursor;
     /** The global skin **/
     public static Skin skin;
-    /** Number formats **/
-    public static INumberFormat oneDecimalFormat, twoDecimalsFormat;
 
     /**
      * Model for atmosphere scattering
@@ -37,10 +36,6 @@ public class GlobalResources {
 
         // Sprite batch
         spriteBatch = new SpriteBatch();
-
-        // Number formats
-        oneDecimalFormat = NumberFormatFactory.getFormatter("#######0.0");
-        twoDecimalsFormat = NumberFormatFactory.getFormatter("#######0.0#");
 
         // Create skin right now, it is needed.
         skin = new Skin(Gdx.files.internal("skins/" + GlobalConf.program.UI_THEME + ".json"));
@@ -65,27 +60,9 @@ public class GlobalResources {
         String[] parts = property.split("\\.");
         StringBuilder b = new StringBuilder();
         for (String part : parts) {
-            b.append(capitalise(part));
+            b.append(TextUtils.capitalise(part));
         }
         return b.toString();
-    }
-
-    /**
-     * Returns the given string with the first letter capitalised
-     * @param line
-     * @return
-     */
-    public static String capitalise(String line) {
-        return Character.toUpperCase(line.charAt(0)) + line.substring(1);
-    }
-
-    /**
-     * Returns the given string with the first letter capitalised and all the others in lower case.
-     * @param line
-     * @return
-     */
-    public static String trueCapitalise(String line) {
-        return Character.toUpperCase(line.charAt(0)) + line.substring(1).toLowerCase();
     }
 
     /**

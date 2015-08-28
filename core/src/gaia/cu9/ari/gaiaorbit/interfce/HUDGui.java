@@ -58,7 +58,7 @@ public class HUDGui implements IGui {
 
     private void initialize() {
         // FOCUS INFORMATION - BOTTOM RIGHT
-        focusInterface = new FocusInfoInterface(skin, format, sformat);
+        focusInterface = new FocusInfoInterface(skin);
         focusInterface.setFillParent(true);
         focusInterface.right().bottom();
         focusInterface.pad(0, 0, 5, 5);

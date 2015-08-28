@@ -101,7 +101,7 @@ public class HYGCSVLoader extends AbstractCatalogLoader implements ISceneGraphLo
                 ad += 213;
             }
 
-            Star star = new Star(pos, appmag, absmag, colorbv, name, ra, dec, starid);
+            Star star = new Star(pos, appmag, absmag, colorbv, name, (float) ra, (float) dec, (int) starid);
             stars.add(star);
         }
     }

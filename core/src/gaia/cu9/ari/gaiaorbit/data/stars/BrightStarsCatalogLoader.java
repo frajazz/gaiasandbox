@@ -68,7 +68,7 @@ public class BrightStarsCatalogLoader extends AbstractCatalogLoader implements I
         Vector3d pos = Coordinates.sphericalToCartesian(ra, dec, dist, new Vector3d());
         float absmag = Float.parseFloat(st[3]);
         String name = (st.length == 6 ? st[5].substring(1, st[5].length() - 1) : null);
-        Star star = new Star(pos, absmag, absmag, 0, name, ra, dec, 0l);
+        Star star = new Star(pos, absmag, absmag, 0, name, (float) ra, (float) dec, 0);
         stars.add(star);
     }
 

@@ -13,6 +13,7 @@ import com.badlogic.gdx.assets.AssetManager;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.glutils.ShaderProgram;
+import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.utils.Pool;
 import com.badlogic.gdx.utils.Pools;
@@ -41,7 +42,7 @@ public abstract class AbstractPositionEntity extends SceneGraphNode {
     /**
      * Position in the equatorial system; ra, dec.
      */
-    public Vector2d posSph;
+    public Vector2 posSph;
 
     /**
      * Size factor in units
@@ -73,14 +74,14 @@ public abstract class AbstractPositionEntity extends SceneGraphNode {
         super();
         // Positions
         pos = new Vector3d();
-        posSph = new Vector2d();
+        posSph = new Vector2();
     }
 
     public AbstractPositionEntity(SceneGraphNode parent) {
         super(parent);
         // Positions
         pos = new Vector3d();
-        posSph = new Vector2d();
+        posSph = new Vector2();
     }
 
     public AbstractPositionEntity(String name) {

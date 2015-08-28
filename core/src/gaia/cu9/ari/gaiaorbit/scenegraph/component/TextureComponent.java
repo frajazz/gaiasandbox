@@ -1,18 +1,16 @@
 package gaia.cu9.ari.gaiaorbit.scenegraph.component;
 
 import gaia.cu9.ari.gaiaorbit.data.AssetBean;
-import gaia.cu9.ari.gaiaorbit.scenegraph.ICamera;
+import gaia.cu9.ari.gaiaorbit.util.Constants;
 
 import java.util.Map;
 
-import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.assets.AssetManager;
 import com.badlogic.gdx.assets.loaders.TextureLoader.TextureParameter;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.Texture.TextureFilter;
 import com.badlogic.gdx.graphics.g3d.Material;
-import com.badlogic.gdx.graphics.g3d.ModelInstance;
 import com.badlogic.gdx.graphics.g3d.attributes.BlendingAttribute;
 import com.badlogic.gdx.graphics.g3d.attributes.ColorAttribute;
 import com.badlogic.gdx.graphics.g3d.attributes.TextureAttribute;
@@ -27,9 +25,10 @@ public class TextureComponent {
     protected static final TextureParameter textureParams;
     static {
         textureParams = new TextureParameter();
-        textureParams.genMipMaps = true;
+        textureParams.genMipMaps = !Constants.webgl;
         textureParams.magFilter = TextureFilter.Linear;
-        textureParams.minFilter = TextureFilter.MipMapLinearNearest;
+        //textureParams.minFilter = TextureFilter.MipMapLinearNearest;
+        textureParams.minFilter = TextureFilter.Linear;
     }
     /**
      * Above this angle the hi-resolution texture is loaded and applied (if any)
@@ -59,45 +58,6 @@ public class TextureComponent {
             AssetBean.addAsset(night, Texture.class, textureParams);
         if (ring != null)
             AssetBean.addAsset(ring, Texture.class, textureParams);
-    }
-
-    /**
-     * Updates the texture of the associated model to a high/low texture if necessary.
-     * @param manager
-     * @param instance
-     * @param viewAngle
-     * @param camera
-     *
-     * @deprecated This must be no longer used, we use mipmapping.
-     */
-    public void updateTexture(final AssetManager manager, ModelInstance instance, float viewAngle, ICamera camera) {
-        if (!hiresTexFlag && viewAngle > HIRES_ANGLE_THRESHOLD * camera.getFovFactor() && hires != null) {
-            // LOAD hi-res texture
-            manager.load(hires, Texture.class, textureParams);
-            hiresTexFlag = true;
-        } else if (hiresTexFlag && viewAngle <= HIRES_ANGLE_THRESHOLD * camera.getFovFactor() && hi_resTex != null) {
-            // UNLOAD hi-res texture loaded
-            for (Material mat : instance.materials) {
-                mat.set(new TextureAttribute(TextureAttribute.Diffuse, baseTex));
-            }
-            Gdx.app.postRunnable(new Runnable() {
-                @Override
-                public void run() {
-                    manager.unload(hires);
-                }
-            });
-
-            hi_resTex = null;
-            hiresTexFlag = false;
-        } else if (hiresTexFlag && hi_resTex == null) {
-            // Check the loading, add the texture if loaded
-            if (manager.isLoaded(hires)) {
-                hi_resTex = manager.get(hires, Texture.class);
-                for (Material mat : instance.materials) {
-                    mat.set(new TextureAttribute(TextureAttribute.Diffuse, hi_resTex));
-                }
-            }
-        }
     }
 
     /**

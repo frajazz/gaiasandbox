@@ -7,7 +7,6 @@ import gaia.cu9.ari.gaiaorbit.scenegraph.component.RotationComponent;
 import gaia.cu9.ari.gaiaorbit.util.Constants;
 import gaia.cu9.ari.gaiaorbit.util.GlobalConf;
 import gaia.cu9.ari.gaiaorbit.util.color.ColourUtils;
-import gaia.cu9.ari.gaiaorbit.util.math.Vector2d;
 import gaia.cu9.ari.gaiaorbit.util.math.Vector3d;
 import gaia.cu9.ari.gaiaorbit.util.time.ITimeFrameProvider;
 
@@ -22,6 +21,7 @@ import com.badlogic.gdx.graphics.g3d.ModelBatch;
 import com.badlogic.gdx.graphics.glutils.ShaderProgram;
 import com.badlogic.gdx.math.Matrix4;
 import com.badlogic.gdx.math.Quaternion;
+import com.badlogic.gdx.math.Vector2;
 
 /**
  * These are entities that have a model and is always loaded.
@@ -202,7 +202,7 @@ public abstract class CelestialBody extends AbstractPositionEntity implements I3
         this.appmag = appmag.floatValue();
     }
 
-    public Vector2d getPositionSph() {
+    public Vector2 getPositionSph() {
         return posSph;
     }
 

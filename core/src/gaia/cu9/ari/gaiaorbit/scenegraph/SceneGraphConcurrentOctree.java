@@ -97,7 +97,7 @@ public class SceneGraphConcurrentOctree extends AbstractSceneGraph {
         // Update focus, just in case
         CelestialBody focus = camera.getFocus();
         if (focus != null) {
-            SceneGraphNode star = focus.getFirstAncestorOfType(Star.class);
+            SceneGraphNode star = focus.getFirstStarAncestor();
             OctreeNode<SceneGraphNode> parent = octree.parenthood.get(star);
             if (parent != null && !parent.isObserved()) {
                 star.update(time, star.parent.transform, camera);

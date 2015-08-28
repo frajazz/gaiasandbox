@@ -1,6 +1,7 @@
 package gaia.cu9.ari.gaiaorbit.data;
 
 import gaia.cu9.ari.gaiaorbit.data.stars.ISceneGraphLoader;
+import gaia.cu9.ari.gaiaorbit.interfce.TextUtils;
 import gaia.cu9.ari.gaiaorbit.scenegraph.SceneGraphNode;
 import gaia.cu9.ari.gaiaorbit.util.GlobalResources;
 import gaia.cu9.ari.gaiaorbit.util.I18n;
@@ -147,7 +148,7 @@ public class JsonLoader<T extends SceneGraphNode> implements ISceneGraphLoader {
                     }
 
                 } else if (attribute.isObject()) {
-                    String clazzName = attribute.has("impl") ? attribute.getString("impl") : GlobalResources.capitalise(attribute.name) + "Component";
+                    String clazzName = attribute.has("impl") ? attribute.getString("impl") : TextUtils.capitalise(attribute.name) + "Component";
                     try {
                         valueClass = ClassReflection.forName(clazzName);
                         value = convertJsonToObject(attribute, valueClass);

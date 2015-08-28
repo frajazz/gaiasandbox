@@ -69,11 +69,11 @@ public class Star extends Particle {
         this.parentName = ROOT_NAME;
     }
 
-    public Star(Vector3d pos, float appmag, float absmag, float colorbv, String name, long starid) {
+    public Star(Vector3d pos, float appmag, float absmag, float colorbv, String name, int starid) {
         super(pos, appmag, absmag, colorbv, name, starid);
     }
 
-    public Star(Vector3d pos, float appmag, float absmag, float colorbv, String name, double ra, double dec, long starid) {
+    public Star(Vector3d pos, float appmag, float absmag, float colorbv, String name, float ra, float dec, int starid) {
         super(pos, appmag, absmag, colorbv, name, ra, dec, starid);
     }
 
@@ -86,29 +86,16 @@ public class Star extends Particle {
 
     @Override
     protected void addToRenderLists(ICamera camera) {
-        if (viewAngleApparent >= THRESHOLD_ANGLE_NONE() * camera.getFovFactor()) {
-            if (camera.getCurrent() instanceof FovCamera) {
-                // Only shader for FovCamera
+        if (camera.getCurrent() instanceof FovCamera) {
+            // Only shader for FovCamera
+            addToRender(this, RenderGroup.SHADER);
+            addToRender(this, RenderGroup.LABEL);
+        } else {
+            if (viewAngleApparent >= (THRESHOLD_ANGLE_POINT() / 3f) * camera.getFovFactor()) {
                 addToRender(this, RenderGroup.SHADER);
-                addToRender(this, RenderGroup.LABEL);
-            } else {
-                if (viewAngleApparent >= THRESHOLD_ANGLE_POINT() * camera.getFovFactor()) {
-                    addToRender(this, RenderGroup.SHADER);
-                    if (distToCamera < modelDistance) {
-                        camera.checkClosest(this);
-                        addToRender(this, RenderGroup.MODEL_S);
-                    }
-                    // Check Sol position for gravity distortion
-
-                    //                    if (this.name.equalsIgnoreCase("sol")) {
-                    //                        // We have the closest shader star
-                    //                        Vector3 aux = auxVector3f.get();
-                    //                        camera.getCamera().project(aux.set(transform.getTranslationf()));
-                    //                        float x = aux.x;
-                    //                        float y = aux.y;
-                    //
-                    //                        EventManager.instance.post(Events.GRAVITATIONAL_LENSING_PARAMS, x, y);
-                    //                    }
+                if (distToCamera < modelDistance) {
+                    camera.checkClosest(this);
+                    addToRender(this, RenderGroup.MODEL_S);
                 }
             }
             if (renderText()) {

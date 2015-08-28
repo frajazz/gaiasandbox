@@ -4,6 +4,7 @@ import gaia.cu9.ari.gaiaorbit.GaiaSandbox;
 import gaia.cu9.ari.gaiaorbit.event.EventManager;
 import gaia.cu9.ari.gaiaorbit.event.Events;
 import gaia.cu9.ari.gaiaorbit.event.IObserver;
+import gaia.cu9.ari.gaiaorbit.scenegraph.CameraManager.CameraMode;
 import gaia.cu9.ari.gaiaorbit.scenegraph.CelestialBody;
 import gaia.cu9.ari.gaiaorbit.util.Constants;
 import gaia.cu9.ari.gaiaorbit.util.GlobalResources;
@@ -21,18 +22,19 @@ public class FocusInfoInterface extends Table implements IObserver {
 
     protected OwnLabel focusName, focusRA, focusDEC, focusAngle, focusDist, focusAppMag, focusAbsMag, focusRadius;
     protected OwnLabel camName, camVel, camPos;
-    INumberFormat format, sformat, format8;
 
     private Table focusInfo, cameraInfo;
 
     Vector3d pos;
 
-    public FocusInfoInterface(Skin skin, INumberFormat format, INumberFormat sformat) {
+    INumberFormat nf, sf;
+
+    public FocusInfoInterface(Skin skin) {
         super(skin);
-        this.format = format;
-        this.sformat = sformat;
-        this.format8 = NumberFormatFactory.getFormatter("#####0.0#######");
         this.setBackground("table-bg");
+
+        nf = NumberFormatFactory.getFormatter("#0.###");
+        sf = NumberFormatFactory.getFormatter("##0.###E0");
 
         focusInfo = new Table();
         focusInfo.pad(5);
@@ -95,7 +97,7 @@ public class FocusInfoInterface extends Table implements IObserver {
         pack();
 
         pos = new Vector3d();
-        EventManager.instance.subscribe(this, Events.FOCUS_CHANGED, Events.FOCUS_INFO_UPDATED, Events.CAMERA_MOTION_UPDATED);
+        EventManager.instance.subscribe(this, Events.FOCUS_CHANGED, Events.FOCUS_INFO_UPDATED, Events.CAMERA_MOTION_UPDATED, Events.CAMERA_MODE_CMD);
     }
 
     @Override
@@ -113,43 +115,51 @@ public class FocusInfoInterface extends Table implements IObserver {
 
             focusName.setText(objectName);
             if (cb.posSph != null && cb.posSph.len() > 0f) {
-                focusRA.setText(format.format(cb.posSph.x) + "°");
-                focusDEC.setText(format.format(cb.posSph.y) + "°");
+                focusRA.setText(nf.format(cb.posSph.x) + "°");
+                focusDEC.setText(nf.format(cb.posSph.y) + "°");
             } else {
                 Coordinates.cartesianToSpherical(cb.pos, pos);
 
-                focusRA.setText(format.format(cb.pos.x % 360) + "°");
-                focusDEC.setText(format.format(cb.pos.y % 360) + "°");
+                focusRA.setText(nf.format(cb.pos.x % 360) + "°");
+                focusDEC.setText(nf.format(cb.pos.y % 360) + "°");
             }
 
             Float appmag = cb.appmag;
 
             if (appmag != null) {
-                focusAppMag.setText(format.format(appmag));
+                focusAppMag.setText(nf.format(appmag));
             } else {
                 focusAppMag.setText("-");
             }
             Float absmag = cb.absmag;
 
             if (absmag != null) {
-                focusAbsMag.setText(format.format(absmag));
+                focusAbsMag.setText(nf.format(absmag));
             } else {
                 focusAbsMag.setText("-");
             }
-            focusRadius.setText(sformat.format(cb.getRadius() * Constants.U_TO_KM) + " km");
+            focusRadius.setText(sf.format(cb.getRadius() * Constants.U_TO_KM) + " km");
 
             break;
         case FOCUS_INFO_UPDATED:
-            focusAngle.setText(format8.format(Math.toDegrees((float) data[1]) % 360) + "°");
+            focusAngle.setText(sf.format(Math.toDegrees((float) data[1]) % 360) + "°");
             Object[] dist = GlobalResources.floatToDistanceString((float) data[0]);
-            focusDist.setText(sformat.format((float) Math.max(0d, (float) dist[0])) + " " + dist[1]);
+            focusDist.setText(sf.format(Math.max(0d, (float) dist[0])) + " " + dist[1]);
             break;
         case CAMERA_MOTION_UPDATED:
             Vector3d campos = (Vector3d) data[0];
-            camPos.setText("X: " + sformat.format(campos.x * Constants.U_TO_KM) + "\nY: " + sformat.format(campos.y * Constants.U_TO_KM) + "\nZ: " + sformat.format(campos.z * Constants.U_TO_KM));
-            camVel.setText(sformat.format((double) data[1]) + " km/h");
+            camPos.setText("X: " + nf.format(campos.x * Constants.U_TO_PC) + " pc\nY: " + nf.format(campos.y * Constants.U_TO_PC) + " pc\nZ: " + nf.format(campos.z * Constants.U_TO_PC) + " pc");
+            camVel.setText(sf.format((double) data[1]) + " km/h");
             break;
-
+        case CAMERA_MODE_CMD:
+            // Update camera mode selection
+            CameraMode mode = (CameraMode) data[0];
+            if (mode.equals(CameraMode.Focus)) {
+                displayFocusInfo();
+            } else {
+                hideFocusInfo();
+            }
+            break;
         }
     }
 

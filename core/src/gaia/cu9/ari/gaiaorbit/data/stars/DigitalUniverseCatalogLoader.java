@@ -74,7 +74,7 @@ public class DigitalUniverseCatalogLoader extends AbstractCatalogLoader implemen
         Vector3d pos = new Vector3d(x, y, z);
         float dist = (float) pos.len();
         if (appmag < magcut && dist < distcut) {
-            Star star = new Star(pos, absmag, appmag, colorbv, name, 0l);
+            Star star = new Star(pos, absmag, appmag, colorbv, name, 0);
             stars.add(star);
         }
     }

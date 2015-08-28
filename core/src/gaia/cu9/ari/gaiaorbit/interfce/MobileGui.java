@@ -3,8 +3,6 @@ package gaia.cu9.ari.gaiaorbit.interfce;
 import gaia.cu9.ari.gaiaorbit.render.ComponentType;
 import gaia.cu9.ari.gaiaorbit.scenegraph.ISceneGraph;
 import gaia.cu9.ari.gaiaorbit.util.GlobalResources;
-import gaia.cu9.ari.gaiaorbit.util.format.INumberFormat;
-import gaia.cu9.ari.gaiaorbit.util.format.NumberFormatFactory;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.assets.AssetManager;
@@ -31,11 +29,6 @@ public class MobileGui implements IGui {
     protected DebugInterface debugInterface;
     protected ScriptStateInterface inputInterface;
 
-    /**
-     * Number formats
-     */
-    private INumberFormat format, sformat;
-
     /** Lock object for synchronization **/
     private Object lock;
 
@@ -49,15 +42,13 @@ public class MobileGui implements IGui {
     @Override
     public void doneLoading(AssetManager assetManager) {
         skin = GlobalResources.skin;
-        format = NumberFormatFactory.getFormatter("0.0###");
-        sformat = NumberFormatFactory.getFormatter("0.###E0");
 
         initialize();
     }
 
     private void initialize() {
         // FOCUS INFORMATION - BOTTOM RIGHT
-        focusInterface = new FocusInfoInterface(skin, format, sformat);
+        focusInterface = new FocusInfoInterface(skin);
         focusInterface.setFillParent(true);
         focusInterface.right().bottom();
         focusInterface.pad(0, 0, 5, 5);
