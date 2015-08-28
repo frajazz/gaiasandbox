@@ -55,6 +55,55 @@ task dist(dependsOn: [clean, compileGwt]) {
     }
 }
 
+task cleanGwtLite() {
+    delete 'war/html/logo.png'
+    copy {
+        from '../android/assets/img/gaiasandboxlogo.png'
+        into 'war/html/'
+    }
+    file('war/html/gaiasandboxlogo.png').renameTo(file('war/html/logo.png'))
+    delete 'war/assets/conf', 
+            'war/assets/data/boundaries.csv',
+            'war/assets/data/constel.csv',
+            'war/assets/data/data.json',
+            'war/assets/data/locations_earth.json',
+            'war/assets/data/locations_moon.json',
+            'war/assets/data/locations.json',
+            'war/assets/data/moons.json',
+            'war/assets/data/orbits_asteroid.json',
+            'war/assets/data/orbits_moon.json',
+            'war/assets/data/planets.json',
+            'war/assets/data/satellites.json',
+            'war/assets/data/models',
+            'war/assets/data/tex/callisto.jpg',
+            'war/assets/data/tex/ceres.jpg',
+            'war/assets/data/tex/deimos.jpg',
+            'war/assets/data/tex/earth-night.jpg',
+            'war/assets/data/tex/earth-specular.jpg',
+            'war/assets/data/tex/earth.jpg',
+            'war/assets/data/tex/europa.jpg',
+            'war/assets/data/tex/ganymede.jpg',
+            'war/assets/data/tex/io.jpg',
+            'war/assets/data/tex/jupiter.jpg',
+            'war/assets/data/tex/mars.jpg',
+            'war/assets/data/tex/mercury.jpg',
+            'war/assets/data/tex/milky_way_small.png',
+            'war/assets/data/tex/moon.jpg',
+            'war/assets/data/tex/mw_small.jpg',
+            'war/assets/data/tex/mw.jpg',
+            'war/assets/data/tex/mw.png',
+            'war/assets/data/tex/neptune.jpg',
+            'war/assets/data/tex/pallas.jpg',
+            'war/assets/data/tex/phobos.jpg',
+            'war/assets/data/tex/saturn-ring.jpg',
+            'war/assets/data/tex/saturn.jpg',
+            'war/assets/data/tex/uranus.jpg',
+            'war/assets/data/tex/venus.jpg',
+            'war/assets/data/tex/vesta.jpg',
+            'war/assets/scripts'
+            
+}
+
 draftWar {
    from "war"
 }

@@ -16,7 +16,7 @@ com.badlogic.gdx.graphics.Color: {
 	white: { a: 1, b: 1, g: 1, r: 1 },
 	red: { a: 1, b: 0, g: 0, r: 1 },
 	black: { a: 1, b: 0, g: 0, r: 0 },
-	blue: { a: 1, b: 1, g: 0.6, r: 0.3 },
+	blue: { a: 1, b: .8, g: 0.1, r: 0.1 },
 	orange: { a: 1, b: 0, g: 0.7, r: 1 },
 	dark-gray: { a: 1, b: 0.4, g: 0.4, r: 0.4 }
 },

@@ -5,10 +5,10 @@
 	},
 	{
 		"loader": gaia.cu9.ari.gaiaorbit.data.JsonLoader,
-		"files": [ "data/planets.json",
-					"data/satellites.json",
+		"files": [ "data/planets-lite.json",
+					"data/satellites-lite.json",
 					"data/orbits_planet.json", 
 					"data/orbits_satellite.json",
-					"data/extra.json" ]
+					"data/extra-lite.json" ]
 	}
 ]}

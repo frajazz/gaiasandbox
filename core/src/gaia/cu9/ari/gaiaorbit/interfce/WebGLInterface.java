@@ -31,7 +31,7 @@ public class WebGLInterface extends Table implements IObserver {
     protected OwnLabel date;
     protected OwnLabel gaiaObsLabel, sceneModeLabel;
     protected Slider slider;
-    protected Button switchFull;
+    protected Button switchFull, toggleLabels, plus, minus;
 
     int prevVal = 0;
     private IDateFormat df;
@@ -96,19 +96,55 @@ public class WebGLInterface extends Table implements IObserver {
                 return true;
             }
         });
-
         HorizontalGroup hg = new HorizontalGroup().space(3);
         hg.addActor(gaiaObsLabel);
         hg.addActor(slider);
         hg.addActor(sceneModeLabel);
 
+        toggleLabels = new OwnTextButton(txt("action.toggle", txt("element.labels")), skin, "link");
+        toggleLabels.addListener(new EventListener() {
+            @Override
+            public boolean handle(Event event) {
+                if (event instanceof ChangeEvent) {
+                    EventManager.instance.post(Events.TOGGLE_VISIBILITY_CMD, txt("element.labels"), false);
+                }
+                return true;
+            }
+        });
+
+        plus = new OwnTextButton("+", skin, "link");
+        plus.addListener(new EventListener() {
+            @Override
+            public boolean handle(Event event) {
+                if (event instanceof ChangeEvent) {
+                    EventManager.instance.post(Events.STAR_BRIGHTNESS_CMD, GlobalConf.scene.STAR_BRIGHTNESS + 1f);
+                }
+                return true;
+            }
+        });
+
+        minus = new OwnTextButton("-", skin, "link");
+        minus.addListener(new EventListener() {
+            @Override
+            public boolean handle(Event event) {
+                if (event instanceof ChangeEvent) {
+                    EventManager.instance.post(Events.STAR_BRIGHTNESS_CMD, GlobalConf.scene.STAR_BRIGHTNESS - 1f);
+                }
+                return true;
+            }
+        });
+
         add(date).left();
+        padBottom(10);
+        row();
         if (!GlobalConf.runtime.STRIPPED_FOV_MODE) {
-            padBottom(10);
-            row();
             add(hg).left();
             row();
             add(switchFull).left();
+        } else {
+            add(toggleLabels).left().padRight(5);
+            add(minus).left().padRight(5);
+            add(plus).left();
         }
 
         pack();
@@ -131,6 +167,10 @@ public class WebGLInterface extends Table implements IObserver {
 
     private String txt(String key) {
         return I18n.bundle.get(key);
+    }
+
+    private String txt(String key, Object... args) {
+        return I18n.bundle.format(key, args);
     }
 
 }

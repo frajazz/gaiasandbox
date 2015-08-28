@@ -351,8 +351,8 @@ public class FullGui implements IGui, IObserver {
         webglInterface = new WebGLInterface(skin, GaiaSandbox.instance.current);
         wgl = new Container<WebGLInterface>(webglInterface);
         wgl.setFillParent(true);
-        wgl.left().top();
-        wgl.pad(5, 5, 0, 0);
+        wgl.left().bottom();
+        wgl.pad(0, 5, 45, 0);
     }
 
     public void removeControlsWindow() {
