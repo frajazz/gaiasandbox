@@ -55,13 +55,48 @@ task dist(dependsOn: [clean, compileGwt]) {
     }
 }
 
-task cleanGwtLite() {
+task afterGwtCompileFull << {
+    // update logo
     delete 'war/html/logo.png'
     copy {
         from '../android/assets/img/gaiasandboxlogo.png'
         into 'war/html/'
     }
     file('war/html/gaiasandboxlogo.png').renameTo(file('war/html/logo.png'))
+    
+    // update index.html
+    delete 'war/index.html'
+    copy {
+        from 'webapp/index.html'
+        into 'war/'
+    }
+    
+    // delete unused files
+    delete 'war/assets/data/data-lite.json',
+            'war/assets/data/extra-lite.json',
+            'war/assets/data/planets-lite.json',
+            'war/assets/data/satellites-lite.json'
+    
+}
+
+task afterGwtCompileLite << {
+    // update logo
+    delete 'war/html/logo.png'
+    copy {
+        from '../android/assets/img/gaiasandboxlogo.png'
+        into 'war/html/'
+    }
+    file('war/html/gaiasandboxlogo.png').renameTo(file('war/html/logo.png'))
+    
+    // update index.html
+    delete 'war/index.html'
+    copy {
+        from 'webapp/index-lite.html'
+        into 'war/'
+    }
+    file('war/index-lite.html').renameTo(file('war/index.html'))
+    
+    // delete unused files
     delete 'war/assets/conf', 
             'war/assets/data/boundaries.csv',
             'war/assets/data/constel.csv',

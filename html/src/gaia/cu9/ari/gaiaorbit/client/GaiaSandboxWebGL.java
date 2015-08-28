@@ -4,7 +4,7 @@ import gaia.cu9.ari.gaiaorbit.GaiaSandbox;
 import gaia.cu9.ari.gaiaorbit.client.format.GwtDateFormatFactory;
 import gaia.cu9.ari.gaiaorbit.client.format.GwtNumberFormatFactory;
 import gaia.cu9.ari.gaiaorbit.client.script.DummyFactory;
-import gaia.cu9.ari.gaiaorbit.client.util.WebGLConfInitLite;
+import gaia.cu9.ari.gaiaorbit.client.util.WebGLConfInit;
 import gaia.cu9.ari.gaiaorbit.event.EventManager;
 import gaia.cu9.ari.gaiaorbit.event.Events;
 import gaia.cu9.ari.gaiaorbit.event.IObserver;
@@ -31,7 +31,7 @@ public class GaiaSandboxWebGL extends GwtApplication implements IObserver {
         GwtApplicationConfiguration config = new GwtApplicationConfiguration(1024, 600);
 
         try {
-            ConfInit.initialize(new WebGLConfInitLite());
+            ConfInit.initialize(new WebGLConfInit());
             ConfInit.instance.initGlobalConf();
             config.antialiasing = GlobalConf.postprocess.POSTPROCESS_ANTIALIAS != 0 ? true : false;
         } catch (Exception e) {

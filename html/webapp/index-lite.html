@@ -3,6 +3,7 @@
 <head>
 <title>GaiaSandbox</title>
 <meta http-equiv="content-type" content="text/html; charset=UTF-8">
+<meta http-equiv="Cache-control" content="no-cache">
 <meta http-equiv="refresh" content="10800">
 <link href="styles.css" rel="stylesheet" type="text/css">
 <script src="soundmanager2-setup.js"></script>
@@ -11,9 +12,11 @@
 
 <body>
 <script type="text/javascript">
+document.write("<"+"script src='html/html.nocache.js?today=" + (new Date()).getTime() + "'><"+"/script>");
 </script>
 	<div class="wrapper">
-		<div id="title">the Gaia Sandbox (webgl)</div>
+		<div id="title">A window to Gaia - The focal plane</div>
+		<div id="subtitle">Powered by the <a href="http://www.zah.uni-heidelberg.de/gaia/outreach/gaiasandbox/" target="_blank">Gaia Sandbox</a></div>
 		<div style="width: 100%; overflow: hidden;">
 			<div id="embed-html"></div>
 			<!-- <div id="wikip-info">
@@ -44,10 +47,19 @@
 			<a class="link link-tab" href=".">reload</a>
 		</div>
 
-		<div id="disclaimer">This is the WebGL version of the Gaia Sandbox. This version does not
-		contain lots of cool features found in the desktop version such as full screen, scripting, native anti-aliasing, post-processing effects,
-		hi-resolution textures, camera path recording, frame dumping, etc. If you are interested in the desktop version, which
-		works on Linux, Windows and OSX, visit our main page <a href="http://www.zah.uni-heidelberg.de/gaia/outreach/gaiasandbox/" target="_blank">here</a>.</div>
+		<div id="disclaimer">This tool provides a real time view of the
+			Gaia Focal Plane using Tycho stars. It is based on the scanning
+			operations of Gaia. It does not take into account operational
+			activities preventing nominal observations nor matters like e.g. the
+			gaps between CCDs on the Focal Plane. Adding up all dead time
+			components, users should understand that the probability of the data
+			of the target being received on the ground at the indicated time is
+			about 80%. <br/> Furthermore, only targets in magnitude range 6&lt;G&lt;20
+			mag are observed in astrometry and photometry and 6&lt;G_RVS&lt;16
+			mag in spectroscopy. Please note that one more spin phase adjustment
+			to the Gaia orbit will be implemented at a later stage. Therefore the
+			predicted observation time may deviate by up to 6 hours from the
+			actual observation time.</div>
 	</div>
 	<div id="credits">
 		<a class="link link-tab" href="http://www.zah.uni-heidelberg.de/ari/"
