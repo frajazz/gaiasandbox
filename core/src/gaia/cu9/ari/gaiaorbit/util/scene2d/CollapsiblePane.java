@@ -15,7 +15,7 @@ import com.badlogic.gdx.scenes.scene2d.ui.ImageButton;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
-import com.badlogic.gdx.scenes.scene2d.ui.Tooltip;
+import com.badlogic.gdx.scenes.scene2d.ui.TextTooltip;
 import com.badlogic.gdx.scenes.scene2d.ui.VerticalGroup;
 import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener.ChangeEvent;
 import com.badlogic.gdx.utils.Align;
@@ -65,7 +65,7 @@ public class CollapsiblePane extends VerticalGroup {
                 return false;
             }
         });
-        expandIcon.addListener(new Tooltip(I18n.bundle.get("gui.tooltip.expandcollapse.group"), skin));
+        expandIcon.addListener(new TextTooltip(I18n.bundle.get("gui.tooltip.expandcollapse.group"), skin));
 
         // Detach icon
         detachIcon = new OwnImageButton(skin, detachButtonStyle);
@@ -89,7 +89,7 @@ public class CollapsiblePane extends VerticalGroup {
                 return false;
             }
         });
-        detachIcon.addListener(new Tooltip(I18n.bundle.get("gui.tooltip.detach.group"), skin));
+        detachIcon.addListener(new TextTooltip(I18n.bundle.get("gui.tooltip.detach.group"), skin));
 
         HorizontalGroup headerGroup = new HorizontalGroup();
         headerGroup.space(10).align(Align.center);

@@ -35,7 +35,7 @@ import com.badlogic.gdx.scenes.scene2d.ui.Button;
 import com.badlogic.gdx.scenes.scene2d.ui.Image;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
-import com.badlogic.gdx.scenes.scene2d.ui.Tooltip;
+import com.badlogic.gdx.scenes.scene2d.ui.TextTooltip;
 import com.badlogic.gdx.scenes.scene2d.ui.VerticalGroup;
 import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener.ChangeEvent;
 import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
@@ -98,7 +98,7 @@ public class ControlsWindow extends CollapsibleWindow implements IObserver {
                 return false;
             }
         });
-        playstop.addListener(new Tooltip(txt("gui.tooltip.playstop"), skin));
+        playstop.addListener(new TextTooltip(txt("gui.tooltip.playstop"), skin));
 
         TimeComponent timeComponent = new TimeComponent(skin, ui);
         timeComponent.initialize();
@@ -123,7 +123,7 @@ public class ControlsWindow extends CollapsibleWindow implements IObserver {
                     return false;
                 }
             });
-            recCamera.addListener(new Tooltip(txt("gui.tooltip.reccamera"), skin));
+            recCamera.addListener(new TextTooltip(txt("gui.tooltip.reccamera"), skin));
 
             // Play camera button
             playCamera = new OwnImageButton(skin, "play");
@@ -140,7 +140,7 @@ public class ControlsWindow extends CollapsibleWindow implements IObserver {
                 }
             });
 
-            playCamera.addListener(new Tooltip(txt("gui.tooltip.playcamera"), skin));
+            playCamera.addListener(new TextTooltip(txt("gui.tooltip.playcamera"), skin));
         }
 
         CameraComponent cameraComponent = new CameraComponent(skin, ui);

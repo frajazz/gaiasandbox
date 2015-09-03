@@ -26,7 +26,7 @@ import com.badlogic.gdx.scenes.scene2d.ui.ImageButton;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.scenes.scene2d.ui.TextField;
-import com.badlogic.gdx.scenes.scene2d.ui.Tooltip;
+import com.badlogic.gdx.scenes.scene2d.ui.TextTooltip;
 import com.badlogic.gdx.scenes.scene2d.ui.VerticalGroup;
 import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener.ChangeEvent;
 import com.badlogic.gdx.utils.Align;
@@ -70,7 +70,7 @@ public class TimeComponent extends GuiComponent implements IObserver {
             }
 
         });
-        dateEdit.addListener(new Tooltip(txt("gui.tooltip.dateedit"), skin));
+        dateEdit.addListener(new TextTooltip(txt("gui.tooltip.dateedit"), skin));
 
         // Pace
         Label paceLabel = new Label(txt("gui.pace"), skin);
