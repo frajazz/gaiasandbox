@@ -43,125 +43,125 @@ public class TimeComponent extends GuiComponent implements IObserver {
     protected DateDialog dateDialog;
 
     public TimeComponent(Skin skin, Stage stage) {
-        super(skin, stage);
+	super(skin, stage);
 
-        df = DateFormatFactory.getFormatter(I18n.locale, DateType.DATE);
-        EventManager.instance.subscribe(this, Events.TIME_CHANGE_INFO, Events.TIME_CHANGE_CMD, Events.PACE_CHANGED_INFO);
+	df = DateFormatFactory.getFormatter(I18n.locale, DateType.DATE);
+	EventManager.instance.subscribe(this, Events.TIME_CHANGE_INFO, Events.TIME_CHANGE_CMD, Events.PACE_CHANGED_INFO);
     }
 
     @Override
     public void initialize() {
-        // Time
-        date = new OwnLabel("", skin);
-        date.setName("input time");
+	// Time
+	date = new OwnLabel("", skin);
+	date.setName("input time");
 
-        dateEdit = new OwnImageButton(skin, "edit");
-        dateEdit.addListener(new EventListener() {
+	dateEdit = new OwnImageButton(skin, "edit");
+	dateEdit.addListener(new EventListener() {
 
-            @Override
-            public boolean handle(Event event) {
-                if (event instanceof ChangeEvent) {
-                    // Left button click
-                    if (dateDialog == null) {
-                        dateDialog = new DateDialog(stage, skin);
-                    }
-                    dateDialog.updateTime(GaiaSandbox.instance.current.getTime());
-                    dateDialog.display();
-                }
-                return false;
-            }
+	    @Override
+	    public boolean handle(Event event) {
+		if (event instanceof ChangeEvent) {
+		    // Left button click
+		    if (dateDialog == null) {
+			dateDialog = new DateDialog(stage, skin);
+		    }
+		    dateDialog.updateTime(GaiaSandbox.instance.current.getTime());
+		    dateDialog.display();
+		}
+		return false;
+	    }
 
-        });
-        dateEdit.addListener(new Tooltip(txt("gui.tooltip.dateedit"), skin));
+	});
+	dateEdit.addListener(new Tooltip(new OwnLabel(txt("gui.tooltip.dateedit"), skin)));
 
-        // Pace
-        Label paceLabel = new Label(txt("gui.pace"), skin);
-        plus = new ImageButton(skin.getDrawable("tree-plus"));
-        plus.setName("plus");
-        plus.addListener(new EventListener() {
-            @Override
-            public boolean handle(Event event) {
-                if (event instanceof ChangeEvent) {
-                    // Plus pressed
-                    EventManager.instance.post(Events.PACE_DOUBLE_CMD);
+	// Pace
+	Label paceLabel = new Label(txt("gui.pace"), skin);
+	plus = new ImageButton(skin.getDrawable("tree-plus"));
+	plus.setName("plus");
+	plus.addListener(new EventListener() {
+	    @Override
+	    public boolean handle(Event event) {
+		if (event instanceof ChangeEvent) {
+		    // Plus pressed
+		    EventManager.instance.post(Events.PACE_DOUBLE_CMD);
 
-                    return true;
-                }
-                return false;
-            }
-        });
-        minus = new ImageButton(skin.getDrawable("tree-minus"));
-        minus.setName("minus");
-        minus.addListener(new EventListener() {
-            @Override
-            public boolean handle(Event event) {
-                if (event instanceof ChangeEvent) {
-                    // Minus pressed
-                    EventManager.instance.post(Events.PACE_DIVIDE_CMD);
-                    return true;
-                }
-                return false;
-            }
-        });
-        inputPace = new OwnTextField(Double.toString(GaiaSandbox.instance.current.getPace()), skin);
-        inputPace.setName("input pace");
-        inputPace.setMaxLength(15);
-        inputPace.setWidth(60f);
-        inputPace.addListener(new EventListener() {
-            @Override
-            public boolean handle(Event event) {
-                if (event instanceof InputEvent) {
-                    InputEvent ie = (InputEvent) event;
-                    if (ie.getType() == Type.keyTyped) {
-                        try {
-                            double pace = Double.parseDouble(inputPace.getText());
-                            EventManager.instance.post(Events.PACE_CHANGE_CMD, pace, true);
-                        } catch (Exception e) {
-                            return false;
-                        }
-                        return true;
-                    }
-                }
-                return false;
-            }
-        });
+		    return true;
+		}
+		return false;
+	    }
+	});
+	minus = new ImageButton(skin.getDrawable("tree-minus"));
+	minus.setName("minus");
+	minus.addListener(new EventListener() {
+	    @Override
+	    public boolean handle(Event event) {
+		if (event instanceof ChangeEvent) {
+		    // Minus pressed
+		    EventManager.instance.post(Events.PACE_DIVIDE_CMD);
+		    return true;
+		}
+		return false;
+	    }
+	});
+	inputPace = new OwnTextField(Double.toString(GaiaSandbox.instance.current.getPace()), skin);
+	inputPace.setName("input pace");
+	inputPace.setMaxLength(15);
+	inputPace.setWidth(60f);
+	inputPace.addListener(new EventListener() {
+	    @Override
+	    public boolean handle(Event event) {
+		if (event instanceof InputEvent) {
+		    InputEvent ie = (InputEvent) event;
+		    if (ie.getType() == Type.keyTyped) {
+			try {
+			    double pace = Double.parseDouble(inputPace.getText());
+			    EventManager.instance.post(Events.PACE_CHANGE_CMD, pace, true);
+			} catch (Exception e) {
+			    return false;
+			}
+			return true;
+		    }
+		}
+		return false;
+	    }
+	});
 
-        VerticalGroup timeGroup = new VerticalGroup().align(Align.left).space(3).padTop(3);
+	VerticalGroup timeGroup = new VerticalGroup().align(Align.left).space(3).padTop(3);
 
-        HorizontalGroup dateGroup = new HorizontalGroup();
-        dateGroup.space(4);
-        dateGroup.addActor(date);
-        dateGroup.addActor(dateEdit);
-        timeGroup.addActor(dateGroup);
+	HorizontalGroup dateGroup = new HorizontalGroup();
+	dateGroup.space(4);
+	dateGroup.addActor(date);
+	dateGroup.addActor(dateEdit);
+	timeGroup.addActor(dateGroup);
 
-        HorizontalGroup paceGroup = new HorizontalGroup();
-        paceGroup.space(1);
-        paceGroup.addActor(paceLabel);
-        paceGroup.addActor(minus);
-        paceGroup.addActor(inputPace);
-        paceGroup.addActor(plus);
+	HorizontalGroup paceGroup = new HorizontalGroup();
+	paceGroup.space(1);
+	paceGroup.addActor(paceLabel);
+	paceGroup.addActor(minus);
+	paceGroup.addActor(inputPace);
+	paceGroup.addActor(plus);
 
-        timeGroup.addActor(paceGroup);
+	timeGroup.addActor(paceGroup);
 
-        timeGroup.pack();
+	timeGroup.pack();
 
-        component = timeGroup;
+	component = timeGroup;
     }
 
     @Override
     public void notify(Events event, Object... data) {
-        switch (event) {
-        case TIME_CHANGE_INFO:
-        case TIME_CHANGE_CMD:
-            // Update input time
-            Date time = (Date) data[0];
-            date.setText(df.format(time));
-            break;
-        case PACE_CHANGED_INFO:
-            if (data.length == 1)
-                this.inputPace.setText(Double.toString((double) data[0]));
-            break;
-        }
+	switch (event) {
+	case TIME_CHANGE_INFO:
+	case TIME_CHANGE_CMD:
+	    // Update input time
+	    Date time = (Date) data[0];
+	    date.setText(df.format(time));
+	    break;
+	case PACE_CHANGED_INFO:
+	    if (data.length == 1)
+		this.inputPace.setText(Double.toString((double) data[0]));
+	    break;
+	}
 
     }
 

@@ -43,70 +43,70 @@ public class CollapsiblePane extends VerticalGroup {
      * @param topIcons List of top icons that will be added between the label and the expand/detach icons.
      */
     public CollapsiblePane(final Stage stage, final String labelText, final Actor content, final Skin skin, String labelStyle, String expandButtonStyle, String detachButtonStyle, Actor... topIcons) {
-        super();
+	super();
 
-        Label mainLabel = new Label(labelText, skin, labelStyle);
+	Label mainLabel = new Label(labelText, skin, labelStyle);
 
-        // Expand icon
-        expandIcon = new OwnImageButton(skin, expandButtonStyle);
-        expandIcon.setName("expand-collapse");
-        expandIcon.addListener(new EventListener() {
-            @Override
-            public boolean handle(Event event) {
-                if (event instanceof ChangeEvent) {
-                    if (expandIcon.isChecked() && dialogWindow == null) {
-                        addActor(content);
-                    } else {
-                        removeActor(content);
-                    }
-                    EventManager.instance.post(Events.RECALCULATE_OPTIONS_SIZE);
-                    return true;
-                }
-                return false;
-            }
-        });
-        expandIcon.addListener(new Tooltip(I18n.bundle.get("gui.tooltip.expandcollapse.group"), skin));
+	// Expand icon
+	expandIcon = new OwnImageButton(skin, expandButtonStyle);
+	expandIcon.setName("expand-collapse");
+	expandIcon.addListener(new EventListener() {
+	    @Override
+	    public boolean handle(Event event) {
+		if (event instanceof ChangeEvent) {
+		    if (expandIcon.isChecked() && dialogWindow == null) {
+			addActor(content);
+		    } else {
+			removeActor(content);
+		    }
+		    EventManager.instance.post(Events.RECALCULATE_OPTIONS_SIZE);
+		    return true;
+		}
+		return false;
+	    }
+	});
+	expandIcon.addListener(new Tooltip(new OwnLabel(I18n.bundle.get("gui.tooltip.expandcollapse.group"), skin)));
 
-        // Detach icon
-        detachIcon = new OwnImageButton(skin, detachButtonStyle);
-        detachIcon.setName("expand-collapse");
-        detachIcon.setChecked(false);
-        detachIcon.addListener(new EventListener() {
-            @Override
-            public boolean handle(Event event) {
-                if (event instanceof ChangeEvent) {
-                    dialogWindow = createWindow(labelText, content, skin, stage, lastx, lasty);
+	// Detach icon
+	detachIcon = new OwnImageButton(skin, detachButtonStyle);
+	detachIcon.setName("expand-collapse");
+	detachIcon.setChecked(false);
+	detachIcon.addListener(new EventListener() {
+	    @Override
+	    public boolean handle(Event event) {
+		if (event instanceof ChangeEvent) {
+		    dialogWindow = createWindow(labelText, content, skin, stage, lastx, lasty);
 
-                    // Display
-                    if (!stage.getActors().contains(dialogWindow, true))
-                        stage.addActor(dialogWindow);
+		    // Display
+		    if (!stage.getActors().contains(dialogWindow, true))
+			stage.addActor(dialogWindow);
 
-                    expandIcon.setChecked(false);
-                    expandIcon.setDisabled(true);
-                    detachIcon.setDisabled(true);
-                    return true;
-                }
-                return false;
-            }
-        });
-        detachIcon.addListener(new Tooltip(I18n.bundle.get("gui.tooltip.detach.group"), skin));
+		    expandIcon.setChecked(false);
+		    expandIcon.setDisabled(true);
+		    detachIcon.setDisabled(true);
+		    return true;
+		}
+		return false;
+	    }
+	});
+	detachIcon.addListener(new Tooltip(new OwnLabel(I18n.bundle.get("gui.tooltip.detach.group"), skin)));
 
-        HorizontalGroup headerGroup = new HorizontalGroup();
-        headerGroup.space(10).align(Align.center);
-        headerGroup.addActor(mainLabel);
+	HorizontalGroup headerGroup = new HorizontalGroup();
+	headerGroup.space(10).align(Align.center);
+	headerGroup.addActor(mainLabel);
 
-        if (topIcons != null && topIcons.length > 0) {
-            for (Actor topIcon : topIcons) {
-                headerGroup.addActor(topIcon);
-            }
-        }
+	if (topIcons != null && topIcons.length > 0) {
+	    for (Actor topIcon : topIcons) {
+		headerGroup.addActor(topIcon);
+	    }
+	}
 
-        headerGroup.addActor(expandIcon);
-        headerGroup.addActor(detachIcon);
+	headerGroup.addActor(expandIcon);
+	headerGroup.addActor(detachIcon);
 
-        addActor(headerGroup);
+	addActor(headerGroup);
 
-        expandIcon.setChecked(true);
+	expandIcon.setChecked(true);
     }
 
     /**
@@ -118,48 +118,48 @@ public class CollapsiblePane extends VerticalGroup {
      * @param topIcons List of top icons that will be added between the label and the expand/detach icons.
      */
     public CollapsiblePane(Stage stage, String labelText, final Actor content, Skin skin, Actor... topIcons) {
-        this(stage, labelText, content, skin, "header", "expand-collapse", "detach", topIcons);
+	this(stage, labelText, content, skin, "header", "expand-collapse", "detach", topIcons);
     }
 
     private CollapsibleWindow createWindow(String labelText, final Actor content, Skin skin, Stage stage, float x, float y) {
-        final CollapsibleWindow window = new CollapsibleWindow(labelText, skin);
-        window.align(Align.center);
+	final CollapsibleWindow window = new CollapsibleWindow(labelText, skin);
+	window.align(Align.center);
 
-        window.add(content).row();
+	window.add(content).row();
 
-        /** Close button **/
-        TextButton close = new OwnTextButton(I18n.bundle.get("gui.close"), skin, "default");
-        close.setName("close");
-        close.addListener(new EventListener() {
-            @Override
-            public boolean handle(Event event) {
-                if (event instanceof ChangeEvent) {
-                    lastx = window.getX();
-                    lasty = window.getY();
-                    window.remove();
-                    dialogWindow = null;
-                    expandIcon.setDisabled(false);
-                    detachIcon.setDisabled(false);
-                    return true;
-                }
+	/** Close button **/
+	TextButton close = new OwnTextButton(I18n.bundle.get("gui.close"), skin, "default");
+	close.setName("close");
+	close.addListener(new EventListener() {
+	    @Override
+	    public boolean handle(Event event) {
+		if (event instanceof ChangeEvent) {
+		    lastx = window.getX();
+		    lasty = window.getY();
+		    window.remove();
+		    dialogWindow = null;
+		    expandIcon.setDisabled(false);
+		    detachIcon.setDisabled(false);
+		    return true;
+		}
 
-                return false;
-            }
+		return false;
+	    }
 
-        });
-        Container<Button> closeContainer = new Container<Button>(close);
-        close.setSize(70, 20);
-        closeContainer.align(Align.right);
+	});
+	Container<Button> closeContainer = new Container<Button>(close);
+	close.setSize(70, 20);
+	closeContainer.align(Align.right);
 
-        window.add(closeContainer).pad(5, 0, 0, 0).bottom().right();
-        window.getTitleTable().align(Align.left);
-        window.pack();
+	window.add(closeContainer).pad(5, 0, 0, 0).bottom().right();
+	window.getTitleTable().align(Align.left);
+	window.pack();
 
-        x = x < 0 ? stage.getWidth() / 2f - this.getWidth() / 2f : x;
-        y = y < 0 ? stage.getHeight() / 2f - this.getHeight() / 2f : y;
-        window.setPosition(x, y);
+	x = x < 0 ? stage.getWidth() / 2f - this.getWidth() / 2f : x;
+	y = y < 0 ? stage.getHeight() / 2f - this.getHeight() / 2f : y;
+	window.setPosition(x, y);
 
-        return window;
+	return window;
     }
 
 }
