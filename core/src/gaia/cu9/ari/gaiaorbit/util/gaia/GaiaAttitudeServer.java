@@ -36,12 +36,16 @@ public class GaiaAttitudeServer {
     Date initialDate;
 
     public GaiaAttitudeServer(String folder, String... files) {
-        attitudes = AttitudeXmlParser.parseFolder(folder, GlobalConf.runtime.STRIPPED_FOV_MODE, files);
-        initialDate = ((AttitudeIntervalBean) attitudes.findMin()).activationTime;
-        current = new AttitudeIntervalBean("current", null, null, "dummy");
-        // Dummy attitude
-        dummyAttitude = new ConcreteAttitude(0, new Quaterniond(), false);
-        nsl = new Nsl37();
+        if (GlobalConf.data.REAL_GAIA_ATTITUDE) {
+            attitudes = AttitudeXmlParser.parseFolder(folder, GlobalConf.runtime.STRIPPED_FOV_MODE, files);
+            initialDate = ((AttitudeIntervalBean) attitudes.findMin()).activationTime;
+            current = new AttitudeIntervalBean("current", null, null, "dummy");
+            // Dummy attitude
+            dummyAttitude = new ConcreteAttitude(0, new Quaterniond(), false);
+        } else {
+            // Use NSL as approximation
+            nsl = new Nsl37();
+        }
     }
 
     private Date getDate(String date) {
@@ -64,24 +68,30 @@ public class GaiaAttitudeServer {
      * @return
      */
     public synchronized Attitude getAttitude(Date date) {
+        Attitude result;
+        if (GlobalConf.data.REAL_GAIA_ATTITUDE) {
+            // Find AttitudeType in timeSlots
+            if (date.before(initialDate)) {
+                result = dummyAttitude;
+            } else {
+                current.activationTime = date;
+                AttitudeIntervalBean att = (AttitudeIntervalBean) attitudes.findIntervalStart(current);
 
-        // Find AttitudeType in timeSlots
-        if (date.before(initialDate)) {
-            return dummyAttitude;
-        } else {
-            current.activationTime = date;
-            AttitudeIntervalBean att = (AttitudeIntervalBean) attitudes.findIntervalStart(current);
+                if (prevAttitude != null && !att.equals(prevAttitude)) {
+                    // Change!
+                    EventManager.instance.post(Events.POST_NOTIFICATION, I18n.bundle.format("notif.attitude.changed", att.toString(), att.activationTime));
+                }
 
-            if (prevAttitude != null && !att.equals(prevAttitude)) {
-                // Change!
-                EventManager.instance.post(Events.POST_NOTIFICATION, I18n.bundle.format("notif.attitude.changed", att.toString(), att.activationTime));
+                prevAttitude = att;
+
+                // Get actual attitude
+                result = att.get(date);
             }
-
-            prevAttitude = att;
-
-            // Get actual attitude
-            return att.get(date);
+        } else {
+            result = nsl.getAttitude(date);
         }
+
+        return result;
 
     }
 
