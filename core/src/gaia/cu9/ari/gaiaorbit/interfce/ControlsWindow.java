@@ -17,7 +17,6 @@ import gaia.cu9.ari.gaiaorbit.util.math.MathUtilsd;
 import gaia.cu9.ari.gaiaorbit.util.scene2d.CollapsiblePane;
 import gaia.cu9.ari.gaiaorbit.util.scene2d.CollapsibleWindow;
 import gaia.cu9.ari.gaiaorbit.util.scene2d.OwnImageButton;
-import gaia.cu9.ari.gaiaorbit.util.scene2d.OwnLabel;
 import gaia.cu9.ari.gaiaorbit.util.scene2d.OwnScrollPane;
 import gaia.cu9.ari.gaiaorbit.util.scene2d.OwnTextButton;
 
@@ -35,7 +34,7 @@ import com.badlogic.gdx.scenes.scene2d.ui.Button;
 import com.badlogic.gdx.scenes.scene2d.ui.Image;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
-import com.badlogic.gdx.scenes.scene2d.ui.Tooltip;
+import com.badlogic.gdx.scenes.scene2d.ui.TextTooltip;
 import com.badlogic.gdx.scenes.scene2d.ui.VerticalGroup;
 import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener.ChangeEvent;
 import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
@@ -65,250 +64,250 @@ public class ControlsWindow extends CollapsibleWindow implements IObserver {
     private boolean[] visible;
 
     public ControlsWindow(String title, Skin skin, Stage ui) {
-	super(title, skin);
-	this.skin = skin;
-	this.ui = ui;
+        super(title, skin);
+        this.skin = skin;
+        this.ui = ui;
 
-	/** Global resources **/
-	TextureRegion septexreg = ((TextureRegionDrawable) skin.newDrawable("separator")).getRegion();
-	septexreg.getTexture().setWrap(TextureWrap.Repeat, TextureWrap.ClampToEdge);
-	this.separator = new TiledDrawable(septexreg);
+        /** Global resources **/
+        TextureRegion septexreg = ((TextureRegionDrawable) skin.newDrawable("separator")).getRegion();
+        septexreg.getTexture().setWrap(TextureWrap.Repeat, TextureWrap.ClampToEdge);
+        this.separator = new TiledDrawable(septexreg);
 
-	EventManager.instance.subscribe(this, Events.TOGGLE_TIME_CMD, Events.GUI_SCROLL_POSITION_CMD, Events.GUI_FOLD_CMD, Events.GUI_MOVE_CMD, Events.RECALCULATE_OPTIONS_SIZE);
+        EventManager.instance.subscribe(this, Events.TOGGLE_TIME_CMD, Events.GUI_SCROLL_POSITION_CMD, Events.GUI_FOLD_CMD, Events.GUI_MOVE_CMD, Events.RECALCULATE_OPTIONS_SIZE);
     }
 
     public void initialize() {
-	/** Global layout **/
-	guiLayout = new Table();
-	guiLayout.align(Align.left);
+        /** Global layout **/
+        guiLayout = new Table();
+        guiLayout.align(Align.left);
 
-	List<Actor> mainActors = new ArrayList<Actor>();
+        List<Actor> mainActors = new ArrayList<Actor>();
 
-	/** ----TIME GROUP---- **/
-	playstop = new OwnImageButton(skin, "playstop");
-	playstop.setName("play stop");
-	playstop.setChecked(GlobalConf.runtime.TIME_ON);
-	playstop.addListener(new EventListener() {
-	    @Override
-	    public boolean handle(Event event) {
-		if (event instanceof ChangeEvent) {
-		    EventManager.instance.post(Events.TOGGLE_TIME_CMD, playstop.isChecked(), true);
-		    return true;
-		}
-		return false;
-	    }
-	});
-	playstop.addListener(new Tooltip(new OwnLabel(txt("gui.tooltip.playstop"), skin)));
+        /** ----TIME GROUP---- **/
+        playstop = new OwnImageButton(skin, "playstop");
+        playstop.setName("play stop");
+        playstop.setChecked(GlobalConf.runtime.TIME_ON);
+        playstop.addListener(new EventListener() {
+            @Override
+            public boolean handle(Event event) {
+                if (event instanceof ChangeEvent) {
+                    EventManager.instance.post(Events.TOGGLE_TIME_CMD, playstop.isChecked(), true);
+                    return true;
+                }
+                return false;
+            }
+        });
+        playstop.addListener(new TextTooltip(txt("gui.tooltip.playstop"), skin));
 
-	TimeComponent timeComponent = new TimeComponent(skin, ui);
-	timeComponent.initialize();
+        TimeComponent timeComponent = new TimeComponent(skin, ui);
+        timeComponent.initialize();
 
-	CollapsiblePane time = new CollapsiblePane(ui, txt("gui.time"), timeComponent.getActor(), skin, playstop);
-	time.align(Align.left);
-	mainActors.add(time);
+        CollapsiblePane time = new CollapsiblePane(ui, txt("gui.time"), timeComponent.getActor(), skin, playstop);
+        time.align(Align.left);
+        mainActors.add(time);
 
-	/** ----CAMERA---- **/
-	// Play camera button
-	//        playCamera = new OwnImageButton(skin, "play");
-	//        playCamera.setName("playCam");
-	//        playCamera.setChecked(false);
-	//        playCamera.addListener(new EventListener() {
-	//            @Override
-	//            public boolean handle(Event event) {
-	//                if (event instanceof ChangeEvent) {
-	//                    EventManager.instance.post(Events.SHOW_PLAYCAMERA_ACTION);
-	//                    return true;
-	//                }
-	//                return false;
-	//            }
-	//        });
-	//
-	//        playCamera.addListener(new Tooltip(txt("gui.tooltip.playcamera"), skin));
+        /** ----CAMERA---- **/
+        // Play camera button
+        //        playCamera = new OwnImageButton(skin, "play");
+        //        playCamera.setName("playCam");
+        //        playCamera.setChecked(false);
+        //        playCamera.addListener(new EventListener() {
+        //            @Override
+        //            public boolean handle(Event event) {
+        //                if (event instanceof ChangeEvent) {
+        //                    EventManager.instance.post(Events.SHOW_PLAYCAMERA_ACTION);
+        //                    return true;
+        //                }
+        //                return false;
+        //            }
+        //        });
+        //
+        //        playCamera.addListener(new TextTooltip(txt("gui.tooltip.playcamera"), skin));
 
-	CameraComponent cameraComponent = new CameraComponent(skin, ui);
-	cameraComponent.initialize();
+        CameraComponent cameraComponent = new CameraComponent(skin, ui);
+        cameraComponent.initialize();
 
-	CollapsiblePane camera = new CollapsiblePane(ui, txt("gui.camera"), cameraComponent.getActor(), skin/*, playCamera*/);
-	camera.align(Align.left);
-	mainActors.add(camera);
+        CollapsiblePane camera = new CollapsiblePane(ui, txt("gui.camera"), cameraComponent.getActor(), skin/*, playCamera*/);
+        camera.align(Align.left);
+        mainActors.add(camera);
 
-	/** ----OBJECTS TREE---- **/
-	ObjectsComponent objectsComponent = new ObjectsComponent(skin, ui);
-	objectsComponent.setSceneGraph(sg);
-	objectsComponent.initialize();
+        /** ----OBJECTS TREE---- **/
+        ObjectsComponent objectsComponent = new ObjectsComponent(skin, ui);
+        objectsComponent.setSceneGraph(sg);
+        objectsComponent.initialize();
 
-	CollapsiblePane objects = new CollapsiblePane(ui, txt("gui.objects"), objectsComponent.getActor(), skin);
-	objects.align(Align.left);
-	mainActors.add(objects);
+        CollapsiblePane objects = new CollapsiblePane(ui, txt("gui.objects"), objectsComponent.getActor(), skin);
+        objects.align(Align.left);
+        mainActors.add(objects);
 
-	/** ----OBJECT TOGGLES GROUP---- **/
-	VisibilityComponent visibilityComponent = new VisibilityComponent(skin, ui);
-	visibilityComponent.setVisibilityEntitites(visibilityEntities, visible);
-	visibilityComponent.initialize();
+        /** ----OBJECT TOGGLES GROUP---- **/
+        VisibilityComponent visibilityComponent = new VisibilityComponent(skin, ui);
+        visibilityComponent.setVisibilityEntitites(visibilityEntities, visible);
+        visibilityComponent.initialize();
 
-	CollapsiblePane visibility = new CollapsiblePane(ui, txt("gui.visibility"), visibilityComponent.getActor(), skin);
-	visibility.align(Align.left);
-	mainActors.add(visibility);
+        CollapsiblePane visibility = new CollapsiblePane(ui, txt("gui.visibility"), visibilityComponent.getActor(), skin);
+        visibility.align(Align.left);
+        mainActors.add(visibility);
 
-	/** ----LIGHTING GROUP---- **/
-	VisualEffectsComponent visualEffectsComponent = new VisualEffectsComponent(skin, ui);
-	visualEffectsComponent.initialize();
+        /** ----LIGHTING GROUP---- **/
+        VisualEffectsComponent visualEffectsComponent = new VisualEffectsComponent(skin, ui);
+        visualEffectsComponent.initialize();
 
-	CollapsiblePane visualEffects = new CollapsiblePane(ui, txt("gui.lighting"), visualEffectsComponent.getActor(), skin);
-	visualEffects.align(Align.left);
-	mainActors.add(visualEffects);
+        CollapsiblePane visualEffects = new CollapsiblePane(ui, txt("gui.lighting"), visualEffectsComponent.getActor(), skin);
+        visualEffects.align(Align.left);
+        mainActors.add(visualEffects);
 
-	/** ----GAIA SCAN GROUP---- **/
-	GaiaComponent gaiaComponent = new GaiaComponent(skin, ui);
-	gaiaComponent.initialize();
+        /** ----GAIA SCAN GROUP---- **/
+        GaiaComponent gaiaComponent = new GaiaComponent(skin, ui);
+        gaiaComponent.initialize();
 
-	CollapsiblePane gaia = new CollapsiblePane(ui, txt("gui.gaiascan"), gaiaComponent.getActor(), skin);
-	gaia.align(Align.left);
-	mainActors.add(gaia);
+        CollapsiblePane gaia = new CollapsiblePane(ui, txt("gui.gaiascan"), gaiaComponent.getActor(), skin);
+        gaia.align(Align.left);
+        mainActors.add(gaia);
 
-	/** ----BACK TO WEBGL LINK---- **/
-	Button switchWebgl = new OwnTextButton(txt("gui.webgl.back"), skin, "link");
-	switchWebgl.addListener(new EventListener() {
-	    @Override
-	    public boolean handle(Event event) {
-		if (event instanceof ChangeEvent) {
-		    // Remove webgl, add controls window
-		    EventManager.instance.post(Events.REMOVE_GUI_COMPONENT, "controlsWindow");
-		    EventManager.instance.post(Events.ADD_GUI_COMPONENT, "webglInterface");
-		}
-		return true;
-	    }
-	});
-	mainActors.add(switchWebgl);
+        /** ----BACK TO WEBGL LINK---- **/
+        Button switchWebgl = new OwnTextButton(txt("gui.webgl.back"), skin, "link");
+        switchWebgl.addListener(new EventListener() {
+            @Override
+            public boolean handle(Event event) {
+                if (event instanceof ChangeEvent) {
+                    // Remove webgl, add controls window
+                    EventManager.instance.post(Events.REMOVE_GUI_COMPONENT, "controlsWindow");
+                    EventManager.instance.post(Events.ADD_GUI_COMPONENT, "webglInterface");
+                }
+                return true;
+            }
+        });
+        mainActors.add(switchWebgl);
 
-	/** ADD GROUPS TO VERTICAL LAYOUT **/
-	int pad = 10;
-	int size = mainActors.size();
-	for (int i = 0; i < size; i++) {
-	    Actor actor = mainActors.get(i);
-	    guiLayout.add(actor).left().padBottom(pad);
-	    if (i < size - 1) {
-		// Not last
-		guiLayout.row();
-		guiLayout.add(new Image(separator)).left().fill(true, false);
-		guiLayout.row();
-	    }
-	}
-	guiLayout.layout();
-	guiLayout.pack();
+        /** ADD GROUPS TO VERTICAL LAYOUT **/
+        int pad = 10;
+        int size = mainActors.size();
+        for (int i = 0; i < size; i++) {
+            Actor actor = mainActors.get(i);
+            guiLayout.add(actor).left().padBottom(pad);
+            if (i < size - 1) {
+                // Not last
+                guiLayout.row();
+                guiLayout.add(new Image(separator)).left().fill(true, false);
+                guiLayout.row();
+            }
+        }
+        guiLayout.layout();
+        guiLayout.pack();
 
-	windowScroll = new OwnScrollPane(guiLayout, skin, "minimalist-nobg");
-	windowScroll.setFadeScrollBars(true);
-	windowScroll.setScrollingDisabled(true, false);
-	windowScroll.setOverscroll(false, false);
-	windowScroll.setSmoothScrolling(true);
-	windowScroll.pack();
-	windowScroll.setWidth(guiLayout.getWidth() + windowScroll.getStyle().vScroll.getMinWidth());
+        windowScroll = new OwnScrollPane(guiLayout, skin, "minimalist-nobg");
+        windowScroll.setFadeScrollBars(true);
+        windowScroll.setScrollingDisabled(true, false);
+        windowScroll.setOverscroll(false, false);
+        windowScroll.setSmoothScrolling(true);
+        windowScroll.pack();
+        windowScroll.setWidth(guiLayout.getWidth() + windowScroll.getStyle().vScroll.getMinWidth());
 
-	mainVertical = new VerticalGroup();
-	mainVertical.space(5f);
-	mainVertical.align(Align.right).align(Align.top);
-	mainVertical.addActor(windowScroll);
-	mainVertical.pack();
+        mainVertical = new VerticalGroup();
+        mainVertical.space(5f);
+        mainVertical.align(Align.right).align(Align.top);
+        mainVertical.addActor(windowScroll);
+        mainVertical.pack();
 
-	/** ADD TO MAIN WINDOW **/
-	add(mainVertical).top().left().expand();
-	setPosition(0, Gdx.graphics.getHeight() - getHeight());
+        /** ADD TO MAIN WINDOW **/
+        add(mainVertical).top().left().expand();
+        setPosition(0, Gdx.graphics.getHeight() - getHeight());
 
-	setWidth(mainVertical.getWidth());
-	pack();
-	recalculateSize();
+        setWidth(mainVertical.getWidth());
+        pack();
+        recalculateSize();
     }
 
     public void recalculateSize() {
-	// Save position
-	float topy = getY() + getHeight();
+        // Save position
+        float topy = getY() + getHeight();
 
-	// Calculate new size
-	guiLayout.pack();
-	if (windowScroll != null) {
-	    windowScroll.setHeight(Math.min(guiLayout.getHeight(), Gdx.graphics.getHeight() - 70));
-	    windowScroll.pack();
+        // Calculate new size
+        guiLayout.pack();
+        if (windowScroll != null) {
+            windowScroll.setHeight(Math.min(guiLayout.getHeight(), Gdx.graphics.getHeight() - 70));
+            windowScroll.pack();
 
-	    mainVertical.setHeight(windowScroll.getHeight() + 30);
-	    mainVertical.pack();
+            mainVertical.setHeight(windowScroll.getHeight() + 30);
+            mainVertical.pack();
 
-	    setHeight(windowScroll.getHeight() + 40);
-	}
-	pack();
-	validate();
+            setHeight(windowScroll.getHeight() + 40);
+        }
+        pack();
+        validate();
 
-	// Restore position
-	setY(topy - getHeight());
+        // Restore position
+        setY(topy - getHeight());
     }
 
     public void setSceneGraph(ISceneGraph sg) {
-	this.sg = sg;
+        this.sg = sg;
     }
 
     public void setVisibilityToggles(ComponentType[] entities, boolean[] visible) {
-	this.visibilityEntities = entities;
-	this.visible = visible;
+        this.visibilityEntities = entities;
+        this.visible = visible;
     }
 
     private String txt(String key) {
-	return I18n.bundle.get(key);
+        return I18n.bundle.get(key);
     }
 
     private String txt(String key, Object... params) {
-	return I18n.bundle.format(key, params);
+        return I18n.bundle.format(key, params);
     }
 
     @Override
     public void notify(Events event, Object... data) {
-	switch (event) {
-	case TOGGLE_TIME_CMD:
-	    // Pause has been toggled, update playstop button only if this does not come from this interface
-	    if (!(Boolean) data[1]) {
-		Boolean timeOn = null;
-		if (data[0] != null) {
-		    timeOn = (Boolean) data[0];
-		} else {
-		    timeOn = !playstop.isChecked();
-		}
-		playstop.setCheckedNoFire(timeOn);
-	    }
-	    break;
-	case GUI_SCROLL_POSITION_CMD:
-	    this.windowScroll.setScrollY((float) data[0]);
-	    break;
-	case GUI_FOLD_CMD:
-	    boolean collapse;
-	    if (data.length >= 1) {
-		collapse = (boolean) data[0];
-	    } else {
-		// Toggle
-		collapse = !isCollapsed();
-	    }
-	    if (collapse) {
-		collapse();
-	    } else {
-		expand();
-	    }
-	    break;
-	case GUI_MOVE_CMD:
-	    float x = (float) data[0];
-	    float y = (float) data[1];
-	    float width = Gdx.graphics.getWidth();
-	    float height = Gdx.graphics.getHeight();
-	    float windowWidth = getWidth();
-	    float windowHeight = getHeight();
+        switch (event) {
+        case TOGGLE_TIME_CMD:
+            // Pause has been toggled, update playstop button only if this does not come from this interface
+            if (!(Boolean) data[1]) {
+                Boolean timeOn = null;
+                if (data[0] != null) {
+                    timeOn = (Boolean) data[0];
+                } else {
+                    timeOn = !playstop.isChecked();
+                }
+                playstop.setCheckedNoFire(timeOn);
+            }
+            break;
+        case GUI_SCROLL_POSITION_CMD:
+            this.windowScroll.setScrollY((float) data[0]);
+            break;
+        case GUI_FOLD_CMD:
+            boolean collapse;
+            if (data.length >= 1) {
+                collapse = (boolean) data[0];
+            } else {
+                // Toggle
+                collapse = !isCollapsed();
+            }
+            if (collapse) {
+                collapse();
+            } else {
+                expand();
+            }
+            break;
+        case GUI_MOVE_CMD:
+            float x = (float) data[0];
+            float y = (float) data[1];
+            float width = Gdx.graphics.getWidth();
+            float height = Gdx.graphics.getHeight();
+            float windowWidth = getWidth();
+            float windowHeight = getHeight();
 
-	    x = MathUtilsd.clamp(x * width, 0, width - windowWidth);
-	    y = MathUtilsd.clamp(y * height - windowHeight, 0, height - windowHeight);
+            x = MathUtilsd.clamp(x * width, 0, width - windowWidth);
+            y = MathUtilsd.clamp(y * height - windowHeight, 0, height - windowHeight);
 
-	    setPosition(x, y);
+            setPosition(x, y);
 
-	    break;
-	case RECALCULATE_OPTIONS_SIZE:
-	    recalculateSize();
-	    break;
-	}
+            break;
+        case RECALCULATE_OPTIONS_SIZE:
+            recalculateSize();
+            break;
+        }
 
     }
 
