@@ -33,7 +33,7 @@ public class PixelRenderSystem extends ImmediateRenderSystem implements IObserve
     public PixelRenderSystem(RenderGroup rg, int priority, float[] alphas) {
         super(rg, priority, alphas);
         EventManager.instance.subscribe(this, Events.TRANSIT_COLOUR_CMD, Events.ONLY_OBSERVED_STARS_CMD);
-        BRIGHTNESS_FACTOR = Constants.webgl ? 15f : 1f;
+        BRIGHTNESS_FACTOR = Constants.webgl ? 15f : 2f;
         POINT_SIZE = GlobalConf.runtime.STRIPPED_FOV_MODE ? 2 : 1;
     }
 
@@ -81,7 +81,7 @@ public class PixelRenderSystem extends ImmediateRenderSystem implements IObserve
             for (int i = 0; i < size; i++) {
                 // 2 FPS gain
                 CelestialBody cb = (CelestialBody) renderables.get(i);
-                float[] col = starColorTransit ? cb.ccTransit : cb.cc;
+                float[] col = starColorTransit ? cb.ccTransit : cb.ccPale;
                 // COLOR
                 curr.vertices[curr.vertexIdx + curr.colorOffset] = Color.toFloatBits(col[0], col[1], col[2], 1.0f);
 

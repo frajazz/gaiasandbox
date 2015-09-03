@@ -62,12 +62,7 @@ public class GaiaSandboxDesktop implements IObserver {
             // Initialize date format
             DateFormatFactory.initialize(new DesktopDateFormatFactory());
 
-            //UIManager.setLookAndFeel("com.alee.laf.WebLookAndFeel");
-            //WebLookAndFeel.setAllowLinuxTransparency(false);
-            //UIManager.setLookAndFeel("com.sun.java.swing.plaf.gtk.GTKLookAndFeel");
-            //UIManager.setLookAndFeel("com.jgoodies.looks.plastic.PlasticXPLookAndFeel");
             UIManager.setLookAndFeel("com.pagosoft.plaf.PgsLookAndFeel");
-            //UIManager.setLookAndFeel(new SyntheticaStandardLookAndFeel());
 
             setUIFont(new javax.swing.plaf.FontUIResource("SansSerif", Font.PLAIN, 10));
 
