@@ -1,9 +1,5 @@
 package gaia.cu9.ari.gaiaorbit.util.g3d;
 
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -296,23 +292,23 @@ public class IcoSphereCreator extends ModelCreator
         return this;
     }
 
-    public static void main(String[] args) {
-        boolean flipNormals = true;
-        IcoSphereCreator isc = new IcoSphereCreator();
-        int recursion = 2;
-        isc.create(1, recursion, flipNormals);
-        try {
-            File file = File.createTempFile("icosphere_" + recursion + "_", ".obj");
-            OutputStream os = new FileOutputStream(file);
-            isc.dumpObj(os);
-            os.flush();
-            os.close();
-            System.out.println("Vertices: " + isc.vertices.size());
-            System.out.println("Normals: " + isc.normals.size());
-            System.out.println("Faces: " + isc.faces.size());
-            System.out.println("Model written in: " + file.getAbsolutePath());
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-    }
+//    public static void main(String[] args) {
+//        boolean flipNormals = true;
+//        IcoSphereCreator isc = new IcoSphereCreator();
+//        int recursion = 2;
+//        isc.create(1, recursion, flipNormals);
+//        try {
+//            File file = File.createTempFile("icosphere_" + recursion + "_", ".obj");
+//            OutputStream os = new FileOutputStream(file);
+//            isc.dumpObj(os);
+//            os.flush();
+//            os.close();
+//            System.out.println("Vertices: " + isc.vertices.size());
+//            System.out.println("Normals: " + isc.normals.size());
+//            System.out.println("Faces: " + isc.faces.size());
+//            System.out.println("Model written in: " + file.getAbsolutePath());
+//        } catch (IOException e) {
+//            e.printStackTrace();
+//        }
+//    }
 }

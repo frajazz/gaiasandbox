@@ -1,12 +1,57 @@
 <!doctype html>
 <html>
-       <head>
-              <title>GaiaSandbox</title>
-              <meta http-equiv="content-type" content="text/html; charset=UTF-8">
-              <link href="styles.css" rel="stylesheet" type="text/css">
-              <script src="soundmanager2-setup.js"></script>
-  			  <script src="soundmanager2-jsmin.js"></script>
-       </head>
+<head>
+<title>GaiaSandbox</title>
+<meta http-equiv="content-type" content="text/html; charset=UTF-8">
+<meta http-equiv="refresh" content="10800">
+<link href="styles.css" rel="stylesheet" type="text/css">
+<script src="soundmanager2-setup.js"></script>
+<script src="soundmanager2-jsmin.js"></script>
+</head>
+
+<body>
+	<script>
+	  (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+	  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+	  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+	  })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+	
+	  ga('create', 'UA-57580474-3', 'auto');
+	  ga('send', 'pageview');
+	</script>
+	<script type="text/javascript">
+	</script>
+	<div class="wrapper">
+		<div id="title">the Gaia Sandbox (webgl)</div>
+		<div style="width: 100%; overflow: hidden;">
+			<div id="embed-html"></div>
+			<!-- <div id="wikip-info">
+			    	<iframe id="wikip-info-ifr" src="https://en.m.wikipedia.org/wiki/Sun"></iframe>
+			    </div> -->
+		</div>
+		<div id="controls">
+			<script language="javascript">
+				function toggle() {
+					var list = document.getElementsByClassName("gwt-TextArea");
+					var button = document.getElementById("hide-console");
+					var console = list[0];
+					if (console.style.display == "block") {
+						console.style.display = "none";
+						console.scrollTop = 99999;
+						button.innerHTML = "show console";
+					} else {
+						console.style.display = "block";
+						console.scrollTop = 99999;
+						button.innerHTML = "hide console";
+					}
+				}
+			</script>
+			<a id="hide-console" class="link link-tab" href="javascript:toggle();">show console</a> | 
+			<a class="link link-tab" href="http://sci.esa.int/gaia/" target="_blank">what is gaia?</a> | 
+			<a class="link link-tab" href="http://www.zah.uni-heidelberg.de/gaia/outreach/gaiasandbox/" target="_blank">the gaia sandbox</a> | 
+			<a class="link link-tab" href="https://github.com/ari-zah/gaiasandbox/issues" target="_blank">report bug</a> | 
+			<a class="link link-tab" href=".">reload</a>
+		</div>
 
        <body>
               <a class="superdev" href="javascript:%7B%20window.__gwt_bookmarklet_params%20%3D%20%7B'server_url'%3A'http%3A%2F%2Flocalhost%3A9876%2F'%7D%3B%20var%20s%20%3D%20document.createElement('script')%3B%20s.src%20%3D%20'http%3A%2F%2Flocalhost%3A9876%2Fdev_mode_on.js'%3B%20void(document.getElementsByTagName('head')%5B0%5D.appendChild(s))%3B%7D">&#8635;</a>

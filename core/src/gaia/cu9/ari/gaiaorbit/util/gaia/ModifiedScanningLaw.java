@@ -12,6 +12,8 @@ import gaia.cu9.ari.gaiaorbit.util.math.Matrix4d;
 import gaia.cu9.ari.gaiaorbit.util.math.Quaterniond;
 import gaia.cu9.ari.gaiaorbit.util.math.Vector3d;
 
+import java.util.Arrays;
+
 /**
  * Class to generate Gaia Modified Scanning Law (MSL).
  *
@@ -29,26 +31,21 @@ import gaia.cu9.ari.gaiaorbit.util.math.Vector3d;
  */
 public class ModifiedScanningLaw {
 
-
     protected static final double PI = Math.PI;
     protected static final double TWO_PI = 2.0 * PI;
     protected static final double FOUR_PI = 4.0 * PI;
     protected final static double DEG = PI / 180.0;
 
-
     protected final static double DAY_NS = 86400e9;
 
-
     protected static final double obliquity = Coordinates.OBLIQUITY_DEG_J2000;
-
 
     // define ecliptic pole in equatorial coordinates
     // NOTE: The direction cosines matrix from GPDB should not be used
     // here since the shift of the origin (equinox) by 0.05542 arcsec
     // is not consistent with the ScanningLaw transformation from
     // ecliptic to equatorial coordinates.
-    protected static Vector3d eclPole = new Vector3d(0.0, 1.0, 0.0)
-            .rotate(obliquity, 0, 0, 1);
+    protected static Vector3d eclPole = new Vector3d(0.0, 1.0, 0.0).rotate(obliquity, 0, 0, 1);
 
     /**
      * Reference epoch to which the reference scan parameters refer
@@ -334,8 +331,7 @@ public class ModifiedScanningLaw {
      */
     public void setRefEpoch(long refEpoch) throws RuntimeException {
         if (refEpoch > tBeg) {
-            throw new RuntimeException(
-                    "Reference epoch for MSL cannot be later than the starting time");
+            throw new RuntimeException("Reference epoch for MSL cannot be later than the starting time");
         }
         this.refEpoch = refEpoch;
         initialized = false;
@@ -445,8 +441,7 @@ public class ModifiedScanningLaw {
      * @param s1Min
      *            minimum parallax factor for reduced speed [-]
      */
-    public void setMslParameters(double factor, double zMaxDeg, double zMinDeg,
-            double s1Min) {
+    public void setMslParameters(double factor, double zMaxDeg, double zMinDeg, double s1Min) {
         sFactor = factor;
         s1min = s1Min;
         zMax = Math.toRadians(zMaxDeg);
@@ -472,12 +467,10 @@ public class ModifiedScanningLaw {
         double radius1 = 0.50 * DEG;
         Coordinates.sphericalToCartesian(1.04 * DEG, -3.88 * DEG, radius1, dir1);
 
-
         // circle 2:
         Vector3d dir2 = new Vector3d();
         double radius2 = 0.50 * DEG;
         Coordinates.sphericalToCartesian(1.44 * DEG, -2.64 * DEG, radius2, dir2);
-
 
         Matrix4d galEq = Coordinates.galacticToEquatorial();
         dir1.mul(galEq);
@@ -554,7 +547,7 @@ public class ModifiedScanningLaw {
      */
     public void regretLastStep() {
         tNow = tOld;
-        y = yOld.clone();
+        y = Arrays.copyOf(yOld, yOld.length);
         dydt = dn.derivn(tNow, y);
         sun.setTime(tNow);
         lSun = sun.getSolarLongitude();
@@ -683,8 +676,7 @@ public class ModifiedScanningLaw {
     public double getCurrentS() {
         double cosNu = Math.cos(nu);
         double sinNu = Math.sin(nu);
-        return Math.sqrt(Math.pow(cosNu, 2)
-                + Math.pow(getKappa() * sinXi - cosXi * sinNu, 2));
+        return Math.sqrt(Math.pow(cosNu, 2) + Math.pow(getKappa() * sinXi - cosXi * sinNu, 2));
     }
 
     /**
@@ -799,9 +791,7 @@ public class ModifiedScanningLaw {
             double sinNu = Math.sin(y[0]);
 
             // calculate nominal kappa
-            double kappaN = (Math.sqrt(sNom * sNom - cosNu * cosNu) + cosXi
-                    * sinNu)
-                    / sinXi;
+            double kappaN = (Math.sqrt(sNom * sNom - cosNu * cosNu) + cosXi * sinNu) / sinXi;
 
             // determine the minimum altitude of the highDensityAreas over the
             // scanning plane; the relevant area is
@@ -826,10 +816,8 @@ public class ModifiedScanningLaw {
             if (altMin < zMax) {
                 reduced = true;
                 double kappaR = kappaN;
-                double s0 = Vector3d.crs(eclPole, spinAxis).dot(
-                        refDir[indexAltMin]);
-                double s1 = Vector3d.crs(sunDir, spinAxis).dot(
-                        refDir[indexAltMin]);
+                double s0 = Vector3d.crs(eclPole, spinAxis).dot(refDir[indexAltMin]);
+                double s1 = Vector3d.crs(sunDir, spinAxis).dot(refDir[indexAltMin]);
                 if (s1 > 0) {
                     kappaR = Math.min(kappaN, (sRed - s0) / s1);
                 } else if (s1 < 0) {
@@ -837,8 +825,7 @@ public class ModifiedScanningLaw {
                 }
                 if (kappaR < 0)
                     kappaR = 0.0;
-                kappaR = kappaN - (kappaN - kappaR)
-                        * sigmoid((Math.abs(s1) - s1min) / 0.1);
+                kappaR = kappaN - (kappaN - kappaR) * sigmoid((Math.abs(s1) - s1min) / 0.1);
                 if (altMin < zMin) {
                     // use the reduced kappa
                     kappa = kappaR;
@@ -846,8 +833,7 @@ public class ModifiedScanningLaw {
                 } else {
                     // use a smooth transition for x between 0 (R) and 1 (N)
                     double x = (altMin - zMin) / (zMax - zMin);
-                    kappa = transitionKappa(x, kappaN, kappaR,
-                            TransitionFunction.FANCY);
+                    kappa = transitionKappa(x, kappaN, kappaR, TransitionFunction.FANCY);
                     status = ScanState.TRANSITION;
                 }
             } else {
@@ -930,16 +916,14 @@ public class ModifiedScanningLaw {
      *            type of transition function
      * @return
      */
-    protected double transitionKappa(double x, double kappaN, double kappaR,
-            TransitionFunction tf) {
+    protected double transitionKappa(double x, double kappaN, double kappaR, TransitionFunction tf) {
         double kappa = 0.0;
         switch (tf) {
         case LINEAR:
             kappa = kappaR * (1.0 - x) + kappaN * x;
             break;
         case COSINE:
-            kappa = 0.5 * ((kappaN + kappaR) - (kappaN - kappaR)
-                    * Math.cos(Math.PI * x));
+            kappa = 0.5 * ((kappaN + kappaR) - (kappaN - kappaR) * Math.cos(Math.PI * x));
             break;
         case SQUAREROOT:
             kappa = Math.sqrt((1 - x) * kappaR * kappaR + x * kappaN * kappaN);
