@@ -89,16 +89,16 @@ public class ParticleDataBinaryIO {
                     float appmag = data_in.readFloat();
                     float absmag = data_in.readFloat();
                     float colorbv = data_in.readFloat();
-                    float x = data_in.readFloat();
-                    float y = data_in.readFloat();
-                    float z = data_in.readFloat();
-                    int id = data_in.readInt();
+                    double x = data_in.readDouble();
+                    double y = data_in.readDouble();
+                    double z = data_in.readDouble();
+                    long id = data_in.readLong();
                     long pageId = data_in.readLong();
                     int type = data_in.readInt();
                     if (appmag < GlobalConf.data.LIMIT_MAG_LOAD) {
                         Vector3d pos = new Vector3d(x, y, z);
                         Vector3d sph = Coordinates.cartesianToSpherical(pos, new Vector3d());
-                        Star s = new Star(pos, appmag, absmag, colorbv, name, (float) sph.x, (float) sph.y, id);
+                        Star s = new Star(pos, appmag, absmag, colorbv, name, (float) sph.x, (float) sph.y, (int) id);
                         s.pageId = pageId;
                         s.type = type;
                         s.initialize();

@@ -1,14 +1,12 @@
 package gaia.cu9.ari.gaiaorbit.util;
 
-import gaia.cu9.ari.gaiaorbit.interfce.TextUtils;
 import gaia.cu9.ari.gaiaorbit.util.coord.AstroUtils;
-import gaia.cu9.ari.gaiaorbit.util.format.INumberFormat;
-import gaia.cu9.ari.gaiaorbit.util.format.NumberFormatFactory;
 import gaia.cu9.ari.gaiaorbit.util.math.MathUtilsd;
 import gaia.cu9.ari.gaiaorbit.util.math.Vector3d;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.assets.AssetManager;
+import com.badlogic.gdx.files.FileHandle;
 import com.badlogic.gdx.graphics.Pixmap;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
@@ -38,7 +36,8 @@ public class GlobalResources {
         spriteBatch = new SpriteBatch();
 
         // Create skin right now, it is needed.
-        skin = new Skin(Gdx.files.internal("skins/" + GlobalConf.program.UI_THEME + ".json"));
+        FileHandle fh = Gdx.files.internal("skins/" + GlobalConf.program.UI_THEME + ".json");
+        skin = new Skin(fh);
 
         // Async load
         manager.load("img/cursor-link.png", Pixmap.class);
@@ -60,9 +59,27 @@ public class GlobalResources {
         String[] parts = property.split("\\.");
         StringBuilder b = new StringBuilder();
         for (String part : parts) {
-            b.append(TextUtils.capitalise(part));
+            b.append(capitalise(part));
         }
         return b.toString();
+    }
+
+    /**
+     * Returns the given string with the first letter capitalised
+     * @param line
+     * @return
+     */
+    public static String capitalise(String line) {
+        return Character.toUpperCase(line.charAt(0)) + line.substring(1);
+    }
+
+    /**
+     * Returns the given string with the first letter capitalised and all the others in lower case.
+     * @param line
+     * @return
+     */
+    public static String trueCapitalise(String line) {
+        return Character.toUpperCase(line.charAt(0)) + line.substring(1).toLowerCase();
     }
 
     /**
