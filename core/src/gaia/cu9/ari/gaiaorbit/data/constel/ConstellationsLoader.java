@@ -1,6 +1,6 @@
 package gaia.cu9.ari.gaiaorbit.data.constel;
 
-import gaia.cu9.ari.gaiaorbit.data.stars.ISceneGraphLoader;
+import gaia.cu9.ari.gaiaorbit.data.ISceneGraphLoader;
 import gaia.cu9.ari.gaiaorbit.render.ComponentType;
 import gaia.cu9.ari.gaiaorbit.scenegraph.Constellation;
 import gaia.cu9.ari.gaiaorbit.scenegraph.SceneGraphNode;
