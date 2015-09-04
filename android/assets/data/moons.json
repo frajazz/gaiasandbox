@@ -37,7 +37,8 @@
 									"flip" : false
 									},
 						"texture" : {
-									"base" : "data/tex/moon.jpg"
+									"base" : "data/tex/moon-4k.jpg",
+									"normal" : "data/tex/moon-normal.jpg"
 									}
 						}
 	},

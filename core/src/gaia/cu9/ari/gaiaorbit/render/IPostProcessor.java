@@ -37,7 +37,18 @@ public interface IPostProcessor {
 
     }
 
-    public PostProcessBean getPostProcessBean();
+    public enum RenderType {
+        screen(0), screenshot(1), frame(2);
+
+        public int index;
+
+        private RenderType(int index) {
+            this.index = index;
+        }
+
+    }
+
+    public PostProcessBean getPostProcessBean(RenderType type);
 
     public void resize(int width, int height);
 }

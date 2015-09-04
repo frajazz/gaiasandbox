@@ -6,6 +6,7 @@ import gaia.cu9.ari.gaiaorbit.util.math.Vector3d;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.assets.AssetManager;
+import com.badlogic.gdx.files.FileHandle;
 import com.badlogic.gdx.graphics.Pixmap;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
@@ -35,7 +36,8 @@ public class GlobalResources {
         spriteBatch = new SpriteBatch();
 
         // Create skin right now, it is needed.
-        skin = new Skin(Gdx.files.internal("skins/" + GlobalConf.program.UI_THEME + ".json"));
+        FileHandle fh = Gdx.files.internal("skins/" + GlobalConf.program.UI_THEME + ".json");
+        skin = new Skin(fh);
 
         // Async load
         manager.load("img/cursor-link.png", Pixmap.class);

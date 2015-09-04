@@ -182,8 +182,8 @@ public class GaiaCatalogFilter {
             data_out.writeFloat(s.appmag);
             data_out.writeFloat(s.absmag);
             data_out.writeFloat(s.colorbv);
-            data_out.writeFloat(s.posSph.x);
-            data_out.writeFloat(s.posSph.y);
+            data_out.writeFloat((float) s.posSph.x);
+            data_out.writeFloat((float) s.posSph.y);
             data_out.writeFloat((float) s.pos.len());
             data_out.writeInt(s.id);
         }

@@ -3,7 +3,11 @@ package gaia.cu9.ari.gaiaorbit.desktop;
 import gaia.cu9.ari.gaiaorbit.GaiaSandbox;
 import gaia.cu9.ari.gaiaorbit.desktop.format.DesktopDateFormatFactory;
 import gaia.cu9.ari.gaiaorbit.desktop.format.DesktopNumberFormatFactory;
-import gaia.cu9.ari.gaiaorbit.desktop.util.WebGLConfInitLite;
+import gaia.cu9.ari.gaiaorbit.desktop.render.DesktopPostProcessorFactory;
+import gaia.cu9.ari.gaiaorbit.desktop.util.WebGLConfInit;
+import gaia.cu9.ari.gaiaorbit.render.PostProcessorFactory;
+import gaia.cu9.ari.gaiaorbit.script.DummyFactory;
+import gaia.cu9.ari.gaiaorbit.script.ScriptingFactory;
 import gaia.cu9.ari.gaiaorbit.util.ConfInit;
 import gaia.cu9.ari.gaiaorbit.util.GlobalConf;
 import gaia.cu9.ari.gaiaorbit.util.format.DateFormatFactory;
@@ -19,7 +23,9 @@ public class GaiaSandboxDesktopWebGL {
     public static void main(String[] args) throws Exception {
         NumberFormatFactory.initialize(new DesktopNumberFormatFactory());
         DateFormatFactory.initialize(new DesktopDateFormatFactory());
-        ConfInit.initialize(new WebGLConfInitLite());
+        ScriptingFactory.initialize(new DummyFactory());
+        ConfInit.initialize(new WebGLConfInit());
+        PostProcessorFactory.initialize(new DesktopPostProcessorFactory());
 
         LwjglApplicationConfiguration cfg = new LwjglApplicationConfiguration();
         LwjglApplicationConfiguration.disableAudio = true;

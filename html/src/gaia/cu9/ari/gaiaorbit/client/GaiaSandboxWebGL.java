@@ -3,11 +3,13 @@ package gaia.cu9.ari.gaiaorbit.client;
 import gaia.cu9.ari.gaiaorbit.GaiaSandbox;
 import gaia.cu9.ari.gaiaorbit.client.format.GwtDateFormatFactory;
 import gaia.cu9.ari.gaiaorbit.client.format.GwtNumberFormatFactory;
+import gaia.cu9.ari.gaiaorbit.client.render.WebGLPostProcessorFactory;
 import gaia.cu9.ari.gaiaorbit.client.script.DummyFactory;
 import gaia.cu9.ari.gaiaorbit.client.util.WebGLConfInit;
 import gaia.cu9.ari.gaiaorbit.event.EventManager;
 import gaia.cu9.ari.gaiaorbit.event.Events;
 import gaia.cu9.ari.gaiaorbit.event.IObserver;
+import gaia.cu9.ari.gaiaorbit.render.PostProcessorFactory;
 import gaia.cu9.ari.gaiaorbit.scenegraph.CelestialBody;
 import gaia.cu9.ari.gaiaorbit.script.ScriptingFactory;
 import gaia.cu9.ari.gaiaorbit.util.ConfInit;
@@ -38,6 +40,8 @@ public class GaiaSandboxWebGL extends GwtApplication implements IObserver {
             System.err.println("Error initializing GlobalConf");
             e.printStackTrace(System.err);
         }
+
+        PostProcessorFactory.initialize(new WebGLPostProcessorFactory());
 
         return config;
     }

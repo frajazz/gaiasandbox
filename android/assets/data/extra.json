@@ -32,8 +32,7 @@
 
 	"parent" : "Universe", 
 	"impl" : "gaia.cu9.ari.gaiaorbit.scenegraph.Grid"
-	}
-	,
+	},
 	
 	
 	{
@@ -61,7 +60,7 @@
 							"diameter" : 1.0
 							},
 				"texture" : {
-							"base" : "data/tex/milky_way_small.png"
+							"base" : "data/tex/milky_way.png"
 							}
 				}
 	},
@@ -70,7 +69,7 @@
 	{
 	"name" : "MW",
 	"color" : [1.0, 1.0, 1.0, 0.3],
-	"size" : 1.6e10,
+	"size" : 1.6e12,
 	"ct" : MilkyWay,
 	"transformName" : equatorialToGalactic,
 

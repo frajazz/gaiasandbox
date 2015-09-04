@@ -5,7 +5,6 @@ import gaia.cu9.ari.gaiaorbit.util.Constants;
 import gaia.cu9.ari.gaiaorbit.util.I18n;
 import gaia.cu9.ari.gaiaorbit.util.Logger;
 import gaia.cu9.ari.gaiaorbit.util.coord.AstroUtils;
-
 import gaia.cu9.ari.gaiaorbit.util.format.DateFormatFactory;
 import gaia.cu9.ari.gaiaorbit.util.format.IDateFormat;
 import gaia.cu9.ari.gaiaorbit.util.gaia.time.Duration;
@@ -33,11 +32,9 @@ import com.badlogic.gdx.utils.XmlReader;
 public class AttitudeXmlParser {
 
     private static Date endOfMission;
-
     private static IDateFormat format;
 
     static {
-
         format = DateFormatFactory.getFormatter("yyyy-MM-dd HH:mm:ss");
         endOfMission = getDate("2019-06-20 06:13:26");
     }

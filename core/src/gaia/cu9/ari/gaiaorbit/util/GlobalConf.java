@@ -253,7 +253,7 @@ public class GlobalConf {
                 }
                 // Flush buffer if needed
                 if (!RENDER_OUTPUT && GaiaSandbox.instance != null) {
-                    //GaiaSandbox.instance.frameRenderer.flush();
+                    EventManager.instance.post(Events.FLUSH_FRAMES);
                 }
             }
         }
@@ -281,14 +281,17 @@ public class GlobalConf {
         public String OBJECT_SERVER_PASSWORD;
         /** Limit magnitude used for loading stars. All stars above this magnitude will not even be loaded by the sandbox. **/
         public float LIMIT_MAG_LOAD;
+        /** Whether to use the real attitude of Gaia or the NSL approximation **/
+        public boolean REAL_GAIA_ATTITUDE = false;
 
-        public void initialize(boolean dATA_SOURCE_LOCAL, String dATA_JSON_FILE, String oBJECT_SERVER_HOSTNAME, int oBJECT_SERVER_PORT, String vISUALIZATION_ID, float lIMIT_MAG_LOAD) {
+        public void initialize(boolean dATA_SOURCE_LOCAL, String dATA_JSON_FILE, String oBJECT_SERVER_HOSTNAME, int oBJECT_SERVER_PORT, String vISUALIZATION_ID, float lIMIT_MAG_LOAD, boolean rEAL_GAIA_ATTITUDE) {
             DATA_SOURCE_LOCAL = dATA_SOURCE_LOCAL;
             DATA_JSON_FILE = dATA_JSON_FILE;
             OBJECT_SERVER_HOSTNAME = oBJECT_SERVER_HOSTNAME;
             OBJECT_SERVER_PORT = oBJECT_SERVER_PORT;
             VISUALIZATION_ID = vISUALIZATION_ID;
             LIMIT_MAG_LOAD = lIMIT_MAG_LOAD;
+            REAL_GAIA_ATTITUDE = rEAL_GAIA_ATTITUDE;
         }
 
         public void initialize(String dATA_JSON_FILE, boolean dATA_SOURCE_LOCAL, float lIMIT_MAG_LOAD) {
@@ -307,7 +310,7 @@ public class GlobalConf {
         public boolean FULLSCREEN;
         public boolean RESIZABLE;
         public boolean VSYNC;
-        public boolean SCREEN_OUTPUT;
+        public boolean SCREEN_OUTPUT = true;
 
         public void initialize(int sCREEN_WIDTH, int sCREEN_HEIGHT, int fULLSCREEN_WIDTH, int fULLSCREEN_HEIGHT, boolean fULLSCREEN, boolean rESIZABLE, boolean vSYNC, boolean sCREEN_OUTPUT) {
             SCREEN_WIDTH = sCREEN_WIDTH;

@@ -17,19 +17,23 @@ import gaia.cu9.ari.gaiaorbit.interfce.HUDGui;
 import gaia.cu9.ari.gaiaorbit.interfce.IGui;
 import gaia.cu9.ari.gaiaorbit.interfce.LoadingGui;
 import gaia.cu9.ari.gaiaorbit.interfce.MobileGui;
-import gaia.cu9.ari.gaiaorbit.interfce.RenderGui;
 import gaia.cu9.ari.gaiaorbit.render.AbstractRenderer;
 import gaia.cu9.ari.gaiaorbit.render.ComponentType;
-import gaia.cu9.ari.gaiaorbit.render.GSPostProcessor;
+import gaia.cu9.ari.gaiaorbit.render.IMainRenderer;
 import gaia.cu9.ari.gaiaorbit.render.IPostProcessor;
+import gaia.cu9.ari.gaiaorbit.render.IPostProcessor.PostProcessBean;
+import gaia.cu9.ari.gaiaorbit.render.IPostProcessor.RenderType;
+import gaia.cu9.ari.gaiaorbit.render.PostProcessorFactory;
 import gaia.cu9.ari.gaiaorbit.render.SceneGraphRenderer;
 import gaia.cu9.ari.gaiaorbit.scenegraph.AbstractPositionEntity;
 import gaia.cu9.ari.gaiaorbit.scenegraph.CameraManager;
 import gaia.cu9.ari.gaiaorbit.scenegraph.CameraManager.CameraMode;
 import gaia.cu9.ari.gaiaorbit.scenegraph.CelestialBody;
+import gaia.cu9.ari.gaiaorbit.scenegraph.ICamera;
 import gaia.cu9.ari.gaiaorbit.scenegraph.ISceneGraph;
 import gaia.cu9.ari.gaiaorbit.scenegraph.SceneGraphNode;
 import gaia.cu9.ari.gaiaorbit.scenegraph.component.ModelComponent;
+import gaia.cu9.ari.gaiaorbit.util.ConfInit;
 import gaia.cu9.ari.gaiaorbit.util.Constants;
 import gaia.cu9.ari.gaiaorbit.util.GlobalConf;
 import gaia.cu9.ari.gaiaorbit.util.GlobalResources;
@@ -44,6 +48,7 @@ import gaia.cu9.ari.gaiaorbit.util.time.ITimeFrameProvider;
 import gaia.cu9.ari.gaiaorbit.util.time.RealTimeClock;
 import gaia.cu9.ari.gaiaorbit.util.tree.OctreeNode;
 
+import java.io.File;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -69,7 +74,7 @@ import com.badlogic.gdx.graphics.glutils.FrameBuffer;
  * @author Toni Sagrista
  *
  */
-public class GaiaSandbox implements ApplicationListener, IObserver {
+public class GaiaSandbox implements ApplicationListener, IObserver, IMainRenderer {
     private static boolean LOADING = true;
 
     /** Attitude folder **/
@@ -97,7 +102,7 @@ public class GaiaSandbox implements ApplicationListener, IObserver {
     /**
      * The user interface
      */
-    public IGui gui, loadingGui, renderGui;
+    public IGui gui, loadingGui;
 
     /**
      * Time
@@ -170,17 +175,10 @@ public class GaiaSandbox implements ApplicationListener, IObserver {
 
         /** LOAD SCENE GRAPH **/
         if (sg == null) {
-            // Set asset manager to asset bean
-            AssetBean.setAssetManager(manager);
             manager.load(GlobalConf.data.DATA_JSON_FILE, ISceneGraph.class, new SGLoaderParameter(current, GlobalConf.performance.MULTITHREADING, GlobalConf.performance.NUMBER_THREADS()));
         }
 
-        // Initialize timestamp for screenshots
-        renderGui = new RenderGui();
-        renderGui.initialize(manager);
-
         if (GlobalConf.OPENGL_GUI) {
-            gui = new FullGui();
             // Load scene graph
             if (Constants.desktop || Constants.webgl) {
                 // Full GUI for desktop
@@ -221,7 +219,7 @@ public class GaiaSandbox implements ApplicationListener, IObserver {
             GaiaAttitudeServer.instance = manager.get(ATTITUDE_FOLDER);
         }
 
-        pp = new GSPostProcessor();
+        pp = PostProcessorFactory.instance.getPostProcessor();
 
         GlobalResources.doneLoading(manager);
 
@@ -262,7 +260,6 @@ public class GaiaSandbox implements ApplicationListener, IObserver {
         }
         // Initialize the GUI
         gui.doneLoading(manager);
-        renderGui.doneLoading(manager);
 
         // Publish visibility
         EventManager.instance.post(Events.VISIBILITY_OF_COMPONENTS, new Object[] { SceneGraphRenderer.visible });
@@ -307,7 +304,7 @@ public class GaiaSandbox implements ApplicationListener, IObserver {
         EventManager.instance.post(Events.TIME_CHANGE_INFO, current.getTime());
 
         // Subscribe to events
-        EventManager.instance.subscribe(this, Events.TOGGLE_AMBIENT_LIGHT, Events.AMBIENT_LIGHT_CMD);
+        EventManager.instance.subscribe(this, Events.TOGGLE_AMBIENT_LIGHT, Events.AMBIENT_LIGHT_CMD, Events.FULLSCREEN_CMD);
 
         // Re-enable input
         if (!GlobalConf.runtime.STRIPPED_FOV_MODE)
@@ -320,12 +317,27 @@ public class GaiaSandbox implements ApplicationListener, IObserver {
         EventManager.instance.post(Events.TOGGLE_TIME_CMD, true, false);
 
         initialized = true;
+
+        // Run tutorial
+        if (GlobalConf.program.DISPLAY_TUTORIAL) {
+            EventManager.instance.post(Events.RUN_SCRIPT_PATH, "scripts/tutorial/tutorial-pointer.py");
+            GlobalConf.program.DISPLAY_TUTORIAL = false;
+        }
+
     }
 
     @Override
     public void dispose() {
+
+        if (Constants.desktop)
+            ConfInit.instance.persistGlobalConf(new File(System.getProperty("properties.file")));
+
+        // Flush frames
+        EventManager.instance.post(Events.FLUSH_FRAMES);
+
+        // Dispose all
         gui.dispose();
-        renderGui.dispose();
+        EventManager.instance.post(Events.DISPOSE);
         if (sg != null) {
             sg.dispose();
         }
@@ -354,16 +366,30 @@ public class GaiaSandbox implements ApplicationListener, IObserver {
                  */
                 update(Gdx.graphics.getDeltaTime());
 
-                /** 
-                 * RENDER THE SCENE
-                 **/
-                preRenderScene();
-                sgr.render(cam, Gdx.graphics.getWidth(), Gdx.graphics.getHeight(), null, pp.getPostProcessBean());
+                /**
+                 * FRAME OUTPUT
+                 */
+                EventManager.instance.post(Events.RENDER_FRAME, this);
 
-                if (!GlobalConf.runtime.CLEAN_MODE) {
-                    // Render the GUI, setting the viewport
-                    gui.getGuiStage().getViewport().apply();
-                    gui.render();
+                /**
+                 * SCREENSHOT OUTPUT - simple|redraw mode
+                 */
+                EventManager.instance.post(Events.RENDER_SCREENSHOT, this);
+
+                /**
+                 * SCREEN OUTPUT
+                 */
+                if (GlobalConf.screen.SCREEN_OUTPUT) {
+                    /** RENDER THE SCENE **/
+                    preRenderScene();
+                    renderSgr(cam, Gdx.graphics.getWidth(), Gdx.graphics.getHeight(), null, pp.getPostProcessBean(RenderType.screen));
+
+                    if (!GlobalConf.runtime.CLEAN_MODE) {
+                        // Render the GUI, setting the viewport
+                        gui.getGuiStage().getViewport().apply();
+                        gui.render();
+                    }
+
                 }
 
                 sgr.clearLists();
@@ -381,12 +407,17 @@ public class GaiaSandbox implements ApplicationListener, IObserver {
      *            Delta time in seconds.
      */
     public void update(float dt) {
-
-        // Max time step is 0.1 seconds. Not in RENDER_OUTPUT MODE.
-        dt = Math.min(dt, 0.1f);
+        if (GlobalConf.frame.RENDER_OUTPUT) {
+            // If RENDER_OUTPUT is active, we need to set our dt according to
+            // the fps
+            dt = 1f / GlobalConf.frame.RENDER_TARGET_FPS;
+        } else {
+            // Max time step is 0.1 seconds. Not in RENDER_OUTPUT MODE.
+            dt = Math.min(dt, 0.1f);
+        }
 
         gui.update(dt);
-        renderGui.update(dt);
+        EventManager.instance.post(Events.UPDATE_GUI, dt);
 
         float dtScene = dt;
         if (!GlobalConf.runtime.TIME_ON) {
@@ -409,6 +440,10 @@ public class GaiaSandbox implements ApplicationListener, IObserver {
     public void preRenderScene() {
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT | GL20.GL_DEPTH_BUFFER_BIT | (Gdx.graphics.getBufferFormat().coverageSampling ? GL20.GL_COVERAGE_BUFFER_BIT_NV : 0));
         Gdx.gl.glBlendFunc(GL20.GL_SRC_ALPHA, GL20.GL_ONE_MINUS_SRC_ALPHA);
+    }
+
+    public void renderSgr(ICamera camera, int width, int height, FrameBuffer frameBuffer, PostProcessBean ppb) {
+        sgr.render(camera, width, height, frameBuffer, ppb);
     }
 
     @Override
@@ -445,6 +480,7 @@ public class GaiaSandbox implements ApplicationListener, IObserver {
 
     @Override
     public void pause() {
+        EventManager.instance.post(Events.FLUSH_FRAMES);
     }
 
     @Override
@@ -464,7 +500,7 @@ public class GaiaSandbox implements ApplicationListener, IObserver {
         return sg.findFocus(name);
     }
 
-    private FrameBuffer getFrameBuffer(int w, int h) {
+    public FrameBuffer getFrameBuffer(int w, int h) {
         String key = getKey(w, h);
         if (!fbmap.containsKey(key)) {
             FrameBuffer fb = new FrameBuffer(Format.RGB888, w, h, true);
@@ -477,6 +513,18 @@ public class GaiaSandbox implements ApplicationListener, IObserver {
         return w + "x" + h;
     }
 
+    public ICamera getICamera() {
+        return cam.current;
+    }
+
+    public CameraManager getCameraManager() {
+        return cam;
+    }
+
+    public IPostProcessor getPostProcessor() {
+        return pp;
+    }
+
     @Override
     public void notify(Events event, Object... data) {
         switch (event) {
@@ -487,7 +535,6 @@ public class GaiaSandbox implements ApplicationListener, IObserver {
         case AMBIENT_LIGHT_CMD:
             ModelComponent.setAmbientLight((float) data[0]);
             break;
-
         default:
             break;
         }
