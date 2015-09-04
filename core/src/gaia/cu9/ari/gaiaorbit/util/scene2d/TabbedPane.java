@@ -16,6 +16,8 @@
 
 package gaia.cu9.ari.gaiaorbit.util.scene2d;
 
+import gaia.cu9.ari.gaiaorbit.util.MyPools;
+
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.scenes.scene2d.Actor;
@@ -31,7 +33,6 @@ import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener.ChangeEvent;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.badlogic.gdx.scenes.scene2d.utils.Drawable;
 import com.badlogic.gdx.utils.Align;
-import com.badlogic.gdx.utils.Pools;
 
 /** A {@code TabbedPane} widget not full featured but somewhat reusable.
  * 
@@ -228,10 +229,10 @@ public class TabbedPane extends Table {
     /** Sends a ChangeEvent, with this TabbedPane as the target, to each registered listener. This method is called each time there
      * is a change to the selected index. */
     protected void fireStateChanged() {
-        ChangeEvent changeEvent = Pools.obtain(ChangeEvent.class);
+        ChangeEvent changeEvent = MyPools.obtain(ChangeEvent.class);
         changeEvent.setBubbles(false);
         fire(changeEvent);
-        Pools.free(changeEvent);
+        MyPools.free(changeEvent);
     }
 
     private static class TabTitleButton extends TextButton {
@@ -264,8 +265,7 @@ public class TabbedPane extends Table {
         }
 
         private static TextButtonStyle toTextButtonStyle(TabbedPaneStyle style) {
-            TextButtonStyle buttonStyle = new TextButtonStyle(style.titleButtonUnselected, null, style.titleButtonSelected,
-                    style.font);
+            TextButtonStyle buttonStyle = new TextButtonStyle(style.titleButtonUnselected, null, style.titleButtonSelected, style.font);
             buttonStyle.fontColor = style.fontColor;
             buttonStyle.downFontColor = style.downFontColor;
             buttonStyle.overFontColor = style.overFontColor;
@@ -287,8 +287,7 @@ public class TabbedPane extends Table {
         public TabbedPaneStyle() {
         }
 
-        public TabbedPaneStyle(Drawable titleBegin, Drawable titleEnd, Drawable bodyBackground, Drawable titleButtonSelected,
-                Drawable titleButtonUnselected, BitmapFont font) {
+        public TabbedPaneStyle(Drawable titleBegin, Drawable titleEnd, Drawable bodyBackground, Drawable titleButtonSelected, Drawable titleButtonUnselected, BitmapFont font) {
             this.titleBegin = titleBegin;
             this.titleEnd = titleEnd;
             this.bodyBackground = bodyBackground;
