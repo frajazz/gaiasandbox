@@ -1,8 +1,6 @@
 #ifdef GL_ES
-#define LOWP lowp
 precision mediump float;
-#else
-#define LOWP 
+precision mediump int;
 #endif
 
 #define exposure 1.0
