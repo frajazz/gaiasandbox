@@ -19,7 +19,6 @@ import gaia.cu9.ari.gaiaorbit.desktop.util.SysUtils;
 import gaia.cu9.ari.gaiaorbit.event.EventManager;
 import gaia.cu9.ari.gaiaorbit.event.Events;
 import gaia.cu9.ari.gaiaorbit.event.IObserver;
-import gaia.cu9.ari.gaiaorbit.interfce.KeyMappings;
 import gaia.cu9.ari.gaiaorbit.render.PostProcessorFactory;
 import gaia.cu9.ari.gaiaorbit.screenshot.ScreenshotsManager;
 import gaia.cu9.ari.gaiaorbit.script.JythonFactory;
@@ -69,6 +68,7 @@ public class GaiaSandboxDesktop implements IObserver {
 
             // Initialize number format
             NumberFormatFactory.initialize(new DesktopNumberFormatFactory());
+
             // Initialize date format
             DateFormatFactory.initialize(new DesktopDateFormatFactory());
 
@@ -92,9 +92,6 @@ public class GaiaSandboxDesktop implements IObserver {
 
             // Initialize icons
             IconManager.initialise(Gdx.files.internal("data/ui/"));
-
-            // Initialize key mappings
-            KeyMappings.initialize();
 
             // Jython
             ScriptingFactory.initialize(JythonFactory.getInstance());

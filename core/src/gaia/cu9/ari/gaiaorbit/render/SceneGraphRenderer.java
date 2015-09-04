@@ -115,8 +115,8 @@ public class SceneGraphRenderer extends AbstractRenderer implements IProcessRend
             render_lists.put(rg, new Multilist<IRenderable>(numLists, 100));
         }
 
-        ShaderProvider spnormal = new AtmosphereGroundShaderProvider(Gdx.files.internal("shader/normal.vertex.glsl"), Gdx.files.internal("shader/normal.fragment.glsl"));
         ShaderProvider sp = new AtmosphereGroundShaderProvider(Gdx.files.internal("shader/default.vertex.glsl"), Gdx.files.internal("shader/default.fragment.glsl"));
+        ShaderProvider spnormal = Constants.webgl ? sp : new AtmosphereGroundShaderProvider(Gdx.files.internal("shader/normal.vertex.glsl"), Gdx.files.internal("shader/normal.fragment.glsl"));
         ShaderProvider spatm = new AtmosphereShaderProvider(Gdx.files.internal("shader/atm.vertex.glsl"), Gdx.files.internal("shader/atm.fragment.glsl"));
         ShaderProvider spsurface = new DefaultShaderProvider(Gdx.files.internal("shader/default.vertex.glsl"), Gdx.files.internal("shader/starsurface.fragment.glsl"));
 
@@ -128,7 +128,7 @@ public class SceneGraphRenderer extends AbstractRenderer implements IProcessRend
         };
 
         ModelBatch modelBatchB = new ModelBatch(sp, noSorter);
-        ModelBatch modelBatchF = new ModelBatch(spnormal, noSorter);
+        ModelBatch modelBatchF = Constants.webgl ? modelBatchB : new ModelBatch(spnormal, noSorter);
         ModelBatch modelBatchAtm = new ModelBatch(spatm, noSorter);
         ModelBatch modelBatchS = new ModelBatch(spsurface, noSorter);
 
@@ -478,11 +478,11 @@ public class SceneGraphRenderer extends AbstractRenderer implements IProcessRend
         if (GlobalConf.scene.isNormalLineRenderer()) {
             // Normal
             sys = new LineRenderSystem(RenderGroup.LINE, 0, alphas);
-            sys.setPreRunnable(blendDepthRunnable);
+            sys.setPreRunnable(blendNoDepthRunnable);
         } else {
             // Quad
             sys = new LineQuadRenderSystem(RenderGroup.LINE, 0, alphas);
-            sys.setPreRunnable(blendDepthRunnable);
+            sys.setPreRunnable(blendNoDepthRunnable);
         }
         return sys;
     }
@@ -496,7 +496,7 @@ public class SceneGraphRenderer extends AbstractRenderer implements IProcessRend
                 sys.setPreRunnable(blendNoDepthRunnable);
             } else if (GlobalConf.scene.isFuzzyPixelRenderer()) {
                 sys = new PixelFuzzyRenderSystem(RenderGroup.POINT, 0, alphas);
-                sys.setPreRunnable(blendNoDepthRunnable);
+                sys.setPreRunnable(blendDepthRunnable);
             } else {
                 sys = new PixelRenderSystem(RenderGroup.POINT, 0, alphas);
                 sys.setPreRunnable(blendNoDepthRunnable);

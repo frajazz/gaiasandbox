@@ -8,10 +8,7 @@ import java.util.ListIterator;
 
 /**
  * A multiple list, holding a number of indexed lists. Useful for threaded applications.
-<<<<<<< HEAD
-=======
  * Not all methods of {@link java.util.List} are implemented, check the comments.
->>>>>>> objectserver
  * @author Toni Sagrista
  *
  * @param <T>
@@ -55,6 +52,10 @@ public class Multilist<T> implements List<T> {
     public List<T> toList() {
         tolist.clear();
         int size = lists.length;
+
+        if (size == 1)
+            return lists[0];
+
         for (int i = 0; i < size; i++)
             tolist.addAll(lists[i]);
         return tolist;
