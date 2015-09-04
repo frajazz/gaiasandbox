@@ -245,10 +245,12 @@ public class GaiaSandbox implements ApplicationListener, IObserver, IMainRendere
 
         // Initialize input handlers
         InputMultiplexer inputMultiplexer = new InputMultiplexer();
+
         // Only for the Full GUI
         gui.setSceneGraph(sg);
         gui.setVisibilityToggles(ComponentType.values(), SceneGraphRenderer.visible);
         inputMultiplexer.addProcessor(gui.getGuiStage());
+
         // Initialize the GUI
         gui.doneLoading(manager);
 
@@ -295,7 +297,7 @@ public class GaiaSandbox implements ApplicationListener, IObserver, IMainRendere
         EventManager.instance.post(Events.TIME_CHANGE_INFO, current.getTime());
 
         // Subscribe to events
-        EventManager.instance.subscribe(this, Events.TOGGLE_AMBIENT_LIGHT, Events.AMBIENT_LIGHT_CMD, Events.FULLSCREEN_CMD);
+        EventManager.instance.subscribe(this, Events.TOGGLE_AMBIENT_LIGHT, Events.AMBIENT_LIGHT_CMD);
 
         // Re-enable input
         if (!GlobalConf.runtime.STRIPPED_FOV_MODE)

@@ -12,6 +12,7 @@ import gaia.cu9.ari.gaiaorbit.desktop.gui.swing.HelpDialog;
 import gaia.cu9.ari.gaiaorbit.desktop.gui.swing.IconManager;
 import gaia.cu9.ari.gaiaorbit.desktop.gui.swing.ScriptDialog;
 import gaia.cu9.ari.gaiaorbit.desktop.render.DesktopPostProcessorFactory;
+import gaia.cu9.ari.gaiaorbit.desktop.render.FullscreenCmd;
 import gaia.cu9.ari.gaiaorbit.desktop.util.CamRecorder;
 import gaia.cu9.ari.gaiaorbit.desktop.util.DesktopConfInit;
 import gaia.cu9.ari.gaiaorbit.desktop.util.SysUtils;
@@ -96,6 +97,9 @@ public class GaiaSandboxDesktop implements IObserver {
 
             // Jython
             ScriptingFactory.initialize(JythonFactory.getInstance());
+
+            // Fullscreen command
+            FullscreenCmd.initialize();
 
             // Init cam recorder
             CamRecorder.initialize();
