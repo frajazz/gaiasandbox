@@ -19,6 +19,7 @@ import com.badlogic.gdx.graphics.g3d.ModelBatch;
 import com.badlogic.gdx.graphics.g3d.attributes.ColorAttribute;
 import com.badlogic.gdx.graphics.glutils.ShaderProgram;
 import com.badlogic.gdx.math.Matrix4;
+import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.utils.reflect.ClassReflection;
 import com.badlogic.gdx.utils.reflect.Method;
 import com.badlogic.gdx.utils.reflect.ReflectionException;
@@ -32,7 +33,6 @@ public class MilkyWay extends Blob implements IModelRenderable, I3DTextRenderabl
     public MilkyWay() {
         super();
         localTransform = new Matrix4();
-
         lowAngle = (float) Math.toRadians(60);
         highAngle = (float) Math.toRadians(75.51);
     }
@@ -52,14 +52,8 @@ public class MilkyWay extends Blob implements IModelRenderable, I3DTextRenderabl
         // Initialize transform
         if (transformName != null) {
             coordinateSystem = new Matrix4();
-            Class<Coordinates> c = Coordinates.class;
-            try {
-                Method m = ClassReflection.getMethod(c, transformName);
-                Matrix4d trf = (Matrix4d) m.invoke(null);
-                coordinateSystem.set(trf.valuesf());
-            } catch (ReflectionException e) {
-                Gdx.app.error(Mw.class.getName(), "Error getting/invoking method Coordinates." + transformName + "()");
-            }
+            Matrix4d trf = Coordinates.getTransformMatrix(transformName);
+            coordinateSystem.set(trf.valuesf());
         } else {
             // Equatorial, nothing
         }
@@ -80,12 +74,17 @@ public class MilkyWay extends Blob implements IModelRenderable, I3DTextRenderabl
     @Override
     public void updateLocal(ITimeFrameProvider time, ICamera camera) {
         super.updateLocal(time, camera);
-        // Directional light comes from camera
-        if (mc != null) {
-            float[] camdir = camera.getDirection().valuesf();
-            mc.dlight.direction.set(-camdir[0], -camdir[1], -camdir[2]);
-        }
+        // Directional light comes from up
         updateLocalTransform();
+        if (mc != null) {
+            Vector3 d = v3fpool.obtain();
+            d.set(0, 1, 0);
+            d.mul(coordinateSystem);
+
+            mc.dlight.direction.set(d);
+            v3fpool.free(d);
+        }
+
     }
 
     /**
@@ -124,11 +123,12 @@ public class MilkyWay extends Blob implements IModelRenderable, I3DTextRenderabl
      */
     @Override
     public void render(SpriteBatch batch, ShaderProgram shader, BitmapFont font, ICamera camera) {
-        Vector3d pos = auxVector3d.get();
+        Vector3d pos = v3dpool.obtain();
         textPosition(pos);
         shader.setUniformf("a_viewAngle", 90f);
         shader.setUniformf("a_thOverFactor", 1f);
         render3DLabel(batch, shader, font, camera, text(), pos, textScale(), textSize(), textColour());
+        v3dpool.free(pos);
     }
 
     @Override

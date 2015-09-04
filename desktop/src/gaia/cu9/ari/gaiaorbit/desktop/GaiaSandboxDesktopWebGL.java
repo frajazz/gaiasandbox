@@ -3,7 +3,6 @@ package gaia.cu9.ari.gaiaorbit.desktop;
 import gaia.cu9.ari.gaiaorbit.GaiaSandbox;
 import gaia.cu9.ari.gaiaorbit.data.SceneGraphImplementationProvider;
 import gaia.cu9.ari.gaiaorbit.data.WebGLSceneGraphImplementationProvider;
-import gaia.cu9.ari.gaiaorbit.desktop.concurrent.SimpleLocalVarFactory;
 import gaia.cu9.ari.gaiaorbit.desktop.format.DesktopDateFormatFactory;
 import gaia.cu9.ari.gaiaorbit.desktop.format.DesktopNumberFormatFactory;
 import gaia.cu9.ari.gaiaorbit.desktop.render.DesktopPostProcessorFactory;
@@ -13,7 +12,6 @@ import gaia.cu9.ari.gaiaorbit.script.DummyFactory;
 import gaia.cu9.ari.gaiaorbit.script.ScriptingFactory;
 import gaia.cu9.ari.gaiaorbit.util.ConfInit;
 import gaia.cu9.ari.gaiaorbit.util.GlobalConf;
-import gaia.cu9.ari.gaiaorbit.util.concurrent.LocalVarFactory;
 import gaia.cu9.ari.gaiaorbit.util.concurrent.SingleThreadIndexer;
 import gaia.cu9.ari.gaiaorbit.util.concurrent.ThreadIndexer;
 import gaia.cu9.ari.gaiaorbit.util.format.DateFormatFactory;
@@ -34,7 +32,6 @@ public class GaiaSandboxDesktopWebGL {
         PostProcessorFactory.initialize(new DesktopPostProcessorFactory());
         ThreadIndexer.initialize(new SingleThreadIndexer());
         SceneGraphImplementationProvider.initialize(new WebGLSceneGraphImplementationProvider());
-        LocalVarFactory.initialize(new SimpleLocalVarFactory<Object>());
 
         LwjglApplicationConfiguration cfg = new LwjglApplicationConfiguration();
         LwjglApplicationConfiguration.disableAudio = true;

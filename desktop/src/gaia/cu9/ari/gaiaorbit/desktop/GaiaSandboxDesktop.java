@@ -4,7 +4,6 @@ import gaia.cu9.ari.gaiaorbit.GaiaSandbox;
 import gaia.cu9.ari.gaiaorbit.data.DesktopSceneGraphImplementationProvider;
 import gaia.cu9.ari.gaiaorbit.data.SceneGraphImplementationProvider;
 import gaia.cu9.ari.gaiaorbit.desktop.concurrent.MultiThreadIndexer;
-import gaia.cu9.ari.gaiaorbit.desktop.concurrent.ThreadLocalVarFactory;
 import gaia.cu9.ari.gaiaorbit.desktop.concurrent.ThreadPoolManager;
 import gaia.cu9.ari.gaiaorbit.desktop.format.DesktopDateFormatFactory;
 import gaia.cu9.ari.gaiaorbit.desktop.format.DesktopNumberFormatFactory;
@@ -29,7 +28,6 @@ import gaia.cu9.ari.gaiaorbit.util.ConfInit;
 import gaia.cu9.ari.gaiaorbit.util.Constants;
 import gaia.cu9.ari.gaiaorbit.util.GlobalConf;
 import gaia.cu9.ari.gaiaorbit.util.I18n;
-import gaia.cu9.ari.gaiaorbit.util.concurrent.LocalVarFactory;
 import gaia.cu9.ari.gaiaorbit.util.concurrent.SingleThreadIndexer;
 import gaia.cu9.ari.gaiaorbit.util.concurrent.ThreadIndexer;
 import gaia.cu9.ari.gaiaorbit.util.format.DateFormatFactory;
@@ -112,9 +110,6 @@ public class GaiaSandboxDesktop implements IObserver {
             // Key mappings
             Constants.desktop = true;
             KeyMappings.initialize();
-
-            // Local vars
-            LocalVarFactory.initialize(new ThreadLocalVarFactory<Object>());
 
             // Scene graph implementation provider
             SceneGraphImplementationProvider.initialize(new DesktopSceneGraphImplementationProvider());

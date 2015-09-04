@@ -163,7 +163,9 @@ public abstract class AbstractPositionEntity extends SceneGraphNode {
 
         this.transform.translate(pos);
 
-        this.distToCamera = (float) transform.getTranslation(auxVector3d.get()).len();
+        Vector3d aux = v3dpool.obtain();
+        this.distToCamera = (float) transform.getTranslation(aux).len();
+        v3dpool.free(aux);
         this.viewAngle = (float) Math.atan(size / distToCamera);
         this.viewAngleApparent = this.viewAngle;
         if (!copy) {
@@ -251,7 +253,8 @@ public abstract class AbstractPositionEntity extends SceneGraphNode {
     }
 
     protected void render2DLabel(SpriteBatch batch, ShaderProgram shader, BitmapFont font, ICamera camera, String label, Vector3d pos) {
-        Vector3 p = pos.setVector3(auxVector3f.get());
+        Vector3 p = v3fpool.obtain();
+        pos.setVector3(p);
 
         camera.getCamera().project(p);
         p.x += 5;
@@ -259,6 +262,7 @@ public abstract class AbstractPositionEntity extends SceneGraphNode {
 
         shader.setUniformf("scale", .5f);
         DecalUtils.drawFont2D(font, batch, label, p);
+        v3fpool.free(p);
     }
 
     protected void render3DLabel(SpriteBatch batch, ShaderProgram shader, BitmapFont font, ICamera camera, String label, Vector3d pos, float scale, float size, float[] colour) {

@@ -6,7 +6,6 @@ import gaia.cu9.ari.gaiaorbit.client.format.GwtDateFormatFactory;
 import gaia.cu9.ari.gaiaorbit.client.format.GwtNumberFormatFactory;
 import gaia.cu9.ari.gaiaorbit.client.render.WebGLPostProcessorFactory;
 import gaia.cu9.ari.gaiaorbit.client.script.DummyFactory;
-import gaia.cu9.ari.gaiaorbit.client.util.SimpleLocalVarFactory;
 import gaia.cu9.ari.gaiaorbit.client.util.WebGLConfInit;
 import gaia.cu9.ari.gaiaorbit.data.SceneGraphImplementationProvider;
 import gaia.cu9.ari.gaiaorbit.event.EventManager;
@@ -17,7 +16,6 @@ import gaia.cu9.ari.gaiaorbit.scenegraph.CelestialBody;
 import gaia.cu9.ari.gaiaorbit.script.ScriptingFactory;
 import gaia.cu9.ari.gaiaorbit.util.ConfInit;
 import gaia.cu9.ari.gaiaorbit.util.GlobalConf;
-import gaia.cu9.ari.gaiaorbit.util.concurrent.LocalVarFactory;
 import gaia.cu9.ari.gaiaorbit.util.concurrent.SingleThreadIndexer;
 import gaia.cu9.ari.gaiaorbit.util.concurrent.ThreadIndexer;
 import gaia.cu9.ari.gaiaorbit.util.format.DateFormatFactory;
@@ -37,7 +35,6 @@ public class GaiaSandboxWebGL extends GwtApplication implements IObserver {
         ScriptingFactory.initialize(new DummyFactory());
         ThreadIndexer.initialize(new SingleThreadIndexer());
         SceneGraphImplementationProvider.initialize(new WebGLSceneGraphImplementationProvider());
-        LocalVarFactory.initialize(new SimpleLocalVarFactory<Object>());
 
         GwtApplicationConfiguration config = new GwtApplicationConfiguration(1024, 600);
 
