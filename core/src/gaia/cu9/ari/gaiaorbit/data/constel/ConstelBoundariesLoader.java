@@ -26,21 +26,20 @@ public class ConstelBoundariesLoader<T extends SceneGraphNode> implements IScene
     private static final int INTERPOLATED_MOD = 3;
     private String[] files;
 
-    @Override
-    public void initialize(String[] files) throws RuntimeException {
+    public void initialize(String[] files) {
         this.files = files;
     }
 
     @Override
-    public List<ConstellationBoundaries> loadData() {
+    public List<? extends SceneGraphNode> loadData() {
         List<ConstellationBoundaries> boundaries = new ArrayList<ConstellationBoundaries>();
-        try {
-            int n = 0;
-            for (String f : files) {
-                Logger.info(this.getClass().getSimpleName(), I18n.bundle.format("notif.datafile", f));
-                // load constellations
+        int n = 0;
+        for (String f : files) {
+            try {
+                // load boundaries
                 FileHandle file = Gdx.files.internal(f);
                 BufferedReader br = new BufferedReader(new InputStreamReader(file.read()));
+
                 try {
                     //Skip first line
                     String line;
@@ -73,7 +72,7 @@ public class ConstelBoundariesLoader<T extends SceneGraphNode> implements IScene
                                 double ra = Parser.parseDouble(tokens[0].trim()) * 15d;
                                 double dec = Parser.parseDouble(tokens[1].trim());
 
-                                double dist = 1 * Constants.AU_TO_U;
+                                double dist = 10 * Constants.AU_TO_U;
 
                                 Vector3d point = Coordinates.sphericalToCartesian(Math.toRadians(ra), Math.toRadians(dec), dist, new Vector3d());
                                 buffer.add(point);
@@ -88,13 +87,13 @@ public class ConstelBoundariesLoader<T extends SceneGraphNode> implements IScene
                 } catch (IOException e) {
                     Logger.error(e, this.getClass().getSimpleName());
                 }
+            } catch (Exception e) {
+                Logger.error(e, this.getClass().getSimpleName());
             }
-
-            Logger.info(this.getClass().getSimpleName(), I18n.bundle.format("notif.boundaries.init", n));
-
-        } catch (Exception e) {
-            Logger.error(e, this.getClass().getSimpleName());
         }
+
+        Logger.info(this.getClass().getSimpleName(), I18n.bundle.format("notif.boundaries.init", n));
+
         return boundaries;
     }
 }
