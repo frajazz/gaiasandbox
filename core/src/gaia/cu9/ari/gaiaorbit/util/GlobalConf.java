@@ -25,8 +25,6 @@ public class GlobalConf {
     public static final String WIKI = "https://github.com/ari-zah/gaiasandbox/wiki";
     public static final String ICON_URL = "http://www.zah.uni-heidelberg.de/uploads/pics/gaiasandboxlogo_02.png";
 
-    public static boolean OPENGL_GUI;
-
     public static final String TEXTURES_FOLDER = "data/tex/";
 
     public static interface IConf {

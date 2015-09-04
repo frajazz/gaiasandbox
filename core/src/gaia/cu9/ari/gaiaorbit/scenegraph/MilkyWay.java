@@ -74,11 +74,12 @@ public class MilkyWay extends Blob implements IModelRenderable, I3DTextRenderabl
         // Directional light comes from up
         updateLocalTransform();
         if (mc != null) {
-            Vector3 d = auxVector3f;
+            Vector3 d = v3fpool.obtain();
             d.set(0, 1, 0);
             d.mul(coordinateSystem);
 
             mc.dlight.direction.set(d);
+            v3fpool.free(d);
         }
 
     }
@@ -119,11 +120,12 @@ public class MilkyWay extends Blob implements IModelRenderable, I3DTextRenderabl
      */
     @Override
     public void render(SpriteBatch batch, ShaderProgram shader, BitmapFont font, ICamera camera) {
-        Vector3d pos = auxVector3d;
+        Vector3d pos = v3dpool.obtain();
         textPosition(pos);
         shader.setUniformf("a_viewAngle", 90f);
         shader.setUniformf("a_thOverFactor", 1f);
         render3DLabel(batch, shader, font, camera, text(), pos, textScale(), textSize(), textColour());
+        v3dpool.free(pos);
     }
 
     @Override

@@ -7,6 +7,8 @@ import com.badlogic.gdx.utils.Pool;
 public class MyPools {
     static private final ObjectMap<String, Pool> typePools = new ObjectMap();
 
+    static Object lock = new Object();
+
     /** Returns a new or existing pool for the specified type, stored in a Class to {@link Pool} map. Note the max size is ignored
      * if this is not the first time this pool has been requested. */
     static public <T> Pool<T> get(Class<T> type, int max) {
@@ -32,17 +34,23 @@ public class MyPools {
 
     /** Obtains an object from the {@link #get(Class) pool}. */
     static public <T> T obtain(Class<T> type) {
-        return (T) get(type).obtain();
+        T obj = null;
+        synchronized (lock) {
+            obj = (T) get(type).obtain();
+        }
+        return obj;
     }
 
     /** Frees an object from the {@link #get(Class) pool}. */
     static public void free(Object object) {
-        if (object == null)
-            throw new IllegalArgumentException("Object cannot be null.");
-        Pool pool = typePools.get(object.getClass().getName());
-        if (pool == null)
-            return; // Ignore freeing an object that was never retained.
-        pool.free(object);
+        synchronized (lock) {
+            if (object == null)
+                throw new IllegalArgumentException("Object cannot be null.");
+            Pool pool = typePools.get(object.getClass().getName());
+            if (pool == null)
+                return; // Ignore freeing an object that was never retained.
+            pool.free(object);
+        }
     }
 
     /** Frees the specified objects from the {@link #get(Class) pool}. Null objects within the array are silently ignored. Objects

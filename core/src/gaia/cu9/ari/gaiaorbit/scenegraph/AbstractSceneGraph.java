@@ -24,7 +24,7 @@ public abstract class AbstractSceneGraph implements ISceneGraph {
     /** Star id map **/
     LongMap<CelestialBody> starMap;
     /** Number of objects per thread **/
-    int[] objectsPerThread;
+    protected int[] objectsPerThread;
 
     public AbstractSceneGraph() {
         // Id = -1 for root

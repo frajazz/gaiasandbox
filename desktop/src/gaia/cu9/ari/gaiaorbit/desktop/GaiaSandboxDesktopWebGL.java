@@ -41,6 +41,6 @@ public class GaiaSandboxDesktopWebGL {
         cfg.addIcon("icon/ic_launcher.png", Files.FileType.Internal);
 
         // Launch app
-        new LwjglApplication(new GaiaSandbox(true), cfg);
+        new LwjglApplication(new GaiaSandbox(), cfg);
     }
 }

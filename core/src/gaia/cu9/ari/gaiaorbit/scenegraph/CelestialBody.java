@@ -20,6 +20,7 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g3d.ModelBatch;
 import com.badlogic.gdx.graphics.glutils.ShaderProgram;
 import com.badlogic.gdx.math.Vector2;
+import com.badlogic.gdx.math.Vector3;
 
 /**
  * These are entities that have a model and is always loaded.
@@ -110,8 +111,10 @@ public abstract class CelestialBody extends AbstractPositionEntity implements I3
 
         float size = getFuzzyRenderSize(camera);
 
-        shader.setUniformf("u_pos", transform.getTranslationf(auxVector3f));
+        Vector3 aux = v3fpool.obtain();
+        shader.setUniformf("u_pos", transform.getTranslationf(aux));
         shader.setUniformf("u_size", size);
+        v3fpool.free(aux);
 
         float[] col = ccPale;
         if (colorTransit)
@@ -157,11 +160,12 @@ public abstract class CelestialBody extends AbstractPositionEntity implements I3
             render2DLabel(batch, shader, font, camera, text(), pos);
         } else {
             // 3D distance font
-            Vector3d pos = auxVector3d;
+            Vector3d pos = v3dpool.obtain();
             textPosition(pos);
             shader.setUniformf("a_viewAngle", viewAngle);
             shader.setUniformf("a_thOverFactor", TH_OVER_FACTOR);
             render3DLabel(batch, shader, font, camera, text(), pos, textScale(), textSize(), textColour());
+            v3dpool.free(pos);
         }
 
     }

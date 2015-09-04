@@ -1,6 +1,8 @@
 package gaia.cu9.ari.gaiaorbit.desktop;
 
 import gaia.cu9.ari.gaiaorbit.GaiaSandbox;
+import gaia.cu9.ari.gaiaorbit.desktop.concurrent.MultiThreadIndexer;
+import gaia.cu9.ari.gaiaorbit.desktop.concurrent.ThreadPoolManager;
 import gaia.cu9.ari.gaiaorbit.desktop.format.DesktopDateFormatFactory;
 import gaia.cu9.ari.gaiaorbit.desktop.format.DesktopNumberFormatFactory;
 import gaia.cu9.ari.gaiaorbit.desktop.gui.swing.ConfigDialog;
@@ -20,8 +22,11 @@ import gaia.cu9.ari.gaiaorbit.screenshot.ScreenshotsManager;
 import gaia.cu9.ari.gaiaorbit.script.JythonFactory;
 import gaia.cu9.ari.gaiaorbit.script.ScriptingFactory;
 import gaia.cu9.ari.gaiaorbit.util.ConfInit;
+import gaia.cu9.ari.gaiaorbit.util.Constants;
 import gaia.cu9.ari.gaiaorbit.util.GlobalConf;
 import gaia.cu9.ari.gaiaorbit.util.I18n;
+import gaia.cu9.ari.gaiaorbit.util.concurrent.SingleThreadIndexer;
+import gaia.cu9.ari.gaiaorbit.util.concurrent.ThreadIndexer;
 import gaia.cu9.ari.gaiaorbit.util.format.DateFormatFactory;
 import gaia.cu9.ari.gaiaorbit.util.format.NumberFormatFactory;
 import gaia.cu9.ari.gaiaorbit.util.math.MathUtilsd;
@@ -62,6 +67,7 @@ public class GaiaSandboxDesktop implements IObserver {
 
             // Initialize number format
             NumberFormatFactory.initialize(new DesktopNumberFormatFactory());
+
             // Initialize date format
             DateFormatFactory.initialize(new DesktopDateFormatFactory());
 
@@ -79,14 +85,12 @@ public class GaiaSandboxDesktop implements IObserver {
 
             // Initialize i18n
             I18n.initialize(Gdx.files.internal("data/i18n/gsbundle"));
+
             // Dev mode
             I18n.initialize(Gdx.files.absolute(System.getProperty("assets.location") + "i18n/gsbundle"));
 
             // Initialize icons
             IconManager.initialise(Gdx.files.internal("data/ui/"));
-
-            // Initialize key mappings
-            KeyMappings.initialize();
 
             // Jython
             ScriptingFactory.initialize(JythonFactory.getInstance());
@@ -96,6 +100,10 @@ public class GaiaSandboxDesktop implements IObserver {
 
             // Initialize post processor factory
             PostProcessorFactory.initialize(new DesktopPostProcessorFactory());
+
+            // Key mappings
+            Constants.desktop = true;
+            KeyMappings.initialize();
 
             // Initialize screenshots manager
             ScreenshotsManager.initialize();
@@ -148,11 +156,16 @@ public class GaiaSandboxDesktop implements IObserver {
 
         System.out.println("Display mode set to " + cfg.width + "x" + cfg.height + ", fullscreen: " + cfg.fullscreen);
 
-        // Init scripting
-        JythonFactory.initialize();
+        // Thread pool manager
+        if (GlobalConf.performance.MULTITHREADING) {
+            ThreadPoolManager.initialize(GlobalConf.performance.NUMBER_THREADS());
+            ThreadIndexer.initialize(new MultiThreadIndexer());
+        } else {
+            ThreadIndexer.initialize(new SingleThreadIndexer());
+        }
 
         // Launch app
-        new LwjglApplication(new GaiaSandbox(true), cfg);
+        new LwjglApplication(new GaiaSandbox(), cfg);
 
         EventManager.instance.unsubscribe(this, Events.POST_NOTIFICATION, Events.JAVA_EXCEPTION);
     }

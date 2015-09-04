@@ -30,17 +30,9 @@ import com.badlogic.gdx.utils.Pool;
 public class SceneGraphNode implements ISceneGraphNode, IPosition {
     public static final String ROOT_NAME = "Universe";
 
-    /** Static auxiliary Vector3d **/
-    protected static Vector3d auxVector3d = new Vector3d();
-
-    /** Static auxiliary Vector3f **/
-    protected static Vector3 auxVector3f = new Vector3();
-
-    /** Static auxiliary Vector3f **/
-    protected static Vector3 aux2Vector3f = new Vector3();
-
-    /** Static auxiliary Vector2d **/
-    protected static Vector2d auxVector2d = new Vector2d();
+    protected static Pool<Vector3d> v3dpool = MyPools.get(Vector3d.class);
+    protected static Pool<Vector3> v3fpool = MyPools.get(Vector3.class);
+    protected static Pool<Vector2d> v2dpool = MyPools.get(Vector2d.class);
 
     /**
      * Describes to which render group this node belongs at a particular time step.

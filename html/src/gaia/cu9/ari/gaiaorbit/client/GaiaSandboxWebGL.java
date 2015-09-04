@@ -14,6 +14,8 @@ import gaia.cu9.ari.gaiaorbit.scenegraph.CelestialBody;
 import gaia.cu9.ari.gaiaorbit.script.ScriptingFactory;
 import gaia.cu9.ari.gaiaorbit.util.ConfInit;
 import gaia.cu9.ari.gaiaorbit.util.GlobalConf;
+import gaia.cu9.ari.gaiaorbit.util.concurrent.SingleThreadIndexer;
+import gaia.cu9.ari.gaiaorbit.util.concurrent.ThreadIndexer;
 import gaia.cu9.ari.gaiaorbit.util.format.DateFormatFactory;
 import gaia.cu9.ari.gaiaorbit.util.format.NumberFormatFactory;
 
@@ -29,6 +31,7 @@ public class GaiaSandboxWebGL extends GwtApplication implements IObserver {
         NumberFormatFactory.initialize(new GwtNumberFormatFactory());
         DateFormatFactory.initialize(new GwtDateFormatFactory());
         ScriptingFactory.initialize(new DummyFactory());
+        ThreadIndexer.initialize(new SingleThreadIndexer());
 
         GwtApplicationConfiguration config = new GwtApplicationConfiguration(1024, 600);
 
@@ -49,7 +52,7 @@ public class GaiaSandboxWebGL extends GwtApplication implements IObserver {
     @Override
     public ApplicationListener getApplicationListener() {
         EventManager.instance.subscribe(this, Events.FOCUS_CHANGED);
-        return new GaiaSandbox(true);
+        return new GaiaSandbox();
     }
 
     @Override

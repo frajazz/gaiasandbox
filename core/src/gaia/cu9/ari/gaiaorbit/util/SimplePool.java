@@ -5,6 +5,8 @@ import gaia.cu9.ari.gaiaorbit.scenegraph.Particle;
 import gaia.cu9.ari.gaiaorbit.scenegraph.Planet;
 import gaia.cu9.ari.gaiaorbit.scenegraph.SceneGraphNode;
 import gaia.cu9.ari.gaiaorbit.scenegraph.Star;
+import gaia.cu9.ari.gaiaorbit.util.math.Matrix4d;
+import gaia.cu9.ari.gaiaorbit.util.math.Vector2d;
 import gaia.cu9.ari.gaiaorbit.util.math.Vector3d;
 
 import com.badlogic.gdx.math.Vector3;
@@ -12,7 +14,17 @@ import com.badlogic.gdx.utils.Pool;
 
 public class SimplePool<T> extends Pool<T> {
 
-    String typeName;
+    private static final int vector3 = Vector3.class.hashCode();
+    private static final int vector3d = Vector3d.class.hashCode();
+    private static final int vector2d = Vector2d.class.hashCode();
+    private static final int planet = Planet.class.hashCode();
+    private static final int particle = Particle.class.hashCode();
+    private static final int star = Star.class.hashCode();
+    private static final int gaia = Gaia.class.hashCode();
+    private static final int sgn = SceneGraphNode.class.hashCode();
+    private static final int matrix4d = Matrix4d.class.hashCode();
+
+    final Integer typeHash;
 
     public SimplePool(Class<T> type) {
         this(type, 16, Integer.MAX_VALUE);
@@ -24,29 +36,31 @@ public class SimplePool<T> extends Pool<T> {
 
     public SimplePool(Class<T> type, int initialCapacity, int max) {
         super(initialCapacity, max);
-        typeName = type.getSimpleName();
+        typeHash = type.hashCode();
     }
 
     @Override
     protected T newObject() {
-        switch (typeName) {
-        case "Vector3":
+        if (typeHash == vector3)
             return (T) new Vector3();
-        case "Vector3d":
+        if (typeHash == vector3d)
             return (T) new Vector3d();
-        case "Planet":
+        if (typeHash == vector2d)
+            return (T) new Vector2d();
+        if (typeHash == planet)
             return (T) new Planet();
-        case "Star":
+        if (typeHash == star)
             return (T) new Star();
-        case "Particle":
+        if (typeHash == particle)
             return (T) new Particle();
-        case "Gaia":
+        if (typeHash == gaia)
             return (T) new Gaia();
-        case "SceneGraphNode":
+        if (typeHash == sgn)
             return (T) new SceneGraphNode();
-        }
+        if (typeHash == matrix4d)
+            return (T) new Matrix4d();
 
-        Logger.warn("Class " + typeName + " is not poolable!");
+        Logger.warn("Class " + typeHash + " is not poolable!");
         return null;
     }
 
