@@ -6,6 +6,7 @@ import gaia.cu9.ari.gaiaorbit.render.system.LineRenderSystem;
 import gaia.cu9.ari.gaiaorbit.scenegraph.ICamera;
 import gaia.cu9.ari.gaiaorbit.scenegraph.Transform;
 import gaia.cu9.ari.gaiaorbit.util.GlobalResources;
+import gaia.cu9.ari.gaiaorbit.util.MyPools;
 import gaia.cu9.ari.gaiaorbit.util.Pair;
 import gaia.cu9.ari.gaiaorbit.util.math.BoundingBoxd;
 import gaia.cu9.ari.gaiaorbit.util.math.Intersectord;
@@ -24,7 +25,6 @@ import java.util.TreeSet;
 
 import com.badlogic.gdx.math.Frustum;
 import com.badlogic.gdx.math.Vector3;
-import com.badlogic.gdx.utils.Pools;
 
 /**
  * Octree node implementation which contains a list of {@link IPosition} objects
@@ -513,7 +513,7 @@ public class OctreeNode<T extends IPosition> implements ILineRenderable {
         this.col.set(col.getRed() * alpha, col.getGreen() * alpha, col.getBlue() * alpha, alpha);
 
         // Camera correction
-        Vector3d loc = Pools.get(Vector3d.class).obtain();
+        Vector3d loc = MyPools.get(Vector3d.class).obtain();
         loc.set(this.blf).add(transform);
 
         /*
@@ -578,7 +578,7 @@ public class OctreeNode<T extends IPosition> implements ILineRenderable {
         line(sr, loc.x, loc.y + size.y, loc.z + size.z, loc.x + size.x, loc.y + size.y, loc.z + size.z, this.col);
         line(sr, loc.x + size.x, loc.y + size.y, loc.z, loc.x + size.x, loc.y + size.y, loc.z + size.z, this.col);
 
-        Pools.get(Vector3d.class).free(loc);
+        MyPools.get(Vector3d.class).free(loc);
     }
 
     /** Draws a line **/

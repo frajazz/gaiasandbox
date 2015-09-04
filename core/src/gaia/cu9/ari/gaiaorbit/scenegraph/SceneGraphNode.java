@@ -4,6 +4,7 @@ import gaia.cu9.ari.gaiaorbit.render.ComponentType;
 import gaia.cu9.ari.gaiaorbit.render.IRenderable;
 import gaia.cu9.ari.gaiaorbit.render.SceneGraphRenderer;
 import gaia.cu9.ari.gaiaorbit.scenegraph.octreewrapper.AbstractOctreeWrapper;
+import gaia.cu9.ari.gaiaorbit.util.MyPools;
 import gaia.cu9.ari.gaiaorbit.util.concurrent.ThreadIndexer;
 import gaia.cu9.ari.gaiaorbit.util.math.Matrix4d;
 import gaia.cu9.ari.gaiaorbit.util.math.Vector2d;
@@ -20,7 +21,6 @@ import com.badlogic.gdx.math.Matrix4;
 import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.utils.Bits;
 import com.badlogic.gdx.utils.Pool;
-import com.badlogic.gdx.utils.Pools;
 
 /**
  * A scene graph entity.
@@ -498,7 +498,7 @@ public class SceneGraphNode implements ISceneGraphNode, IPosition {
      * @return
      */
     public <T extends SceneGraphNode> T getSimpleCopy() {
-        Pool<? extends SceneGraphNode> pool = Pools.get(this.getClass());
+        Pool<? extends SceneGraphNode> pool = MyPools.get(this.getClass());
         T copy = (T) pool.obtain();
         copy.name = this.name;
         copy.parentName = this.parentName;
@@ -524,7 +524,7 @@ public class SceneGraphNode implements ISceneGraphNode, IPosition {
         if (this.children != null)
             this.children.clear();
         Class clazz = this.getClass();
-        Pools.get(clazz).free(this);
+        MyPools.get(clazz).free(this);
     }
 
     /**

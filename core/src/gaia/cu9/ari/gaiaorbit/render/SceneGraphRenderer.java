@@ -22,6 +22,7 @@ import gaia.cu9.ari.gaiaorbit.util.Constants;
 import gaia.cu9.ari.gaiaorbit.util.GlobalConf;
 import gaia.cu9.ari.gaiaorbit.util.GlobalConf.ProgramConf.StereoProfile;
 import gaia.cu9.ari.gaiaorbit.util.GlobalResources;
+import gaia.cu9.ari.gaiaorbit.util.MyPools;
 import gaia.cu9.ari.gaiaorbit.util.ds.Multilist;
 import gaia.cu9.ari.gaiaorbit.util.math.MathUtilsd;
 import gaia.cu9.ari.gaiaorbit.util.override.AtmosphereGroundShaderProvider;
@@ -49,7 +50,6 @@ import com.badlogic.gdx.graphics.glutils.ShaderProgram;
 import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.Pool;
-import com.badlogic.gdx.utils.Pools;
 import com.badlogic.gdx.utils.viewport.ExtendViewport;
 import com.badlogic.gdx.utils.viewport.StretchViewport;
 import com.badlogic.gdx.utils.viewport.Viewport;
@@ -308,7 +308,7 @@ public class SceneGraphRenderer extends AbstractRenderer implements IProcessRend
                 Viewport viewport = stretch ? stretchViewport : extendViewport;
 
                 PerspectiveCamera cam = camera.getCamera();
-                Pool<Vector3> vectorPool = Pools.get(Vector3.class);
+                Pool<Vector3> vectorPool = MyPools.get(Vector3.class);
                 // Vector of 1 meter length pointing to the side of the camera
                 Vector3 side = vectorPool.obtain().set(cam.direction);
                 float separation = (float) Constants.M_TO_U * GlobalConf.program.STEREOSCOPIC_EYE_SEPARATION_M;
