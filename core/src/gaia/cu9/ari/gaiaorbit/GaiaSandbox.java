@@ -309,7 +309,7 @@ public class GaiaSandbox implements ApplicationListener, IObserver, IMainRendere
         EventManager.instance.post(Events.TIME_CHANGE_INFO, current.getTime());
 
         // Subscribe to events
-        EventManager.instance.subscribe(this, Events.TOGGLE_AMBIENT_LIGHT, Events.AMBIENT_LIGHT_CMD, Events.FULLSCREEN_CMD);
+        EventManager.instance.subscribe(this, Events.TOGGLE_AMBIENT_LIGHT, Events.AMBIENT_LIGHT_CMD);
 
         // Re-enable input
         if (!GlobalConf.runtime.STRIPPED_FOV_MODE)
@@ -539,24 +539,6 @@ public class GaiaSandbox implements ApplicationListener, IObserver, IMainRendere
             break;
         case AMBIENT_LIGHT_CMD:
             ModelComponent.setAmbientLight((float) data[0]);
-            break;
-        case FULLSCREEN_CMD:
-            boolean toFullscreen = data.length >= 1 ? (Boolean) data[0] : !Gdx.graphics.isFullscreen();
-            int width;
-            int height;
-            if (toFullscreen) {
-                width = GlobalConf.screen.FULLSCREEN_WIDTH;
-                height = GlobalConf.screen.FULLSCREEN_HEIGHT;
-                GlobalConf.screen.SCREEN_WIDTH = Gdx.graphics.getWidth();
-                GlobalConf.screen.SCREEN_HEIGHT = Gdx.graphics.getHeight();
-            } else {
-                width = GlobalConf.screen.SCREEN_WIDTH;
-                height = GlobalConf.screen.SCREEN_HEIGHT;
-            }
-            // Only switch if needed
-            if (Gdx.graphics.isFullscreen() != toFullscreen) {
-                Gdx.graphics.setDisplayMode(width, height, toFullscreen);
-            }
             break;
         default:
             break;
