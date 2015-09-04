@@ -27,7 +27,7 @@ public class SunLoader implements ISceneGraphLoader {
     }
 
     @Override
-    public void initialize(String[] files) {
+    public void initialize(String[] files) throws RuntimeException {
 
     }
 

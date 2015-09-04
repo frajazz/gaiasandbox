@@ -43,13 +43,13 @@ public class HYGBinaryLoader extends AbstractCatalogLoader implements ISceneGrap
     @Override
     public List<Particle> loadData() throws FileNotFoundException {
         List<Particle> stars = new ArrayList<Particle>();
-        InputStream data = null;
         for (String f : files) {
             FileHandle file = Gdx.files.internal(f);
-            data = file.read();
+            InputStream data = file.read();
             DataInputStream data_in = new DataInputStream(data);
 
-            Logger.info(this.getClass().getSimpleName(), I18n.bundle.format("notif.datafile", f));
+            Logger.info(this.getClass().getSimpleName(), I18n.bundle.format("notif.limitmag", GlobalConf.data.LIMIT_MAG_LOAD));
+            Logger.info(this.getClass().getSimpleName(), I18n.bundle.format("notif.catalog.loading", file.name()));
 
             try {
                 // Read size of stars
@@ -94,11 +94,6 @@ public class HYGBinaryLoader extends AbstractCatalogLoader implements ISceneGrap
 
         Logger.info(this.getClass().getSimpleName(), I18n.bundle.format("notif.catalog.init", stars.size()));
         return stars;
-    }
-
-    @Override
-    public void initialize(String[] files) {
-        super.initialize(files);
     }
 
 }

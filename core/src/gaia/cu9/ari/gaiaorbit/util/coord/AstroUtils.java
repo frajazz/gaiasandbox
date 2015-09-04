@@ -8,9 +8,7 @@ import gaia.cu9.ari.gaiaorbit.util.math.Vector2d;
 import gaia.cu9.ari.gaiaorbit.util.math.Vector3d;
 
 import java.sql.Timestamp;
-import java.util.Calendar;
 import java.util.Date;
-import java.util.GregorianCalendar;
 
 /**
  * Some astronomical algorithms to get the position of the Sun, Moon, work out Julian dates, etc.
@@ -24,19 +22,13 @@ public class AstroUtils {
     /** Julian date of the Gaia-specific reference epoch J2010 = J2010.0 = JD2455197.5 = 2010-01-01T00:00:00 **/
     static final public double JD_J2010 = 2455197.5;
 
-
     /** Julian date of B1900 epoch */
     static final public double JD_B1900 = 2415020.31352;// Julian Date of B1900
     /** Milliseconds of J2000 in the scale of java.util.Date **/
     public static final long J2000_MS;
     static {
-        Calendar c = new GregorianCalendar();
-        c.set(Calendar.YEAR, 2000);
-        c.set(Calendar.MONTH, Calendar.JANUARY);
-        c.set(Calendar.DAY_OF_MONTH, 1);
-        c.set(Calendar.HOUR_OF_DAY, 0);
-        c.set(Calendar.MINUTE, 0);
-        J2000_MS = c.getTime().getTime();
+        Date d = new Date(2000, 0, 1, 0, 0, 0);
+        J2000_MS = d.getTime();
     }
 
     /** Julian date cache, since most dates are used more than once **/
@@ -80,9 +72,7 @@ public class AstroUtils {
         double T3 = T2 * T;
         double M = 357.5291 + 35999.0503 * T - 0.0001599 * T2 - 0.00000048 * T3;
         double e = 0.016708617 - 0.000042037 * T - 0.0000001236 * T2;
-        double C = (1.9146 - 0.004817 * T - 0.000014 * T2) * Math.sin(Math.toRadians(M)) +
-                (0.019993 - 0.000101 * T) * Math.sin(Math.toRadians(2 * M)) +
-                0.00029 * Math.sin(Math.toRadians(3 * M));
+        double C = (1.9146 - 0.004817 * T - 0.000014 * T2) * Math.sin(Math.toRadians(M)) + (0.019993 - 0.000101 * T) * Math.sin(Math.toRadians(2 * M)) + 0.00029 * Math.sin(Math.toRadians(3 * M));
         double v = M + C;
 
         double R = (1.000001018 * (1 - e * e)) / (1 + e * Math.cos(Math.toRadians(v)));
@@ -133,15 +123,13 @@ public class AstroUtils {
      */
     @SuppressWarnings("unused")
     public static double getFakeSunLongitude(Date date) {
-        Calendar cal = Calendar.getInstance();
-        cal.setTime(date);
-        int year = cal.get(Calendar.YEAR);
-        int month = cal.get(Calendar.MONTH);
-        int day = cal.get(Calendar.DAY_OF_MONTH);
+        int year = date.getYear();
+        int month = date.getMonth();
+        int day = date.getDate();
 
-        int hour = cal.get(Calendar.HOUR_OF_DAY);
-        int min = cal.get(Calendar.MINUTE);
-        int sec = cal.get(Calendar.SECOND);
+        int hour = date.getHours();
+        int min = date.getMinutes();
+        int sec = date.getSeconds();
         int nanos = ((Timestamp) date).getNanos();
 
         double frac = (1d / 12d) * month + (1d / 365.242d) * day + (1d / 8765.81d) * hour + (1d / 525949d) * min + (1d / 31556940d) * sec + (1d / 31556940e9d) * nanos;
@@ -279,8 +267,7 @@ public class AstroUtils {
         }
         // Addition to Sumb. The terms involving A1 are due to the action of Venus. The term involving A2 is due to Jupiter
         // while those involing L' are due to the flattening of the Earth.
-        double sumbadd = -2235 * MathUtilsd.sin(Math.toRadians(Lp)) + 382 * MathUtilsd.sin(Math.toRadians(A3)) + 175 * MathUtilsd.sin(Math.toRadians(A1 - F)) +
-                175 * MathUtilsd.sin(Math.toRadians(A1 + F)) + 127 * MathUtilsd.sin(Math.toRadians(Lp - Mp)) - 115 * MathUtilsd.sin(Math.toRadians(Lp + Mp));
+        double sumbadd = -2235 * MathUtilsd.sin(Math.toRadians(Lp)) + 382 * MathUtilsd.sin(Math.toRadians(A3)) + 175 * MathUtilsd.sin(Math.toRadians(A1 - F)) + 175 * MathUtilsd.sin(Math.toRadians(A1 + F)) + 127 * MathUtilsd.sin(Math.toRadians(Lp - Mp)) - 115 * MathUtilsd.sin(Math.toRadians(Lp + Mp));
         sumb += sumbadd;
 
         return sumb;
@@ -292,138 +279,20 @@ public class AstroUtils {
      * Multiple of
      * D M M' F  CoeffSine CoeffCosine
      */
-    private static final int[][] table45a =
-    {
-            { 0, 0, 1, 0, 6288774, -20905355 },
-            { 2, 0, -1, 0, 1274027, -3699111 },
-            { 2, 0, 0, 0, 658314, -2955968 },
-            { 0, 0, 2, 0, 213618, -569925 },
-            { 0, 1, 0, 0, -185116, 48888 },
-            { 0, 0, 0, 2, -114332, -3149 },
-            { 2, 0, -2, 0, 58793, 246158 },
-            { 2, -1, -1, 0, 57066, -152138 },
-            { 2, 0, 1, 0, 53322, -170733 },
-            { 2, -1, 0, 0, 45758, -204586 },
-            { 0, 1, -1, 0, -40923, -129620 },
-            { 1, 0, 0, 0, -34720, 108743 },
-            { 0, 1, 1, 0, -30383, 104755 },
-            { 2, 0, 0, -2, 15327, 10321 },
-            { 0, 0, 1, 2, -12528, 0 },
-            { 0, 0, 1, -2, 10980, 79661 },
-            { 4, 0, -1, 0, 10675, -34782 },
-            { 0, 0, 3, 0, 10034, -23210 },
-            { 4, 0, -2, 0, 8548, -21636 },
-            { 2, 1, -1, 0, -7888, 24208 },
-            { 2, 1, 0, 0, -6766, 30824 },
-            { 1, 0, -1, 0, -5163, -8379 },
-            { 1, 1, 0, 0, 4987, -16675 },
-            { 2, -1, 1, 0, 4036, -12831 },
-            { 2, 0, 2, 0, 3994, -10445 },
-            { 4, 0, 0, 0, 3861, -11650 },
-            { 2, 0, -3, 0, 3665, 14403 },
-            { 0, 1, -2, 0, -2689, -7003 },
-            { 2, 0, -1, 2, -2602, 0 },
-            { 2, -1, -2, 0, 2390, 10056 },
-            { 1, 0, 1, 0, -2348, 6322 },
-            { 2, -2, 0, 0, 2236, -9884 },
-            { 0, 1, 2, 0, -2120, 5751 },
-            { 0, 2, 0, 0, -2069, 0 },
-            { 2, -2, -1, 0, 2048, -4950 },
-            { 2, 0, 1, -2, -1773, 4130 },
-            { 2, 0, 0, 2, -1595, 0 },
-            { 4, -1, -1, 0, 1215, -3958 },
-            { 0, 0, 2, 2, -1110, 0 },
-            { 3, 0, -1, 0, -892, 3258 },
-            { 2, 1, 1, 0, -810, 2616 },
-            { 4, -1, -2, 0, 759, -1897 },
-            { 0, 2, -1, 0, -713, -2117 },
-            { 2, 2, -1, 0, -700, 2354 },
-            { 2, 1, -2, 0, 691, 0 },
-            { 2, -1, 0, -2, 596, 0 },
-            { 4, 0, 1, 0, 549, -1423 },
-            { 0, 0, 4, 0, 537, -1117 },
-            { 4, -1, 0, 0, 520, -1571 },
-            { 1, 0, -2, 0, -487, -1739 },
-            { 2, 1, 0, -2, -399, 0 },
-            { 0, 0, 2, -2, -381, -4421 },
-            { 1, 1, 1, 0, 351, 0 },
-            { 3, 0, -2, 0, -340, 0 },
-            { 4, 0, -3, 0, 330, 0 },
-            { 2, -1, 2, 0, 327, 0 },
-            { 0, 2, 1, 0, -323, 1165 },
-            { 1, 1, -1, 0, 299, 0 },
-            { 2, 0, 3, 0, 294, 0 },
-            { 2, 0, -1, -2, 0, 8752 }
-    };
+    private static final int[][] table45a = { { 0, 0, 1, 0, 6288774, -20905355 }, { 2, 0, -1, 0, 1274027, -3699111 }, { 2, 0, 0, 0, 658314, -2955968 }, { 0, 0, 2, 0, 213618, -569925 }, { 0, 1, 0, 0, -185116, 48888 }, { 0, 0, 0, 2, -114332, -3149 }, { 2, 0, -2, 0, 58793, 246158 }, { 2, -1, -1, 0, 57066, -152138 }, { 2, 0, 1, 0, 53322, -170733 }, { 2, -1, 0, 0, 45758, -204586 }, { 0, 1, -1, 0, -40923, -129620 }, { 1, 0, 0, 0, -34720, 108743 }, { 0, 1, 1, 0, -30383, 104755 },
+            { 2, 0, 0, -2, 15327, 10321 }, { 0, 0, 1, 2, -12528, 0 }, { 0, 0, 1, -2, 10980, 79661 }, { 4, 0, -1, 0, 10675, -34782 }, { 0, 0, 3, 0, 10034, -23210 }, { 4, 0, -2, 0, 8548, -21636 }, { 2, 1, -1, 0, -7888, 24208 }, { 2, 1, 0, 0, -6766, 30824 }, { 1, 0, -1, 0, -5163, -8379 }, { 1, 1, 0, 0, 4987, -16675 }, { 2, -1, 1, 0, 4036, -12831 }, { 2, 0, 2, 0, 3994, -10445 }, { 4, 0, 0, 0, 3861, -11650 }, { 2, 0, -3, 0, 3665, 14403 }, { 0, 1, -2, 0, -2689, -7003 }, { 2, 0, -1, 2, -2602, 0 },
+            { 2, -1, -2, 0, 2390, 10056 }, { 1, 0, 1, 0, -2348, 6322 }, { 2, -2, 0, 0, 2236, -9884 }, { 0, 1, 2, 0, -2120, 5751 }, { 0, 2, 0, 0, -2069, 0 }, { 2, -2, -1, 0, 2048, -4950 }, { 2, 0, 1, -2, -1773, 4130 }, { 2, 0, 0, 2, -1595, 0 }, { 4, -1, -1, 0, 1215, -3958 }, { 0, 0, 2, 2, -1110, 0 }, { 3, 0, -1, 0, -892, 3258 }, { 2, 1, 1, 0, -810, 2616 }, { 4, -1, -2, 0, 759, -1897 }, { 0, 2, -1, 0, -713, -2117 }, { 2, 2, -1, 0, -700, 2354 }, { 2, 1, -2, 0, 691, 0 }, { 2, -1, 0, -2, 596, 0 },
+            { 4, 0, 1, 0, 549, -1423 }, { 0, 0, 4, 0, 537, -1117 }, { 4, -1, 0, 0, 520, -1571 }, { 1, 0, -2, 0, -487, -1739 }, { 2, 1, 0, -2, -399, 0 }, { 0, 0, 2, -2, -381, -4421 }, { 1, 1, 1, 0, 351, 0 }, { 3, 0, -2, 0, -340, 0 }, { 4, 0, -3, 0, 330, 0 }, { 2, -1, 2, 0, 327, 0 }, { 0, 2, 1, 0, -323, 1165 }, { 1, 1, -1, 0, 299, 0 }, { 2, 0, 3, 0, 294, 0 }, { 2, 0, -1, -2, 0, 8752 } };
 
     /**
      * Periodic terms for the latitude of the Moon (Sum(b)). The unit is 0.000001 degree.
      * Multiple of
      * D M M' F 	Coefficient of the sine of the argument
      */
-    private static final int[][] table45b =
-    {
-            { 0, 0, 0, 1, 5128122, 0 },
-            { 0, 0, 1, 1, 280602, 0 },
-            { 0, 0, 1, -1, 277693, 0 },
-            { 2, 0, 0, -1, 173237, 0 },
-            { 2, 0, -1, 1, 55413, 0 },
-            { 2, 0, -1, -1, 46271, 0 },
-            { 2, 0, 0, 1, 32573, 0 },
-            { 0, 0, 2, 1, 17198, 0 },
-            { 2, 0, 1, -1, 9266, 0 },
-            { 0, 0, 2, -1, 8822, 0 },
-            { 2, -1, 0, -1, 8216, 0 },
-            { 2, 0, -2, -1, 4324, 0 },
-            { 2, 0, 1, 1, 4200, 0 },
-            { 2, 1, 0, -1, -3359, 0 },
-            { 2, -1, -1, 1, 2463, 0 },
-            { 2, -1, 0, 1, 2211, 0 },
-            { 2, -1, -1, -1, 2065, 0 },
-            { 0, 1, -1, -1, -1870, 0 },
-            { 4, 0, -1, -1, 1828, 0 },
-            { 0, 1, 0, 1, -1794, 0 },
-            { 0, 0, 0, 3, -1749, 0 },
-            { 0, 1, -1, 1, -1565, 0 },
-            { 1, 0, 0, 1, -1491, 0 },
-            { 0, 1, 1, 1, -1475, 0 },
-            { 0, 1, 1, -1, -1410, 0 },
-            { 0, 1, 0, -1, -1344, 0 },
-            { 1, 0, 0, -1, -1335, 0 },
-            { 0, 0, 3, 1, 1107, 0 },
-            { 4, 0, 0, -1, 1021, 0 },
-            { 4, 0, -1, 1, 833, 0 },
-            { 0, 0, 1, -3, 777, 0 },
-            { 4, 0, -2, 1, 671, 0 },
-            { 2, 0, 0, -3, 607, 0 },
-            { 2, 0, 2, -1, 596, 0 },
-            { 2, -1, 1, -1, 491, 0 },
-            { 2, 0, -2, 1, -451, 0 },
-            { 0, 0, 3, -1, 439, 0 },
-            { 2, 0, 2, 1, 422, 0 },
-            { 2, 0, -3, -1, 421, 0 },
-            { 2, 1, -1, 1, -366, 0 },
-            { 2, 1, 0, 1, -351, 0 },
-            { 4, 0, 0, 1, 331, 0 },
-            { 2, -1, 1, 1, 315, 0 },
-            { 2, -2, 0, -1, 302, 0 },
-            { 0, 0, 1, 3, -283, 0 },
-            { 2, 1, 1, -1, -229, 0 },
-            { 1, 1, 0, -1, 223, 0 },
-            { 1, 1, 0, 1, 223, 0 },
-            { 0, 1, -2, -1, -220, 0 },
-            { 2, 1, -1, -1, -220, 0 },
-            { 1, 0, 1, 1, -185, 0 },
-            { 2, -1, -2, -1, 181, 0 },
-            { 0, 1, 2, 1, -177, 0 },
-            { 4, 0, -2, -1, 176, 0 },
-            { 4, -1, -1, -1, 166, 0 },
-            { 1, 0, 1, -1, -164, 0 },
-            { 4, 0, 1, -1, 132, 0 },
-            { 1, 0, -1, -1, -119, 0 },
-            { 4, -1, 0, -1, 115, 0 },
-            { 2, -2, 0, 1, 107, 0 }
-    };
+    private static final int[][] table45b = { { 0, 0, 0, 1, 5128122, 0 }, { 0, 0, 1, 1, 280602, 0 }, { 0, 0, 1, -1, 277693, 0 }, { 2, 0, 0, -1, 173237, 0 }, { 2, 0, -1, 1, 55413, 0 }, { 2, 0, -1, -1, 46271, 0 }, { 2, 0, 0, 1, 32573, 0 }, { 0, 0, 2, 1, 17198, 0 }, { 2, 0, 1, -1, 9266, 0 }, { 0, 0, 2, -1, 8822, 0 }, { 2, -1, 0, -1, 8216, 0 }, { 2, 0, -2, -1, 4324, 0 }, { 2, 0, 1, 1, 4200, 0 }, { 2, 1, 0, -1, -3359, 0 }, { 2, -1, -1, 1, 2463, 0 }, { 2, -1, 0, 1, 2211, 0 },
+            { 2, -1, -1, -1, 2065, 0 }, { 0, 1, -1, -1, -1870, 0 }, { 4, 0, -1, -1, 1828, 0 }, { 0, 1, 0, 1, -1794, 0 }, { 0, 0, 0, 3, -1749, 0 }, { 0, 1, -1, 1, -1565, 0 }, { 1, 0, 0, 1, -1491, 0 }, { 0, 1, 1, 1, -1475, 0 }, { 0, 1, 1, -1, -1410, 0 }, { 0, 1, 0, -1, -1344, 0 }, { 1, 0, 0, -1, -1335, 0 }, { 0, 0, 3, 1, 1107, 0 }, { 4, 0, 0, -1, 1021, 0 }, { 4, 0, -1, 1, 833, 0 }, { 0, 0, 1, -3, 777, 0 }, { 4, 0, -2, 1, 671, 0 }, { 2, 0, 0, -3, 607, 0 }, { 2, 0, 2, -1, 596, 0 },
+            { 2, -1, 1, -1, 491, 0 }, { 2, 0, -2, 1, -451, 0 }, { 0, 0, 3, -1, 439, 0 }, { 2, 0, 2, 1, 422, 0 }, { 2, 0, -3, -1, 421, 0 }, { 2, 1, -1, 1, -366, 0 }, { 2, 1, 0, 1, -351, 0 }, { 4, 0, 0, 1, 331, 0 }, { 2, -1, 1, 1, 315, 0 }, { 2, -2, 0, -1, 302, 0 }, { 0, 0, 1, 3, -283, 0 }, { 2, 1, 1, -1, -229, 0 }, { 1, 1, 0, -1, 223, 0 }, { 1, 1, 0, 1, 223, 0 }, { 0, 1, -2, -1, -220, 0 }, { 2, 1, -1, -1, -220, 0 }, { 1, 0, 1, 1, -185, 0 }, { 2, -1, -2, -1, 181, 0 }, { 0, 1, 2, 1, -177, 0 },
+            { 4, 0, -2, -1, 176, 0 }, { 4, -1, -1, -1, 166, 0 }, { 1, 0, 1, -1, -164, 0 }, { 4, 0, 1, -1, 132, 0 }, { 1, 0, -1, -1, -119, 0 }, { 4, -1, 0, -1, 115, 0 }, { 2, -2, 0, 1, 107, 0 } };
 
     /**
      * Returns a vector with the heliocentric ecliptic latitude and longitude in radians and the distance in km.
@@ -565,16 +434,14 @@ public class AstroUtils {
     }
 
     public static double getJulianDate(Date date) {
-        Calendar cal = Calendar.getInstance();
-        cal.setTime(date);
-        int year = cal.get(Calendar.YEAR);
-        int month = cal.get(Calendar.MONTH) + 1;
-        int day = cal.get(Calendar.DAY_OF_MONTH);
+        int year = date.getYear() + 1900;
+        int month = date.getMonth() + 1;
+        int day = date.getDate();
 
-        int hour = cal.get(Calendar.HOUR_OF_DAY);
-        int min = cal.get(Calendar.MINUTE);
-        int sec = cal.get(Calendar.SECOND);
-        int nanos = cal.get(Calendar.MILLISECOND) * 1000000;
+        int hour = date.getHours();
+        int min = date.getMinutes();
+        int sec = date.getSeconds();
+        int nanos = (int) (date.getTime() % 1000) * 1000000;
         return getJulianDate(year, month, day, hour, min, sec, nanos, true);
     }
 

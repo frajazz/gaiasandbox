@@ -33,12 +33,10 @@ public class HYGCSVLoader extends AbstractCatalogLoader implements ISceneGraphLo
     @Override
     public List<Star> loadData() throws FileNotFoundException {
         List<Star> stars = new ArrayList<Star>();
-        InputStream data = null;
-        for (String f : files) {
-            FileHandle file = Gdx.files.internal(f);
-            data = file.read();
+        for (String file : files) {
+            FileHandle f = Gdx.files.internal(file);
+            InputStream data = f.read();
             BufferedReader br = new BufferedReader(new InputStreamReader(data));
-            Logger.info(this.getClass().getSimpleName(), I18n.bundle.format("notif.datafile", f));
 
             try {
                 //Skip first line
@@ -63,6 +61,7 @@ public class HYGCSVLoader extends AbstractCatalogLoader implements ISceneGraphLo
 
             }
         }
+
         Logger.info(this.getClass().getSimpleName(), I18n.bundle.format("notif.catalog.init", stars.size()));
         return stars;
     }
@@ -97,18 +96,9 @@ public class HYGCSVLoader extends AbstractCatalogLoader implements ISceneGraphLo
             }
             long starid = Parser.parseLong(st[0].trim());
 
-            if (name != null && name.equalsIgnoreCase("Betelgeuse")) {
-                int ad = 34;
-                ad += 213;
-            }
-
             Star star = new Star(pos, appmag, absmag, colorbv, name, (float) ra, (float) dec, (int) starid);
             stars.add(star);
         }
     }
 
-    @Override
-    public void initialize(String[] files) {
-        super.initialize(files);
-    }
 }

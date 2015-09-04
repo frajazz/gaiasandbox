@@ -3,10 +3,9 @@ package gaia.cu9.ari.gaiaorbit.util.time;
 import gaia.cu9.ari.gaiaorbit.event.EventManager;
 import gaia.cu9.ari.gaiaorbit.event.Events;
 import gaia.cu9.ari.gaiaorbit.event.IObserver;
+import gaia.cu9.ari.gaiaorbit.util.Constants;
 
-import java.util.Calendar;
 import java.util.Date;
-import java.util.GregorianCalendar;
 
 /**
  * Keeps pace of the simulation time vs real time and holds the global clock
@@ -16,14 +15,12 @@ import java.util.GregorianCalendar;
 public class GlobalClock implements IObserver, ITimeFrameProvider {
     private static final double MS_TO_HOUR = 1 / 3600000d;
 
-    // Represents the current time
-    public GregorianCalendar cal;
     /**The current time of the clock **/
     public Date time, lastTime;
     /** The hour difference from the last frame **/
     public double hdiff;
 
-    // Represents the pace in simulation hours/real seconds
+    /** Represents the pace in simulation hours/real seconds **/
     public double pace = 2;
     // Seconds since last event POST
     private float lastUpdate = 1;
@@ -33,17 +30,15 @@ public class GlobalClock implements IObserver, ITimeFrameProvider {
     /**
      * Creates a new GlobalClock
      * @param pace The pace of the clock in [simulation hours/real seconds]
-     * @param date The date with which to initialize the clock
+     * @param date The date with which to initialise the clock
      */
     public GlobalClock(double pace, Date date) {
         super();
         // Now
-        cal = new GregorianCalendar();
         this.pace = pace;
         hdiff = 0d;
         time = date;
         lastTime = new Date(time.getTime());
-        cal.setTime(time);
         EventManager.instance.subscribe(this, Events.PACE_CHANGE_CMD, Events.PACE_DIVIDE_CMD, Events.PACE_DOUBLE_CMD, Events.TIME_CHANGE_CMD);
     }
 
@@ -56,44 +51,15 @@ public class GlobalClock implements IObserver, ITimeFrameProvider {
                 dt = 1 / fps;
             }
 
-            int days = 0;
-            int hours = 0;
-            int mins = 0;
-            int secs = 0;
-            int millisecs = 0;
-
             int sign = (int) Math.signum(pace);
             double h = Math.abs(dt * pace);
             hdiff = h * sign;
 
-            days = (int) (h / 24);
-            h = (h / 24 - days) * 24;
-            hours = (int) h;
+            double ms = h * Constants.H_TO_MS;
 
-            double m = (h - Math.floor(h)) * 60;
-            mins = (int) m;
-
-            double s = (m - Math.floor(m)) * 60;
-            secs = (int) s;
-
-            double ms = (s - Math.floor(s)) * 1000;
-            millisecs = (int) Math.round(ms);
-            if (days == 0 && hours == 0 && mins == 0 && secs == 0 && millisecs == 0) {
-                msacum += ms;
-                millisecs = (int) Math.round(msacum);
-                if (millisecs > 0) {
-                    msacum = 0;
-                }
-            }
-
-            cal.add(Calendar.DAY_OF_YEAR, days * sign);
-            cal.add(Calendar.HOUR, hours * sign);
-            cal.add(Calendar.MINUTE, mins * sign);
-            cal.add(Calendar.SECOND, secs * sign);
-            cal.add(Calendar.MILLISECOND, millisecs * sign);
-
-            lastTime.setTime(time.getTime());
-            time.setTime(cal.getTimeInMillis());
+            long currentTime = time.getTime();
+            lastTime.setTime(currentTime);
+            time.setTime(currentTime + (long) ms);
 
             // Post event each 1/2 second
             lastUpdate += dt;
@@ -134,7 +100,6 @@ public class GlobalClock implements IObserver, ITimeFrameProvider {
             // Update time
             long newt = ((Date) data[0]).getTime();
             this.time.setTime(newt);
-            this.cal.setTimeInMillis(newt);
             break;
         }
 

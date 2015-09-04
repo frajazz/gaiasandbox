@@ -21,7 +21,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.files.FileHandle;
 
 public class OctreeCatalogLoader implements ISceneGraphLoader {
 
@@ -32,12 +31,10 @@ public class OctreeCatalogLoader implements ISceneGraphLoader {
         Logger.info(this.getClass().getSimpleName(), I18n.bundle.format("notif.limitmag", GlobalConf.data.LIMIT_MAG_LOAD));
 
         MetadataBinaryIO metadataReader = new MetadataBinaryIO();
-        FileHandle metadataFile = Gdx.files.internal(metadata);
-        OctreeNode<SceneGraphNode> root = (OctreeNode<SceneGraphNode>) metadataReader.readMetadata(metadataFile.read());
+        OctreeNode<SceneGraphNode> root = (OctreeNode<SceneGraphNode>) metadataReader.readMetadata(Gdx.files.internal(metadata).read());
 
         ParticleDataBinaryIO particleReader = new ParticleDataBinaryIO();
-        FileHandle particlesFile = Gdx.files.internal(particles);
-        List<CelestialBody> particleList = particleReader.readParticles(particlesFile.read());
+        List<CelestialBody> particleList = particleReader.readParticles(Gdx.files.internal(particles).read());
 
         /**
          * CREATE OCTREE WRAPPER WITH ROOT NODE
@@ -92,12 +89,7 @@ public class OctreeCatalogLoader implements ISceneGraphLoader {
     }
 
     @Override
-    public void initialize(String[] files) {
-        if (files.length != 2) {
-            new RuntimeException(getClass().getSimpleName() + " needs exactly two files: particles and metadata. Review your data.json file.");
-        }
-        particles = files[0];
-        metadata = files[1];
+    public void initialize(String[] files) throws RuntimeException {
 
     }
 
