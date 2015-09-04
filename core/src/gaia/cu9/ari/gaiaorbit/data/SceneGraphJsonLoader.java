@@ -2,9 +2,6 @@ package gaia.cu9.ari.gaiaorbit.data;
 
 import gaia.cu9.ari.gaiaorbit.data.stars.ISceneGraphLoader;
 import gaia.cu9.ari.gaiaorbit.scenegraph.ISceneGraph;
-import gaia.cu9.ari.gaiaorbit.scenegraph.SceneGraph;
-import gaia.cu9.ari.gaiaorbit.scenegraph.SceneGraphConcurrent;
-import gaia.cu9.ari.gaiaorbit.scenegraph.SceneGraphConcurrentOctree;
 import gaia.cu9.ari.gaiaorbit.scenegraph.SceneGraphNode;
 import gaia.cu9.ari.gaiaorbit.scenegraph.octreewrapper.AbstractOctreeWrapper;
 import gaia.cu9.ari.gaiaorbit.util.Logger;
@@ -62,18 +59,7 @@ public class SceneGraphJsonLoader {
                 }
             }
 
-            // Implement one or the other depending on concurrency setting
-            if (multithreading) {
-                if (!hasOctree) {
-                    // No octree, local data
-                    sg = new SceneGraphConcurrent(maxThreads);
-                } else {
-                    // Object server, we use octree mode
-                    sg = new SceneGraphConcurrentOctree(maxThreads);
-                }
-            } else {
-                sg = new SceneGraph();
-            }
+            sg = SceneGraphImplementationProvider.provider.getImplementation(multithreading, hasOctree, maxThreads);
 
             sg.initialize(nodes, time);
 

@@ -1,11 +1,12 @@
-package gaia.cu9.ari.gaiaorbit.scenegraph;
+package gaia.cu9.ari.gaiaorbit.desktop.concurrent;
 
 import gaia.cu9.ari.gaiaorbit.event.EventManager;
 import gaia.cu9.ari.gaiaorbit.event.Events;
+import gaia.cu9.ari.gaiaorbit.scenegraph.AbstractSceneGraph;
+import gaia.cu9.ari.gaiaorbit.scenegraph.ICamera;
+import gaia.cu9.ari.gaiaorbit.scenegraph.SceneGraphNode;
 import gaia.cu9.ari.gaiaorbit.util.I18n;
 import gaia.cu9.ari.gaiaorbit.util.Logger;
-import gaia.cu9.ari.gaiaorbit.util.concurrent.ThreadPoolManager;
-import gaia.cu9.ari.gaiaorbit.util.concurrent.UpdaterTask;
 import gaia.cu9.ari.gaiaorbit.util.time.ITimeFrameProvider;
 
 import java.util.ArrayList;

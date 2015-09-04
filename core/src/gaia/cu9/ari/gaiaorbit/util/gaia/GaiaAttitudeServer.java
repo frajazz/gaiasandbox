@@ -5,11 +5,8 @@ import gaia.cu9.ari.gaiaorbit.event.Events;
 import gaia.cu9.ari.gaiaorbit.util.BinarySearchTree;
 import gaia.cu9.ari.gaiaorbit.util.GlobalConf;
 import gaia.cu9.ari.gaiaorbit.util.I18n;
-import gaia.cu9.ari.gaiaorbit.util.format.DateFormatFactory;
-import gaia.cu9.ari.gaiaorbit.util.format.IDateFormat;
 import gaia.cu9.ari.gaiaorbit.util.math.Quaterniond;
 
-import java.util.Calendar;
 import java.util.Date;
 
 /**
@@ -46,20 +43,6 @@ public class GaiaAttitudeServer {
             // Use NSL as approximation
             nsl = new Nsl37();
         }
-    }
-
-    private Date getDate(String date) {
-        String fmt = "yyyy-MM-dd HH:mm:ss";
-        IDateFormat format = DateFormatFactory.getFormatter(fmt);
-        Date d = format.parse(date);
-        return d;
-    }
-
-    private Date getDate(int day, int month, int year, int hour, int min, int sec) {
-        Calendar cal = Calendar.getInstance();
-        cal.setTimeInMillis(0);
-        cal.set(year, month, day, hour, min, sec);
-        return cal.getTime();
     }
 
     /**

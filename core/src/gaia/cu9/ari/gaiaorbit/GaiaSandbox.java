@@ -40,7 +40,6 @@ import gaia.cu9.ari.gaiaorbit.util.GlobalResources;
 import gaia.cu9.ari.gaiaorbit.util.I18n;
 import gaia.cu9.ari.gaiaorbit.util.Logger;
 import gaia.cu9.ari.gaiaorbit.util.ModelCache;
-import gaia.cu9.ari.gaiaorbit.util.concurrent.ThreadPoolManager;
 import gaia.cu9.ari.gaiaorbit.util.gaia.GaiaAttitudeServer;
 import gaia.cu9.ari.gaiaorbit.util.math.MathUtilsd;
 import gaia.cu9.ari.gaiaorbit.util.math.Vector3d;
@@ -154,10 +153,6 @@ public class GaiaSandbox implements ApplicationListener, IObserver, IMainRendere
 
         // Initialize i18n
         I18n.initialize();
-
-        if (GlobalConf.performance.MULTITHREADING)
-            // Initialize thread pool manager
-            ThreadPoolManager.initialize(GlobalConf.performance.NUMBER_THREADS());
 
         // Initialize asset manager
         FileHandleResolver resolver = new InternalFileHandleResolver();

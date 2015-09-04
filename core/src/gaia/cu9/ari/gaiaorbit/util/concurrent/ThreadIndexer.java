@@ -7,23 +7,20 @@ package gaia.cu9.ari.gaiaorbit.util.concurrent;
  */
 public abstract class ThreadIndexer {
 
-    private static ThreadIndexer inst;
+    public static ThreadIndexer instance;
 
-    public static void setInstance(ThreadIndexer inst) {
-        ThreadIndexer.inst = inst;
+    public static void initialize(ThreadIndexer inst) {
+        ThreadIndexer.instance = inst;
     }
 
-    public static ThreadIndexer inst() {
-        if (inst == null) {
-            inst = new SingleThreadIndexer();
-        }
-        return inst;
+    public static int i() {
+        return instance.idx();
     }
 
     /**
      * Gets the index of the current thread
      * @return
      */
-    public abstract int i();
+    public abstract int idx();
 
 }

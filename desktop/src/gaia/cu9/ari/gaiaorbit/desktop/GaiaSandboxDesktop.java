@@ -1,6 +1,10 @@
 package gaia.cu9.ari.gaiaorbit.desktop;
 
 import gaia.cu9.ari.gaiaorbit.GaiaSandbox;
+import gaia.cu9.ari.gaiaorbit.data.DesktopSceneGraphImplementationProvider;
+import gaia.cu9.ari.gaiaorbit.data.SceneGraphImplementationProvider;
+import gaia.cu9.ari.gaiaorbit.desktop.concurrent.MultiThreadIndexer;
+import gaia.cu9.ari.gaiaorbit.desktop.concurrent.ThreadPoolManager;
 import gaia.cu9.ari.gaiaorbit.desktop.format.DesktopDateFormatFactory;
 import gaia.cu9.ari.gaiaorbit.desktop.format.DesktopNumberFormatFactory;
 import gaia.cu9.ari.gaiaorbit.desktop.gui.swing.ConfigDialog;
@@ -23,6 +27,8 @@ import gaia.cu9.ari.gaiaorbit.script.ScriptingFactory;
 import gaia.cu9.ari.gaiaorbit.util.ConfInit;
 import gaia.cu9.ari.gaiaorbit.util.GlobalConf;
 import gaia.cu9.ari.gaiaorbit.util.I18n;
+import gaia.cu9.ari.gaiaorbit.util.concurrent.SingleThreadIndexer;
+import gaia.cu9.ari.gaiaorbit.util.concurrent.ThreadIndexer;
 import gaia.cu9.ari.gaiaorbit.util.format.DateFormatFactory;
 import gaia.cu9.ari.gaiaorbit.util.format.NumberFormatFactory;
 import gaia.cu9.ari.gaiaorbit.util.math.MathUtilsd;
@@ -80,6 +86,7 @@ public class GaiaSandboxDesktop implements IObserver {
 
             // Initialize i18n
             I18n.initialize(Gdx.files.internal("data/i18n/gsbundle"));
+
             // Dev mode
             I18n.initialize(Gdx.files.absolute(System.getProperty("assets.location") + "i18n/gsbundle"));
 
@@ -100,6 +107,9 @@ public class GaiaSandboxDesktop implements IObserver {
 
             // Initialize post processor factory
             PostProcessorFactory.initialize(new DesktopPostProcessorFactory());
+
+            // Scene graph implementation provider
+            SceneGraphImplementationProvider.initialize(new DesktopSceneGraphImplementationProvider());
 
             // Initialize screenshots manager
             ScreenshotsManager.initialize();
@@ -152,8 +162,13 @@ public class GaiaSandboxDesktop implements IObserver {
 
         System.out.println("Display mode set to " + cfg.width + "x" + cfg.height + ", fullscreen: " + cfg.fullscreen);
 
-        // Init scripting
-        JythonFactory.initialize();
+        // Thread pool manager
+        if (GlobalConf.performance.MULTITHREADING) {
+            ThreadPoolManager.initialize(GlobalConf.performance.NUMBER_THREADS());
+            ThreadIndexer.initialize(new MultiThreadIndexer());
+        } else {
+            ThreadIndexer.initialize(new SingleThreadIndexer());
+        }
 
         // Launch app
         new LwjglApplication(new GaiaSandbox(true), cfg);

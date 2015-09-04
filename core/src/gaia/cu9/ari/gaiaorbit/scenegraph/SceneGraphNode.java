@@ -545,12 +545,12 @@ public class SceneGraphNode implements ISceneGraphNode, IPosition {
 
     protected void addToRender(IRenderable renderable, RenderGroup rg) {
         if (SceneGraphRenderer.visible[ct.ordinal()] || (!SceneGraphRenderer.visible[ct.ordinal()] && SceneGraphRenderer.alphas[ct.ordinal()] > 0)) {
-            SceneGraphRenderer.render_lists.get(rg).add(renderable, ThreadIndexer.inst().i());
+            SceneGraphRenderer.render_lists.get(rg).add(renderable, ThreadIndexer.i());
         }
     }
 
     protected boolean isInRender(IRenderable renderable, RenderGroup rg) {
-        return SceneGraphRenderer.render_lists.get(rg).contains(renderable, ThreadIndexer.inst().i());
+        return SceneGraphRenderer.render_lists.get(rg).contains(renderable, ThreadIndexer.i());
     }
 
     public SceneGraphNode getFirstStarAncestor() {

@@ -1,6 +1,6 @@
 package gaia.cu9.ari.gaiaorbit.desktop.concurrent;
 
-import gaia.cu9.ari.gaiaorbit.util.concurrent.GaiaSandboxThreadFactory.GSThread;
+import gaia.cu9.ari.gaiaorbit.desktop.concurrent.GaiaSandboxThreadFactory.GSThread;
 import gaia.cu9.ari.gaiaorbit.util.concurrent.ThreadIndexer;
 
 /**
@@ -11,7 +11,7 @@ import gaia.cu9.ari.gaiaorbit.util.concurrent.ThreadIndexer;
 public class MultiThreadIndexer extends ThreadIndexer {
 
     @Override
-    public int i() {
+    public int idx() {
         return Thread.currentThread() instanceof GSThread ? ((GSThread) Thread.currentThread()).index : 0;
     }
 

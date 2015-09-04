@@ -1,4 +1,4 @@
-package gaia.cu9.ari.gaiaorbit.util.concurrent;
+package gaia.cu9.ari.gaiaorbit.desktop.concurrent;
 
 import java.util.concurrent.ThreadFactory;
 import java.util.concurrent.atomic.AtomicInteger;

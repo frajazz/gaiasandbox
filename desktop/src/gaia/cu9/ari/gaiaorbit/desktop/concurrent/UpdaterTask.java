@@ -1,4 +1,4 @@
-package gaia.cu9.ari.gaiaorbit.util.concurrent;
+package gaia.cu9.ari.gaiaorbit.desktop.concurrent;
 
 import gaia.cu9.ari.gaiaorbit.scenegraph.ICamera;
 import gaia.cu9.ari.gaiaorbit.scenegraph.SceneGraphNode;
