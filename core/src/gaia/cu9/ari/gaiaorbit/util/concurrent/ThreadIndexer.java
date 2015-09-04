@@ -23,4 +23,10 @@ public abstract class ThreadIndexer {
      */
     public abstract int idx();
 
+    /**
+     * Number of threads
+     * @return
+     */
+    public abstract int nthreads();
+
 }

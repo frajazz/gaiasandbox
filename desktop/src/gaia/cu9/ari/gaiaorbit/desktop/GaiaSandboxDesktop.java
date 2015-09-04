@@ -167,8 +167,8 @@ public class GaiaSandboxDesktop implements IObserver {
 
         // Thread pool manager
         if (GlobalConf.performance.MULTITHREADING) {
-            ThreadPoolManager.initialize(GlobalConf.performance.NUMBER_THREADS());
             ThreadIndexer.initialize(new MultiThreadIndexer());
+            ThreadPoolManager.initialize(GlobalConf.performance.NUMBER_THREADS());
         } else {
             ThreadIndexer.initialize(new SingleThreadIndexer());
         }
