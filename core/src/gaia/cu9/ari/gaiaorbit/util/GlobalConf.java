@@ -5,6 +5,7 @@ import gaia.cu9.ari.gaiaorbit.event.EventManager;
 import gaia.cu9.ari.gaiaorbit.event.Events;
 import gaia.cu9.ari.gaiaorbit.event.IObserver;
 import gaia.cu9.ari.gaiaorbit.render.system.AbstractRenderSystem;
+import gaia.cu9.ari.gaiaorbit.util.concurrent.ThreadIndexer;
 import gaia.cu9.ari.gaiaorbit.util.format.DateFormatFactory;
 import gaia.cu9.ari.gaiaorbit.util.format.DateFormatFactory.DateType;
 import gaia.cu9.ari.gaiaorbit.util.format.IDateFormat;
@@ -68,8 +69,16 @@ public class GlobalConf {
             this.NUMBER_THREADS = NUMBER_THREADS;
         }
 
+        /**
+         * Returns the actual number of threads. It accounts for the number of threads being 0 or less,
+         * "let the program decide" option, in which case the number of processors is returned.
+         * @return
+         */
         public int NUMBER_THREADS() {
-            return NUMBER_THREADS;
+            if (NUMBER_THREADS <= 0)
+                return ThreadIndexer.instance.nthreads();
+            else
+                return NUMBER_THREADS;
         }
 
     }

@@ -1,6 +1,7 @@
 package gaia.cu9.ari.gaiaorbit.scenegraph.component;
 
 import gaia.cu9.ari.gaiaorbit.data.AssetBean;
+import gaia.cu9.ari.gaiaorbit.util.Constants;
 
 import java.util.Map;
 
@@ -24,7 +25,7 @@ public class TextureComponent {
     protected static final TextureParameter textureParams;
     static {
         textureParams = new TextureParameter();
-        textureParams.genMipMaps = false;
+        textureParams.genMipMaps = !Constants.webgl;
         textureParams.magFilter = TextureFilter.Linear;
         //textureParams.minFilter = TextureFilter.MipMapLinearNearest;
         textureParams.minFilter = TextureFilter.Linear;

@@ -10,7 +10,7 @@ import java.util.List;
 
 /**
  * Static Octree wrapper that can be inserted into the scene graph. 
- * This implementation is prepared to work with the {@link gaia.cu9.ari.gaiaorbit.scenegraph.SceneGraphConcurrentOctree},
+ * This implementation is prepared to work with the {@link gaia.cu9.ari.gaiaorbit.desktop.concurrent.SceneGraphConcurrentOctree},
  * which is designed to take advantage of knowing an octree is present in the scenegraph. 
  * @author Toni Sagrista
  *

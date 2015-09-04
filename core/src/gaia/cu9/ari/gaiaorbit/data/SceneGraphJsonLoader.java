@@ -1,7 +1,6 @@
 package gaia.cu9.ari.gaiaorbit.data;
 
 import gaia.cu9.ari.gaiaorbit.scenegraph.ISceneGraph;
-import gaia.cu9.ari.gaiaorbit.scenegraph.SceneGraph;
 import gaia.cu9.ari.gaiaorbit.scenegraph.SceneGraphNode;
 import gaia.cu9.ari.gaiaorbit.scenegraph.octreewrapper.AbstractOctreeWrapper;
 import gaia.cu9.ari.gaiaorbit.util.Logger;
@@ -59,12 +58,7 @@ public class SceneGraphJsonLoader {
                 }
             }
 
-            // Implement one or the other depending on concurrency setting
-            if (multithreading) {
-                // TODO sort this out
-            } else {
-                sg = new SceneGraph();
-            }
+            sg = SceneGraphImplementationProvider.provider.getImplementation(multithreading, hasOctree, maxThreads);
 
             sg.initialize(nodes, time);
 

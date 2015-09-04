@@ -1,6 +1,8 @@
 package gaia.cu9.ari.gaiaorbit.desktop;
 
 import gaia.cu9.ari.gaiaorbit.GaiaSandbox;
+import gaia.cu9.ari.gaiaorbit.data.DesktopSceneGraphImplementationProvider;
+import gaia.cu9.ari.gaiaorbit.data.SceneGraphImplementationProvider;
 import gaia.cu9.ari.gaiaorbit.desktop.concurrent.MultiThreadIndexer;
 import gaia.cu9.ari.gaiaorbit.desktop.concurrent.ThreadPoolManager;
 import gaia.cu9.ari.gaiaorbit.desktop.format.DesktopDateFormatFactory;
@@ -105,6 +107,9 @@ public class GaiaSandboxDesktop implements IObserver {
             Constants.desktop = true;
             KeyMappings.initialize();
 
+            // Scene graph implementation provider
+            SceneGraphImplementationProvider.initialize(new DesktopSceneGraphImplementationProvider());
+
             // Initialize screenshots manager
             ScreenshotsManager.initialize();
 
@@ -158,8 +163,8 @@ public class GaiaSandboxDesktop implements IObserver {
 
         // Thread pool manager
         if (GlobalConf.performance.MULTITHREADING) {
-            ThreadPoolManager.initialize(GlobalConf.performance.NUMBER_THREADS());
             ThreadIndexer.initialize(new MultiThreadIndexer());
+            ThreadPoolManager.initialize(GlobalConf.performance.NUMBER_THREADS());
         } else {
             ThreadIndexer.initialize(new SingleThreadIndexer());
         }

@@ -15,4 +15,9 @@ public class MultiThreadIndexer extends ThreadIndexer {
         return Thread.currentThread() instanceof GSThread ? ((GSThread) Thread.currentThread()).index : 0;
     }
 
+    @Override
+    public int nthreads() {
+        return Runtime.getRuntime().availableProcessors();
+    }
+
 }
