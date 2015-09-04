@@ -77,6 +77,7 @@ public class FovCamera extends AbstractCamera implements IObserver {
     Stage[] fpstages;
     Drawable fp, fp_fov1, fp_fov2;
 
+    @SuppressWarnings("unchecked")
     public FovCamera(AssetManager assetManager, CameraManager parent) {
         super(parent);
         initialize(assetManager);
