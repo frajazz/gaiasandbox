@@ -57,13 +57,6 @@ public abstract class BaseAttitudeDataServer<A extends Attitude> {
     protected TimeContext nativeTimeContext = null;
     protected TimeContext initialRequestedTimeContext = null;
 
-    protected ThreadLocal<TimeContext> requestedTimeContext = new ThreadLocal<TimeContext>() {
-        @Override
-        protected TimeContext initialValue() {
-            return initialRequestedTimeContext;
-        }
-    };
-
     /**
      * switch to decide if attitude uncertainties and correlations should be calculated
      */
@@ -79,7 +72,6 @@ public abstract class BaseAttitudeDataServer<A extends Attitude> {
     public void setInitialized(boolean initialized) {
         this.initialized = initialized;
     }
-
 
     public A getAttitude(Date date) {
         long tNs = (long) ((AstroUtils.getJulianDateCache(date) - AstroUtils.JD_J2010) * AstroUtils.DAY_TO_NS);

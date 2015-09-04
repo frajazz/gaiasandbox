@@ -5,6 +5,8 @@ import gaia.cu9.ari.gaiaorbit.render.IRenderable;
 import gaia.cu9.ari.gaiaorbit.render.SceneGraphRenderer;
 import gaia.cu9.ari.gaiaorbit.scenegraph.octreewrapper.AbstractOctreeWrapper;
 import gaia.cu9.ari.gaiaorbit.util.MyPools;
+import gaia.cu9.ari.gaiaorbit.util.concurrent.ILocalVar;
+import gaia.cu9.ari.gaiaorbit.util.concurrent.LocalVarFactory;
 import gaia.cu9.ari.gaiaorbit.util.concurrent.ThreadIndexer;
 import gaia.cu9.ari.gaiaorbit.util.math.Matrix4d;
 import gaia.cu9.ari.gaiaorbit.util.math.Vector2d;
@@ -15,6 +17,7 @@ import gaia.cu9.ari.gaiaorbit.util.tree.IPosition;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Vector;
+import java.util.concurrent.Callable;
 
 import com.badlogic.gdx.assets.AssetManager;
 import com.badlogic.gdx.math.Matrix4;
@@ -32,36 +35,36 @@ public class SceneGraphNode implements ISceneGraphNode, IPosition {
     public static final String ROOT_NAME = "Universe";
 
     /** Static Thread local auxiliary Vector3d **/
-    protected static ThreadLocal<Vector3d> auxVector3d = new ThreadLocal<Vector3d>() {
+    protected static ILocalVar<Vector3d> auxVector3d = LocalVarFactory.instance.get(new Callable<Vector3d>() {
         @Override
-        protected Vector3d initialValue() {
+        public Vector3d call() throws Exception {
             return new Vector3d();
         }
-    };
+    });
 
     /** Static Thread local auxiliary Vector3f **/
-    protected static ThreadLocal<Vector3> auxVector3f = new ThreadLocal<Vector3>() {
+    protected static ILocalVar<Vector3> auxVector3f = LocalVarFactory.instance.get(new Callable<Vector3>() {
         @Override
-        protected Vector3 initialValue() {
+        public Vector3 call() throws Exception {
             return new Vector3();
         }
-    };
+    });
 
     /** Static Thread local auxiliary Vector3f **/
-    protected static ThreadLocal<Vector3> aux2Vector3f = new ThreadLocal<Vector3>() {
+    protected static ILocalVar<Vector3> aux2Vector3f = LocalVarFactory.instance.get(new Callable<Vector3>() {
         @Override
-        protected Vector3 initialValue() {
+        public Vector3 call() throws Exception {
             return new Vector3();
         }
-    };
+    });
 
     /** Static Thread local auxiliary Vector2d **/
-    protected static ThreadLocal<Vector2d> auxVector2d = new ThreadLocal<Vector2d>() {
+    protected static ILocalVar<Vector2d> auxVector2d = LocalVarFactory.instance.get(new Callable<Vector2d>() {
         @Override
-        protected Vector2d initialValue() {
+        public Vector2d call() throws Exception {
             return new Vector2d();
         }
-    };
+    });
 
     /**
      * Describes to which render group this node belongs at a particular time step.

@@ -238,7 +238,6 @@ public class GaiaInputController extends GestureDetector {
             // Remove keyboard focus from GUI elements
             EventManager.instance.notify(Events.REMOVE_KEYBOARD_FOCUS);
 
-
             this.button = -1;
         }
         return super.touchUp(screenX, screenY, pointer, button);
@@ -321,11 +320,7 @@ public class GaiaInputController extends GestureDetector {
             return true;
         } else if (keycode == Keys.ESCAPE) {
             // If input is not enabled, only escape works
-            if (GlobalConf.OPENGL_GUI) {
-                Gdx.app.exit();
-            } else {
-                EventManager.instance.post(Events.FULLSCREEN_CMD, false);
-            }
+            Gdx.app.exit();
             pressedKeys.remove(keycode);
             return true;
         }

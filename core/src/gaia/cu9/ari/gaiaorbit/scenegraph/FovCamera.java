@@ -10,6 +10,8 @@ import gaia.cu9.ari.gaiaorbit.util.GlobalResources;
 import gaia.cu9.ari.gaiaorbit.util.I18n;
 import gaia.cu9.ari.gaiaorbit.util.Logger;
 import gaia.cu9.ari.gaiaorbit.util.MyPools;
+import gaia.cu9.ari.gaiaorbit.util.concurrent.ILocalVar;
+import gaia.cu9.ari.gaiaorbit.util.concurrent.LocalVarFactory;
 import gaia.cu9.ari.gaiaorbit.util.gaia.GaiaAttitudeServer;
 import gaia.cu9.ari.gaiaorbit.util.gaia.Satellite;
 import gaia.cu9.ari.gaiaorbit.util.math.Matrix4d;
@@ -21,6 +23,7 @@ import gaia.cu9.ari.gaiaorbit.util.time.ITimeFrameProvider;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.concurrent.Callable;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.assets.AssetManager;
@@ -64,7 +67,7 @@ public class FovCamera extends AbstractCamera implements IObserver {
     Vector3d dirMiddle, up;
     public Vector3d[] directions;
     public List<Vector3d[]> interpolatedDirections;
-    private ThreadLocal<Matrix4d> trf;
+    private ILocalVar<Matrix4d> trf;
 
     public long currentTime, lastTime;
     private Pool<Vector3d> vectorPool;
@@ -81,13 +84,12 @@ public class FovCamera extends AbstractCamera implements IObserver {
         interpolatedDirections = new ArrayList<Vector3d[]>();
         dirMiddle = new Vector3d();
         up = new Vector3d();
-        trf = new ThreadLocal<Matrix4d>() {
+        trf = LocalVarFactory.instance.get(new Callable<Matrix4d>() {
             @Override
-            protected Matrix4d initialValue() {
+            public Matrix4d call() throws Exception {
                 return new Matrix4d();
             }
-
-        };
+        });
         currentTime = 0l;
         lastTime = 0l;
         vectorPool = MyPools.get(Vector3d.class);

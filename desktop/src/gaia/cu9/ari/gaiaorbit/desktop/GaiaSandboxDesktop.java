@@ -4,6 +4,7 @@ import gaia.cu9.ari.gaiaorbit.GaiaSandbox;
 import gaia.cu9.ari.gaiaorbit.data.DesktopSceneGraphImplementationProvider;
 import gaia.cu9.ari.gaiaorbit.data.SceneGraphImplementationProvider;
 import gaia.cu9.ari.gaiaorbit.desktop.concurrent.MultiThreadIndexer;
+import gaia.cu9.ari.gaiaorbit.desktop.concurrent.ThreadLocalVarFactory;
 import gaia.cu9.ari.gaiaorbit.desktop.concurrent.ThreadPoolManager;
 import gaia.cu9.ari.gaiaorbit.desktop.format.DesktopDateFormatFactory;
 import gaia.cu9.ari.gaiaorbit.desktop.format.DesktopNumberFormatFactory;
@@ -19,13 +20,16 @@ import gaia.cu9.ari.gaiaorbit.desktop.util.SysUtils;
 import gaia.cu9.ari.gaiaorbit.event.EventManager;
 import gaia.cu9.ari.gaiaorbit.event.Events;
 import gaia.cu9.ari.gaiaorbit.event.IObserver;
+import gaia.cu9.ari.gaiaorbit.interfce.KeyMappings;
 import gaia.cu9.ari.gaiaorbit.render.PostProcessorFactory;
 import gaia.cu9.ari.gaiaorbit.screenshot.ScreenshotsManager;
 import gaia.cu9.ari.gaiaorbit.script.JythonFactory;
 import gaia.cu9.ari.gaiaorbit.script.ScriptingFactory;
 import gaia.cu9.ari.gaiaorbit.util.ConfInit;
+import gaia.cu9.ari.gaiaorbit.util.Constants;
 import gaia.cu9.ari.gaiaorbit.util.GlobalConf;
 import gaia.cu9.ari.gaiaorbit.util.I18n;
+import gaia.cu9.ari.gaiaorbit.util.concurrent.LocalVarFactory;
 import gaia.cu9.ari.gaiaorbit.util.concurrent.SingleThreadIndexer;
 import gaia.cu9.ari.gaiaorbit.util.concurrent.ThreadIndexer;
 import gaia.cu9.ari.gaiaorbit.util.format.DateFormatFactory;
@@ -105,6 +109,13 @@ public class GaiaSandboxDesktop implements IObserver {
             // Initialize post processor factory
             PostProcessorFactory.initialize(new DesktopPostProcessorFactory());
 
+            // Key mappings
+            Constants.desktop = true;
+            KeyMappings.initialize();
+
+            // Local vars
+            LocalVarFactory.initialize(new ThreadLocalVarFactory<Object>());
+
             // Scene graph implementation provider
             SceneGraphImplementationProvider.initialize(new DesktopSceneGraphImplementationProvider());
 
@@ -168,7 +179,7 @@ public class GaiaSandboxDesktop implements IObserver {
         }
 
         // Launch app
-        new LwjglApplication(new GaiaSandbox(true), cfg);
+        new LwjglApplication(new GaiaSandbox(), cfg);
 
         EventManager.instance.unsubscribe(this, Events.POST_NOTIFICATION, Events.JAVA_EXCEPTION);
     }

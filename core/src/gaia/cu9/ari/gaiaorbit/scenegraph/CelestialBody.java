@@ -19,8 +19,6 @@ import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g3d.ModelBatch;
 import com.badlogic.gdx.graphics.glutils.ShaderProgram;
-import com.badlogic.gdx.math.Matrix4;
-import com.badlogic.gdx.math.Quaternion;
 import com.badlogic.gdx.math.Vector2;
 
 /**
@@ -30,19 +28,6 @@ import com.badlogic.gdx.math.Vector2;
  */
 public abstract class CelestialBody extends AbstractPositionEntity implements I3DTextRenderable, IQuadRenderable, IModelRenderable {
     private static float[] labelColour = new float[] { 1, 1, 1, 1 };
-
-    protected static ThreadLocal<Quaternion> rotation = new ThreadLocal<Quaternion>() {
-        @Override
-        public Quaternion initialValue() {
-            return new Quaternion();
-        }
-    };
-    protected static ThreadLocal<Matrix4> transf = new ThreadLocal<Matrix4>() {
-        @Override
-        public Matrix4 initialValue() {
-            return new Matrix4();
-        }
-    };
 
     /**
      * Angle limit for rendering at all. If angle is smaller than this quantity, no rendering happens.

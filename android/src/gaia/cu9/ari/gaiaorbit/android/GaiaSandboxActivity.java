@@ -60,7 +60,7 @@ public class GaiaSandboxActivity extends AndroidApplication {
         sensorAcce = sensorMan.getDefaultSensor(Sensor.TYPE_ACCELEROMETER);
         sensorMagn = sensorMan.getDefaultSensor(Sensor.TYPE_MAGNETIC_FIELD);
 
-        initialize(new GaiaSandbox(true), cfg);
+        initialize(new GaiaSandbox(), cfg);
     }
 
     SensorManager sensorMan;

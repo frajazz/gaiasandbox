@@ -13,7 +13,6 @@ import gaia.cu9.ari.gaiaorbit.event.IObserver;
 import gaia.cu9.ari.gaiaorbit.interfce.FullGui;
 import gaia.cu9.ari.gaiaorbit.interfce.GaiaControllerListener;
 import gaia.cu9.ari.gaiaorbit.interfce.GaiaInputController;
-import gaia.cu9.ari.gaiaorbit.interfce.HUDGui;
 import gaia.cu9.ari.gaiaorbit.interfce.IGui;
 import gaia.cu9.ari.gaiaorbit.interfce.LoadingGui;
 import gaia.cu9.ari.gaiaorbit.interfce.MobileGui;
@@ -119,9 +118,8 @@ public class GaiaSandbox implements ApplicationListener, IObserver, IMainRendere
      *            This will paint the GUI in OpenGL. True for Desktop (if not
      *            Swing GUI) and Android.
      */
-    public GaiaSandbox(boolean openGLGUI) {
+    public GaiaSandbox() {
         super();
-        GlobalConf.OPENGL_GUI = openGLGUI;
         instance = this;
     }
 
@@ -178,18 +176,13 @@ public class GaiaSandbox implements ApplicationListener, IObserver, IMainRendere
             manager.load(GlobalConf.data.DATA_JSON_FILE, ISceneGraph.class, new SGLoaderParameter(current, GlobalConf.performance.MULTITHREADING, GlobalConf.performance.NUMBER_THREADS()));
         }
 
-        if (GlobalConf.OPENGL_GUI) {
-            // Load scene graph
-            if (Constants.desktop || Constants.webgl) {
-                // Full GUI for desktop
-                gui = new FullGui();
-            } else if (Constants.mobile) {
-                // Reduced GUI for android/iOS/...
-                gui = new MobileGui();
-            }
-        } else {
-            // Only the HUD
-            gui = new HUDGui();
+        // Load scene graph
+        if (Constants.desktop || Constants.webgl) {
+            // Full GUI for desktop
+            gui = new FullGui();
+        } else if (Constants.mobile) {
+            // Reduced GUI for android/iOS/...
+            gui = new MobileGui();
         }
         gui.initialize(manager);
 
@@ -252,12 +245,12 @@ public class GaiaSandbox implements ApplicationListener, IObserver, IMainRendere
 
         // Initialize input handlers
         InputMultiplexer inputMultiplexer = new InputMultiplexer();
-        if (GlobalConf.OPENGL_GUI) {
-            // Only for the Full GUI
-            gui.setSceneGraph(sg);
-            gui.setVisibilityToggles(ComponentType.values(), SceneGraphRenderer.visible);
-            inputMultiplexer.addProcessor(gui.getGuiStage());
-        }
+
+        // Only for the Full GUI
+        gui.setSceneGraph(sg);
+        gui.setVisibilityToggles(ComponentType.values(), SceneGraphRenderer.visible);
+        inputMultiplexer.addProcessor(gui.getGuiStage());
+
         // Initialize the GUI
         gui.doneLoading(manager);
 
