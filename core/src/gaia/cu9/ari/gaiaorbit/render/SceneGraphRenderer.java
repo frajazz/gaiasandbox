@@ -284,11 +284,11 @@ public class SceneGraphRenderer extends AbstractRenderer implements IProcessRend
 
             CameraMode aux = camera.getMode();
 
-            camera.updateMode(CameraMode.Gaia_FOV2, false);
+            camera.updateMode(CameraMode.Gaia_FOV1, false);
 
             renderScene(camera, rc);
 
-            camera.updateMode(CameraMode.Gaia_FOV1, false);
+            camera.updateMode(CameraMode.Gaia_FOV2, false);
 
             renderScene(camera, rc);
 

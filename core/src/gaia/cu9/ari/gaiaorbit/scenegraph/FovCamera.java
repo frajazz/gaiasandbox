@@ -167,7 +167,6 @@ public class FovCamera extends AbstractCamera implements IObserver {
 
         // Update cameras
         updateCamera(directions[0], up, camera);
-        //System.out.println(time.getTime() + ":: " + directions[0]);
 
         updateCamera(directions[1], up, camera2);
 
@@ -243,6 +242,7 @@ public class FovCamera extends AbstractCamera implements IObserver {
         default:
             return new PerspectiveCamera[] { camera };
         case Gaia_FOV2:
+
             return new PerspectiveCamera[] { camera2 };
         case Gaia_FOV1and2:
             return new PerspectiveCamera[] { camera, camera2 };
@@ -281,7 +281,7 @@ public class FovCamera extends AbstractCamera implements IObserver {
 
     @Override
     public Vector3d getDirection() {
-        int idx = parent.mode.ordinal() - 2;
+        int idx = parent.mode.ordinal() - 3;
         idx = Math.min(idx, 1);
         return directions[idx];
     }
