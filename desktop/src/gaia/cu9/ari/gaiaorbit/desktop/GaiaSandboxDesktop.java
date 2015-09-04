@@ -7,6 +7,7 @@ import gaia.cu9.ari.gaiaorbit.desktop.gui.swing.ConfigDialog;
 import gaia.cu9.ari.gaiaorbit.desktop.gui.swing.HelpDialog;
 import gaia.cu9.ari.gaiaorbit.desktop.gui.swing.IconManager;
 import gaia.cu9.ari.gaiaorbit.desktop.gui.swing.ScriptDialog;
+import gaia.cu9.ari.gaiaorbit.desktop.render.DesktopPostProcessorFactory;
 import gaia.cu9.ari.gaiaorbit.desktop.util.CamRecorder;
 import gaia.cu9.ari.gaiaorbit.desktop.util.DesktopConfInit;
 import gaia.cu9.ari.gaiaorbit.desktop.util.SysUtils;
@@ -14,6 +15,8 @@ import gaia.cu9.ari.gaiaorbit.event.EventManager;
 import gaia.cu9.ari.gaiaorbit.event.Events;
 import gaia.cu9.ari.gaiaorbit.event.IObserver;
 import gaia.cu9.ari.gaiaorbit.interfce.KeyMappings;
+import gaia.cu9.ari.gaiaorbit.render.PostProcessorFactory;
+import gaia.cu9.ari.gaiaorbit.screenshot.ScreenshotsManager;
 import gaia.cu9.ari.gaiaorbit.script.JythonFactory;
 import gaia.cu9.ari.gaiaorbit.script.ScriptingFactory;
 import gaia.cu9.ari.gaiaorbit.util.ConfInit;
@@ -71,6 +74,7 @@ public class GaiaSandboxDesktop implements IObserver {
                 props = initConfigFile(false);
             }
 
+            // Init global configuration
             ConfInit.initialize(new DesktopConfInit());
 
             // Initialize i18n
@@ -89,6 +93,12 @@ public class GaiaSandboxDesktop implements IObserver {
 
             // Init cam recorder
             CamRecorder.initialize();
+
+            // Initialize post processor factory
+            PostProcessorFactory.initialize(new DesktopPostProcessorFactory());
+
+            // Initialize screenshots manager
+            ScreenshotsManager.initialize();
 
             gsd.init();
         } catch (Exception e) {

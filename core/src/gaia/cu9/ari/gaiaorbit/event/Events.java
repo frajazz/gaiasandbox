@@ -254,6 +254,13 @@ public enum Events {
     SCREENSHOT_CMD,
     /** Contains the path where the screenshot has been saved */
     SCREENSHOT_INFO,
+
+    /** Issues the command to render a screenshot **/
+    RENDER_SCREENSHOT,
+    /** Issues the command to render a frame **/
+    RENDER_FRAME,
+    /** Issues the command to flush the frame system **/
+    FLUSH_FRAMES,
     /** Contains an array of booleans with the visibility of each ComponentType, in the same order returned by ComponentType.values() **/
     VISIBILITY_OF_COMPONENTS,
     /** Sets the limit magnitude. Contains a double with the new magnitude **/
@@ -297,6 +304,12 @@ public enum Events {
     /** Removes the gui component identified by the given name **/
     REMOVE_GUI_COMPONENT,
     /** Adds the gui component identified by the given name **/
-    ADD_GUI_COMPONENT;
+    ADD_GUI_COMPONENT,
+
+    /** Update external GUIs signal. Contains the dt in seconds. **/
+    UPDATE_GUI,
+
+    /** Dispose all resources, app is shutting down **/
+    DISPOSE;
 
 }

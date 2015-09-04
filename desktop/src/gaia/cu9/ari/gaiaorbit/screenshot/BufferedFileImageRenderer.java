@@ -1,4 +1,4 @@
-package gaia.cu9.ari.gaiaorbit.util.screenshot;
+package gaia.cu9.ari.gaiaorbit.screenshot;
 
 import gaia.cu9.ari.gaiaorbit.render.BufferedFrame;
 import gaia.cu9.ari.gaiaorbit.util.I18n;

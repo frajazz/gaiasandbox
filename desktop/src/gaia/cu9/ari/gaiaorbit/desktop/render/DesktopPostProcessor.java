@@ -1,8 +1,10 @@
-package gaia.cu9.ari.gaiaorbit.render;
+package gaia.cu9.ari.gaiaorbit.desktop.render;
 
 import gaia.cu9.ari.gaiaorbit.event.EventManager;
 import gaia.cu9.ari.gaiaorbit.event.Events;
 import gaia.cu9.ari.gaiaorbit.event.IObserver;
+import gaia.cu9.ari.gaiaorbit.render.IPostProcessor;
+import gaia.cu9.ari.gaiaorbit.util.Constants;
 import gaia.cu9.ari.gaiaorbit.util.GlobalConf;
 import gaia.cu9.ari.gaiaorbit.util.I18n;
 import gaia.cu9.ari.gaiaorbit.util.Logger;
@@ -17,21 +19,23 @@ import com.bitfire.postprocessing.effects.MotionBlur;
 import com.bitfire.postprocessing.effects.Nfaa;
 import com.bitfire.utils.ShaderLoader;
 
-public class GSPostProcessor implements IPostProcessor, IObserver {
+public class DesktopPostProcessor implements IPostProcessor, IObserver {
 
     private PostProcessBean[] pps;
 
     float bloomFboScale = 0.5f;
     float lensFboScale = 0.25f;
 
-    public GSPostProcessor() {
+    public DesktopPostProcessor() {
         ShaderLoader.BasePath = "shaders/";
 
         pps = new PostProcessBean[RenderType.values().length];
 
         pps[RenderType.screen.index] = newPostProcessor(getWidth(RenderType.screen), getHeight(RenderType.screen));
-        pps[RenderType.screenshot.index] = newPostProcessor(getWidth(RenderType.screenshot), getHeight(RenderType.screenshot));
-        pps[RenderType.frame.index] = newPostProcessor(getWidth(RenderType.frame), getHeight(RenderType.frame));
+        if (Constants.desktop) {
+            pps[RenderType.screenshot.index] = newPostProcessor(getWidth(RenderType.screenshot), getHeight(RenderType.screenshot));
+            pps[RenderType.frame.index] = newPostProcessor(getWidth(RenderType.frame), getHeight(RenderType.frame));
+        }
 
         // Output AA info.
         if (GlobalConf.postprocess.POSTPROCESS_ANTIALIAS == -1) {
@@ -173,11 +177,11 @@ public class GSPostProcessor implements IPostProcessor, IObserver {
             }
             break;
         case CAMERA_MOTION_UPDATED:
-            //	    rts = RenderType.values();
-            //	    float strength = (float) MathUtilsd.lint(((double) data[1] * Constants.KM_TO_U * Constants.U_TO_PC), 0, 100, 0, 0.05);
-            //	    for (int i = 0; i < rts.length; i++) {
-            //		pps[i].zoomer.setBlurStrength(strength);
-            //	    }
+            //    rts = RenderType.values();
+            //    float strength = (float) MathUtilsd.lint(((double) data[1] * Constants.KM_TO_U * Constants.U_TO_PC), 0, 100, 0, 0.05);
+            //    for (int i = 0; i < rts.length; i++) {
+            //pps[i].zoomer.setBlurStrength(strength);
+            //    }
             break;
         case MOTION_BLUR_CMD:
             Gdx.app.postRunnable(new Runnable() {

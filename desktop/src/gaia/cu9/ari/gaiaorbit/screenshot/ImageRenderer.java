@@ -1,4 +1,4 @@
-package gaia.cu9.ari.gaiaorbit.util.screenshot;
+package gaia.cu9.ari.gaiaorbit.screenshot;
 
 import gaia.cu9.ari.gaiaorbit.util.format.INumberFormat;
 import gaia.cu9.ari.gaiaorbit.util.format.NumberFormatFactory;

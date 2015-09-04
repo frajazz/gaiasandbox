@@ -1,4 +1,4 @@
-package gaia.cu9.ari.gaiaorbit.util.screenshot;
+package gaia.cu9.ari.gaiaorbit.screenshot;
 
 public interface IFileImageRenderer {
 

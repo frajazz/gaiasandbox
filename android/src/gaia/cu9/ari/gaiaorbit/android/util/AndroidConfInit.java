@@ -121,7 +121,7 @@ public class AndroidConfInit extends ConfInit {
         } else {
             LIMIT_MAG_LOAD = Float.MAX_VALUE;
         }
-        dc.initialize(DATA_SOURCE_LOCAL, DATA_JSON_FILE, OBJECT_SERVER_HOSTNAME, OBJECT_SERVER_PORT, VISUALIZATION_ID, LIMIT_MAG_LOAD);
+        dc.initialize(DATA_SOURCE_LOCAL, DATA_JSON_FILE, OBJECT_SERVER_HOSTNAME, OBJECT_SERVER_PORT, VISUALIZATION_ID, LIMIT_MAG_LOAD, false);
 
         /** PROGRAM CONF **/
         ProgramConf prc = new ProgramConf();

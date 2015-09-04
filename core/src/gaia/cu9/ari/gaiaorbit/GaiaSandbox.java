@@ -17,13 +17,13 @@ import gaia.cu9.ari.gaiaorbit.interfce.HUDGui;
 import gaia.cu9.ari.gaiaorbit.interfce.IGui;
 import gaia.cu9.ari.gaiaorbit.interfce.LoadingGui;
 import gaia.cu9.ari.gaiaorbit.interfce.MobileGui;
-import gaia.cu9.ari.gaiaorbit.interfce.RenderGui;
 import gaia.cu9.ari.gaiaorbit.render.AbstractRenderer;
 import gaia.cu9.ari.gaiaorbit.render.ComponentType;
-import gaia.cu9.ari.gaiaorbit.render.GSPostProcessor;
+import gaia.cu9.ari.gaiaorbit.render.IMainRenderer;
 import gaia.cu9.ari.gaiaorbit.render.IPostProcessor;
 import gaia.cu9.ari.gaiaorbit.render.IPostProcessor.PostProcessBean;
 import gaia.cu9.ari.gaiaorbit.render.IPostProcessor.RenderType;
+import gaia.cu9.ari.gaiaorbit.render.PostProcessorFactory;
 import gaia.cu9.ari.gaiaorbit.render.SceneGraphRenderer;
 import gaia.cu9.ari.gaiaorbit.scenegraph.AbstractPositionEntity;
 import gaia.cu9.ari.gaiaorbit.scenegraph.CameraManager;
@@ -44,10 +44,6 @@ import gaia.cu9.ari.gaiaorbit.util.concurrent.ThreadPoolManager;
 import gaia.cu9.ari.gaiaorbit.util.gaia.GaiaAttitudeServer;
 import gaia.cu9.ari.gaiaorbit.util.math.MathUtilsd;
 import gaia.cu9.ari.gaiaorbit.util.math.Vector3d;
-import gaia.cu9.ari.gaiaorbit.util.screenshot.BasicFileImageRenderer;
-import gaia.cu9.ari.gaiaorbit.util.screenshot.BufferedFileImageRenderer;
-import gaia.cu9.ari.gaiaorbit.util.screenshot.IFileImageRenderer;
-import gaia.cu9.ari.gaiaorbit.util.screenshot.ImageRenderer;
 import gaia.cu9.ari.gaiaorbit.util.time.GlobalClock;
 import gaia.cu9.ari.gaiaorbit.util.time.ITimeFrameProvider;
 import gaia.cu9.ari.gaiaorbit.util.time.RealTimeClock;
@@ -79,7 +75,7 @@ import com.badlogic.gdx.graphics.glutils.FrameBuffer;
  * @author Toni Sagrista
  *
  */
-public class GaiaSandbox implements ApplicationListener, IObserver {
+public class GaiaSandbox implements ApplicationListener, IObserver, IMainRenderer {
     private static boolean LOADING = true;
 
     /** Attitude folder **/
@@ -107,7 +103,7 @@ public class GaiaSandbox implements ApplicationListener, IObserver {
     /**
      * The user interface
      */
-    public IGui gui, loadingGui, renderGui;
+    public IGui gui, loadingGui;
 
     /**
      * Time
@@ -116,29 +112,6 @@ public class GaiaSandbox implements ApplicationListener, IObserver {
     private ITimeFrameProvider clock, real;
 
     private boolean initialized = false;
-
-    /** Command to take screenshot **/
-    private class ScreenshotCmd {
-        public static final String FILENAME = "screenshot";
-        public String folder;
-        public int width, height;
-        public boolean active = false;
-
-        public ScreenshotCmd() {
-            super();
-        }
-
-        public void takeScreenshot(int width, int height, String folder) {
-            this.folder = folder;
-            this.width = width;
-            this.height = height;
-            this.active = true;
-        }
-
-    }
-
-    public IFileImageRenderer frameRenderer, screenshotRenderer;
-    private ScreenshotCmd screenshot;
 
     /**
      * Creates a Gaia Sandbox instance.
@@ -186,10 +159,6 @@ public class GaiaSandbox implements ApplicationListener, IObserver {
             // Initialize thread pool manager
             ThreadPoolManager.initialize(GlobalConf.performance.NUMBER_THREADS());
 
-        // Init frame/screenshot renderer
-        frameRenderer = new BufferedFileImageRenderer(GlobalConf.runtime.OUTPUT_FRAME_BUFFER_SIZE);
-        screenshotRenderer = new BasicFileImageRenderer();
-
         // Initialize asset manager
         FileHandleResolver resolver = new InternalFileHandleResolver();
         manager = new AssetManager(resolver);
@@ -214,10 +183,6 @@ public class GaiaSandbox implements ApplicationListener, IObserver {
             manager.load(GlobalConf.data.DATA_JSON_FILE, ISceneGraph.class, new SGLoaderParameter(current, GlobalConf.performance.MULTITHREADING, GlobalConf.performance.NUMBER_THREADS()));
         }
 
-        // Initialize timestamp for screenshots
-        renderGui = new RenderGui();
-        renderGui.initialize(manager);
-
         if (GlobalConf.OPENGL_GUI) {
             // Load scene graph
             if (Constants.desktop || Constants.webgl) {
@@ -239,8 +204,6 @@ public class GaiaSandbox implements ApplicationListener, IObserver {
             ab.load(manager);
         }
 
-        screenshot = new ScreenshotCmd();
-
         // Initialize loading screen
         loadingGui = new LoadingGui();
         loadingGui.initialize(manager);
@@ -261,7 +224,7 @@ public class GaiaSandbox implements ApplicationListener, IObserver {
             GaiaAttitudeServer.instance = manager.get(ATTITUDE_FOLDER);
         }
 
-        pp = new GSPostProcessor();
+        pp = PostProcessorFactory.instance.getPostProcessor();
 
         GlobalResources.doneLoading(manager);
 
@@ -302,7 +265,6 @@ public class GaiaSandbox implements ApplicationListener, IObserver {
         }
         // Initialize the GUI
         gui.doneLoading(manager);
-        renderGui.doneLoading(manager);
 
         // Publish visibility
         EventManager.instance.post(Events.VISIBILITY_OF_COMPONENTS, new Object[] { SceneGraphRenderer.visible });
@@ -347,7 +309,7 @@ public class GaiaSandbox implements ApplicationListener, IObserver {
         EventManager.instance.post(Events.TIME_CHANGE_INFO, current.getTime());
 
         // Subscribe to events
-        EventManager.instance.subscribe(this, Events.TOGGLE_AMBIENT_LIGHT, Events.AMBIENT_LIGHT_CMD, Events.SCREENSHOT_CMD, Events.FULLSCREEN_CMD);
+        EventManager.instance.subscribe(this, Events.TOGGLE_AMBIENT_LIGHT, Events.AMBIENT_LIGHT_CMD, Events.FULLSCREEN_CMD);
 
         // Re-enable input
         if (!GlobalConf.runtime.STRIPPED_FOV_MODE)
@@ -356,11 +318,11 @@ public class GaiaSandbox implements ApplicationListener, IObserver {
         // Set current date
         EventManager.instance.post(Events.TIME_CHANGE_CMD, new Date());
 
-     // Activate time
+        // Activate time
         EventManager.instance.post(Events.TOGGLE_TIME_CMD, true, false);
 
         initialized = true;
-        
+
         // Run tutorial
         if (GlobalConf.program.DISPLAY_TUTORIAL) {
             EventManager.instance.post(Events.RUN_SCRIPT_PATH, "scripts/tutorial/tutorial-pointer.py");
@@ -375,9 +337,12 @@ public class GaiaSandbox implements ApplicationListener, IObserver {
         if (Constants.desktop)
             ConfInit.instance.persistGlobalConf(new File(System.getProperty("properties.file")));
 
-        frameRenderer.flush();
+        // Flush frames
+        EventManager.instance.post(Events.FLUSH_FRAMES);
+
+        // Dispose all
         gui.dispose();
-        renderGui.dispose();
+        EventManager.instance.post(Events.DISPOSE);
         if (sg != null) {
             sg.dispose();
         }
@@ -409,37 +374,12 @@ public class GaiaSandbox implements ApplicationListener, IObserver {
                 /**
                  * FRAME OUTPUT
                  */
-                if (GlobalConf.frame.RENDER_OUTPUT) {
-                    switch (GlobalConf.frame.FRAME_MODE) {
-                    case simple:
-                        frameRenderer.saveScreenshot(GlobalConf.frame.RENDER_FOLDER, GlobalConf.frame.RENDER_FILE_NAME, Gdx.graphics.getWidth(), Gdx.graphics.getHeight(), true);
-                        break;
-                    case redraw:
-                        renderToImage(cam, pp.getPostProcessBean(RenderType.frame), GlobalConf.frame.RENDER_WIDTH, GlobalConf.frame.RENDER_HEIGHT, GlobalConf.frame.RENDER_FOLDER, GlobalConf.frame.RENDER_FILE_NAME, frameRenderer);
-                        break;
-                    }
-
-                }
+                EventManager.instance.post(Events.RENDER_FRAME, this);
 
                 /**
                  * SCREENSHOT OUTPUT - simple|redraw mode
                  */
-                if (screenshot.active) {
-                    String file = null;
-                    switch (GlobalConf.screenshot.SCREENSHOT_MODE) {
-                    case simple:
-                        file = ImageRenderer.renderToImageGl20(screenshot.folder, ScreenshotCmd.FILENAME, Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
-                        break;
-                    case redraw:
-                        file = renderToImage(cam, pp.getPostProcessBean(RenderType.screenshot), screenshot.width, screenshot.height, screenshot.folder, ScreenshotCmd.FILENAME, screenshotRenderer);
-                        break;
-                    }
-                    if (file != null) {
-                        screenshot.active = false;
-                        EventManager.instance.post(Events.SCREENSHOT_INFO, file);
-                    }
-
-                }
+                EventManager.instance.post(Events.RENDER_SCREENSHOT, this);
 
                 /**
                  * SCREEN OUTPUT
@@ -447,7 +387,7 @@ public class GaiaSandbox implements ApplicationListener, IObserver {
                 if (GlobalConf.screen.SCREEN_OUTPUT) {
                     /** RENDER THE SCENE **/
                     preRenderScene();
-                    sgr.render(cam, Gdx.graphics.getWidth(), Gdx.graphics.getHeight(), null, pp.getPostProcessBean(RenderType.screen));
+                    renderSgr(cam, Gdx.graphics.getWidth(), Gdx.graphics.getHeight(), null, pp.getPostProcessBean(RenderType.screen));
 
                     if (!GlobalConf.runtime.CLEAN_MODE) {
                         // Render the GUI, setting the viewport
@@ -482,7 +422,7 @@ public class GaiaSandbox implements ApplicationListener, IObserver {
         }
 
         gui.update(dt);
-        renderGui.update(dt);
+        EventManager.instance.post(Events.UPDATE_GUI, dt);
 
         float dtScene = dt;
         if (!GlobalConf.runtime.TIME_ON) {
@@ -507,57 +447,8 @@ public class GaiaSandbox implements ApplicationListener, IObserver {
         Gdx.gl.glBlendFunc(GL20.GL_SRC_ALPHA, GL20.GL_ONE_MINUS_SRC_ALPHA);
     }
 
-    /**
-     * Renders the current scene to an image and returns the file name where it
-     * has been written to
-     * 
-     * @param camera
-     * @param width
-     *            The width of the image.
-     * @param height
-     *            The height of the image.
-     * @param folder
-     *            The folder to save the image to.
-     * @param filename
-     *            The file name prefix.
-     * @param renderer
-     *            the {@link IFileImageRenderer} to use.
-     * @return
-     */
-    public String renderToImage(ICamera camera, PostProcessBean ppb, int width, int height, String folder, String filename, IFileImageRenderer renderer) {
-        FrameBuffer frameBuffer = getFrameBuffer(width, height);
-        // TODO That's a dirty trick, we should find a better way (i.e. making
-        // buildEnabledEffectsList() method public)
-        boolean postprocessing = ppb.pp.captureNoClear();
-        ppb.pp.captureEnd();
-        if (!postprocessing) {
-            // If post processing is not active, we must start the buffer now.
-            // Otherwise, it is used in the render method to write the results
-            // of the pp.
-            frameBuffer.begin();
-        }
-
-        // this is the main render function
-        preRenderScene();
-        // sgr.render(camera, width, height, postprocessing ? m_fbo : null,
-        // ppb);
+    public void renderSgr(ICamera camera, int width, int height, FrameBuffer frameBuffer, PostProcessBean ppb) {
         sgr.render(camera, width, height, frameBuffer, ppb);
-
-        if (postprocessing) {
-            // If post processing is active, we have to start now again because
-            // the renderScene() has closed it.
-            frameBuffer.begin();
-        }
-        if (GlobalConf.frame.RENDER_SCREENSHOT_TIME) {
-            // Timestamp
-            renderGui.resize(width, height);
-            renderGui.render();
-        }
-
-        String res = renderer.saveScreenshot(folder, filename, width, height, false);
-
-        frameBuffer.end();
-        return res;
     }
 
     @Override
@@ -594,7 +485,7 @@ public class GaiaSandbox implements ApplicationListener, IObserver {
 
     @Override
     public void pause() {
-        frameRenderer.flush();
+        EventManager.instance.post(Events.FLUSH_FRAMES);
     }
 
     @Override
@@ -614,7 +505,7 @@ public class GaiaSandbox implements ApplicationListener, IObserver {
         return sg.findFocus(name);
     }
 
-    private FrameBuffer getFrameBuffer(int w, int h) {
+    public FrameBuffer getFrameBuffer(int w, int h) {
         String key = getKey(w, h);
         if (!fbmap.containsKey(key)) {
             FrameBuffer fb = new FrameBuffer(Format.RGB888, w, h, true);
@@ -627,6 +518,18 @@ public class GaiaSandbox implements ApplicationListener, IObserver {
         return w + "x" + h;
     }
 
+    public ICamera getICamera() {
+        return cam.current;
+    }
+
+    public CameraManager getCameraManager() {
+        return cam;
+    }
+
+    public IPostProcessor getPostProcessor() {
+        return pp;
+    }
+
     @Override
     public void notify(Events event, Object... data) {
         switch (event) {
@@ -636,9 +539,6 @@ public class GaiaSandbox implements ApplicationListener, IObserver {
             break;
         case AMBIENT_LIGHT_CMD:
             ModelComponent.setAmbientLight((float) data[0]);
-            break;
-        case SCREENSHOT_CMD:
-            screenshot.takeScreenshot((int) data[0], (int) data[1], (String) data[2]);
             break;
         case FULLSCREEN_CMD:
             boolean toFullscreen = data.length >= 1 ? (Boolean) data[0] : !Gdx.graphics.isFullscreen();

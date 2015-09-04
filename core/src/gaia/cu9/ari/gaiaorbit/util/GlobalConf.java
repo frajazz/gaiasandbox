@@ -261,7 +261,7 @@ public class GlobalConf {
                 }
                 // Flush buffer if needed
                 if (!RENDER_OUTPUT && GaiaSandbox.instance != null) {
-                    GaiaSandbox.instance.frameRenderer.flush();
+                    EventManager.instance.post(Events.FLUSH_FRAMES);
                 }
             }
         }

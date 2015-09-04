@@ -40,7 +40,7 @@ public interface IPostProcessor {
     public enum RenderType {
         screen(0), screenshot(1), frame(2);
 
-        int index;
+        public int index;
 
         private RenderType(int index) {
             this.index = index;
