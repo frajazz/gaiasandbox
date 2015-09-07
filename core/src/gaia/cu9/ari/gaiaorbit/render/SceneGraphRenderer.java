@@ -23,6 +23,7 @@ import gaia.cu9.ari.gaiaorbit.util.GlobalConf;
 import gaia.cu9.ari.gaiaorbit.util.GlobalConf.ProgramConf.StereoProfile;
 import gaia.cu9.ari.gaiaorbit.util.GlobalResources;
 import gaia.cu9.ari.gaiaorbit.util.MyPools;
+import gaia.cu9.ari.gaiaorbit.util.ds.Multilist;
 import gaia.cu9.ari.gaiaorbit.util.math.MathUtilsd;
 import gaia.cu9.ari.gaiaorbit.util.override.AtmosphereGroundShaderProvider;
 import gaia.cu9.ari.gaiaorbit.util.override.AtmosphereShaderProvider;
@@ -75,7 +76,7 @@ public class SceneGraphRenderer extends AbstractRenderer implements IProcessRend
     private RenderContext rc;
 
     /** Render lists for all render groups **/
-    public static Map<RenderGroup, List<IRenderable>> render_lists;
+    public static Map<RenderGroup, Multilist<IRenderable>> render_lists;
 
     // Two model batches, for front (models), back and atmospheres
     private SpriteBatch spriteBatch, fontBatch;
@@ -107,13 +108,15 @@ public class SceneGraphRenderer extends AbstractRenderer implements IProcessRend
             Gdx.app.error(this.getClass().getName(), "Font shader compilation failed:\n" + fontShader.getLog());
         }
 
+        int numLists = GlobalConf.performance.MULTITHREADING ? GlobalConf.performance.NUMBER_THREADS() : 1;
         RenderGroup[] renderGroups = RenderGroup.values();
-        render_lists = new HashMap<RenderGroup, List<IRenderable>>(renderGroups.length);
+        render_lists = new HashMap<RenderGroup, Multilist<IRenderable>>(renderGroups.length);
         for (RenderGroup rg : renderGroups) {
-            render_lists.put(rg, new ArrayList<IRenderable>(100));
+            render_lists.put(rg, new Multilist<IRenderable>(numLists, 100));
         }
 
         ShaderProvider sp = new AtmosphereGroundShaderProvider(Gdx.files.internal("shader/default.vertex.glsl"), Gdx.files.internal("shader/default.fragment.glsl"));
+        ShaderProvider spnormal = Constants.webgl ? sp : new AtmosphereGroundShaderProvider(Gdx.files.internal("shader/normal.vertex.glsl"), Gdx.files.internal("shader/normal.fragment.glsl"));
         ShaderProvider spatm = new AtmosphereShaderProvider(Gdx.files.internal("shader/atm.vertex.glsl"), Gdx.files.internal("shader/atm.fragment.glsl"));
         ShaderProvider spsurface = new DefaultShaderProvider(Gdx.files.internal("shader/default.vertex.glsl"), Gdx.files.internal("shader/starsurface.fragment.glsl"));
 
@@ -125,6 +128,7 @@ public class SceneGraphRenderer extends AbstractRenderer implements IProcessRend
         };
 
         ModelBatch modelBatchB = new ModelBatch(sp, noSorter);
+        ModelBatch modelBatchF = Constants.webgl ? modelBatchB : new ModelBatch(spnormal, noSorter);
         ModelBatch modelBatchAtm = new ModelBatch(spatm, noSorter);
         ModelBatch modelBatchS = new ModelBatch(spsurface, noSorter);
 
@@ -211,7 +215,7 @@ public class SceneGraphRenderer extends AbstractRenderer implements IProcessRend
         AbstractRenderSystem lineProc = getLineRenderSystem();
 
         // MODEL FRONT
-        AbstractRenderSystem modelFrontProc = new ModelBatchRenderSystem(RenderGroup.MODEL_F, priority++, alphas, modelBatchB, false);
+        AbstractRenderSystem modelFrontProc = new ModelBatchRenderSystem(RenderGroup.MODEL_F, priority++, alphas, modelBatchF, false);
         modelFrontProc.setPreRunnable(blendDepthRunnable);
 
         // MODEL STARS
@@ -280,11 +284,11 @@ public class SceneGraphRenderer extends AbstractRenderer implements IProcessRend
 
             CameraMode aux = camera.getMode();
 
-            camera.updateMode(CameraMode.Gaia_FOV2, false);
+            camera.updateMode(CameraMode.Gaia_FOV1, false);
 
             renderScene(camera, rc);
 
-            camera.updateMode(CameraMode.Gaia_FOV1, false);
+            camera.updateMode(CameraMode.Gaia_FOV2, false);
 
             renderScene(camera, rc);
 
@@ -394,7 +398,7 @@ public class SceneGraphRenderer extends AbstractRenderer implements IProcessRend
         int size = renderProcesses.size();
         for (int i = 0; i < size; i++) {
             IRenderSystem process = renderProcesses.get(i);
-            List<IRenderable> l = render_lists.get(process.getRenderGroup());
+            List<IRenderable> l = render_lists.get(process.getRenderGroup()).toList();
             process.render(l, camera, rc);
         }
 
@@ -474,15 +478,7 @@ public class SceneGraphRenderer extends AbstractRenderer implements IProcessRend
         if (GlobalConf.scene.isNormalLineRenderer()) {
             // Normal
             sys = new LineRenderSystem(RenderGroup.LINE, 0, alphas);
-            sys.setPreRunnable(/*new Runnable() {
-                               @Override
-                               public void run() {
-                               Gdx.gl.glDisable(GL20.GL_BLEND);
-                               Gdx.gl.glDisable(GL20.GL_DEPTH_TEST);
-                               Gdx.gl.glDepthFunc(GL20.GL_LESS);
-                               Gdx.gl.glDepthMask(false);
-                               }
-                               }*/blendNoDepthRunnable);
+            sys.setPreRunnable(blendNoDepthRunnable);
         } else {
             // Quad
             sys = new LineQuadRenderSystem(RenderGroup.LINE, 0, alphas);
