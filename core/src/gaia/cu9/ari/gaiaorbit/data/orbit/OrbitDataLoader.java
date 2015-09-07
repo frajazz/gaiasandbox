@@ -12,6 +12,7 @@ import com.badlogic.gdx.assets.loaders.AsynchronousAssetLoader;
 import com.badlogic.gdx.assets.loaders.FileHandleResolver;
 import com.badlogic.gdx.files.FileHandle;
 import com.badlogic.gdx.utils.Array;
+import com.badlogic.gdx.utils.reflect.ClassReflection;
 
 /**
  * Abstract data loader to rule them all.
@@ -35,25 +36,13 @@ public class OrbitDataLoader extends AsynchronousAssetLoader<OrbitData, OrbitDat
     public void loadAsync(AssetManager manager, String fileName, FileHandle file, OrbitDataLoaderParameter parameter) {
         IOrbitDataProvider provider;
         try {
-            provider = getProvider(parameter.providerClass);
+            provider = ClassReflection.newInstance(parameter.providerClass);
             provider.load(fileName, parameter);
             data = provider.getData();
         } catch (Exception e) {
             Gdx.app.error(getClass().getSimpleName(), e.getMessage());
         }
 
-    }
-
-    private IOrbitDataProvider getProvider(String className) {
-        switch (className) {
-        case "gaia.cu9.ari.gaiaorbit.data.orbit.OrbitalParametersProvider":
-            return new OrbitalParametersProvider();
-        case "gaia.cu9.ari.gaiaorbit.data.orbit.OrbitFileDataProvider":
-            return new OrbitFileDataProvider();
-        case "gaia.cu9.ari.gaiaorbit.data.orbit.OrbitSamplerDataProvider":
-            return new OrbitSamplerDataProvider();
-        }
-        return null;
     }
 
     /**
@@ -65,7 +54,7 @@ public class OrbitDataLoader extends AsynchronousAssetLoader<OrbitData, OrbitDat
 
     static public class OrbitDataLoaderParameter extends AssetLoaderParameters<OrbitData> {
 
-        String providerClass;
+        Class<? extends IOrbitDataProvider> providerClass;
         Date ini;
         boolean forward;
         float orbitalPeriod;
@@ -73,17 +62,17 @@ public class OrbitDataLoader extends AsynchronousAssetLoader<OrbitData, OrbitDat
         String name;
         OrbitComponent orbitalParamaters;
 
-        public OrbitDataLoaderParameter(String providerClass) {
+        public OrbitDataLoaderParameter(Class<? extends IOrbitDataProvider> providerClass) {
             this.providerClass = providerClass;
         }
 
-        public OrbitDataLoaderParameter(String name, String providerClass, OrbitComponent orbitalParameters) {
+        public OrbitDataLoaderParameter(String name, Class<? extends IOrbitDataProvider> providerClass, OrbitComponent orbitalParameters) {
             this(providerClass);
             this.name = name;
             this.orbitalParamaters = orbitalParameters;
         }
 
-        public OrbitDataLoaderParameter(String providerClass, String name, Date ini, boolean forward, float orbitalPeriod, int numSamples) {
+        public OrbitDataLoaderParameter(Class<? extends IOrbitDataProvider> providerClass, String name, Date ini, boolean forward, float orbitalPeriod, int numSamples) {
             this(providerClass);
             this.name = name;
             this.ini = ini;
@@ -92,7 +81,7 @@ public class OrbitDataLoader extends AsynchronousAssetLoader<OrbitData, OrbitDat
             this.numSamples = numSamples;
         }
 
-        public OrbitDataLoaderParameter(String providerClass, String name, Date ini, boolean forward, float orbitalPeriod) {
+        public OrbitDataLoaderParameter(Class<? extends IOrbitDataProvider> providerClass, String name, Date ini, boolean forward, float orbitalPeriod) {
             this(providerClass, name, ini, forward, orbitalPeriod, -1);
         }
 

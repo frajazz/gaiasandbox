@@ -11,6 +11,7 @@ import gaia.cu9.ari.gaiaorbit.util.coord.AstroUtils;
 import gaia.cu9.ari.gaiaorbit.util.coord.Coordinates;
 import gaia.cu9.ari.gaiaorbit.util.math.Vector3d;
 
+import java.io.IOException;
 import java.util.Date;
 
 /**
@@ -19,9 +20,12 @@ import java.util.Date;
  *
  */
 public class OrbitSamplerDataProvider implements IOrbitDataProvider, IObserver {
+    private static boolean writeData = false;
+    private static final String writeDataPath = "/home/tsagrista/Workspaces/workspace-luna/GaiaSandbox-android/assets/data/android/";
     OrbitData data;
 
     public static void main(String[] args) {
+        OrbitSamplerDataProvider.writeData = true;
         OrbitSamplerDataProvider me = new OrbitSamplerDataProvider();
         EventManager.instance.subscribe(me, Events.JAVA_EXCEPTION, Events.POST_NOTIFICATION);
 
@@ -32,7 +36,7 @@ public class OrbitSamplerDataProvider implements IOrbitDataProvider, IObserver {
 
             String b = bodies[i];
             float period = periods[i];
-            OrbitDataLoaderParameter param = new OrbitDataLoaderParameter(me.getClass().getName(), b, now, true, period, 80);
+            OrbitDataLoaderParameter param = new OrbitDataLoaderParameter(me.getClass(), b, now, true, period, 80);
             me.load(null, param);
 
         }
@@ -84,6 +88,14 @@ public class OrbitSamplerDataProvider implements IOrbitDataProvider, IObserver {
         data.z.add(data.z.get(0));
         d.setTime(d.getTime() + stepMs);
         data.time.add(new Date(d.getTime()));
+
+        if (writeData) {
+            try {
+                OrbitDataWriter.writeOrbitData(writeDataPath + "orb." + bodyDesc.toString() + ".dat", data);
+            } catch (IOException e) {
+                Logger.error(e);
+            }
+        }
 
         Logger.info(this.getClass().getSimpleName(), I18n.bundle.format("notif.orbitdataof.loaded", parameter.name, data.getNumPoints()));
 
