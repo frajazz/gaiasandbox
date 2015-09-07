@@ -41,7 +41,7 @@
 	"ct" : MilkyWay,
 	"transformName" : equatorialToGalactic,
 
-	"parent" : "Milky Way", 
+	"parent" : "Universe", 
 	"impl" : "gaia.cu9.ari.gaiaorbit.scenegraph.Mw",
 	
 	"coordinates" : {
