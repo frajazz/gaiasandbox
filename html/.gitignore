@@ -1,4 +1,7 @@
 /build/
 /war/
-/webapp/
+/webapp/html/
+/webapp/war/
+/webapp/assets/
 /gwt-unitCache/
+*.war

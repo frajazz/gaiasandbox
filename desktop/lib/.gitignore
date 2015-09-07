@@ -1,5 +1,2 @@
-*.jar
-!gdx-backend-lwjgl-natives.jar
-!gdx-natives.jar
-!gdx-controllers-desktop-natives.jar
+!stil.jar
 !pgslookandfeel-1.1.2.jar
