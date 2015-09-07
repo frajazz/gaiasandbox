@@ -102,7 +102,7 @@
 						// Angle between equatorial plane and orbital plane
 						"axialtilt" : -23.4392911,
 						// Inclination of orbit plane with respect to ecliptic
-						"inclination" : 0,
+						"inclination" : 0.0,
 						"meridianangle" : 180.0
 						},
 						

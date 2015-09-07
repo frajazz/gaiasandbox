@@ -28,7 +28,6 @@ import com.badlogic.gdx.utils.Pool;
  *
  * @param <T>
  */
-@SuppressWarnings("unchecked")
 public class SceneGraphNode implements ISceneGraphNode, IPosition {
     public static final String ROOT_NAME = "Universe";
 
@@ -202,7 +201,6 @@ public class SceneGraphNode implements ISceneGraphNode, IPosition {
      * Adds the given SceneGraphNode list as children to this node.
      * @param children
      */
-    @SafeVarargs
     public final void add(SceneGraphNode... children) {
         if (this.children == null) {
             initChildren(this.parent == null || this instanceof AbstractOctreeWrapper ? 300000 : children.length * 5, this.parent == null ? 1000 : children.length);

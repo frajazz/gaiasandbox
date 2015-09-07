@@ -12,6 +12,7 @@
 	<set-configuration-property name="gdx.assetpath" value="../android/assets" />
 	<set-configuration-property name='xsiframe.failIfScriptTag' value='FALSE'/>
 	
+	<!--  REFLECTION  -->
 	<extend-configuration-property name="gdx.reflect.include" value="gaia.cu9.ari.gaiaorbit.interfce.FullGui" />
 	<extend-configuration-property name="gdx.reflect.include" value="gaia.cu9.ari.gaiaorbit.data.stars.HYGBinaryLoader" />
 	<extend-configuration-property name="gdx.reflect.include" value="gaia.cu9.ari.gaiaorbit.data.stars.OctreeCatalogLoader" />
@@ -24,6 +25,15 @@
 	<extend-configuration-property name="gdx.reflect.include" value="gaia.cu9.ari.gaiaorbit.data.orbit.OrbitSamplerDataProvider" />
 	
 	<extend-configuration-property name="gdx.reflect.include" value="gaia.cu9.ari.gaiaorbit.util.coord.Coordinates" />
+	<extend-configuration-property name="gdx.reflect.include" value="gaia.cu9.ari.gaiaorbit.util.coord.IBodyCoordinates" />
+	<extend-configuration-property name="gdx.reflect.include" value="gaia.cu9.ari.gaiaorbit.util.coord.vsop87" />
+	
+	<extend-configuration-property name="gdx.reflect.include" value="gaia.cu9.ari.gaiaorbit.scenegraph" />
+	<extend-configuration-property name="gdx.reflect.include" value="gaia.cu9.ari.gaiaorbit.scenegraph.component" />
+	<extend-configuration-property name="gdx.reflect.include" value="gaia.cu9.ari.gaiaorbit.util.coord.StaticCoordinates" />
+	<extend-configuration-property name="gdx.reflect.include" value="gaia.cu9.ari.gaiaorbit.util.coord.OrbitLintCoordinates" />
+	<extend-configuration-property name="gdx.reflect.include" value="gaia.cu9.ari.gaiaorbit.util.coord.MoonAACoordinates" />
+	<extend-configuration-property name="gdx.reflect.include" value="gaia.cu9.ari.gaiaorbit.util.coord.GaiaCoordinates" />
 	<extend-configuration-property name="gdx.reflect.include" value="gaia.cu9.ari.gaiaorbit.util.coord.vsop87" />
 	
 </module>

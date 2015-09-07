@@ -26,7 +26,7 @@ import com.badlogic.gdx.utils.reflect.ReflectionException;
  * Implements the loading of scene graph nodes using libgdx's json library.
  * It loads entities in the JSON format described in <a href="https://github.com/ari-zah/gaiasandbox/wiki/Non-particle-data-loading">this link</a>.
  * @author Toni Sagrista
- *
+ * @deprecated Use {@link gaia.cu9.ari.gaiaorbit.data.JsonLoader} instead.
  * @param <T>
  */
 public class JsonLoader2<T extends SceneGraphNode> implements ISceneGraphLoader {

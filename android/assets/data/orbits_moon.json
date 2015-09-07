@@ -29,7 +29,7 @@
 						// In days
 						"period" : 0.31891023,
 						// 2010 Jan 1 12:00
-						"epoch" : 2455198,
+						"epoch" : 2455198.0,
 						"semimajoraxis" : 9377.2,
 						"eccentricity" : 0.0151,
 						// Inclination of orbit with respect to the planet's Equator
@@ -55,7 +55,7 @@
 							// In days
 							"period" : 1.2624407,
 							// 2010 Jan 1 12:00
-							"epoch" : 2455198,
+							"epoch" : 2455198.0,
 							"semimajoraxis" : 23463.2,
 							"eccentricity" : 0.00033,
 							// Inclination of orbit with respect to the planet's Equator

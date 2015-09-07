@@ -4,14 +4,6 @@
 		"files": [ "data/hygxyz.bin" ]
 	},
 	{
-		"loader": gaia.cu9.ari.gaiaorbit.data.stars.STILCatalogLoader
-		//,"files": [ "/home/tsagrista/Gaia/data/GAMA/GAMA.vot" ]
-	},
-	{
-		"loader": gaia.cu9.ari.gaiaorbit.data.stars.OctreeCatalogLoader
-		//,"files": [ "data/hyg_particles.bin", "data/hyg_metadata.bin" ]
-	},
-	{
 		"loader": gaia.cu9.ari.gaiaorbit.data.JsonLoader,
 		"files": [ "data/planets-wgl.json", 
 					"data/moons-wgl.json",

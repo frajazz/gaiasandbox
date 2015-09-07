@@ -21,16 +21,16 @@ public class OrbitComponent {
     /** Mean anomaly at epoch, in degrees. **/
     public double meananomaly;
 
+    public OrbitComponent() {
+
+    }
+
     public void setSource(String source) {
         this.source = source;
     }
 
     public void setPeriod(Double period) {
         this.period = period;
-    }
-
-    public void setEpoch(Long epoch) {
-        this.epoch = epoch;
     }
 
     public void setEpoch(Double epoch) {

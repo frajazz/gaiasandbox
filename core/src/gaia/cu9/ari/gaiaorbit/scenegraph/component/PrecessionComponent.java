@@ -12,4 +12,8 @@ public class PrecessionComponent {
     protected float precessionVelocity;
     /** Current precession position around y **/
     public float precessionPosition;
+
+    public PrecessionComponent() {
+
+    }
 }
