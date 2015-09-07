@@ -32,7 +32,7 @@
 						"args" : [true],
 						"type" : "sphere",
 						"params" : {
-									"quality" : 130,
+									"quality" : 40,
 									"diameter" : 1.0,
 									"flip" : false
 									},
@@ -74,7 +74,7 @@
 						"args" : [true],
 						"type" : "sphere",
 						"params" : {
-									"quality" : 150,
+									"quality" : 40,
 									"diameter" : 1.0,
 									"flip" : false
 									},
@@ -129,7 +129,7 @@
 						"args" : [true],
 						"type" : "sphere",
 						"params" : {
-									"quality" : 180,
+									"quality" : 40,
 									"diameter" : 1.0,
 									"flip" : false
 									},
@@ -147,7 +147,7 @@
 						"m_Km" : 0.001,
 						
 						"params" : {
-									"quality" : 180,
+									"quality" : 80,
 									// Atmosphere diameters are always 2
 									"diameter" : 2.0,
 									"flip" : true
@@ -188,7 +188,7 @@
 						"args" : [true],
 						"type" : "sphere",
 						"params" : {
-									"quality" : 160,
+									"quality" : 40,
 									"diameter" : 1.0,
 									"flip" : false
 									},
@@ -203,7 +203,7 @@
 						"m_Km" : 0.001,
 						
 						"params" : {
-									"quality" : 160,
+									"quality" : 40,
 									// Atmosphere diameters are always 2
 									"diameter" : 2.0,
 									"flip" : true
@@ -244,7 +244,7 @@
 						"args" : [true],
 						"type" : "sphere",
 						"params" : {
-									"quality" : 180,
+									"quality" : 40,
 									"diameter" : 1.0,
 									"flip" : false
 									},
@@ -286,7 +286,7 @@
 						"args" : [true],
 						"type" : "ring",
 						"params" : {
-									"quality" : 150,
+									"quality" : 40,
 									"diameter" : 1.0,
 									"flip" : false,
 									"divisions" : 90,
@@ -332,7 +332,7 @@
 						"args" : [true],
 						"type" : "sphere",
 						"params" : {
-									"quality" : 150,
+									"quality" : 40,
 									"diameter" : 1.0,
 									"flip" : false
 									},
@@ -375,7 +375,7 @@
 						"args" : [true],
 						"type" : "sphere",
 						"params" : {
-									"quality" : 150,
+									"quality" : 40,
 									"diameter" : 1.0,
 									"flip" : false
 									},

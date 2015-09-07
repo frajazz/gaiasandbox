@@ -32,7 +32,7 @@
 						"args" : [true],
 						"type" : "sphere",
 						"params" : {
-									"quality" : 130,
+									"quality" : 30,
 									"diameter" : 1.0,
 									"flip" : false
 									},
@@ -193,7 +193,7 @@
 							"args" : [true],
 							"type" : "sphere",
 							"params" : {
-									"quality" : 130,
+									"quality" : 30,
 									"diameter" : 1.0,
 									"flip" : false
 									},
@@ -237,7 +237,7 @@
 							"args" : [true],
 							"type" : "sphere",
 							"params" : {
-									"quality" : 130,
+									"quality" : 30,
 									"diameter" : 1.0,
 									"flip" : false
 									},
@@ -281,7 +281,7 @@
 							"args" : [true],
 							"type" : "sphere",
 							"params" : {
-									"quality" : 130,
+									"quality" : 30,
 									"diameter" : 1.0,
 									"flip" : false
 									},
@@ -325,7 +325,7 @@
 							"args" : [true],
 							"type" : "sphere",
 							"params" : {
-									"quality" : 130,
+									"quality" : 30,
 									"diameter" : 1.0,
 									"flip" : false
 									},
