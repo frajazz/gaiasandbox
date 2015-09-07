@@ -1,5 +1,8 @@
 package gaia.cu9.ari.gaiaorbit.util.g3d;
 
+import gaia.cu9.ari.gaiaorbit.util.format.INumberFormat;
+import gaia.cu9.ari.gaiaorbit.util.format.NumberFormatFactory;
+
 import java.io.IOException;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
@@ -97,17 +100,18 @@ public abstract class ModelCreator {
      * @throws IOException
      */
     public void dumpObj(OutputStream os) throws IOException {
+        INumberFormat nf = NumberFormatFactory.getFormatter("########0.000000");
         OutputStreamWriter osw = new OutputStreamWriter(os);
         osw.append("# Created by " + this.getClass().getSimpleName() + " - ARI - ZAH - Heidelberg Universitat\n");
         osw.append("o " + name + "\n");
         // Write vertices
         for (Vector3 vertex : vertices) {
-            osw.append("v " + vertex.x + " " + vertex.y + " " + vertex.z + "\n");
+            osw.append("v " + nf.format(vertex.x) + " " + nf.format(vertex.y) + " " + nf.format(vertex.z) + "\n");
         }
 
         // Write vertex normals
         for (Vector3 vertex : normals) {
-            osw.append("vn " + vertex.x + " " + vertex.y + " " + vertex.z + "\n");
+            osw.append("vn " + nf.format(vertex.x) + " " + nf.format(vertex.y) + " " + nf.format(vertex.z) + "\n");
         }
 
         //osw.append("s 1\n");

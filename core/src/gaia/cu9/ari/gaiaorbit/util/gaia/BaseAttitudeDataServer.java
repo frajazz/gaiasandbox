@@ -57,8 +57,6 @@ public abstract class BaseAttitudeDataServer<A extends Attitude> {
     protected TimeContext nativeTimeContext = null;
     protected TimeContext initialRequestedTimeContext = null;
 
-    protected TimeContext requestedTimeContext = initialRequestedTimeContext;
-
     /**
      * switch to decide if attitude uncertainties and correlations should be calculated
      */

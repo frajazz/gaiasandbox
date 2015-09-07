@@ -24,6 +24,6 @@
 	<extend-configuration-property name="gdx.reflect.include" value="gaia.cu9.ari.gaiaorbit.data.orbit.OrbitSamplerDataProvider" />
 	
 	<extend-configuration-property name="gdx.reflect.include" value="gaia.cu9.ari.gaiaorbit.util.coord.Coordinates" />
-	
+	<extend-configuration-property name="gdx.reflect.include" value="gaia.cu9.ari.gaiaorbit.util.coord.vsop87" />
 	
 </module>

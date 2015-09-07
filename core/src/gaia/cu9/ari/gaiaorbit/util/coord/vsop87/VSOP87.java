@@ -1,9 +1,13 @@
 package gaia.cu9.ari.gaiaorbit.util.coord.vsop87;
 
-import gaia.cu9.ari.gaiaorbit.util.GlobalResources;
+import gaia.cu9.ari.gaiaorbit.interfce.TextUtils;
 
 import java.util.HashMap;
 import java.util.Map;
+
+import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.utils.reflect.ClassReflection;
+import com.badlogic.gdx.utils.reflect.ReflectionException;
 
 public class VSOP87 {
     public static VSOP87 instance;
@@ -22,31 +26,21 @@ public class VSOP87 {
     public iVSOP87 getVOSP87(String cb) {
         if (!tried.containsKey(cb) || !tried.get(cb)) {
             // Initialize
-            elements.put(cb, getVSOP87Instance(GlobalResources.trueCapitalise(cb)));
+            String pkg = "gaia.cu9.ari.gaiaorbit.util.coord.vsop87.";
+            String name = TextUtils.trueCapitalise(cb) + "VSOP87";
+            Class<?> clazz = null;
+            try {
+                clazz = ClassReflection.forName(pkg + name);
+            } catch (ReflectionException e) {
+                clazz = DummyVSOP87.class;
+            }
+            try {
+                elements.put(cb, (iVSOP87) ClassReflection.newInstance(clazz));
+            } catch (ReflectionException e) {
+                Gdx.app.error("VSOP87", e.getLocalizedMessage());
+            }
             tried.put(cb, true);
         }
         return elements.get(cb);
-    }
-
-    private iVSOP87 getVSOP87Instance(String name) {
-        if (name.contains("Earth")) {
-            return new EarthVSOP87();
-        } else if (name.contains("Jupiter")) {
-            return new JupiterVSOP87();
-        } else if (name.contains("Mars")) {
-            return new MarsVSOP87();
-        } else if (name.contains("Mercury")) {
-            return new MercuryVSOP87();
-        } else if (name.contains("Neptune")) {
-            return new NeptuneVSOP87();
-        } else if (name.contains("Saturn")) {
-            return new SaturnVSOP87();
-        } else if (name.contains("Uranus")) {
-            return new UranusVSOP87();
-        } else if (name.contains("Venus")) {
-            return new VenusVSOP87();
-        } else {
-            return new DummyVSOP87();
-        }
     }
 }

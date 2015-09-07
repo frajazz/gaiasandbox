@@ -28,7 +28,7 @@ public class AttitudeIntervalBean implements Comparable<AttitudeIntervalBean> {
         cache = new LruCache<Long, Attitude>(10);
     }
 
-    public Attitude get(Date date) {
+    public synchronized Attitude get(Date date) {
         Long time = date.getTime();
         if (!cache.containsKey(time)) {
             Attitude att = attitude.getAttitude(date);
