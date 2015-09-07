@@ -21,6 +21,8 @@ public class WebGLConfInit extends ConfInit {
 
     @Override
     public void initGlobalConf() throws Exception {
+        this.webgl = true;
+
         VersionConf vc = new VersionConf();
         vc.initialize("0.706b", null, null, null, null, 0, 706);
 
@@ -34,7 +36,7 @@ public class WebGLConfInit extends ConfInit {
         rc.initialize(false, false, false, false, true, false, 8f, false);
 
         DataConf dc = new DataConf();
-        dc.initialize("data/data-wgl.json", true, 7.8f);
+        dc.initialize("data/data-wgl.json", true, 7.3f);
 
         ProgramConf prc = new ProgramConf();
         prc.initialize(false, false, "dark", "en-GB", false, StereoProfile.CROSSEYE);
