@@ -97,25 +97,4 @@ public class RingCreator extends ModelCreator {
         }
     }
 
-    //    public static void main(String[] args) {
-    //        boolean flipNormals = false;
-    //        float inner = 1f, outer = 3f;
-    //        int divisions = 10;
-    //        RingCreator rc = new RingCreator();
-    //        rc.create(divisions, inner, outer, flipNormals);
-    //        try {
-    //            File file = File.createTempFile("ring_" + inner + "_" + outer + "_" + divisions + "_", ".obj");
-    //            OutputStream os = new FileOutputStream(file);
-    //            rc.dumpObj(os);
-    //            os.flush();
-    //            os.close();
-    //            System.out.println("Vertices: " + rc.vertices.size());
-    //            System.out.println("Normals: " + rc.normals.size());
-    //            System.out.println("Faces: " + rc.faces.size());
-    //            System.out.println("Model written in: " + file.getAbsolutePath());
-    //        } catch (IOException e) {
-    //            e.printStackTrace();
-    //        }
-    //    }
-
 }
