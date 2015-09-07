@@ -7,12 +7,12 @@ import gaia.cu9.ari.gaiaorbit.event.IObserver;
 import gaia.cu9.ari.gaiaorbit.interfce.components.VisualEffectsComponent;
 import gaia.cu9.ari.gaiaorbit.render.ComponentType;
 import gaia.cu9.ari.gaiaorbit.scenegraph.ISceneGraph;
+import gaia.cu9.ari.gaiaorbit.util.Constants;
 import gaia.cu9.ari.gaiaorbit.util.GlobalConf;
 import gaia.cu9.ari.gaiaorbit.util.GlobalResources;
 import gaia.cu9.ari.gaiaorbit.util.I18n;
 import gaia.cu9.ari.gaiaorbit.util.Logger;
 
-import com.badlogic.gdx.Application.ApplicationType;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.assets.AssetManager;
 import com.badlogic.gdx.scenes.scene2d.Actor;
@@ -99,12 +99,9 @@ public class FullGui implements IGui, IObserver {
             ct.getName();
         }
 
-        ApplicationType type = Gdx.app.getType();
-        if (/**type.equals(ApplicationType.WebGL)**/
-        true) {
+        if (Constants.webgl) {
             // WEBGL INTERFACE - TOP LEFT
             addWebglInterface();
-
         } else {
             // CONTROLS WINDOW
             addControlsWindow();

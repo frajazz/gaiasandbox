@@ -2,7 +2,10 @@ package gaia.cu9.ari.gaiaorbit.interfce;
 
 import gaia.cu9.ari.gaiaorbit.render.ComponentType;
 import gaia.cu9.ari.gaiaorbit.scenegraph.ISceneGraph;
+import gaia.cu9.ari.gaiaorbit.util.Constants;
 import gaia.cu9.ari.gaiaorbit.util.GlobalResources;
+import gaia.cu9.ari.gaiaorbit.util.format.INumberFormat;
+import gaia.cu9.ari.gaiaorbit.util.format.NumberFormatFactory;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.assets.AssetManager;
@@ -23,11 +26,16 @@ public class HUDGui implements IGui {
      */
     protected Stage ui;
 
-    protected CameraInfoInterface cameraInterface;
     protected FocusInfoInterface focusInterface;
     protected NotificationsInterface notificationsInterface;
     protected MessagesInterface messagesInterface;
     protected DebugInterface debugInterface;
+    protected ScriptStateInterface inputInterface;
+
+    /**
+     * Number formats
+     */
+    private INumberFormat format, sformat;
 
     /** Lock object for synchronization **/
     private Object lock;
@@ -42,6 +50,8 @@ public class HUDGui implements IGui {
     @Override
     public void doneLoading(AssetManager assetManager) {
         skin = GlobalResources.skin;
+        format = NumberFormatFactory.getFormatter("0.0###");
+        sformat = NumberFormatFactory.getFormatter("0.###E0");
 
         initialize();
     }
@@ -52,11 +62,6 @@ public class HUDGui implements IGui {
         focusInterface.setFillParent(true);
         focusInterface.right().bottom();
         focusInterface.pad(0, 0, 5, 5);
-
-        // CAMERA INFORMATION - BOTTOM CENTER
-        cameraInterface = new CameraInfoInterface(skin, lock);
-        cameraInterface.setFillParent(true);
-        cameraInterface.center().bottom();
 
         // DEBUG INFO - TOP RIGHT
         debugInterface = new DebugInterface(skin, lock);
@@ -74,6 +79,14 @@ public class HUDGui implements IGui {
         messagesInterface.setFillParent(true);
         messagesInterface.left().bottom();
         messagesInterface.pad(0, 300, 150, 0);
+
+        if (Constants.desktop) {
+            // INPUT STATE
+            inputInterface = new ScriptStateInterface(skin);
+            inputInterface.setFillParent(true);
+            inputInterface.right().top();
+            inputInterface.pad(50, 0, 0, 5);
+        }
 
         // Add to GUI
         rebuildGui();
@@ -95,8 +108,8 @@ public class HUDGui implements IGui {
             if (focusInterface != null) {
                 ui.addActor(focusInterface);
             }
-            if (cameraInterface != null) {
-                ui.addActor(cameraInterface);
+            if (inputInterface != null) {
+                ui.addActor(inputInterface);
             }
         }
     }

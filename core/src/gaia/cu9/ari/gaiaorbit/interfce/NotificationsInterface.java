@@ -9,6 +9,9 @@ import gaia.cu9.ari.gaiaorbit.scenegraph.CameraManager.CameraMode;
 import gaia.cu9.ari.gaiaorbit.scenegraph.SceneGraphNode;
 import gaia.cu9.ari.gaiaorbit.util.GlobalConf;
 import gaia.cu9.ari.gaiaorbit.util.I18n;
+import gaia.cu9.ari.gaiaorbit.util.format.DateFormatFactory;
+import gaia.cu9.ari.gaiaorbit.util.format.DateFormatFactory.DateType;
+import gaia.cu9.ari.gaiaorbit.util.format.IDateFormat;
 import gaia.cu9.ari.gaiaorbit.util.scene2d.OwnLabel;
 
 import java.util.Date;
@@ -28,6 +31,7 @@ import com.badlogic.gdx.scenes.scene2d.ui.Table;
 public class NotificationsInterface extends Table implements IObserver {
     private static final long DEFAULT_TIMEOUT = 5000;
     private static final String TAG_SEPARATOR = " - ";
+    IDateFormat df;
     long msTimeout;
     Label message1;
     Label message2;
@@ -84,6 +88,7 @@ public class NotificationsInterface extends Table implements IObserver {
         message1 = new OwnLabel("", skin, "hud-med");
         this.add(message1).left();
         this.historical = new LinkedList<MessageBean>();
+        this.df = DateFormatFactory.getFormatter(I18n.locale, DateType.TIME);
         EventManager.instance.subscribe(this, Events.POST_NOTIFICATION, Events.FOCUS_CHANGED, Events.TOGGLE_TIME_CMD, Events.TOGGLE_VISIBILITY_CMD, Events.CAMERA_MODE_CMD, Events.PACE_CHANGED_INFO, Events.FOCUS_LOCK_CMD, Events.TOGGLE_AMBIENT_LIGHT, Events.FOV_CHANGE_NOTIFICATION, Events.JAVA_EXCEPTION, Events.ORBIT_DATA_LOADED, Events.SCREENSHOT_INFO, Events.COMPUTE_GAIA_SCAN_CMD, Events.ONLY_OBSERVED_STARS_CMD, Events.TRANSIT_COLOUR_CMD, Events.LIMIT_MAG_CMD, Events.TOGGLE_STEREOSCOPIC, Events.TOGGLE_CLEANMODE, Events.FRAME_OUTPUT_CMD, Events.TOGGLE_STEREO_PROFILE);
     }
 
@@ -109,12 +114,12 @@ public class NotificationsInterface extends Table implements IObserver {
         this.displaying = true;
         this.permanent = permanent;
         if (consoleLog) {
-            Gdx.app.log(messageBean.date.toString(), msg);
+            Gdx.app.log(df.format(messageBean.date), msg);
         }
     }
 
     private String formatMessage(MessageBean msgBean) {
-        return (writeDates ? msgBean.date.toString() + TAG_SEPARATOR : "") + msgBean.msg;
+        return (writeDates ? df.format(msgBean.date) + TAG_SEPARATOR : "") + msgBean.msg;
     }
 
     public void update() {
@@ -166,16 +171,14 @@ public class NotificationsInterface extends Table implements IObserver {
                 if (bool == null) {
                     addMessage(I18n.bundle.format("notif.toggle", I18n.bundle.format("gui.time")));
                 } else {
-                    addMessage(I18n.bundle.get("notif.simulation." + (bool ? "resume" : "pause")));
+                    addMessage(I18n.bundle.format("notif.simulation." + (bool ? "resume" : "pause")));
                 }
                 break;
             case TOGGLE_VISIBILITY_CMD:
-                if (data.length >= 3) {
-                    boolean on = (Boolean) data[2];
-                    addMessage(I18n.bundle.format("notif.visibility." + (on ? "on" : "off"), (String) data[0]));
-                } else {
+                if (data.length == 2)
+                    addMessage(I18n.bundle.format("notif.visibility." + (((Boolean) data[1]) ? "on" : "off"), (String) data[0]));
+                else
                     addMessage(I18n.bundle.format("notif.visibility.toggle", (String) data[0]));
-                }
                 break;
             case FOCUS_LOCK_CMD:
             case TOGGLE_AMBIENT_LIGHT:
