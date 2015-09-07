@@ -53,25 +53,35 @@
 			<a class="link link-tab" href=".">reload</a>
 		</div>
 
-       <body>
-              <a class="superdev" href="javascript:%7B%20window.__gwt_bookmarklet_params%20%3D%20%7B'server_url'%3A'http%3A%2F%2Flocalhost%3A9876%2F'%7D%3B%20var%20s%20%3D%20document.createElement('script')%3B%20s.src%20%3D%20'http%3A%2F%2Flocalhost%3A9876%2Fdev_mode_on.js'%3B%20void(document.getElementsByTagName('head')%5B0%5D.appendChild(s))%3B%7D">&#8635;</a>
-              <div align="center" id="embed-html"></div>
-              <script type="text/javascript" src="html/html.nocache.js"></script>
-       </body>
+		<div id="disclaimer">This is the WebGL version of the Gaia Sandbox. This version does not
+		contain lots of cool features found in the desktop version such as full screen, scripting, native anti-aliasing, post-processing effects,
+		hi-resolution textures, camera path recording, frame dumping, etc. If you are interested in the desktop version, which
+		works on Linux, Windows and OSX, visit our main page <a href="http://www.zah.uni-heidelberg.de/gaia/outreach/gaiasandbox/" target="_blank">here</a>.</div>
+	</div>
+	<div id="credits">
+		<a class="link link-tab" href="http://www.zah.uni-heidelberg.de/ari/"
+			target="_blank">ARI / ZAH</a> | <a class="link link-tab"
+			href="http://www.dlr.de/" target="_blank">DLR</a> | <a
+			class="link link-tab" href="http://www.bmwi.de/" target="_blank">BMWi</a>
+	</div>
+	<script type="text/javascript" src="html/html.nocache.js"></script>
+</body>
 
-       <script>
-              function handleMouseDown(evt) {
-                evt.preventDefault();
-                evt.stopPropagation();
-                evt.target.style.cursor = 'default';
-              }
+<script>
+	function handleMouseDown(evt) {
+		evt.preventDefault();
+		evt.stopPropagation();
+		evt.target.style.cursor = 'default';
+	}
 
-              function handleMouseUp(evt) {
-                evt.preventDefault();
-                evt.stopPropagation();
-                evt.target.style.cursor = '';
-              }
-              document.getElementById('embed-html').addEventListener('mousedown', handleMouseDown, false);
-              document.getElementById('embed-html').addEventListener('mouseup', handleMouseUp, false);
-       </script>
+	function handleMouseUp(evt) {
+		evt.preventDefault();
+		evt.stopPropagation();
+		evt.target.style.cursor = '';
+	}
+	document.getElementById('embed-html').addEventListener('mousedown',
+			handleMouseDown, false);
+	document.getElementById('embed-html').addEventListener('mouseup',
+			handleMouseUp, false);
+</script>
 </html>
