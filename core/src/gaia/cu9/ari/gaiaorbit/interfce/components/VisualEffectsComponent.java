@@ -22,8 +22,9 @@ import com.badlogic.gdx.utils.Align;
 public class VisualEffectsComponent extends GuiComponent {
 
     protected Slider starBrightness, bloomEffect, ambientLight, motionBlur;
-    protected OwnLabel brightness, bloom, ambient, motion;
+    protected OwnLabel brightness, bloom, ambient, motion, bloomLabel, motionBlurLabel;
     protected CheckBox lensFlare;
+    private HorizontalGroup motionGroup, bloomGroup;
 
     public VisualEffectsComponent(Skin skin, Stage stage) {
         super(skin, stage);
@@ -74,77 +75,81 @@ public class VisualEffectsComponent extends GuiComponent {
         ambientGroup.addActor(ambientLight);
         ambientGroup.addActor(ambient);
 
-        /** Bloom **/
-        Label bloomLabel = new Label(txt("gui.bloom"), skin, "default");
-        bloom = new OwnLabel(Integer.toString((int) (GlobalConf.postprocess.POSTPROCESS_BLOOM_INTENSITY * 10)), skin);
-        bloomEffect = new Slider(Constants.MIN_SLIDER, Constants.MAX_SLIDER, 1, false, skin);
-        bloomEffect.setName("bloom effect");
-        bloomEffect.setValue(GlobalConf.postprocess.POSTPROCESS_BLOOM_INTENSITY * 10f);
-        bloomEffect.addListener(new EventListener() {
-            @Override
-            public boolean handle(Event event) {
-                if (event instanceof ChangeEvent) {
-                    EventManager.instance.post(Events.BLOOM_CMD, bloomEffect.getValue() / 10f);
-                    bloom.setText(Integer.toString((int) bloomEffect.getValue()));
-                    return true;
+        if (Constants.desktop) {
+            /** Bloom **/
+            bloomLabel = new OwnLabel(txt("gui.bloom"), skin, "default");
+            bloom = new OwnLabel(Integer.toString((int) (GlobalConf.postprocess.POSTPROCESS_BLOOM_INTENSITY * 10)), skin);
+            bloomEffect = new Slider(Constants.MIN_SLIDER, Constants.MAX_SLIDER, 1, false, skin);
+            bloomEffect.setName("bloom effect");
+            bloomEffect.setValue(GlobalConf.postprocess.POSTPROCESS_BLOOM_INTENSITY * 10f);
+            bloomEffect.addListener(new EventListener() {
+                @Override
+                public boolean handle(Event event) {
+                    if (event instanceof ChangeEvent) {
+                        EventManager.instance.post(Events.BLOOM_CMD, bloomEffect.getValue() / 10f);
+                        bloom.setText(Integer.toString((int) bloomEffect.getValue()));
+                        return true;
+                    }
+                    return false;
                 }
-                return false;
-            }
-        });
+            });
 
-        HorizontalGroup bloomGroup = new HorizontalGroup();
-        bloomGroup.space(3);
-        bloomGroup.addActor(bloomEffect);
-        bloomGroup.addActor(bloom);
+            bloomGroup = new HorizontalGroup();
+            bloomGroup.space(3);
+            bloomGroup.addActor(bloomEffect);
+            bloomGroup.addActor(bloom);
 
-        /** Motion blur **/
-        Label motionBlurLabel = new Label(txt("gui.motionblur"), skin, "default");
-        motion = new OwnLabel(Integer.toString((int) (GlobalConf.postprocess.POSTPROCESS_MOTION_BLUR * 100)), skin);
-        motionBlur = new Slider(Constants.MIN_SLIDER, Constants.MAX_SLIDER, 1, false, skin);
-        motionBlur.setName("motion blur");
-        motionBlur.setValue(GlobalConf.postprocess.POSTPROCESS_MOTION_BLUR * 100f);
-        motionBlur.addListener(new EventListener() {
-            @Override
-            public boolean handle(Event event) {
-                if (event instanceof ChangeEvent) {
-                    EventManager.instance.post(Events.MOTION_BLUR_CMD, motionBlur.getValue() / 100f);
-                    motion.setText(Integer.toString((int) motionBlur.getValue()));
-                    return true;
+            /** Motion blur **/
+            motionBlurLabel = new OwnLabel(txt("gui.motionblur"), skin, "default");
+            motion = new OwnLabel(Integer.toString((int) (GlobalConf.postprocess.POSTPROCESS_MOTION_BLUR * 100)), skin);
+            motionBlur = new Slider(Constants.MIN_SLIDER, Constants.MAX_SLIDER, 1, false, skin);
+            motionBlur.setName("motion blur");
+            motionBlur.setValue(GlobalConf.postprocess.POSTPROCESS_MOTION_BLUR * 100f);
+            motionBlur.addListener(new EventListener() {
+                @Override
+                public boolean handle(Event event) {
+                    if (event instanceof ChangeEvent) {
+                        EventManager.instance.post(Events.MOTION_BLUR_CMD, motionBlur.getValue() / 100f);
+                        motion.setText(Integer.toString((int) motionBlur.getValue()));
+                        return true;
+                    }
+                    return false;
                 }
-                return false;
-            }
-        });
+            });
 
-        HorizontalGroup motionGroup = new HorizontalGroup();
-        motionGroup.space(3);
-        motionGroup.addActor(motionBlur);
-        motionGroup.addActor(motion);
+            motionGroup = new HorizontalGroup();
+            motionGroup.space(3);
+            motionGroup.addActor(motionBlur);
+            motionGroup.addActor(motion);
 
-        /** Lens flare **/
-        lensFlare = new CheckBox(txt("gui.lensflare"), skin);
-        lensFlare.setName("lens flare");
-        lensFlare.addListener(new EventListener() {
-            @Override
-            public boolean handle(Event event) {
-                if (event instanceof ChangeEvent) {
-                    EventManager.instance.post(Events.LENS_FLARE_CMD, lensFlare.isChecked());
-                    return true;
+            /** Lens flare **/
+            lensFlare = new CheckBox(txt("gui.lensflare"), skin);
+            lensFlare.setName("lens flare");
+            lensFlare.addListener(new EventListener() {
+                @Override
+                public boolean handle(Event event) {
+                    if (event instanceof ChangeEvent) {
+                        EventManager.instance.post(Events.LENS_FLARE_CMD, lensFlare.isChecked());
+                        return true;
+                    }
+                    return false;
                 }
-                return false;
-            }
-        });
-        lensFlare.setChecked(GlobalConf.postprocess.POSTPROCESS_LENS_FLARE);
+            });
+            lensFlare.setChecked(GlobalConf.postprocess.POSTPROCESS_LENS_FLARE);
+        }
 
         VerticalGroup lightingGroup = new VerticalGroup().align(Align.left);
         lightingGroup.addActor(brightnessLabel);
         lightingGroup.addActor(brightnessGroup);
         lightingGroup.addActor(ambientLightLabel);
         lightingGroup.addActor(ambientGroup);
-        lightingGroup.addActor(bloomLabel);
-        lightingGroup.addActor(bloomGroup);
-        lightingGroup.addActor(motionBlurLabel);
-        lightingGroup.addActor(motionGroup);
-        lightingGroup.addActor(lensFlare);
+        if (Constants.desktop) {
+            lightingGroup.addActor(bloomLabel);
+            lightingGroup.addActor(bloomGroup);
+            lightingGroup.addActor(motionBlurLabel);
+            lightingGroup.addActor(motionGroup);
+            lightingGroup.addActor(lensFlare);
+        }
 
         component = lightingGroup;
     }

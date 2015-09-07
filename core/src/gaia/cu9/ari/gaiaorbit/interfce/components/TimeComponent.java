@@ -32,6 +32,7 @@ import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener.ChangeEvent;
 import com.badlogic.gdx.utils.Align;
 
 public class TimeComponent extends GuiComponent implements IObserver {
+
     /** Date format **/
     private IDateFormat df;
 
@@ -43,6 +44,7 @@ public class TimeComponent extends GuiComponent implements IObserver {
 
     public TimeComponent(Skin skin, Stage stage) {
         super(skin, stage);
+
         df = DateFormatFactory.getFormatter(I18n.locale, DateType.DATE);
         EventManager.instance.subscribe(this, Events.TIME_CHANGE_INFO, Events.TIME_CHANGE_CMD, Events.PACE_CHANGED_INFO);
     }
