@@ -6,6 +6,7 @@ import gaia.cu9.ari.gaiaorbit.event.IObserver;
 import gaia.cu9.ari.gaiaorbit.render.IRenderable;
 import gaia.cu9.ari.gaiaorbit.scenegraph.ICamera;
 import gaia.cu9.ari.gaiaorbit.scenegraph.SceneGraphNode.RenderGroup;
+import gaia.cu9.ari.gaiaorbit.util.Constants;
 import gaia.cu9.ari.gaiaorbit.util.GlobalConf;
 import gaia.cu9.ari.gaiaorbit.util.GlobalConf.ProgramConf.StereoProfile;
 import gaia.cu9.ari.gaiaorbit.util.GlobalResources;
@@ -33,10 +34,18 @@ public abstract class PixelPostProcessRenderSystem extends PixelRenderSystem imp
         // Initialize post processors
         ppmap = new HashMap<String, PostProcessor>();
         getPostProcessor(Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
+        if (Constants.desktop) {
+            getPostProcessor(GlobalConf.screenshot.SCREENSHOT_WIDTH, GlobalConf.screen.SCREEN_HEIGHT);
+            getPostProcessor(GlobalConf.frame.RENDER_WIDTH, GlobalConf.frame.RENDER_HEIGHT);
+        }
 
         // Initialize frame buffers
         fbmap = new HashMap<String, FrameBuffer>();
         getFrameBuffer(Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
+        if (Constants.desktop) {
+            getFrameBuffer(GlobalConf.screenshot.SCREENSHOT_WIDTH, GlobalConf.screen.SCREEN_HEIGHT);
+            getFrameBuffer(GlobalConf.frame.RENDER_WIDTH, GlobalConf.frame.RENDER_HEIGHT);
+        }
 
         EventManager.instance.subscribe(this, Events.SCREEN_RESIZE, Events.TOGGLE_STEREOSCOPIC);
     }

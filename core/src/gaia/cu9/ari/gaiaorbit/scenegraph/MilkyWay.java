@@ -20,6 +20,9 @@ import com.badlogic.gdx.graphics.g3d.attributes.ColorAttribute;
 import com.badlogic.gdx.graphics.glutils.ShaderProgram;
 import com.badlogic.gdx.math.Matrix4;
 import com.badlogic.gdx.math.Vector3;
+import com.badlogic.gdx.utils.reflect.ClassReflection;
+import com.badlogic.gdx.utils.reflect.Method;
+import com.badlogic.gdx.utils.reflect.ReflectionException;
 
 public class MilkyWay extends Blob implements IModelRenderable, I3DTextRenderable {
     float[] labelColour = new float[] { 1f, 1f, 1f, 1f };
@@ -48,9 +51,14 @@ public class MilkyWay extends Blob implements IModelRenderable, I3DTextRenderabl
 
         // Initialize transform
         if (transformName != null) {
-            coordinateSystem = new Matrix4();
-            Matrix4d trf = Coordinates.getTransformMatrix(transformName);
-            coordinateSystem.set(trf.valuesf());
+            Class<Coordinates> c = Coordinates.class;
+            try {
+                Method m = ClassReflection.getMethod(c, transformName);
+                Matrix4d trf = (Matrix4d) m.invoke(null);
+                coordinateSystem = new Matrix4(trf.valuesf());
+            } catch (ReflectionException e) {
+                Gdx.app.error(Mw.class.getName(), "Error getting/invoking method Coordinates." + transformName + "()");
+            }
         } else {
             // Equatorial, nothing
         }
