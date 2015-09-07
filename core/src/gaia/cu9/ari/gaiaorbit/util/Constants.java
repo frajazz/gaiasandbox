@@ -123,7 +123,7 @@ public class Constants {
     /** Minimum star brightness **/
     public static final float MIN_STAR_BRIGHT = 0f;
     /** Maximum star brightness **/
-    public static final float MAX_STAR_BRIGHT = 5f;
+    public static final float MAX_STAR_BRIGHT = 10f;
 
     /**
      * 
@@ -136,9 +136,9 @@ public class Constants {
 
     static {
         if (Gdx.app != null) {
-            mobile = (Gdx.app.getType() == ApplicationType.Android || Gdx.app.getType() == ApplicationType.iOS) && !GlobalConf.runtime.STRIPPED_FOV_MODE;
-            desktop = Gdx.app.getType() == ApplicationType.Desktop && !GlobalConf.runtime.STRIPPED_FOV_MODE;
-            webgl = Gdx.app.getType() == ApplicationType.WebGL || GlobalConf.runtime.STRIPPED_FOV_MODE;
+            mobile = (Gdx.app.getType() == ApplicationType.Android || Gdx.app.getType() == ApplicationType.iOS) && !ConfInit.instance.webgl;
+            desktop = Gdx.app.getType() == ApplicationType.Desktop && !ConfInit.instance.webgl;
+            webgl = Gdx.app.getType() == ApplicationType.WebGL || ConfInit.instance.webgl;
         }
     }
 

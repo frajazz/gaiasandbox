@@ -27,6 +27,7 @@ import com.badlogic.gdx.utils.Pool;
  *
  * @param <T>
  */
+@SuppressWarnings("unchecked")
 public class SceneGraphNode implements ISceneGraphNode, IPosition {
     public static final String ROOT_NAME = "Universe";
 

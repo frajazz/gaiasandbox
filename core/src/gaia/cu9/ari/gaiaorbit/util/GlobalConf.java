@@ -289,7 +289,7 @@ public class GlobalConf {
         /** Limit magnitude used for loading stars. All stars above this magnitude will not even be loaded by the sandbox. **/
         public float LIMIT_MAG_LOAD;
         /** Whether to use the real attitude of Gaia or the NSL approximation **/
-        public boolean REAL_GAIA_ATTITUDE = false;
+        public boolean REAL_GAIA_ATTITUDE;
 
         public void initialize(boolean dATA_SOURCE_LOCAL, String dATA_JSON_FILE, String oBJECT_SERVER_HOSTNAME, int oBJECT_SERVER_PORT, String vISUALIZATION_ID, float lIMIT_MAG_LOAD, boolean rEAL_GAIA_ATTITUDE) {
             DATA_SOURCE_LOCAL = dATA_SOURCE_LOCAL;

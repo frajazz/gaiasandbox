@@ -24,6 +24,7 @@ import com.badlogic.gdx.math.Vector2;
 public class Particle extends CelestialBody implements IPointRenderable {
 
     private static final float DISC_FACTOR = 1.5f;
+    private static final float LABEL_FACTOR = Constants.webgl ? 3f : 1f;
 
     private static Random rnd = new Random();
 
@@ -217,7 +218,7 @@ public class Particle extends CelestialBody implements IPointRenderable {
 
     @Override
     public float labelSizeConcrete() {
-        return (float) computedSize * 3;
+        return (float) computedSize * LABEL_FACTOR;
     }
 
     @Override

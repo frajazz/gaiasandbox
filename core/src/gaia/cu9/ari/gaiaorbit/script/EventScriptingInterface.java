@@ -523,4 +523,19 @@ public class EventScriptingInterface implements IScriptingInterface, IObserver {
         }
     }
 
+    @Override
+    public void startRecordingCameraPath() {
+        em.post(Events.RECORD_CAMERA_CMD, true);
+    }
+
+    @Override
+    public void stopRecordingCameraPath() {
+        em.post(Events.RECORD_CAMERA_CMD, false);
+    }
+
+    @Override
+    public void runCameraRecording(String path) {
+        em.post(Events.PLAY_CAMERA_CMD, path);
+    }
+
 }

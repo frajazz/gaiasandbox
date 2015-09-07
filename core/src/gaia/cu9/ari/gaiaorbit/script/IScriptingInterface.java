@@ -431,4 +431,22 @@ public interface IScriptingInterface {
      */
     public boolean waitFocus(String name, long timeoutMs);
 
+    /**
+     * Starts recording the camera path to a temporary file. This command has no
+     * effect if the camera is already being recorded.
+     */
+    public void startRecordingCameraPath();
+
+    /**
+     * Stops the current camera recording. This command has no effect if the
+     * camera was not being recorded.
+     */
+    public void stopRecordingCameraPath();
+
+    /**
+     * Runs the camera recording file with the given path.
+     * @param path The path of the camera recording file to run.
+     */
+    public void runCameraRecording(String path);
+
 }
