@@ -29,6 +29,7 @@ allprojects {
 	jythonVersion = '2.7.0'
 	miglayoutVersion = '4.2'
         lwjglVersion = '2.9.3'
+        pgslookandfeelVersion = '1.1.4'
     }
 
     repositories {
@@ -57,8 +58,8 @@ project(":desktop") {
         compile "com.badlogicgames.gdx:gdx-controllers-platform:$gdxVersion:natives-desktop"
 	compile "org.python:jython-standalone:$jythonVersion"
 	compile "com.miglayout:miglayout-swing:$miglayoutVersion"
-	compile files('lib/pgslookandfeel-1.1.2.jar',
-					'../core/lib/postprocessing.jar',
+        compile 'com.github.arnabk:pgslookandfeel:$pgslookandfeelVersion'
+	compile files('../core/lib/postprocessing.jar',
 					'../android/assets',
                                         'lib/stil.jar')
     }

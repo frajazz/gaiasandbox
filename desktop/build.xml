@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<project default="compile" basedir="." name="Build the GaiaSandbox-desktop" xmlns:ivy="antlib:org.apache.ivy.ant">
+  <!-- PROPERTIES -->
+  <property environment="env"/>
+  <property name="lib" value="lib"/>
+  <property name="gs-desktop.dir" value="${basedir}"/>
+  <property name="gs.dir" value="../core"/>
+  <property name="debuglevel" value="source,lines,vars"/>
+  <property name="target" value="1.7"/>
+  <property name="source" value="1.7"/>
+
+  
+  <!-- BUILD -->
+  <target depends="init,resolve" name="compile">
+    <echo message="${ant.project.name}: ${ant.file}"/>
+    <javac debug="true" debuglevel="${debuglevel}" destdir="${gs-desktop.dir}/bin" includeantruntime="false" source="${source}" target="${target}">
+      <src path="${gs-desktop.dir}/src"/>
+      <classpath>
+	    <fileset dir="${gs-desktop.dir}/${lib}">  
+        	<include name="**/*.jar" />  
+        </fileset>  
+        <pathelement location="${gs.dir}/bin"/>
+      </classpath>
+    </javac>
+  </target>
+  <!-- RESOLVE -->
+  <target name="resolve" description="--> retrieve dependencies with ivy">
+    <ivy:retrieve/>
+  </target>
+  <!-- INIT -->
+  <target name="init">
+    <mkdir dir="${gs-desktop.dir}/bin"/>
+  </target>
+  <!-- CLEANS THE BIN FOLDERS -->
+  <target name="clean">
+    <delete dir="${gs-desktop.dir}/bin"/>
+  </target>
+</project>
