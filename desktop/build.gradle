@@ -1,21 +1,22 @@
 apply plugin: "java"
 
 sourceCompatibility = 1.7
-sourceSets.main.java.srcDirs = [ "src/" ]
+sourceSets.main.java.srcDirs = ["src/"]
 
 project.ext.mainClassName = "gaia.cu9.ari.gaiaorbit.desktop.GaiaSandboxDesktop"
 project.ext.assetsDir = new File("../android/assets");
 project.ext.workDir = new File(".");
 
 sourceSets {
-main {
-   main {
-   output.resourcesDir = project.assetsDir.absolutePath
-   }
+    main {
+        main {
+            output.resourcesDir = project.assetsDir.absolutePath
+        }
+    }
 }
- }
 
-task run(dependsOn: classes, type: JavaExec) {
+task run(dependsOn: classes, type: JavaExec, description: "Runs the desktop project") << {
+
     main = project.mainClassName
     systemProperties['properties.file'] = '../android/assets/conf/global.properties'
     systemProperties['assets.location'] = '../android/assets/'
@@ -26,7 +27,7 @@ task run(dependsOn: classes, type: JavaExec) {
     ignoreExitValue = true
 }
 
-task runCatalogFilter(dependsOn: classes, type: JavaExec) {
+task runCatalogFilter(dependsOn: classes, type: JavaExec, description: "Runs the catalog filter application to generate day catalogs for WebGL") << {
     main = "gaia.cu9.ari.gaiaorbit.desktop.util.GaiaCatalogFilter"
     classpath = sourceSets.main.runtimeClasspath
     classpath += files(project.assetsDir)
@@ -35,15 +36,62 @@ task runCatalogFilter(dependsOn: classes, type: JavaExec) {
     ignoreExitValue = true
 }
 
-task dist(type: Jar) {
-    from files(sourceSets.main.output.classesDir)
-    from files(sourceSets.main.output.resourcesDir)
-    from {configurations.compile.collect {zipTree(it)}}
-    from files(project.assetsDir);
- 
-    manifest {
-        attributes 'Main-Class': project.mainClassName
+task createDistDir (dependsOn: ':versionFile', description: "Creates the releases/dist folder") << {
+    project.ext.distName = "gaiasandbox-" + rootProject.tag + "." + rootProject.rev
+    project.ext.distDir = "../releases/$distName"
+
+    File distDir = new File(project.distDir)
+
+    println "dist dir: " + distDir.getPath()
+
+    // Prepare output directory
+    delete distDir
+    mkdir distDir
+
+}
+
+task copyToLib (dependsOn: [compileJava, createDistDir], description: "Copies the runtime dependencies to releases/dist/lib") << {
+
+    // Create releases/dist/lib
+    File distLib = new File(project.distDir, 'lib')
+    mkdir distLib
+    project.ext.distLib = distLib.getPath()
+
+    // Copy deps to dist lib folder
+    ['runtime'].each { mode ->
+        copy {
+            from configurations.getByName(mode).files
+            into project.distLib
+        }
     }
+
+    // Remove folders
+    delete project.distLib + '/conf'
+    delete project.distLib + '/data'
+    delete project.distLib + '/font'
+    delete project.distLib + '/i18n'
+    delete project.distLib + '/icon'
+    delete project.distLib + '/img'
+    delete project.distLib + '/scripts'
+    delete project.distLib + '/shader'
+    delete project.distLib + '/shaders'
+    delete project.distLib + '/skins'
+    delete project.distLib + '/postprocessing-sources.jar'
+
+}
+
+task gaiasandboxJar (dependsOn: [copyToLib, jar],  description: "Creates the gaiasandbox jar and puts it to the dist folder") << {
+    copy {
+        from 'build/libs/desktop-' + rootProject.version + '.jar'
+        into project.distDir
+    }
+    File a = new File(project.distDir, 'desktop-' + rootProject.version + '.jar')
+    File b = new File(project.distDir, 'gaiasandbox.jar')
+    file(project.distDir + '/desktop-' + rootProject.version + '.jar').renameTo(file(project.distDir + '/gaiasandbox.jar'))
+}
+
+task dist (dependsOn: gaiasandboxJar, description: "Compiles the project, creates the jar and moves it all to releases/gaiasandbox-\$tag-\$rev") << {
+    
 }
 
 dist.dependsOn classes
@@ -56,12 +104,12 @@ eclipse {
 }
 
 task afterEclipseImport(description: "Post processing after project generation", group: "IDE") {
-  doLast {
-    def classpath = new XmlParser().parse(file(".classpath"))
-    new Node(classpath, "classpathentry", [ kind: 'src', path: 'assets' ]);
-    def writer = new FileWriter(file(".classpath"))
-    def printer = new XmlNodePrinter(new PrintWriter(writer))
-    printer.setPreserveWhitespace(true)
-    printer.print(classpath)
-  }
+    doLast {
+        def classpath = new XmlParser().parse(file(".classpath"))
+        new Node(classpath, "classpathentry", [ kind: 'src', path: 'assets' ]);
+        def writer = new FileWriter(file(".classpath"))
+        def printer = new XmlNodePrinter(new PrintWriter(writer))
+        printer.setPreserveWhitespace(true)
+        printer.print(classpath)
+    }
 }

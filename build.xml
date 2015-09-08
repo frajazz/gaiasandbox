@@ -95,11 +95,13 @@
 		<copy todir="${dist.dir}/${lib}">
 			<fileset dir="${gs.dir}/${lib}">
 				<include name="**/*.jar" />
+				<exclude name="*-sources.jar" />
 			</fileset>
 		</copy>
 		<copy todir="${dist.dir}/${lib}">
 			<fileset dir="${gs-desktop.dir}/${lib}">
 				<include name="**/*.jar" />
+				<exclude name="*-sources.jar" />
 			</fileset>
 		</copy>
 
@@ -115,7 +117,7 @@
 
 		<jar destfile="${dist.dir}/gaiasandbox.jar">
 			<manifest>
-				<attribute name="Main-Class" value="gaia.cu9.ari.gaiaorbit.GaiaSandboxDesktop" />
+				<attribute name="Main-Class" value="gaia.cu9.ari.gaiaorbit.desktop.GaiaSandboxDesktop" />
 				<attribute name="Class-Path" value="${lib.list}" />
 				<attribute name="Built-By" value="${user.name}" />
 				<attribute name="Application-Name" value="Gaia Sandbox" />

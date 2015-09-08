@@ -29,7 +29,7 @@ allprojects {
 	jythonVersion = '2.7.0'
 	miglayoutVersion = '4.2'
         lwjglVersion = '2.9.3'
-        pgslookandfeelVersion = '1.1.4'
+        pgsVersion = '1.1.4'
     }
 
     repositories {
@@ -58,11 +58,20 @@ project(":desktop") {
         compile "com.badlogicgames.gdx:gdx-controllers-platform:$gdxVersion:natives-desktop"
 	compile "org.python:jython-standalone:$jythonVersion"
 	compile "com.miglayout:miglayout-swing:$miglayoutVersion"
-        compile 'com.github.arnabk:pgslookandfeel:$pgslookandfeelVersion'
+        compile "com.github.arnabk:pgslookandfeel:$pgsVersion"
 	compile files('../core/lib/postprocessing.jar',
 					'../android/assets',
                                         'lib/stil.jar')
     }
+    
+    jar {
+        manifest {
+            attributes 'Implementation-Title': 'Gaia Sandbox',
+                       'Implementation-Version': version,
+                       'Main-Class': 'gaia.cu9.ari.gaiaorbit.desktop.GaiaSandboxDesktop'
+        }
+    }
+    
 }
 
 
@@ -123,3 +132,50 @@ project(":android") {
 tasks.eclipse.doLast {
     delete ".project"
 }
+
+task gitRevision << {
+    def cmd = "git describe --abbrev=0 --tags HEAD"
+    def proc = cmd.execute()
+    project.ext.tag = proc.text.trim()
+    
+    cmd = "git rev-parse --short HEAD"
+    proc = cmd.execute()
+    project.ext.rev = proc.text.trim()
+    
+    cmd = "uname -a"
+    proc = cmd.execute()
+    project.ext.system = proc.text.trim()
+    
+    cmd = "whoami"
+    proc = cmd.execute()
+    project.ext.builder = proc.text.trim()
+    
+    project.ext.buildtime = new Date()
+    
+    println "git tag: $tag"
+    println "git rev: $rev"
+    println "buildtime: $buildtime"
+    println "builder: $builder"
+    println "system: $system"
+    
+    println "global version: " + version
+}
+
+task versionFile (dependsOn: gitRevision) << {
+    File versionFile = file('core/build/classes/main/version')
+    delete versionFile
+    def writer = new FileWriter(versionFile)
+    
+    try {
+       writer.write('buildtime=' + project.buildtime + '\n')
+       writer.write('build=' + project.rev + '\n')
+       writer.write('version=' + project.tag + '\n')
+       writer.write('builder=' + project.builder + '\n')
+       writer.write('system=' + project.system + '\n')
+       writer.flush()
+    } finally {
+       writer.close()
+    }
+}
+
+

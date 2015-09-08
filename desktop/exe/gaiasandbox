@@ -47,7 +47,7 @@ OPTS="$OPTS -XX:+UseParallelGC"
 OLDDIR="$( pwd )"
 
 cd $GSDIR
-CMD="$JAVA $OPTS -cp $LIB_PATH gaia.cu9.ari.gaiaorbit.GaiaSandboxDesktop $@"
+CMD="$JAVA $OPTS -cp $LIB_PATH gaia.cu9.ari.gaiaorbit.desktop.GaiaSandboxDesktop $@"
 echo "$CMD"
 $CMD
 
