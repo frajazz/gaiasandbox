@@ -71,11 +71,81 @@ task afterGwtCompileFull << {
         into 'war/'
     }
     
+    // copy orbit files from android folder
+    copy {
+        from 'war/assets/data/android/orb.EARTH.dat'
+        into 'war/assets/data/'
+    }
+    copy {
+        from 'war/assets/data/android/orb.GAIA.dat'
+        into 'war/assets/data/'
+    }
+    copy {
+        from 'war/assets/data/android/orb.JUPITER.dat'
+        into 'war/assets/data/'
+    }
+    copy {
+        from 'war/assets/data/android/orb.MARS.dat'
+        into 'war/assets/data/'
+    }
+    copy {
+        from 'war/assets/data/android/orb.MERCURY.dat'
+        into 'war/assets/data/'
+    }
+    copy {
+        from 'war/assets/data/android/orb.MOON.dat'
+        into 'war/assets/data/'
+    }
+    copy {
+        from 'war/assets/data/android/orb.NEPTUNE.dat'
+        into 'war/assets/data/'
+    }
+    copy {
+        from 'war/assets/data/android/orb.SATURN.dat'
+        into 'war/assets/data/'
+    }
+    copy {
+        from 'war/assets/data/android/orb.URANUS.dat'
+        into 'war/assets/data/'
+    }
+    copy {
+        from 'war/assets/data/android/orb.VENUS.dat'
+        into 'war/assets/data/'
+    }
+    
+    // update assets.txt
+    delete 'war/assets/assets.txt'
+    copy {
+        from 'assets/assets-wgl.txt'
+        into 'war/assets/'
+    }
+    file('war/assets/assets-wgl.txt').renameTo(file('war/assets/assets.txt'))
+    
     // delete unused files
-    delete 'war/assets/data/data-lite.json',
+    delete 'war/assets/conf',
+            'war/assets/data/android',
+            'war/assets/data/hyg_metadata.bin',
+            'war/assets/data/hyg_particles.bin',
+            'war/assets/data/data-lite.json',
             'war/assets/data/extra-lite.json',
             'war/assets/data/planets-lite.json',
-            'war/assets/data/satellites-lite.json'
+            'war/assets/data/satellites-lite.json',
+            'war/assets/data/tex/earth-4k.jpg',
+            'war/assets/data/tex/earth-8k.jpg',
+            'war/assets/data/tex/earth-night-2k.jpg',
+            'war/assets/data/tex/earth-night-4k.jpg',
+            'war/assets/data/tex/earth-normal-4k.jpg',
+            'war/assets/data/tex/earth-normal.jpg',
+            'war/assets/data/tex/earth-specular-4k.jpg',
+            'war/assets/data/tex/jupiter-4k.jpg',
+            'war/assets/data/tex/mars-2k.jpg',
+            'war/assets/data/tex/mars-normal.jpg',
+            'war/assets/data/tex/moon-4k.jpg',
+            'war/assets/data/tex/moon-normal.jpg',
+            'war/assets/data/tex/venus-1k.jpg',
+            'war/assets/data/tex/phobos-normal.jpg',
+            'war/assets/data/tex/deimos-normal.jpg',
+            'war/assets/scripts'
     
 }
 
@@ -96,11 +166,25 @@ task afterGwtCompileLite << {
     }
     file('war/index-lite.html').renameTo(file('war/index.html'))
     
+    // update assets.txt
+    delete 'war/assets/assets.txt'
+    copy {
+        from 'assets/assets-lite.txt'
+        into 'war/assets/'
+    }
+    file('war/assets/assets-lite.txt').renameTo(file('war/assets/assets.txt'))
+    
     // delete unused files
     delete 'war/assets/conf', 
+            'war/assets/data/android',
+            'war/assets/data/models',
+            'war/assets/data/hyg_metadata.bin',
+            'war/assets/data/hyg_particles.bin',
             'war/assets/data/boundaries.csv',
             'war/assets/data/constel.csv',
             'war/assets/data/data.json',
+            'war/assets/data/data-wgl.json',
+            'war/assets/data/extra.json',
             'war/assets/data/locations_earth.json',
             'war/assets/data/locations_moon.json',
             'war/assets/data/locations.json',
@@ -108,24 +192,34 @@ task afterGwtCompileLite << {
             'war/assets/data/orbits_asteroid.json',
             'war/assets/data/orbits_moon.json',
             'war/assets/data/planets.json',
+            'war/assets/data/planets-wgl.json',
             'war/assets/data/satellites.json',
-            'war/assets/data/models',
             'war/assets/data/tex/callisto.jpg',
             'war/assets/data/tex/ceres.jpg',
             'war/assets/data/tex/deimos.jpg',
+            'war/assets/data/tex/earth-4k.jpg',
+            'war/assets/data/tex/earth-8k.jpg',
+            'war/assets/data/tex/earth-night-2k.jpg',
+            'war/assets/data/tex/earth-night-4k.jpg',
             'war/assets/data/tex/earth-night.jpg',
+            'war/assets/data/tex/earth-normal-4k.jpg',
+            'war/assets/data/tex/earth-normal.jpg',
+            'war/assets/data/tex/earth-specular-4k.jpg',
             'war/assets/data/tex/earth-specular.jpg',
             'war/assets/data/tex/earth.jpg',
             'war/assets/data/tex/europa.jpg',
             'war/assets/data/tex/ganymede.jpg',
             'war/assets/data/tex/io.jpg',
+            'war/assets/data/tex/jupiter-4k.jpg',
             'war/assets/data/tex/jupiter.jpg',
+            'war/assets/data/tex/mars-2k.jpg',
+            'war/assets/data/tex/mars-normal.jpg',
             'war/assets/data/tex/mars.jpg',
             'war/assets/data/tex/mercury.jpg',
             'war/assets/data/tex/milky_way_small.png',
+            'war/assets/data/tex/moon-4k.jpg',
+            'war/assets/data/tex/moon-normal.jpg',
             'war/assets/data/tex/moon.jpg',
-            'war/assets/data/tex/mw_small.jpg',
-            'war/assets/data/tex/mw.jpg',
             'war/assets/data/tex/mw.png',
             'war/assets/data/tex/neptune.jpg',
             'war/assets/data/tex/pallas.jpg',
@@ -133,6 +227,7 @@ task afterGwtCompileLite << {
             'war/assets/data/tex/saturn-ring.jpg',
             'war/assets/data/tex/saturn.jpg',
             'war/assets/data/tex/uranus.jpg',
+            'war/assets/data/tex/venus-1k.jpg',
             'war/assets/data/tex/venus.jpg',
             'war/assets/data/tex/vesta.jpg',
             'war/assets/scripts'

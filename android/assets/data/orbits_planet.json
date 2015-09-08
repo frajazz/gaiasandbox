@@ -117,20 +117,5 @@
 		"orbit" 		: {
 							"source" : "data/orb.NEPTUNE.dat",
 							}
-	},
-	
-	
-	{
-		"name" : "Moon orbit",
-		"color" : [0.7, 0.7, 1.0, 0.4],
-		"ct" : Orbits,
-		
-		"parent" : "Earth", 
-		"impl" : "gaia.cu9.ari.gaiaorbit.scenegraph.Orbit",
-		"provider" : "gaia.cu9.ari.gaiaorbit.data.orbit.OrbitFileDataProvider",
-			
-		"orbit" 		: {
-							"source" : "data/orb.MOON.dat",
-							}
 	}
 ]}
