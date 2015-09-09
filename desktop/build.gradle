@@ -1,11 +1,16 @@
 apply plugin: "java"
+apply plugin: 'install4j'
 
 sourceCompatibility = 1.7
-sourceSets.main.java.srcDirs = [ "src/" ]
+sourceSets.main.java.srcDirs = ["src/"]
 
 project.ext.mainClassName = "gaia.cu9.ari.gaiaorbit.desktop.GaiaSandboxDesktop"
 project.ext.assetsDir = new File("../android/assets");
 project.ext.workDir = new File(".");
+
+install4j {
+    installDir = file('/home/tsagrista/Programs/install4j6')
+}
 
 sourceSets {
     main {
@@ -15,8 +20,7 @@ sourceSets {
     }
 }
 
-task run(dependsOn: classes, type: JavaExec, description: "Runs the desktop project") {
-
+task run(dependsOn: jar, type: JavaExec, description: "Runs the desktop project") {
     main = project.mainClassName
     systemProperties['properties.file'] = '../android/assets/conf/global.properties'
     systemProperties['assets.location'] = '../android/assets/'
@@ -37,12 +41,8 @@ task runCatalogFilter(dependsOn: classes, type: JavaExec, description: "Runs the
 }
 
 task createDistDir (dependsOn: ':versionFile', description: "Creates the releases/dist folder") << {
-    project.ext.distName = "gaiasandbox-" + rootProject.tag + "." + rootProject.rev
-    project.ext.distDir = "../releases/$distName"
 
-    File distDir = new File(project.distDir)
-
-    println "dist dir: " + distDir.getPath()
+        File distDir = new File(project.distDir)
 
     // Prepare output directory
     delete distDir
@@ -62,7 +62,8 @@ task copyToLib (dependsOn: [compileJava, createDistDir], description: "Copies th
         copy {
             from configurations.getByName(mode).files
             into project.distLib
-            exclude "**/core-" + rootProject.version + ".jar" 
+            exclude "**/core-1.0.jar"
+            exclude "**/core-" + version + ".jar"
         }
     }
 
@@ -83,55 +84,67 @@ task copyToLib (dependsOn: [compileJava, createDistDir], description: "Copies th
 
 task gaiasandboxJar (dependsOn: [compileJava, jar, copyToLib],  description: "Creates the gaiasandbox jar and puts it to the dist folder") << {
     copy {
-        from 'build/libs/desktop-' + rootProject.version + '.jar'
-        into project.distLib
+        from "$baseDir/desktop/build/libs/desktop-" + version + ".jar"
+        into "$distLib/"
     }
-    file("$distLib/desktop-" + rootProject.version + ".jar").renameTo(file("$distLib/gaiasandbox.jar"))
+    file("$distLib/desktop-" + version + ".jar").renameTo(file("$distLib/gaiasandbox.jar"))
 }
 
 task dist (dependsOn: gaiasandboxJar, description: "Compiles the project, creates the jar and moves it all to releases/gaiasandbox-\$tag-\$rev") << {
     // Copy conf
     mkdir "$distDir/conf"
     copy {
-        from "../android/assets/conf"
+        from "$baseDir/android/assets/conf"
         into "$distDir/conf"
         exclude "**/android"
     }
-    
+
     // Copy data
     mkdir "$distDir/data"
     copy {
         from "../android/assets/data"
         into "$distDir/data"
         exclude "**/android"
+        
+        exclude "**/earth-8k.jpg"
+        exclude "**/earth.jpg"
+        exclude "**/earth-normal.jpg"
+        exclude "**/earth-specular.jpg"
+        exclude "**/earth-night.jpg"
+        exclude "**/earth-night-2k.jpg"
+        exclude "**/mars.jpg"
+        exclude "**/jupiter.jpg"
+        exclude "**/venus.jpg"
+        
+        
         exclude "**/hyg_metadata.bin"
         exclude "**/hyg_particles.bin"
         exclude "**/*-wgl.json"
         exclude "**/*-lite.json"
     }
-    
+
     // Add icons to data
     copy {
         from "data"
         into "$distDir/data"
         include "**/config/**"
     }
-    
+
     // Copy i18n files
     mkdir "$distDir/i18n"
     copy {
-        from "../android/assets/i18n"
+        from "$baseDir/android/assets/i18n"
         into "$distDir/i18n"
         exclude "**/android/"
     }
-    
+
     // Copy script files
     mkdir "$distDir/scripts"
     copy {
-        from "../android/assets/scripts"
+        from "$baseDir/android/assets/scripts"
         into "$distDir/scripts"
     }
-    
+
     // Copy scripts, README, LICENSE and AUTHORS
     copy {
         from "exe"
@@ -139,32 +152,74 @@ task dist (dependsOn: gaiasandboxJar, description: "Compiles the project, create
         exclude "*.sh"
     }
     copy {
-        from "../"
+        from "$baseDir/"
         into "$distDir"
         include "README.md"
         include "LICENSE"
         include "AUTHORS"
     }
     copy {
-        from "../android/assets/icon"
+        from "$baseDir/android/assets/icon"
         into "$distDir"
         include "ic_launcher.png"
         include "ic_launcher.ico"
         include "ic_launcher.svg"
     }
-    
+
     // Make gaiasandbox script executable
     def cmd = "chmod u+x $distDir/gaiasandbox"
     cmd.execute()
-    
+
     // Replace version in readme file
     project.ext.versionFile = file("../core/build/classes/main/version").text
     ant.replace(file: "$distDir/README.md", token: "--------------------------", value: "$versionFile")
-    
-    
+
+
+}
+dist.dependsOn classes
+
+task createTar(dependsOn: dist, description: "Creates application tar package") << {
+    File packageDir = new File(project.packageDir)
+
+    delete packageDir
+    mkdir packageDir
+
+    ant.tar(destfile: "$packageDir/" + project.distName + ".tar.gz", compression: 'gzip', longfile: 'gnu') {
+        tarfileset(dir: "$distDir") {
+            exclude (name: "gaiasandbox")
+        }
+        tarfileset(dir: "$distDir", filemode:'755') {
+            include(name: "gaiasandbox")
+        }
+    }
+
 }
 
-dist.dependsOn classes
+task prepareInstall4jScript (dependsOn: createTar, description: "Prepares the install4j script and copies it to the packages folder") << {
+    copy {
+        from "installerscripts/template.install4j"
+        into "$packageDir"
+    }
+    file("$packageDir/template.install4j").renameTo(file("$packageDir/" + project.distName + ".install4j"))
+    
+    project.ext.releaseFolder = "$baseDir/releases/$distName"
+    
+    ant.replace(file: "$packageDir/" + project.distName + ".install4j", token: '@gs-release-folder@', value: "$distDir")
+    ant.replace(file: "$packageDir/" + project.distName + ".install4j", token: '@gs-git-folder@', value: "$baseDir")
+    ant.replace(file: "$packageDir/" + project.distName + ".install4j", token: '@version-tag@', value: "$tagRev")
+}
+
+task install4jMedia(type: com.install4j.gradle.Install4jTask, description: "Runs the install4j task to create the installers") {
+    dependsOn 'prepareInstall4jScript' // example task that prepares the distribution for install4j
+    
+    projectFile = file("$packageDir/" + project.distName + ".install4j")
+    variables = [majorVersion: project.tag, build: project.rev]
+}
+
+
+task pack (dependsOn: install4jMedia, description: "Creates the releases for windows, mac, linux and the tar package") << {
+    
+}
 
 eclipse {
     project {
