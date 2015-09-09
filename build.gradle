@@ -48,7 +48,6 @@ allprojects {
 project(":desktop") {
     apply plugin: "java"
 
-
     dependencies {
         compile project(":core")
         compile "com.badlogicgames.gdx:gdx-backend-lwjgl:$gdxVersion"
@@ -66,10 +65,27 @@ project(":desktop") {
     
     jar {
         manifest {
-            attributes 'Implementation-Title': 'Gaia Sandbox',
-                       'Implementation-Version': version,
-                       'Main-Class': 'gaia.cu9.ari.gaiaorbit.desktop.GaiaSandboxDesktop'
+            attributes 'Implementation-Title': 'Gaia Sandbox desktop',
+                       'Implementation-Version': version
         }
+        from('../android/assets') {
+            include 'font/main-font.fnt'
+            include 'font/main-font.png'
+            include 'icon/ic_launcher.png'
+            include 'img/**'
+            include 'shader/**'
+            include 'shaders/**'
+            include 'skins/**'
+        }
+        from('build/classes/main') {
+            include '**'
+        }
+        from('../core/build/classes/main') {
+            include '**'
+        }
+        
+        
+        println "Creating desktop jar file"
     }
     
 }
@@ -108,6 +124,14 @@ project(":core") {
 	compile 'junit:junit:4.12'
 	compile files('lib/postprocessing.jar',
                         'lib/postprocessing-sources.jar')
+    }
+    
+    jar {
+        manifest {
+            attributes 'Implementation-Title': 'Gaia Sandbox core',
+                       'Implementation-Version': version
+        }
+        println "Creating core jar file"
     }
 }
 

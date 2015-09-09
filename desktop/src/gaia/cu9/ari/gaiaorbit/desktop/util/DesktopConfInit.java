@@ -55,7 +55,7 @@ public class DesktopConfInit extends ConfInit {
             InputStream vis = GaiaSandboxDesktop.class.getResourceAsStream("/version");
             if (vis == null) {
                 // In case of running in 'developer' mode
-                vis = new FileInputStream(new File(System.getProperty("assets.location") + "data/dummyversion"));
+                vis = new FileInputStream(GaiaSandboxDesktop.ASSETS_LOC + "data/dummyversion");
             }
             vp = new Properties();
             vp.load(vis);

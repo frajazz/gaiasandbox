@@ -61,11 +61,15 @@ import com.badlogic.gdx.backends.lwjgl.LwjglFiles;
  */
 public class GaiaSandboxDesktop implements IObserver {
     private static GaiaSandboxDesktop gsd;
+    public static String ASSETS_LOC;
 
     public static void main(String[] args) {
 
         try {
             gsd = new GaiaSandboxDesktop();
+            // Assets location
+            ASSETS_LOC = (System.getProperty("assets.location") != null ? System.getProperty("assets.location") : "");
+
             Gdx.files = new LwjglFiles();
 
             // Initialize number format
@@ -90,7 +94,7 @@ public class GaiaSandboxDesktop implements IObserver {
             I18n.initialize(Gdx.files.internal("data/i18n/gsbundle"));
 
             // Dev mode
-            I18n.initialize(Gdx.files.absolute(System.getProperty("assets.location") + "i18n/gsbundle"));
+            I18n.initialize(Gdx.files.absolute(ASSETS_LOC + "i18n/gsbundle"));
 
             // Initialize icons
             IconManager.initialise(Gdx.files.internal("data/ui/"));

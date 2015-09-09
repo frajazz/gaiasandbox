@@ -325,10 +325,8 @@ public class ConfigDialog extends I18nJFrame {
         JPanel ui = new JPanel(new MigLayout("", "[grow,fill][grow,fill]", ""));
         ui.setBorder(new TitledBorder(new MatteBorder(new Insets(thick, 0, 0, 0), bcol), txt("gui.ui.interfacesettings"), just, pos));
 
-        File i18nfolder = new File("./data/i18n/");
-        if (!i18nfolder.exists()) {
-            i18nfolder = new File("../android/assets/i18n/");
-        }
+        File i18nfolder = new File(GaiaSandboxDesktop.ASSETS_LOC + "i18n/");
+
         String i18nname = "gsbundle";
         String[] files = i18nfolder.list();
         LangComboBoxBean[] langs = new LangComboBoxBean[files.length];
@@ -363,7 +361,7 @@ public class ConfigDialog extends I18nJFrame {
             @Override
             public void actionPerformed(ActionEvent e) {
                 String selected = (String) theme.getSelectedItem();
-                ImageIcon icon = new ImageIcon(System.getProperty("assets.location") + "img/themes/" + selected + ".png");
+                ImageIcon icon = new ImageIcon(GaiaSandboxDesktop.ASSETS_LOC + "img/themes/" + selected + ".png");
                 sampleImage.setIcon(icon);
             }
         });

@@ -1,7 +1,7 @@
 apply plugin: "java"
 
 sourceCompatibility = 1.7
-sourceSets.main.java.srcDirs = ["src/"]
+sourceSets.main.java.srcDirs = [ "src/" ]
 
 project.ext.mainClassName = "gaia.cu9.ari.gaiaorbit.desktop.GaiaSandboxDesktop"
 project.ext.assetsDir = new File("../android/assets");
@@ -15,7 +15,7 @@ sourceSets {
     }
 }
 
-task run(dependsOn: classes, type: JavaExec, description: "Runs the desktop project") << {
+task run(dependsOn: classes, type: JavaExec, description: "Runs the desktop project") {
 
     main = project.mainClassName
     systemProperties['properties.file'] = '../android/assets/conf/global.properties'
@@ -62,6 +62,7 @@ task copyToLib (dependsOn: [compileJava, createDistDir], description: "Copies th
         copy {
             from configurations.getByName(mode).files
             into project.distLib
+            exclude "**/core-" + rootProject.version + ".jar" 
         }
     }
 
@@ -80,17 +81,86 @@ task copyToLib (dependsOn: [compileJava, createDistDir], description: "Copies th
 
 }
 
-task gaiasandboxJar (dependsOn: [copyToLib, jar],  description: "Creates the gaiasandbox jar and puts it to the dist folder") << {
+task gaiasandboxJar (dependsOn: [compileJava, jar, copyToLib],  description: "Creates the gaiasandbox jar and puts it to the dist folder") << {
     copy {
         from 'build/libs/desktop-' + rootProject.version + '.jar'
-        into project.distDir
+        into project.distLib
     }
-    File a = new File(project.distDir, 'desktop-' + rootProject.version + '.jar')
-    File b = new File(project.distDir, 'gaiasandbox.jar')
-    file(project.distDir + '/desktop-' + rootProject.version + '.jar').renameTo(file(project.distDir + '/gaiasandbox.jar'))
+    file("$distLib/desktop-" + rootProject.version + ".jar").renameTo(file("$distLib/gaiasandbox.jar"))
 }
 
 task dist (dependsOn: gaiasandboxJar, description: "Compiles the project, creates the jar and moves it all to releases/gaiasandbox-\$tag-\$rev") << {
+    // Copy conf
+    mkdir "$distDir/conf"
+    copy {
+        from "../android/assets/conf"
+        into "$distDir/conf"
+        exclude "**/android"
+    }
+    
+    // Copy data
+    mkdir "$distDir/data"
+    copy {
+        from "../android/assets/data"
+        into "$distDir/data"
+        exclude "**/android"
+        exclude "**/hyg_metadata.bin"
+        exclude "**/hyg_particles.bin"
+        exclude "**/*-wgl.json"
+        exclude "**/*-lite.json"
+    }
+    
+    // Add icons to data
+    copy {
+        from "data"
+        into "$distDir/data"
+        include "**/config/**"
+    }
+    
+    // Copy i18n files
+    mkdir "$distDir/i18n"
+    copy {
+        from "../android/assets/i18n"
+        into "$distDir/i18n"
+        exclude "**/android/"
+    }
+    
+    // Copy script files
+    mkdir "$distDir/scripts"
+    copy {
+        from "../android/assets/scripts"
+        into "$distDir/scripts"
+    }
+    
+    // Copy scripts, README, LICENSE and AUTHORS
+    copy {
+        from "exe"
+        into "$distDir"
+        exclude "*.sh"
+    }
+    copy {
+        from "../"
+        into "$distDir"
+        include "README.md"
+        include "LICENSE"
+        include "AUTHORS"
+    }
+    copy {
+        from "../android/assets/icon"
+        into "$distDir"
+        include "ic_launcher.png"
+        include "ic_launcher.ico"
+        include "ic_launcher.svg"
+    }
+    
+    // Make gaiasandbox script executable
+    def cmd = "chmod u+x $distDir/gaiasandbox"
+    cmd.execute()
+    
+    // Replace version in readme file
+    project.ext.versionFile = file("../core/build/classes/main/version").text
+    ant.replace(file: "$distDir/README.md", token: "--------------------------", value: "$versionFile")
+    
     
 }
 
