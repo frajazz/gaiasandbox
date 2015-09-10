@@ -153,6 +153,10 @@ public class GaiaSandboxDesktop implements IObserver {
         }
     }
 
+    public void terminate() {
+        System.exit(0);
+    }
+
     public void launchMainApp() {
         LwjglApplicationConfiguration cfg = new LwjglApplicationConfiguration();
         LwjglApplicationConfiguration.disableAudio = true;

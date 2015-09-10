@@ -115,6 +115,7 @@ public class DesktopConfInit extends ConfInit {
         String OBJECT_SERVER_HOSTNAME = p.getProperty("data.source.hostname");
         int OBJECT_SERVER_PORT = Integer.parseInt(p.getProperty("data.source.port"));
         String VISUALIZATION_ID = p.getProperty("data.source.visid");
+        boolean REAL_GAIA_ATTITUDE = Boolean.parseBoolean(p.getProperty("data.attitude.real"));
 
         float LIMIT_MAG_LOAD;
         if (p.getProperty("data.limit.mag") != null && !p.getProperty("data.limit.mag").isEmpty()) {
@@ -122,7 +123,7 @@ public class DesktopConfInit extends ConfInit {
         } else {
             LIMIT_MAG_LOAD = Float.MAX_VALUE;
         }
-        dc.initialize(DATA_SOURCE_LOCAL, DATA_JSON_FILE, OBJECT_SERVER_HOSTNAME, OBJECT_SERVER_PORT, VISUALIZATION_ID, LIMIT_MAG_LOAD, false);
+        dc.initialize(DATA_SOURCE_LOCAL, DATA_JSON_FILE, OBJECT_SERVER_HOSTNAME, OBJECT_SERVER_PORT, VISUALIZATION_ID, LIMIT_MAG_LOAD, REAL_GAIA_ATTITUDE);
 
         /** PROGRAM CONF **/
         ProgramConf prc = new ProgramConf();
@@ -132,7 +133,12 @@ public class DesktopConfInit extends ConfInit {
         String TUTORIAL_SCRIPT_LOCATION = p.getProperty("program.tutorial.script");
         boolean SHOW_CONFIG_DIALOG = Boolean.parseBoolean(p.getProperty("program.configdialog"));
         boolean SHOW_DEBUG_INFO = Boolean.parseBoolean(p.getProperty("program.debuginfo"));
-        Date LAST_CHECKED = p.getProperty("program.lastchecked").isEmpty() ? null : df.parse(p.getProperty("program.lastchecked"));
+        Date LAST_CHECKED;
+        try {
+            LAST_CHECKED = df.parse(p.getProperty("program.lastchecked"));
+        } catch (Exception e) {
+            LAST_CHECKED = null;
+        }
         String LAST_VERSION = p.getProperty("program.lastversion");
         String VERSION_CHECK_URL = p.getProperty("program.versioncheckurl");
         String UI_THEME = p.getProperty("program.ui.theme");
@@ -259,6 +265,7 @@ public class DesktopConfInit extends ConfInit {
         p.setProperty("data.source.port", Integer.toString(GlobalConf.data.OBJECT_SERVER_PORT));
         p.setProperty("data.source.visid", GlobalConf.data.VISUALIZATION_ID);
         p.setProperty("data.limit.mag", Float.toString(GlobalConf.data.LIMIT_MAG_LOAD));
+        p.setProperty("data.attitude.real", Boolean.toString(GlobalConf.data.REAL_GAIA_ATTITUDE));
 
         /** SCREEN **/
         p.setProperty("graphics.screen.width", Integer.toString(GlobalConf.screen.SCREEN_WIDTH));

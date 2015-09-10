@@ -756,6 +756,46 @@ public class ConfigDialog extends I18nJFrame {
         tabbedPane.addTab(txt("gui.data"), IconManager.get("config/data"), dataPanel);
         tabbedPane.setMnemonicAt(6, KeyEvent.VK_7);
 
+        /**
+         * ====== GAIA TAB =======
+         */
+        JPanel gaia = new JPanel(new MigLayout("", "[][grow,fill][]", ""));
+        gaia.setBorder(new TitledBorder(new MatteBorder(new Insets(thick, 0, 0, 0), bcol), txt("gui.gaia.attitude"), just, pos));
+
+        // REAL OR NSL attitude
+        final JRadioButton real = new JRadioButton(txt("gui.gaia.real"));
+        real.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                GlobalConf.data.REAL_GAIA_ATTITUDE = real.isSelected();
+            }
+        });
+        real.setSelected(GlobalConf.data.REAL_GAIA_ATTITUDE);
+
+        final JRadioButton nsl = new JRadioButton(txt("gui.gaia.nsl"));
+        nsl.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                GlobalConf.data.REAL_GAIA_ATTITUDE = !nsl.isSelected();
+            }
+        });
+        nsl.setSelected(!GlobalConf.data.DATA_SOURCE_LOCAL);
+
+        ButtonGroup gaiaButtons = new ButtonGroup();
+        gaiaButtons.add(real);
+        gaiaButtons.add(nsl);
+
+        gaia.add(real, "span,wrap");
+        gaia.add(nsl, "span,wrap");
+
+        final JPanel gaiaPanel = new JPanel(new MigLayout("", "[grow,fill]", ""));
+        gaiaPanel.add(gaia, "wrap");
+
+        tabbedPane.addTab(txt("gui.gaia"), IconManager.get("config/gaia"), gaiaPanel);
+        tabbedPane.setMnemonicAt(7, KeyEvent.VK_8);
+
+        /** SHOW AGAIN? **/
+
         // Do not show again
         final JCheckBox showAgain = new JCheckBox(txt("gui.notagain"));
         showAgain.addChangeListener(new ChangeListener() {
@@ -853,7 +893,7 @@ public class ConfigDialog extends I18nJFrame {
                     if (startup) {
                         gsd.launchMainApp();
                     }
-                    frame.setVisible(false);
+                    frame.dispose();
                 }
             }
 
@@ -865,6 +905,10 @@ public class ConfigDialog extends I18nJFrame {
             public void actionPerformed(ActionEvent e) {
                 if (frame.isDisplayable()) {
                     frame.dispose();
+                    if (startup) {
+                        gsd.terminate();
+                    }
+
                 }
             }
         });
