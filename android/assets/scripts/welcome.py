@@ -3,7 +3,7 @@
 # Created by Toni Sagrista
 
 from time import sleep
-from sandbox.script import EventScriptingInterface
+from gaia.cu9.ari.gaiaorbit.script import EventScriptingInterface
 
 gs = EventScriptingInterface()
 

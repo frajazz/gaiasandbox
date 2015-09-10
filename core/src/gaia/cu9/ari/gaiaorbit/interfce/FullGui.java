@@ -51,6 +51,7 @@ public class FullGui implements IGui, IObserver {
     protected MessagesInterface messagesInterface;
     protected DebugInterface debugInterface;
     protected CustomInterface customInterface;
+    protected ScriptStateInterface inputInterface;
     protected Container<WebGLInterface> wgl;
     protected WebGLInterface webglInterface;
 
@@ -134,6 +135,12 @@ public class FullGui implements IGui, IObserver {
         messagesInterface.left().bottom();
         messagesInterface.pad(0, 300, 150, 0);
 
+        // INPUT STATE
+        inputInterface = new ScriptStateInterface(skin);
+        inputInterface.setFillParent(true);
+        inputInterface.right().top();
+        inputInterface.pad(100, 0, 0, 5);
+
         // CUSTOM OBJECTS INTERFACE
         customInterface = new CustomInterface(ui, skin, lock);
 
@@ -169,6 +176,9 @@ public class FullGui implements IGui, IObserver {
                 ui.addActor(messagesInterface);
             if (focusInterface != null && !GlobalConf.runtime.STRIPPED_FOV_MODE)
                 ui.addActor(fi);
+            if (inputInterface != null && Constants.desktop) {
+                ui.addActor(inputInterface);
+            }
 
             if (customInterface != null) {
                 customInterface.reAddObjects();

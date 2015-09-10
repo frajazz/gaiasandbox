@@ -268,7 +268,7 @@ public class GaiaSandbox implements ApplicationListener, IObserver, IMainRendere
         AbstractPositionEntity focus = null;
         Vector3d newCameraPos = null;
         if (!Constants.webgl) {
-            focus = (AbstractPositionEntity) sg.getNode("Sol");
+            focus = (AbstractPositionEntity) sg.getNode("Earth");
             EventManager.instance.post(Events.FOCUS_CHANGE_CMD, focus, true);
             EventManager.instance.post(Events.CAMERA_MODE_CMD, CameraMode.Focus);
             float dst = focus.size * 3;
