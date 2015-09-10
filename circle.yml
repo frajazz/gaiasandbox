@@ -5,8 +5,7 @@ deployment:
   production:
       branch: master
       commands:
-        - ant init-ivy
-        - ant package-ci
+        - gradle desktop:createTar
 general:
   artifacts:
     - "releases/*.tgz"
