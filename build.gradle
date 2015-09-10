@@ -188,23 +188,23 @@ project(":core") {
     }
 }
 
-project(":android") {
-    apply plugin: "android"
-
-    configurations { natives }
-
-    dependencies {
-        compile project(":core")
-        compile "com.badlogicgames.gdx:gdx-backend-android:$gdxVersion"
-        natives "com.badlogicgames.gdx:gdx-platform:$gdxVersion:natives-armeabi"
-        natives "com.badlogicgames.gdx:gdx-platform:$gdxVersion:natives-armeabi-v7a"
-        natives "com.badlogicgames.gdx:gdx-platform:$gdxVersion:natives-x86"
-        compile "com.badlogicgames.gdx:gdx-controllers:$gdxVersion"
-	compile "org.python:jython-standalone:$jythonVersion"
-        compile "com.badlogicgames.gdx:gdx-controllers-android:$gdxVersion"
-	compile files('../core/lib/postprocessing.jar')
-    }
-}
+//project(":android") {
+//    apply plugin: "android"
+//
+//    configurations { natives }
+//
+//    dependencies {
+//        compile project(":core")
+//        compile "com.badlogicgames.gdx:gdx-backend-android:$gdxVersion"
+//        natives "com.badlogicgames.gdx:gdx-platform:$gdxVersion:natives-armeabi"
+//        natives "com.badlogicgames.gdx:gdx-platform:$gdxVersion:natives-armeabi-v7a"
+//        natives "com.badlogicgames.gdx:gdx-platform:$gdxVersion:natives-x86"
+//        compile "com.badlogicgames.gdx:gdx-controllers:$gdxVersion"
+//	compile "org.python:jython-standalone:$jythonVersion"
+//        compile "com.badlogicgames.gdx:gdx-controllers-android:$gdxVersion"
+//	compile files('../core/lib/postprocessing.jar')
+//    }
+//}
 
 tasks.eclipse.doLast {
     delete ".project"
