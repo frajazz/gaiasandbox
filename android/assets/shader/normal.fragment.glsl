@@ -5,7 +5,7 @@ precision mediump float;
 #define LOWP 
 #endif
 
-#define TEXTURE_LOD_BIAS 0.0
+#define TEXTURE_LOD_BIAS 0.2
 
 ////////////////////////////////////////////////////////////////////////////////////
 ////////// GROUND ATMOSPHERIC SCATTERING - FRAGMENT

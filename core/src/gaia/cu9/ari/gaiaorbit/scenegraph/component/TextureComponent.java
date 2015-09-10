@@ -27,8 +27,7 @@ public class TextureComponent {
         textureParams = new TextureParameter();
         textureParams.genMipMaps = !Constants.webgl;
         textureParams.magFilter = TextureFilter.Linear;
-        //textureParams.minFilter = TextureFilter.MipMapLinearNearest;
-        textureParams.minFilter = TextureFilter.Linear;
+        textureParams.minFilter = Constants.webgl ? TextureFilter.Linear : TextureFilter.MipMapLinearNearest;
     }
     /**
      * Above this angle the hi-resolution texture is loaded and applied (if any)

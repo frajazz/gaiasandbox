@@ -9,7 +9,7 @@ precision mediump float;
 #define HIGH
 #endif
 
-#define TEXTURE_LOD_BIAS 0.1
+#define TEXTURE_LOD_BIAS 0.2
 
 // Ground atmospheric scattering
 varying vec3 v_atmosphereColor;

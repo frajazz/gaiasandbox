@@ -482,7 +482,7 @@ public class SceneGraphRenderer extends AbstractRenderer implements IProcessRend
         } else {
             // Quad
             sys = new LineQuadRenderSystem(RenderGroup.LINE, 0, alphas);
-            sys.setPreRunnable(blendNoDepthRunnable);
+            sys.setPreRunnable(blendDepthRunnable);
         }
         return sys;
     }
