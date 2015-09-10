@@ -2,7 +2,9 @@
 -------------------------
 --------------------------
 
+<!--
 [![Circle CI](https://circleci.com/gh/ari-zah/gaiasandbox/tree/master.svg?style=svg)](https://circleci.com/gh/ari-zah/gaiasandbox/tree/master)
+-->
 
 The **Gaia Sandbox** is a real-time, 3D, astronomy visualisation software that
 runs on Windows, Linux and MacOS. It is developed in the framework of
