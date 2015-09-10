@@ -1,10 +1,12 @@
 # Change Log
 
-## [Unreleased](https://github.com/ari-zah/gaiasandbox/tree/HEAD)
+## [0.707b](https://github.com/ari-zah/gaiasandbox/tree/0.707b) (2015-09-10)
 
-[Full Changelog](https://github.com/ari-zah/gaiasandbox/compare/0.706b...HEAD)
+[Full Changelog](https://github.com/ari-zah/gaiasandbox/compare/0.706b...0.707b)
 
 **Implemented enhancements:**
+
+- Simplify loading mechanism of data files [\#46](https://github.com/ari-zah/gaiasandbox/issues/46)
 
 - Add sample image when choosing theme [\#38](https://github.com/ari-zah/gaiasandbox/issues/38)
 
@@ -22,7 +24,13 @@
 
 - Support for location info [\#28](https://github.com/ari-zah/gaiasandbox/issues/28)
 
+- Migrate build system to gradle [\#2](https://github.com/ari-zah/gaiasandbox/issues/2)
+
 **Fixed bugs:**
+
+- Fix labels in Gaia Fov mode [\#45](https://github.com/ari-zah/gaiasandbox/issues/45)
+
+- Last update date is sensible to running locale [\#43](https://github.com/ari-zah/gaiasandbox/issues/43)
 
 - RA and DEC are wrong in binary version of HYG catalog [\#42](https://github.com/ari-zah/gaiasandbox/issues/42)
 

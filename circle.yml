@@ -9,3 +9,7 @@ deployment:
 general:
   artifacts:
     - "releases/*.tgz"
+
+dependencies:
+  override:
+    - ANDROID_HOME=/usr/local/android-sdk-linux ./gradlew dependencies
