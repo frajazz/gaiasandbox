@@ -50,192 +50,367 @@ public class EventScriptingInterface implements IScriptingInterface, IObserver {
 
     @Override
     public void activateRealTimeFrame() {
-        em.post(Events.EVENT_TIME_FRAME_CMD, TimeFrame.REAL_TIME);
+        Gdx.app.postRunnable(new Runnable() {
+            @Override
+            public void run() {
+                em.post(Events.EVENT_TIME_FRAME_CMD, TimeFrame.REAL_TIME);
+            }
+        });
     }
 
     @Override
     public void activateSimulationTimeFrame() {
-        em.post(Events.EVENT_TIME_FRAME_CMD, TimeFrame.SIMULATION_TIME);
+        Gdx.app.postRunnable(new Runnable() {
+            @Override
+            public void run() {
+                em.post(Events.EVENT_TIME_FRAME_CMD, TimeFrame.SIMULATION_TIME);
+            }
+        });
     }
 
     @Override
-    public void setHeadlineMessage(String headline) {
-        em.post(Events.POST_HEADLINE_MESSAGE, headline);
+    public void setHeadlineMessage(final String headline) {
+        Gdx.app.postRunnable(new Runnable() {
+            @Override
+            public void run() {
+                em.post(Events.POST_HEADLINE_MESSAGE, headline);
+            }
+        });
     }
 
     @Override
-    public void setSubheadMessage(String subhead) {
-        em.post(Events.POST_SUBHEAD_MESSAGE, subhead);
+    public void setSubheadMessage(final String subhead) {
+        Gdx.app.postRunnable(new Runnable() {
+            @Override
+            public void run() {
+                em.post(Events.POST_SUBHEAD_MESSAGE, subhead);
+            }
+        });
     }
 
     @Override
     public void clearHeadlineMessage() {
-        em.post(Events.CLEAR_HEADLINE_MESSAGE);
+        Gdx.app.postRunnable(new Runnable() {
+            @Override
+            public void run() {
+                em.post(Events.CLEAR_HEADLINE_MESSAGE);
+            }
+        });
     }
 
     @Override
     public void clearSubheadMessage() {
-        em.post(Events.CLEAR_SUBHEAD_MESSAGE);
+        Gdx.app.postRunnable(new Runnable() {
+            @Override
+            public void run() {
+                em.post(Events.CLEAR_SUBHEAD_MESSAGE);
+            }
+        });
     }
 
     @Override
     public void clearAllMessages() {
-        em.post(Events.CLEAR_MESSAGES);
+        Gdx.app.postRunnable(new Runnable() {
+            @Override
+            public void run() {
+                em.post(Events.CLEAR_MESSAGES);
+            }
+        });
     }
 
     @Override
     public void disableInput() {
-        em.post(Events.INPUT_ENABLED_CMD, false);
+        Gdx.app.postRunnable(new Runnable() {
+            @Override
+            public void run() {
+                em.post(Events.INPUT_ENABLED_CMD, false);
+            }
+        });
     }
 
     @Override
     public void enableInput() {
-        em.post(Events.INPUT_ENABLED_CMD, true);
+        Gdx.app.postRunnable(new Runnable() {
+            @Override
+            public void run() {
+                em.post(Events.INPUT_ENABLED_CMD, true);
+            }
+        });
     }
 
     @Override
-    public void setCameraFocus(String focusName) {
-        em.post(Events.FOCUS_CHANGE_CMD, focusName, true);
+    public void setCameraFocus(final String focusName) {
+        Gdx.app.postRunnable(new Runnable() {
+            @Override
+            public void run() {
+                em.post(Events.FOCUS_CHANGE_CMD, focusName, true);
+            }
+        });
     }
 
     @Override
-    public void setCameraLock(boolean lock) {
-        em.post(Events.FOCUS_LOCK_CMD, lock);
+    public void setCameraLock(final boolean lock) {
+        Gdx.app.postRunnable(new Runnable() {
+            @Override
+            public void run() {
+                em.post(Events.FOCUS_LOCK_CMD, lock);
+            }
+        });
     }
 
     @Override
     public void setCameraFree() {
-        em.post(Events.CAMERA_MODE_CMD, CameraMode.Free_Camera);
+        Gdx.app.postRunnable(new Runnable() {
+            @Override
+            public void run() {
+                em.post(Events.CAMERA_MODE_CMD, CameraMode.Free_Camera);
+            }
+        });
     }
 
     @Override
     public void setCameraFov1() {
-        em.post(Events.CAMERA_MODE_CMD, CameraMode.Gaia_FOV1);
+        Gdx.app.postRunnable(new Runnable() {
+            @Override
+            public void run() {
+                em.post(Events.CAMERA_MODE_CMD, CameraMode.Gaia_FOV1);
+            }
+        });
     }
 
     @Override
     public void setCameraFov2() {
-        em.post(Events.CAMERA_MODE_CMD, CameraMode.Gaia_FOV2);
+        Gdx.app.postRunnable(new Runnable() {
+            @Override
+            public void run() {
+                em.post(Events.CAMERA_MODE_CMD, CameraMode.Gaia_FOV2);
+            }
+        });
     }
 
     @Override
     public void setCameraFov1and2() {
-        em.post(Events.CAMERA_MODE_CMD, CameraMode.Gaia_FOV1and2);
+        Gdx.app.postRunnable(new Runnable() {
+            @Override
+            public void run() {
+                em.post(Events.CAMERA_MODE_CMD, CameraMode.Gaia_FOV1and2);
+            }
+        });
     }
 
     @Override
-    public void setCameraPostion(double[] vec) {
-        em.post(Events.CAMERA_POS_CMD, vec);
+    public void setCameraPostion(final double[] vec) {
+        Gdx.app.postRunnable(new Runnable() {
+            @Override
+            public void run() {
+                em.post(Events.CAMERA_POS_CMD, vec);
+            }
+        });
     }
 
     @Override
-    public void setCameraDirection(double[] dir) {
-        em.post(Events.CAMERA_DIR_CMD, dir);
+    public void setCameraDirection(final double[] dir) {
+        Gdx.app.postRunnable(new Runnable() {
+            @Override
+            public void run() {
+                em.post(Events.CAMERA_DIR_CMD, dir);
+            }
+        });
     }
 
     @Override
-    public void setCameraUp(double[] up) {
-        em.post(Events.CAMERA_UP_CMD, up);
+    public void setCameraUp(final double[] up) {
+        Gdx.app.postRunnable(new Runnable() {
+            @Override
+            public void run() {
+                em.post(Events.CAMERA_UP_CMD, up);
+            }
+        });
     }
 
     @Override
-    public void setCameraSpeed(float speed) {
+    public void setCameraSpeed(final float speed) {
         assert speed >= Constants.MIN_SLIDER && speed <= Constants.MAX_SLIDER : "Speed must be between " + Constants.MIN_SLIDER + " and " + Constants.MAX_SLIDER;
-        em.post(Events.CAMERA_SPEED_CMD, speed / 10f, false);
+        Gdx.app.postRunnable(new Runnable() {
+            @Override
+            public void run() {
+                em.post(Events.CAMERA_SPEED_CMD, speed / 10f, false);
+            }
+        });
     }
 
     @Override
-    public void setRotationCameraSpeed(float speed) {
+    public void setRotationCameraSpeed(final float speed) {
         assert speed >= Constants.MIN_SLIDER && speed <= Constants.MAX_SLIDER : "Speed must be between " + Constants.MIN_SLIDER + " and " + Constants.MAX_SLIDER;
-        em.post(Events.ROTATION_SPEED_CMD, MathUtilsd.lint(speed, Constants.MIN_SLIDER, Constants.MAX_SLIDER, Constants.MIN_ROT_SPEED, Constants.MAX_ROT_SPEED), false);
+        Gdx.app.postRunnable(new Runnable() {
+            @Override
+            public void run() {
+                em.post(Events.ROTATION_SPEED_CMD, MathUtilsd.lint(speed, Constants.MIN_SLIDER, Constants.MAX_SLIDER, Constants.MIN_ROT_SPEED, Constants.MAX_ROT_SPEED), false);
+            }
+        });
     }
 
     @Override
-    public void setTurningCameraSpeed(float speed) {
+    public void setTurningCameraSpeed(final float speed) {
         assert speed >= Constants.MIN_SLIDER && speed <= Constants.MAX_SLIDER : "Speed must be between " + Constants.MIN_SLIDER + " and " + Constants.MAX_SLIDER;
-        em.post(Events.TURNING_SPEED_CMD, MathUtilsd.lint(speed, Constants.MIN_SLIDER, Constants.MAX_SLIDER, Constants.MIN_TURN_SPEED, Constants.MAX_TURN_SPEED), false);
+        Gdx.app.postRunnable(new Runnable() {
+            @Override
+            public void run() {
+                em.post(Events.TURNING_SPEED_CMD, MathUtilsd.lint(speed, Constants.MIN_SLIDER, Constants.MAX_SLIDER, Constants.MIN_TURN_SPEED, Constants.MAX_TURN_SPEED), false);
+
+            }
+        });
     }
 
     @Override
-    public void cameraForward(double value) {
+    public void cameraForward(final double value) {
         assert value >= 0d && value <= 1d : "Value must be between 0 and 1";
-        em.post(Events.CAMERA_FWD, value);
+        Gdx.app.postRunnable(new Runnable() {
+            @Override
+            public void run() {
+                em.post(Events.CAMERA_FWD, value);
+            }
+        });
 
     }
 
     @Override
-    public void cameraRotate(double deltaX, double deltaY) {
+    public void cameraRotate(final double deltaX, final double deltaY) {
         assert deltaX >= 0d && deltaX <= 1d && deltaY >= 0d && deltaY <= 1d : "DeltaX and deltaY must be between 0 and 1";
-        em.post(Events.CAMERA_ROTATE, deltaX, deltaY);
+        Gdx.app.postRunnable(new Runnable() {
+            @Override
+            public void run() {
+                em.post(Events.CAMERA_ROTATE, deltaX, deltaY);
+            }
+        });
 
     }
 
     @Override
-    public void cameraRoll(double roll) {
+    public void cameraRoll(final double roll) {
         assert roll >= 0d && roll <= 1d : "Roll must be between 0 and 1";
-        em.post(Events.CAMERA_ROLL, roll);
+        Gdx.app.postRunnable(new Runnable() {
+            @Override
+            public void run() {
+                em.post(Events.CAMERA_ROLL, roll);
+            }
+        });
     }
 
     @Override
-    public void cameraTurn(double deltaX, double deltaY) {
+    public void cameraTurn(final double deltaX, final double deltaY) {
         assert deltaX >= 0d && deltaX <= 1d && deltaY >= 0d && deltaY <= 1d : "DeltaX and deltaY must be between 0 and 1";
-        em.post(Events.CAMERA_TURN, deltaX, deltaY);
+        Gdx.app.postRunnable(new Runnable() {
+            @Override
+            public void run() {
+                em.post(Events.CAMERA_TURN, deltaX, deltaY);
+            }
+        });
     }
 
     @Override
     public void cameraStop() {
-        em.post(Events.CAMERA_STOP);
+        Gdx.app.postRunnable(new Runnable() {
+            @Override
+            public void run() {
+                em.post(Events.CAMERA_STOP);
+            }
+        });
 
     }
 
     @Override
     public void cameraCenter() {
-        em.post(Events.CAMERA_CENTER);
+        Gdx.app.postRunnable(new Runnable() {
+            @Override
+            public void run() {
+                em.post(Events.CAMERA_CENTER);
+            }
+        });
     }
 
     @Override
-    public void setFov(float newFov) {
+    public void setFov(final float newFov) {
         assert newFov >= Constants.MIN_FOV && newFov <= Constants.MAX_FOV : "Fov value must be between " + Constants.MIN_FOV + " and " + Constants.MAX_FOV;
-        em.post(Events.FOV_CHANGED_CMD, newFov);
+        Gdx.app.postRunnable(new Runnable() {
+            @Override
+            public void run() {
+                em.post(Events.FOV_CHANGED_CMD, newFov);
+            }
+        });
     }
 
     @Override
-    public void setVisibility(String name, boolean visible) {
-        em.post(Events.TOGGLE_VISIBILITY_CMD, name, visible);
-
+    public void setVisibility(final String name, final boolean visible) {
+        Gdx.app.postRunnable(new Runnable() {
+            @Override
+            public void run() {
+                em.post(Events.TOGGLE_VISIBILITY_CMD, name, visible);
+            }
+        });
     }
 
     @Override
-    public void setAmbientLight(float value) {
+    public void setAmbientLight(final float value) {
         assert value >= Constants.MIN_SLIDER && value <= Constants.MAX_SLIDER : "Value must be between 0 and 100";
-        em.post(Events.AMBIENT_LIGHT_CMD, value / 100f);
+        Gdx.app.postRunnable(new Runnable() {
+            @Override
+            public void run() {
+                em.post(Events.AMBIENT_LIGHT_CMD, value / 100f);
+            }
+        });
     }
 
     @Override
-    public void setSimulationTime(long time) {
+    public void setSimulationTime(final long time) {
         assert time > 0 : "Time can not be negative";
-        em.post(Events.TIME_CHANGE_CMD, new Date(time));
+        Gdx.app.postRunnable(new Runnable() {
+            @Override
+            public void run() {
+                em.post(Events.TIME_CHANGE_CMD, new Date(time));
+            }
+        });
     }
 
     @Override
     public void startSimulationTime() {
-        em.post(Events.TOGGLE_TIME_CMD, true, false);
+        Gdx.app.postRunnable(new Runnable() {
+            @Override
+            public void run() {
+                em.post(Events.TOGGLE_TIME_CMD, true, false);
+            }
+        });
     }
 
     @Override
     public void stopSimulationTime() {
-        em.post(Events.TOGGLE_TIME_CMD, false, false);
+        Gdx.app.postRunnable(new Runnable() {
+            @Override
+            public void run() {
+                em.post(Events.TOGGLE_TIME_CMD, false, false);
+            }
+        });
     }
 
     @Override
-    public void setSimulationPace(double pace) {
-        em.post(Events.PACE_CHANGE_CMD, pace);
+    public void setSimulationPace(final double pace) {
+        Gdx.app.postRunnable(new Runnable() {
+            @Override
+            public void run() {
+                em.post(Events.PACE_CHANGE_CMD, pace);
+            }
+        });
     }
 
     @Override
-    public void setStarBrightness(float brightness) {
+    public void setStarBrightness(final float brightness) {
         assert brightness >= Constants.MIN_SLIDER && brightness <= Constants.MAX_SLIDER : "Brightness value must be between 0 and 100";
-        em.post(Events.AMBIENT_LIGHT_CMD, MathUtilsd.lint(brightness, Constants.MIN_SLIDER, Constants.MAX_SLIDER, Constants.MIN_STAR_BRIGHT, Constants.MAX_STAR_BRIGHT));
+        Gdx.app.postRunnable(new Runnable() {
+            @Override
+            public void run() {
+                em.post(Events.AMBIENT_LIGHT_CMD, MathUtilsd.lint(brightness, Constants.MIN_SLIDER, Constants.MAX_SLIDER, Constants.MIN_STAR_BRIGHT, Constants.MAX_STAR_BRIGHT));
+            }
+        });
     }
 
     @Override
@@ -325,72 +500,124 @@ public class EventScriptingInterface implements IScriptingInterface, IObserver {
     }
 
     @Override
-    public void setGuiScrollPosition(float pixelY) {
-        em.post(Events.GUI_SCROLL_POSITION_CMD, pixelY);
+    public void setGuiScrollPosition(final float pixelY) {
+        Gdx.app.postRunnable(new Runnable() {
+            @Override
+            public void run() {
+                em.post(Events.GUI_SCROLL_POSITION_CMD, pixelY);
+            }
+        });
     }
 
     @Override
-    public void displayMessageObject(int id, String message, float x, float y, float r, float g, float b, float a, float fontSize) {
-        em.post(Events.ADD_CUSTOM_MESSAGE, id, message, x, y, r, g, b, a, fontSize);
+    public void displayMessageObject(final int id, final String message, final float x, final float y, final float r, final float g, final float b, final float a, final float fontSize) {
+        Gdx.app.postRunnable(new Runnable() {
+            @Override
+            public void run() {
+                em.post(Events.ADD_CUSTOM_MESSAGE, id, message, x, y, r, g, b, a, fontSize);
+            }
+        });
     }
 
     @Override
-    public void displayTextObject(int id, String text, float x, float y, float maxWidth, float maxHeight, float r, float g, float b, float a, float fontSize) {
-        em.post(Events.ADD_CUSTOM_TEXT, id, text, x, y, maxWidth, maxHeight, r, g, b, a, fontSize);
+    public void displayTextObject(final int id, final String text, final float x, final float y, final float maxWidth, final float maxHeight, final float r, final float g, final float b, final float a, final float fontSize) {
+        Gdx.app.postRunnable(new Runnable() {
+            @Override
+            public void run() {
+                em.post(Events.ADD_CUSTOM_TEXT, id, text, x, y, maxWidth, maxHeight, r, g, b, a, fontSize);
+            }
+        });
 
     }
 
     @Override
-    public void displayImageObject(int id, final String path, float x, float y, float r, float g, float b, float a) {
-        Texture tex = getTexture(path);
-        em.post(Events.ADD_CUSTOM_IMAGE, id, tex, x, y, r, g, b, a);
+    public void displayImageObject(final int id, final String path, final float x, final float y, final float r, final float g, final float b, final float a) {
+        Gdx.app.postRunnable(new Runnable() {
+            @Override
+            public void run() {
+                Texture tex = getTexture(path);
+                em.post(Events.ADD_CUSTOM_IMAGE, id, tex, x, y, r, g, b, a);
+            }
+        });
 
     }
 
     @Override
-    public void displayImageObject(int id, final String path, float x, float y) {
-        Texture tex = getTexture(path);
-        em.post(Events.ADD_CUSTOM_IMAGE, id, tex, x, y);
-
+    public void displayImageObject(final int id, final String path, final float x, final float y) {
+        Gdx.app.postRunnable(new Runnable() {
+            @Override
+            public void run() {
+                Texture tex = getTexture(path);
+                em.post(Events.ADD_CUSTOM_IMAGE, id, tex, x, y);
+            }
+        });
     }
 
     @Override
     public void removeAllObjects() {
-        em.post(Events.REMOVE_ALL_OBJECTS);
+        Gdx.app.postRunnable(new Runnable() {
+            @Override
+            public void run() {
+                em.post(Events.REMOVE_ALL_OBJECTS);
+            }
+        });
     }
 
     @Override
-    public void removeObject(int id) {
-        em.post(Events.REMOVE_OBJECTS, new int[] { id });
+    public void removeObject(final int id) {
+        Gdx.app.postRunnable(new Runnable() {
+            @Override
+            public void run() {
+                em.post(Events.REMOVE_OBJECTS, new int[] { id });
+            }
+        });
     }
 
     @Override
-    public void removeObjects(int[] ids) {
-        em.post(Events.REMOVE_OBJECTS, ids);
+    public void removeObjects(final int[] ids) {
+        Gdx.app.postRunnable(new Runnable() {
+            @Override
+            public void run() {
+                em.post(Events.REMOVE_OBJECTS, ids);
+            }
+        });
     }
 
     @Override
     public void maximizeInterfaceWindow() {
-        em.post(Events.GUI_FOLD_CMD, false);
-
+        Gdx.app.postRunnable(new Runnable() {
+            @Override
+            public void run() {
+                em.post(Events.GUI_FOLD_CMD, false);
+            }
+        });
     }
 
     @Override
     public void minimizeInterfaceWindow() {
-        em.post(Events.GUI_FOLD_CMD, true);
+        Gdx.app.postRunnable(new Runnable() {
+            @Override
+            public void run() {
+                em.post(Events.GUI_FOLD_CMD, true);
+            }
+        });
     }
 
     @Override
-    public void setGuiPosition(float x, float y) {
-        em.post(Events.GUI_MOVE_CMD, x, y);
-
+    public void setGuiPosition(final float x, final float y) {
+        Gdx.app.postRunnable(new Runnable() {
+            @Override
+            public void run() {
+                em.post(Events.GUI_MOVE_CMD, x, y);
+            }
+        });
     }
 
     @Override
     public void waitForInput() {
         while (inputCode < 0) {
             try {
-                Thread.sleep(50);
+                Thread.sleep(100);
             } catch (InterruptedException e) {
                 em.post(Events.JAVA_EXCEPTION, e);
             }
@@ -404,7 +631,7 @@ public class EventScriptingInterface implements IScriptingInterface, IObserver {
     public void waitForEnter() {
         while (inputCode != Keys.ENTER) {
             try {
-                Thread.sleep(50);
+                Thread.sleep(100);
             } catch (InterruptedException e) {
                 em.post(Events.JAVA_EXCEPTION, e);
             }

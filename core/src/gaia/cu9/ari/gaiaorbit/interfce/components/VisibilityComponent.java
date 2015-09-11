@@ -105,7 +105,7 @@ public class VisibilityComponent extends GuiComponent implements IObserver {
             boolean interf = (Boolean) data[1];
             if (!interf) {
                 String name = (String) data[0];
-                Button b = buttonMap.get(name);
+                Button b = buttonMap.get(name.toLowerCase());
 
                 b.setProgrammaticChangeEvents(false);
                 if (b != null) {
