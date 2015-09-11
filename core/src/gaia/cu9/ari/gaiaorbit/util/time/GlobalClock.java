@@ -55,7 +55,7 @@ public class GlobalClock implements IObserver, ITimeFrameProvider {
             double h = Math.abs(dt * pace);
             hdiff = h * sign;
 
-            double ms = h * Constants.H_TO_MS;
+            double ms = sign * h * Constants.H_TO_MS;
 
             long currentTime = time.getTime();
             lastTime.setTime(currentTime);

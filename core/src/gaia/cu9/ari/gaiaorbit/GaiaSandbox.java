@@ -306,8 +306,10 @@ public class GaiaSandbox implements ApplicationListener, IObserver, IMainRendere
         // Set current date
         EventManager.instance.post(Events.TIME_CHANGE_CMD, new Date());
 
-        // Activate time
-        EventManager.instance.post(Events.TOGGLE_TIME_CMD, true, false);
+        if (Constants.webgl) {
+            // Activate time
+            EventManager.instance.post(Events.TOGGLE_TIME_CMD, true, false);
+        }
 
         initialized = true;
 
