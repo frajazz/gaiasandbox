@@ -23,7 +23,6 @@ import com.badlogic.gdx.utils.viewport.Viewport;
  *
  */
 public class NaturalCamera extends AbstractCamera implements IObserver {
-
     /** Camera far value **/
     public static final double CAM_FAR = 1e6 * Constants.PC_TO_U;
     /** Camera near values **/
@@ -60,7 +59,7 @@ public class NaturalCamera extends AbstractCamera implements IObserver {
      */
     public CelestialBody focus, focusBak, closest;
 
-    /** 
+    /**
      * Distance from the center (Sun)
      */
     public double distance;
@@ -127,8 +126,8 @@ public class NaturalCamera extends AbstractCamera implements IObserver {
         EventManager.instance.subscribe(this, Events.FOCUS_CHANGE_CMD, Events.FOV_CHANGED_CMD, Events.FOCUS_LOCK_CMD, Events.CAMERA_POS_CMD, Events.CAMERA_DIR_CMD, Events.CAMERA_UP_CMD, Events.CAMERA_FWD, Events.CAMERA_ROTATE, Events.CAMERA_PAN, Events.CAMERA_ROLL, Events.CAMERA_TURN, Events.CAMERA_STOP, Events.CAMERA_CENTER, Events.GO_TO_OBJECT_CMD);
     }
 
+    // Set up direction and lookAtSensor if accelerometer is enabled
     public void update(float dt, ITimeFrameProvider time) {
-        // Set up direction and lookAtSensor if accelerometer is enabled
         if (accelerometer) {
             synchronized (lookAtSensor) {
                 direction.set(lookAtSensor).nor();
@@ -266,7 +265,7 @@ public class NaturalCamera extends AbstractCamera implements IObserver {
     }
 
     /**
-     * Sets the gamepad velocity as it comes from the joystick sensor. 
+     * Sets the gamepad velocity as it comes from the joystick sensor.
      * @param amount The amount in [-1, 1].
      */
     public void setVelocity(double amount) {
@@ -286,7 +285,7 @@ public class NaturalCamera extends AbstractCamera implements IObserver {
     }
 
     /**
-     * Adds a rotation force to the camera. DeltaX corresponds to yaw (right/left) and deltaY 
+     * Adds a rotation force to the camera. DeltaX corresponds to yaw (right/left) and deltaY
      * corresponds to pitch (up/down).
      * @param deltaX The yaw amount.
      * @param deltaY The pitch amount.
@@ -702,10 +701,10 @@ public class NaturalCamera extends AbstractCamera implements IObserver {
 
     }
 
-    /** 
+    /**
      * Rotates the direction and up vector of this camera by the given angle around the given axis, with the axis attached to given
      * point. The direction and up vector will not be orthogonalized.
-     * 
+     *
      * @param point the point to attach the axis to
      * @param axis the axis to rotate around
      * @param angle the angle */
@@ -855,7 +854,7 @@ public class NaturalCamera extends AbstractCamera implements IObserver {
         if (focus != null && !(focus instanceof Star)) {
             // Move camera if too close to focus
             this.focus.getAbsolutePosition(aux1);
-            if (pos.dst(aux1) < this.focus.size * 2) {
+            if (pos.dst(aux1) < this.focus.getRadius()) {
                 // Position camera near focus
                 stopTotalMovement();
 

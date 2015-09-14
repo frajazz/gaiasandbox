@@ -1,0 +1,10 @@
+{
+  "cmd": "gradle desktop:run",
+  "name": "run",
+  "sh": true,
+  "targets": {
+    "compile": {
+      "cmd": "gradle desktop:compileJava",
+      "sh": true
+    }
+}
