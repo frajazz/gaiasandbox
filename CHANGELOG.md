@@ -1,14 +1,6 @@
 # Change Log
 
-## [Unreleased](https://github.com/ari-zah/gaiasandbox/tree/HEAD)
-
-[Full Changelog](https://github.com/ari-zah/gaiasandbox/compare/0.707b...HEAD)
-
-**Fixed bugs:**
-
-- Linux launcher not working if spaces in path [\#47](https://github.com/ari-zah/gaiasandbox/issues/47)
-
-## [0.707b](https://github.com/ari-zah/gaiasandbox/tree/0.707b) (2015-09-10)
+## [0.707b](https://github.com/ari-zah/gaiasandbox/tree/0.707b) (2015-09-14)
 
 [Full Changelog](https://github.com/ari-zah/gaiasandbox/compare/0.706b...0.707b)
 
@@ -35,6 +27,8 @@
 - Migrate build system to gradle [\#2](https://github.com/ari-zah/gaiasandbox/issues/2)
 
 **Fixed bugs:**
+
+- Linux launcher not working if spaces in path [\#47](https://github.com/ari-zah/gaiasandbox/issues/47)
 
 - Fix labels in Gaia Fov mode [\#45](https://github.com/ari-zah/gaiasandbox/issues/45)
 
