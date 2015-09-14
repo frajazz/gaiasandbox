@@ -3,15 +3,17 @@
 # Gaia Sandbox start script.
 #
 
+# Get script path
 SOURCE="${BASH_SOURCE[0]}"
 while [ -h "$SOURCE" ]; do # resolve $SOURCE until the file is no longer a symlink
-  DIR="$( cd -P "$( dirname "$SOURCE" )" && pwd )"
+  GSDIR="$( cd -P "$( dirname "$SOURCE" )" && pwd )"
   SOURCE="$(readlink "$SOURCE")"
-  [[ $SOURCE != /* ]] && SOURCE="$DIR/$SOURCE" # if $SOURCE was a relative symlink, we need to resolve it relative to the path where the symlink file was located
+  [[ $SOURCE != /* ]] && SOURCE="$GSDIR/$SOURCE" # if $SOURCE was a relative symlink, we need to resolve it relative to the path where the symlink file was located
 done
-
-
 GSDIR="$( cd -P "$( dirname "$SOURCE" )" && pwd )"
+# Escape spaces in GSDIR
+GSDIRESC=$(printf %q "$GSDIR")
+
 LIB_PATH="$GSDIR/lib/*"
 
 #
@@ -27,7 +29,7 @@ fi
 # Settings.
 #
 # Properties file
-OPTS="$OPTS -Dproperties.file=$GSDIR/conf/global.properties"
+OPTS="$OPTS -Dproperties.file=$GSDIRESC/conf/global.properties"
 
 # Memory
 OPTS="$OPTS -Xmx512m"
@@ -44,11 +46,7 @@ OPTS="$OPTS -XX:+UseParallelGC"
 # Run.
 #
 
-OLDDIR="$( pwd )"
-
-cd $GSDIR
 CMD="$JAVA $OPTS -cp \"$LIB_PATH\" gaia.cu9.ari.gaiaorbit.desktop.GaiaSandboxDesktop $@"
 echo "$CMD"
-eval $CMD
 
-cd $OLDDIR
+( cd "$GSDIR" && eval $CMD )
