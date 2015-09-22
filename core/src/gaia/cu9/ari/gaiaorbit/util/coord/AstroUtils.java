@@ -447,11 +447,11 @@ public class AstroUtils {
     }
 
     public static double getMsSinceJ2010(Date date) {
-	return (getJulianDate(date) - JD_J2010) * DAY_TO_MS;
+	return (getJulianDateCache(date) - JD_J2010) * DAY_TO_MS;
     }
 
     public static double getMsSinceJ2000(Date date) {
-	return (getJulianDate(date) - JD_J2000) * DAY_TO_MS;
+	return (getJulianDateCache(date) - JD_J2000) * DAY_TO_MS;
     }
 
     /**

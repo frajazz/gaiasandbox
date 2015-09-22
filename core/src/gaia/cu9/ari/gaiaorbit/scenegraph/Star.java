@@ -63,28 +63,22 @@ public class Star extends Particle {
 	}
     }
 
-    /** Proper motion in cartesian coordinates [U/sec] **/
-    Vector3d pm;
     double modelDistance;
 
     public Star() {
 	this.parentName = ROOT_NAME;
-	pm = new Vector3d();
     }
 
     public Star(Vector3d pos, float appmag, float absmag, float colorbv, String name, int starid) {
 	super(pos, appmag, absmag, colorbv, name, starid);
-	pm = new Vector3d();
     }
 
     public Star(Vector3d pos, float appmag, float absmag, float colorbv, String name, float ra, float dec, int starid) {
 	super(pos, appmag, absmag, colorbv, name, ra, dec, starid);
-	pm = new Vector3d();
     }
 
     public Star(Vector3d pos, Vector3d pm, float appmag, float absmag, float colorbv, String name, float ra, float dec, int starid) {
-	super(pos, appmag, absmag, colorbv, name, ra, dec, starid);
-	this.pm = pm;
+	super(pos, pm, appmag, absmag, colorbv, name, ra, dec, starid);
     }
 
     @Override
