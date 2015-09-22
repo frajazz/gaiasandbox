@@ -3,9 +3,16 @@ precision mediump float;
 precision mediump int;
 #endif
 
+// cartesian position
 attribute vec4 a_position;
+// cartesian proper motion vector, same units as position
+attribute vec4 a_pm;
+// color
 attribute vec4 a_color;
+// x - size, y - th_angle_point
 attribute vec4 a_additional;
+// time in ms since ref epoch
+uniform float u_t;
 
 uniform float u_pointAlphaMin;
 uniform float u_pointAlphaMax;
@@ -26,7 +33,11 @@ float lint(float x, float x0, float x1, float y0, float y1) {
 
 void main() {
     vec3 pos = a_position.xyz - u_camPos;
-    
+
+    // Proper motion
+    vec3 pm = a_pm.xyz * u_t / 1000.0;     
+    pos = pos + pm;
+  
     float a_size = a_additional.x;
     float a_thAnglePoint = a_additional.y;
     
@@ -35,6 +46,6 @@ void main() {
     
     v_col = vec4(a_color.rgb, opacity * u_alpha * step(viewAngleApparent, a_thAnglePoint * 60.0));
 
-	gl_Position = u_projModelView * vec4(pos, 0.0);
+    gl_Position = u_projModelView * vec4(pos, 0.0);
     gl_PointSize = u_pointSize;
 }

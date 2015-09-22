@@ -70,8 +70,8 @@ public abstract class CelestialBody extends AbstractPositionEntity implements I3
     public float compalpha;
 
     public CelestialBody() {
-        super();
-        TH_OVER_FACTOR = (float) (THRESHOLD_ANGLE_POINT() / GlobalConf.scene.LABEL_NUMBER_FACTOR);
+	super();
+	TH_OVER_FACTOR = (float) (THRESHOLD_ANGLE_POINT() / GlobalConf.scene.LABEL_NUMBER_FACTOR);
     }
 
     /**
@@ -80,24 +80,24 @@ public abstract class CelestialBody extends AbstractPositionEntity implements I3
      */
     @Override
     public void update(ITimeFrameProvider time, final Transform parentTransform, ICamera camera) {
-        if (appmag <= GlobalConf.runtime.LIMIT_MAG_RUNTIME) {
-            super.update(time, parentTransform, camera);
-        }
+	if (appmag <= GlobalConf.runtime.LIMIT_MAG_RUNTIME) {
+	    super.update(time, parentTransform, camera);
+	}
     }
 
     @Override
     public void render(Object... params) {
-        Object first = params[0];
-        if (first instanceof ShaderProgram) {
-            // QUAD - SHADER
-            render((ShaderProgram) first, (Float) params[1], (Boolean) params[2], (Mesh) params[3], (ICamera) params[4]);
-        } else if (first instanceof SpriteBatch) {
-            // LABEL
-            render((SpriteBatch) first, (ShaderProgram) params[1], (BitmapFont) params[2], (ICamera) params[3]);
-        } else if (first instanceof ModelBatch) {
-            // Normal model
-            render((ModelBatch) first, (Float) params[1]);
-        }
+	Object first = params[0];
+	if (first instanceof ShaderProgram) {
+	    // QUAD - SHADER
+	    render((ShaderProgram) first, (Float) params[1], (Boolean) params[2], (Mesh) params[3], (ICamera) params[4]);
+	} else if (first instanceof SpriteBatch) {
+	    // LABEL
+	    render((SpriteBatch) first, (ShaderProgram) params[1], (BitmapFont) params[2], (ICamera) params[3]);
+	} else if (first instanceof ModelBatch) {
+	    // Normal model
+	    render((ModelBatch) first, (Float) params[1]);
+	}
     }
 
     float precomp = -1;
@@ -107,47 +107,47 @@ public abstract class CelestialBody extends AbstractPositionEntity implements I3
      */
     @Override
     public void render(ShaderProgram shader, float alpha, boolean colorTransit, Mesh mesh, ICamera camera) {
-        compalpha = alpha;
+	compalpha = alpha;
 
-        float size = getFuzzyRenderSize(camera);
+	float size = getFuzzyRenderSize(camera);
 
-        Vector3 aux = v3fpool.obtain();
-        shader.setUniformf("u_pos", transform.getTranslationf(aux));
-        shader.setUniformf("u_size", size);
-        v3fpool.free(aux);
+	Vector3 aux = v3fpool.obtain();
+	shader.setUniformf("u_pos", transform.getTranslationf(aux));
+	shader.setUniformf("u_size", size);
+	v3fpool.free(aux);
 
-        float[] col = ccPale;
-        if (colorTransit)
-            col = ccTransit;
-        shader.setUniformf("u_color", col[0], col[1], col[2], alpha * opacity);
-        if (!Constants.mobile) {
-            shader.setUniformf("u_inner_rad", getInnerRad());
-            shader.setUniformf("u_distance", (float) (distToCamera * Constants.U_TO_KM));
-            shader.setUniformf("u_apparent_angle", viewAngleApparent);
-            shader.setUniformf("u_th_angle_point", (float) THRESHOLD_ANGLE_POINT() * camera.getFovFactor());
+	float[] col = ccPale;
+	if (colorTransit)
+	    col = ccTransit;
+	shader.setUniformf("u_color", col[0], col[1], col[2], alpha * opacity);
+	if (!Constants.mobile) {
+	    shader.setUniformf("u_inner_rad", getInnerRad());
+	    shader.setUniformf("u_distance", (float) (distToCamera * Constants.U_TO_KM));
+	    shader.setUniformf("u_apparent_angle", viewAngleApparent);
+	    shader.setUniformf("u_th_angle_point", (float) THRESHOLD_ANGLE_POINT() * camera.getFovFactor());
 
-            if (precomp < 0) {
-                precomp = (float) (getRadius() * Constants.U_TO_KM * 172.4643429);
-            }
-            shader.setUniformf("u_th_dist_up", precomp);
-        }
+	    if (precomp < 0) {
+		precomp = (float) (getRadius() * Constants.U_TO_KM * 172.4643429);
+	    }
+	    shader.setUniformf("u_th_dist_up", precomp);
+	}
 
-        // Sprite.render
-        mesh.render(shader, GL20.GL_TRIANGLES, 0, 6);
+	// Sprite.render
+	mesh.render(shader, GL20.GL_TRIANGLES, 0, 6);
     }
 
     public float getFuzzyRenderSize(ICamera camera) {
-        float thAngleQuad = (float) THRESHOLD_ANGLE_QUAD() * camera.getFovFactor();
-        double size = 0f;
-        if (viewAngle >= THRESHOLD_ANGLE_POINT() * camera.getFovFactor()) {
-            if (viewAngle < thAngleQuad) {
-                float tanThShaderOverlapDist = (float) Math.tan(thAngleQuad) * distToCamera;
-                size = tanThShaderOverlapDist;
-            } else {
-                size = this.size;
-            }
-        }
-        return (float) size / camera.getFovFactor();
+	float thAngleQuad = (float) THRESHOLD_ANGLE_QUAD() * camera.getFovFactor();
+	double size = 0f;
+	if (viewAngle >= THRESHOLD_ANGLE_POINT() * camera.getFovFactor()) {
+	    if (viewAngle < thAngleQuad) {
+		float tanThShaderOverlapDist = (float) Math.tan(thAngleQuad) * distToCamera;
+		size = tanThShaderOverlapDist;
+	    } else {
+		size = this.size;
+	    }
+	}
+	return (float) size / camera.getFovFactor();
     }
 
     /**
@@ -155,44 +155,44 @@ public abstract class CelestialBody extends AbstractPositionEntity implements I3
      */
     @Override
     public void render(SpriteBatch batch, ShaderProgram shader, BitmapFont font, ICamera camera) {
-        if (camera.getCurrent() instanceof FovCamera) {
+	if (camera.getCurrent() instanceof FovCamera) {
 
-            render2DLabel(batch, shader, font, camera, text(), pos);
-        } else {
-            // 3D distance font
-            Vector3d pos = v3dpool.obtain();
-            textPosition(pos);
-            shader.setUniformf("a_viewAngle", viewAngle);
-            shader.setUniformf("a_thOverFactor", TH_OVER_FACTOR);
-            render3DLabel(batch, shader, font, camera, text(), pos, textScale(), textSize(), textColour());
-            v3dpool.free(pos);
-        }
+	    render2DLabel(batch, shader, font, camera, text(), pos);
+	} else {
+	    // 3D distance font
+	    Vector3d pos = v3dpool.obtain();
+	    textPosition(pos);
+	    shader.setUniformf("a_viewAngle", viewAngle);
+	    shader.setUniformf("a_thOverFactor", TH_OVER_FACTOR);
+	    render3DLabel(batch, shader, font, camera, text(), pos, textScale(), textSize(), textColour());
+	    v3dpool.free(pos);
+	}
 
     }
 
     protected void setColor2Data() {
-        final float plus = 0.15f;
-        ccPale = new float[] { Math.min(1, cc[0] + plus), Math.min(1, cc[1] + plus), Math.min(1, cc[2] + plus) };
-        ccTransit = new float[] { ccPale[0], ccPale[1], ccPale[2], cc[3] };
+	final float plus = 0.15f;
+	ccPale = new float[] { Math.min(1, cc[0] + plus), Math.min(1, cc[1] + plus), Math.min(1, cc[2] + plus) };
+	ccTransit = new float[] { ccPale[0], ccPale[1], ccPale[2], cc[3] };
     }
 
     public abstract float getInnerRad();
 
     public void setMag(Double mag) {
-        this.absmag = mag.floatValue();
-        this.appmag = mag.floatValue();
+	this.absmag = mag.floatValue();
+	this.appmag = mag.floatValue();
     }
 
     public void setAbsmag(Double absmag) {
-        this.absmag = absmag.floatValue();
+	this.absmag = absmag.floatValue();
     }
 
     public void setAppmag(Double appmag) {
-        this.appmag = appmag.floatValue();
+	this.appmag = appmag.floatValue();
     }
 
     public Vector2 getPositionSph() {
-        return posSph;
+	return posSph;
     }
 
     /**
@@ -200,12 +200,12 @@ public abstract class CelestialBody extends AbstractPositionEntity implements I3
      * @param list
      */
     public void addFocusableObjects(List<CelestialBody> list) {
-        list.add(this);
-        super.addFocusableObjects(list);
+	list.add(this);
+	super.addFocusableObjects(list);
     }
 
     public float getViewAngle() {
-        return viewAngle;
+	return viewAngle;
     }
 
     /**
@@ -213,34 +213,34 @@ public abstract class CelestialBody extends AbstractPositionEntity implements I3
      * @param size
      */
     public void setSize(Double size) {
-        // Size gives us the radius, and we want the diameter
-        this.size = (float) (size * 2 * Constants.KM_TO_U);
+	// Size gives us the radius, and we want the diameter
+	this.size = (float) (size * 2 * Constants.KM_TO_U);
     }
 
     public boolean isStar() {
-        return false;
+	return false;
     }
 
     /**
      * Sets the rotation period in hours
      */
     public void setRotation(RotationComponent rc) {
-        this.rc = rc;
+	this.rc = rc;
     }
 
     public boolean withinMagLimit() {
-        return this.appmag <= GlobalConf.runtime.LIMIT_MAG_RUNTIME;
+	return this.appmag <= GlobalConf.runtime.LIMIT_MAG_RUNTIME;
     }
 
     @Override
     public <T extends SceneGraphNode> T getSimpleCopy() {
-        CelestialBody copy = (CelestialBody) super.getSimpleCopy();
-        copy.absmag = this.absmag;
-        copy.appmag = this.appmag;
-        copy.colorbv = this.colorbv;
-        copy.flux = this.flux;
-        copy.rc = this.rc;
-        return (T) copy;
+	CelestialBody copy = (CelestialBody) super.getSimpleCopy();
+	copy.absmag = this.absmag;
+	copy.appmag = this.appmag;
+	copy.colorbv = this.colorbv;
+	copy.flux = this.flux;
+	copy.rc = this.rc;
+	return (T) copy;
     }
 
     /**
@@ -250,50 +250,50 @@ public abstract class CelestialBody extends AbstractPositionEntity implements I3
      * @param time
      */
     protected void updateTransitNumber(boolean visible, ITimeFrameProvider time, FovCamera fcamera) {
-        if (GlobalConf.scene.COMPUTE_GAIA_SCAN && visible && timeCondition(time)) {
-            // Update observations. Add if forward time, subtract if backward time
-            transits = Math.max(0, transits + (int) Math.signum(time.getDt()));
-            lastTransitIncrease = time.getTime().getTime();
-            // Update transit colour
-            ColourUtils.long_rainbow(ColourUtils.normalize(transits, 0, 30), this.ccTransit);
-        }
+	if (GlobalConf.scene.COMPUTE_GAIA_SCAN && visible && timeCondition(time)) {
+	    // Update observations. Add if forward time, subtract if backward time
+	    transits = Math.max(0, transits + (int) Math.signum(time.getDt()));
+	    lastTransitIncrease = time.getTime().getTime();
+	    // Update transit colour
+	    ColourUtils.long_rainbow(ColourUtils.normalize(transits, 0, 30), this.ccTransit);
+	}
     }
 
     protected boolean timeCondition(ITimeFrameProvider time) {
-        // 95 seconds minimum since last increase, this ensures we are not increasing more than once in the same transit
-        if (time.getDt() < 0 && lastTransitIncrease - time.getTime().getTime() < 0) {
-            lastTransitIncrease = time.getTime().getTime();
-            return true;
-        } else if (time.getDt() > 0 && time.getTime().getTime() - lastTransitIncrease < 0) {
-            lastTransitIncrease = time.getTime().getTime();
-            return true;
-        } else {
-            return (time.getDt() > 0 && time.getTime().getTime() - lastTransitIncrease > 90000) || (time.getDt() < 0 && lastTransitIncrease - time.getTime().getTime() > 90000);
-        }
+	// 95 seconds minimum since last increase, this ensures we are not increasing more than once in the same transit
+	if (time.getDt() < 0 && lastTransitIncrease - time.getTime().getTime() < 0) {
+	    lastTransitIncrease = time.getTime().getTime();
+	    return true;
+	} else if (time.getDt() > 0 && time.getTime().getTime() - lastTransitIncrease < 0) {
+	    lastTransitIncrease = time.getTime().getTime();
+	    return true;
+	} else {
+	    return (time.getDt() > 0 && time.getTime().getTime() - lastTransitIncrease > 90000) || (time.getDt() < 0 && lastTransitIncrease - time.getTime().getTime() > 90000);
+	}
     }
 
     @Override
     public boolean renderText() {
-        return name != null && viewAngle > TH_OVER_FACTOR;
+	return name != null && viewAngle > TH_OVER_FACTOR;
     }
 
     @Override
     public float[] textColour() {
-        return labelColour;
+	return labelColour;
     }
 
     @Override
     public float textScale() {
-        return (float) Math.atan(labelMax()) * labelFactor() * 4e2f;
+	return (float) Math.atan(labelMax()) * labelFactor() * 4e2f;
     }
 
     @Override
     public float textSize() {
-        return (float) Math.min(labelSizeConcrete() / distToCamera, labelMax()) * distToCamera * labelFactor();
+	return (float) Math.min(labelSizeConcrete() / distToCamera, labelMax()) * distToCamera * labelFactor();
     }
 
     protected float labelSizeConcrete() {
-        return this.size;
+	return this.size;
     }
 
     protected abstract float labelFactor();
@@ -302,30 +302,42 @@ public abstract class CelestialBody extends AbstractPositionEntity implements I3
 
     @Override
     public void textPosition(Vector3d out) {
-        transform.getTranslation(out);
-        double len = out.len();
-        out.clamp(0, len - getRadius());
+	transform.getTranslation(out);
+	double len = out.len();
+	out.clamp(0, len - getRadius());
     }
 
     @Override
     public String text() {
-        return name;
+	return name;
     }
 
     @Override
     public void textDepthBuffer() {
-        Gdx.gl.glEnable(GL20.GL_DEPTH_TEST);
-        Gdx.gl.glDepthMask(true);
+	Gdx.gl.glEnable(GL20.GL_DEPTH_TEST);
+	Gdx.gl.glDepthMask(true);
     }
 
     @Override
     public boolean hasAtmosphere() {
-        return false;
+	return false;
     }
 
     @Override
     public boolean isLabel() {
-        return true;
+	return true;
+    }
+
+    public double getPmX() {
+	return 0;
+    }
+
+    public double getPmY() {
+	return 0;
+    }
+
+    public double getPmZ() {
+	return 0;
     }
 
 }
