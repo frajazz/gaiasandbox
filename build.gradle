@@ -21,7 +21,7 @@ allprojects {
     apply plugin: "idea"
 
     version = '1.0'
-    
+
     ext {
         appName = 'GaiaSandbox'
         gdxVersion = '1.6.5'
@@ -40,7 +40,7 @@ allprojects {
         maven { url "https://oss.sonatype.org/content/repositories/snapshots/" }
         maven { url "https://oss.sonatype.org/content/repositories/releases/" }
     }
-    
+
     eclipse {
         classpath {
            downloadSources=true
@@ -54,23 +54,23 @@ project(":desktop") {
     def cmd = "git describe --abbrev=0 --tags HEAD"
     def proc = cmd.execute()
     project.ext.tag = proc.text.trim()
-    
+
     cmd = "git rev-parse --short HEAD"
     proc = cmd.execute()
     project.ext.rev = proc.text.trim()
-    
-    cmd = "uname -a"
+
+    cmd = "uname -snmr"
     proc = cmd.execute()
     project.ext.system = proc.text.trim()
-    
+
     cmd = "whoami"
     proc = cmd.execute()
     project.ext.builder = proc.text.trim()
-    
+
     project.ext.buildtime = new Date()
-    
+
     version = "$tag"
-    
+
     println ""
     println "BUILD INFO FROM GIT"
     println "==================="
@@ -81,7 +81,7 @@ project(":desktop") {
     println "system: $system"
     println ""
 
-    
+
     // Set some build variables
     project.ext.baseDir = System.getProperty("user.dir")
     project.ext.tagRev = project.tag + "." + project.rev
@@ -89,7 +89,7 @@ project(":desktop") {
     project.ext.distDir = "$baseDir/releases/$distName"
     project.ext.packageName = "packages-$tagRev"
     project.ext.packageDir = "$baseDir/releases/$packageName"
-    
+
     println ""
     println "BUILD VARIABLES AND INFO"
     println "========================"
@@ -100,7 +100,7 @@ project(":desktop") {
     println "packages name: $packageName"
     println "packages dir: $packageDir"
     println ""
-    
+
     dependencies {
         compile project(":core")
         compile "com.badlogicgames.gdx:gdx-backend-lwjgl:$gdxVersion"
@@ -115,7 +115,7 @@ project(":desktop") {
 					'../android/assets',
                                         'lib/stil.jar')
     }
-    
+
     jar {
         manifest {
             attributes 'Implementation-Title': 'Gaia Sandbox desktop',
@@ -136,11 +136,11 @@ project(":desktop") {
         from('../core/build/classes/main') {
             include '**'
         }
-        
-        
+
+
         println "Creating desktop jar file"
     }
-    
+
 }
 
 
@@ -155,7 +155,7 @@ project(":html") {
 			force 'com.google.gwt:gwt-user:2.7.0', 'com.google.gwt:gwt-dev:2.7.0'
 		}
 	}
-	
+
     dependencies {
         compile project(":core")
         compile "com.badlogicgames.gdx:gdx-backend-gwt:$gdxVersion"
@@ -178,7 +178,7 @@ project(":core") {
 	compile files('lib/postprocessing.jar',
                         'lib/postprocessing-sources.jar')
     }
-    
+
     jar {
         manifest {
             attributes 'Implementation-Title': 'Gaia Sandbox core',
@@ -216,7 +216,7 @@ task versionFile << {
     File versionFile = file('core/build/classes/main/version')
     delete versionFile
     def writer = new FileWriter(versionFile)
-    
+
     try {
        writer.write('buildtime=' + project(':desktop').buildtime + '\n')
        writer.write('build=' + project(':desktop').rev + '\n')
@@ -228,5 +228,3 @@ task versionFile << {
        writer.close()
     }
 }
-
-
