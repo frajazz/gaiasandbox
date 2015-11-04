@@ -333,7 +333,6 @@ public class FovCamera extends AbstractCamera implements IObserver {
 
     /**
      * We have fixed field of view angles and thus fixed aspect ratio.
-     * @Override
      */
     public void updateAngleEdge(int width, int height) {
         float h = (float) Satellite.FOV_AC_ACTIVE;

@@ -76,7 +76,6 @@ public abstract class CelestialBody extends AbstractPositionEntity implements I3
 
     /**
      * Overrides the update adding the magnitude limit thingy.
-     * @override
      */
     @Override
     public void update(ITimeFrameProvider time, final Transform parentTransform, ICamera camera) {

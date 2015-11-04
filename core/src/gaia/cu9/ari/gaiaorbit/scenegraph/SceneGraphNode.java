@@ -26,7 +26,6 @@ import com.badlogic.gdx.utils.Pool;
  * A scene graph entity.
  * @author Toni Sagrista
  *
- * @param <T>
  */
 public class SceneGraphNode implements ISceneGraphNode, IPosition {
     public static final String ROOT_NAME = "Universe";

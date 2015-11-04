@@ -47,9 +47,12 @@ public class DecalUtils {
      * @param font The font.
      * @param batch The sprite batch to use.
      * @param text The text to write.
-     * @param pos The 3D position.
-     * @param camera The camera.
+     * @param x The x coordinate.
+     * @param y The y coordinate.
+     * @param z The z coordinate.
      * @param scale The scale of the font.
+     * @param camera The camera.
+     * @param faceCamera Whether to apply billboarding.
      */
     public static void drawFont3D(BitmapFont font, SpriteBatch batch, String text, float x, float y, float z, float scale, Camera camera, boolean faceCamera) {
         // Store batch matrices

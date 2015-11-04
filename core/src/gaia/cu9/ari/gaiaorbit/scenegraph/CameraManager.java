@@ -172,8 +172,7 @@ public class CameraManager implements ICamera, IObserver {
     /**
      * Update method.
      * @param dt Delta time in seconds.
-     * @time time The time frame provider.
-     * @Override
+     * @param time The time frame provider.
      */
     public void update(float dt, ITimeFrameProvider time) {
         current.update(dt, time);
