@@ -18,7 +18,6 @@
  */
 package gaia.cu9.ari.gaiaorbit.util.gaia.time;
 
-
 import java.io.Serializable;
 
 /**
@@ -41,39 +40,39 @@ public interface Duration extends Serializable {
     public final long NS_PER_SEC = 1000000000L;
     public final double SECS_PER_MIN = 60.;
     public final double MINS_PER_HOUR = 60.;
-    public final double HOURS_PER_DAY = 24.;    
+    public final double HOURS_PER_DAY = 24.;
     public final double DAYS_PER_JULIAN_YEAR = 365.25D;
-	public final double HOURS_PER_REV = 6;
-	public final double REVS_PER_DAY = 4;
-    
+    public final double HOURS_PER_REV = 6;
+    public final double REVS_PER_DAY = 4;
+
     /* _PER_JULIAN_YEAR */
     public final double REVS_PER_JULIAN_YEAR = DAYS_PER_JULIAN_YEAR * REVS_PER_DAY;
     public final double HOURS_PER_JULIAN_YEAR = DAYS_PER_JULIAN_YEAR * HOURS_PER_DAY;
     public final double MINS_PER_JULIAN_YEAR = HOURS_PER_JULIAN_YEAR * MINS_PER_HOUR;
     public final double SECS_PER_JULIAN_YEAR = MINS_PER_JULIAN_YEAR * SECS_PER_MIN;
-    public final double NS_PER_JULIAN_YEAR = SECS_PER_JULIAN_YEAR * (double)NS_PER_SEC;
-    public final long NS_PER_JULIAN_YEAR_L = (long)NS_PER_JULIAN_YEAR;
+    public final double NS_PER_JULIAN_YEAR = SECS_PER_JULIAN_YEAR * (double) NS_PER_SEC;
+    public final long NS_PER_JULIAN_YEAR_L = (long) NS_PER_JULIAN_YEAR;
 
     /* _PER_DAY */
     public final double MINS_PER_DAY = HOURS_PER_DAY * MINS_PER_HOUR;
     public final double SECS_PER_DAY = MINS_PER_DAY * SECS_PER_MIN;
-    public final double NS_PER_DAY = SECS_PER_DAY * (double)NS_PER_SEC;
-    public final long NS_PER_DAY_L = (long)NS_PER_DAY;
-    
+    public final double NS_PER_DAY = SECS_PER_DAY * (double) NS_PER_SEC;
+    public final long NS_PER_DAY_L = (long) NS_PER_DAY;
+
     /* _PER_REV */
     public final double MINS_PER_REV = HOURS_PER_REV * MINS_PER_HOUR;
     public final double SECS_PER_REV = MINS_PER_REV * SECS_PER_MIN;
-    public final double NS_PER_REV = SECS_PER_REV * (double)NS_PER_SEC;
-    public final long NS_PER_REV_L = (long)NS_PER_REV;
-    
+    public final double NS_PER_REV = SECS_PER_REV * (double) NS_PER_SEC;
+    public final long NS_PER_REV_L = (long) NS_PER_REV;
+
     /* _PER_HOUR */
     public final double SECS_PER_HOUR = MINS_PER_HOUR * SECS_PER_MIN;
-    public final double NS_PER_HOUR = SECS_PER_HOUR * (double)NS_PER_SEC;
-    public final long NS_PER_HOUR_L = (long)NS_PER_HOUR;
+    public final double NS_PER_HOUR = SECS_PER_HOUR * (double) NS_PER_SEC;
+    public final long NS_PER_HOUR_L = (long) NS_PER_HOUR;
 
     /* _PER_MIN */
-    public final double NS_PER_MIN = SECS_PER_MIN * (double)NS_PER_SEC;
-    public final long NS_PER_MIN_L = (long)NS_PER_MIN;
+    public final double NS_PER_MIN = SECS_PER_MIN * (double) NS_PER_SEC;
+    public final long NS_PER_MIN_L = (long) NS_PER_MIN;
 
     /**
      * Set this duration to a new given one
@@ -83,7 +82,6 @@ public interface Duration extends Serializable {
      * @return updated object
      */
     public Duration set(final Duration d);
-
 
     /**
      * @return duration expressed in ns
@@ -142,27 +140,27 @@ public interface Duration extends Serializable {
      * @return updated object
      */
     public Duration sub(final Duration d);
-    
+
     /**
      * Check that this duration is longer than a given one 
      * @param d duration to compare to
      * @return {@code true} if this duration is longer than {@code d}
      */
     public boolean isLongerThan(Duration d);
-    
+
     /**
      * Multiply this duration by a given factor
-     * 
+     * @param s scale factor
      *
      * @return updated object
      */
     public Duration mult(final double s);
-    
+
     /**
      * @return Current time scale of the duration
      */
     public TimeScale getScale();
-    
+
     /**
      * Set the time scale for this duration
      * @param scale time scale to set the duration to

@@ -23,7 +23,7 @@ import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.math.Vector3;
 
 /**
- * These are entities that have a model and is always loaded.
+ * Represents any celestial body.
  * @author Toni Sagrista
  *
  */

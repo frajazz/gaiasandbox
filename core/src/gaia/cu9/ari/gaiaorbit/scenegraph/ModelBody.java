@@ -10,6 +10,11 @@ import com.badlogic.gdx.assets.AssetManager;
 import com.badlogic.gdx.graphics.g3d.ModelBatch;
 import com.badlogic.gdx.math.Matrix4;
 
+/**
+ * Abstract class with the basic functionality of bodies represented by a 3D model.
+ * @author Toni Sagrista
+ *
+ */
 public abstract class ModelBody extends CelestialBody {
     protected static final double TH_ANGLE_POINT = Math.toRadians(0.30);
 
