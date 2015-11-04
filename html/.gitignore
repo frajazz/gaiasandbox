@@ -5,3 +5,4 @@
 /webapp/assets/
 /gwt-unitCache/
 *.war
+/.gwt/
