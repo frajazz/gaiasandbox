@@ -34,7 +34,7 @@ public class WebGLConfInitLite extends ConfInit {
         rc.initialize(false, false, true, false, false, false, 20, true);
 
         DataConf dc = new DataConf();
-        dc.initialize("data/data-lite.json", true, 20f);
+        dc.initialize(true, "data/data-lite.json", "", 0, "", 20f, true);
 
         ProgramConf prc = new ProgramConf();
         prc.initialize(false, false, "dark", "en-GB", false, StereoProfile.CROSSEYE);
@@ -54,7 +54,7 @@ public class WebGLConfInitLite extends ConfInit {
         VISIBILITY[ComponentType.Others.ordinal()] = true;
 
         SceneConf sc = new SceneConf();
-        sc.initialize(2000, 10f, 0f, 50, 2.1f, 1866f, 2286f, 13, true, 7.0f, VISIBILITY, 2, 0, 0f, 2e-8f, 0f, 0.2f, 1f);
+        sc.initialize(2000, 10f, 0f, 50, 2.1f, 1866f, 2286f, 13, true, 7.0f, VISIBILITY, 2, 0, 0f, 2e-8f, 0f, 0.5f, 1f);
 
         FrameConf fc = new FrameConf();
 

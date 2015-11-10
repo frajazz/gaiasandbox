@@ -117,7 +117,7 @@ public class WebGLInterface extends Table implements IObserver {
             @Override
             public boolean handle(Event event) {
                 if (event instanceof ChangeEvent) {
-                    EventManager.instance.post(Events.STAR_BRIGHTNESS_CMD, GlobalConf.scene.STAR_BRIGHTNESS + 1f);
+                    EventManager.instance.post(Events.STAR_BRIGHTNESS_CMD, GlobalConf.scene.STAR_BRIGHTNESS * 1.5f);
                 }
                 return true;
             }
@@ -128,7 +128,7 @@ public class WebGLInterface extends Table implements IObserver {
             @Override
             public boolean handle(Event event) {
                 if (event instanceof ChangeEvent) {
-                    EventManager.instance.post(Events.STAR_BRIGHTNESS_CMD, GlobalConf.scene.STAR_BRIGHTNESS - 1f);
+                    EventManager.instance.post(Events.STAR_BRIGHTNESS_CMD, GlobalConf.scene.STAR_BRIGHTNESS / 1.5f);
                 }
                 return true;
             }
