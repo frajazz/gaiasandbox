@@ -5,6 +5,7 @@ import gaia.cu9.ari.gaiaorbit.data.stars.STILCatalogLoader;
 import gaia.cu9.ari.gaiaorbit.desktop.format.DesktopDateFormatFactory;
 import gaia.cu9.ari.gaiaorbit.scenegraph.CelestialBody;
 import gaia.cu9.ari.gaiaorbit.scenegraph.Star;
+import gaia.cu9.ari.gaiaorbit.util.GlobalConf;
 import gaia.cu9.ari.gaiaorbit.util.I18n;
 import gaia.cu9.ari.gaiaorbit.util.Pair;
 import gaia.cu9.ari.gaiaorbit.util.format.DateFormatFactory;
@@ -76,6 +77,8 @@ public class GaiaCatalogFilter {
         I18n.initialize();
 
         // Load attitude
+        GlobalConf.data.REAL_GAIA_ATTITUDE = true;
+        GlobalConf.data.LIMIT_MAG_LOAD = 20f;
         GaiaAttitudeServer.instance = new GaiaAttitudeServer("data/attitudexml/", "OPS_RSLS_0022916_rsls_nsl_gareq1_afterFirstSpinPhaseOptimization.2.xml");
 
         // Load catalog
@@ -101,7 +104,7 @@ public class GaiaCatalogFilter {
         float w = (float) Satellite.FOV_AL;
         angleEdgeRad = (Math.sqrt(h * h + w * w) * Math.PI / 180D);
         // In ms
-        MAX_OVERLAP_TIME = (long) ((Satellite.FOV_AL * Math.PI / 180d) / (Satellite.SCANRATE * (Math.PI / (3600D * 180D)))) * 1000;
+        MAX_OVERLAP_TIME = (long) (angleEdgeRad / (Satellite.SCANRATE * (Math.PI / (3600D * 180D)))) * 1000;
 
         BAM_2 = Satellite.BASICANGLE_DEGREE / 2D;
 
@@ -130,14 +133,13 @@ public class GaiaCatalogFilter {
 
         Date current = new Date(ini.getTime());
 
-        Set<CelestialBody> out = new HashSet<CelestialBody>(10000);
+        Set<CelestialBody> out = new HashSet<CelestialBody>(100000);
 
         while (current.getTime() < end.getTime()) {
             out.clear();
             long dayStart = current.getTime();
             // Process day
             for (long t = dayStart - overlap; t < dayStart + msDay + overlap * 2; t += MAX_OVERLAP_TIME) {
-                System.out.println("Processing " + new Date(t));
                 Pair<Vector3d, Vector3d> dirs = getDirections(new Date(t));
 
                 for (CelestialBody p : catalog) {
@@ -202,6 +204,7 @@ public class GaiaCatalogFilter {
     public Pair<Vector3d, Vector3d> getDirections(Date d) {
         trf.idt();
         Quaterniond quat = GaiaAttitudeServer.instance.getAttitude(d).getQuaternion();
+
         trf.rotate(quat).rotate(0, 0, 1, 180);
         Vector3d dir1 = new Vector3d().set(0, 0, 1).rotate(BAM_2, 0, 1, 0).mul(trf).nor();
         Vector3d dir2 = new Vector3d().set(0, 0, 1).rotate(-BAM_2, 0, 1, 0).mul(trf).nor();
@@ -211,6 +214,6 @@ public class GaiaCatalogFilter {
     public static void main(String[] args) throws Exception {
         GaiaCatalogFilter gcf = new GaiaCatalogFilter();
         gcf.initialize();
-        gcf.filterCatalog(2015, 11, 10, 2015, 11, 12);
+        gcf.filterCatalog(2015, 11, 11, 2016, 12, 31);
     }
 }

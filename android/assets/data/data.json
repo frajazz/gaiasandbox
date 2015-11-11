@@ -1,7 +1,7 @@
 { "data" : [
 	{
 		"loader": gaia.cu9.ari.gaiaorbit.data.stars.HYGBinaryLoader,
-		"files": [ "data/hygxyz.bin" ]
+		"files": [ "data/tycho-20151111.bin" ]
 	},
 	{
 		"loader": gaia.cu9.ari.gaiaorbit.data.stars.STILCatalogLoader
