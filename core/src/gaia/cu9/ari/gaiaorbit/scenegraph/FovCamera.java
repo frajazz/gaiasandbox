@@ -337,7 +337,7 @@ public class FovCamera extends AbstractCamera implements IObserver {
     public void updateAngleEdge(int width, int height) {
         float h = (float) Satellite.FOV_AC_ACTIVE;
         float w = (float) Satellite.FOV_AL;
-        angleEdgeRad = (float) (Math.sqrt(h * h + w * w) * Math.PI / 180);
+        angleEdgeRad = (float) (Satellite.FOV_AL * Math.PI / 180);
         // Update max overlap time
         MAX_OVERLAP_TIME = (long) (angleEdgeRad / (Satellite.SCANRATE * (Math.PI / (3600 * 180)))) * 1000;
         MAX_OVERLAP_ANGLE = angleEdgeRad;

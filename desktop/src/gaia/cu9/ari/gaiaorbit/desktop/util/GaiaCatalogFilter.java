@@ -2,10 +2,12 @@ package gaia.cu9.ari.gaiaorbit.desktop.util;
 
 import gaia.cu9.ari.gaiaorbit.data.stars.HYGBinaryLoader;
 import gaia.cu9.ari.gaiaorbit.data.stars.STILCatalogLoader;
+import gaia.cu9.ari.gaiaorbit.desktop.format.DesktopDateFormatFactory;
 import gaia.cu9.ari.gaiaorbit.scenegraph.CelestialBody;
 import gaia.cu9.ari.gaiaorbit.scenegraph.Star;
 import gaia.cu9.ari.gaiaorbit.util.I18n;
 import gaia.cu9.ari.gaiaorbit.util.Pair;
+import gaia.cu9.ari.gaiaorbit.util.format.DateFormatFactory;
 import gaia.cu9.ari.gaiaorbit.util.gaia.GaiaAttitudeServer;
 import gaia.cu9.ari.gaiaorbit.util.gaia.Satellite;
 import gaia.cu9.ari.gaiaorbit.util.math.MathUtilsd;
@@ -60,6 +62,9 @@ public class GaiaCatalogFilter {
         // Init log writer
         lw = new LogWriter();
 
+        // Initialize date format
+        DateFormatFactory.initialize(new DesktopDateFormatFactory());
+
         // Init global conf
         WebGLConfInit confInit = new WebGLConfInit();
         confInit.initGlobalConf();
@@ -95,7 +100,9 @@ public class GaiaCatalogFilter {
         float h = (float) Satellite.FOV_AC_ACTIVE;
         float w = (float) Satellite.FOV_AL;
         angleEdgeRad = (Math.sqrt(h * h + w * w) * Math.PI / 180D);
-        MAX_OVERLAP_TIME = (long) (angleEdgeRad / (Satellite.SCANRATE * (Math.PI / (3600D * 180D)))) * 1000;
+        // In ms
+        MAX_OVERLAP_TIME = (long) ((Satellite.FOV_AL * Math.PI / 180d) / (Satellite.SCANRATE * (Math.PI / (3600D * 180D)))) * 1000;
+
         BAM_2 = Satellite.BASICANGLE_DEGREE / 2D;
 
         trf = new Matrix4d();
@@ -130,6 +137,7 @@ public class GaiaCatalogFilter {
             long dayStart = current.getTime();
             // Process day
             for (long t = dayStart - overlap; t < dayStart + msDay + overlap * 2; t += MAX_OVERLAP_TIME) {
+                System.out.println("Processing " + new Date(t));
                 Pair<Vector3d, Vector3d> dirs = getDirections(new Date(t));
 
                 for (CelestialBody p : catalog) {
@@ -203,6 +211,6 @@ public class GaiaCatalogFilter {
     public static void main(String[] args) throws Exception {
         GaiaCatalogFilter gcf = new GaiaCatalogFilter();
         gcf.initialize();
-        gcf.filterCatalog(2015, 8, 25, 2016, 8, 26);
+        gcf.filterCatalog(2015, 11, 10, 2015, 11, 12);
     }
 }

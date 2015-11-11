@@ -333,53 +333,42 @@ public final class MathUtilsd {
     }
 
     /* not quite rint(), i.e. results not properly rounded to nearest-or-even */
-    static public double rint_v2(double x)
-    {
+    static public double rint_v2(double x) {
         double t = floor(Math.abs(x) + 0.5);
         return (x < 0.0) ? -t : t;
     }
 
     /* minimax approximation to cos on [-pi/4, pi/4] with rel. err. ~= 7.5e-13 */
-    static public double cos_core(double x)
-    {
+    static public double cos_core(double x) {
         double x8, x4, x2;
         x2 = x * x;
         x4 = x2 * x2;
         x8 = x4 * x4;
         /* evaluate polynomial using Estrin's scheme */
-        return (-2.7236370439787708e-7 * x2 + 2.4799852696610628e-5) * x8 +
-                (-1.3888885054799695e-3 * x2 + 4.1666666636943683e-2) * x4 +
-                (-4.9999999999963024e-1 * x2 + 1.0000000000000000e+0);
+        return (-2.7236370439787708e-7 * x2 + 2.4799852696610628e-5) * x8 + (-1.3888885054799695e-3 * x2 + 4.1666666636943683e-2) * x4 + (-4.9999999999963024e-1 * x2 + 1.0000000000000000e+0);
     }
 
     /* minimax approximation to sin on [-pi/4, pi/4] with rel. err. ~= 5.5e-12 */
-    static public double sin_core(double x)
-    {
+    static public double sin_core(double x) {
         double x4, x2;
         x2 = x * x;
         x4 = x2 * x2;
         /* evaluate polynomial using a mix of Estrin's and Horner's scheme */
-        return ((2.7181216275479732e-6 * x2 - 1.9839312269456257e-4) * x4 +
-                (8.3333293048425631e-3 * x2 - 1.6666666640797048e-1)) * x2 * x + x;
+        return ((2.7181216275479732e-6 * x2 - 1.9839312269456257e-4) * x4 + (8.3333293048425631e-3 * x2 - 1.6666666640797048e-1)) * x2 * x + x;
     }
 
     /* minimax approximation to arcsin on [0, 0.5625] with rel. err. ~= 1.5e-11 */
-    static public double asin_core(double x)
-    {
+    static public double asin_core(double x) {
         double x8, x4, x2;
         x2 = x * x;
         x4 = x2 * x2;
         x8 = x4 * x4;
         /* evaluate polynomial using a mix of Estrin's and Horner's scheme */
-        return (((4.5334220547132049e-2 * x2 - 1.1226216762576600e-2) * x4 +
-                (2.6334281471361822e-2 * x2 + 2.0596336163223834e-2)) * x8 +
-                (3.0582043602875735e-2 * x2 + 4.4630538556294605e-2) * x4 +
-                (7.5000364034134126e-2 * x2 + 1.6666666300567365e-1)) * x2 * x + x;
+        return (((4.5334220547132049e-2 * x2 - 1.1226216762576600e-2) * x4 + (2.6334281471361822e-2 * x2 + 2.0596336163223834e-2)) * x8 + (3.0582043602875735e-2 * x2 + 4.4630538556294605e-2) * x4 + (7.5000364034134126e-2 * x2 + 1.6666666300567365e-1)) * x2 * x + x;
     }
 
     /* relative error < 7e-12 on [-50000, 50000] */
-    static public double sin_v2(double x)
-    {
+    static public double sin_v2(double x) {
         double q, t;
         int quadrant;
         /* Cody-Waite style argument reduction */
@@ -396,8 +385,7 @@ public final class MathUtilsd {
     }
 
     /* relative error < 2e-11 on [-1, 1] */
-    static public double acos_v2(double x)
-    {
+    static public double acos_v2(double x) {
         double xa, t;
         xa = Math.abs(x);
         /* arcsin(x) = pi/2 - 2 * arcsin (sqrt ((1-x) / 2)) 
@@ -529,7 +517,7 @@ public final class MathUtilsd {
      * @param x0 The point.
      * @return The euclidean distance between the segment (x1, x2)
      */
-    public static double distancePointSegment(double x1, double y1, double z1, double x2, double y2, double z2, double x0, double y0, double z0){
+    public static double distancePointSegment(double x1, double y1, double z1, double x2, double y2, double z2, double x0, double y0, double z0) {
         Vector3d v = aux0.set(x1, y1, z1);
         Vector3d w = aux1.set(x2, y2, z2);
         Vector3d p = aux2.set(x0, y0, z0);
@@ -538,16 +526,18 @@ public final class MathUtilsd {
 
         // Return minimum distance between line segment vw and point p
         double l2 = v.dst2(w);
-        if (l2 == 0.0) return p.dst(v);   // v == w case
+        if (l2 == 0.0)
+            return p.dst(v); // v == w case
         // Consider the line extending the segment, parameterized as v + t (w - v).
         // We find projection of point p onto the line.
         // It falls where t = [(p-v) . (w-v)] / |w-v|^2
         double t = aux3.dot(aux4) / l2;
-        if (t < 0.0) return p.dst(v);       // Beyond the 'v' end of the segment
-        else if (t > 1.0) return p.dst(w);  // Beyond the 'w' end of the segment
+        if (t < 0.0)
+            return p.dst(v); // Beyond the 'v' end of the segment
+        else if (t > 1.0)
+            return p.dst(w); // Beyond the 'w' end of the segment
         Vector3d projection = v.add(aux4.scl(t)); // Projection falls on the segment
         return p.dst(projection);
     }
-
 
 }

@@ -79,8 +79,8 @@ public abstract class AbstractCamera implements ICamera {
     public boolean isVisible(ITimeFrameProvider time, CelestialBody cb, boolean computeGaiaScan) {
         boolean visible = cb.viewAngle > VIEW_ANGLE || GlobalResources.isInView(cb.transform.position, cb.distToCamera, angleEdgeRad, getDirection());
         /** If time is running, check Gaia **/
-        if (visible && computeGaiaScan && time.getDt() != 0) {
-            boolean visibleByGaia = computeVisibleFovs(cb.pos, parent.fovCamera, cb.distToCamera);
+        if (computeGaiaScan && time.getDt() != 0) {
+            boolean visibleByGaia = computeVisibleFovs(cb.pos, parent.fovCamera, cb.pos.len());
 
             cb.updateTransitNumber(visibleByGaia, time, parent.fovCamera);
         }
@@ -101,17 +101,13 @@ public abstract class AbstractCamera implements ICamera {
         if (GlobalConf.scene.COMPUTE_GAIA_SCAN && !fcamera.interpolatedDirections.isEmpty()) {
             // We need to interpolate...
             for (Vector3d[] interpolatedDirection : fcamera.interpolatedDirections) {
-                visible = visible ||
-                        MathUtilsd.acos(pos.dot(interpolatedDirection[0]) / poslen) < coneAngle ||
-                        MathUtilsd.acos(pos.dot(interpolatedDirection[1]) / poslen) < coneAngle;
+                visible = visible || MathUtilsd.acos(pos.dot(interpolatedDirection[0]) / poslen) < coneAngle || MathUtilsd.acos(pos.dot(interpolatedDirection[1]) / poslen) < coneAngle;
                 if (visible)
                     return true;
             }
         }
         dirs = fcamera.directions;
-        visible = visible ||
-                MathUtilsd.acos(pos.dot(dirs[0]) / poslen) < coneAngle ||
-                MathUtilsd.acos(pos.dot(dirs[1]) / poslen) < coneAngle;
+        visible = visible || MathUtilsd.acos(pos.dot(dirs[0]) / poslen) < coneAngle || MathUtilsd.acos(pos.dot(dirs[1]) / poslen) < coneAngle;
         return visible;
     }
 

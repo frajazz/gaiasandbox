@@ -147,11 +147,6 @@ public class SceneGraphNode implements ISceneGraphNode, IPosition {
     public int numChildren;
 
     /**
-     * Flag indicating whether we compute the nested elements or not.
-     */
-    public boolean expandedFlag = true;
-
-    /**
      * Flag indicating whether the object has been computed in this step.
      */
     public boolean computed = true;
