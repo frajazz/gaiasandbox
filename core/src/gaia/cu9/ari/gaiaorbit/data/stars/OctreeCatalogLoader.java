@@ -33,8 +33,12 @@ public class OctreeCatalogLoader implements ISceneGraphLoader {
 	MetadataBinaryIO metadataReader = new MetadataBinaryIO();
 	OctreeNode<SceneGraphNode> root = (OctreeNode<SceneGraphNode>) metadataReader.readMetadata(Gdx.files.internal(metadata).read());
 
+	Logger.info(this.getClass().getSimpleName(), I18n.bundle.format("notif.nodeloader", root.numNodes(), metadata));
+
 	ParticleDataBinaryIO particleReader = new ParticleDataBinaryIO();
 	List<CelestialBody> particleList = particleReader.readParticles(Gdx.files.internal(particles).read());
+
+	Logger.info(this.getClass().getSimpleName(), I18n.bundle.format("notif.nodeloader", particleList.size(), particles));
 
 	/**
 	 * CREATE OCTREE WRAPPER WITH ROOT NODE

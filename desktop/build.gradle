@@ -31,8 +31,19 @@ task run(dependsOn: jar, type: JavaExec, description: "Runs the desktop project"
     ignoreExitValue = true
 }
 
-task runCatalogFilter(dependsOn: classes, type: JavaExec, description: "Runs the catalog filter application to generate day catalogs for WebGL") << {
-    main = "gaia.cu9.ari.gaiaorbit.desktop.util.GaiaCatalogFilter"
+task runCatalogFilter(dependsOn: jar, type: JavaExec, description: "Runs the catalog filter application to generate day catalogs for WebGL") {
+    main = 'gaia.cu9.ari.gaiaorbit.desktop.util.GaiaCatalogFilter'
+    classpath = sourceSets.main.runtimeClasspath
+    classpath += files(project.assetsDir)
+    standardInput = System.in
+    workingDir = project.workDir
+    ignoreExitValue = true
+}
+
+
+task runOctreeGenerator(dependsOn: jar, type: JavaExec, description: "Runs the octree generator to create the octree structure from a base catalog") {
+    main = 'gaia.cu9.ari.gaiaorbit.data.OctreeGeneratorTest'
+    systemProperties['properties.file'] = '../android/assets/conf/global.properties'
     classpath = sourceSets.main.runtimeClasspath
     classpath += files(project.assetsDir)
     standardInput = System.in
@@ -41,9 +52,7 @@ task runCatalogFilter(dependsOn: classes, type: JavaExec, description: "Runs the
 }
 
 task createDistDir (dependsOn: ':versionFile', description: "Creates the releases/dist folder") << {
-
-        File distDir = new File(project.distDir)
-
+    File distDir = new File(project.distDir)
     // Prepare output directory
     delete distDir
     mkdir distDir
@@ -105,7 +114,7 @@ task dist (dependsOn: gaiasandboxJar, description: "Compiles the project, create
         from "../android/assets/data"
         into "$distDir/data"
         exclude "**/android"
-        
+
         exclude "**/earth-8k.jpg"
         exclude "**/earth.jpg"
         exclude "**/earth-normal.jpg"
@@ -115,8 +124,8 @@ task dist (dependsOn: gaiasandboxJar, description: "Compiles the project, create
         exclude "**/mars.jpg"
         exclude "**/jupiter.jpg"
         exclude "**/venus.jpg"
-        
-        
+
+
         exclude "**/hyg_metadata.bin"
         exclude "**/hyg_particles.bin"
         exclude "**/*-wgl.json"
@@ -201,9 +210,9 @@ task prepareInstall4jScript (dependsOn: createTar, description: "Prepares the in
         into "$packageDir"
     }
     file("$packageDir/template.install4j").renameTo(file("$packageDir/" + project.distName + ".install4j"))
-    
+
     project.ext.releaseFolder = "$baseDir/releases/$distName"
-    
+
     ant.replace(file: "$packageDir/" + project.distName + ".install4j", token: '@gs-release-folder@', value: "$distDir")
     ant.replace(file: "$packageDir/" + project.distName + ".install4j", token: '@gs-git-folder@', value: "$baseDir")
     ant.replace(file: "$packageDir/" + project.distName + ".install4j", token: '@version-tag@', value: "$tagRev")
@@ -211,14 +220,14 @@ task prepareInstall4jScript (dependsOn: createTar, description: "Prepares the in
 
 task install4jMedia(type: com.install4j.gradle.Install4jTask, description: "Runs the install4j task to create the installers") {
     dependsOn 'prepareInstall4jScript' // example task that prepares the distribution for install4j
-    
+
     projectFile = file("$packageDir/" + project.distName + ".install4j")
     variables = [majorVersion: project.tag, build: project.rev]
 }
 
 
 task pack (dependsOn: install4jMedia, description: "Creates the releases for windows, mac, linux and the tar package") << {
-    
+
 }
 
 eclipse {

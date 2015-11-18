@@ -17,7 +17,7 @@ public class MagnitudeCut implements IAggregationAlgorithm<Particle> {
     }
 
     @Override
-    public boolean sample(List<Particle> inputStars, OctreeNode<Particle> octant, int maxObjs) {
+    public boolean sample(List<Particle> inputStars, OctreeNode<Particle> octant, float percentage) {
         float limitMag = START_MAG + octant.depth * 2;
         List<Particle> candidates = new ArrayList<Particle>(10000);
         for (Particle s : inputStars) {
@@ -58,5 +58,9 @@ public class MagnitudeCut implements IAggregationAlgorithm<Particle> {
         copy.pos = new Vector3d(s.pos);
         copy.id = starId++;
         return copy;
+    }
+
+    public int getMaxPart(){
+      return Integer.MAX_VALUE;
     }
 }

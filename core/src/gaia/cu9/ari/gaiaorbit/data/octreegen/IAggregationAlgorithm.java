@@ -18,9 +18,15 @@ public interface IAggregationAlgorithm<T extends SceneGraphNode> {
      * defined by the center and the sizes.
      * @param inputStars The actual stars that are inside the octant.
      * @param octant The octant that characterizes the box with its center, size and depth well set.
-     * @param maxLevelObjects The number of objects of the octant with the most objects in this level.
+     * @param percentage The percentage of objects to be included in the octant.
      * @return True if we are in a leaf.
      */
-    public boolean sample(List<T> inputStars, OctreeNode<T> octant, int maxLevelObjects);
+    public boolean sample(List<T> inputStars, OctreeNode<T> octant, float percentage);
+
+    /**
+     * Gets the maximum number of particles in a single nodes
+     * @return maximum number of particles in a node
+     */
+    public int getMaxPart();
 
 }
