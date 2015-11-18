@@ -22,79 +22,79 @@ public class OwnTextButton extends TextButton {
     OwnTextButton me;
 
     public OwnTextButton(String text, Skin skin) {
-        super(text, skin);
-        this.me = this;
-        initialize();
+	super(text, skin);
+	this.me = this;
+	initialize();
     }
 
     public OwnTextButton(String text, Skin skin, String styleName) {
-        super(text, skin, styleName);
-        this.me = this;
-        initialize();
+	super(text, skin, styleName);
+	this.me = this;
+	initialize();
     }
 
     public OwnTextButton(String text, TextButtonStyle style) {
-        super(text, style);
-        this.me = this;
-        initialize();
+	super(text, style);
+	this.me = this;
+	initialize();
     }
 
     private void initialize() {
-        this.addListener(new EventListener() {
-            @Override
-            public boolean handle(Event event) {
-                if (event instanceof InputEvent) {
-                    Type type = ((InputEvent) event).getType();
-                    if (type == Type.enter) {
-                        if (!me.isDisabled())
-                            Gdx.input.setCursorImage(GlobalResources.linkCursor, 4, 0);
-                        return true;
-                    } else if (type == Type.exit) {
-                        Gdx.input.setCursorImage(null, 0, 0);
-                        return true;
-                    }
+	this.addListener(new EventListener() {
+	    @Override
+	    public boolean handle(Event event) {
+		if (event instanceof InputEvent) {
+		    Type type = ((InputEvent) event).getType();
+		    if (type == Type.enter) {
+			if (!me.isDisabled())
+			    Gdx.graphics.setCursor(Gdx.graphics.newCursor(GlobalResources.linkCursor, 4, 0));
+			return true;
+		    } else if (type == Type.exit) {
+			Gdx.graphics.setCursor(null);
+			return true;
+		    }
 
-                }
-                return false;
-            }
-        });
+		}
+		return false;
+	    }
+	});
     }
 
     @Override
     public void setWidth(float width) {
-        ownwidth = width;
-        super.setWidth(width);
+	ownwidth = width;
+	super.setWidth(width);
     }
 
     @Override
     public void setHeight(float height) {
-        ownheight = height;
-        super.setHeight(height);
+	ownheight = height;
+	super.setHeight(height);
     }
 
     @Override
     public void setSize(float width, float height) {
-        ownwidth = width;
-        ownheight = height;
-        super.setSize(width, height);
+	ownwidth = width;
+	ownheight = height;
+	super.setSize(width, height);
     }
 
     @Override
     public float getPrefWidth() {
-        if (ownwidth != 0) {
-            return ownwidth;
-        } else {
-            return super.getPrefWidth();
-        }
+	if (ownwidth != 0) {
+	    return ownwidth;
+	} else {
+	    return super.getPrefWidth();
+	}
     }
 
     @Override
     public float getPrefHeight() {
-        if (ownheight != 0) {
-            return ownheight;
-        } else {
-            return super.getPrefHeight();
-        }
+	if (ownheight != 0) {
+	    return ownheight;
+	} else {
+	    return super.getPrefHeight();
+	}
     }
 
 }
