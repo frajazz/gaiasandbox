@@ -25,6 +25,7 @@ import java.util.TreeSet;
 
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.math.Frustum;
+import com.badlogic.gdx.math.Plane;
 import com.badlogic.gdx.math.Vector3;
 
 /**
@@ -138,7 +139,7 @@ public class OctreeNode<T extends IPosition> implements ILineRenderable {
 	this.ownObjects = ownObjects;
     }
 
-    /** 
+    /**
      * Resolves and adds the children of this node using the map. It runs recursively
      * once the children have been added.
      * @param map
@@ -335,8 +336,10 @@ public class OctreeNode<T extends IPosition> implements ILineRenderable {
 	parentTransform.getTranslation(transform);
 	this.opacity = opacity;
 
+
+
 	// Is this octant observed??
-	computeObserved2(parentTransform, cam);
+	computeObserved1(parentTransform, cam);
 
 	if (observed) {
 
@@ -409,7 +412,6 @@ public class OctreeNode<T extends IPosition> implements ILineRenderable {
      */
     private boolean computeObserved1(Transform parentTransform, ICamera cam) {
 	// Is this octant observed??
-	cam.getCamera().update(true);
 	Frustum frustum = cam.getCamera().frustum;
 	boxcopy.set(box);
 	boxcopy.mul(boxtransf.idt().translate(parentTransform.getTranslation()));
@@ -515,7 +517,7 @@ public class OctreeNode<T extends IPosition> implements ILineRenderable {
 
 	this.col.set(ColourUtils.getRed(rgb) * alpha, ColourUtils.getGreen(rgb) * alpha, ColourUtils.getBlue(rgb) * alpha, alpha);
 
-	if (depth == 6)
+	if (this.pageId == 45)
 	    this.col.set(Color.BLUE);
 
 	// Camera correction
@@ -529,7 +531,7 @@ public class OctreeNode<T extends IPosition> implements ILineRenderable {
 	 *    |   |  |   |
 	 *    |  ,+--+---·
 	 *    |.'    | .'
-	 *    +------+' 
+	 *    +------+'
 	 */
 	line(sr, loc.x, loc.y, loc.z, loc.x + size.x, loc.y, loc.z, this.col);
 	line(sr, loc.x, loc.y, loc.z, loc.x, loc.y + size.y, loc.z, this.col);
@@ -542,7 +544,7 @@ public class OctreeNode<T extends IPosition> implements ILineRenderable {
 	 *    |   |  |   |
 	 *    |  ,·--+---+
 	 *    |.'    | .'
-	 *    ·------+' 
+	 *    ·------+'
 	 */
 	line(sr, loc.x + size.x, loc.y, loc.z, loc.x + size.x, loc.y + size.y, loc.z, this.col);
 	line(sr, loc.x + size.x, loc.y, loc.z, loc.x + size.x, loc.y, loc.z + size.z, this.col);
@@ -554,7 +556,7 @@ public class OctreeNode<T extends IPosition> implements ILineRenderable {
 	 *    |   |  |   |
 	 *    |  ,+--+---+
 	 *    |.'    | .'
-	 *    ·------·' 
+	 *    ·------·'
 	 */
 	line(sr, loc.x + size.x, loc.y, loc.z + size.z, loc.x, loc.y, loc.z + size.z, this.col);
 	line(sr, loc.x + size.x, loc.y, loc.z + size.z, loc.x + size.x, loc.y + size.y, loc.z + size.z, this.col);
@@ -566,7 +568,7 @@ public class OctreeNode<T extends IPosition> implements ILineRenderable {
 	 *    |   |  |   |
 	 *    |  ,+--+---·
 	 *    |.'    | .'
-	 *    ·------·' 
+	 *    ·------·'
 	 */
 	line(sr, loc.x, loc.y, loc.z + size.z, loc.x, loc.y + size.y, loc.z + size.z, this.col);
 
@@ -577,7 +579,7 @@ public class OctreeNode<T extends IPosition> implements ILineRenderable {
 	 *    |   |  |   |
 	 *    |  ,·--+---·
 	 *    |.'    | .'
-	 *    ·------·' 
+	 *    ·------·'
 	 */
 	line(sr, loc.x, loc.y + size.y, loc.z, loc.x + size.x, loc.y + size.y, loc.z, this.col);
 	line(sr, loc.x, loc.y + size.y, loc.z, loc.x, loc.y + size.y, loc.z + size.z, this.col);
