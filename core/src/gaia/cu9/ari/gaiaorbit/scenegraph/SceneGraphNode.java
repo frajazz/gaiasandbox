@@ -509,7 +509,7 @@ public class SceneGraphNode implements ISceneGraphNode, IPosition {
     }
 
     protected void addToRender(IRenderable renderable, RenderGroup rg) {
-        if (SceneGraphRenderer.visible[ct.ordinal()] || (!SceneGraphRenderer.visible[ct.ordinal()] && SceneGraphRenderer.alphas[ct.ordinal()] > 0)) {
+        if (SceneGraphRenderer.visible[ct.ordinal()] || SceneGraphRenderer.alphas[ct.ordinal()] > 0) {
             SceneGraphRenderer.render_lists.get(rg).add(renderable, ThreadIndexer.i());
         }
     }

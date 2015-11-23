@@ -29,7 +29,7 @@ public class OctreeWrapper extends AbstractOctreeWrapper {
     protected void updateOctreeObjects(ITimeFrameProvider time, Transform parentTransform, ICamera camera) {
         int size = roulette.size();
         for (int i = 0; i < size; i++) {
-            roulette.get(i).update(time, parentTransform, camera);
+            roulette.get(i).update(time, parentTransform, camera, roulette.get(i).opacity);
         }
     }
 

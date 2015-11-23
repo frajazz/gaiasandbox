@@ -55,11 +55,11 @@ public class ParticleDataBinaryIO {
                 data_out.writeFloat(s.appmag);
                 data_out.writeFloat(s.absmag);
                 data_out.writeFloat(s.colorbv);
-                data_out.writeDouble(s.pos.x);
-                data_out.writeDouble(s.pos.y);
-                data_out.writeDouble(s.pos.z);
+                data_out.writeFloat((float) s.pos.x);
+                data_out.writeFloat((float) s.pos.y);
+                data_out.writeFloat((float) s.pos.z);
                 data_out.writeLong(s.id);
-                data_out.writeLong(s.pageId);
+                data_out.writeInt((int) s.pageId);
                 data_out.writeInt(s.type);
             }
             data_out.close();
@@ -89,11 +89,11 @@ public class ParticleDataBinaryIO {
                     float appmag = data_in.readFloat();
                     float absmag = data_in.readFloat();
                     float colorbv = data_in.readFloat();
-                    double x = data_in.readDouble();
-                    double y = data_in.readDouble();
-                    double z = data_in.readDouble();
+                    float x = data_in.readFloat();
+                    float y = data_in.readFloat();
+                    float z = data_in.readFloat();
                     long id = data_in.readLong();
-                    long pageId = data_in.readLong();
+                    long pageId = data_in.readInt();
                     int type = data_in.readInt();
                     if (appmag < GlobalConf.data.LIMIT_MAG_LOAD) {
                         Vector3d pos = new Vector3d(x, y, z);

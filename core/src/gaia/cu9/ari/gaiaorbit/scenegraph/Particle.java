@@ -2,9 +2,12 @@ package gaia.cu9.ari.gaiaorbit.scenegraph;
 
 import gaia.cu9.ari.gaiaorbit.render.ComponentType;
 import gaia.cu9.ari.gaiaorbit.render.IPointRenderable;
+import gaia.cu9.ari.gaiaorbit.render.IRenderable;
+import gaia.cu9.ari.gaiaorbit.render.SceneGraphRenderer;
 import gaia.cu9.ari.gaiaorbit.util.Constants;
 import gaia.cu9.ari.gaiaorbit.util.GlobalConf;
 import gaia.cu9.ari.gaiaorbit.util.color.ColourUtils;
+import gaia.cu9.ari.gaiaorbit.util.concurrent.ThreadIndexer;
 import gaia.cu9.ari.gaiaorbit.util.coord.AstroUtils;
 import gaia.cu9.ari.gaiaorbit.util.math.Vector3d;
 import gaia.cu9.ari.gaiaorbit.util.time.ITimeFrameProvider;
@@ -16,6 +19,7 @@ import com.badlogic.gdx.assets.AssetManager;
 import com.badlogic.gdx.graphics.g3d.ModelBatch;
 import com.badlogic.gdx.graphics.glutils.ImmediateModeRenderer;
 import com.badlogic.gdx.math.Vector2;
+import com.badlogic.gdx.math.Vector3;
 
 /**
  * A point particle which may represent a star, a galaxy, etc.
@@ -45,11 +49,13 @@ public class Particle extends CelestialBody implements IPointRenderable {
     }
 
     /** Proper motion in cartesian coordinates [U/sec] **/
-    public Vector3d pm;
+    public Vector3 pm;
 
     double computedSize;
     double radius;
     boolean randomName = false;
+    boolean hasPm = false;
+    boolean visiblect = false;
 
     /**
      * Object server properties
@@ -92,7 +98,7 @@ public class Particle extends CelestialBody implements IPointRenderable {
             randomName = true;
             this.name = "star_" + rnd.nextInt(10000000);
         }
-        this.pm = new Vector3d();
+        this.pm = new Vector3();
     }
 
     public Particle(Vector3d pos, float appmag, float absmag, float colorbv, String name, float ra, float dec, int starid) {
@@ -101,10 +107,11 @@ public class Particle extends CelestialBody implements IPointRenderable {
 
     }
 
-    public Particle(Vector3d pos, Vector3d pm, float appmag, float absmag, float colorbv, String name, float ra, float dec, int starid) {
+    public Particle(Vector3d pos, Vector3 pm, float appmag, float absmag, float colorbv, String name, float ra, float dec, int starid) {
         this(pos, appmag, absmag, colorbv, name, starid);
         this.posSph = new Vector2(ra, dec);
         this.pm.set(pm);
+        this.hasPm = this.pm.len2() != 0;
 
     }
 
@@ -136,13 +143,14 @@ public class Particle extends CelestialBody implements IPointRenderable {
     public void update(ITimeFrameProvider time, final Transform parentTransform, ICamera camera, float opacity) {
         if (appmag <= GlobalConf.runtime.LIMIT_MAG_RUNTIME) {
             transform.position.set(parentTransform.position).add(pos);
-            if (pm.len2() != 0) {
-                Vector3d pmv = new Vector3d(pm).scl((float) AstroUtils.getMsSinceJ2000(time.getTime()) / 1000f);
+            if (hasPm) {
+                Vector3 pmv = new Vector3(pm).scl((float) AstroUtils.getMsSinceJ2000(time.getTime()) / 1000f);
                 transform.position.add(pmv);
             }
             distToCamera = (float) transform.position.len();
 
             if (!copy) {
+                visiblect = SceneGraphRenderer.visible[ct.ordinal()];
                 addToRender(this, RenderGroup.POINT);
 
                 if (camera.isVisible(time, this, GlobalConf.scene.COMPUTE_GAIA_SCAN) || camera.isFocus(this)) {
@@ -179,6 +187,12 @@ public class Particle extends CelestialBody implements IPointRenderable {
             addToRender(this, RenderGroup.LABEL);
         }
 
+    }
+
+    protected void addToRender(IRenderable renderable, RenderGroup rg) {
+        if (visiblect || SceneGraphRenderer.alphas[ct.ordinal()] > 0) {
+            SceneGraphRenderer.render_lists.get(rg).add(renderable, ThreadIndexer.i());
+        }
     }
 
     public void render(Object... params) {

@@ -29,4 +29,10 @@ public interface IAggregationAlgorithm<T extends SceneGraphNode> {
      */
     public int getMaxPart();
 
+    /**
+     * Returns the number of discarded stars by this algorithm so far.
+     * @return The number of stars discarded.
+     */
+    public int getDiscarded();
+
 }

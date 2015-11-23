@@ -29,7 +29,7 @@ import uk.ac.starlink.util.FileDataSource;
 
 public class STILCatalogLoader implements ISceneGraphLoader {
 
-    String files[];
+    public String files[];
 
     public void initialize(String[] files) throws RuntimeException {
         this.files = files;

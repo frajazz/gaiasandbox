@@ -25,7 +25,6 @@ import java.util.TreeSet;
 
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.math.Frustum;
-import com.badlogic.gdx.math.Plane;
 import com.badlogic.gdx.math.Vector3;
 
 /**
@@ -39,9 +38,9 @@ public class OctreeNode<T extends IPosition> implements ILineRenderable {
     /** Max depth of the structure this node belongs to **/
     public static int maxDepth;
     /** Angle threshold below which we stay with the current level. Lower limit of overlap **/
-    public static final double ANGLE_THRESHOLD_1 = Math.toRadians(18d);
+    public static final double ANGLE_THRESHOLD_1 = Math.toRadians(40d);
     /** Angle threshold above which we break the Octree. Upper limit of overlap **/
-    public static final double ANGLE_THRESHOLD_2 = Math.toRadians(35d);
+    public static final double ANGLE_THRESHOLD_2 = Math.toRadians(70d);
     /** Is dynamic loading active? **/
     public static boolean LOAD_ACTIVE;
 
@@ -106,17 +105,17 @@ public class OctreeNode<T extends IPosition> implements ILineRenderable {
      * @param depth
      */
     public OctreeNode(long pageId, double x, double y, double z, double hsx, double hsy, double hsz, int depth) {
-	this.pageId = pageId;
-	this.blf = new Vector3d(x - hsx, y - hsy, z - hsz);
-	this.trb = new Vector3d(x + hsx, y + hsy, z + hsz);
-	this.centre = new Vector3d(x, y, z);
-	this.size = new Vector3d(hsx * 2, hsy * 2, hsz * 2);
-	this.box = new BoundingBoxd(blf, trb);
-	this.depth = depth;
-	this.transform = new Vector3d();
-	this.observed = false;
-	this.status = LoadStatus.NOT_LOADED;
-	this.radius = Math.sqrt(hsx * hsx + hsy * hsy + hsz * hsz);
+        this.pageId = pageId;
+        this.blf = new Vector3d(x - hsx, y - hsy, z - hsz);
+        this.trb = new Vector3d(x + hsx, y + hsy, z + hsz);
+        this.centre = new Vector3d(x, y, z);
+        this.size = new Vector3d(hsx * 2, hsy * 2, hsz * 2);
+        this.box = new BoundingBoxd(blf, trb);
+        this.depth = depth;
+        this.transform = new Vector3d();
+        this.observed = false;
+        this.status = LoadStatus.NOT_LOADED;
+        this.radius = Math.sqrt(hsx * hsx + hsy * hsy + hsz * hsz);
     }
 
     /**
@@ -133,10 +132,10 @@ public class OctreeNode<T extends IPosition> implements ILineRenderable {
      * @param ownObjects Number of objects contained in this node. Same as objects.size().
      */
     public OctreeNode(long pageId, double x, double y, double z, double hsx, double hsy, double hsz, int childrenCount, int nObjects, int ownObjects, int depth) {
-	this(pageId, x, y, z, hsx, hsy, hsz, depth);
-	this.childrenCount = childrenCount;
-	this.nObjects = nObjects;
-	this.ownObjects = ownObjects;
+        this(pageId, x, y, z, hsx, hsy, hsz, depth);
+        this.childrenCount = childrenCount;
+        this.nObjects = nObjects;
+        this.ownObjects = ownObjects;
     }
 
     /**
@@ -145,79 +144,79 @@ public class OctreeNode<T extends IPosition> implements ILineRenderable {
      * @param map
      */
     public void resolveChildren(Map<Long, Pair<OctreeNode<T>, long[]>> map) {
-	Pair<OctreeNode<T>, long[]> me = map.get(pageId);
-	if (me == null) {
-	    throw new RuntimeException("OctreeNode with page ID " + pageId + " not found in map");
-	}
+        Pair<OctreeNode<T>, long[]> me = map.get(pageId);
+        if (me == null) {
+            throw new RuntimeException("OctreeNode with page ID " + pageId + " not found in map");
+        }
 
-	long[] childrenIds = me.getSecond();
-	int i = 0;
-	for (long childId : childrenIds) {
-	    if (childId >= 0) {
-		// Child exists
-		OctreeNode<T> child = map.get(childId).getFirst();
-		children[i] = child;
-		child.parent = this;
-	    } else {
-		// No node in this position
-	    }
-	    i++;
-	}
+        long[] childrenIds = me.getSecond();
+        int i = 0;
+        for (long childId : childrenIds) {
+            if (childId >= 0) {
+                // Child exists
+                OctreeNode<T> child = map.get(childId).getFirst();
+                children[i] = child;
+                child.parent = this;
+            } else {
+                // No node in this position
+            }
+            i++;
+        }
 
-	// Recursive running
-	for (int j = 0; j < children.length; j++) {
-	    OctreeNode<T> child = children[j];
-	    if (child != null) {
-		child.resolveChildren(map);
-	    }
-	}
+        // Recursive running
+        for (int j = 0; j < children.length; j++) {
+            OctreeNode<T> child = children[j];
+            if (child != null) {
+                child.resolveChildren(map);
+            }
+        }
     }
 
     public boolean add(T e) {
-	if (objects == null)
-	    objects = new ArrayList<T>(100);
-	objects.add(e);
-	ownObjects = objects.size();
-	return true;
+        if (objects == null)
+            objects = new ArrayList<T>(100);
+        objects.add(e);
+        ownObjects = objects.size();
+        return true;
     }
 
     public boolean addAll(Collection<T> l) {
-	if (objects == null)
-	    objects = new ArrayList<T>(l.size());
-	objects.addAll(l);
-	ownObjects = objects.size();
-	return true;
+        if (objects == null)
+            objects = new ArrayList<T>(l.size());
+        objects.addAll(l);
+        ownObjects = objects.size();
+        return true;
     }
 
     public void setObjects(List<T> l) {
-	this.objects = l;
-	ownObjects = objects.size();
+        this.objects = l;
+        ownObjects = objects.size();
     }
 
     public boolean insert(T e, int level) {
-	int node = 0;
-	if (e.getPosition().y > blf.y + ((trb.y - blf.y) / 2))
-	    node += 4;
-	if (e.getPosition().z > blf.z + ((trb.z - blf.z) / 2))
-	    node += 2;
-	if (e.getPosition().x > blf.x + ((trb.x - blf.x) / 2))
-	    node += 1;
-	if (level == this.depth + 1) {
-	    return children[node].add(e);
-	} else {
-	    return children[node].insert(e, level);
-	}
+        int node = 0;
+        if (e.getPosition().y > blf.y + ((trb.y - blf.y) / 2))
+            node += 4;
+        if (e.getPosition().z > blf.z + ((trb.z - blf.z) / 2))
+            node += 2;
+        if (e.getPosition().x > blf.x + ((trb.x - blf.x) / 2))
+            node += 1;
+        if (level == this.depth + 1) {
+            return children[node].add(e);
+        } else {
+            return children[node].insert(e, level);
+        }
     }
 
     public void toTree(TreeSet<T> tree) {
-	for (T i : objects) {
-	    tree.add(i);
-	}
-	if (children != null) {
-	    for (int i = 0; i < 8; i++) {
-		children[i].toTree(tree);
-	    }
-	}
+        for (T i : objects) {
+            tree.add(i);
+        }
+        if (children != null) {
+            for (int i = 0; i < 8; i++) {
+                children[i].toTree(tree);
+            }
+        }
     }
 
     /**
@@ -225,14 +224,14 @@ public class OctreeNode<T extends IPosition> implements ILineRenderable {
      * @param tree
      */
     public void addChildrenToList(ArrayList<OctreeNode<T>> tree) {
-	if (children != null) {
-	    for (int i = 0; i < 8; i++) {
-		if (children[i] != null) {
-		    tree.add(children[i]);
-		    children[i].addChildrenToList(tree);
-		}
-	    }
-	}
+        if (children != null) {
+            for (int i = 0; i < 8; i++) {
+                if (children[i] != null) {
+                    tree.add(children[i]);
+                    children[i].addChildrenToList(tree);
+                }
+            }
+        }
     }
 
     /**
@@ -240,35 +239,35 @@ public class OctreeNode<T extends IPosition> implements ILineRenderable {
      * @param particles
      */
     public void addParticlesTo(Collection<T> particles) {
-	if (this.objects != null)
-	    particles.addAll(this.objects);
-	for (int i = 0; i < 8; i++) {
-	    if (children[i] != null) {
-		children[i].addParticlesTo(particles);
-	    }
-	}
+        if (this.objects != null)
+            particles.addAll(this.objects);
+        for (int i = 0; i < 8; i++) {
+            if (children[i] != null) {
+                children[i].addParticlesTo(particles);
+            }
+        }
     }
 
     public String toString() {
-	StringBuffer str = new StringBuffer(depth);
-	for (int i = 0; i < depth; i++) {
-	    str.append("    ");
-	}
-	str.append(pageId).append("(").append(depth).append(")");
-	if (parent != null) {
-	    str.append(" [i: ").append(Arrays.asList(parent.children).indexOf(this)).append(", ownobj: ");
-	} else {
-	    str.append("[ownobj: ");
-	}
-	str.append(objects != null ? objects.size() : "0").append("/").append(ownObjects).append(", recobj: ").append(nObjects).append(", nchld: ").append(childrenCount).append("] ").append(status).append("\n");
-	if (childrenCount > 0) {
-	    for (OctreeNode<T> child : children) {
-		if (child != null) {
-		    str.append(child.toString());
-		}
-	    }
-	}
-	return str.toString();
+        StringBuffer str = new StringBuffer(depth);
+        for (int i = 0; i < depth; i++) {
+            str.append("    ");
+        }
+        str.append(pageId).append("(").append(depth).append(")");
+        if (parent != null) {
+            str.append(" [i: ").append(Arrays.asList(parent.children).indexOf(this)).append(", ownobj: ");
+        } else {
+            str.append("[ownobj: ");
+        }
+        str.append(objects != null ? objects.size() : "0").append("/").append(ownObjects).append(", recobj: ").append(nObjects).append(", nchld: ").append(childrenCount).append("] ").append(status).append("\n");
+        if (childrenCount > 0) {
+            for (OctreeNode<T> child : children) {
+                if (child != null) {
+                    str.append(child.toString());
+                }
+            }
+        }
+        return str.toString();
     }
 
     /**
@@ -276,28 +275,28 @@ public class OctreeNode<T extends IPosition> implements ILineRenderable {
      * @return
      */
     public int numNodes() {
-	int numNodes = 1;
-	for (int i = 0; i < 8; i++) {
-	    if (children[i] != null) {
-		numNodes += children[i].numNodes();
-	    }
-	}
-	return numNodes;
+        int numNodes = 1;
+        for (int i = 0; i < 8; i++) {
+            if (children[i] != null) {
+                numNodes += children[i].numNodes();
+            }
+        }
+        return numNodes;
     }
 
     @Override
     public void render(Object... params) {
-	render((LineRenderSystem) params[0], (ICamera) params[1], (Float) params[2]);
+        render((LineRenderSystem) params[0], (ICamera) params[1], (Float) params[2]);
     }
 
     @Override
     public ComponentType getComponentType() {
-	return ComponentType.Others;
+        return ComponentType.Others;
     }
 
     @Override
     public float getDistToCamera() {
-	return 0;
+        return 0;
     }
 
     /**
@@ -306,22 +305,22 @@ public class OctreeNode<T extends IPosition> implements ILineRenderable {
      * @return
      */
     public OctreeNode<T> getBestOctant(Vector3d position) {
-	if (!this.box.contains(position)) {
-	    return null;
-	} else {
-	    OctreeNode<T> candidate = null;
-	    for (int i = 0; i < 8; i++) {
-		OctreeNode<T> child = children[i];
-		if (child != null) {
-		    candidate = child.getBestOctant(position);
-		    if (candidate != null) {
-			return candidate;
-		    }
-		}
-	    }
-	    // We could not found a candidate in our children, we use this node.
-	    return this;
-	}
+        if (!this.box.contains(position)) {
+            return null;
+        } else {
+            OctreeNode<T> candidate = null;
+            for (int i = 0; i < 8; i++) {
+                OctreeNode<T> child = children[i];
+                if (child != null) {
+                    candidate = child.getBestOctant(position);
+                    if (candidate != null) {
+                        return candidate;
+                    }
+                }
+            }
+            // We could not found a candidate in our children, we use this node.
+            return this;
+        }
     }
 
     /**
@@ -333,76 +332,61 @@ public class OctreeNode<T extends IPosition> implements ILineRenderable {
      * @return Whether new objects have been added since last frame
      */
     public void update(Transform parentTransform, ICamera cam, List<T> roulette, float opacity) {
-	parentTransform.getTranslation(transform);
-	this.opacity = opacity;
+        parentTransform.getTranslation(transform);
+        this.opacity = opacity;
 
+        // Is this octant observed??
+        computeObserved2(parentTransform, cam);
 
+        if (observed) {
 
-	// Is this octant observed??
-	computeObserved1(parentTransform, cam);
+            // Compute distance and view angle
+            distToCamera = auxD1.set(centre).add(cam.getInversePos()).len();
+            viewAngle = (radius / distToCamera) / cam.getFovFactor();
 
-	if (observed) {
+            //            if (pageId == 2) {
+            //                System.out.print("Opacity: " + opacity + ", Angle: " + viewAngle + "\r");
+            //            }
 
-	    // Compute distance and view angle
-	    distToCamera = auxD1.set(centre).add(cam.getInversePos()).len();
-	    viewAngle = (radius / distToCamera) / cam.getFovFactor();
+            if (viewAngle < ANGLE_THRESHOLD_1) {
+                // Stay in current level
+                addObjectsTo(roulette);
+                setChildrenObserved(false);
+            } else {
+                // Break down tree, fade in until th2
+                double alpha = MathUtilsd.clamp(MathUtilsd.lint(viewAngle, ANGLE_THRESHOLD_1, ANGLE_THRESHOLD_2, 0d, 1d), 0f, 1f);
 
-	    if (viewAngle < ANGLE_THRESHOLD_1) {
-		// Stay in current level
-		addObjectsTo(roulette);
-		setChildrenObserved(false);
-	    } else if (viewAngle > ANGLE_THRESHOLD_2) {
-		// Break down tree
-		if (childrenCount == 0) {
-		    // We are a leaf, add objects anyway
-		    addObjectsTo(roulette);
-		    setChildrenObserved(false);
-		} else {
-		    // Update children
-		    for (int i = 0; i < 8; i++) {
-			OctreeNode<T> child = children[i];
-			if (child != null) {
-			    child.update(parentTransform, cam, roulette, opacity);
-			}
-		    }
-		}
-	    } else {
-		// View angle between th1 and th2
-		addObjectsTo(roulette);
+                // Add objects
+                addObjectsTo(roulette);
+                // Update children
+                for (int i = 0; i < 8; i++) {
+                    OctreeNode<T> child = children[i];
+                    if (child != null) {
+                        child.update(parentTransform, cam, roulette, (float) alpha);
+                    }
+                }
 
-		if (childrenCount > 0) {
-		    // Opacity = this?  1 - alpha : children? alpha
-		    double alpha = MathUtilsd.lint(viewAngle, ANGLE_THRESHOLD_1, ANGLE_THRESHOLD_2, 0d, 1d);
-		    // Update children
-		    this.opacity = 1f - (float) alpha;
-		    for (int i = 0; i < 8; i++) {
-			OctreeNode<T> child = children[i];
-			if (child != null) {
-			    child.update(parentTransform, cam, roulette, (float) alpha);
-			}
-		    }
-		}
-	    }
-	}
+            }
+        }
     }
 
     private void addObjectsTo(List<T> roulette) {
-	if (objects != null) {
-	    roulette.addAll(objects);
-	}
+        if (objects != null) {
+            roulette.addAll(objects);
+        }
     }
 
     private void setChildrenObserved(boolean observed) {
-	for (int i = 0; i < 8; i++) {
-	    OctreeNode<T> child = children[i];
-	    if (child != null) {
-		child.observed = observed;
-	    }
-	}
+        for (int i = 0; i < 8; i++) {
+            OctreeNode<T> child = children[i];
+            if (child != null) {
+                child.observed = observed;
+            }
+        }
     }
 
     public boolean isObserved() {
-	return observed && (parent == null ? true : parent.isObserved());
+        return observed && (parent == null ? true : parent.isObserved());
     }
 
     /**
@@ -411,12 +395,12 @@ public class OctreeNode<T extends IPosition> implements ILineRenderable {
      * @param cam
      */
     private boolean computeObserved1(Transform parentTransform, ICamera cam) {
-	// Is this octant observed??
-	Frustum frustum = cam.getCamera().frustum;
-	boxcopy.set(box);
-	boxcopy.mul(boxtransf.idt().translate(parentTransform.getTranslation()));
-	observed = frustum.boundsInFrustum(boxcopy.getCenter(auxD1).setVector3(auxF1), size.setVector3(auxF2));
-	return observed;
+        // Is this octant observed??
+        Frustum frustum = cam.getCamera().frustum;
+        boxcopy.set(box);
+        boxcopy.mul(boxtransf.idt().translate(parentTransform.getTranslation()));
+        observed = frustum.boundsInFrustum(boxcopy.getCenter(auxD1).setVector3(auxF1), size.setVector3(auxF2));
+        return observed;
     }
 
     /**
@@ -426,41 +410,41 @@ public class OctreeNode<T extends IPosition> implements ILineRenderable {
      * @param cam
      */
     private boolean computeObserved2(Transform parentTransform, ICamera cam) {
-	float angle = cam.getAngleEdge();
-	Vector3d dir = cam.getDirection();
-	Vector3d up = cam.getUp();
+        float angle = cam.getAngleEdge();
+        Vector3d dir = cam.getDirection();
+        Vector3d up = cam.getUp();
 
-	boxcopy.set(box);
-	boxcopy.mul(boxtransf.idt().translate(parentTransform.getTranslation()));
-	observed = GlobalResources.isInView(boxcopy.getCenter(auxD1), auxD1.len(), angle, dir) || GlobalResources.isInView(boxcopy.getCorner000(auxD1), auxD1.len(), angle, dir) || GlobalResources.isInView(boxcopy.getCorner001(auxD1), auxD1.len(), angle, dir) || GlobalResources.isInView(boxcopy.getCorner010(auxD1), auxD1.len(), angle, dir) || GlobalResources.isInView(boxcopy.getCorner011(auxD1), auxD1.len(), angle, dir)
-		|| GlobalResources.isInView(boxcopy.getCorner100(auxD1), auxD1.len(), angle, dir) || GlobalResources.isInView(boxcopy.getCorner101(auxD1), auxD1.len(), angle, dir) || GlobalResources.isInView(boxcopy.getCorner110(auxD1), auxD1.len(), angle, dir) || GlobalResources.isInView(boxcopy.getCorner111(auxD1), auxD1.len(), angle, dir) || box.contains(cam.getPos());
+        boxcopy.set(box);
+        boxcopy.mul(boxtransf.idt().translate(parentTransform.getTranslation()));
+        observed = GlobalResources.isInView(boxcopy.getCenter(auxD1), auxD1.len(), angle, dir) || GlobalResources.isInView(boxcopy.getCorner000(auxD1), auxD1.len(), angle, dir) || GlobalResources.isInView(boxcopy.getCorner001(auxD1), auxD1.len(), angle, dir) || GlobalResources.isInView(boxcopy.getCorner010(auxD1), auxD1.len(), angle, dir) || GlobalResources.isInView(boxcopy.getCorner011(auxD1), auxD1.len(), angle, dir)
+                || GlobalResources.isInView(boxcopy.getCorner100(auxD1), auxD1.len(), angle, dir) || GlobalResources.isInView(boxcopy.getCorner101(auxD1), auxD1.len(), angle, dir) || GlobalResources.isInView(boxcopy.getCorner110(auxD1), auxD1.len(), angle, dir) || GlobalResources.isInView(boxcopy.getCorner111(auxD1), auxD1.len(), angle, dir) || box.contains(cam.getPos());
 
-	// Rays
-	if (!observed) {
-	    // Rays in direction-up plane (vertical plane)
-	    auxD2.set(dir).crs(up);
-	    ray.direction.set(auxD1.set(dir).rotate(auxD2, angle));
-	    observed = observed || Intersectord.intersectRayBoundsFast(ray, boxcopy.getCenter(auxD3), boxcopy.getDimensions(auxD4));
-	    ray.direction.set(auxD1.set(dir).rotate(auxD2, -angle));
-	    observed = observed || Intersectord.intersectRayBoundsFast(ray, boxcopy.getCenter(auxD3), boxcopy.getDimensions(auxD4));
+        // Rays
+        if (!observed) {
+            // Rays in direction-up plane (vertical plane)
+            auxD2.set(dir).crs(up);
+            ray.direction.set(auxD1.set(dir).rotate(auxD2, angle));
+            observed = observed || Intersectord.intersectRayBoundsFast(ray, boxcopy.getCenter(auxD3), boxcopy.getDimensions(auxD4));
+            ray.direction.set(auxD1.set(dir).rotate(auxD2, -angle));
+            observed = observed || Intersectord.intersectRayBoundsFast(ray, boxcopy.getCenter(auxD3), boxcopy.getDimensions(auxD4));
 
-	    // Rays in direction-crs(direction,up) plane (horizontal plane)
-	    ray.direction.set(auxD1.set(dir).rotate(up, angle));
-	    observed = observed || Intersectord.intersectRayBoundsFast(ray, boxcopy.getCenter(auxD3), boxcopy.getDimensions(auxD4));
-	    ray.direction.set(auxD1.set(dir).rotate(up, -angle));
-	    observed = observed || Intersectord.intersectRayBoundsFast(ray, boxcopy.getCenter(auxD3), boxcopy.getDimensions(auxD4));
-	}
-	return observed;
+            // Rays in direction-crs(direction,up) plane (horizontal plane)
+            ray.direction.set(auxD1.set(dir).rotate(up, angle));
+            observed = observed || Intersectord.intersectRayBoundsFast(ray, boxcopy.getCenter(auxD3), boxcopy.getDimensions(auxD4));
+            ray.direction.set(auxD1.set(dir).rotate(up, -angle));
+            observed = observed || Intersectord.intersectRayBoundsFast(ray, boxcopy.getCenter(auxD3), boxcopy.getDimensions(auxD4));
+        }
+        return observed;
     }
 
     public LoadStatus getStatus() {
-	return status;
+        return status;
     }
 
     public void setStatus(LoadStatus status) {
-	synchronized (status) {
-	    this.status = status;
-	}
+        synchronized (status) {
+            this.status = status;
+        }
     }
 
     /**
@@ -470,15 +454,15 @@ public class OctreeNode<T extends IPosition> implements ILineRenderable {
      * @param depth The depth.
      */
     public void setStatus(LoadStatus status, int depth) {
-	if (depth >= this.depth) {
-	    setStatus(status);
-	    for (int i = 0; i < 8; i++) {
-		OctreeNode<T> child = children[i];
-		if (child != null) {
-		    child.setStatus(status, depth);
-		}
-	    }
-	}
+        if (depth >= this.depth) {
+            setStatus(status);
+            for (int i = 0; i < 8; i++) {
+                OctreeNode<T> child = children[i];
+                if (child != null) {
+                    child.setStatus(status, depth);
+                }
+            }
+        }
     }
 
     /**
@@ -486,22 +470,22 @@ public class OctreeNode<T extends IPosition> implements ILineRenderable {
      * runs recursively in depth.
      */
     public void updateNumbers() {
-	// Number of own objects
-	this.ownObjects = objects != null ? objects.size() : 0;
+        // Number of own objects
+        this.ownObjects = objects != null ? objects.size() : 0;
 
-	// Number of recursive objects
-	this.nObjects = this.ownObjects;
+        // Number of recursive objects
+        this.nObjects = this.ownObjects;
 
-	// Children count
-	this.childrenCount = 0;
-	for (int i = 0; i < 8; i++) {
-	    if (children[i] != null) {
-		this.childrenCount++;
-		// Recursive call
-		children[i].updateNumbers();
-		nObjects += children[i].nObjects;
-	    }
-	}
+        // Children count
+        this.childrenCount = 0;
+        for (int i = 0; i < 8; i++) {
+            if (children[i] != null) {
+                this.childrenCount++;
+                // Recursive call
+                children[i].updateNumbers();
+                nObjects += children[i].nObjects;
+            }
+        }
 
     }
 
@@ -509,89 +493,89 @@ public class OctreeNode<T extends IPosition> implements ILineRenderable {
 
     @Override
     public void render(LineRenderSystem sr, ICamera camera, float alpha) {
-	float maxDepth = OctreeNode.maxDepth * 2;
-	// Colour depends on depth
-	int rgb = 0xff000000 | ColourUtils.HSBtoRGB((float) depth / (float) maxDepth, 1f, 0.5f);
+        float maxDepth = OctreeNode.maxDepth * 2;
+        // Colour depends on depth
+        int rgb = 0xff000000 | ColourUtils.HSBtoRGB((float) depth / (float) maxDepth, 1f, 0.5f);
 
-	alpha *= MathUtilsd.lint(depth, 0, maxDepth, 1.0, 0.5);
+        alpha *= MathUtilsd.lint(depth, 0, maxDepth, 1.0, 0.5);
 
-	this.col.set(ColourUtils.getRed(rgb) * alpha, ColourUtils.getGreen(rgb) * alpha, ColourUtils.getBlue(rgb) * alpha, alpha);
+        this.col.set(ColourUtils.getRed(rgb) * alpha, ColourUtils.getGreen(rgb) * alpha, ColourUtils.getBlue(rgb) * alpha, alpha * opacity);
 
-	if (this.pageId == 45)
-	    this.col.set(Color.BLUE);
+        if (this.pageId == 45)
+            this.col.set(Color.BLUE);
 
-	// Camera correction
-	Vector3d loc = MyPools.get(Vector3d.class).obtain();
-	loc.set(this.blf).add(transform);
+        // Camera correction
+        Vector3d loc = MyPools.get(Vector3d.class).obtain();
+        loc.set(this.blf).add(transform);
 
-	/*
-	 *       .·------·
-	 *     .' |    .'|
-	 *    +---+--·'  |
-	 *    |   |  |   |
-	 *    |  ,+--+---·
-	 *    |.'    | .'
-	 *    +------+'
-	 */
-	line(sr, loc.x, loc.y, loc.z, loc.x + size.x, loc.y, loc.z, this.col);
-	line(sr, loc.x, loc.y, loc.z, loc.x, loc.y + size.y, loc.z, this.col);
-	line(sr, loc.x, loc.y, loc.z, loc.x, loc.y, loc.z + size.z, this.col);
+        /*
+         *       .·------·
+         *     .' |    .'|
+         *    +---+--·'  |
+         *    |   |  |   |
+         *    |  ,+--+---·
+         *    |.'    | .'
+         *    +------+'
+         */
+        line(sr, loc.x, loc.y, loc.z, loc.x + size.x, loc.y, loc.z, this.col);
+        line(sr, loc.x, loc.y, loc.z, loc.x, loc.y + size.y, loc.z, this.col);
+        line(sr, loc.x, loc.y, loc.z, loc.x, loc.y, loc.z + size.z, this.col);
 
-	/*
-	 *       .·------·
-	 *     .' |    .'|
-	 *    ·---+--+'  |
-	 *    |   |  |   |
-	 *    |  ,·--+---+
-	 *    |.'    | .'
-	 *    ·------+'
-	 */
-	line(sr, loc.x + size.x, loc.y, loc.z, loc.x + size.x, loc.y + size.y, loc.z, this.col);
-	line(sr, loc.x + size.x, loc.y, loc.z, loc.x + size.x, loc.y, loc.z + size.z, this.col);
+        /*
+         *       .·------·
+         *     .' |    .'|
+         *    ·---+--+'  |
+         *    |   |  |   |
+         *    |  ,·--+---+
+         *    |.'    | .'
+         *    ·------+'
+         */
+        line(sr, loc.x + size.x, loc.y, loc.z, loc.x + size.x, loc.y + size.y, loc.z, this.col);
+        line(sr, loc.x + size.x, loc.y, loc.z, loc.x + size.x, loc.y, loc.z + size.z, this.col);
 
-	/*
-	 *       .·------+
-	 *     .' |    .'|
-	 *    ·---+--·'  |
-	 *    |   |  |   |
-	 *    |  ,+--+---+
-	 *    |.'    | .'
-	 *    ·------·'
-	 */
-	line(sr, loc.x + size.x, loc.y, loc.z + size.z, loc.x, loc.y, loc.z + size.z, this.col);
-	line(sr, loc.x + size.x, loc.y, loc.z + size.z, loc.x + size.x, loc.y + size.y, loc.z + size.z, this.col);
+        /*
+         *       .·------+
+         *     .' |    .'|
+         *    ·---+--·'  |
+         *    |   |  |   |
+         *    |  ,+--+---+
+         *    |.'    | .'
+         *    ·------·'
+         */
+        line(sr, loc.x + size.x, loc.y, loc.z + size.z, loc.x, loc.y, loc.z + size.z, this.col);
+        line(sr, loc.x + size.x, loc.y, loc.z + size.z, loc.x + size.x, loc.y + size.y, loc.z + size.z, this.col);
 
-	/*
-	 *       .+------·
-	 *     .' |    .'|
-	 *    ·---+--·'  |
-	 *    |   |  |   |
-	 *    |  ,+--+---·
-	 *    |.'    | .'
-	 *    ·------·'
-	 */
-	line(sr, loc.x, loc.y, loc.z + size.z, loc.x, loc.y + size.y, loc.z + size.z, this.col);
+        /*
+         *       .+------·
+         *     .' |    .'|
+         *    ·---+--·'  |
+         *    |   |  |   |
+         *    |  ,+--+---·
+         *    |.'    | .'
+         *    ·------·'
+         */
+        line(sr, loc.x, loc.y, loc.z + size.z, loc.x, loc.y + size.y, loc.z + size.z, this.col);
 
-	/*
-	 *       .+------+
-	 *     .' |    .'|
-	 *    +---+--+'  |
-	 *    |   |  |   |
-	 *    |  ,·--+---·
-	 *    |.'    | .'
-	 *    ·------·'
-	 */
-	line(sr, loc.x, loc.y + size.y, loc.z, loc.x + size.x, loc.y + size.y, loc.z, this.col);
-	line(sr, loc.x, loc.y + size.y, loc.z, loc.x, loc.y + size.y, loc.z + size.z, this.col);
-	line(sr, loc.x, loc.y + size.y, loc.z + size.z, loc.x + size.x, loc.y + size.y, loc.z + size.z, this.col);
-	line(sr, loc.x + size.x, loc.y + size.y, loc.z, loc.x + size.x, loc.y + size.y, loc.z + size.z, this.col);
+        /*
+         *       .+------+
+         *     .' |    .'|
+         *    +---+--+'  |
+         *    |   |  |   |
+         *    |  ,·--+---·
+         *    |.'    | .'
+         *    ·------·'
+         */
+        line(sr, loc.x, loc.y + size.y, loc.z, loc.x + size.x, loc.y + size.y, loc.z, this.col);
+        line(sr, loc.x, loc.y + size.y, loc.z, loc.x, loc.y + size.y, loc.z + size.z, this.col);
+        line(sr, loc.x, loc.y + size.y, loc.z + size.z, loc.x + size.x, loc.y + size.y, loc.z + size.z, this.col);
+        line(sr, loc.x + size.x, loc.y + size.y, loc.z, loc.x + size.x, loc.y + size.y, loc.z + size.z, this.col);
 
-	MyPools.get(Vector3d.class).free(loc);
+        MyPools.get(Vector3d.class).free(loc);
     }
 
     /** Draws a line **/
     private void line(LineRenderSystem sr, double x1, double y1, double z1, double x2, double y2, double z2, com.badlogic.gdx.graphics.Color col) {
-	sr.addLine((float) x1, (float) y1, (float) z1, (float) x2, (float) y2, (float) z2, col);
+        sr.addLine((float) x1, (float) y1, (float) z1, (float) x2, (float) y2, (float) z2, col);
     }
 
 }

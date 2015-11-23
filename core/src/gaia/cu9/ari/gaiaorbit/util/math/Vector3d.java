@@ -116,6 +116,13 @@ public class Vector3d implements Serializable {
         return this;
     }
 
+    public Vector3d add(final Vector3 vector) {
+        this.x += vector.x;
+        this.y += vector.y;
+        this.z += vector.z;
+        return this;
+    }
+
     /** Adds the given vector to this component
      * @param x The x-component of the other vector
      * @param y The y-component of the other vector
@@ -341,8 +348,7 @@ public class Vector3d implements Serializable {
      * @param matrix The matrix
      * @return This vector for chaining */
     public Vector3d mul4x3(double[] matrix) {
-        return set(x * matrix[0] + y * matrix[3] + z * matrix[6] + matrix[9], x * matrix[1] + y * matrix[4] + z * matrix[7]
-                + matrix[10], x * matrix[2] + y * matrix[5] + z * matrix[8] + matrix[11]);
+        return set(x * matrix[0] + y * matrix[3] + z * matrix[6] + matrix[9], x * matrix[1] + y * matrix[4] + z * matrix[7] + matrix[10], x * matrix[2] + y * matrix[5] + z * matrix[8] + matrix[11]);
     }
 
     /** Left-multiplies the vector by the given matrix, assuming the fourth (w) component of the vector is 1.
@@ -350,9 +356,7 @@ public class Vector3d implements Serializable {
      * @return This vector for chaining */
     public Vector3d mul(final Matrix4d matrix) {
         final double l_mat[] = matrix.val;
-        return this.set(x * l_mat[Matrix4d.M00] + y * l_mat[Matrix4d.M01] + z * l_mat[Matrix4d.M02] + l_mat[Matrix4d.M03], x
-                * l_mat[Matrix4d.M10] + y * l_mat[Matrix4d.M11] + z * l_mat[Matrix4d.M12] + l_mat[Matrix4d.M13], x * l_mat[Matrix4d.M20] + y
-                * l_mat[Matrix4d.M21] + z * l_mat[Matrix4d.M22] + l_mat[Matrix4d.M23]);
+        return this.set(x * l_mat[Matrix4d.M00] + y * l_mat[Matrix4d.M01] + z * l_mat[Matrix4d.M02] + l_mat[Matrix4d.M03], x * l_mat[Matrix4d.M10] + y * l_mat[Matrix4d.M11] + z * l_mat[Matrix4d.M12] + l_mat[Matrix4d.M13], x * l_mat[Matrix4d.M20] + y * l_mat[Matrix4d.M21] + z * l_mat[Matrix4d.M22] + l_mat[Matrix4d.M23]);
     }
 
     /** Multiplies the vector by the transpose of the given matrix, assuming the fourth (w) component of the vector is 1.
@@ -360,9 +364,7 @@ public class Vector3d implements Serializable {
      * @return This vector for chaining */
     public Vector3d traMul(final Matrix4d matrix) {
         final double l_mat[] = matrix.val;
-        return this.set(x * l_mat[Matrix4d.M00] + y * l_mat[Matrix4d.M10] + z * l_mat[Matrix4d.M20] + l_mat[Matrix4d.M30], x
-                * l_mat[Matrix4d.M01] + y * l_mat[Matrix4d.M11] + z * l_mat[Matrix4d.M21] + l_mat[Matrix4d.M31], x * l_mat[Matrix4d.M02] + y
-                * l_mat[Matrix4d.M12] + z * l_mat[Matrix4d.M22] + l_mat[Matrix4d.M32]);
+        return this.set(x * l_mat[Matrix4d.M00] + y * l_mat[Matrix4d.M10] + z * l_mat[Matrix4d.M20] + l_mat[Matrix4d.M30], x * l_mat[Matrix4d.M01] + y * l_mat[Matrix4d.M11] + z * l_mat[Matrix4d.M21] + l_mat[Matrix4d.M31], x * l_mat[Matrix4d.M02] + y * l_mat[Matrix4d.M12] + z * l_mat[Matrix4d.M22] + l_mat[Matrix4d.M32]);
     }
 
     /** Multiplies the vector by the given {@link Quaternion}.
@@ -379,9 +381,7 @@ public class Vector3d implements Serializable {
     public Vector3d prj(final Matrix4d matrix) {
         final double l_mat[] = matrix.val;
         final double l_w = 1f / (x * l_mat[Matrix4d.M30] + y * l_mat[Matrix4d.M31] + z * l_mat[Matrix4d.M32] + l_mat[Matrix4d.M33]);
-        return this.set((x * l_mat[Matrix4d.M00] + y * l_mat[Matrix4d.M01] + z * l_mat[Matrix4d.M02] + l_mat[Matrix4d.M03]) * l_w, (x
-                * l_mat[Matrix4d.M10] + y * l_mat[Matrix4d.M11] + z * l_mat[Matrix4d.M12] + l_mat[Matrix4d.M13])
-                * l_w, (x * l_mat[Matrix4d.M20] + y * l_mat[Matrix4d.M21] + z * l_mat[Matrix4d.M22] + l_mat[Matrix4d.M23]) * l_w);
+        return this.set((x * l_mat[Matrix4d.M00] + y * l_mat[Matrix4d.M01] + z * l_mat[Matrix4d.M02] + l_mat[Matrix4d.M03]) * l_w, (x * l_mat[Matrix4d.M10] + y * l_mat[Matrix4d.M11] + z * l_mat[Matrix4d.M12] + l_mat[Matrix4d.M13]) * l_w, (x * l_mat[Matrix4d.M20] + y * l_mat[Matrix4d.M21] + z * l_mat[Matrix4d.M22] + l_mat[Matrix4d.M23]) * l_w);
     }
 
     /** Multiplies this vector by the first three columns of the matrix, essentially only applying rotation and scaling.
@@ -390,8 +390,7 @@ public class Vector3d implements Serializable {
      * @return This vector for chaining */
     public Vector3d rot(final Matrix4d matrix) {
         final double l_mat[] = matrix.val;
-        return this.set(x * l_mat[Matrix4d.M00] + y * l_mat[Matrix4d.M01] + z * l_mat[Matrix4d.M02], x * l_mat[Matrix4d.M10] + y
-                * l_mat[Matrix4d.M11] + z * l_mat[Matrix4d.M12], x * l_mat[Matrix4d.M20] + y * l_mat[Matrix4d.M21] + z * l_mat[Matrix4d.M22]);
+        return this.set(x * l_mat[Matrix4d.M00] + y * l_mat[Matrix4d.M01] + z * l_mat[Matrix4d.M02], x * l_mat[Matrix4d.M10] + y * l_mat[Matrix4d.M11] + z * l_mat[Matrix4d.M12], x * l_mat[Matrix4d.M20] + y * l_mat[Matrix4d.M21] + z * l_mat[Matrix4d.M22]);
     }
 
     /** Multiplies this vector by the transpose of the first three columns of the matrix. Note: only works for translation and
@@ -400,8 +399,7 @@ public class Vector3d implements Serializable {
      * @return The vector for chaining */
     public Vector3d unrotate(final Matrix4d matrix) {
         final double l_mat[] = matrix.val;
-        return this.set(x * l_mat[Matrix4d.M00] + y * l_mat[Matrix4d.M10] + z * l_mat[Matrix4d.M20], x * l_mat[Matrix4d.M01] + y
-                * l_mat[Matrix4d.M11] + z * l_mat[Matrix4d.M21], x * l_mat[Matrix4d.M02] + y * l_mat[Matrix4d.M12] + z * l_mat[Matrix4d.M22]);
+        return this.set(x * l_mat[Matrix4d.M00] + y * l_mat[Matrix4d.M10] + z * l_mat[Matrix4d.M20], x * l_mat[Matrix4d.M01] + y * l_mat[Matrix4d.M11] + z * l_mat[Matrix4d.M21], x * l_mat[Matrix4d.M02] + y * l_mat[Matrix4d.M12] + z * l_mat[Matrix4d.M22]);
     }
 
     /** Translates this vector in the direction opposite to the translation of the matrix and the multiplies this vector by the
@@ -414,8 +412,7 @@ public class Vector3d implements Serializable {
         x -= l_mat[Matrix4d.M03];
         y -= l_mat[Matrix4d.M03];
         z -= l_mat[Matrix4d.M03];
-        return this.set(x * l_mat[Matrix4d.M00] + y * l_mat[Matrix4d.M10] + z * l_mat[Matrix4d.M20], x * l_mat[Matrix4d.M01] + y
-                * l_mat[Matrix4d.M11] + z * l_mat[Matrix4d.M21], x * l_mat[Matrix4d.M02] + y * l_mat[Matrix4d.M12] + z * l_mat[Matrix4d.M22]);
+        return this.set(x * l_mat[Matrix4d.M00] + y * l_mat[Matrix4d.M10] + z * l_mat[Matrix4d.M20], x * l_mat[Matrix4d.M01] + y * l_mat[Matrix4d.M11] + z * l_mat[Matrix4d.M21], x * l_mat[Matrix4d.M02] + y * l_mat[Matrix4d.M12] + z * l_mat[Matrix4d.M22]);
     }
 
     /** Rotates this vector by the given angle in degrees around the given axis.
@@ -541,9 +538,7 @@ public class Vector3d implements Serializable {
 
     public Vector3d setLength2(double len2) {
         double oldLen2 = len2();
-        return (oldLen2 == 0 || oldLen2 == len2)
-                ? this
-                : scl(Math.sqrt(len2 / oldLen2));
+        return (oldLen2 == 0 || oldLen2 == len2) ? this : scl(Math.sqrt(len2 / oldLen2));
     }
 
     public Vector3d clamp(double min, double max) {
@@ -602,7 +597,6 @@ public class Vector3d implements Serializable {
     public Vector3 setVector3(Vector3 v) {
         return v.set((float) x, (float) y, (float) z);
     }
-
 
     /**
      * Rotates this vector by a quaternion, using "vector rotation" according to

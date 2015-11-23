@@ -57,16 +57,16 @@ public class MetadataBinaryIO {
             for (int idx = 0; idx < size; idx++) {
                 try {
                     // name_length, name, appmag, absmag, colorbv, ra, dec, dist	
-                    long pageId = data_in.readLong();
-                    double x = data_in.readDouble();
-                    double y = data_in.readDouble();
-                    double z = data_in.readDouble();
-                    double hsx = data_in.readDouble() / 2d;
-                    double hsy = data_in.readDouble() / 2d;
-                    double hsz = data_in.readDouble() / 2d;
+                    long pageId = data_in.readInt();
+                    float x = data_in.readFloat();
+                    float y = data_in.readFloat();
+                    float z = data_in.readFloat();
+                    float hsx = data_in.readFloat() / 2f;
+                    float hsy = data_in.readFloat() / 2f;
+                    float hsz = data_in.readFloat() / 2f;
                     long[] childrenIds = new long[8];
                     for (int i = 0; i < 8; i++) {
-                        childrenIds[i] = data_in.readLong();
+                        childrenIds[i] = data_in.readInt();
                     }
                     int depth = data_in.readInt();
                     int nObjects = data_in.readInt();
@@ -121,15 +121,15 @@ public class MetadataBinaryIO {
             data_out.writeInt(nodes.size());
 
             for (OctreeNode<?> node : nodes) {
-                data_out.writeLong(node.pageId);
-                data_out.writeDouble(node.centre.x);
-                data_out.writeDouble(node.centre.y);
-                data_out.writeDouble(node.centre.z);
-                data_out.writeDouble(node.size.x);
-                data_out.writeDouble(node.size.y);
-                data_out.writeDouble(node.size.z);
+                data_out.writeInt((int) node.pageId);
+                data_out.writeFloat((float) node.centre.x);
+                data_out.writeFloat((float) node.centre.y);
+                data_out.writeFloat((float) node.centre.z);
+                data_out.writeFloat((float) node.size.x);
+                data_out.writeFloat((float) node.size.y);
+                data_out.writeFloat((float) node.size.z);
                 for (int i = 0; i < 8; i++) {
-                    data_out.writeLong(node.children[i] != null ? node.children[i].pageId : -1l);
+                    data_out.writeInt((int) (node.children[i] != null ? node.children[i].pageId : -1));
                 }
                 data_out.writeInt(node.depth);
                 data_out.writeInt(node.nObjects);

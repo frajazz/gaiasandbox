@@ -60,7 +60,11 @@ public class MagnitudeCut implements IAggregationAlgorithm<Particle> {
         return copy;
     }
 
-    public int getMaxPart(){
-      return Integer.MAX_VALUE;
+    public int getMaxPart() {
+        return Integer.MAX_VALUE;
+    }
+
+    public int getDiscarded() {
+        return 0;
     }
 }
