@@ -17,7 +17,7 @@ public class OctreeGenerator {
     /** Is the octree centred at the sun? **/
     private static final boolean SUN_CENTRE = true;
     /** Maximum distance in parsecs **/
-    private static final double MAX_DISTANCE_CAP = 3e4;
+    private static final double MAX_DISTANCE_CAP = 3e5;
 
     IAggregationAlgorithm<Particle> aggregation;
     Longref pageid;

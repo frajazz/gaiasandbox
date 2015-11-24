@@ -21,9 +21,8 @@ public abstract class Blob extends AbstractPositionEntity {
         super();
     }
 
-    @Override
-    public void update(ITimeFrameProvider time, Transform parentTransform, ICamera camera) {
-
+    public void update(ITimeFrameProvider time, final Transform parentTransform, ICamera camera, float opacity) {
+        this.opacity = opacity * this.opacity;
         transform.set(parentTransform);
 
         // Update with translation/rotation/etc
@@ -31,11 +30,16 @@ public abstract class Blob extends AbstractPositionEntity {
 
         if (children != null && viewAngle > lowAngle) {
             for (int i = 0; i < children.size(); i++) {
-                float childOpacity = 1 - opacity;
+                float childOpacity = 1 - this.opacity;
                 SceneGraphNode child = children.get(i);
                 child.update(time, transform, camera, childOpacity);
             }
         }
+    }
+
+    @Override
+    public void update(ITimeFrameProvider time, Transform parentTransform, ICamera camera) {
+
     }
 
     @Override

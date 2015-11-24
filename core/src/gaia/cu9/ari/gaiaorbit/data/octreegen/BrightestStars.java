@@ -9,11 +9,11 @@ import java.util.Comparator;
 import java.util.List;
 
 public class BrightestStars implements IAggregationAlgorithm<Particle> {
-    private static final int MAX_DEPTH = 13;
+    private static final int MAX_DEPTH = 14;
     // Maximum number of objects in the densest node of this level
-    private static final int MAX_PART = 10000;
+    private static final int MAX_PART = 5000;
     // Minimum number of objects under which we do not need to break the octree further
-    private static final int MIN_PART = 1000;
+    private static final int MIN_PART = 500;
     Comparator<Particle> comp;
     int starId;
 

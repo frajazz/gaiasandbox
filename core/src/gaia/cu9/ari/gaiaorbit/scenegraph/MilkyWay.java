@@ -57,7 +57,7 @@ public class MilkyWay extends Blob implements IModelRenderable, I3DTextRenderabl
                 Matrix4d trf = (Matrix4d) m.invoke(null);
                 coordinateSystem = new Matrix4(trf.valuesf());
             } catch (ReflectionException e) {
-                Gdx.app.error(Mw.class.getName(), "Error getting/invoking method Coordinates." + transformName + "()");
+                Gdx.app.error(this.getClass().getName(), "Error getting/invoking method Coordinates." + transformName + "()");
             }
         } else {
             // Equatorial, nothing

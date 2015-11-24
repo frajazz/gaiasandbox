@@ -344,10 +344,6 @@ public class OctreeNode<T extends IPosition> implements ILineRenderable {
             distToCamera = auxD1.set(centre).add(cam.getInversePos()).len();
             viewAngle = (radius / distToCamera) / cam.getFovFactor();
 
-            //            if (pageId == 2) {
-            //                System.out.print("Opacity: " + opacity + ", Angle: " + viewAngle + "\r");
-            //            }
-
             if (viewAngle < ANGLE_THRESHOLD_1) {
                 // Stay in current level
                 addObjectsTo(roulette);
