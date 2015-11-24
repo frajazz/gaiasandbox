@@ -104,10 +104,10 @@ tree-minus
   index: -1
 default-slider
   rotate: false
-  xy: 29, 20
-  size: 5, 5
+  xy: 193, 33
+  size: 7, 11
   split: 1, 1, 1, 1
-  orig: 5, 5
+  orig: 7, 11
   offset: 0, 0
   index: -1
 default-pane
