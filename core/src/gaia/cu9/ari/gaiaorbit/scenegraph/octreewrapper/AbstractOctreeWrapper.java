@@ -8,6 +8,7 @@ import gaia.cu9.ari.gaiaorbit.scenegraph.CelestialBody;
 import gaia.cu9.ari.gaiaorbit.scenegraph.ICamera;
 import gaia.cu9.ari.gaiaorbit.scenegraph.SceneGraphNode;
 import gaia.cu9.ari.gaiaorbit.scenegraph.Transform;
+import gaia.cu9.ari.gaiaorbit.util.GlobalConf;
 import gaia.cu9.ari.gaiaorbit.util.Logger;
 import gaia.cu9.ari.gaiaorbit.util.MyPools;
 import gaia.cu9.ari.gaiaorbit.util.time.ITimeFrameProvider;
@@ -33,7 +34,7 @@ public abstract class AbstractOctreeWrapper extends SceneGraphNode implements It
     protected List<SceneGraphNode> roulette;
     public Map<SceneGraphNode, OctreeNode<SceneGraphNode>> parenthood;
     /** The number of objects added to render in the last frame **/
-    private int lastNumberObjects = 0;
+    protected int lastNumberObjects = 0;
     /**
      * Is this just a copy?
      */
@@ -108,10 +109,14 @@ public abstract class AbstractOctreeWrapper extends SceneGraphNode implements It
             // Compute observed octants and fill roulette list
             root.update(transform, camera, roulette, 1f);
 
-            if (roulette.size() != lastNumberObjects) {
-                // Need to update the points in renderer
+            if (!GlobalConf.scene.OCTREE_PARTICLE_FADE) {
+                if (roulette.size() != lastNumberObjects) {
+                    // Need to update the points in renderer
+                    AbstractRenderSystem.POINT_UPDATE_FLAG = true;
+                    lastNumberObjects = roulette.size();
+                }
+            } else {
                 AbstractRenderSystem.POINT_UPDATE_FLAG = true;
-                lastNumberObjects = roulette.size();
             }
 
             updateLocal(time, camera);
@@ -161,8 +166,7 @@ public abstract class AbstractOctreeWrapper extends SceneGraphNode implements It
     }
 
     public void addToRenderLists(ICamera camera, OctreeNode<SceneGraphNode> octant) {
-        if (octant.observed) {
-            addToRender(octant, RenderGroup.LINE);
+        if (octant.observed && addToRender(octant, RenderGroup.LINE)) {
             for (int i = 0; i < 8; i++) {
                 OctreeNode<SceneGraphNode> child = octant.children[i];
                 if (child != null) {

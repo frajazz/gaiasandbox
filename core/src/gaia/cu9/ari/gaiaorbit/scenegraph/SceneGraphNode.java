@@ -362,7 +362,7 @@ public class SceneGraphNode implements ISceneGraphNode, IPosition {
         if (children != null) {
             int size = children.size();
             for (int i = 0; i < size; i++) {
-                children.get(i).update(time, transform, camera);
+                children.get(i).update(time, transform, camera, opacity);
             }
         }
     }
@@ -508,10 +508,12 @@ public class SceneGraphNode implements ISceneGraphNode, IPosition {
         }
     }
 
-    protected void addToRender(IRenderable renderable, RenderGroup rg) {
+    protected boolean addToRender(IRenderable renderable, RenderGroup rg) {
         if (SceneGraphRenderer.visible[ct.ordinal()] || SceneGraphRenderer.alphas[ct.ordinal()] > 0) {
             SceneGraphRenderer.render_lists.get(rg).add(renderable, ThreadIndexer.i());
+            return true;
         }
+        return false;
     }
 
     protected boolean isInRender(IRenderable renderable, RenderGroup rg) {

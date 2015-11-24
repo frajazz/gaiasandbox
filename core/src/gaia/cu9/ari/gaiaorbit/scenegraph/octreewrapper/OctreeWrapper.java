@@ -1,6 +1,7 @@
 package gaia.cu9.ari.gaiaorbit.scenegraph.octreewrapper;
 
 import gaia.cu9.ari.gaiaorbit.scenegraph.ICamera;
+import gaia.cu9.ari.gaiaorbit.scenegraph.Particle;
 import gaia.cu9.ari.gaiaorbit.scenegraph.SceneGraphNode;
 import gaia.cu9.ari.gaiaorbit.scenegraph.Transform;
 import gaia.cu9.ari.gaiaorbit.util.time.ITimeFrameProvider;
@@ -29,7 +30,9 @@ public class OctreeWrapper extends AbstractOctreeWrapper {
     protected void updateOctreeObjects(ITimeFrameProvider time, Transform parentTransform, ICamera camera) {
         int size = roulette.size();
         for (int i = 0; i < size; i++) {
-            roulette.get(i).update(time, parentTransform, camera, roulette.get(i).opacity);
+            SceneGraphNode sgn = roulette.get(i);
+            float opacity = sgn instanceof Particle ? ((Particle) sgn).page.opacity : sgn.opacity;
+            sgn.update(time, parentTransform, camera, opacity);
         }
     }
 

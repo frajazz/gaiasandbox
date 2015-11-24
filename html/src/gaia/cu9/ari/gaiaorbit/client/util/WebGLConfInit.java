@@ -54,7 +54,7 @@ public class WebGLConfInit extends ConfInit {
         VISIBILITY[ComponentType.Galaxies.ordinal()] = true;
         VISIBILITY[ComponentType.Others.ordinal()] = true;
         SceneConf sc = new SceneConf();
-        sc.initialize(2000, 1f, 0f, 50, 2.1f, 1866f, 2286f, 13, true, 7.0f, VISIBILITY, 2, 0, 0f, 2e-8f, 0f, 0.05f, 1f);
+        sc.initialize(2000, 1f, 0f, 50, 2.1f, 1866f, 2286f, 13, true, 7.0f, VISIBILITY, 2, 0, 0f, 2e-8f, 0f, 0.05f, 1f, false);
 
         FrameConf fc = new FrameConf();
 

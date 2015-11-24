@@ -16,8 +16,6 @@ import java.util.List;
 import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 
-import com.badlogic.gdx.Gdx;
-
 /**
  * Implementation of a 3D scene graph where the node updates takes place
  * concurrently in threads (as many as processors).
@@ -81,7 +79,7 @@ public class SceneGraphConcurrent extends AbstractSceneGraph {
         try {
             pool.invokeAll(tasks);
         } catch (InterruptedException e) {
-            Gdx.app.error(SceneGraphConcurrent.class.getName(), e.getLocalizedMessage());
+            Logger.error(e);
         }
 
         // Debug thread number

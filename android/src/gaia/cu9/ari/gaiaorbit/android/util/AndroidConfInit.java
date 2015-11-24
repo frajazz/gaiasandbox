@@ -159,6 +159,8 @@ public class AndroidConfInit extends ConfInit {
         float POINT_ALPHA_MAX = Float.parseFloat(p.getProperty("scene.point.alpha.max"));
         int PIXEL_RENDERER = Integer.parseInt(p.getProperty("scene.renderer.star"));
         int LINE_RENDERER = Integer.parseInt(p.getProperty("scene.renderer.line"));
+        boolean OCTREE_PARTICLE_FADE = Boolean.parseBoolean(p.getProperty("scene.octree.particle.fade"));
+
         //Visibility of components
         ComponentType[] cts = ComponentType.values();
         boolean[] VISIBILITY = new boolean[cts.length];
@@ -169,7 +171,7 @@ public class AndroidConfInit extends ConfInit {
             }
         }
         SceneConf sc = new SceneConf();
-        sc.initialize(OBJECT_FADE_MS, STAR_BRIGHTNESS, AMBIENT_LIGHT, CAMERA_FOV, CAMERA_SPEED, TURNING_SPEED, ROTATION_SPEED, CAMERA_SPEED_LIMIT_IDX, FOCUS_LOCK, LABEL_NUMBER_FACTOR, VISIBILITY, PIXEL_RENDERER, LINE_RENDERER, STAR_TH_ANGLE_NONE, STAR_TH_ANGLE_POINT, STAR_TH_ANGLE_QUAD, POINT_ALPHA_MIN, POINT_ALPHA_MAX);
+        sc.initialize(OBJECT_FADE_MS, STAR_BRIGHTNESS, AMBIENT_LIGHT, CAMERA_FOV, CAMERA_SPEED, TURNING_SPEED, ROTATION_SPEED, CAMERA_SPEED_LIMIT_IDX, FOCUS_LOCK, LABEL_NUMBER_FACTOR, VISIBILITY, PIXEL_RENDERER, LINE_RENDERER, STAR_TH_ANGLE_NONE, STAR_TH_ANGLE_POINT, STAR_TH_ANGLE_QUAD, POINT_ALPHA_MIN, POINT_ALPHA_MAX, OCTREE_PARTICLE_FADE);
 
         /** FRAME CONF **/
         String renderFolder = null;
@@ -301,6 +303,7 @@ public class AndroidConfInit extends ConfInit {
         p.setProperty("scene.point.alpha.max", Float.toString(GlobalConf.scene.POINT_ALPHA_MAX));
         p.setProperty("scene.renderer.star", Integer.toString(GlobalConf.scene.PIXEL_RENDERER));
         p.setProperty("scene.renderer.line", Integer.toString(GlobalConf.scene.LINE_RENDERER));
+        p.setProperty("scene.octree.particle.fade", Boolean.toString(GlobalConf.scene.OCTREE_PARTICLE_FADE));
         // Visibility of components
         int idx = 0;
         ComponentType[] cts = ComponentType.values();

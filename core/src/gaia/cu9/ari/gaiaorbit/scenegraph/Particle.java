@@ -142,6 +142,7 @@ public class Particle extends CelestialBody implements IPointRenderable {
     @Override
     public void update(ITimeFrameProvider time, final Transform parentTransform, ICamera camera, float opacity) {
         if (appmag <= GlobalConf.runtime.LIMIT_MAG_RUNTIME) {
+            this.opacity = opacity;
             transform.position.set(parentTransform.position).add(pos);
             if (hasPm) {
                 Vector3 pmv = new Vector3(pm).scl((float) AstroUtils.getMsSinceJ2000(time.getTime()) / 1000f);
@@ -166,7 +167,7 @@ public class Particle extends CelestialBody implements IPointRenderable {
                 int size = children.size();
                 for (int i = 0; i < size; i++) {
                     SceneGraphNode child = children.get(i);
-                    child.update(time, parentTransform, camera);
+                    child.update(time, parentTransform, camera, opacity);
                 }
             }
         }
@@ -189,10 +190,12 @@ public class Particle extends CelestialBody implements IPointRenderable {
 
     }
 
-    protected void addToRender(IRenderable renderable, RenderGroup rg) {
+    protected boolean addToRender(IRenderable renderable, RenderGroup rg) {
         if (visiblect || SceneGraphRenderer.alphas[ct.ordinal()] > 0) {
             SceneGraphRenderer.render_lists.get(rg).add(renderable, ThreadIndexer.i());
+            return true;
         }
+        return false;
     }
 
     public void render(Object... params) {

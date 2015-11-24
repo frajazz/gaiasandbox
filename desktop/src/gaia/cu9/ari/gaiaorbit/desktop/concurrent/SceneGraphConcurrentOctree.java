@@ -18,8 +18,6 @@ import java.util.List;
 import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 
-import com.badlogic.gdx.Gdx;
-
 /**
  * Implementation of a 3D scene graph where the node updates takes place
  * concurrently in threads (as many as processors). This implementation takes
@@ -81,7 +79,7 @@ public class SceneGraphConcurrentOctree extends AbstractSceneGraph {
         roulette.remove(octree);
 
         // Update octree - Add nodes to process to roulette
-        octree.update(time, root.transform, camera);
+        octree.update(time, root.transform, camera, 1f);
 
         // Update params
         int size = tasks.size();
@@ -93,7 +91,7 @@ public class SceneGraphConcurrentOctree extends AbstractSceneGraph {
         try {
             pool.invokeAll(tasks);
         } catch (InterruptedException e) {
-            Gdx.app.error(SceneGraphConcurrentOctree.class.getName(), e.getLocalizedMessage());
+            Logger.error(e);
         }
 
         // Update focus, just in case

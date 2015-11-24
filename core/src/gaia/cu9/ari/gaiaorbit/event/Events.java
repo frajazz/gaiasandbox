@@ -306,6 +306,9 @@ public enum Events {
     /** Adds the gui component identified by the given name **/
     ADD_GUI_COMPONENT,
 
+    /** Toggles the fading of particles in the octree. Contains a boolean with the state of the flag. **/
+    OCTREE_PARTICLE_FADE_CMD,
+
     /** Update external GUIs signal. Contains the dt in seconds. **/
     UPDATE_GUI,
 

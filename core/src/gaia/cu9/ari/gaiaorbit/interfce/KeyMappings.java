@@ -265,6 +265,14 @@ public class KeyMappings {
             }
         }), SPECIAL1, Keys.F);
 
+        // CTRL + SHIFT + O -> Toggle particle fade
+        addMapping(new ProgramAction(txt("action.toggle", txt("element.octreeparticlefade")), new Runnable() {
+            @Override
+            public void run() {
+                EventManager.instance.post(Events.OCTREE_PARTICLE_FADE_CMD, txt("element.octreeparticlefade"), !GlobalConf.scene.OCTREE_PARTICLE_FADE);
+            }
+        }), SPECIAL1, SPECIAL2, Keys.O);
+
         // CTRL + S -> Toggle stereoscopic mode
         addMapping(new ProgramAction(txt("action.toggle", txt("element.stereomode")), new Runnable() {
             @Override
