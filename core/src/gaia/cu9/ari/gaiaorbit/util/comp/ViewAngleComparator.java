@@ -14,7 +14,7 @@ public class ViewAngleComparator<T> implements Comparator<T> {
 
     @Override
     public int compare(T o1, T o2) {
-        return -Float.compare(((AbstractPositionEntity) o1).viewAngleApparent, ((AbstractPositionEntity) o2).viewAngleApparent);
+        return Float.compare(((AbstractPositionEntity) o1).viewAngleApparent, ((AbstractPositionEntity) o2).viewAngleApparent);
     }
 
 }
