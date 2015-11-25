@@ -102,7 +102,7 @@ public class SceneGraphNode implements ISceneGraphNode, IPosition {
     public static ISceneGraph sg;
 
     /** The identifier **/
-    public int id = -1;
+    public long id = -1;
 
     /**
      * The parent entity.

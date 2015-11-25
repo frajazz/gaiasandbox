@@ -11,9 +11,9 @@ import java.util.List;
 public class BrightestStars implements IAggregationAlgorithm<Particle> {
     private static final int MAX_DEPTH = 15;
     // Maximum number of objects in the densest node of this level
-    private static final int MAX_PART = 5000;
+    private static final int MAX_PART = 10000;
     // Minimum number of objects under which we do not need to break the octree further
-    private static final int MIN_PART = 500;
+    private static final int MIN_PART = 1000;
     Comparator<Particle> comp;
     int starId;
 

@@ -85,7 +85,7 @@ public class Particle extends CelestialBody implements IPointRenderable {
      * @param name The label or name.
      * @param starid The star unique id.
      */
-    public Particle(Vector3d pos, float appmag, float absmag, float colorbv, String name, int starid) {
+    public Particle(Vector3d pos, float appmag, float absmag, float colorbv, String name, long starid) {
         this();
         this.pos = pos;
         this.name = name;
@@ -101,13 +101,13 @@ public class Particle extends CelestialBody implements IPointRenderable {
         this.pm = new Vector3();
     }
 
-    public Particle(Vector3d pos, float appmag, float absmag, float colorbv, String name, float ra, float dec, int starid) {
+    public Particle(Vector3d pos, float appmag, float absmag, float colorbv, String name, float ra, float dec, long starid) {
         this(pos, appmag, absmag, colorbv, name, starid);
         this.posSph = new Vector2(ra, dec);
 
     }
 
-    public Particle(Vector3d pos, Vector3 pm, float appmag, float absmag, float colorbv, String name, float ra, float dec, int starid) {
+    public Particle(Vector3d pos, Vector3 pm, float appmag, float absmag, float colorbv, String name, float ra, float dec, long starid) {
         this(pos, appmag, absmag, colorbv, name, starid);
         this.posSph = new Vector2(ra, dec);
         this.pm.set(pm);

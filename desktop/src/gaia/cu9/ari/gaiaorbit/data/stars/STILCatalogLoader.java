@@ -37,7 +37,7 @@ public class STILCatalogLoader implements ISceneGraphLoader {
 
     @Override
     public List<? extends CelestialBody> loadData() throws FileNotFoundException {
-        long starid = 0;
+        long starid = 1000000;
 
         List<CelestialBody> result = new ArrayList<CelestialBody>();
         StarTableFactory factory = new StarTableFactory();

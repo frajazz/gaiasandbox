@@ -70,15 +70,15 @@ public class Star extends Particle {
         this.parentName = ROOT_NAME;
     }
 
-    public Star(Vector3d pos, float appmag, float absmag, float colorbv, String name, int starid) {
+    public Star(Vector3d pos, float appmag, float absmag, float colorbv, String name, long starid) {
         super(pos, appmag, absmag, colorbv, name, starid);
     }
 
-    public Star(Vector3d pos, float appmag, float absmag, float colorbv, String name, float ra, float dec, int starid) {
+    public Star(Vector3d pos, float appmag, float absmag, float colorbv, String name, float ra, float dec, long starid) {
         super(pos, appmag, absmag, colorbv, name, ra, dec, starid);
     }
 
-    public Star(Vector3d pos, Vector3 pm, float appmag, float absmag, float colorbv, String name, float ra, float dec, int starid) {
+    public Star(Vector3d pos, Vector3 pm, float appmag, float absmag, float colorbv, String name, float ra, float dec, long starid) {
         super(pos, pm, appmag, absmag, colorbv, name, ra, dec, starid);
     }
 

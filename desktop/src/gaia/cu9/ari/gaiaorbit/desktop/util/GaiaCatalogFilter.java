@@ -195,7 +195,7 @@ public class GaiaCatalogFilter {
             data_out.writeFloat((float) s.posSph.x);
             data_out.writeFloat((float) s.posSph.y);
             data_out.writeFloat((float) s.pos.len());
-            data_out.writeInt(s.id);
+            data_out.writeInt(new Long(s.id).intValue());
         }
         file_output.close();
         System.out.println(new Date() + " - " + catalog.size() + " particles written to binary file " + bin);

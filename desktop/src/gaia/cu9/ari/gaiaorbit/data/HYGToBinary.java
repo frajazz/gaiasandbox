@@ -135,7 +135,7 @@ public class HYGToBinary implements IObserver {
                 data_out.writeFloat(s.posSph.x);
                 data_out.writeFloat(s.posSph.y);
                 data_out.writeFloat((float) s.pos.len());
-                data_out.writeInt(s.id);
+                data_out.writeInt(new Long(s.id).intValue());
             }
             data_out.close();
             file_output.close();

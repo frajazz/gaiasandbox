@@ -70,7 +70,7 @@ public class HYGBinaryLoader extends AbstractCatalogLoader implements ISceneGrap
                         float ra = data_in.readFloat();
                         float dec = data_in.readFloat();
                         float dist = data_in.readFloat();
-                        int id = data_in.readInt();
+                        long id = data_in.readInt();
                         if (appmag < GlobalConf.data.LIMIT_MAG_LOAD) {
                             Vector3d pos = Coordinates.sphericalToCartesian(Math.toRadians(ra), Math.toRadians(dec), dist, new Vector3d());
                             stars.add(new Star(pos, appmag, absmag, colorbv, name, ra, dec, id));
