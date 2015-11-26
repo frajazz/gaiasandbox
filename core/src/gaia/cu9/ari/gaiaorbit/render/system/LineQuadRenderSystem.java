@@ -1,12 +1,5 @@
 package gaia.cu9.ari.gaiaorbit.render.system;
 
-import gaia.cu9.ari.gaiaorbit.render.IRenderable;
-import gaia.cu9.ari.gaiaorbit.scenegraph.ICamera;
-import gaia.cu9.ari.gaiaorbit.scenegraph.SceneGraphNode.RenderGroup;
-import gaia.cu9.ari.gaiaorbit.util.Constants;
-import gaia.cu9.ari.gaiaorbit.util.math.MathUtilsd;
-import gaia.cu9.ari.gaiaorbit.util.math.Vector3d;
-
 import java.util.List;
 
 import com.badlogic.gdx.Gdx;
@@ -16,6 +9,13 @@ import com.badlogic.gdx.graphics.VertexAttribute;
 import com.badlogic.gdx.graphics.VertexAttributes.Usage;
 import com.badlogic.gdx.graphics.glutils.ShaderProgram;
 import com.badlogic.gdx.utils.Array;
+
+import gaia.cu9.ari.gaiaorbit.render.IRenderable;
+import gaia.cu9.ari.gaiaorbit.scenegraph.ICamera;
+import gaia.cu9.ari.gaiaorbit.scenegraph.SceneGraphNode.RenderGroup;
+import gaia.cu9.ari.gaiaorbit.util.Constants;
+import gaia.cu9.ari.gaiaorbit.util.math.MathUtilsd;
+import gaia.cu9.ari.gaiaorbit.util.math.Vector3d;
 
 public class LineQuadRenderSystem extends LineRenderSystem {
     /** 100 pc of bin **/
@@ -61,7 +61,7 @@ public class LineQuadRenderSystem extends LineRenderSystem {
 
     @Override
     protected void initVertices() {
-        meshes = new MeshDataExt[10];
+        meshes = new MeshDataExt[50];
         initVertices(meshIdx++);
     }
 
@@ -81,10 +81,8 @@ public class LineQuadRenderSystem extends LineRenderSystem {
             currext.vertexSize = currext.mesh.getVertexAttributes().vertexSize / 4;
             currext.vertices = new float[maxVertices * currext.vertexSize];
 
-            currext.colorOffset = currext.mesh.getVertexAttribute(Usage.ColorPacked) != null ? currext.mesh.getVertexAttribute(Usage.ColorPacked).offset / 4
-                    : 0;
-            currext.uvOffset = currext.mesh.getVertexAttribute(Usage.TextureCoordinates) != null ? currext.mesh.getVertexAttribute(Usage.TextureCoordinates).offset / 4
-                    : 0;
+            currext.colorOffset = currext.mesh.getVertexAttribute(Usage.ColorPacked) != null ? currext.mesh.getVertexAttribute(Usage.ColorPacked).offset / 4 : 0;
+            currext.uvOffset = currext.mesh.getVertexAttribute(Usage.TextureCoordinates) != null ? currext.mesh.getVertexAttribute(Usage.TextureCoordinates).offset / 4 : 0;
         } else {
             currext = (MeshDataExt) meshes[index];
             curr = currext;

@@ -1,5 +1,18 @@
 package gaia.cu9.ari.gaiaorbit.data;
 
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.util.List;
+
+import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.backends.lwjgl.LwjglFiles;
+import com.badlogic.gdx.files.FileHandle;
+import com.badlogic.gdx.utils.reflect.ClassReflection;
+import com.badlogic.gdx.utils.reflect.ReflectionException;
+
 import gaia.cu9.ari.gaiaorbit.data.octreegen.BrightestStars;
 import gaia.cu9.ari.gaiaorbit.data.octreegen.IAggregationAlgorithm;
 import gaia.cu9.ari.gaiaorbit.data.octreegen.MetadataBinaryIO;
@@ -7,7 +20,6 @@ import gaia.cu9.ari.gaiaorbit.data.octreegen.OctreeGenerator;
 import gaia.cu9.ari.gaiaorbit.data.octreegen.ParticleDataBinaryIO;
 import gaia.cu9.ari.gaiaorbit.data.stars.HYGBinaryLoader;
 import gaia.cu9.ari.gaiaorbit.data.stars.OctreeCatalogLoader;
-import gaia.cu9.ari.gaiaorbit.data.stars.STILCatalogLoader;
 import gaia.cu9.ari.gaiaorbit.desktop.format.DesktopDateFormatFactory;
 import gaia.cu9.ari.gaiaorbit.desktop.format.DesktopNumberFormatFactory;
 import gaia.cu9.ari.gaiaorbit.desktop.util.DesktopConfInit;
@@ -22,19 +34,6 @@ import gaia.cu9.ari.gaiaorbit.util.I18n;
 import gaia.cu9.ari.gaiaorbit.util.format.DateFormatFactory;
 import gaia.cu9.ari.gaiaorbit.util.format.NumberFormatFactory;
 import gaia.cu9.ari.gaiaorbit.util.tree.OctreeNode;
-
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.util.List;
-
-import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.backends.lwjgl.LwjglFiles;
-import com.badlogic.gdx.files.FileHandle;
-import com.badlogic.gdx.utils.reflect.ClassReflection;
-import com.badlogic.gdx.utils.reflect.ReflectionException;
 
 public class OctreeGeneratorTest implements IObserver {
 
@@ -93,11 +92,11 @@ public class OctreeGeneratorTest implements IObserver {
 
         HYGBinaryLoader hyg = new HYGBinaryLoader();
         hyg.initialize(new String[] { "data/hygxyz.bin" });
-        STILCatalogLoader tycho = new STILCatalogLoader();
-        tycho.initialize(new String[] { "/home/tsagrista/Workspaces/objectserver/data/tycho.vot.gz" });
+        //        STILCatalogLoader tycho = new STILCatalogLoader();
+        //        tycho.initialize(new String[] { "/home/tsagrista/Workspaces/objectserver/data/tycho.vot.gz" });
 
         List<Particle> list = (List<Particle>) hyg.loadData();
-        list.addAll((List<Particle>) tycho.loadData());
+        //list.addAll((List<Particle>) tycho.loadData());
         OctreeNode<Particle> octree = og.generateOctree(list);
 
         // Put all new particles in list

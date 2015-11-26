@@ -1,12 +1,5 @@
 package gaia.cu9.ari.gaiaorbit.scenegraph;
 
-import gaia.cu9.ari.gaiaorbit.render.I3DTextRenderable;
-import gaia.cu9.ari.gaiaorbit.render.system.ImmediateRenderSystem;
-import gaia.cu9.ari.gaiaorbit.render.system.LineRenderSystem;
-import gaia.cu9.ari.gaiaorbit.util.Constants;
-import gaia.cu9.ari.gaiaorbit.util.math.Vector3d;
-import gaia.cu9.ari.gaiaorbit.util.time.ITimeFrameProvider;
-
 import java.util.ArrayList;
 import java.util.List;
 
@@ -15,9 +8,18 @@ import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.glutils.ShaderProgram;
+import com.badlogic.gdx.math.Vector3;
+
+import gaia.cu9.ari.gaiaorbit.render.I3DTextRenderable;
+import gaia.cu9.ari.gaiaorbit.render.system.ImmediateRenderSystem;
+import gaia.cu9.ari.gaiaorbit.render.system.LineRenderSystem;
+import gaia.cu9.ari.gaiaorbit.util.Constants;
+import gaia.cu9.ari.gaiaorbit.util.Logger;
+import gaia.cu9.ari.gaiaorbit.util.math.Vector3d;
+import gaia.cu9.ari.gaiaorbit.util.time.ITimeFrameProvider;
 
 /**
- * Has the lines of a constellation
+ * Represents a constellation object.
  * @author Toni Sagrista
  *
  */
@@ -29,6 +31,8 @@ public class Constellation extends LineObject implements I3DTextRenderable {
     public List<long[]> ids;
     /** List of pairs of stars between which there are lines **/
     public List<AbstractPositionEntity[]> stars;
+    /** The positions themselves, in case the stars are not there (i.e. octrees) **/
+    public List<Vector3[]> positions;
 
     public Constellation() {
         super();
@@ -47,6 +51,10 @@ public class Constellation extends LineObject implements I3DTextRenderable {
     }
 
     public void update(ITimeFrameProvider time, final Transform parentTransform, ICamera camera) {
+        update(time, parentTransform, camera, 1f);
+    }
+
+    public void update(ITimeFrameProvider time, final Transform parentTransform, ICamera camera, float opacity) {
         pos.scl(0);
         for (AbstractPositionEntity[] pair : stars) {
             pos.add(pair[0].transform.getTranslation());
@@ -58,13 +66,18 @@ public class Constellation extends LineObject implements I3DTextRenderable {
 
     @Override
     public void setUp() {
-        stars = new ArrayList<AbstractPositionEntity[]>(ids.size());
+        stars = new ArrayList<AbstractPositionEntity[]>();
+        positions = new ArrayList<Vector3[]>();
         for (long[] pair : ids) {
             AbstractPositionEntity s1, s2;
             s1 = sg.getStarMap().get(pair[0]);
             s2 = sg.getStarMap().get(pair[1]);
-            if (s1 != null && s2 != null)
+            if (s1 != null && s2 != null) {
                 stars.add(new AbstractPositionEntity[] { s1, s2 });
+                positions.add(new Vector3[] { s1.pos.toVector3(), s2.pos.toVector3() });
+            } else {
+                Logger.error(new RuntimeException("Stars with id not found: " + pair[0] + ", " + pair[1]));
+            }
         }
     }
 
@@ -84,14 +97,22 @@ public class Constellation extends LineObject implements I3DTextRenderable {
     public void render(LineRenderSystem renderer, ICamera camera, float alpha) {
         constalpha = alpha;
         alpha *= this.alpha;
-        // This is so that the shape renderer does not mess up the z-buffer
-        for (AbstractPositionEntity[] pair : stars) {
-            double[] p1 = pair[0].transform.getTranslation();
-            double[] p2 = pair[1].transform.getTranslation();
 
-            renderer.addLine((float) p1[0], (float) p1[1], (float) p1[2], (float) p2[0], (float) p2[1], (float) p2[2], cc[0], cc[1], cc[2], alpha);
+        Vector3 campos = v3fpool.obtain();
+        Vector3 p1 = v3fpool.obtain();
+        Vector3 p2 = v3fpool.obtain();
+        camera.getPos().setVector3(campos);
+        // Fix, using positions directly
+        for (Vector3[] pair : positions) {
+            p1.set(pair[0]).sub(campos);
+            p2.set(pair[1]).sub(campos);
+
+            renderer.addLine(p1.x, p1.y, p1.z, p2.x, p2.y, p2.z, cc[0], cc[1], cc[2], alpha);
 
         }
+        v3fpool.free(campos);
+        v3fpool.free(p1);
+        v3fpool.free(p2);
 
     }
 
