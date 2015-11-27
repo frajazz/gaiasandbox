@@ -1,5 +1,15 @@
 package gaia.cu9.ari.gaiaorbit.scenegraph;
 
+import java.util.Iterator;
+import java.util.List;
+import java.util.Vector;
+
+import com.badlogic.gdx.assets.AssetManager;
+import com.badlogic.gdx.math.Matrix4;
+import com.badlogic.gdx.math.Vector3;
+import com.badlogic.gdx.utils.Bits;
+import com.badlogic.gdx.utils.Pool;
+
 import gaia.cu9.ari.gaiaorbit.render.ComponentType;
 import gaia.cu9.ari.gaiaorbit.render.IRenderable;
 import gaia.cu9.ari.gaiaorbit.render.SceneGraphRenderer;
@@ -11,16 +21,6 @@ import gaia.cu9.ari.gaiaorbit.util.math.Vector2d;
 import gaia.cu9.ari.gaiaorbit.util.math.Vector3d;
 import gaia.cu9.ari.gaiaorbit.util.time.ITimeFrameProvider;
 import gaia.cu9.ari.gaiaorbit.util.tree.IPosition;
-
-import java.util.Iterator;
-import java.util.List;
-import java.util.Vector;
-
-import com.badlogic.gdx.assets.AssetManager;
-import com.badlogic.gdx.math.Matrix4;
-import com.badlogic.gdx.math.Vector3;
-import com.badlogic.gdx.utils.Bits;
-import com.badlogic.gdx.utils.Pool;
 
 /**
  * A scene graph entity.
@@ -509,7 +509,7 @@ public class SceneGraphNode implements ISceneGraphNode, IPosition {
     }
 
     protected boolean addToRender(IRenderable renderable, RenderGroup rg) {
-        if (SceneGraphRenderer.visible[ct.ordinal()] || SceneGraphRenderer.alphas[ct.ordinal()] > 0) {
+        if (SceneGraphRenderer.visible[ct.ordinal()] || SceneGraphRenderer.alphas[ct.ordinal()] < 1f) {
             SceneGraphRenderer.render_lists.get(rg).add(renderable, ThreadIndexer.i());
             return true;
         }

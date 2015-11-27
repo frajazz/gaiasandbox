@@ -1,19 +1,19 @@
 package gaia.cu9.ari.gaiaorbit.data.octreegen;
 
-import gaia.cu9.ari.gaiaorbit.scenegraph.Particle;
-import gaia.cu9.ari.gaiaorbit.util.math.Vector3d;
-import gaia.cu9.ari.gaiaorbit.util.tree.OctreeNode;
-
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 
+import gaia.cu9.ari.gaiaorbit.scenegraph.Particle;
+import gaia.cu9.ari.gaiaorbit.util.math.Vector3d;
+import gaia.cu9.ari.gaiaorbit.util.tree.OctreeNode;
+
 public class BrightestStars implements IAggregationAlgorithm<Particle> {
-    private static final int MAX_DEPTH = 15;
+    private static final int MAX_DEPTH = 17;
     // Maximum number of objects in the densest node of this level
-    private static final int MAX_PART = 10000;
+    private static final int MAX_PART = 15000;
     // Minimum number of objects under which we do not need to break the octree further
-    private static final int MIN_PART = 1000;
+    private static final int MIN_PART = 1300;
     Comparator<Particle> comp;
     int starId;
 
@@ -50,7 +50,6 @@ public class BrightestStars implements IAggregationAlgorithm<Particle> {
                         octant.add(s);
                         s.page = octant;
                         s.pageId = octant.pageId;
-                        s.type = 92;
                         s.nparticles = inputStars.size() / nObjects;
                     }
                 }
@@ -68,7 +67,6 @@ public class BrightestStars implements IAggregationAlgorithm<Particle> {
                     octant.add(s);
                     s.page = octant;
                     s.pageId = octant.pageId;
-                    s.type = 92;
                     s.nparticles = inputStars.size() / nObjects;
                 }
             }

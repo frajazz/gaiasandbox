@@ -61,7 +61,7 @@ public class LineQuadRenderSystem extends LineRenderSystem {
 
     @Override
     protected void initVertices() {
-        meshes = new MeshDataExt[50];
+        meshes = new MeshDataExt[100];
         initVertices(meshIdx++);
     }
 

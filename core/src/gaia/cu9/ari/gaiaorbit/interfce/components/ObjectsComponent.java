@@ -1,17 +1,5 @@
 package gaia.cu9.ari.gaiaorbit.interfce.components;
 
-import gaia.cu9.ari.gaiaorbit.event.EventManager;
-import gaia.cu9.ari.gaiaorbit.event.Events;
-import gaia.cu9.ari.gaiaorbit.event.IObserver;
-import gaia.cu9.ari.gaiaorbit.interfce.GaiaInputController;
-import gaia.cu9.ari.gaiaorbit.scenegraph.CameraManager.CameraMode;
-import gaia.cu9.ari.gaiaorbit.scenegraph.CelestialBody;
-import gaia.cu9.ari.gaiaorbit.scenegraph.ISceneGraph;
-import gaia.cu9.ari.gaiaorbit.scenegraph.SceneGraphNode;
-import gaia.cu9.ari.gaiaorbit.util.Logger;
-import gaia.cu9.ari.gaiaorbit.util.TwoWayHashmap;
-import gaia.cu9.ari.gaiaorbit.util.scene2d.OwnScrollPane;
-
 import java.util.List;
 
 import com.badlogic.gdx.Gdx;
@@ -31,6 +19,18 @@ import com.badlogic.gdx.scenes.scene2d.ui.VerticalGroup;
 import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener.ChangeEvent;
 import com.badlogic.gdx.utils.Align;
 import com.badlogic.gdx.utils.Array;
+
+import gaia.cu9.ari.gaiaorbit.event.EventManager;
+import gaia.cu9.ari.gaiaorbit.event.Events;
+import gaia.cu9.ari.gaiaorbit.event.IObserver;
+import gaia.cu9.ari.gaiaorbit.interfce.GaiaInputController;
+import gaia.cu9.ari.gaiaorbit.scenegraph.CameraManager.CameraMode;
+import gaia.cu9.ari.gaiaorbit.scenegraph.CelestialBody;
+import gaia.cu9.ari.gaiaorbit.scenegraph.ISceneGraph;
+import gaia.cu9.ari.gaiaorbit.scenegraph.SceneGraphNode;
+import gaia.cu9.ari.gaiaorbit.util.Logger;
+import gaia.cu9.ari.gaiaorbit.util.TwoWayHashmap;
+import gaia.cu9.ari.gaiaorbit.util.scene2d.OwnScrollPane;
 
 public class ObjectsComponent extends GuiComponent implements IObserver {
     boolean tree = false;
@@ -130,10 +130,17 @@ public class ObjectsComponent extends GuiComponent implements IObserver {
             focusList.setName("objects list");
             List<CelestialBody> focusableObjects = sg.getFocusableObjects();
             Array<String> names = new Array<String>(focusableObjects.size());
+            int maxentries = 500;
+            int entries = 0;
             for (CelestialBody cb : focusableObjects) {
+                if (entries >= maxentries) {
+                    break;
+                }
                 // Omit stars with no proper names
                 if (!cb.name.startsWith("star_") && !cb.name.startsWith("Hip ") && !cb.name.startsWith("dummy")) {
                     names.add(cb.name);
+                    entries++;
+
                 }
             }
             focusList.setItems(names);

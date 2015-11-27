@@ -4,6 +4,10 @@
 		//,"files": [ "data/hygxyz.bin" ]
 	},
 	{
+		"loader": gaia.cu9.ari.gaiaorbit.data.stars.TGASLoader
+		//,"files": [ "data/TGAS_July2015/Solution1507280011.txt"]
+	},
+	{
 		"loader": gaia.cu9.ari.gaiaorbit.data.stars.SunLoader
 		//,"files": [ "one" ]
 	},
@@ -14,7 +18,8 @@
 	},
 	{
 		"loader": gaia.cu9.ari.gaiaorbit.data.stars.OctreeCatalogLoader
-		,"files": [ "data/octree/hygtycho_01_particles.bin", "data/octree/hygtycho_01_metadata.bin" ]
+		//,"files": [ "data/octree/hygtycho_01_particles.bin", "data/octree/hygtycho_01_metadata.bin" ]
+		,"files": [ "data/octree/tgas_00_particles.bin", "data/octree/tgas_00_metadata.bin" ]
 	},
 	{
 		"loader": gaia.cu9.ari.gaiaorbit.data.JsonLoader,
@@ -33,10 +38,10 @@
 	},
 	{
 		"loader": gaia.cu9.ari.gaiaorbit.data.constel.ConstellationsLoader,
-		"files": [ "data/constel.csv" ]
+		//"files": [ "data/constel.csv" ]
 	},
 	{
 		"loader": gaia.cu9.ari.gaiaorbit.data.constel.ConstelBoundariesLoader,
-		"files": [ "data/boundaries.csv" ]
+		//"files": [ "data/boundaries.csv" ]
 	}
 ]}

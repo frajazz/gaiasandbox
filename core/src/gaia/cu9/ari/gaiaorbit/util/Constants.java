@@ -1,9 +1,9 @@
 package gaia.cu9.ari.gaiaorbit.util;
 
-import gaia.cu9.ari.gaiaorbit.util.coord.AstroUtils;
-
 import com.badlogic.gdx.Application.ApplicationType;
 import com.badlogic.gdx.Gdx;
+
+import gaia.cu9.ari.gaiaorbit.util.coord.AstroUtils;
 
 public class Constants {
 
@@ -123,7 +123,7 @@ public class Constants {
     /** Minimum star brightness **/
     public static final float MIN_STAR_BRIGHT = 0.2f;
     /** Maximum star brightness **/
-    public static final float MAX_STAR_BRIGHT = 15f;
+    public static final float MAX_STAR_BRIGHT = 25f;
 
     /**
      * 
@@ -135,36 +135,36 @@ public class Constants {
     public static boolean desktop = false;
 
     static {
-	if (Gdx.app != null) {
-	    mobile = (Gdx.app.getType() == ApplicationType.Android || Gdx.app.getType() == ApplicationType.iOS) && !ConfInit.instance.webgl;
-	    desktop = Gdx.app.getType() == ApplicationType.Desktop && !ConfInit.instance.webgl;
-	    webgl = Gdx.app.getType() == ApplicationType.WebGL || ConfInit.instance.webgl;
-	}
+        if (Gdx.app != null) {
+            mobile = (Gdx.app.getType() == ApplicationType.Android || Gdx.app.getType() == ApplicationType.iOS) && !ConfInit.instance.webgl;
+            desktop = Gdx.app.getType() == ApplicationType.Desktop && !ConfInit.instance.webgl;
+            webgl = Gdx.app.getType() == ApplicationType.WebGL || ConfInit.instance.webgl;
+        }
     }
 
     /**
      * Nature
      */
     public static class Nature {
-	/** Number of seconds per day */
-	public static final double DAY_SECOND = 86400.0D;
-	/** One degree in units of radians */
-	public static final double DEGREE_RADIAN = 0.0174532925199433D;
-	/** One radian in units of degrees */
-	public static final double RADIAN_DEGREE = 57.2957795130823D;
-	/** One arcsecond in units of radians */
-	public static final double ARCSECOND_RADIAN = 4.84813681109536E-6D;
-	/** Number of days per Julian year */
-	public static final double JULIANYEAR_DAY = 365.25D;
-	/**
-	 * Mean (geometric) longitude rate of the nominal Sun for use in simulations of the
-	 * NSL (mean ecliptic orbital elements, at the standard epoch J2000.0). Note that a value
-	 * of 1295977422.83429 / (1.0E3 * 365.25 * 3600.0) = 0.98560911 degrees day^-1 is given in
-	 * Section 5.8.3 of J.L. Simon, P. Bretagnon, J. Chapront, M. Chapront-Touze, G. Francou,
-	 * J. Laskar, 1994, \'Numerical expressions for precession formulae and mean elements for
-	 * the Moon and the planets\', A\&A, 282, 663 (1994A\&A...282..663S)
-	 */
-	public static final double NOMINALSUN_MEANLONGITUDERATE_J2000 = 0.98560903D;
+        /** Number of seconds per day */
+        public static final double DAY_SECOND = 86400.0D;
+        /** One degree in units of radians */
+        public static final double DEGREE_RADIAN = 0.0174532925199433D;
+        /** One radian in units of degrees */
+        public static final double RADIAN_DEGREE = 57.2957795130823D;
+        /** One arcsecond in units of radians */
+        public static final double ARCSECOND_RADIAN = 4.84813681109536E-6D;
+        /** Number of days per Julian year */
+        public static final double JULIANYEAR_DAY = 365.25D;
+        /**
+        	 * Mean (geometric) longitude rate of the nominal Sun for use in simulations of the
+        	 * NSL (mean ecliptic orbital elements, at the standard epoch J2000.0). Note that a value
+        	 * of 1295977422.83429 / (1.0E3 * 365.25 * 3600.0) = 0.98560911 degrees day^-1 is given in
+        	 * Section 5.8.3 of J.L. Simon, P. Bretagnon, J. Chapront, M. Chapront-Touze, G. Francou,
+        	 * J. Laskar, 1994, \'Numerical expressions for precession formulae and mean elements for
+        	 * the Moon and the planets\', A\&A, 282, 663 (1994A\&A...282..663S)
+        	 */
+        public static final double NOMINALSUN_MEANLONGITUDERATE_J2000 = 0.98560903D;
     }
 
 }

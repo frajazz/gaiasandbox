@@ -1,5 +1,16 @@
 package gaia.cu9.ari.gaiaorbit.util.tree;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.List;
+import java.util.Map;
+import java.util.TreeSet;
+
+import com.badlogic.gdx.graphics.Color;
+import com.badlogic.gdx.math.Frustum;
+import com.badlogic.gdx.math.Vector3;
+
 import gaia.cu9.ari.gaiaorbit.render.ComponentType;
 import gaia.cu9.ari.gaiaorbit.render.ILineRenderable;
 import gaia.cu9.ari.gaiaorbit.render.system.LineRenderSystem;
@@ -16,17 +27,6 @@ import gaia.cu9.ari.gaiaorbit.util.math.Matrix4d;
 import gaia.cu9.ari.gaiaorbit.util.math.Rayd;
 import gaia.cu9.ari.gaiaorbit.util.math.Vector3d;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.List;
-import java.util.Map;
-import java.util.TreeSet;
-
-import com.badlogic.gdx.graphics.Color;
-import com.badlogic.gdx.math.Frustum;
-import com.badlogic.gdx.math.Vector3;
-
 /**
  * Octree node implementation which contains a list of {@link IPosition} objects
  * and possibly 8 subnodes.
@@ -38,11 +38,14 @@ public class OctreeNode<T extends IPosition> implements ILineRenderable {
     /** Max depth of the structure this node belongs to **/
     public static int maxDepth;
     /** Angle threshold below which we stay with the current level. Lower limit of overlap **/
-    public static final double ANGLE_THRESHOLD_1 = Math.toRadians(20d);
+    public static final double ANGLE_THRESHOLD_1 = Math.toRadians(35d);
     /** Angle threshold above which we break the Octree. Upper limit of overlap **/
     public static final double ANGLE_THRESHOLD_2 = Math.toRadians(50d);
     /** Is dynamic loading active? **/
     public static boolean LOAD_ACTIVE;
+
+    /** Is the draw method actually drawing? **/
+    public static boolean DRAW_ACTIVE = true;
 
     /** Since OctreeNode is not to be parallelized, this can be static **/
     private static BoundingBoxd boxcopy = new BoundingBoxd(new Vector3d(), new Vector3d());
@@ -489,84 +492,86 @@ public class OctreeNode<T extends IPosition> implements ILineRenderable {
 
     @Override
     public void render(LineRenderSystem sr, ICamera camera, float alpha) {
-        float maxDepth = OctreeNode.maxDepth * 2;
-        // Colour depends on depth
-        int rgb = 0xff000000 | ColourUtils.HSBtoRGB((float) depth / (float) maxDepth, 1f, 0.5f);
+        if (DRAW_ACTIVE) {
+            float maxDepth = OctreeNode.maxDepth * 2;
+            // Colour depends on depth
+            int rgb = 0xff000000 | ColourUtils.HSBtoRGB((float) depth / (float) maxDepth, 1f, 0.5f);
 
-        alpha *= MathUtilsd.lint(depth, 0, maxDepth, 1.0, 0.5);
+            alpha *= MathUtilsd.lint(depth, 0, maxDepth, 1.0, 0.5);
 
-        this.col.set(ColourUtils.getRed(rgb) * alpha, ColourUtils.getGreen(rgb) * alpha, ColourUtils.getBlue(rgb) * alpha, alpha * opacity);
+            this.col.set(ColourUtils.getRed(rgb) * alpha, ColourUtils.getGreen(rgb) * alpha, ColourUtils.getBlue(rgb) * alpha, alpha * opacity);
 
-        if (this.pageId == 45)
-            this.col.set(Color.BLUE);
+            if (this.pageId == 45)
+                this.col.set(Color.BLUE);
 
-        // Camera correction
-        Vector3d loc = MyPools.get(Vector3d.class).obtain();
-        loc.set(this.blf).add(transform);
+            // Camera correction
+            Vector3d loc = MyPools.get(Vector3d.class).obtain();
+            loc.set(this.blf).add(transform);
 
-        /*
-         *       .·------·
-         *     .' |    .'|
-         *    +---+--·'  |
-         *    |   |  |   |
-         *    |  ,+--+---·
-         *    |.'    | .'
-         *    +------+'
-         */
-        line(sr, loc.x, loc.y, loc.z, loc.x + size.x, loc.y, loc.z, this.col);
-        line(sr, loc.x, loc.y, loc.z, loc.x, loc.y + size.y, loc.z, this.col);
-        line(sr, loc.x, loc.y, loc.z, loc.x, loc.y, loc.z + size.z, this.col);
+            /*
+             *       .·------·
+             *     .' |    .'|
+             *    +---+--·'  |
+             *    |   |  |   |
+             *    |  ,+--+---·
+             *    |.'    | .'
+             *    +------+'
+             */
+            line(sr, loc.x, loc.y, loc.z, loc.x + size.x, loc.y, loc.z, this.col);
+            line(sr, loc.x, loc.y, loc.z, loc.x, loc.y + size.y, loc.z, this.col);
+            line(sr, loc.x, loc.y, loc.z, loc.x, loc.y, loc.z + size.z, this.col);
 
-        /*
-         *       .·------·
-         *     .' |    .'|
-         *    ·---+--+'  |
-         *    |   |  |   |
-         *    |  ,·--+---+
-         *    |.'    | .'
-         *    ·------+'
-         */
-        line(sr, loc.x + size.x, loc.y, loc.z, loc.x + size.x, loc.y + size.y, loc.z, this.col);
-        line(sr, loc.x + size.x, loc.y, loc.z, loc.x + size.x, loc.y, loc.z + size.z, this.col);
+            /*
+             *       .·------·
+             *     .' |    .'|
+             *    ·---+--+'  |
+             *    |   |  |   |
+             *    |  ,·--+---+
+             *    |.'    | .'
+             *    ·------+'
+             */
+            line(sr, loc.x + size.x, loc.y, loc.z, loc.x + size.x, loc.y + size.y, loc.z, this.col);
+            line(sr, loc.x + size.x, loc.y, loc.z, loc.x + size.x, loc.y, loc.z + size.z, this.col);
 
-        /*
-         *       .·------+
-         *     .' |    .'|
-         *    ·---+--·'  |
-         *    |   |  |   |
-         *    |  ,+--+---+
-         *    |.'    | .'
-         *    ·------·'
-         */
-        line(sr, loc.x + size.x, loc.y, loc.z + size.z, loc.x, loc.y, loc.z + size.z, this.col);
-        line(sr, loc.x + size.x, loc.y, loc.z + size.z, loc.x + size.x, loc.y + size.y, loc.z + size.z, this.col);
+            /*
+             *       .·------+
+             *     .' |    .'|
+             *    ·---+--·'  |
+             *    |   |  |   |
+             *    |  ,+--+---+
+             *    |.'    | .'
+             *    ·------·'
+             */
+            line(sr, loc.x + size.x, loc.y, loc.z + size.z, loc.x, loc.y, loc.z + size.z, this.col);
+            line(sr, loc.x + size.x, loc.y, loc.z + size.z, loc.x + size.x, loc.y + size.y, loc.z + size.z, this.col);
 
-        /*
-         *       .+------·
-         *     .' |    .'|
-         *    ·---+--·'  |
-         *    |   |  |   |
-         *    |  ,+--+---·
-         *    |.'    | .'
-         *    ·------·'
-         */
-        line(sr, loc.x, loc.y, loc.z + size.z, loc.x, loc.y + size.y, loc.z + size.z, this.col);
+            /*
+             *       .+------·
+             *     .' |    .'|
+             *    ·---+--·'  |
+             *    |   |  |   |
+             *    |  ,+--+---·
+             *    |.'    | .'
+             *    ·------·'
+             */
+            line(sr, loc.x, loc.y, loc.z + size.z, loc.x, loc.y + size.y, loc.z + size.z, this.col);
 
-        /*
-         *       .+------+
-         *     .' |    .'|
-         *    +---+--+'  |
-         *    |   |  |   |
-         *    |  ,·--+---·
-         *    |.'    | .'
-         *    ·------·'
-         */
-        line(sr, loc.x, loc.y + size.y, loc.z, loc.x + size.x, loc.y + size.y, loc.z, this.col);
-        line(sr, loc.x, loc.y + size.y, loc.z, loc.x, loc.y + size.y, loc.z + size.z, this.col);
-        line(sr, loc.x, loc.y + size.y, loc.z + size.z, loc.x + size.x, loc.y + size.y, loc.z + size.z, this.col);
-        line(sr, loc.x + size.x, loc.y + size.y, loc.z, loc.x + size.x, loc.y + size.y, loc.z + size.z, this.col);
+            /*
+             *       .+------+
+             *     .' |    .'|
+             *    +---+--+'  |
+             *    |   |  |   |
+             *    |  ,·--+---·
+             *    |.'    | .'
+             *    ·------·'
+             */
+            line(sr, loc.x, loc.y + size.y, loc.z, loc.x + size.x, loc.y + size.y, loc.z, this.col);
+            line(sr, loc.x, loc.y + size.y, loc.z, loc.x, loc.y + size.y, loc.z + size.z, this.col);
+            line(sr, loc.x, loc.y + size.y, loc.z + size.z, loc.x + size.x, loc.y + size.y, loc.z + size.z, this.col);
+            line(sr, loc.x + size.x, loc.y + size.y, loc.z, loc.x + size.x, loc.y + size.y, loc.z + size.z, this.col);
 
-        MyPools.get(Vector3d.class).free(loc);
+            MyPools.get(Vector3d.class).free(loc);
+        }
     }
 
     /** Draws a line **/

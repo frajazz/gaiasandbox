@@ -18,18 +18,27 @@ import gaia.cu9.ari.gaiaorbit.util.Constants;
 import gaia.cu9.ari.gaiaorbit.util.GlobalConf;
 import gaia.cu9.ari.gaiaorbit.util.I18n;
 import gaia.cu9.ari.gaiaorbit.util.Logger;
+import gaia.cu9.ari.gaiaorbit.util.coord.AstroUtils;
 import gaia.cu9.ari.gaiaorbit.util.coord.Coordinates;
-import gaia.cu9.ari.gaiaorbit.util.math.MathUtilsd;
 import gaia.cu9.ari.gaiaorbit.util.math.Vector3d;
 import gaia.cu9.ari.gaiaorbit.util.parse.Parser;
 
 /**
- * Loads the HYG catalog in CSV format
+ * Loads TGAS stars in the original ASCII format:
+ *  
+ *  # 0    1         2      3               4      5           6      7           8            9                 10       11            12       13    14           15    16     17 18
+ *  # cat  sourceId  alpha  alphaStarError  delta  deltaError  varpi  varpiError  muAlphaStar  muAlphaStarError  muDelta  muDeltaError  nObsAl   nOut  excessNoise  gMag  nuEff  C  M 
+ *  
+ * Source position and corresponding errors are in radian, parallax in mas and propermotion in mas/yr
+ * Color and magnitude are based on 2Mass catalogue C = Jmag-Kmag and M = (VTmag+5*(1+log10(varPi/1000))) set to NaN if some data is not available
+ * 
  * @author Toni Sagrista
  *
  */
-public class HYGCSVLoader extends AbstractCatalogLoader implements ISceneGraphLoader {
-    private static final String separator = "\t";
+public class TGASLoader extends AbstractCatalogLoader implements ISceneGraphLoader {
+
+    private static final String separator = "\\s+";
+    private static final String comment = "#";
 
     @Override
     public List<Particle> loadData() throws FileNotFoundException {
@@ -40,16 +49,11 @@ public class HYGCSVLoader extends AbstractCatalogLoader implements ISceneGraphLo
             BufferedReader br = new BufferedReader(new InputStreamReader(data));
 
             try {
-                //Skip first line
-                String[] header = br.readLine().split(separator);
-
-                for (String head : header) {
-                    head = head.trim();
-                }
                 String line;
                 while ((line = br.readLine()) != null) {
-                    //Add star
-                    addStar(line, stars);
+                    if (!line.startsWith(comment))
+                        //Add star
+                        addStar(line, stars);
                 }
             } catch (IOException e) {
                 e.printStackTrace();
@@ -69,35 +73,24 @@ public class HYGCSVLoader extends AbstractCatalogLoader implements ISceneGraphLo
 
     private void addStar(String line, List<Particle> stars) {
         String[] st = line.split(separator);
-        double ra = MathUtilsd.lint(Parser.parseDouble(st[7].trim()), 0, 24, 0, 360);
-        double dec = Parser.parseDouble(st[8].trim());
-        double dist = Parser.parseDouble(st[9]) * Constants.PC_TO_U;
+
+        String catalog = st[0];
+        long sourceid = Parser.parseLong(st[1]);
+
+        double ra = AstroUtils.TO_DEG * Parser.parseDouble(st[2].trim());
+        double dec = AstroUtils.TO_DEG * Parser.parseDouble(st[4].trim());
+        double pllx = Parser.parseDouble(st[6].trim());
+        double dist = (1000d / pllx) * Constants.PC_TO_U;
         Vector3d pos = Coordinates.sphericalToCartesian(Math.toRadians(ra), Math.toRadians(dec), dist, new Vector3d());
 
-        float appmag = Parser.parseFloat(st[10].trim());
-        float colorbv = 0f;
-
-        if (st.length >= 14 && !st[13].trim().isEmpty()) {
-            colorbv = Parser.parseFloat(st[13].trim());
-        } else {
-            colorbv = 1;
-        }
+        float appmag = new Double(Parser.parseDouble(st[15].trim())).floatValue();
+        float colorbv = new Double(Parser.parseDouble(st[17].trim())).floatValue();
 
         if (appmag < GlobalConf.data.LIMIT_MAG_LOAD) {
-            float absmag = Parser.parseFloat(st[11].trim());
-            String name = null;
-            if (!st[6].trim().isEmpty()) {
-                name = st[6].trim().replaceAll("\\s+", " ");
-            } else if (!st[5].trim().isEmpty()) {
-                name = st[5].trim().replaceAll("\\s+", " ");
-            } else if (!st[4].trim().isEmpty()) {
-                name = st[4].trim().replaceAll("\\s+", " ");
-            } else if (!st[2].trim().isEmpty()) {
-                name = "Hip " + st[1].trim();
-            }
-            long starid = Parser.parseLong(st[0].trim());
+            float absmag = appmag;
+            String name = catalog + sourceid;
 
-            Star star = new Star(pos, appmag, absmag, colorbv, name, (float) ra, (float) dec, starid);
+            Star star = new Star(pos, appmag, absmag, colorbv, name, (float) ra, (float) dec, sourceid);
             stars.add(star);
         }
     }
