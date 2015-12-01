@@ -509,7 +509,8 @@ public class SceneGraphNode implements ISceneGraphNode, IPosition {
     }
 
     protected boolean addToRender(IRenderable renderable, RenderGroup rg) {
-        if (SceneGraphRenderer.visible[ct.ordinal()] || SceneGraphRenderer.alphas[ct.ordinal()] < 1f) {
+        boolean vis = SceneGraphRenderer.visible[ct.ordinal()];
+        if (vis || (!vis && SceneGraphRenderer.alphas[ct.ordinal()] > 0)) {
             SceneGraphRenderer.render_lists.get(rg).add(renderable, ThreadIndexer.i());
             return true;
         }

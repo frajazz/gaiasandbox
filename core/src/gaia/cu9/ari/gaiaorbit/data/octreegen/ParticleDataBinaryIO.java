@@ -102,7 +102,7 @@ public class ParticleDataBinaryIO {
                     if (appmag < GlobalConf.data.LIMIT_MAG_LOAD) {
                         Vector3d pos = new Vector3d(x, y, z);
                         Vector3d sph = Coordinates.cartesianToSpherical(pos, new Vector3d());
-                        Star s = new Star(pos, appmag, absmag, colorbv, name, (float) sph.x, (float) sph.y, id, hip, tycho);
+                        Star s = new Star(pos, appmag, absmag, colorbv, name, (float) Math.toDegrees(sph.x), (float) Math.toDegrees(sph.y), id, hip, tycho);
                         s.pageId = pageId;
                         s.type = type;
                         s.initialize();

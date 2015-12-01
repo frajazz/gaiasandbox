@@ -1,17 +1,17 @@
 package gaia.cu9.ari.gaiaorbit.scenegraph;
 
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+
+import com.badlogic.gdx.utils.IntMap;
+
 import gaia.cu9.ari.gaiaorbit.render.system.PixelRenderSystem;
 import gaia.cu9.ari.gaiaorbit.scenegraph.octreewrapper.AbstractOctreeWrapper;
 import gaia.cu9.ari.gaiaorbit.util.GlobalConf;
 import gaia.cu9.ari.gaiaorbit.util.I18n;
 import gaia.cu9.ari.gaiaorbit.util.Logger;
 import gaia.cu9.ari.gaiaorbit.util.time.ITimeFrameProvider;
-
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-
-import com.badlogic.gdx.utils.LongMap;
 
 public abstract class AbstractSceneGraph implements ISceneGraph {
 
@@ -21,8 +21,8 @@ public abstract class AbstractSceneGraph implements ISceneGraph {
     public SceneGraphNode root;
     /** Quick lookup map. Name to node. **/
     HashMap<String, SceneGraphNode> stringToNode;
-    /** Star id map **/
-    LongMap<CelestialBody> starMap;
+    /** Star HIP map **/
+    IntMap<Star> starMap;
     /** Number of objects per thread **/
     protected int[] objectsPerThread;
 
@@ -45,7 +45,7 @@ public abstract class AbstractSceneGraph implements ISceneGraph {
         // Initialize stringToNode and starMap maps
         stringToNode = new HashMap<String, SceneGraphNode>(nodes.size() * 2);
         stringToNode.put(root.name, root);
-        starMap = new LongMap<CelestialBody>();
+        starMap = new IntMap<Star>();
         for (SceneGraphNode node : nodes) {
             if (node.name != null && !node.name.isEmpty()) {
                 stringToNode.put(node.name, node);
@@ -63,15 +63,26 @@ public abstract class AbstractSceneGraph implements ISceneGraph {
                 }
             }
 
-            // Star map
+            // Star map            
             if (node.getStarCount() == 1) {
                 CelestialBody s = (CelestialBody) node.getStars();
-                starMap.put(s.id, s);
+                if (s instanceof Star && ((Star) s).hip >= 0) {
+                    if (starMap.containsKey(((Star) s).hip)) {
+                        Logger.error(new RuntimeException(("Duplicated HIP id: " + ((Star) s).hip)));
+                    } else {
+                        starMap.put(((Star) s).hip, (Star) s);
+                    }
+                }
             } else if (node.getStarCount() > 1) {
                 List<AbstractPositionEntity> stars = (List<AbstractPositionEntity>) node.getStars();
                 for (AbstractPositionEntity s : stars) {
-                    if (s instanceof Star)
-                        starMap.put(s.id, (Star) s);
+                    if (s instanceof Star && ((Star) s).hip >= 0) {
+                        if (starMap.containsKey(((Star) s).hip)) {
+                            Logger.error(new RuntimeException(("Duplicated HIP id: " + ((Star) s).hip)));
+                        } else {
+                            starMap.put(((Star) s).hip, (Star) s);
+                        }
+                    }
                 }
             }
         }
@@ -148,7 +159,7 @@ public abstract class AbstractSceneGraph implements ISceneGraph {
     }
 
     @Override
-    public LongMap<CelestialBody> getStarMap() {
+    public IntMap<Star> getStarMap() {
         return starMap;
     }
 

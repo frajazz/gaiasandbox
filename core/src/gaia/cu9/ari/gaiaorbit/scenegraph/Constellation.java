@@ -28,7 +28,7 @@ public class Constellation extends LineObject implements I3DTextRenderable {
     float constalpha;
 
     /** List of pairs of identifiers **/
-    public List<long[]> ids;
+    public List<int[]> ids;
     /** List of pairs of stars between which there are lines **/
     public List<AbstractPositionEntity[]> stars;
     /** The positions themselves, in case the stars are not there (i.e. octrees) **/
@@ -68,7 +68,7 @@ public class Constellation extends LineObject implements I3DTextRenderable {
     public void setUp() {
         stars = new ArrayList<AbstractPositionEntity[]>();
         positions = new ArrayList<Vector3[]>();
-        for (long[] pair : ids) {
+        for (int[] pair : ids) {
             AbstractPositionEntity s1, s2;
             s1 = sg.getStarMap().get(pair[0]);
             s2 = sg.getStarMap().get(pair[1]);

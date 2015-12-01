@@ -1,10 +1,10 @@
 package gaia.cu9.ari.gaiaorbit.util.coord;
 
+import com.badlogic.gdx.math.Matrix4;
+
 import gaia.cu9.ari.gaiaorbit.util.math.Matrix4d;
 import gaia.cu9.ari.gaiaorbit.util.math.Vector2d;
 import gaia.cu9.ari.gaiaorbit.util.math.Vector3d;
-
-import com.badlogic.gdx.math.Matrix4;
 
 /**
  * Provides utility coordinate conversions between some astronomical coordinate systems and to
@@ -35,6 +35,7 @@ public class Coordinates {
 
     private static Matrix4d equatorialToEcliptic, eclipticToEquatorial, equatorialToGalactic, galacticToEquatorial, eclipticToGalactic, galacticToEcliptic;
     private static Matrix4 equatorialToEclipticF, eclipticToEquatorialF, equatorialToGalacticF, galacticToEquatorialF, eclipticToGalacticF, galacticToEclipticF;
+
     static {
         // Initialize matrices
 
@@ -368,12 +369,12 @@ public class Coordinates {
                 ysq = y ** 2
                 zsq = z ** 2
                 distance = math.sqrt(xsq + ysq + zsq)
-
+        
                 alpha = math.atan2(y, x)
                 # Correct the value of alpha depending upon the quadrant.
                 if alpha < 0:
                     alpha += 2 * math.pi
-
+        
                 if (xsq + ysq) == 0:
                     # In the case of the poles, delta is -90 or +90
                     delta = math.copysign(math.pi / 2, z)

@@ -88,6 +88,18 @@ public class Star extends Particle {
         super(pos, appmag, absmag, colorbv, name, ra, dec, starid);
     }
 
+    /**
+     * 
+     * @param pos
+     * @param appmag
+     * @param absmag
+     * @param colorbv
+     * @param name
+     * @param ra in degrees
+     * @param dec in degrees
+     * @param starid
+     * @param hip
+     */
     public Star(Vector3d pos, float appmag, float absmag, float colorbv, String name, float ra, float dec, long starid, int hip) {
         super(pos, appmag, absmag, colorbv, name, ra, dec, starid);
         this.hip = hip;

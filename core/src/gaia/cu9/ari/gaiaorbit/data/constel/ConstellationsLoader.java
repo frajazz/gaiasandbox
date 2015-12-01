@@ -38,8 +38,8 @@ public class ConstellationsLoader<T extends SceneGraphNode> implements ISceneGra
                 try {
                     //Skip first line
                     String lastName = "";
-                    List<long[]> partial = null;
-                    long lastid = -1;
+                    List<int[]> partial = null;
+                    int lastid = -1;
                     String line;
                     String name = null;
                     while ((line = br.readLine()) != null) {
@@ -58,7 +58,7 @@ public class ConstellationsLoader<T extends SceneGraphNode> implements ISceneGra
                             }
 
                             if (partial == null) {
-                                partial = new ArrayList<long[]>();
+                                partial = new ArrayList<int[]>();
                             }
 
                             // Break point sequence
@@ -66,9 +66,9 @@ public class ConstellationsLoader<T extends SceneGraphNode> implements ISceneGra
                                 lastid = -1;
                             } else {
 
-                                long newid = Parser.parseLong(tokens[1].trim());
+                                int newid = Parser.parseInt(tokens[1].trim());
                                 if (lastid > 0) {
-                                    partial.add(new long[] { lastid, newid });
+                                    partial.add(new int[] { lastid, newid });
                                 }
                                 lastid = newid;
 

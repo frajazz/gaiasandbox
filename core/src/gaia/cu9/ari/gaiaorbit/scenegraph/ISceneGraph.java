@@ -1,12 +1,12 @@
 package gaia.cu9.ari.gaiaorbit.scenegraph;
 
-import gaia.cu9.ari.gaiaorbit.util.time.ITimeFrameProvider;
-
 import java.io.Serializable;
 import java.util.HashMap;
 import java.util.List;
 
-import com.badlogic.gdx.utils.LongMap;
+import com.badlogic.gdx.utils.IntMap;
+
+import gaia.cu9.ari.gaiaorbit.util.time.ITimeFrameProvider;
 
 public interface ISceneGraph extends Serializable {
     public void initialize(List<SceneGraphNode> nodes, ITimeFrameProvider time);
@@ -24,7 +24,12 @@ public interface ISceneGraph extends Serializable {
 
     public HashMap<String, SceneGraphNode> getStringToNodeMap();
 
-    public LongMap<CelestialBody> getStarMap();
+    /** 
+     * Gets a star map: HIP -> Star
+     * It only contains the stars with HIP number
+     * @return The HIP star map
+     */
+    public IntMap<Star> getStarMap();
 
     public List<SceneGraphNode> getNodes();
 

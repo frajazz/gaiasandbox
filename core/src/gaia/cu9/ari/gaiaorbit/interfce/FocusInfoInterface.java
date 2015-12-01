@@ -1,11 +1,15 @@
 package gaia.cu9.ari.gaiaorbit.interfce;
 
+import com.badlogic.gdx.scenes.scene2d.ui.Skin;
+import com.badlogic.gdx.scenes.scene2d.ui.Table;
+
 import gaia.cu9.ari.gaiaorbit.GaiaSandbox;
 import gaia.cu9.ari.gaiaorbit.event.EventManager;
 import gaia.cu9.ari.gaiaorbit.event.Events;
 import gaia.cu9.ari.gaiaorbit.event.IObserver;
 import gaia.cu9.ari.gaiaorbit.scenegraph.CameraManager.CameraMode;
 import gaia.cu9.ari.gaiaorbit.scenegraph.CelestialBody;
+import gaia.cu9.ari.gaiaorbit.scenegraph.Star;
 import gaia.cu9.ari.gaiaorbit.util.Constants;
 import gaia.cu9.ari.gaiaorbit.util.GlobalResources;
 import gaia.cu9.ari.gaiaorbit.util.I18n;
@@ -15,12 +19,9 @@ import gaia.cu9.ari.gaiaorbit.util.format.NumberFormatFactory;
 import gaia.cu9.ari.gaiaorbit.util.math.Vector3d;
 import gaia.cu9.ari.gaiaorbit.util.scene2d.OwnLabel;
 
-import com.badlogic.gdx.scenes.scene2d.ui.Skin;
-import com.badlogic.gdx.scenes.scene2d.ui.Table;
-
 public class FocusInfoInterface extends Table implements IObserver {
 
-    protected OwnLabel focusName, focusRA, focusDEC, focusAngle, focusDist, focusAppMag, focusAbsMag, focusRadius;
+    protected OwnLabel focusName, focusId, focusRA, focusDEC, focusAngle, focusDist, focusAppMag, focusAbsMag, focusRadius;
     protected OwnLabel camName, camVel, camPos;
 
     private Table focusInfo, cameraInfo;
@@ -42,6 +43,7 @@ public class FocusInfoInterface extends Table implements IObserver {
         cameraInfo.pad(5);
 
         focusName = new OwnLabel("", skin, "hud-header");
+        focusId = new OwnLabel("", skin, "hud");
         focusRA = new OwnLabel("", skin, "hud");
         focusDEC = new OwnLabel("", skin, "hud");
         focusAppMag = new OwnLabel("", skin, "hud");
@@ -55,6 +57,7 @@ public class FocusInfoInterface extends Table implements IObserver {
         camPos = new OwnLabel("", skin, "hud");
 
         float w = 100;
+        focusId.setWidth(w);
         focusRA.setWidth(w);
         focusDEC.setWidth(w);
         focusAngle.setWidth(w);
@@ -62,6 +65,9 @@ public class FocusInfoInterface extends Table implements IObserver {
         camVel.setWidth(w);
 
         focusInfo.add(focusName).left().colspan(2);
+        focusInfo.row();
+        focusInfo.add(new OwnLabel("ID", skin, "hud-big")).left();
+        focusInfo.add(focusId).left().padLeft(10);
         focusInfo.row();
         focusInfo.add(new OwnLabel(txt("gui.focusinfo.alpha"), skin, "hud-big")).left();
         focusInfo.add(focusRA).left().padLeft(10);
@@ -110,6 +116,22 @@ public class FocusInfoInterface extends Table implements IObserver {
             } else {
                 cb = (CelestialBody) data[0];
             }
+
+            String id = "";
+            if (cb instanceof Star) {
+                Star s = (Star) cb;
+                if (s.hip >= 0) {
+                    id = "HIP " + s.hip;
+                } else if (s.tycho >= 0) {
+                    id = "TYC " + s.tycho;
+                } else {
+                    id = "" + s.id;
+                }
+            } else {
+                id = "-";
+            }
+            focusId.setText(id);
+
             // Update focus information
             String objectName = cb.name;
 
