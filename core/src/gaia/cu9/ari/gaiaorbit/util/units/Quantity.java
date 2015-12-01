@@ -60,8 +60,7 @@ public class Quantity {
             /** Milliarcseconds **/
             MAS(1d / 3600000d),
             /** Arcseconds **/
-            ARCSEC(1d / 3600d),
-            ARCMIN(1d / 60d);
+            ARCSEC(1d / 3600d), ARCMIN(1d / 60d);
 
             final double deg;
 
@@ -90,7 +89,11 @@ public class Quantity {
          * @return A length with the distance of this angle interpreted as a parallax.
          */
         public Length getParallaxDistance() {
-            return new Length(1000d / get(AngleUnit.MAS), LengthUnit.PC);
+            double mas = get(AngleUnit.MAS);
+            if (mas < 0) {
+                mas = 0.001;
+            }
+            return new Length(1000d / mas, LengthUnit.PC);
         }
 
     }

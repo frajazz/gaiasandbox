@@ -9,17 +9,17 @@
 	},
 	{
 		"loader": gaia.cu9.ari.gaiaorbit.data.stars.SunLoader
-		//,"files": [ "one" ]
+		,"files": [ "one" ]
 	},
 	{
 		"loader": gaia.cu9.ari.gaiaorbit.data.stars.STILCatalogLoader
 		//,"files": [ "/home/tsagrista/Gaia/data/GAMA/GAMA.vot" ]
-		//,"files": [ "/home/tsagrista/Gaia/data/Tycho/tycho.vot.gz" ]
+		,"files": [ "/home/tsagrista/Gaia/data/Tycho/tycho.vot.gz" ]
 	},
 	{
 		"loader": gaia.cu9.ari.gaiaorbit.data.stars.OctreeCatalogLoader
 		//,"files": [ "data/octree/hyg_00_particles.bin", "data/octree/hyg_00_metadata.bin" ]
-		,"files": [ "data/octree/hygtycho_00_particles.bin", "data/octree/hygtycho_00_metadata.bin" ]
+		//,"files": [ "data/octree/hygtycho_00_particles.bin", "data/octree/hygtycho_00_metadata.bin" ]
 		//,"files": [ "data/octree/tgas_01_particles.bin", "data/octree/tgas_01_metadata.bin" ]
 	},
 	{

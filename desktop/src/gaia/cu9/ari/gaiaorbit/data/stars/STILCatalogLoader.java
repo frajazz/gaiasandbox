@@ -194,6 +194,15 @@ public class STILCatalogLoader implements ISceneGraphLoader {
                 long rowcount = table.getRowCount();
                 for (long i = 0; i < rowcount; i++) {
                     Object[] row = table.getRow(i);
+
+                    int tycho = -1;
+                    if (tychoi >= 0 && row[tychoi] != null)
+                        tycho = Parser.parseInt(((String) row[tychoi]).replaceAll("\\s+", ""));
+
+                    int hip = -1;
+                    if (hipi >= 0 && row[hipi] != null)
+                        hip = ((Number) row[hipi]).intValue();
+
                     double a = ((Number) row[ai]).doubleValue();
                     double b = ((Number) row[bi]).doubleValue();
                     double c = ((Number) row[ci]).doubleValue();
@@ -208,14 +217,6 @@ public class STILCatalogLoader implements ISceneGraphLoader {
                     float absmag = ((Number) row[abmagi]).floatValue();
 
                     float color = coli > 0 ? ((Number) row[coli]).floatValue() : 0.656f;
-
-                    int tycho = -1;
-                    if (tychoi >= 0 && row[tychoi] != null)
-                        tycho = Parser.parseInt(((String) row[tychoi]).replaceAll("\\s+", ""));
-
-                    int hip = -1;
-                    if (hipi >= 0 && row[hipi] != null)
-                        hip = ((Number) row[hipi]).intValue();
 
                     starid++;
 
