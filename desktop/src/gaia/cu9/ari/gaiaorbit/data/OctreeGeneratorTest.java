@@ -18,8 +18,8 @@ import gaia.cu9.ari.gaiaorbit.data.octreegen.IAggregationAlgorithm;
 import gaia.cu9.ari.gaiaorbit.data.octreegen.MetadataBinaryIO;
 import gaia.cu9.ari.gaiaorbit.data.octreegen.OctreeGenerator;
 import gaia.cu9.ari.gaiaorbit.data.octreegen.ParticleDataBinaryIO;
+import gaia.cu9.ari.gaiaorbit.data.stars.HYGBinaryLoader;
 import gaia.cu9.ari.gaiaorbit.data.stars.OctreeCatalogLoader;
-import gaia.cu9.ari.gaiaorbit.data.stars.TGASLoader;
 import gaia.cu9.ari.gaiaorbit.desktop.format.DesktopDateFormatFactory;
 import gaia.cu9.ari.gaiaorbit.desktop.format.DesktopNumberFormatFactory;
 import gaia.cu9.ari.gaiaorbit.desktop.util.DesktopConfInit;
@@ -91,18 +91,18 @@ public class OctreeGeneratorTest implements IObserver {
         OctreeGenerator og = new OctreeGenerator(aggr);
 
         /** HIP **/
-        //        HYGBinaryLoader hyg = new HYGBinaryLoader();
-        //        hyg.initialize(new String[] { "data/hygxyz.bin" });
+        HYGBinaryLoader hyg = new HYGBinaryLoader();
+        hyg.initialize(new String[] { "data/hygxyz.bin" });
 
         /** TYCHO **/
         //        STILCatalogLoader tycho = new STILCatalogLoader();
         //        tycho.initialize(new String[] { "/home/tsagrista/Workspaces/objectserver/data/tycho.vot.gz" });
 
         /** TGAS **/
-        TGASLoader tgas = new TGASLoader();
-        tgas.initialize(new String[] { "data/TGAS_July2015/Solution1507280011.txt" });
+        //TGASLoader tgas = new TGASLoader();
+        //tgas.initialize(new String[] { "data/tgas_201507/Solution1507280011.txt" });
 
-        List<Particle> list = (List<Particle>) tgas.loadData();
+        List<Particle> list = (List<Particle>) hyg.loadData();
         //list.addAll((List<Particle>) tycho.loadData());
         OctreeNode<Particle> octree = og.generateOctree(list);
 

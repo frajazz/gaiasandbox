@@ -1,13 +1,5 @@
 package gaia.cu9.ari.gaiaorbit.scenegraph;
 
-import gaia.cu9.ari.gaiaorbit.render.ComponentType;
-import gaia.cu9.ari.gaiaorbit.scenegraph.component.ModelComponent;
-import gaia.cu9.ari.gaiaorbit.util.GlobalConf;
-import gaia.cu9.ari.gaiaorbit.util.ModelCache;
-import gaia.cu9.ari.gaiaorbit.util.Pair;
-import gaia.cu9.ari.gaiaorbit.util.math.Vector3d;
-import gaia.cu9.ari.gaiaorbit.util.time.TimeUtils;
-
 import java.util.Map;
 import java.util.TreeMap;
 
@@ -29,11 +21,29 @@ import com.badlogic.gdx.graphics.g3d.attributes.TextureAttribute;
 import com.badlogic.gdx.math.Matrix4;
 import com.badlogic.gdx.math.Vector3;
 
+import gaia.cu9.ari.gaiaorbit.render.ComponentType;
+import gaia.cu9.ari.gaiaorbit.scenegraph.component.ModelComponent;
+import gaia.cu9.ari.gaiaorbit.util.GlobalConf;
+import gaia.cu9.ari.gaiaorbit.util.ModelCache;
+import gaia.cu9.ari.gaiaorbit.util.Pair;
+import gaia.cu9.ari.gaiaorbit.util.math.Vector3d;
+import gaia.cu9.ari.gaiaorbit.util.time.TimeUtils;
+
+/**
+ * Represents a star. The Gaia sourceid is put in the id attribute. Otherwise, the id is fabricated.
+ * @author tsagrista
+ *
+ */
 public class Star extends Particle {
 
     /** Has the model used to represent the star **/
     private static ModelComponent mc;
     private static Matrix4 modelTransform;
+
+    /** HIP number, negative if non existent **/
+    public int hip = -1;
+    /** TYCHO star number, negative if non existent **/
+    public int tycho = -1;
 
     public static void initModel() {
         if (mc == null) {
@@ -76,6 +86,16 @@ public class Star extends Particle {
 
     public Star(Vector3d pos, float appmag, float absmag, float colorbv, String name, float ra, float dec, long starid) {
         super(pos, appmag, absmag, colorbv, name, ra, dec, starid);
+    }
+
+    public Star(Vector3d pos, float appmag, float absmag, float colorbv, String name, float ra, float dec, long starid, int hip) {
+        super(pos, appmag, absmag, colorbv, name, ra, dec, starid);
+        this.hip = hip;
+    }
+
+    public Star(Vector3d pos, float appmag, float absmag, float colorbv, String name, float ra, float dec, long starid, int hip, int tycho) {
+        this(pos, appmag, absmag, colorbv, name, ra, dec, starid, hip);
+        this.tycho = tycho;
     }
 
     public Star(Vector3d pos, Vector3 pm, float appmag, float absmag, float colorbv, String name, float ra, float dec, long starid) {

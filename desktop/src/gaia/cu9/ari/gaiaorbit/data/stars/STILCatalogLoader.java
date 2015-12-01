@@ -1,5 +1,12 @@
 package gaia.cu9.ari.gaiaorbit.data.stars;
 
+import java.io.FileNotFoundException;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
+
 import gaia.cu9.ari.gaiaorbit.data.ISceneGraphLoader;
 import gaia.cu9.ari.gaiaorbit.scenegraph.CelestialBody;
 import gaia.cu9.ari.gaiaorbit.scenegraph.Particle;
@@ -10,16 +17,9 @@ import gaia.cu9.ari.gaiaorbit.util.I18n;
 import gaia.cu9.ari.gaiaorbit.util.Logger;
 import gaia.cu9.ari.gaiaorbit.util.coord.Coordinates;
 import gaia.cu9.ari.gaiaorbit.util.math.Vector3d;
+import gaia.cu9.ari.gaiaorbit.util.parse.Parser;
 import gaia.cu9.ari.gaiaorbit.util.units.Position;
 import gaia.cu9.ari.gaiaorbit.util.units.Position.PositionType;
-
-import java.io.FileNotFoundException;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
-
 import uk.ac.starlink.table.ColumnInfo;
 import uk.ac.starlink.table.StarTable;
 import uk.ac.starlink.table.StarTableFactory;
@@ -48,6 +48,9 @@ public class STILCatalogLoader implements ISceneGraphLoader {
             try {
                 Map<String, ColumnInfo> ucds = new HashMap<String, ColumnInfo>();
                 Map<String, Integer> ucdsi = new HashMap<String, Integer>();
+                Map<String, ColumnInfo> colnames = new HashMap<String, ColumnInfo>();
+                Map<String, Integer> colnamesi = new HashMap<String, Integer>();
+
                 DataSource ds = new FileDataSource(file);
                 TableSequence ts = factory.makeStarTables(ds);
                 // Find table
@@ -69,6 +72,8 @@ public class STILCatalogLoader implements ISceneGraphLoader {
                     colInfo[i] = table.getColumnInfo(i);
                     ucds.put(colInfo[i].getUCD(), colInfo[i]);
                     ucdsi.put(colInfo[i].getUCD(), i);
+                    colnames.put(colInfo[i].getName(), colInfo[i]);
+                    colnamesi.put(colInfo[i].getName(), i);
                 }
 
                 /** POSITION **/
@@ -76,6 +81,8 @@ public class STILCatalogLoader implements ISceneGraphLoader {
                 ColumnInfo ac = null, bc = null, cc = null;
                 int ai, bi, ci;
                 PositionType type = null;
+                int tychoi = -1;
+                int hipi = -1;
 
                 // Check positions
                 if (ucds.containsKey("pos.eq.ra")) {
@@ -116,6 +123,16 @@ public class STILCatalogLoader implements ISceneGraphLoader {
                     ai = ucdsi.get(ac.getUCD());
                     bi = ucdsi.get(bc.getUCD());
                     ci = ucdsi.get(cc.getUCD());
+                }
+
+                /** CHECK FOR TYCHO NUMBER **/
+                if (colnames.containsKey("TYC")) {
+                    tychoi = colnamesi.get("TYC");
+                }
+
+                /** CHECK FOR HIP NUMBER **/
+                if (colnames.containsKey("HIP")) {
+                    hipi = colnamesi.get("HIP");
                 }
 
                 /** APP MAGNITUDE **/
@@ -192,17 +209,25 @@ public class STILCatalogLoader implements ISceneGraphLoader {
 
                     float color = coli > 0 ? ((Number) row[coli]).floatValue() : 0.656f;
 
+                    int tycho = -1;
+                    if (tychoi >= 0 && row[tychoi] != null)
+                        tycho = Parser.parseInt(((String) row[tychoi]).replaceAll("\\s+", ""));
+
+                    int hip = -1;
+                    if (hipi >= 0 && row[hipi] != null)
+                        hip = ((Number) row[hipi]).intValue();
+
                     starid++;
 
                     String idstr = (idstrc == null || !idstrc.getContentClass().isAssignableFrom(String.class)) ? "star_" + starid : (String) row[idstri];
                     Long id = (idc == null || !idc.getContentClass().isAssignableFrom(Number.class)) ? starid : ((Number) row[idi]).longValue();
 
                     CelestialBody s = null;
-                    if (dist > 2.2e5) {
+                    if (dist > 2.2e7) {
                         // Galaxy
-                        s = new Particle(p.gsposition, mag, absmag, color, idstr, (float) Math.toDegrees(sph.x), (float) Math.toDegrees(sph.y), id.intValue());
+                        s = new Particle(p.gsposition, mag, absmag, color, idstr, (float) Math.toDegrees(sph.x), (float) Math.toDegrees(sph.y), id);
                     } else {
-                        s = new Star(p.gsposition, mag, absmag, color, idstr, (float) Math.toDegrees(sph.x), (float) Math.toDegrees(sph.y), id.intValue());
+                        s = new Star(p.gsposition, mag, absmag, color, idstr, (float) Math.toDegrees(sph.x), (float) Math.toDegrees(sph.y), id, hip, tycho);
                     }
                     s.initialize();
                     result.add(s);

@@ -1,14 +1,5 @@
 package gaia.cu9.ari.gaiaorbit.data.stars;
 
-import gaia.cu9.ari.gaiaorbit.data.ISceneGraphLoader;
-import gaia.cu9.ari.gaiaorbit.scenegraph.Particle;
-import gaia.cu9.ari.gaiaorbit.scenegraph.Star;
-import gaia.cu9.ari.gaiaorbit.util.GlobalConf;
-import gaia.cu9.ari.gaiaorbit.util.I18n;
-import gaia.cu9.ari.gaiaorbit.util.Logger;
-import gaia.cu9.ari.gaiaorbit.util.coord.Coordinates;
-import gaia.cu9.ari.gaiaorbit.util.math.Vector3d;
-
 import java.io.DataInputStream;
 import java.io.EOFException;
 import java.io.FileNotFoundException;
@@ -19,6 +10,15 @@ import java.util.List;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.files.FileHandle;
+
+import gaia.cu9.ari.gaiaorbit.data.ISceneGraphLoader;
+import gaia.cu9.ari.gaiaorbit.scenegraph.Particle;
+import gaia.cu9.ari.gaiaorbit.scenegraph.Star;
+import gaia.cu9.ari.gaiaorbit.util.GlobalConf;
+import gaia.cu9.ari.gaiaorbit.util.I18n;
+import gaia.cu9.ari.gaiaorbit.util.Logger;
+import gaia.cu9.ari.gaiaorbit.util.coord.Coordinates;
+import gaia.cu9.ari.gaiaorbit.util.math.Vector3d;
 
 /**
  * Loads the HYG catalog in binary (own) format. The format is defined as follows
@@ -71,9 +71,10 @@ public class HYGBinaryLoader extends AbstractCatalogLoader implements ISceneGrap
                         float dec = data_in.readFloat();
                         float dist = data_in.readFloat();
                         long id = data_in.readInt();
+                        int hip = data_in.readInt();
                         if (appmag < GlobalConf.data.LIMIT_MAG_LOAD) {
                             Vector3d pos = Coordinates.sphericalToCartesian(Math.toRadians(ra), Math.toRadians(dec), dist, new Vector3d());
-                            stars.add(new Star(pos, appmag, absmag, colorbv, name, ra, dec, id));
+                            stars.add(new Star(pos, appmag, absmag, colorbv, name, ra, dec, id, hip));
                         }
                     } catch (EOFException eof) {
                         Logger.error(eof, HYGBinaryLoader.class.getSimpleName());

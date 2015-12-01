@@ -1,13 +1,5 @@
 package gaia.cu9.ari.gaiaorbit.data.octreegen;
 
-import gaia.cu9.ari.gaiaorbit.scenegraph.CelestialBody;
-import gaia.cu9.ari.gaiaorbit.scenegraph.Particle;
-import gaia.cu9.ari.gaiaorbit.scenegraph.Star;
-import gaia.cu9.ari.gaiaorbit.util.GlobalConf;
-import gaia.cu9.ari.gaiaorbit.util.Logger;
-import gaia.cu9.ari.gaiaorbit.util.coord.Coordinates;
-import gaia.cu9.ari.gaiaorbit.util.math.Vector3d;
-
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.EOFException;
@@ -17,6 +9,14 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.List;
+
+import gaia.cu9.ari.gaiaorbit.scenegraph.CelestialBody;
+import gaia.cu9.ari.gaiaorbit.scenegraph.Particle;
+import gaia.cu9.ari.gaiaorbit.scenegraph.Star;
+import gaia.cu9.ari.gaiaorbit.util.GlobalConf;
+import gaia.cu9.ari.gaiaorbit.util.Logger;
+import gaia.cu9.ari.gaiaorbit.util.coord.Coordinates;
+import gaia.cu9.ari.gaiaorbit.util.math.Vector3d;
 
 /**
  * Loads and writes particle data to/from our own binary format. The format is defined as follows
@@ -49,7 +49,7 @@ public class ParticleDataBinaryIO {
             // Size of stars
             data_out.writeInt(particles.size());
             for (Particle s : particles) {
-                // name_length, name, appmag, absmag, colorbv, ra, dec, dist
+                // name_length, name, appmag, absmag, colorbv, x, y, z, id, hip, tycho, pageid, type
                 data_out.writeInt(s.name.length());
                 data_out.writeChars(s.name);
                 data_out.writeFloat(s.appmag);
@@ -59,6 +59,8 @@ public class ParticleDataBinaryIO {
                 data_out.writeFloat((float) s.pos.y);
                 data_out.writeFloat((float) s.pos.z);
                 data_out.writeLong(s.id);
+                data_out.writeInt(s instanceof Star ? ((Star) s).hip : -1);
+                data_out.writeInt(s instanceof Star ? ((Star) s).tycho : -1);
                 data_out.writeInt((int) s.pageId);
                 data_out.writeInt(s.type);
             }
@@ -79,7 +81,7 @@ public class ParticleDataBinaryIO {
 
             for (int idx = 0; idx < size; idx++) {
                 try {
-                    // name_length, name, appmag, absmag, colorbv, ra, dec, dist	
+                    // name_length, name, appmag, absmag, colorbv, x, y, z, id, hip, tycho, pageid, type
                     int nameLength = data_in.readInt();
                     StringBuilder sb = new StringBuilder();
                     for (int i = 0; i < nameLength; i++) {
@@ -93,12 +95,14 @@ public class ParticleDataBinaryIO {
                     float y = data_in.readFloat();
                     float z = data_in.readFloat();
                     long id = data_in.readLong();
+                    int hip = data_in.readInt();
+                    int tycho = data_in.readInt();
                     long pageId = data_in.readInt();
                     int type = data_in.readInt();
                     if (appmag < GlobalConf.data.LIMIT_MAG_LOAD) {
                         Vector3d pos = new Vector3d(x, y, z);
                         Vector3d sph = Coordinates.cartesianToSpherical(pos, new Vector3d());
-                        Star s = new Star(pos, appmag, absmag, colorbv, name, (float) sph.x, (float) sph.y, id);
+                        Star s = new Star(pos, appmag, absmag, colorbv, name, (float) sph.x, (float) sph.y, id, hip, tycho);
                         s.pageId = pageId;
                         s.type = type;
                         s.initialize();

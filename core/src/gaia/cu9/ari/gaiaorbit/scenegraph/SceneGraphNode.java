@@ -101,7 +101,7 @@ public class SceneGraphNode implements ISceneGraphNode, IPosition {
     /** Reference to scene graph **/
     public static ISceneGraph sg;
 
-    /** The identifier **/
+    /** The internal identifier **/
     public long id = -1;
 
     /**

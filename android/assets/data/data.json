@@ -18,8 +18,9 @@
 	},
 	{
 		"loader": gaia.cu9.ari.gaiaorbit.data.stars.OctreeCatalogLoader
-		//,"files": [ "data/octree/hygtycho_01_particles.bin", "data/octree/hygtycho_01_metadata.bin" ]
-		,"files": [ "data/octree/tgas_00_particles.bin", "data/octree/tgas_00_metadata.bin" ]
+		,"files": [ "data/octree/hyg_00_particles.bin", "data/octree/hyg_00_metadata.bin" ]
+		//,"files": [ "data/octree/hygtycho_00_particles.bin", "data/octree/hygtycho_00_metadata.bin" ]
+		//,"files": [ "data/octree/tgas_01_particles.bin", "data/octree/tgas_01_metadata.bin" ]
 	},
 	{
 		"loader": gaia.cu9.ari.gaiaorbit.data.JsonLoader,
