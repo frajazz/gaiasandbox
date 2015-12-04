@@ -1,5 +1,9 @@
 package gaia.cu9.ari.gaiaorbit.scenegraph;
 
+import com.badlogic.gdx.assets.AssetManager;
+import com.badlogic.gdx.math.Matrix4;
+import com.badlogic.gdx.math.Quaternion;
+
 import gaia.cu9.ari.gaiaorbit.event.EventManager;
 import gaia.cu9.ari.gaiaorbit.event.Events;
 import gaia.cu9.ari.gaiaorbit.util.coord.AstroUtils;
@@ -10,30 +14,7 @@ import gaia.cu9.ari.gaiaorbit.util.math.Quaterniond;
 import gaia.cu9.ari.gaiaorbit.util.math.Vector3d;
 import gaia.cu9.ari.gaiaorbit.util.time.ITimeFrameProvider;
 
-import com.badlogic.gdx.assets.AssetManager;
-import com.badlogic.gdx.math.Matrix4;
-import com.badlogic.gdx.math.Quaternion;
-
-public class Gaia extends ModelBody {
-
-    private static final double TH_ANGLE_NONE = ModelBody.TH_ANGLE_POINT / 1e18;
-    private static final double TH_ANGLE_POINT = ModelBody.TH_ANGLE_POINT / 1e17;
-    private static final double TH_ANGLE_QUAD = ModelBody.TH_ANGLE_POINT / 4d;
-
-    @Override
-    public double THRESHOLD_ANGLE_NONE() {
-        return TH_ANGLE_NONE;
-    }
-
-    @Override
-    public double THRESHOLD_ANGLE_POINT() {
-        return TH_ANGLE_POINT;
-    }
-
-    @Override
-    public double THRESHOLD_ANGLE_QUAD() {
-        return TH_ANGLE_QUAD;
-    }
+public class Gaia extends Satellite {
 
     public Vector3d unrotatedPos;
     boolean display = true;
@@ -64,24 +45,14 @@ public class Gaia extends ModelBody {
     }
 
     @Override
-    public void updateLocalValues(ITimeFrameProvider time, ICamera camera) {
-        forceUpdatePosition(time, false);
-    }
-
-    private void forceUpdatePosition(ITimeFrameProvider time, boolean force) {
+    protected void forceUpdatePosition(ITimeFrameProvider time, boolean force) {
+        super.forceUpdatePosition(time, force);
         if (time.getDt() != 0 || force) {
-            display = coordinates.getEquatorialCartesianCoordinates(time.getTime(), pos) != null;
             unrotatedPos.set(pos);
             // Undo rotation
             unrotatedPos.mul(Coordinates.eclipticToEquatorial()).rotate(-AstroUtils.getSunLongitude(time.getTime()) - 180, 0, 1, 0);
             attitude = GaiaAttitudeServer.instance.getAttitude(time.getTime());
         }
-
-    }
-
-    @Override
-    protected void updateLocalTransform() {
-        setToLocalTransform(1, localTransform, true);
     }
 
     public void setToLocalTransform(float sizeFactor, Matrix4 localTransform, boolean forceUpdate) {
@@ -98,31 +69,6 @@ public class Gaia extends ModelBody {
             localTransform.set(this.localTransform);
         }
 
-    }
-
-    @Override
-    public void textPosition(Vector3d out) {
-        transform.getTranslation(out);
-    }
-
-    @Override
-    protected float labelFactor() {
-        return 2e1f;
-    }
-
-    @Override
-    protected float labelMax() {
-        return super.labelMax() * 10;
-    }
-
-    @Override
-    public float textScale() {
-        return labelSizeConcrete() * .5e5f;
-    }
-
-    @Override
-    public boolean renderText() {
-        return name != null && viewAngle > TH_ANGLE_POINT;
     }
 
 }

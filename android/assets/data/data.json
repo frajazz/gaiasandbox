@@ -1,7 +1,7 @@
 { "data" : [
 	{
 		"loader": gaia.cu9.ari.gaiaorbit.data.stars.HYGBinaryLoader
-		//,"files": [ "data/hygxyz.bin" ]
+		,"files": [ "data/hygxyz.bin" ]
 	},
 	{
 		"loader": gaia.cu9.ari.gaiaorbit.data.stars.TGASLoader
@@ -9,12 +9,12 @@
 	},
 	{
 		"loader": gaia.cu9.ari.gaiaorbit.data.stars.SunLoader
-		,"files": [ "one" ]
+		//,"files": [ "one" ]
 	},
 	{
 		"loader": gaia.cu9.ari.gaiaorbit.data.stars.STILCatalogLoader
 		//,"files": [ "/home/tsagrista/Gaia/data/GAMA/GAMA.vot" ]
-		,"files": [ "/home/tsagrista/Gaia/data/Tycho/tycho.vot.gz" ]
+		//,"files": [ "/home/tsagrista/Gaia/data/Tycho/tycho.vot.gz" ]
 	},
 	{
 		"loader": gaia.cu9.ari.gaiaorbit.data.stars.OctreeCatalogLoader
