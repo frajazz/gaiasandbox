@@ -239,7 +239,7 @@ public class Particle extends CelestialBody implements IPointRenderable {
 
     @Override
     public float getInnerRad() {
-        return 0.01f * DISC_FACTOR;
+        return 0.02f * DISC_FACTOR;
     }
 
     @Override
