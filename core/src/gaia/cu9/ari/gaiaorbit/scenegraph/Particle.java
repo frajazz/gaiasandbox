@@ -1,5 +1,13 @@
 package gaia.cu9.ari.gaiaorbit.scenegraph;
 
+import java.util.Random;
+
+import com.badlogic.gdx.assets.AssetManager;
+import com.badlogic.gdx.graphics.g3d.ModelBatch;
+import com.badlogic.gdx.graphics.glutils.ImmediateModeRenderer;
+import com.badlogic.gdx.math.Vector2;
+import com.badlogic.gdx.math.Vector3;
+
 import gaia.cu9.ari.gaiaorbit.render.ComponentType;
 import gaia.cu9.ari.gaiaorbit.render.IPointRenderable;
 import gaia.cu9.ari.gaiaorbit.render.IRenderable;
@@ -12,14 +20,6 @@ import gaia.cu9.ari.gaiaorbit.util.coord.AstroUtils;
 import gaia.cu9.ari.gaiaorbit.util.math.Vector3d;
 import gaia.cu9.ari.gaiaorbit.util.time.ITimeFrameProvider;
 import gaia.cu9.ari.gaiaorbit.util.tree.OctreeNode;
-
-import java.util.Random;
-
-import com.badlogic.gdx.assets.AssetManager;
-import com.badlogic.gdx.graphics.g3d.ModelBatch;
-import com.badlogic.gdx.graphics.glutils.ImmediateModeRenderer;
-import com.badlogic.gdx.math.Vector2;
-import com.badlogic.gdx.math.Vector3;
 
 /**
  * A point particle which may represent a star, a galaxy, etc.
@@ -51,6 +51,20 @@ public class Particle extends CelestialBody implements IPointRenderable {
     /** Proper motion in cartesian coordinates [U/sec] **/
     public Vector3 pm;
 
+    /**
+     * Source of this star:
+     * <ul><li>
+     * -1: Unknown 
+     * </li><li>
+     * 1: Gaia
+     * </li><li>
+     * 2: Hipparcos (HYG)
+     * </li><li>
+     * 3: Tycho
+     * </li></ul>
+     */
+    public byte catalogSource = -1;
+
     double computedSize;
     double radius;
     boolean randomName = false;
@@ -65,6 +79,7 @@ public class Particle extends CelestialBody implements IPointRenderable {
     public long pageId;
     /** Its page **/
     public OctreeNode<? extends SceneGraphNode> page;
+
     /** Particle type
      * 90 - real star
      * 92 - virtual particle
@@ -224,7 +239,7 @@ public class Particle extends CelestialBody implements IPointRenderable {
 
     @Override
     public float getInnerRad() {
-        return 0.04f * DISC_FACTOR;
+        return 0.01f * DISC_FACTOR;
     }
 
     @Override

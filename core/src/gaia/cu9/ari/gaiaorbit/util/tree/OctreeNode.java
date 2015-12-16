@@ -16,6 +16,7 @@ import gaia.cu9.ari.gaiaorbit.render.ILineRenderable;
 import gaia.cu9.ari.gaiaorbit.render.system.LineRenderSystem;
 import gaia.cu9.ari.gaiaorbit.scenegraph.ICamera;
 import gaia.cu9.ari.gaiaorbit.scenegraph.Transform;
+import gaia.cu9.ari.gaiaorbit.util.GlobalConf;
 import gaia.cu9.ari.gaiaorbit.util.GlobalResources;
 import gaia.cu9.ari.gaiaorbit.util.MyPools;
 import gaia.cu9.ari.gaiaorbit.util.Pair;
@@ -37,10 +38,6 @@ import gaia.cu9.ari.gaiaorbit.util.math.Vector3d;
 public class OctreeNode<T extends IPosition> implements ILineRenderable {
     /** Max depth of the structure this node belongs to **/
     public static int maxDepth;
-    /** Angle threshold below which we stay with the current level. Lower limit of overlap **/
-    public static final double ANGLE_THRESHOLD_1 = Math.toRadians(35d);
-    /** Angle threshold above which we break the Octree. Upper limit of overlap **/
-    public static final double ANGLE_THRESHOLD_2 = Math.toRadians(50d);
     /** Is dynamic loading active? **/
     public static boolean LOAD_ACTIVE;
 
@@ -347,13 +344,13 @@ public class OctreeNode<T extends IPosition> implements ILineRenderable {
             distToCamera = auxD1.set(centre).add(cam.getInversePos()).len();
             viewAngle = (radius / distToCamera) / cam.getFovFactor();
 
-            if (viewAngle < ANGLE_THRESHOLD_1) {
+            if (viewAngle < GlobalConf.scene.OCTANT_TH_ANGLE_0) {
                 // Stay in current level
                 addObjectsTo(roulette);
                 setChildrenObserved(false);
             } else {
                 // Break down tree, fade in until th2
-                double alpha = MathUtilsd.clamp(MathUtilsd.lint(viewAngle, ANGLE_THRESHOLD_1, ANGLE_THRESHOLD_2, 0d, 1d), 0f, 1f);
+                double alpha = MathUtilsd.clamp(MathUtilsd.lint(viewAngle, GlobalConf.scene.OCTANT_TH_ANGLE_0, GlobalConf.scene.OCTANT_TH_ANGLE_1, 0d, 1d), 0f, 1f);
 
                 // Add objects
                 addObjectsTo(roulette);

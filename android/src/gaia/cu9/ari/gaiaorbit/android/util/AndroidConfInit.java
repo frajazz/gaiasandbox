@@ -1,5 +1,14 @@
 package gaia.cu9.ari.gaiaorbit.android.util;
 
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.nio.channels.FileChannel;
+import java.util.Date;
+import java.util.Properties;
+
 import gaia.cu9.ari.gaiaorbit.render.ComponentType;
 import gaia.cu9.ari.gaiaorbit.util.ConfInit;
 import gaia.cu9.ari.gaiaorbit.util.GlobalConf;
@@ -18,15 +27,6 @@ import gaia.cu9.ari.gaiaorbit.util.GlobalConf.VersionConf;
 import gaia.cu9.ari.gaiaorbit.util.Logger;
 import gaia.cu9.ari.gaiaorbit.util.format.DateFormatFactory;
 import gaia.cu9.ari.gaiaorbit.util.format.IDateFormat;
-
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.nio.channels.FileChannel;
-import java.util.Date;
-import java.util.Properties;
 
 /**
  * Desktop GlobalConf initialiser, where the configuration comes from a
@@ -160,6 +160,8 @@ public class AndroidConfInit extends ConfInit {
         int PIXEL_RENDERER = Integer.parseInt(p.getProperty("scene.renderer.star"));
         int LINE_RENDERER = Integer.parseInt(p.getProperty("scene.renderer.line"));
         boolean OCTREE_PARTICLE_FADE = Boolean.parseBoolean(p.getProperty("scene.octree.particle.fade"));
+        float OCTANT_TH_ANGLE_0 = (float) Math.toRadians(Float.parseFloat(p.getProperty("octant.thresholdangle.0")));
+        float OCTANT_TH_ANGLE_1 = (float) Math.toRadians(Float.parseFloat(p.getProperty("octant.thresholdangle.1")));
 
         //Visibility of components
         ComponentType[] cts = ComponentType.values();
@@ -171,7 +173,7 @@ public class AndroidConfInit extends ConfInit {
             }
         }
         SceneConf sc = new SceneConf();
-        sc.initialize(OBJECT_FADE_MS, STAR_BRIGHTNESS, AMBIENT_LIGHT, CAMERA_FOV, CAMERA_SPEED, TURNING_SPEED, ROTATION_SPEED, CAMERA_SPEED_LIMIT_IDX, FOCUS_LOCK, LABEL_NUMBER_FACTOR, VISIBILITY, PIXEL_RENDERER, LINE_RENDERER, STAR_TH_ANGLE_NONE, STAR_TH_ANGLE_POINT, STAR_TH_ANGLE_QUAD, POINT_ALPHA_MIN, POINT_ALPHA_MAX, OCTREE_PARTICLE_FADE);
+        sc.initialize(OBJECT_FADE_MS, STAR_BRIGHTNESS, AMBIENT_LIGHT, CAMERA_FOV, CAMERA_SPEED, TURNING_SPEED, ROTATION_SPEED, CAMERA_SPEED_LIMIT_IDX, FOCUS_LOCK, LABEL_NUMBER_FACTOR, VISIBILITY, PIXEL_RENDERER, LINE_RENDERER, STAR_TH_ANGLE_NONE, STAR_TH_ANGLE_POINT, STAR_TH_ANGLE_QUAD, POINT_ALPHA_MIN, POINT_ALPHA_MAX, OCTREE_PARTICLE_FADE, OCTANT_TH_ANGLE_0, OCTANT_TH_ANGLE_1);
 
         /** FRAME CONF **/
         String renderFolder = null;
@@ -304,6 +306,8 @@ public class AndroidConfInit extends ConfInit {
         p.setProperty("scene.renderer.star", Integer.toString(GlobalConf.scene.PIXEL_RENDERER));
         p.setProperty("scene.renderer.line", Integer.toString(GlobalConf.scene.LINE_RENDERER));
         p.setProperty("scene.octree.particle.fade", Boolean.toString(GlobalConf.scene.OCTREE_PARTICLE_FADE));
+        p.setProperty("octant.thresholdangle.0", Float.toString((float) Math.toDegrees(GlobalConf.scene.OCTANT_TH_ANGLE_0)));
+        p.setProperty("octant.thresholdangle.1", Float.toString((float) Math.toDegrees(GlobalConf.scene.OCTANT_TH_ANGLE_1)));
         // Visibility of components
         int idx = 0;
         ComponentType[] cts = ComponentType.values();

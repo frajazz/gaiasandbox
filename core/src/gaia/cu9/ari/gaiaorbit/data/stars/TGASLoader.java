@@ -6,7 +6,9 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.files.FileHandle;
@@ -38,10 +40,24 @@ import gaia.cu9.ari.gaiaorbit.util.parse.Parser;
 public class TGASLoader extends AbstractCatalogLoader implements ISceneGraphLoader {
 
     private static final String separator = "\\s+";
+    private static final String comma = ",";
     private static final String comment = "#";
+
+    /** Whether to load the sourceId->HIP correspondences file **/
+    private static final boolean useHIP = true;
+    /** Gaia sourceId to HIP numbers csv file **/
+    private static final String idCorrespondences = "data/tgas_201507/hip-sourceid-correspondences.csv";
+    /** Map of Gaia sourceId to HIP id **/
+    private Map<Long, Integer> sidHIPMap;
+
+    private int sidhipfound = 0;
 
     @Override
     public List<Particle> loadData() throws FileNotFoundException {
+        if (useHIP) {
+            sidHIPMap = loadSourceidHipCorrespondences(idCorrespondences);
+        }
+
         List<Particle> stars = new ArrayList<Particle>();
         for (String file : files) {
             FileHandle f = Gdx.files.internal(file);
@@ -67,6 +83,7 @@ public class TGASLoader extends AbstractCatalogLoader implements ISceneGraphLoad
             }
         }
 
+        Logger.info(this.getClass().getSimpleName(), "SourceId matched to HIP in " + sidhipfound + " stars");
         Logger.info(this.getClass().getSimpleName(), I18n.bundle.format("notif.catalog.init", stars.size()));
         return stars;
     }
@@ -75,7 +92,13 @@ public class TGASLoader extends AbstractCatalogLoader implements ISceneGraphLoad
         String[] st = line.split(separator);
 
         String catalog = st[0];
+        int hip = -1;
         long sourceid = Parser.parseLong(st[1]);
+
+        if (sidHIPMap != null && sidHIPMap.containsKey(sourceid)) {
+            hip = sidHIPMap.get(sourceid);
+            sidhipfound++;
+        }
 
         double ra = AstroUtils.TO_DEG * Parser.parseDouble(st[2].trim());
         double dec = AstroUtils.TO_DEG * Parser.parseDouble(st[4].trim());
@@ -88,11 +111,51 @@ public class TGASLoader extends AbstractCatalogLoader implements ISceneGraphLoad
 
         if (appmag < GlobalConf.data.LIMIT_MAG_LOAD) {
             float absmag = appmag;
-            String name = catalog + sourceid;
+            String name = Long.toString(sourceid);
 
-            Star star = new Star(pos, appmag, absmag, colorbv, name, (float) ra, (float) dec, sourceid);
-            stars.add(star);
+            Star star = new Star(pos, appmag, absmag, colorbv, name, (float) ra, (float) dec, sourceid, hip, (byte) 1);
+            if (runFiltersAnd(star))
+                stars.add(star);
+
         }
+    }
+
+    private Map<Long, Integer> loadSourceidHipCorrespondences(String file) {
+        Map<Long, Integer> result = new HashMap<Long, Integer>();
+
+        FileHandle f = Gdx.files.internal(file);
+        InputStream data = f.read();
+        BufferedReader br = new BufferedReader(new InputStreamReader(data));
+        try {
+            // skip first line with headers
+            br.readLine();
+
+            String line;
+            while ((line = br.readLine()) != null) {
+                if (!line.startsWith(comment))
+                    //Add correspondence
+                    addCorrespondence(line, result);
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        } finally {
+            try {
+                br.close();
+            } catch (IOException e) {
+                Logger.error(e);
+            }
+
+        }
+
+        return result;
+    }
+
+    private void addCorrespondence(String line, Map<Long, Integer> map) {
+        String[] st = line.split(comma);
+        int hip = Parser.parseInt(st[2].trim());
+        long sourceId = Parser.parseLong(st[3].trim());
+
+        map.put(sourceId, hip);
     }
 
 }

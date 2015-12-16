@@ -10,6 +10,8 @@ import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.badlogic.gdx.math.Vector3;
+
 import gaia.cu9.ari.gaiaorbit.scenegraph.CelestialBody;
 import gaia.cu9.ari.gaiaorbit.scenegraph.Particle;
 import gaia.cu9.ari.gaiaorbit.scenegraph.Star;
@@ -31,9 +33,12 @@ import gaia.cu9.ari.gaiaorbit.util.math.Vector3d;
  * - 32 bits (float) - x
  * - 32 bits (float) - y
  * - 32 bits (float) - z
- * - 64 bits (long) - id
- * - 64 bits (long) - pageId
- * - 32 bits (int) - particleType
+ * - 64 bits (long)  - id
+ * - 32 bits (int)   - HIP
+ * - 32 bits (int)   - TYC
+ * - 8 bits (byte)   - catalogSource
+ * - 64 bits (long)  - pageId
+ * - 32 bits (int)   - particleType
  * 
  * @author Toni Sagrista
  *
@@ -58,9 +63,13 @@ public class ParticleDataBinaryIO {
                 data_out.writeFloat((float) s.pos.x);
                 data_out.writeFloat((float) s.pos.y);
                 data_out.writeFloat((float) s.pos.z);
+                data_out.writeFloat(s.pm != null ? s.pm.x : 0f);
+                data_out.writeFloat(s.pm != null ? s.pm.y : 0f);
+                data_out.writeFloat(s.pm != null ? s.pm.z : 0f);
                 data_out.writeLong(s.id);
                 data_out.writeInt(s instanceof Star ? ((Star) s).hip : -1);
                 data_out.writeInt(s instanceof Star ? ((Star) s).tycho : -1);
+                data_out.writeByte(s.catalogSource);
                 data_out.writeInt((int) s.pageId);
                 data_out.writeInt(s.type);
             }
@@ -81,7 +90,7 @@ public class ParticleDataBinaryIO {
 
             for (int idx = 0; idx < size; idx++) {
                 try {
-                    // name_length, name, appmag, absmag, colorbv, x, y, z, id, hip, tycho, pageid, type
+                    // name_length, name, appmag, absmag, colorbv, x, y, z, vx, vy, vz, id, hip, tycho, catalogSource, pageid, type
                     int nameLength = data_in.readInt();
                     StringBuilder sb = new StringBuilder();
                     for (int i = 0; i < nameLength; i++) {
@@ -94,15 +103,20 @@ public class ParticleDataBinaryIO {
                     float x = data_in.readFloat();
                     float y = data_in.readFloat();
                     float z = data_in.readFloat();
+                    float vx = data_in.readFloat();
+                    float vy = data_in.readFloat();
+                    float vz = data_in.readFloat();
                     long id = data_in.readLong();
                     int hip = data_in.readInt();
                     int tycho = data_in.readInt();
+                    byte source = data_in.readByte();
                     long pageId = data_in.readInt();
                     int type = data_in.readInt();
                     if (appmag < GlobalConf.data.LIMIT_MAG_LOAD) {
                         Vector3d pos = new Vector3d(x, y, z);
+                        Vector3 vel = new Vector3(vx, vy, vz);
                         Vector3d sph = Coordinates.cartesianToSpherical(pos, new Vector3d());
-                        Star s = new Star(pos, appmag, absmag, colorbv, name, (float) Math.toDegrees(sph.x), (float) Math.toDegrees(sph.y), id, hip, tycho);
+                        Star s = new Star(pos, vel, appmag, absmag, colorbv, name, (float) Math.toDegrees(sph.x), (float) Math.toDegrees(sph.y), id, hip, tycho, source);
                         s.pageId = pageId;
                         s.type = type;
                         s.initialize();

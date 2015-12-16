@@ -7,7 +7,6 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
-import gaia.cu9.ari.gaiaorbit.data.ISceneGraphLoader;
 import gaia.cu9.ari.gaiaorbit.scenegraph.CelestialBody;
 import gaia.cu9.ari.gaiaorbit.scenegraph.Particle;
 import gaia.cu9.ari.gaiaorbit.scenegraph.Star;
@@ -27,13 +26,7 @@ import uk.ac.starlink.table.TableSequence;
 import uk.ac.starlink.util.DataSource;
 import uk.ac.starlink.util.FileDataSource;
 
-public class STILCatalogLoader implements ISceneGraphLoader {
-
-    public String files[];
-
-    public void initialize(String[] files) throws RuntimeException {
-        this.files = files;
-    }
+public class STILCatalogLoader extends AbstractCatalogLoader {
 
     @Override
     public List<? extends CelestialBody> loadData() throws FileNotFoundException {
@@ -228,10 +221,12 @@ public class STILCatalogLoader implements ISceneGraphLoader {
                         // Galaxy
                         s = new Particle(p.gsposition, mag, absmag, color, idstr, (float) Math.toDegrees(sph.x), (float) Math.toDegrees(sph.y), id);
                     } else {
-                        s = new Star(p.gsposition, mag, absmag, color, idstr, (float) Math.toDegrees(sph.x), (float) Math.toDegrees(sph.y), id, hip, tycho);
+                        s = new Star(p.gsposition, mag, absmag, color, idstr, (float) Math.toDegrees(sph.x), (float) Math.toDegrees(sph.y), id, hip, tycho, (byte) -1);
                     }
-                    s.initialize();
-                    result.add(s);
+                    if (runFiltersAnd(s)) {
+                        s.initialize();
+                        result.add(s);
+                    }
                 }
 
             } catch (Exception e) {

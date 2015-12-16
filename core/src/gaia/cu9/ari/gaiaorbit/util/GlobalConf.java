@@ -1,5 +1,9 @@
 package gaia.cu9.ari.gaiaorbit.util;
 
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
+
 import gaia.cu9.ari.gaiaorbit.GaiaSandbox;
 import gaia.cu9.ari.gaiaorbit.event.EventManager;
 import gaia.cu9.ari.gaiaorbit.event.Events;
@@ -10,10 +14,6 @@ import gaia.cu9.ari.gaiaorbit.util.format.DateFormatFactory;
 import gaia.cu9.ari.gaiaorbit.util.format.DateFormatFactory.DateType;
 import gaia.cu9.ari.gaiaorbit.util.format.IDateFormat;
 import gaia.cu9.ari.gaiaorbit.util.math.MathUtilsd;
-
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
 
 /**
  * Holds the global configuration options
@@ -487,11 +487,17 @@ public class GlobalConf {
         /** Particle fade in/out flag for octree-backed catalogs. WARNING: This implies particles are sent to GPU at each cycle **/
         public boolean OCTREE_PARTICLE_FADE;
 
+        /** Angle [rad] above which we start painting stars in octant with fade in **/
+        public float OCTANT_TH_ANGLE_0;
+        /** Angle [rad] below which we paint stars in octant with fade out. Above this angle, inner stars are painted with full brightness **/
+        public float OCTANT_TH_ANGLE_1;
+
         public SceneConf() {
             EventManager.instance.subscribe(this, Events.FOCUS_LOCK_CMD, Events.STAR_BRIGHTNESS_CMD, Events.FOV_CHANGED_CMD, Events.CAMERA_SPEED_CMD, Events.ROTATION_SPEED_CMD, Events.TURNING_SPEED_CMD, Events.SPEED_LIMIT_CMD, Events.TRANSIT_COLOUR_CMD, Events.ONLY_OBSERVED_STARS_CMD, Events.COMPUTE_GAIA_SCAN_CMD, Events.PIXEL_RENDERER_CMD, Events.OCTREE_PARTICLE_FADE_CMD);
         }
 
-        public void initialize(long oBJECT_FADE_MS, float sTAR_BRIGHTNESS, float aMBIENT_LIGHT, int cAMERA_FOV, float cAMERA_SPEED, float tURNING_SPEED, float rOTATION_SPEED, int cAMERA_SPEED_LIMIT_IDX, boolean fOCUS_LOCK, float lABEL_NUMBER_FACTOR, boolean[] vISIBILITY, int pIXEL_RENDERER, int lINE_RENDERER, double sTAR_TH_ANGLE_NONE, double sTAR_TH_ANGLE_POINT, double sTAR_TH_ANGLE_QUAD, float pOINT_ALPHA_MIN, float pOINT_ALPHA_MAX, boolean oCTREE_PARTICLE_FADE) {
+        public void initialize(long oBJECT_FADE_MS, float sTAR_BRIGHTNESS, float aMBIENT_LIGHT, int cAMERA_FOV, float cAMERA_SPEED, float tURNING_SPEED, float rOTATION_SPEED, int cAMERA_SPEED_LIMIT_IDX, boolean fOCUS_LOCK, float lABEL_NUMBER_FACTOR, boolean[] vISIBILITY, int pIXEL_RENDERER, int lINE_RENDERER, double sTAR_TH_ANGLE_NONE, double sTAR_TH_ANGLE_POINT, double sTAR_TH_ANGLE_QUAD, float pOINT_ALPHA_MIN, float pOINT_ALPHA_MAX, boolean oCTREE_PARTICLE_FADE, float oCTANT_TH_ANGLE_0,
+                float oCTANT_TH_ANGLE_1) {
             OBJECT_FADE_MS = oBJECT_FADE_MS;
             STAR_BRIGHTNESS = sTAR_BRIGHTNESS;
             AMBIENT_LIGHT = aMBIENT_LIGHT;
@@ -512,6 +518,9 @@ public class GlobalConf {
             POINT_ALPHA_MIN = pOINT_ALPHA_MIN;
             POINT_ALPHA_MAX = pOINT_ALPHA_MAX;
             OCTREE_PARTICLE_FADE = oCTREE_PARTICLE_FADE;
+            OCTANT_TH_ANGLE_0 = oCTANT_TH_ANGLE_0;
+
+            OCTANT_TH_ANGLE_1 = oCTANT_TH_ANGLE_1;
         }
 
         public void updateSpeedLimit() {

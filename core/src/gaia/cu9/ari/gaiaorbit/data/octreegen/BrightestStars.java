@@ -9,9 +9,9 @@ import gaia.cu9.ari.gaiaorbit.util.math.Vector3d;
 import gaia.cu9.ari.gaiaorbit.util.tree.OctreeNode;
 
 public class BrightestStars implements IAggregationAlgorithm<Particle> {
-    private static final int MAX_DEPTH = 9;
+    private static final int MAX_DEPTH = 18;
     // Maximum number of objects in the densest node of this level
-    private static final int MAX_PART = 15000;
+    private static final int MAX_PART = 10000;
     // Minimum number of objects under which we do not need to break the octree further
     private static final int MIN_PART = 2000;
     Comparator<Particle> comp;

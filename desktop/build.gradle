@@ -24,6 +24,7 @@ task run(dependsOn: jar, type: JavaExec, description: "Runs the desktop project"
     main = project.mainClassName
     systemProperties['properties.file'] = '../android/assets/conf/global.properties'
     systemProperties['assets.location'] = '../android/assets/'
+    jvmArgs = ['-Xms2g', '-Xmx4g', '-server']
     classpath = sourceSets.main.runtimeClasspath
     classpath += files(project.assetsDir)
     standardInput = System.in

@@ -5,7 +5,9 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.backends.lwjgl.LwjglFiles;
@@ -18,16 +20,20 @@ import gaia.cu9.ari.gaiaorbit.data.octreegen.IAggregationAlgorithm;
 import gaia.cu9.ari.gaiaorbit.data.octreegen.MetadataBinaryIO;
 import gaia.cu9.ari.gaiaorbit.data.octreegen.OctreeGenerator;
 import gaia.cu9.ari.gaiaorbit.data.octreegen.ParticleDataBinaryIO;
+import gaia.cu9.ari.gaiaorbit.data.stars.CatalogFilter;
 import gaia.cu9.ari.gaiaorbit.data.stars.HYGBinaryLoader;
 import gaia.cu9.ari.gaiaorbit.data.stars.OctreeCatalogLoader;
+import gaia.cu9.ari.gaiaorbit.data.stars.TGASLoader;
 import gaia.cu9.ari.gaiaorbit.desktop.format.DesktopDateFormatFactory;
 import gaia.cu9.ari.gaiaorbit.desktop.format.DesktopNumberFormatFactory;
 import gaia.cu9.ari.gaiaorbit.desktop.util.DesktopConfInit;
 import gaia.cu9.ari.gaiaorbit.event.EventManager;
 import gaia.cu9.ari.gaiaorbit.event.Events;
 import gaia.cu9.ari.gaiaorbit.event.IObserver;
+import gaia.cu9.ari.gaiaorbit.scenegraph.CelestialBody;
 import gaia.cu9.ari.gaiaorbit.scenegraph.Particle;
 import gaia.cu9.ari.gaiaorbit.scenegraph.SceneGraphNode;
+import gaia.cu9.ari.gaiaorbit.scenegraph.Star;
 import gaia.cu9.ari.gaiaorbit.scenegraph.octreewrapper.AbstractOctreeWrapper;
 import gaia.cu9.ari.gaiaorbit.util.ConfInit;
 import gaia.cu9.ari.gaiaorbit.util.I18n;
@@ -93,17 +99,36 @@ public class OctreeGeneratorTest implements IObserver {
         /** HIP **/
         HYGBinaryLoader hyg = new HYGBinaryLoader();
         hyg.initialize(new String[] { "data/hygxyz.bin" });
+        hyg.addFilter(new CatalogFilter() {
+            @Override
+            public boolean filter(CelestialBody s) {
+                return (s instanceof Particle) && ((Particle) s).appmag <= 7.5f;
+            }
+        });
 
         /** TYCHO **/
         //        STILCatalogLoader tycho = new STILCatalogLoader();
         //        tycho.initialize(new String[] { "/home/tsagrista/Workspaces/objectserver/data/tycho.vot.gz" });
 
         /** TGAS **/
-        //TGASLoader tgas = new TGASLoader();
-        //tgas.initialize(new String[] { "data/tgas_201507/Solution1507280011.txt" });
+        TGASLoader tgas = new TGASLoader();
+        tgas.initialize(new String[] { "data/tgas_201507/Solution1507280011.txt" });
 
         List<Particle> list = (List<Particle>) hyg.loadData();
+        Set<Integer> hips = new HashSet<Integer>();
+        for (Particle p : list) {
+            if (p instanceof Star) {
+                hips.add(((Star) p).hip);
+            }
+        }
         //list.addAll((List<Particle>) tycho.loadData());
+        //list.addAll(tgas.loadData());
+        List<Particle> list2 = tgas.loadData();
+        for (Particle p : list2) {
+            if (p instanceof Star && !hips.contains(((Star) p).hip)) {
+                list.add(p);
+            }
+        }
         OctreeNode<Particle> octree = og.generateOctree(list);
 
         // Put all new particles in list

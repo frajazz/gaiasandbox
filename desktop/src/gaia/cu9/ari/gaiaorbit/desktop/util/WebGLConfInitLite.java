@@ -1,5 +1,7 @@
 package gaia.cu9.ari.gaiaorbit.desktop.util;
 
+import java.io.File;
+
 import gaia.cu9.ari.gaiaorbit.render.ComponentType;
 import gaia.cu9.ari.gaiaorbit.util.ConfInit;
 import gaia.cu9.ari.gaiaorbit.util.GlobalConf;
@@ -14,8 +16,6 @@ import gaia.cu9.ari.gaiaorbit.util.GlobalConf.SceneConf;
 import gaia.cu9.ari.gaiaorbit.util.GlobalConf.ScreenConf;
 import gaia.cu9.ari.gaiaorbit.util.GlobalConf.ScreenshotConf;
 import gaia.cu9.ari.gaiaorbit.util.GlobalConf.VersionConf;
-
-import java.io.File;
 
 public class WebGLConfInitLite extends ConfInit {
 
@@ -56,7 +56,7 @@ public class WebGLConfInitLite extends ConfInit {
         VISIBILITY[ComponentType.Others.ordinal()] = true;
 
         SceneConf sc = new SceneConf();
-        sc.initialize(2000, 10f, 0f, 50, 2.1f, 1866f, 2286f, 13, true, 7.0f, VISIBILITY, 2, 0, 0f, 2e-8f, 0f, 0.2f, 1f, false);
+        sc.initialize(2000, 10f, 0f, 50, 2.1f, 1866f, 2286f, 13, true, 7.0f, VISIBILITY, 2, 0, 0f, 2e-8f, 0f, 0.2f, 1f, false, 0.610865f, 1.0472f);
 
         FrameConf fc = new FrameConf();
 

@@ -76,7 +76,13 @@ public class Constellation extends LineObject implements I3DTextRenderable {
                 stars.add(new AbstractPositionEntity[] { s1, s2 });
                 positions.add(new Vector3[] { s1.pos.toVector3(), s2.pos.toVector3() });
             } else {
-                Logger.error(new RuntimeException("Stars with id not found: " + pair[0] + ", " + pair[1]));
+                String wtf = "";
+                if (s1 == null)
+                    wtf += pair[0];
+
+                if (s2 == null)
+                    wtf += (wtf.length() > 0 ? ", " : "") + pair[1];
+                Logger.info(this.getClass().getSimpleName(), "Constellations stars not found (HIP): " + wtf);
             }
         }
     }

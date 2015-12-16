@@ -68,7 +68,7 @@ public abstract class AbstractSceneGraph implements ISceneGraph {
                 CelestialBody s = (CelestialBody) node.getStars();
                 if (s instanceof Star && ((Star) s).hip >= 0) {
                     if (starMap.containsKey(((Star) s).hip)) {
-                        Logger.error(new RuntimeException(("Duplicated HIP id: " + ((Star) s).hip)));
+                        Logger.debug(this.getClass().getSimpleName(), "Duplicated HIP id: " + ((Star) s).hip);
                     } else {
                         starMap.put(((Star) s).hip, (Star) s);
                     }
@@ -78,7 +78,7 @@ public abstract class AbstractSceneGraph implements ISceneGraph {
                 for (AbstractPositionEntity s : stars) {
                     if (s instanceof Star && ((Star) s).hip >= 0) {
                         if (starMap.containsKey(((Star) s).hip)) {
-                            Logger.error(new RuntimeException(("Duplicated HIP id: " + ((Star) s).hip)));
+                            Logger.debug(this.getClass().getSimpleName(), "Duplicated HIP id: " + ((Star) s).hip);
                         } else {
                             starMap.put(((Star) s).hip, (Star) s);
                         }
