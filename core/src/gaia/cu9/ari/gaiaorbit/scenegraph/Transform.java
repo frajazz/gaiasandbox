@@ -1,9 +1,9 @@
 package gaia.cu9.ari.gaiaorbit.scenegraph;
 
+import com.badlogic.gdx.math.Vector3;
+
 import gaia.cu9.ari.gaiaorbit.util.math.Matrix4d;
 import gaia.cu9.ari.gaiaorbit.util.math.Vector3d;
-
-import com.badlogic.gdx.math.Vector3;
 
 /** 
  * Represents a geometric transformation. It can be either a matrix or a position. Since we have
@@ -19,6 +19,11 @@ public class Transform {
 
     public Transform() {
         super();
+    }
+
+    public Transform(Vector3d position) {
+        super();
+        this.position = position;
     }
 
     /**

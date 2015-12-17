@@ -31,7 +31,7 @@ public class OctreeWrapper extends AbstractOctreeWrapper {
         int size = roulette.size();
         for (int i = 0; i < size; i++) {
             SceneGraphNode sgn = roulette.get(i);
-            float opacity = sgn instanceof Particle ? ((Particle) sgn).page.opacity : sgn.opacity;
+            float opacity = sgn instanceof Particle ? ((Particle) sgn).octant.opacity : sgn.opacity;
             sgn.update(time, parentTransform, camera, opacity);
         }
     }

@@ -30,8 +30,8 @@ public class MagnitudeCut implements IAggregationAlgorithm<Particle> {
         for (Particle s : candidates) {
             if (leaf) {
                 octant.add(s);
-                s.page = octant;
-                s.pageId = octant.pageId;
+                s.octant = octant;
+                s.octantId = octant.pageId;
             } else {
                 // New virtual star
                 Particle virtual = getVirtualCopy(s);
@@ -40,8 +40,8 @@ public class MagnitudeCut implements IAggregationAlgorithm<Particle> {
 
                 // Add virtual to octant
                 octant.add(virtual);
-                virtual.page = octant;
-                virtual.pageId = octant.pageId;
+                virtual.octant = octant;
+                virtual.octantId = octant.pageId;
             }
         }
         return leaf;

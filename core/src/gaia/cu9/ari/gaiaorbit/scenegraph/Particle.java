@@ -76,9 +76,9 @@ public class Particle extends CelestialBody implements IPointRenderable {
      */
 
     /** The id of the octant it belongs to, if any **/
-    public long pageId;
+    public long octantId;
     /** Its page **/
-    public OctreeNode<? extends SceneGraphNode> page;
+    public OctreeNode<? extends SceneGraphNode> octant;
 
     /** Particle type
      * 90 - real star

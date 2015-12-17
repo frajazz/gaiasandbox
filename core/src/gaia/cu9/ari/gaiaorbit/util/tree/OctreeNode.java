@@ -44,7 +44,7 @@ public class OctreeNode<T extends IPosition> implements ILineRenderable {
     /** Is the draw method actually drawing? **/
     public static boolean DRAW_ACTIVE = true;
 
-    /** Since OctreeNode is not to be parallelized, this can be static **/
+    /** Since OctreeNode is not to be parallelised, these can be static. Otherwise, use ThreadLocal **/
     private static BoundingBoxd boxcopy = new BoundingBoxd(new Vector3d(), new Vector3d());
     private static Matrix4d boxtransf = new Matrix4d();
     private static Vector3d auxD1 = new Vector3d(), auxD2 = new Vector3d(), auxD3 = new Vector3d(), auxD4 = new Vector3d();

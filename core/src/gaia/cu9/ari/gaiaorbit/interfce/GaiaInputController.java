@@ -1,19 +1,5 @@
 package gaia.cu9.ari.gaiaorbit.interfce;
 
-import gaia.cu9.ari.gaiaorbit.GaiaSandbox;
-import gaia.cu9.ari.gaiaorbit.event.EventManager;
-import gaia.cu9.ari.gaiaorbit.event.Events;
-import gaia.cu9.ari.gaiaorbit.interfce.KeyMappings.ProgramAction;
-import gaia.cu9.ari.gaiaorbit.scenegraph.CameraManager;
-import gaia.cu9.ari.gaiaorbit.scenegraph.CameraManager.CameraMode;
-import gaia.cu9.ari.gaiaorbit.scenegraph.CelestialBody;
-import gaia.cu9.ari.gaiaorbit.scenegraph.NaturalCamera;
-import gaia.cu9.ari.gaiaorbit.scenegraph.Star;
-import gaia.cu9.ari.gaiaorbit.util.Constants;
-import gaia.cu9.ari.gaiaorbit.util.GlobalConf;
-import gaia.cu9.ari.gaiaorbit.util.comp.ViewAngleComparator;
-import gaia.cu9.ari.gaiaorbit.util.math.Vector3d;
-
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
@@ -30,6 +16,21 @@ import com.badlogic.gdx.input.GestureDetector;
 import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.math.Vector3;
+
+import gaia.cu9.ari.gaiaorbit.GaiaSandbox;
+import gaia.cu9.ari.gaiaorbit.event.EventManager;
+import gaia.cu9.ari.gaiaorbit.event.Events;
+import gaia.cu9.ari.gaiaorbit.interfce.KeyMappings.ProgramAction;
+import gaia.cu9.ari.gaiaorbit.scenegraph.CameraManager;
+import gaia.cu9.ari.gaiaorbit.scenegraph.CameraManager.CameraMode;
+import gaia.cu9.ari.gaiaorbit.scenegraph.CelestialBody;
+import gaia.cu9.ari.gaiaorbit.scenegraph.NaturalCamera;
+import gaia.cu9.ari.gaiaorbit.scenegraph.Particle;
+import gaia.cu9.ari.gaiaorbit.scenegraph.Star;
+import gaia.cu9.ari.gaiaorbit.util.Constants;
+import gaia.cu9.ari.gaiaorbit.util.GlobalConf;
+import gaia.cu9.ari.gaiaorbit.util.comp.ViewAngleComparator;
+import gaia.cu9.ari.gaiaorbit.util.math.Vector3d;
 
 /**
  * Ripoff of libgdx's CameraInputController, for now.
@@ -174,64 +175,73 @@ public class GaiaInputController extends GestureDetector {
     }
 
     @Override
-    public boolean touchUp(int screenX, int screenY, int pointer, int button) {
+    public boolean touchUp(final int screenX, final int screenY, final int pointer, final int button) {
         EventManager.instance.post(Events.INPUT_EVENT, button);
         if (GlobalConf.runtime.INPUT_ENABLED) {
             touched &= -1 ^ (1 << pointer);
             if (cam.isNatural()) {
-                NaturalCamera camera = cam.naturalCamera;
+                final NaturalCamera camera = cam.naturalCamera;
                 multiTouch = !MathUtils.isPowerOfTwo(touched);
                 if (button == this.button && button == Input.Buttons.LEFT) {
-                    // 5% of width pixels distance
-                    if (gesture.dst(screenX, screenY) < MOVE_PX_DIST) {
-                        boolean stopped = camera.stopMovement();
-                        boolean focusRemoved = gui != null && gui.cancelTouchFocus();
-                        gesture.set(0, 0);
+                    // Ensure Octants observed property is computed
+                    Gdx.app.postRunnable(new Runnable() {
+                        @Override
+                        public void run() {
+                            // 5% of width pixels distance
+                            if (gesture.dst(screenX, screenY) < MOVE_PX_DIST) {
+                                boolean stopped = camera.stopMovement();
+                                boolean focusRemoved = gui != null && gui.cancelTouchFocus();
+                                gesture.set(0, 0);
 
-                        if (!stopped && !focusRemoved) {
-                            // Select star, if any
-                            List<CelestialBody> l = GaiaSandbox.instance.getFocusableEntities();
+                                if (!stopped && !focusRemoved) {
+                                    // Select star, if any
+                                    List<CelestialBody> l = GaiaSandbox.instance.getFocusableEntities();
 
-                            List<CelestialBody> hits = new ArrayList<CelestialBody>();
+                                    List<CelestialBody> hits = new ArrayList<CelestialBody>();
 
-                            Iterator<CelestialBody> it = l.iterator();
-                            Vector3 pos = new Vector3();
-                            while (it.hasNext()) {
-                                CelestialBody s = it.next();
-                                if (s.withinMagLimit()) {
-                                    Vector3d posd = s.getPosition(aux);
-                                    pos.set(posd.valuesf());
+                                    Iterator<CelestialBody> it = l.iterator();
+                                    Vector3 pos = new Vector3();
+                                    while (it.hasNext()) {
+                                        CelestialBody s = it.next();
+                                        if (s.withinMagLimit()) {
+                                            Vector3d posd = s.getPosition(aux);
+                                            pos.set(posd.valuesf());
 
-                                    if (camera.direction.dot(posd) > 0) {
-                                        // The star is in front of us
-                                        // Diminish the size of the sun when we are close by
-                                        float angle = s.viewAngle;
-                                        if (s instanceof Star && s.viewAngle > Constants.TH_ANGLE_DOWN / camera.getFovFactor() && s.viewAngle < Constants.TH_ANGLE_UP / camera.getFovFactor()) {
-                                            angle = 20f * (float) Constants.TH_ANGLE_DOWN / camera.getFovFactor();
+                                            if (camera.direction.dot(posd) > 0) {
+                                                // The star is in front of us
+                                                // Diminish the size of the sun when we are close by
+                                                float angle = s.viewAngle;
+                                                if (s instanceof Star && s.viewAngle > Constants.TH_ANGLE_DOWN / camera.getFovFactor() && s.viewAngle < Constants.TH_ANGLE_UP / camera.getFovFactor()) {
+                                                    angle = 20f * (float) Constants.TH_ANGLE_DOWN / camera.getFovFactor();
+                                                }
+
+                                                angle = (float) Math.toDegrees(angle * camera.fovFactor) * (40f / camera.camera.fieldOfView);
+                                                float pixelSize = Math.max(MAX_PX_DIST, ((angle * cam.getViewport().getScreenHeight()) / camera.camera.fieldOfView) / 2);
+                                                camera.camera.project(pos);
+                                                pos.y = cam.getViewport().getScreenHeight() - pos.y;
+                                                // Check click distance
+                                                if (pos.dst(screenX, screenY, pos.z) <= pixelSize) {
+                                                    // Hit
+                                                    hits.add(s);
+                                                }
+                                            }
                                         }
-
-                                        angle = (float) Math.toDegrees(angle * camera.fovFactor) * (40f / camera.camera.fieldOfView);
-                                        float pixelSize = Math.max(MAX_PX_DIST, ((angle * cam.getViewport().getScreenHeight()) / camera.camera.fieldOfView) / 2);
-                                        camera.camera.project(pos);
-                                        pos.y = cam.getViewport().getScreenHeight() - pos.y;
-                                        // Check click distance
-                                        if (pos.dst(screenX, screenY, pos.z) <= pixelSize) {
-                                            // Hit
-                                            hits.add(s);
+                                    }
+                                    if (!hits.isEmpty()) {
+                                        // Sort using distance
+                                        Collections.sort(hits, comp);
+                                        // Get closest
+                                        CelestialBody hit = hits.get(hits.size() - 1);
+                                        // Ensure the octant of the hit is observed, otherwise the focus will not be updated
+                                        if (!(hit instanceof Particle) || (hit instanceof Particle && ((Particle) hit).octant != null && ((Particle) hit).octant.observed)) {
+                                            EventManager.instance.post(Events.FOCUS_CHANGE_CMD, hit);
+                                            EventManager.instance.post(Events.CAMERA_MODE_CMD, CameraMode.Focus);
                                         }
                                     }
                                 }
                             }
-                            if (!hits.isEmpty()) {
-                                // Sort using distance
-                                Collections.sort(hits, comp);
-                                // Get closest
-                                CelestialBody hit = hits.get(hits.size() - 1);
-                                EventManager.instance.post(Events.FOCUS_CHANGE_CMD, hit);
-                                EventManager.instance.post(Events.CAMERA_MODE_CMD, CameraMode.Focus);
-                            }
                         }
-                    }
+                    });
                 }
             }
 

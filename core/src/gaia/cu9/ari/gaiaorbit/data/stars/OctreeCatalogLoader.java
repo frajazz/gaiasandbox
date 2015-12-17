@@ -58,9 +58,9 @@ public class OctreeCatalogLoader implements ISceneGraphLoader {
         // Update model
         for (SceneGraphNode sgn : particleList) {
             Star s = (Star) sgn;
-            OctreeNode<SceneGraphNode> octant = metadataReader.nodesMap.get(s.pageId).getFirst();
+            OctreeNode<SceneGraphNode> octant = metadataReader.nodesMap.get(s.octantId).getFirst();
             octant.add(s);
-            s.page = octant;
+            s.octant = octant;
             // Update status
             octant.setStatus(LoadStatus.LOADED);
 
@@ -80,8 +80,8 @@ public class OctreeCatalogLoader implements ISceneGraphLoader {
         if (candidate == null) {
             Logger.error(new RuntimeException("No octant candidate for the Sun found!"));
         } else {
-            sun.pageId = candidate.pageId;
-            sun.page = candidate;
+            sun.octantId = candidate.pageId;
+            sun.octant = candidate;
             // Add objects to octree wrapper node
             octreeWrapper.add(sun, candidate);
             candidate.add(sun);

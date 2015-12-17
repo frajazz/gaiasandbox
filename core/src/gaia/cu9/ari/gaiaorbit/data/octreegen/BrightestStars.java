@@ -34,10 +34,10 @@ public class BrightestStars implements IAggregationAlgorithm<Particle> {
             if (nInput < MIN_PART) {
                 // Downright use all stars that have not been assigned
                 for (Particle s : inputStars) {
-                    if (s.page == null) {
+                    if (s.octant == null) {
                         octant.add(s);
-                        s.page = octant;
-                        s.pageId = octant.pageId;
+                        s.octant = octant;
+                        s.octantId = octant.pageId;
                     }
                 }
             } else {
@@ -45,11 +45,11 @@ public class BrightestStars implements IAggregationAlgorithm<Particle> {
                 Collections.sort(inputStars, comp);
                 for (int i = 0; i < nObjects; i++) {
                     Particle s = inputStars.get(i);
-                    if (s.page == null) {
+                    if (s.octant == null) {
                         // Add star
                         octant.add(s);
-                        s.page = octant;
-                        s.pageId = octant.pageId;
+                        s.octant = octant;
+                        s.octantId = octant.pageId;
                         s.nparticles = inputStars.size() / nObjects;
                     }
                 }
@@ -62,11 +62,11 @@ public class BrightestStars implements IAggregationAlgorithm<Particle> {
             Collections.sort(inputStars, comp);
             for (int i = 0; i < nObjects; i++) {
                 Particle s = inputStars.get(i);
-                if (s.page == null) {
+                if (s.octant == null) {
                     // Add star
                     octant.add(s);
-                    s.page = octant;
-                    s.pageId = octant.pageId;
+                    s.octant = octant;
+                    s.octantId = octant.pageId;
                     s.nparticles = inputStars.size() / nObjects;
                 }
             }

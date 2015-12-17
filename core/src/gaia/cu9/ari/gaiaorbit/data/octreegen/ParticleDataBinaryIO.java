@@ -70,7 +70,7 @@ public class ParticleDataBinaryIO {
                 data_out.writeInt(s instanceof Star ? ((Star) s).hip : -1);
                 data_out.writeInt(s instanceof Star ? ((Star) s).tycho : -1);
                 data_out.writeByte(s.catalogSource);
-                data_out.writeInt((int) s.pageId);
+                data_out.writeInt((int) s.octantId);
                 data_out.writeInt(s.type);
             }
             data_out.close();
@@ -117,7 +117,7 @@ public class ParticleDataBinaryIO {
                         Vector3 vel = new Vector3(vx, vy, vz);
                         Vector3d sph = Coordinates.cartesianToSpherical(pos, new Vector3d());
                         Star s = new Star(pos, vel, appmag, absmag, colorbv, name, (float) Math.toDegrees(sph.x), (float) Math.toDegrees(sph.y), id, hip, tycho, source);
-                        s.pageId = pageId;
+                        s.octantId = pageId;
                         s.type = type;
                         s.initialize();
                         stars.add(s);
