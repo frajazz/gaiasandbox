@@ -203,7 +203,7 @@ public class GaiaInputController extends GestureDetector {
                                     Vector3 pos = new Vector3();
                                     while (it.hasNext()) {
                                         CelestialBody s = it.next();
-                                        if (s.withinMagLimit()) {
+                                        if (s.withinMagLimit() && (!(s instanceof Particle) || (s instanceof Particle && ((Particle) s).octant == null) || (s instanceof Particle && ((Particle) s).octant != null && ((Particle) s).octant.observed))) {
                                             Vector3d posd = s.getPosition(aux);
                                             pos.set(posd.valuesf());
 
@@ -232,11 +232,10 @@ public class GaiaInputController extends GestureDetector {
                                         Collections.sort(hits, comp);
                                         // Get closest
                                         CelestialBody hit = hits.get(hits.size() - 1);
-                                        // Ensure the octant of the hit is observed, otherwise the focus will not be updated
-                                        if (!(hit instanceof Particle) || (hit instanceof Particle && ((Particle) hit).octant != null && ((Particle) hit).octant.observed)) {
-                                            EventManager.instance.post(Events.FOCUS_CHANGE_CMD, hit);
-                                            EventManager.instance.post(Events.CAMERA_MODE_CMD, CameraMode.Focus);
-                                        }
+
+                                        EventManager.instance.post(Events.FOCUS_CHANGE_CMD, hit);
+                                        EventManager.instance.post(Events.CAMERA_MODE_CMD, CameraMode.Focus);
+
                                     }
                                 }
                             }
