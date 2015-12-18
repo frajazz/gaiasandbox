@@ -18,7 +18,7 @@ uniform float u_distance;
 
 #define time u_time * 0.01
 // Angle threshold. If angle is smaller, we don't draw core. To avoid flickering
-#define ang_th 0.000000001
+#define ang_th 0.00000001
 
 float noise(float t){
     return texture2D (u_noiseTexture, vec2 (t, .0)).x;
