@@ -1,5 +1,6 @@
 package gaia.cu9.ari.gaiaorbit.data;
 
+import java.io.BufferedOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -37,6 +38,7 @@ import gaia.cu9.ari.gaiaorbit.scenegraph.Star;
 import gaia.cu9.ari.gaiaorbit.scenegraph.octreewrapper.AbstractOctreeWrapper;
 import gaia.cu9.ari.gaiaorbit.util.ConfInit;
 import gaia.cu9.ari.gaiaorbit.util.I18n;
+import gaia.cu9.ari.gaiaorbit.util.Logger;
 import gaia.cu9.ari.gaiaorbit.util.format.DateFormatFactory;
 import gaia.cu9.ari.gaiaorbit.util.format.NumberFormatFactory;
 import gaia.cu9.ari.gaiaorbit.util.tree.OctreeNode;
@@ -121,21 +123,23 @@ public class OctreeGeneratorTest implements IObserver {
                 hips.add(((Star) p).hip);
             }
         }
-        //list.addAll((List<Particle>) tycho.loadData());
-        //list.addAll(tgas.loadData());
+
         List<Particle> list2 = tgas.loadData();
         for (Particle p : list2) {
-            if (p instanceof Star && !hips.contains(((Star) p).hip)) {
+            if (!(p instanceof Star) || (p instanceof Star && !hips.contains(((Star) p).hip))) {
                 list.add(p);
             }
         }
+
+        Logger.info("Generating octree with " + list.size() + " actual stars");
+
         OctreeNode<Particle> octree = og.generateOctree(list);
 
         // Put all new particles in list
         list.clear();
         octree.addParticlesTo(list);
 
-        System.out.println(octree.toString());
+        System.out.println(octree.toString(true));
 
         String temp = System.getProperty("java.io.tmpdir");
 
@@ -167,7 +171,7 @@ public class OctreeGeneratorTest implements IObserver {
         System.out.println("Writing particles (" + list.size() + " particles): " + particles.getAbsolutePath());
 
         ParticleDataBinaryIO particleWriter = new ParticleDataBinaryIO();
-        particleWriter.writeParticles(list, new FileOutputStream(particles));
+        particleWriter.writeParticles(list, new BufferedOutputStream(new FileOutputStream(particles)));
     }
 
     private static void loadOctree() throws FileNotFoundException {

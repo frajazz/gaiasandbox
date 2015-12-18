@@ -91,7 +91,7 @@ public class PixelRenderSystem extends ImmediateRenderSystem implements IObserve
 
                 // SIZE
                 curr.vertices[curr.vertexIdx + additionalOffset] = cb.getRadius();
-                curr.vertices[curr.vertexIdx + additionalOffset + 1] = (float) cb.THRESHOLD_ANGLE_POINT();
+                curr.vertices[curr.vertexIdx + additionalOffset + 1] = (float) cb.THRESHOLD_POINT();
 
                 // VERTEX
                 aux.set((float) cb.pos.x, (float) cb.pos.y, (float) cb.pos.z);

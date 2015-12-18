@@ -119,6 +119,25 @@ public class OctreeNode<T extends IPosition> implements ILineRenderable {
     }
 
     /**
+     * Constructs an octree node
+     * @param pageId
+     * @param x
+     * @param y
+     * @param z
+     * @param hsx
+     * @param hsy
+     * @param hsz
+     * @param depth
+     * @param parent The parent of this octant
+     * @param i The index in the parent's children
+     */
+    public OctreeNode(long pageId, double x, double y, double z, double hsx, double hsy, double hsz, int depth, OctreeNode<T> parent, int i) {
+        this(pageId, x, y, z, hsx, hsy, hsz, depth);
+        this.parent = parent;
+        parent.children[i] = this;
+    }
+
+    /**
      * Constructs an octree node.
      * @param pageId The page id.
      * @param x The x coordinate of the center.
@@ -249,6 +268,35 @@ public class OctreeNode<T extends IPosition> implements ILineRenderable {
     }
 
     public String toString() {
+        return toString(false);
+    }
+
+    public String toString(boolean rec) {
+        StringBuffer str = new StringBuffer(depth);
+        if (rec)
+            for (int i = 0; i < depth; i++) {
+                str.append("   ");
+            }
+
+        str.append(pageId).append("(lvl").append(depth).append(")");
+        if (parent != null) {
+            str.append(" [i: ").append(Arrays.asList(parent.children).indexOf(this)).append(", ownobj: ");
+        } else {
+            str.append("[ownobj: ");
+        }
+        str.append(objects != null ? objects.size() : "0").append("/").append(ownObjects).append(", recobj: ").append(nObjects).append(", nchld: ").append(childrenCount).append("] ").append(status).append("\n");
+
+        if (childrenCount > 0 && rec) {
+            for (OctreeNode<T> child : children) {
+                if (child != null) {
+                    str.append(child.toString(rec));
+                }
+            }
+        }
+        return str.toString();
+    }
+
+    public String toStringRec() {
         StringBuffer str = new StringBuffer(depth);
         for (int i = 0; i < depth; i++) {
             str.append("    ");
@@ -344,13 +392,13 @@ public class OctreeNode<T extends IPosition> implements ILineRenderable {
             distToCamera = auxD1.set(centre).add(cam.getInversePos()).len();
             viewAngle = (radius / distToCamera) / cam.getFovFactor();
 
-            if (viewAngle < GlobalConf.scene.OCTANT_TH_ANGLE_0) {
+            if (viewAngle < GlobalConf.scene.OCTANT_THRESHOLD_0) {
                 // Stay in current level
                 addObjectsTo(roulette);
                 setChildrenObserved(false);
             } else {
                 // Break down tree, fade in until th2
-                double alpha = MathUtilsd.clamp(MathUtilsd.lint(viewAngle, GlobalConf.scene.OCTANT_TH_ANGLE_0, GlobalConf.scene.OCTANT_TH_ANGLE_1, 0d, 1d), 0f, 1f);
+                double alpha = MathUtilsd.clamp(MathUtilsd.lint(viewAngle, GlobalConf.scene.OCTANT_THRESHOLD_0 / cam.getFovFactor(), GlobalConf.scene.OCTANT_THRESHOLD_1 / cam.getFovFactor(), 0d, 1d), 0f, 1f);
 
                 // Add objects
                 addObjectsTo(roulette);
@@ -498,8 +546,11 @@ public class OctreeNode<T extends IPosition> implements ILineRenderable {
 
             this.col.set(ColourUtils.getRed(rgb) * alpha, ColourUtils.getGreen(rgb) * alpha, ColourUtils.getBlue(rgb) * alpha, alpha * opacity);
 
-            if (this.pageId == 45)
-                this.col.set(Color.BLUE);
+            if (this.observed) {
+                this.col.set(Color.YELLOW);
+            } else {
+                this.col.set(Color.BROWN);
+            }
 
             // Camera correction
             Vector3d loc = MyPools.get(Vector3d.class).obtain();

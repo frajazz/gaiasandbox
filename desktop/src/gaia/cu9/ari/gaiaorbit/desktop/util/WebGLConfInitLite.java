@@ -56,7 +56,7 @@ public class WebGLConfInitLite extends ConfInit {
         VISIBILITY[ComponentType.Others.ordinal()] = true;
 
         SceneConf sc = new SceneConf();
-        sc.initialize(2000, 10f, 0f, 50, 2.1f, 1866f, 2286f, 13, true, 7.0f, VISIBILITY, 2, 0, 0f, 2e-8f, 0f, 0.2f, 1f, false, 0.610865f, 1.0472f);
+        sc.initialize(2000, 10f, 0f, 50, 2.1f, 1866f, 2286f, 13, true, 7.0f, VISIBILITY, 2, 0, 0f, 2e-8f, 0f, 0.2f, 1f, false, 0.6f, 1.5f);
 
         FrameConf fc = new FrameConf();
 

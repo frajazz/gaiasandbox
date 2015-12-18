@@ -110,7 +110,7 @@ public class Star extends Particle {
      * @param dec in degrees 
      * @param starid The star id
      * @param hip The HIP identifier
-     * @param source Catalog source. 1 - Gaia, 2 - HIP, 3 - TYC
+     * @param source Catalog source. 1: Gaia, 2: HIP, 3: TYC, -1: Unknown
      */
     public Star(Vector3d pos, float appmag, float absmag, float colorbv, String name, float ra, float dec, long starid, int hip, byte source) {
         super(pos, appmag, absmag, colorbv, name, ra, dec, starid);
@@ -208,7 +208,7 @@ public class Star extends Particle {
             addToRender(this, RenderGroup.SHADER);
             addToRender(this, RenderGroup.LABEL);
         } else {
-            if (viewAngleApparent >= (THRESHOLD_ANGLE_POINT() / 1.5f) * camera.getFovFactor()) {
+            if (viewAngleApparent >= (THRESHOLD_POINT() / 1.5f) * camera.getFovFactor()) {
                 addToRender(this, RenderGroup.SHADER);
                 if (distToCamera < modelDistance) {
                     camera.checkClosest(this);

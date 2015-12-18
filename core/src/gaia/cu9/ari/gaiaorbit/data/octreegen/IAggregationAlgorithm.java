@@ -1,9 +1,9 @@
 package gaia.cu9.ari.gaiaorbit.data.octreegen;
 
+import java.util.List;
+
 import gaia.cu9.ari.gaiaorbit.scenegraph.SceneGraphNode;
 import gaia.cu9.ari.gaiaorbit.util.tree.OctreeNode;
-
-import java.util.List;
 
 /**
  * Interface to be implemented by all algorithms that create a group of virtual particles
@@ -24,7 +24,7 @@ public interface IAggregationAlgorithm<T extends SceneGraphNode> {
     public boolean sample(List<T> inputStars, OctreeNode<T> octant, float percentage);
 
     /**
-     * Gets the maximum number of particles in a single nodes
+     * Gets the maximum number of particles in a single node
      * @return maximum number of particles in a node
      */
     public int getMaxPart();

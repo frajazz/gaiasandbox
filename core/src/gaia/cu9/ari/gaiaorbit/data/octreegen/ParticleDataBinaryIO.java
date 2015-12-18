@@ -54,7 +54,7 @@ public class ParticleDataBinaryIO {
             // Size of stars
             data_out.writeInt(particles.size());
             for (Particle s : particles) {
-                // name_length, name, appmag, absmag, colorbv, x, y, z, id, hip, tycho, pageid, type
+                // name_length, name, appmag, absmag, colorbv, x, y, z, pmx, pmy, pmz, id, hip, tycho, sourceCatalog, pageid, type
                 data_out.writeInt(s.name.length());
                 data_out.writeChars(s.name);
                 data_out.writeFloat(s.appmag);

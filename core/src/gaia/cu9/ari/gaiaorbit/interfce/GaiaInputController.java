@@ -209,10 +209,10 @@ public class GaiaInputController extends GestureDetector {
 
                                             if (camera.direction.dot(posd) > 0) {
                                                 // The star is in front of us
-                                                // Diminish the size of the sun when we are close by
+                                                // Diminish the size of the star when we are close by
                                                 float angle = s.viewAngle;
-                                                if (s instanceof Star && s.viewAngle > Constants.TH_ANGLE_DOWN / camera.getFovFactor() && s.viewAngle < Constants.TH_ANGLE_UP / camera.getFovFactor()) {
-                                                    angle = 20f * (float) Constants.TH_ANGLE_DOWN / camera.getFovFactor();
+                                                if (s instanceof Star && s.viewAngle > Constants.THRESHOLD_DOWN / camera.getFovFactor() && s.viewAngle < Constants.THRESHOLD_UP / camera.getFovFactor()) {
+                                                    angle = 20f * (float) Constants.THRESHOLD_DOWN / camera.getFovFactor();
                                                 }
 
                                                 angle = (float) Math.toDegrees(angle * camera.fovFactor) * (40f / camera.camera.fieldOfView);

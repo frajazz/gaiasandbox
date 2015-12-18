@@ -21,7 +21,7 @@ public abstract class ModelBody extends CelestialBody {
     /**
      * Angle limit for rendering as point. If angle is any bigger, we render with shader.
      */
-    public double THRESHOLD_ANGLE_POINT() {
+    public double THRESHOLD_POINT() {
         return TH_ANGLE_POINT;
     }
 
@@ -83,10 +83,10 @@ public abstract class ModelBody extends CelestialBody {
     @Override
     protected void addToRenderLists(ICamera camera) {
         camera.checkClosest(this);
-        float thPoint = (float) (THRESHOLD_ANGLE_POINT() * camera.getFovFactor());
+        float thPoint = (float) (THRESHOLD_POINT() * camera.getFovFactor());
         if (viewAngle >= thPoint) {
             opacity = MathUtilsd.lint(viewAngle, thPoint, thPoint * 4, 0, 1);
-            if (viewAngle < THRESHOLD_ANGLE_QUAD() * camera.getFovFactor()) {
+            if (viewAngle < THRESHOLD_QUAD() * camera.getFovFactor()) {
                 addToRender(this, RenderGroup.SHADER_F);
             } else {
                 addToRender(this, RenderGroup.MODEL_F);
@@ -133,9 +133,9 @@ public abstract class ModelBody extends CelestialBody {
     }
 
     public float getFuzzyRenderSize(ICamera camera) {
-        float thAngleQuad = (float) THRESHOLD_ANGLE_QUAD() * camera.getFovFactor();
+        float thAngleQuad = (float) THRESHOLD_QUAD() * camera.getFovFactor();
         double size = 0f;
-        if (viewAngle >= THRESHOLD_ANGLE_POINT() * camera.getFovFactor()) {
+        if (viewAngle >= THRESHOLD_POINT() * camera.getFovFactor()) {
             float tanThShaderOverlapDist = (float) Math.tan(thAngleQuad) * distToCamera;
             size = tanThShaderOverlapDist;
         }

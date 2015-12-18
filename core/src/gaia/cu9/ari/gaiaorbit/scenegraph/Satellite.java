@@ -12,17 +12,17 @@ public abstract class Satellite extends ModelBody {
     protected static final double TH_ANGLE_QUAD = ModelBody.TH_ANGLE_POINT / 4d;
 
     @Override
-    public double THRESHOLD_ANGLE_NONE() {
+    public double THRESHOLD_NONE() {
         return TH_ANGLE_NONE;
     }
 
     @Override
-    public double THRESHOLD_ANGLE_POINT() {
+    public double THRESHOLD_POINT() {
         return TH_ANGLE_POINT;
     }
 
     @Override
-    public double THRESHOLD_ANGLE_QUAD() {
+    public double THRESHOLD_QUAD() {
         return TH_ANGLE_QUAD;
     }
 

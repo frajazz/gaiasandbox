@@ -152,16 +152,16 @@ public class AndroidConfInit extends ConfInit {
         float TURNING_SPEED = Float.parseFloat(p.getProperty("scene.camera.turn.vel"));
         float ROTATION_SPEED = Float.parseFloat(p.getProperty("scene.camera.rotate.vel"));
         float LABEL_NUMBER_FACTOR = Float.parseFloat(p.getProperty("scene.labelfactor"));
-        double STAR_TH_ANGLE_QUAD = Math.toRadians(Double.parseDouble(p.getProperty("scene.star.thresholdangle.quad")));
-        double STAR_TH_ANGLE_POINT = Math.toRadians(Double.parseDouble(p.getProperty("scene.star.thresholdangle.point")));
-        double STAR_TH_ANGLE_NONE = Math.toRadians(Double.parseDouble(p.getProperty("scene.star.thresholdangle.none")));
+        double STAR_TH_ANGLE_QUAD = Double.parseDouble(p.getProperty("scene.star.thresholdangle.quad"));
+        double STAR_TH_ANGLE_POINT = Double.parseDouble(p.getProperty("scene.star.thresholdangle.point"));
+        double STAR_TH_ANGLE_NONE = Double.parseDouble(p.getProperty("scene.star.thresholdangle.none"));
         float POINT_ALPHA_MIN = Float.parseFloat(p.getProperty("scene.point.alpha.min"));
         float POINT_ALPHA_MAX = Float.parseFloat(p.getProperty("scene.point.alpha.max"));
         int PIXEL_RENDERER = Integer.parseInt(p.getProperty("scene.renderer.star"));
         int LINE_RENDERER = Integer.parseInt(p.getProperty("scene.renderer.line"));
         boolean OCTREE_PARTICLE_FADE = Boolean.parseBoolean(p.getProperty("scene.octree.particle.fade"));
-        float OCTANT_TH_ANGLE_0 = (float) Math.toRadians(Float.parseFloat(p.getProperty("octant.thresholdangle.0")));
-        float OCTANT_TH_ANGLE_1 = (float) Math.toRadians(Float.parseFloat(p.getProperty("octant.thresholdangle.1")));
+        float OCTANT_TH_ANGLE_0 = Float.parseFloat(p.getProperty("scene.octant.threshold.0"));
+        float OCTANT_TH_ANGLE_1 = Float.parseFloat(p.getProperty("scene.octant.threshold.1"));
 
         //Visibility of components
         ComponentType[] cts = ComponentType.values();
@@ -298,16 +298,16 @@ public class AndroidConfInit extends ConfInit {
         p.setProperty("scene.camera.rotate.vel", Float.toString(GlobalConf.scene.ROTATION_SPEED));
         p.setProperty("scene.focuslock", Boolean.toString(GlobalConf.scene.FOCUS_LOCK));
         p.setProperty("scene.labelfactor", Float.toString(GlobalConf.scene.LABEL_NUMBER_FACTOR));
-        p.setProperty("scene.star.thresholdangle.quad", Double.toString(Math.toDegrees(GlobalConf.scene.STAR_TH_ANGLE_QUAD)));
-        p.setProperty("scene.star.thresholdangle.point", Double.toString(Math.toDegrees(GlobalConf.scene.STAR_TH_ANGLE_POINT)));
-        p.setProperty("scene.star.thresholdangle.none", Double.toString(Math.toDegrees(GlobalConf.scene.STAR_TH_ANGLE_NONE)));
+        p.setProperty("scene.star.threshold.quad", Double.toString(GlobalConf.scene.STAR_THRESHOLD_QUAD));
+        p.setProperty("scene.star.threshold.point", Double.toString(GlobalConf.scene.STAR_THRESHOLD_POINT));
+        p.setProperty("scene.star.threshold.none", Double.toString(GlobalConf.scene.STAR_THRESHOLD_NONE));
         p.setProperty("scene.point.alpha.min", Float.toString(GlobalConf.scene.POINT_ALPHA_MIN));
         p.setProperty("scene.point.alpha.max", Float.toString(GlobalConf.scene.POINT_ALPHA_MAX));
         p.setProperty("scene.renderer.star", Integer.toString(GlobalConf.scene.PIXEL_RENDERER));
         p.setProperty("scene.renderer.line", Integer.toString(GlobalConf.scene.LINE_RENDERER));
         p.setProperty("scene.octree.particle.fade", Boolean.toString(GlobalConf.scene.OCTREE_PARTICLE_FADE));
-        p.setProperty("octant.thresholdangle.0", Float.toString((float) Math.toDegrees(GlobalConf.scene.OCTANT_TH_ANGLE_0)));
-        p.setProperty("octant.thresholdangle.1", Float.toString((float) Math.toDegrees(GlobalConf.scene.OCTANT_TH_ANGLE_1)));
+        p.setProperty("scene.octant.threshold.0", Float.toString(GlobalConf.scene.OCTANT_THRESHOLD_0));
+        p.setProperty("scene.octant.threshold.1", Float.toString(GlobalConf.scene.OCTANT_THRESHOLD_1));
         // Visibility of components
         int idx = 0;
         ComponentType[] cts = ComponentType.values();

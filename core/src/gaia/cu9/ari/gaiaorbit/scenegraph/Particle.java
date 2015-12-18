@@ -34,18 +34,18 @@ public class Particle extends CelestialBody implements IPointRenderable {
     private static Random rnd = new Random();
 
     @Override
-    public double THRESHOLD_ANGLE_NONE() {
-        return (float) GlobalConf.scene.STAR_TH_ANGLE_NONE;
+    public double THRESHOLD_NONE() {
+        return (float) GlobalConf.scene.STAR_THRESHOLD_NONE;
     }
 
     @Override
-    public double THRESHOLD_ANGLE_POINT() {
-        return (float) GlobalConf.scene.STAR_TH_ANGLE_POINT;
+    public double THRESHOLD_POINT() {
+        return (float) GlobalConf.scene.STAR_THRESHOLD_POINT;
     }
 
     @Override
-    public double THRESHOLD_ANGLE_QUAD() {
-        return (float) GlobalConf.scene.STAR_TH_ANGLE_QUAD;
+    public double THRESHOLD_QUAD() {
+        return (float) GlobalConf.scene.STAR_THRESHOLD_QUAD;
     }
 
     /** Proper motion in cartesian coordinates [U/sec] **/
@@ -160,7 +160,7 @@ public class Particle extends CelestialBody implements IPointRenderable {
             this.opacity = opacity;
             transform.position.set(parentTransform.position).add(pos);
             if (hasPm) {
-                Vector3 pmv = new Vector3(pm).scl((float) AstroUtils.getMsSinceJ2000(time.getTime()) / 1000f);
+                Vector3 pmv = new Vector3(pm).scl((float) AstroUtils.getMsSinceJ2015(time.getTime()) / 1000f);
                 transform.position.add(pmv);
             }
             distToCamera = (float) transform.position.len();
@@ -195,7 +195,7 @@ public class Particle extends CelestialBody implements IPointRenderable {
             addToRender(this, RenderGroup.SHADER);
         } else {
 
-            if (viewAngleApparent >= THRESHOLD_ANGLE_POINT() * camera.getFovFactor()) {
+            if (viewAngleApparent >= THRESHOLD_POINT() * camera.getFovFactor()) {
                 addToRender(this, RenderGroup.SHADER);
             }
         }
@@ -268,15 +268,15 @@ public class Particle extends CelestialBody implements IPointRenderable {
 
     public float getFuzzyRenderSize(ICamera camera) {
         computedSize = this.size;
-        if (viewAngle > Constants.TH_ANGLE_DOWN / camera.getFovFactor()) {
+        if (viewAngle > Constants.THRESHOLD_DOWN / camera.getFovFactor()) {
             double dist = distToCamera;
-            if (viewAngle > Constants.TH_ANGLE_UP / camera.getFovFactor()) {
-                dist = (float) radius / Constants.TAN_TH_ANGLE_UP;
+            if (viewAngle > Constants.THRESHOLD_UP / camera.getFovFactor()) {
+                dist = (float) radius / Constants.THRESHOLD_UP;
             }
-            computedSize = dist * Constants.TAN_TH_ANGLE_DOWN * Constants.STAR_SIZE_FACTOR_INV;
-
+            computedSize = this.size * (dist / this.radius) * Constants.THRESHOLD_DOWN;
         }
         computedSize *= GlobalConf.scene.STAR_BRIGHTNESS;
+
         return (float) computedSize;
     }
 

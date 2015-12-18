@@ -31,19 +31,19 @@ public abstract class CelestialBody extends AbstractPositionEntity implements I3
     private static float[] labelColour = new float[] { 1, 1, 1, 1 };
 
     /**
-     * Angle limit for rendering at all. If angle is smaller than this quantity, no rendering happens.
+     * radius/distance limit for rendering at all. If angle is smaller than this quantity, no rendering happens.
      */
-    public abstract double THRESHOLD_ANGLE_NONE();
+    public abstract double THRESHOLD_NONE();
 
     /**
-     * Angle limit for rendering as shader. If angle is any bigger, we render as a model.
+     * radius/distance limit for rendering as shader. If angle is any bigger, we render as a model.
      */
-    public abstract double THRESHOLD_ANGLE_QUAD();
+    public abstract double THRESHOLD_QUAD();
 
     /**
-     * Angle limit for rendering as point. If angle is any bigger, we render with shader.
+     * radius/distance limit for rendering as point. If angle is any bigger, we render with shader.
      */
-    public abstract double THRESHOLD_ANGLE_POINT();
+    public abstract double THRESHOLD_POINT();
 
     public float TH_OVER_FACTOR;
 
@@ -71,7 +71,7 @@ public abstract class CelestialBody extends AbstractPositionEntity implements I3
 
     public CelestialBody() {
         super();
-        TH_OVER_FACTOR = (float) (THRESHOLD_ANGLE_POINT() / GlobalConf.scene.LABEL_NUMBER_FACTOR);
+        TH_OVER_FACTOR = (float) (THRESHOLD_POINT() / GlobalConf.scene.LABEL_NUMBER_FACTOR);
     }
 
     /**
@@ -123,7 +123,7 @@ public abstract class CelestialBody extends AbstractPositionEntity implements I3
             shader.setUniformf("u_inner_rad", getInnerRad());
             shader.setUniformf("u_distance", (float) (distToCamera * Constants.U_TO_KM));
             shader.setUniformf("u_apparent_angle", viewAngleApparent);
-            shader.setUniformf("u_th_angle_point", (float) THRESHOLD_ANGLE_POINT() * camera.getFovFactor());
+            shader.setUniformf("u_th_angle_point", (float) THRESHOLD_POINT() * camera.getFovFactor());
 
             if (precomp < 0) {
                 precomp = (float) (getRadius() * Constants.U_TO_KM * 172.4643429);
@@ -136,9 +136,9 @@ public abstract class CelestialBody extends AbstractPositionEntity implements I3
     }
 
     public float getFuzzyRenderSize(ICamera camera) {
-        float thAngleQuad = (float) THRESHOLD_ANGLE_QUAD() * camera.getFovFactor();
+        float thAngleQuad = (float) THRESHOLD_QUAD() * camera.getFovFactor();
         double size = 0f;
-        if (viewAngle >= THRESHOLD_ANGLE_POINT() * camera.getFovFactor()) {
+        if (viewAngle >= THRESHOLD_POINT() * camera.getFovFactor()) {
             if (viewAngle < thAngleQuad) {
                 float tanThShaderOverlapDist = (float) Math.tan(thAngleQuad) * distToCamera;
                 size = tanThShaderOverlapDist;

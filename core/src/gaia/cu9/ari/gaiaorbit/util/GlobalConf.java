@@ -477,9 +477,9 @@ public class GlobalConf {
         /** The line render system: 0 - normal, 1 - shader **/
         public int LINE_RENDERER;
 
-        public double STAR_TH_ANGLE_NONE;
-        public double STAR_TH_ANGLE_POINT;
-        public double STAR_TH_ANGLE_QUAD;
+        public double STAR_THRESHOLD_NONE;
+        public double STAR_THRESHOLD_POINT;
+        public double STAR_THRESHOLD_QUAD;
 
         public float POINT_ALPHA_MIN;
         public float POINT_ALPHA_MAX;
@@ -488,9 +488,9 @@ public class GlobalConf {
         public boolean OCTREE_PARTICLE_FADE;
 
         /** Angle [rad] above which we start painting stars in octant with fade in **/
-        public float OCTANT_TH_ANGLE_0;
+        public float OCTANT_THRESHOLD_0;
         /** Angle [rad] below which we paint stars in octant with fade out. Above this angle, inner stars are painted with full brightness **/
-        public float OCTANT_TH_ANGLE_1;
+        public float OCTANT_THRESHOLD_1;
 
         public SceneConf() {
             EventManager.instance.subscribe(this, Events.FOCUS_LOCK_CMD, Events.STAR_BRIGHTNESS_CMD, Events.FOV_CHANGED_CMD, Events.CAMERA_SPEED_CMD, Events.ROTATION_SPEED_CMD, Events.TURNING_SPEED_CMD, Events.SPEED_LIMIT_CMD, Events.TRANSIT_COLOUR_CMD, Events.ONLY_OBSERVED_STARS_CMD, Events.COMPUTE_GAIA_SCAN_CMD, Events.PIXEL_RENDERER_CMD, Events.OCTREE_PARTICLE_FADE_CMD);
@@ -512,15 +512,15 @@ public class GlobalConf {
             VISIBILITY = vISIBILITY;
             PIXEL_RENDERER = pIXEL_RENDERER;
             LINE_RENDERER = lINE_RENDERER;
-            STAR_TH_ANGLE_NONE = sTAR_TH_ANGLE_NONE;
-            STAR_TH_ANGLE_POINT = sTAR_TH_ANGLE_POINT;
-            STAR_TH_ANGLE_QUAD = sTAR_TH_ANGLE_QUAD;
+            STAR_THRESHOLD_NONE = sTAR_TH_ANGLE_NONE;
+            STAR_THRESHOLD_POINT = sTAR_TH_ANGLE_POINT;
+            STAR_THRESHOLD_QUAD = sTAR_TH_ANGLE_QUAD;
             POINT_ALPHA_MIN = pOINT_ALPHA_MIN;
             POINT_ALPHA_MAX = pOINT_ALPHA_MAX;
             OCTREE_PARTICLE_FADE = oCTREE_PARTICLE_FADE;
-            OCTANT_TH_ANGLE_0 = oCTANT_TH_ANGLE_0;
+            OCTANT_THRESHOLD_0 = oCTANT_TH_ANGLE_0;
 
-            OCTANT_TH_ANGLE_1 = oCTANT_TH_ANGLE_1;
+            OCTANT_THRESHOLD_1 = oCTANT_TH_ANGLE_1;
         }
 
         public void updateSpeedLimit() {

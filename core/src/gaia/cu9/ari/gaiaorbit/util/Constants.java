@@ -86,13 +86,9 @@ public class Constants {
     public static final double STAR_SIZE_FACTOR = 1.31526e-6;
     public static final double STAR_SIZE_FACTOR_INV = 1d / STAR_SIZE_FACTOR;
 
-    /** Threshold angle where star size remains constant, in radians. **/
-    public static final double TH_ANGLE_DOWN = Math.toRadians(2.6e-5);
-    public static final double TAN_TH_ANGLE_DOWN = Math.tan(Constants.TH_ANGLE_DOWN);
-    public static final double TAN_TH_ANGLE_DOWN_FAC = TAN_TH_ANGLE_DOWN * STAR_SIZE_FACTOR_INV;
-    public static final double TH_ANGLE_UP = Math.toRadians(3);
-    public static final double TAN_TH_ANGLE_UP = Math.tan(Constants.TH_ANGLE_UP);
-    public static final double TAN_TH_ANGLE_UP_FAC = TAN_TH_ANGLE_UP * STAR_SIZE_FACTOR_INV;
+    /** Threshold radius/distance where star size remains constant. **/
+    public static final double THRESHOLD_DOWN = 2e-7;
+    public static final double THRESHOLD_UP = 1e-3;
 
     /**
      * 

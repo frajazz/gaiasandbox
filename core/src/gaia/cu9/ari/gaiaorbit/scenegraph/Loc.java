@@ -42,7 +42,7 @@ public class Loc extends AbstractPositionEntity implements I3DTextRenderable {
     @Override
     public void updateLocal(ITimeFrameProvider time, ICamera camera) {
 
-        if (((ModelBody) parent).viewAngle > ((ModelBody) parent).THRESHOLD_ANGLE_QUAD() * 30f) {
+        if (((ModelBody) parent).viewAngle > ((ModelBody) parent).THRESHOLD_QUAD() * 30f) {
             updateLocalValues(time, camera);
 
             this.transform.translate(pos);
