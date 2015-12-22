@@ -33,8 +33,14 @@ OPTS="$OPTS -Dproperties.file=$GSDIRESC/conf/global.properties"
 
 # Memory
 OPTS="$OPTS -Xmx512m"
+
 # Parallel GC 
-OPTS="$OPTS -XX:+UseParallelGC"
+#OPTS="$OPTS -XX:+UseParallelGC"
+# CMS GC
+OPTS="$OPTS -XX:+UseConcMarkSweepGC"
+# G1 GC
+#OPTS="$OPTS -XX:+UseG1GC"
+
 # GC debug only
 #OPTS="$OPTS -verbose:gc -XX:+PrintGCDetails"
 # JIT compiler debug only

@@ -24,7 +24,13 @@ task run(dependsOn: jar, type: JavaExec, description: "Runs the desktop project"
     main = project.mainClassName
     systemProperties['properties.file'] = '../android/assets/conf/global.properties'
     systemProperties['assets.location'] = '../android/assets/'
-    jvmArgs = ['-Xms2g', '-Xmx4g', '-server']
+    	
+    // Parallel GC
+    //jvmArgs = ['-Xms2g', '-Xmx4g', '-XX:+UseParallelGC']
+    // CMS GC
+    jvmArgs = ['-Xms2g', '-Xmx4g', '-XX:+UseConcMarkSweepGC']
+    // G1 GC
+    //jvmArgs = ['-Xms2g', '-Xmx4g', '-XX:+UseG1GC']
     classpath = sourceSets.main.runtimeClasspath
     classpath += files(project.assetsDir)
     standardInput = System.in
