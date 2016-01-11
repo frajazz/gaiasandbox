@@ -1,7 +1,7 @@
 { "data" : [
 	{
 		"loader": gaia.cu9.ari.gaiaorbit.data.stars.HYGBinaryLoader
-		//,"files": [ "data/hygxyz.bin" ]
+		,"files": [ "data/hygxyz.bin" ]
 	},
 	{
 		"loader": gaia.cu9.ari.gaiaorbit.data.stars.TGASLoader
@@ -20,7 +20,7 @@
 		"loader": gaia.cu9.ari.gaiaorbit.data.stars.OctreeCatalogLoader
 		//,"files": [ "data/octree/hyg_level_10k_3k_particles.bin", "data/octree/hyg_level_10k_3k_metadata.bin" ]
 		//,"files": [ "data/octree/hygtycho_00_particles.bin", "data/octree/hygtycho_00_metadata.bin" ]
-		,"files": [ "data/octree/tgashyg_level_2k_200_particles.bin", "data/octree/tgashyg_level_2k_200_metadata.bin" ]
+		//,"files": [ "data/octree/particles_1450453261273.bin", "data/octree/metadata_1450453261273.bin" ]
 		//,"files": [ "data/octree/tgas_00_particles.bin", "data/octree/tgas_00_metadata.bin" ]
 	},
 	{
