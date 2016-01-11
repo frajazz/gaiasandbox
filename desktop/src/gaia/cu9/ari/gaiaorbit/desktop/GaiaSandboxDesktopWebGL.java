@@ -18,13 +18,12 @@ import gaia.cu9.ari.gaiaorbit.util.format.DateFormatFactory;
 import gaia.cu9.ari.gaiaorbit.util.format.NumberFormatFactory;
 import gaia.cu9.ari.gaiaorbit.util.math.MathUtilsd;
 
-import com.badlogic.gdx.Files;
-import com.badlogic.gdx.backends.lwjgl.LwjglApplication;
-import com.badlogic.gdx.backends.lwjgl.LwjglApplicationConfiguration;
+import com.badlogic.gdx.backends.lwjgl3.Lwjgl3Application;
+import com.badlogic.gdx.backends.lwjgl3.Lwjgl3ApplicationConfiguration;
 
 public class GaiaSandboxDesktopWebGL {
 
-    public static void main(String[] args) throws Exception {
+	public static void main(String[] args) throws Exception {
         NumberFormatFactory.initialize(new DesktopNumberFormatFactory());
         DateFormatFactory.initialize(new DesktopDateFormatFactory());
         ScriptingFactory.initialize(new DummyFactory());
@@ -33,20 +32,18 @@ public class GaiaSandboxDesktopWebGL {
         ThreadIndexer.initialize(new SingleThreadIndexer());
         SceneGraphImplementationProvider.initialize(new WebGLSceneGraphImplementationProvider());
 
-        LwjglApplicationConfiguration cfg = new LwjglApplicationConfiguration();
-        LwjglApplicationConfiguration.disableAudio = true;
-        cfg.title = GlobalConf.getFullApplicationName();
-        cfg.fullscreen = false;
-        cfg.resizable = false;
-        cfg.width = 1024;
-        cfg.height = 600;
-        cfg.samples = MathUtilsd.clamp(GlobalConf.postprocess.POSTPROCESS_ANTIALIAS, 0, 16);
-        cfg.vSyncEnabled = false;
-        cfg.foregroundFPS = 0;
-        cfg.backgroundFPS = 0;
-        cfg.addIcon("icon/ic_launcher.png", Files.FileType.Internal);
+        Lwjgl3ApplicationConfiguration cfg = new Lwjgl3ApplicationConfiguration();
+        cfg.disableAudio(true);
+        cfg.setTitle(GlobalConf.getFullApplicationName());
+        cfg.setWindowedMode(1024, 600);
+        cfg.setResizable(false);
+        int samples = MathUtilsd.clamp(GlobalConf.postprocess.POSTPROCESS_ANTIALIAS, 0, 16);
+        cfg.setBackbufferConfig(8, 8, 8, 8, 16, 0, samples);
+        
+        cfg.useVsync(false);
+//        cfg.addIcon("icon/ic_launcher.png", Files.FileType.Internal);
 
         // Launch app
-        new LwjglApplication(new GaiaSandbox(), cfg);
+        new Lwjgl3Application(new GaiaSandbox(), cfg);
     }
 }

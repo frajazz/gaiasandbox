@@ -19,17 +19,19 @@ package gaia.cu9.ari.gaiaorbit.util.scene2d;
 import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener;
 
-/** A {@code TabSelectionChangeListener} for a {@link TabbedPane} widget.
+/**
+ * A {@code TabSelectionChangeListener} for a {@link TabbedPane} widget.
  * 
- * @author davebaol */
+ * @author davebaol
+ */
 public abstract class TabSelectionChangeListener extends ChangeListener {
 
-    @Override
-    public void changed(ChangeEvent event, Actor actor) {
-        if (event.getListenerActor() == event.getTarget()) {
-            tabSelectionChanged(event, actor);
-        }
-    }
+	@Override
+	public void changed(ChangeEvent event, Actor actor) {
+		if (event.getListenerActor() == event.getTarget()) {
+			tabSelectionChanged(event, actor);
+		}
+	}
 
-    public abstract void tabSelectionChanged(ChangeEvent event, Actor actor);
+	public abstract void tabSelectionChanged(ChangeEvent event, Actor actor);
 }

@@ -50,282 +50,318 @@ import javax.swing.plaf.FontUIResource;
 
 import com.badlogic.gdx.Files;
 import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.backends.lwjgl.LwjglApplication;
-import com.badlogic.gdx.backends.lwjgl.LwjglApplicationConfiguration;
-import com.badlogic.gdx.backends.lwjgl.LwjglFiles;
+import com.badlogic.gdx.Graphics.DisplayMode;
+import com.badlogic.gdx.backends.lwjgl3.Lwjgl3Application;
+import com.badlogic.gdx.backends.lwjgl3.Lwjgl3ApplicationConfiguration;
+import com.badlogic.gdx.backends.lwjgl3.Lwjgl3Files;
 
 /**
  * Main class for the desktop launcher
+ * 
  * @author Toni Sagrista
  *
  */
 public class GaiaSandboxDesktop implements IObserver {
-    private static GaiaSandboxDesktop gsd;
-    public static String ASSETS_LOC;
+	private static GaiaSandboxDesktop gsd;
+	public static String ASSETS_LOC;
 
-    public static void main(String[] args) {
+	public static void main(String[] args) {
 
-        try {
-            gsd = new GaiaSandboxDesktop();
-            // Assets location
-            ASSETS_LOC = (System.getProperty("assets.location") != null ? System.getProperty("assets.location") : "");
+		try {
+			gsd = new GaiaSandboxDesktop();
+			// Assets location
+			ASSETS_LOC = (System.getProperty("assets.location") != null ? System
+					.getProperty("assets.location") : "");
 
-            Gdx.files = new LwjglFiles();
+			Gdx.files = new Lwjgl3Files();
 
-            // Initialize number format
-            NumberFormatFactory.initialize(new DesktopNumberFormatFactory());
+			// Initialize number format
+			NumberFormatFactory.initialize(new DesktopNumberFormatFactory());
 
-            // Initialize date format
-            DateFormatFactory.initialize(new DesktopDateFormatFactory());
+			// Initialize date format
+			DateFormatFactory.initialize(new DesktopDateFormatFactory());
 
-            UIManager.setLookAndFeel("com.pagosoft.plaf.PgsLookAndFeel");
+			UIManager.setLookAndFeel("com.pagosoft.plaf.PgsLookAndFeel");
 
-            setUIFont(new javax.swing.plaf.FontUIResource("SansSerif", Font.PLAIN, 10));
+			setUIFont(new javax.swing.plaf.FontUIResource("SansSerif",
+					Font.PLAIN, 10));
 
-            String props = System.getProperty("properties.file");
-            if (props == null || props.isEmpty()) {
-                props = initConfigFile(false);
-            }
+			String props = System.getProperty("properties.file");
+			if (props == null || props.isEmpty()) {
+				props = initConfigFile(false);
+			}
 
-            // Init global configuration
-            ConfInit.initialize(new DesktopConfInit());
+			// Init global configuration
+			ConfInit.initialize(new DesktopConfInit());
 
-            // Initialize i18n
-            I18n.initialize(Gdx.files.internal("data/i18n/gsbundle"));
+			// Initialize i18n
+			I18n.initialize(Gdx.files.internal("data/i18n/gsbundle"));
 
-            // Dev mode
-            I18n.initialize(Gdx.files.absolute(ASSETS_LOC + "i18n/gsbundle"));
+			// Dev mode
+			I18n.initialize(Gdx.files.absolute(ASSETS_LOC + "i18n/gsbundle"));
 
-            // Initialize icons
-            IconManager.initialise(Gdx.files.internal("data/ui/"));
+			// Initialize icons
+			IconManager.initialise(Gdx.files.internal("data/ui/"));
 
-            // Jython
-            ScriptingFactory.initialize(JythonFactory.getInstance());
+			// Jython
+			ScriptingFactory.initialize(JythonFactory.getInstance());
 
-            // Fullscreen command
-            FullscreenCmd.initialize();
+			// Fullscreen command
+			FullscreenCmd.initialize();
 
-            // Init cam recorder
-            CamRecorder.initialize();
+			// Init cam recorder
+			CamRecorder.initialize();
 
-            // Initialize post processor factory
-            PostProcessorFactory.initialize(new DesktopPostProcessorFactory());
+			// Initialize post processor factory
+			PostProcessorFactory.initialize(new DesktopPostProcessorFactory());
 
-            // Key mappings
-            Constants.desktop = true;
-            KeyMappings.initialize();
+			// Key mappings
+			Constants.desktop = true;
+			KeyMappings.initialize();
 
-            // Scene graph implementation provider
-            SceneGraphImplementationProvider.initialize(new DesktopSceneGraphImplementationProvider());
+			// Scene graph implementation provider
+			SceneGraphImplementationProvider
+					.initialize(new DesktopSceneGraphImplementationProvider());
 
-            // Initialize screenshots manager
-            ScreenshotsManager.initialize();
+			// Initialize screenshots manager
+			ScreenshotsManager.initialize();
 
-            gsd.init();
-        } catch (Exception e) {
-            e.printStackTrace(System.err);
-        }
+			gsd.init();
+		} catch (Exception e) {
+			e.printStackTrace(System.err);
+		}
 
-    }
+	}
 
-    public static void setUIFont(javax.swing.plaf.FontUIResource f) {
-        java.util.Enumeration<Object> keys = UIManager.getDefaults().keys();
-        while (keys.hasMoreElements()) {
-            Object key = keys.nextElement();
-            Object value = UIManager.get(key);
-            if (value != null && value instanceof javax.swing.plaf.FontUIResource && ((FontUIResource) value).getSize() > f.getSize()) {
-                UIManager.put(key, f);
-            }
-        }
-    }
+	public static void setUIFont(javax.swing.plaf.FontUIResource f) {
+		java.util.Enumeration<Object> keys = UIManager.getDefaults().keys();
+		while (keys.hasMoreElements()) {
+			Object key = keys.nextElement();
+			Object value = UIManager.get(key);
+			if (value != null
+					&& value instanceof javax.swing.plaf.FontUIResource
+					&& ((FontUIResource) value).getSize() > f.getSize()) {
+				UIManager.put(key, f);
+			}
+		}
+	}
 
-    public GaiaSandboxDesktop() {
-        super();
-        EventManager.instance.subscribe(this, Events.SHOW_PREFERENCES_ACTION, Events.SHOW_ABOUT_ACTION, Events.SHOW_RUNSCRIPT_ACTION, Events.JAVA_EXCEPTION, Events.SHOW_PLAYCAMERA_ACTION, Events.POST_NOTIFICATION);
-    }
+	public GaiaSandboxDesktop() {
+		super();
+		EventManager.instance.subscribe(this, Events.SHOW_PREFERENCES_ACTION,
+				Events.SHOW_ABOUT_ACTION, Events.SHOW_RUNSCRIPT_ACTION,
+				Events.JAVA_EXCEPTION, Events.SHOW_PLAYCAMERA_ACTION,
+				Events.POST_NOTIFICATION);
+	}
 
-    private void init() {
-        // Show configuration
-        if (GlobalConf.program.SHOW_CONFIG_DIALOG) {
-            new ConfigDialog(this, true);
-        } else {
-            launchMainApp();
-        }
-    }
+	ConfigDialog configDialog = null;
+	
+	private void init() {
+		// Show configuration
+		if (GlobalConf.program.SHOW_CONFIG_DIALOG) {
+			configDialog = new ConfigDialog(this, true);
+		} else {
+			launchMainApp();
+		}
+	}
 
-    public void terminate() {
-        System.exit(0);
-    }
+	public void terminate() {
+		System.exit(0);
+	}
 
-    public void launchMainApp() {
-        LwjglApplicationConfiguration cfg = new LwjglApplicationConfiguration();
-        LwjglApplicationConfiguration.disableAudio = true;
-        cfg.title = GlobalConf.getFullApplicationName();
-        cfg.fullscreen = GlobalConf.screen.FULLSCREEN;
-        cfg.resizable = GlobalConf.screen.RESIZABLE;
-        cfg.width = GlobalConf.screen.getScreenWidth();
-        cfg.height = GlobalConf.screen.getScreenHeight();
-        cfg.samples = MathUtilsd.clamp(GlobalConf.postprocess.POSTPROCESS_ANTIALIAS, 0, 16);
-        cfg.vSyncEnabled = GlobalConf.screen.VSYNC;
-        cfg.foregroundFPS = 0;
-        cfg.backgroundFPS = 0;
-        cfg.addIcon("icon/ic_launcher.png", Files.FileType.Internal);
+	public void launchMainApp() {
+		
+		Lwjgl3ApplicationConfiguration cfg = new Lwjgl3ApplicationConfiguration();
+		cfg.disableAudio(true);
+		cfg.setTitle(GlobalConf.getFullApplicationName());
 
-        System.out.println("Display mode set to " + cfg.width + "x" + cfg.height + ", fullscreen: " + cfg.fullscreen);
+		
 
-        // Thread pool manager
-        if (GlobalConf.performance.MULTITHREADING) {
-            ThreadIndexer.initialize(new MultiThreadIndexer());
-            ThreadPoolManager.initialize(GlobalConf.performance.NUMBER_THREADS());
-        } else {
-            ThreadIndexer.initialize(new SingleThreadIndexer());
-        }
+		if (GlobalConf.screen.FULLSCREEN) {
+			// Set fullscreen
+			cfg.setFullscreenMode(Lwjgl3ApplicationConfiguration.getDisplayMode());
+		} else {
+			// Set windowed
+			cfg.setWindowedMode(GlobalConf.screen.getScreenWidth(),
+					GlobalConf.screen.getScreenHeight());
+			cfg.setResizable(GlobalConf.screen.RESIZABLE);
+			cfg.setDecorated(true);
+		}
 
-        // Launch app
-        new LwjglApplication(new GaiaSandbox(), cfg);
+		int samples = MathUtilsd.clamp(
+				GlobalConf.postprocess.POSTPROCESS_ANTIALIAS, 0, 16);
+		
+		cfg.setBackbufferConfig(8, 8, 8, 8, 16, 0, samples);
+		
+		cfg.useVsync(GlobalConf.screen.VSYNC);
+		
+		
+		// cfg.addIcon("icon/ic_launcher.png", Files.FileType.Internal);
 
-        EventManager.instance.unsubscribe(this, Events.POST_NOTIFICATION, Events.JAVA_EXCEPTION);
-    }
+		System.out.println("Display mode set to " + cfg.getDisplayMode().height + "x"
+				+ cfg.getDisplayMode().height + ", fullscreen: " + GlobalConf.screen.FULLSCREEN);
 
-    @Override
-    public void notify(Events event, Object... data) {
-        switch (event) {
-        case SHOW_PLAYCAMERA_ACTION:
-            // Exit fullscreen
-            EventManager.instance.post(Events.FULLSCREEN_CMD, false);
-            Gdx.app.postRunnable(new Runnable() {
+		// Thread pool manager
+		if (GlobalConf.performance.MULTITHREADING) {
+			ThreadIndexer.initialize(new MultiThreadIndexer());
+			ThreadPoolManager.initialize(GlobalConf.performance
+					.NUMBER_THREADS());
+		} else {
+			ThreadIndexer.initialize(new SingleThreadIndexer());
+		}
+		
+		// Launch app
+		new Lwjgl3Application(new GaiaSandbox(), cfg);
+		
+		EventManager.instance.unsubscribe(this, Events.POST_NOTIFICATION,
+				Events.JAVA_EXCEPTION);
+	}
 
-                @Override
-                public void run() {
-                    // Show file dialog
-                    SecurityManager sm = System.getSecurityManager();
-                    System.setSecurityManager(null);
-                    JFileChooser chooser = new JFileChooser();
+	@Override
+	public void notify(Events event, Object... data) {
+		switch (event) {
+		case SHOW_PLAYCAMERA_ACTION:
+			// Exit fullscreen
+			EventManager.instance.post(Events.FULLSCREEN_CMD, false);
+			Gdx.app.postRunnable(new Runnable() {
 
-                    chooser.setFileHidingEnabled(false);
-                    chooser.setMultiSelectionEnabled(false);
-                    chooser.setAcceptAllFileFilterUsed(false);
-                    chooser.setFileSelectionMode(JFileChooser.FILES_ONLY);
-                    chooser.setCurrentDirectory(new File(System.getProperty("java.io.tmpdir")));
+				@Override
+				public void run() {
+					// Show file dialog
+					SecurityManager sm = System.getSecurityManager();
+					System.setSecurityManager(null);
+					JFileChooser chooser = new JFileChooser();
 
-                    // Filter
-                    FileFilter filter = new FileNameExtensionFilter("Camera data files", new String[] { "dat", "txt", "csv" });
-                    chooser.addChoosableFileFilter(filter);
-                    chooser.setFileFilter(filter);
+					chooser.setFileHidingEnabled(false);
+					chooser.setMultiSelectionEnabled(false);
+					chooser.setAcceptAllFileFilterUsed(false);
+					chooser.setFileSelectionMode(JFileChooser.FILES_ONLY);
+					chooser.setCurrentDirectory(new File(System
+							.getProperty("java.io.tmpdir")));
 
-                    int v = chooser.showOpenDialog(null);
+					// Filter
+					FileFilter filter = new FileNameExtensionFilter(
+							"Camera data files", new String[] { "dat", "txt",
+									"csv" });
+					chooser.addChoosableFileFilter(filter);
+					chooser.setFileFilter(filter);
 
-                    switch (v) {
-                    case JFileChooser.APPROVE_OPTION:
-                        File choice = null;
-                        if (chooser.getSelectedFile() != null) {
-                            File file = chooser.getSelectedFile();
-                            // Send command to play file
-                            EventManager.instance.post(Events.PLAY_CAMERA_CMD, file.getAbsolutePath());
-                        }
+					int v = chooser.showOpenDialog(null);
 
-                        break;
-                    case JFileChooser.CANCEL_OPTION:
-                    case JFileChooser.ERROR_OPTION:
-                    }
-                    chooser.removeAll();
-                    chooser = null;
-                    System.setSecurityManager(sm);
+					switch (v) {
+					case JFileChooser.APPROVE_OPTION:
+						File choice = null;
+						if (chooser.getSelectedFile() != null) {
+							File file = chooser.getSelectedFile();
+							// Send command to play file
+							EventManager.instance.post(Events.PLAY_CAMERA_CMD,
+									file.getAbsolutePath());
+						}
 
-                }
+						break;
+					case JFileChooser.CANCEL_OPTION:
+					case JFileChooser.ERROR_OPTION:
+					}
+					chooser.removeAll();
+					chooser = null;
+					System.setSecurityManager(sm);
 
-            });
-            break;
-        case SHOW_RUNSCRIPT_ACTION:
-            // Exit fullscreen
-            EventManager.instance.post(Events.FULLSCREEN_CMD, false);
-            Gdx.app.postRunnable(new Runnable() {
+				}
 
-                @Override
-                public void run() {
-                    JFrame frame = new ScriptDialog();
-                    frame.toFront();
-                }
+			});
+			break;
+		case SHOW_RUNSCRIPT_ACTION:
+			// Exit fullscreen
+			EventManager.instance.post(Events.FULLSCREEN_CMD, false);
+			Gdx.app.postRunnable(new Runnable() {
 
-            });
+				@Override
+				public void run() {
+					JFrame frame = new ScriptDialog();
+					frame.toFront();
+				}
 
-            break;
-        case SHOW_PREFERENCES_ACTION:
-            // Exit fullscreen
-            EventManager.instance.post(Events.FULLSCREEN_CMD, false);
-            Gdx.app.postRunnable(new Runnable() {
+			});
 
-                @Override
-                public void run() {
-                    JFrame frame = new ConfigDialog(gsd, false);
-                    frame.toFront();
-                }
+			break;
+		case SHOW_PREFERENCES_ACTION:
+			// Exit fullscreen
+			EventManager.instance.post(Events.FULLSCREEN_CMD, false);
+			Gdx.app.postRunnable(new Runnable() {
 
-            });
-            break;
-        case SHOW_ABOUT_ACTION:
-            // Exit fullscreen
-            EventManager.instance.post(Events.FULLSCREEN_CMD, false);
-            Gdx.app.postRunnable(new Runnable() {
+				@Override
+				public void run() {
+					JFrame frame = new ConfigDialog(gsd, false);
+					frame.toFront();
+				}
 
-                @Override
-                public void run() {
-                    JFrame frame = new HelpDialog();
-                    frame.toFront();
-                }
+			});
+			break;
+		case SHOW_ABOUT_ACTION:
+			// Exit fullscreen
+			EventManager.instance.post(Events.FULLSCREEN_CMD, false);
+			Gdx.app.postRunnable(new Runnable() {
 
-            });
-            break;
-        case JAVA_EXCEPTION:
-            ((Throwable) data[0]).printStackTrace(System.err);
-            break;
-        case POST_NOTIFICATION:
-            System.out.println((String) data[0]);
-            break;
-        }
+				@Override
+				public void run() {
+					JFrame frame = new HelpDialog();
+					frame.toFront();
+				}
 
-    }
+			});
+			break;
+		case JAVA_EXCEPTION:
+			((Throwable) data[0]).printStackTrace(System.err);
+			break;
+		case POST_NOTIFICATION:
+			System.out.println((String) data[0]);
+			break;
+		}
 
-    private static String initConfigFile(boolean ow) throws IOException {
-        // Use user folder
-        File userFolder = SysUtils.getGSHomeDir();
-        userFolder.mkdirs();
-        File userFolderConfFile = new File(userFolder, "global.properties");
+	}
 
-        if (ow || !userFolderConfFile.exists()) {
-            // Copy file
-            copyFile(new File("conf" + File.separator + "global.properties"), userFolderConfFile, ow);
-        }
-        String props = userFolderConfFile.getAbsolutePath();
-        System.setProperty("properties.file", props);
-        return props;
-    }
+	private static String initConfigFile(boolean ow) throws IOException {
+		// Use user folder
+		File userFolder = SysUtils.getGSHomeDir();
+		userFolder.mkdirs();
+		File userFolderConfFile = new File(userFolder, "global.properties");
 
-    private static void copyFile(File sourceFile, File destFile, boolean ow) throws IOException {
-        if (destFile.exists()) {
-            if (ow) {
-                // Overwrite, delete file
-                destFile.delete();
-            } else {
-                return;
-            }
-        }
-        // Create new
-        destFile.createNewFile();
+		if (ow || !userFolderConfFile.exists()) {
+			// Copy file
+			copyFile(new File("conf" + File.separator + "global.properties"),
+					userFolderConfFile, ow);
+		}
+		String props = userFolderConfFile.getAbsolutePath();
+		System.setProperty("properties.file", props);
+		return props;
+	}
 
-        FileChannel source = null;
-        FileChannel destination = null;
-        try {
-            source = new FileInputStream(sourceFile).getChannel();
-            destination = new FileOutputStream(destFile).getChannel();
-            destination.transferFrom(source, 0, source.size());
-        } finally {
-            if (source != null) {
-                source.close();
-            }
-            if (destination != null) {
-                destination.close();
-            }
-        }
-    }
+	private static void copyFile(File sourceFile, File destFile, boolean ow)
+			throws IOException {
+		if (destFile.exists()) {
+			if (ow) {
+				// Overwrite, delete file
+				destFile.delete();
+			} else {
+				return;
+			}
+		}
+		// Create new
+		destFile.createNewFile();
+
+		FileChannel source = null;
+		FileChannel destination = null;
+		try {
+			source = new FileInputStream(sourceFile).getChannel();
+			destination = new FileOutputStream(destFile).getChannel();
+			destination.transferFrom(source, 0, source.size());
+		} finally {
+			if (source != null) {
+				source.close();
+			}
+			if (destination != null) {
+				destination.close();
+			}
+		}
+	}
 }
