@@ -263,7 +263,7 @@ public class Particle extends CelestialBody implements IPointRenderable {
 
     @Override
     protected float labelMax() {
-        return 0.02f;
+        return 0.01f;
     }
 
     public float getFuzzyRenderSize(ICamera camera) {
