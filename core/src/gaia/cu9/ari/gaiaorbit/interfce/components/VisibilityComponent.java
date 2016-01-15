@@ -1,12 +1,5 @@
 package gaia.cu9.ari.gaiaorbit.interfce.components;
 
-import gaia.cu9.ari.gaiaorbit.event.EventManager;
-import gaia.cu9.ari.gaiaorbit.event.Events;
-import gaia.cu9.ari.gaiaorbit.event.IObserver;
-import gaia.cu9.ari.gaiaorbit.render.ComponentType;
-import gaia.cu9.ari.gaiaorbit.util.scene2d.OwnTextButton;
-import gaia.cu9.ari.gaiaorbit.util.scene2d.OwnTextIconButton;
-
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
@@ -16,11 +9,21 @@ import com.badlogic.gdx.scenes.scene2d.Event;
 import com.badlogic.gdx.scenes.scene2d.EventListener;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.Button;
+import com.badlogic.gdx.scenes.scene2d.ui.CheckBox;
 import com.badlogic.gdx.scenes.scene2d.ui.Image;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
+import com.badlogic.gdx.scenes.scene2d.ui.VerticalGroup;
 import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener.ChangeEvent;
 import com.badlogic.gdx.utils.Align;
+
+import gaia.cu9.ari.gaiaorbit.event.EventManager;
+import gaia.cu9.ari.gaiaorbit.event.Events;
+import gaia.cu9.ari.gaiaorbit.event.IObserver;
+import gaia.cu9.ari.gaiaorbit.render.ComponentType;
+import gaia.cu9.ari.gaiaorbit.util.GlobalConf;
+import gaia.cu9.ari.gaiaorbit.util.scene2d.OwnTextButton;
+import gaia.cu9.ari.gaiaorbit.util.scene2d.OwnTextIconButton;
 
 public class VisibilityComponent extends GuiComponent implements IObserver {
     protected Map<String, Button> buttonMap;
@@ -29,6 +32,7 @@ public class VisibilityComponent extends GuiComponent implements IObserver {
      */
     private ComponentType[] visibilityEntities;
     private boolean[] visible;
+    private CheckBox properMotions;
 
     public VisibilityComponent(Skin skin, Stage stage) {
         super(skin, stage);
@@ -41,6 +45,7 @@ public class VisibilityComponent extends GuiComponent implements IObserver {
     }
 
     public void initialize() {
+
         final Table visibilityTable = new Table(skin);
         visibilityTable.setName("visibility table");
         buttonMap = new HashMap<String, Button>();
@@ -82,6 +87,22 @@ public class VisibilityComponent extends GuiComponent implements IObserver {
                 buttons.add(button);
             }
         }
+
+        /** Focus lock **/
+        properMotions = new CheckBox(txt("gui.checkbox.propermotionvectors"), skin);
+        properMotions.setName("pm vectors");
+        properMotions.setChecked(GlobalConf.scene.PROPER_MOTION_VECTORS);
+        properMotions.addListener(new EventListener() {
+            @Override
+            public boolean handle(Event event) {
+                if (event instanceof ChangeEvent) {
+                    EventManager.instance.post(Events.PROPER_MOTIONS_CMD, "Proper motions", properMotions.isChecked());
+                    return true;
+                }
+                return false;
+            }
+        });
+
         // Set button width to max width
         visibilityTable.pack();
         float maxw = 0f;
@@ -95,7 +116,11 @@ public class VisibilityComponent extends GuiComponent implements IObserver {
         }
         visibilityTable.pack();
 
-        component = visibilityTable;
+        VerticalGroup visGroup = new VerticalGroup().align(Align.left);
+        visGroup.addActor(visibilityTable);
+        visGroup.addActor(properMotions);
+
+        component = visGroup;
     }
 
     @Override
