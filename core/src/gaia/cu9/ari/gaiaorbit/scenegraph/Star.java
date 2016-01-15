@@ -214,6 +214,8 @@ public class Star extends Particle {
                     camera.checkClosest(this);
                     addToRender(this, RenderGroup.MODEL_S);
                 }
+                if (pm.len2() != 0)
+                    addToRender(this, RenderGroup.LINE);
             }
             if (renderText()) {
                 addToRender(this, RenderGroup.LABEL);

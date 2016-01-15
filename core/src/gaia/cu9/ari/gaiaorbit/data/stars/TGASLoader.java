@@ -99,17 +99,17 @@ public class TGASLoader extends AbstractCatalogLoader implements ISceneGraphLoad
             hip = sidHIPMap.get(sourceid);
             sidhipfound++;
         }
-
-        double ra = AstroUtils.TO_DEG * Parser.parseDouble(st[2].trim());
-        double dec = AstroUtils.TO_DEG * Parser.parseDouble(st[4].trim());
-        double pllx = Parser.parseDouble(st[6].trim());
-        double dist = (1000d / pllx) * Constants.PC_TO_U;
-        Vector3d pos = Coordinates.sphericalToCartesian(Math.toRadians(ra), Math.toRadians(dec), dist, new Vector3d());
-
         float appmag = new Double(Parser.parseDouble(st[15].trim())).floatValue();
-        float colorbv = new Double(Parser.parseDouble(st[17].trim())).floatValue();
 
         if (appmag < GlobalConf.data.LIMIT_MAG_LOAD) {
+            double ra = AstroUtils.TO_DEG * Parser.parseDouble(st[2].trim());
+            double dec = AstroUtils.TO_DEG * Parser.parseDouble(st[4].trim());
+            double pllx = Parser.parseDouble(st[6].trim());
+            double dist = (1000d / pllx) * Constants.PC_TO_U;
+            Vector3d pos = Coordinates.sphericalToCartesian(Math.toRadians(ra), Math.toRadians(dec), dist, new Vector3d());
+
+            float colorbv = new Double(Parser.parseDouble(st[17].trim())).floatValue();
+
             float absmag = appmag;
             String name = Long.toString(sourceid);
 

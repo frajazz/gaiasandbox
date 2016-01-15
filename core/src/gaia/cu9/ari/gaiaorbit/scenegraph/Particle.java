@@ -9,9 +9,11 @@ import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.math.Vector3;
 
 import gaia.cu9.ari.gaiaorbit.render.ComponentType;
+import gaia.cu9.ari.gaiaorbit.render.ILineRenderable;
 import gaia.cu9.ari.gaiaorbit.render.IPointRenderable;
 import gaia.cu9.ari.gaiaorbit.render.IRenderable;
 import gaia.cu9.ari.gaiaorbit.render.SceneGraphRenderer;
+import gaia.cu9.ari.gaiaorbit.render.system.LineRenderSystem;
 import gaia.cu9.ari.gaiaorbit.util.Constants;
 import gaia.cu9.ari.gaiaorbit.util.GlobalConf;
 import gaia.cu9.ari.gaiaorbit.util.color.ColourUtils;
@@ -26,7 +28,7 @@ import gaia.cu9.ari.gaiaorbit.util.tree.OctreeNode;
  * @author Toni Sagrista
  *
  */
-public class Particle extends CelestialBody implements IPointRenderable {
+public class Particle extends CelestialBody implements IPointRenderable, ILineRenderable {
 
     private static final float DISC_FACTOR = 1.5f;
     private static final float LABEL_FACTOR = Constants.webgl ? 3f : 1f;
@@ -197,6 +199,8 @@ public class Particle extends CelestialBody implements IPointRenderable {
 
             if (viewAngleApparent >= THRESHOLD_POINT() * camera.getFovFactor()) {
                 addToRender(this, RenderGroup.SHADER);
+                if (this.hasPm)
+                    addToRender(this, RenderGroup.LINE);
             }
         }
         if (renderText()) {
@@ -218,6 +222,9 @@ public class Particle extends CelestialBody implements IPointRenderable {
         if (first instanceof ImmediateModeRenderer) {
             // POINT
             render((ImmediateModeRenderer) first, (Float) params[1], (Boolean) params[2]);
+        } else if (first instanceof LineRenderSystem) {
+            // LINE (proper motion)
+            render((LineRenderSystem) first, (ICamera) params[1], (Float) params[2]);
         } else {
             super.render(params);
         }
@@ -302,7 +309,30 @@ public class Particle extends CelestialBody implements IPointRenderable {
     public <T extends SceneGraphNode> T getSimpleCopy() {
         Particle copy = (Particle) super.getSimpleCopy();
         copy.pm = this.pm;
+        copy.hasPm = this.hasPm;
         return (T) copy;
+    }
+
+    /**
+     * Line renderer. Renders proper motion
+     * @param renderer
+     * @param camera
+     * @param alpha
+     */
+    @Override
+    public void render(LineRenderSystem renderer, ICamera camera, float alpha) {
+        Vector3 campos = v3fpool.obtain();
+        Vector3 p1 = transform.position.setVector3(v3fpool.obtain());
+        Vector3 ppm = v3fpool.obtain().set(pm).scl(1e7f);
+        Vector3 p2 = v3fpool.obtain().set(p1).add(ppm);
+        camera.getPos().setVector3(campos);
+
+        renderer.addLine(p1.x, p1.y, p1.z, p2.x, p2.y, p2.z, 1.0f, 0.0f, 0.0f, alpha * 0.5f);
+
+        v3fpool.free(campos);
+        v3fpool.free(p1);
+        v3fpool.free(p2);
+        v3fpool.free(ppm);
     }
 
 }

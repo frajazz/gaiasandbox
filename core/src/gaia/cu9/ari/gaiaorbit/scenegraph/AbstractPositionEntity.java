@@ -122,7 +122,7 @@ public abstract class AbstractPositionEntity extends SceneGraphNode {
             AbstractPositionEntity fc = (AbstractPositionEntity) this;
             AbstractPositionEntity fccopy = fc.getLineCopy();
             fccopy.getRoot().transform.position.set(camera.getInversePos());
-            fccopy.getRoot().update(time, null, camera);
+            fccopy.getRoot().update(time, fccopy.getRoot().transform, camera);
 
             aux.set(fccopy.transform.getTranslation());
 
