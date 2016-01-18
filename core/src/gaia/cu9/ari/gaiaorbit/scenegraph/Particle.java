@@ -50,7 +50,7 @@ public class Particle extends CelestialBody implements IPointRenderable, ILineRe
         return (float) GlobalConf.scene.STAR_THRESHOLD_QUAD;
     }
 
-    /** Proper motion in cartesian coordinates [U/sec] **/
+    /** Proper motion in cartesian coordinates [U/yr] **/
     public Vector3 pm;
 
     /**
@@ -162,7 +162,7 @@ public class Particle extends CelestialBody implements IPointRenderable, ILineRe
             this.opacity = opacity;
             transform.position.set(parentTransform.position).add(pos);
             if (hasPm) {
-                Vector3 pmv = new Vector3(pm).scl((float) AstroUtils.getMsSinceJ2015(time.getTime()) / 1000f);
+                Vector3 pmv = new Vector3(pm).scl((float) Constants.S_TO_Y).scl((float) AstroUtils.getMsSinceJ2015(time.getTime()) / 1000f);
                 transform.position.add(pmv);
             }
             distToCamera = (float) transform.position.len();
@@ -323,7 +323,7 @@ public class Particle extends CelestialBody implements IPointRenderable, ILineRe
     public void render(LineRenderSystem renderer, ICamera camera, float alpha) {
         Vector3 campos = v3fpool.obtain();
         Vector3 p1 = transform.position.setVector3(v3fpool.obtain());
-        Vector3 ppm = v3fpool.obtain().set(pm).scl(1e7f);
+        Vector3 ppm = v3fpool.obtain().set(pm).scl(1e3f);
         Vector3 p2 = v3fpool.obtain().set(p1).add(ppm);
         camera.getPos().setVector3(campos);
 
