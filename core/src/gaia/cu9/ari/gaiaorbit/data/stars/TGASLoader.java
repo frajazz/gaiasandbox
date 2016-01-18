@@ -12,6 +12,7 @@ import java.util.Map;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.files.FileHandle;
+import com.badlogic.gdx.math.Vector3;
 
 import gaia.cu9.ari.gaiaorbit.data.ISceneGraphLoader;
 import gaia.cu9.ari.gaiaorbit.scenegraph.Particle;
@@ -107,6 +108,16 @@ public class TGASLoader extends AbstractCatalogLoader implements ISceneGraphLoad
             double pllx = Parser.parseDouble(st[6].trim());
             double dist = (1000d / pllx) * Constants.PC_TO_U;
             Vector3d pos = Coordinates.sphericalToCartesian(Math.toRadians(ra), Math.toRadians(dec), dist, new Vector3d());
+
+            // Mu_alpha Mu_delta in mas/yr
+            double mualpha = Parser.parseDouble(st[8].trim()) * AstroUtils.MILLARCSEC_TO_DEG;
+            double mudelta = Parser.parseDouble(st[10].trim()) * AstroUtils.MILLARCSEC_TO_DEG;
+
+            // Proper motion vector = (pos+dx) - pos
+            Vector3d pm = Coordinates.sphericalToCartesian(Math.toRadians(ra + mualpha), Math.toRadians(dec + mudelta), dist, new Vector3d());
+            pm.sub(pos);
+
+            Vector3 pmfloat = pm.toVector3();
 
             float colorbv = new Double(Parser.parseDouble(st[17].trim())).floatValue();
 

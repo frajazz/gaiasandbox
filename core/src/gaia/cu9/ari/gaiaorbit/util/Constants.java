@@ -76,6 +76,12 @@ public class Constants {
     /** Milliseconds to hours **/
     public static final double MS_TO_H = 1 / H_TO_MS;
 
+    /** Years to seconds **/
+    public static final double Y_TO_S = 31557600;
+
+    /** Seconds to years **/
+    public static final double S_TO_Y = 1 / Y_TO_S;
+
     /** Multiplier for all KM values in the application **/
     public static final double KM_MULTIPLIER = AstroUtils.KM_TO_PC * 1e9 * SCALE_FACTOR;
 
