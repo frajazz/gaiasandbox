@@ -469,6 +469,7 @@ public class GlobalConf {
         public boolean FOCUS_LOCK;
         public float LABEL_NUMBER_FACTOR;
         public boolean[] VISIBILITY;
+        public boolean PROPER_MOTION_VECTORS;
         public boolean STAR_COLOR_TRANSIT;
         public boolean ONLY_OBSERVED_STARS;
         public boolean COMPUTE_GAIA_SCAN;
@@ -493,7 +494,7 @@ public class GlobalConf {
         public float OCTANT_THRESHOLD_1;
 
         public SceneConf() {
-            EventManager.instance.subscribe(this, Events.FOCUS_LOCK_CMD, Events.STAR_BRIGHTNESS_CMD, Events.FOV_CHANGED_CMD, Events.CAMERA_SPEED_CMD, Events.ROTATION_SPEED_CMD, Events.TURNING_SPEED_CMD, Events.SPEED_LIMIT_CMD, Events.TRANSIT_COLOUR_CMD, Events.ONLY_OBSERVED_STARS_CMD, Events.COMPUTE_GAIA_SCAN_CMD, Events.PIXEL_RENDERER_CMD, Events.OCTREE_PARTICLE_FADE_CMD);
+            EventManager.instance.subscribe(this, Events.FOCUS_LOCK_CMD, Events.PROPER_MOTIONS_CMD, Events.STAR_BRIGHTNESS_CMD, Events.FOV_CHANGED_CMD, Events.CAMERA_SPEED_CMD, Events.ROTATION_SPEED_CMD, Events.TURNING_SPEED_CMD, Events.SPEED_LIMIT_CMD, Events.TRANSIT_COLOUR_CMD, Events.ONLY_OBSERVED_STARS_CMD, Events.COMPUTE_GAIA_SCAN_CMD, Events.PIXEL_RENDERER_CMD, Events.OCTREE_PARTICLE_FADE_CMD);
         }
 
         public void initialize(long oBJECT_FADE_MS, float sTAR_BRIGHTNESS, float aMBIENT_LIGHT, int cAMERA_FOV, float cAMERA_SPEED, float tURNING_SPEED, float rOTATION_SPEED, int cAMERA_SPEED_LIMIT_IDX, boolean fOCUS_LOCK, float lABEL_NUMBER_FACTOR, boolean[] vISIBILITY, int pIXEL_RENDERER, int lINE_RENDERER, double sTAR_TH_ANGLE_NONE, double sTAR_TH_ANGLE_POINT, double sTAR_TH_ANGLE_QUAD, float pOINT_ALPHA_MIN, float pOINT_ALPHA_MAX, boolean oCTREE_PARTICLE_FADE, float oCTANT_TH_ANGLE_0,
@@ -617,6 +618,9 @@ public class GlobalConf {
             case OCTREE_PARTICLE_FADE_CMD:
                 OCTREE_PARTICLE_FADE = (boolean) data[1];
                 break;
+
+            case PROPER_MOTIONS_CMD:
+                PROPER_MOTION_VECTORS = (boolean) data[1];
             }
 
         }

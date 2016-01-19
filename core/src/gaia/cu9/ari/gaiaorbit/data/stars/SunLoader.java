@@ -4,6 +4,7 @@ import java.io.FileNotFoundException;
 import java.util.ArrayList;
 import java.util.List;
 
+import gaia.cu9.ari.gaiaorbit.data.ISceneGraphLoader;
 import gaia.cu9.ari.gaiaorbit.scenegraph.CelestialBody;
 import gaia.cu9.ari.gaiaorbit.scenegraph.Star;
 import gaia.cu9.ari.gaiaorbit.util.math.Vector3d;
@@ -13,7 +14,7 @@ import gaia.cu9.ari.gaiaorbit.util.math.Vector3d;
  * @author Toni Sagrista
  *
  */
-public class SunLoader extends AbstractCatalogLoader {
+public class SunLoader extends AbstractCatalogLoader implements ISceneGraphLoader {
 
     @Override
     public List<? extends CelestialBody> loadData() throws FileNotFoundException {

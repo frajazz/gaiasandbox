@@ -1,9 +1,5 @@
 package gaia.cu9.ari.gaiaorbit.render.system;
 
-import gaia.cu9.ari.gaiaorbit.render.IRenderable;
-import gaia.cu9.ari.gaiaorbit.scenegraph.ICamera;
-import gaia.cu9.ari.gaiaorbit.scenegraph.SceneGraphNode.RenderGroup;
-
 import java.util.List;
 
 import com.badlogic.gdx.Gdx;
@@ -15,6 +11,11 @@ import com.badlogic.gdx.graphics.VertexAttributes.Usage;
 import com.badlogic.gdx.graphics.glutils.ShaderProgram;
 import com.badlogic.gdx.utils.Array;
 
+import gaia.cu9.ari.gaiaorbit.render.IRenderable;
+import gaia.cu9.ari.gaiaorbit.scenegraph.ICamera;
+import gaia.cu9.ari.gaiaorbit.scenegraph.Particle;
+import gaia.cu9.ari.gaiaorbit.scenegraph.SceneGraphNode.RenderGroup;
+import gaia.cu9.ari.gaiaorbit.util.GlobalConf;
 
 public class LineRenderSystem extends ImmediateRenderSystem {
 
@@ -47,8 +48,7 @@ public class LineRenderSystem extends ImmediateRenderSystem {
 
         curr.vertices = new float[maxVertices * (curr.mesh.getVertexAttributes().vertexSize / 4)];
         curr.vertexSize = curr.mesh.getVertexAttributes().vertexSize / 4;
-        curr.colorOffset = curr.mesh.getVertexAttribute(Usage.ColorPacked) != null ? curr.mesh.getVertexAttribute(Usage.ColorPacked).offset / 4
-                : 0;
+        curr.colorOffset = curr.mesh.getVertexAttribute(Usage.ColorPacked) != null ? curr.mesh.getVertexAttribute(Usage.ColorPacked).offset / 4 : 0;
 
     }
 
@@ -75,7 +75,11 @@ public class LineRenderSystem extends ImmediateRenderSystem {
         int size = renderables.size();
         for (int i = 0; i < size; i++) {
             IRenderable l = renderables.get(i);
-            l.render(this, camera, alphas[l.getComponentType().ordinal()]);
+            boolean rend = true;
+            if (l instanceof Particle && !GlobalConf.scene.PROPER_MOTION_VECTORS)
+                rend = false;
+            if (rend)
+                l.render(this, camera, alphas[l.getComponentType().ordinal()]);
         }
 
         shaderProgram.begin();

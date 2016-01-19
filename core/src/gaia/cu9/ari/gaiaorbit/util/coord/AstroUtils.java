@@ -46,6 +46,11 @@ public class AstroUtils {
     public static final double TO_RAD = Math.PI / 180;
     public static final double TO_DEG = 180 / Math.PI;
 
+    public static final double DEG_TO_ARCSEC = 3600;
+    public static final double ARCSEC_TO_DEG = 1 / DEG_TO_ARCSEC;
+    public static final double DEG_TO_MILLARCSEC = DEG_TO_ARCSEC * 1000;
+    public static final double MILLARCSEC_TO_DEG = 1 / DEG_TO_ARCSEC;
+
     // Distance units
     public static final float PC_TO_KM = 3.08567758e13f;
     public static final float KM_TO_PC = 1 / PC_TO_KM;

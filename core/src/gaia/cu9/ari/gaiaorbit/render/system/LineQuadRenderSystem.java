@@ -12,8 +12,10 @@ import com.badlogic.gdx.utils.Array;
 
 import gaia.cu9.ari.gaiaorbit.render.IRenderable;
 import gaia.cu9.ari.gaiaorbit.scenegraph.ICamera;
+import gaia.cu9.ari.gaiaorbit.scenegraph.Particle;
 import gaia.cu9.ari.gaiaorbit.scenegraph.SceneGraphNode.RenderGroup;
 import gaia.cu9.ari.gaiaorbit.util.Constants;
+import gaia.cu9.ari.gaiaorbit.util.GlobalConf;
 import gaia.cu9.ari.gaiaorbit.util.math.MathUtilsd;
 import gaia.cu9.ari.gaiaorbit.util.math.Vector3d;
 
@@ -209,7 +211,12 @@ public class LineQuadRenderSystem extends LineRenderSystem {
         int size = renderables.size();
         for (int i = 0; i < size; i++) {
             IRenderable l = renderables.get(i);
-            l.render(this, camera, alphas[l.getComponentType().ordinal()]);
+            boolean rend = true;
+            if (l instanceof Particle && !GlobalConf.scene.PROPER_MOTION_VECTORS)
+                rend = false;
+            if (rend)
+                l.render(this, camera, alphas[l.getComponentType().ordinal()]);
+
         }
 
         shaderProgram.begin();

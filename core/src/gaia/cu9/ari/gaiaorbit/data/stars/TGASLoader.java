@@ -12,6 +12,7 @@ import java.util.Map;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.files.FileHandle;
+import com.badlogic.gdx.math.Vector3;
 
 import gaia.cu9.ari.gaiaorbit.data.ISceneGraphLoader;
 import gaia.cu9.ari.gaiaorbit.scenegraph.Particle;
@@ -99,23 +100,38 @@ public class TGASLoader extends AbstractCatalogLoader implements ISceneGraphLoad
             hip = sidHIPMap.get(sourceid);
             sidhipfound++;
         }
-
-        double ra = AstroUtils.TO_DEG * Parser.parseDouble(st[2].trim());
-        double dec = AstroUtils.TO_DEG * Parser.parseDouble(st[4].trim());
-        double pllx = Parser.parseDouble(st[6].trim());
-        double dist = (1000d / pllx) * Constants.PC_TO_U;
-        Vector3d pos = Coordinates.sphericalToCartesian(Math.toRadians(ra), Math.toRadians(dec), dist, new Vector3d());
-
         float appmag = new Double(Parser.parseDouble(st[15].trim())).floatValue();
-        float colorbv = new Double(Parser.parseDouble(st[17].trim())).floatValue();
 
         if (appmag < GlobalConf.data.LIMIT_MAG_LOAD) {
-            float absmag = appmag;
-            String name = Long.toString(sourceid);
+            double ra = AstroUtils.TO_DEG * Parser.parseDouble(st[2].trim());
+            double dec = AstroUtils.TO_DEG * Parser.parseDouble(st[4].trim());
+            double pllx = Parser.parseDouble(st[6].trim());
+            double pllxerr = Parser.parseDouble(st[7].trim());
 
-            Star star = new Star(pos, appmag, absmag, colorbv, name, (float) ra, (float) dec, sourceid, hip, (byte) 1);
-            if (runFiltersAnd(star))
-                stars.add(star);
+            double dist = (1000d / pllx) * Constants.PC_TO_U;
+            if (pllx / pllxerr > 10 && dist >= 0) {
+
+                Vector3d pos = Coordinates.sphericalToCartesian(Math.toRadians(ra), Math.toRadians(dec), dist, new Vector3d());
+
+                // Mu_alpha Mu_delta in mas/yr
+                double mualpha = Parser.parseDouble(st[8].trim()) * AstroUtils.MILLARCSEC_TO_DEG;
+                double mudelta = Parser.parseDouble(st[10].trim()) * AstroUtils.MILLARCSEC_TO_DEG;
+
+                // Proper motion vector = (pos+dx) - pos
+                Vector3d pm = Coordinates.sphericalToCartesian(Math.toRadians(ra + mualpha), Math.toRadians(dec + mudelta), dist, new Vector3d());
+                pm.sub(pos);
+
+                Vector3 pmfloat = pm.toVector3();
+
+                float colorbv = new Double(Parser.parseDouble(st[17].trim())).floatValue();
+
+                float absmag = appmag;
+                String name = Long.toString(sourceid);
+
+                Star star = new Star(pos, appmag, absmag, colorbv, name, (float) ra, (float) dec, sourceid, hip, (byte) 1);
+                if (runFiltersAnd(star))
+                    stars.add(star);
+            }
 
         }
     }

@@ -1,8 +1,5 @@
 package gaia.cu9.ari.gaiaorbit.screenshot;
 
-import gaia.cu9.ari.gaiaorbit.util.format.INumberFormat;
-import gaia.cu9.ari.gaiaorbit.util.format.NumberFormatFactory;
-
 import java.io.File;
 import java.nio.ByteBuffer;
 import java.util.Arrays;
@@ -15,6 +12,9 @@ import com.badlogic.gdx.graphics.Pixmap;
 import com.badlogic.gdx.graphics.Pixmap.Format;
 import com.badlogic.gdx.graphics.PixmapIO;
 import com.badlogic.gdx.utils.ScreenUtils;
+
+import gaia.cu9.ari.gaiaorbit.util.format.INumberFormat;
+import gaia.cu9.ari.gaiaorbit.util.format.NumberFormatFactory;
 
 /**
  * Utility class to render the current frame buffer to images.
@@ -52,6 +52,11 @@ public class ImageRenderer {
     }
 
     public static String writePixmapToImage(String absoluteLocation, String baseFileName, Pixmap pixmap) {
+        /** Make sure the directory exists **/
+        FileHandle dir = Gdx.files.absolute(absoluteLocation);
+        dir.mkdirs();
+
+        /** Save to file **/
         FileHandle fh = getTarget(absoluteLocation, baseFileName);
         switch (imageType) {
         case PNG:
