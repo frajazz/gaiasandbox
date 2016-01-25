@@ -1,5 +1,32 @@
 package gaia.cu9.ari.gaiaorbit.render;
 
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.assets.AssetManager;
+import com.badlogic.gdx.graphics.Camera;
+import com.badlogic.gdx.graphics.GL20;
+import com.badlogic.gdx.graphics.PerspectiveCamera;
+import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.graphics.g3d.ModelBatch;
+import com.badlogic.gdx.graphics.g3d.Renderable;
+import com.badlogic.gdx.graphics.g3d.utils.DefaultShaderProvider;
+import com.badlogic.gdx.graphics.g3d.utils.RenderableSorter;
+import com.badlogic.gdx.graphics.g3d.utils.ShaderProvider;
+import com.badlogic.gdx.graphics.glutils.FrameBuffer;
+import com.badlogic.gdx.graphics.glutils.ShaderProgram;
+import com.badlogic.gdx.math.Vector3;
+import com.badlogic.gdx.utils.Array;
+import com.badlogic.gdx.utils.Pool;
+import com.badlogic.gdx.utils.viewport.ExtendViewport;
+import com.badlogic.gdx.utils.viewport.StretchViewport;
+import com.badlogic.gdx.utils.viewport.Viewport;
+import com.bitfire.utils.ShaderLoader;
+
 import gaia.cu9.ari.gaiaorbit.event.EventManager;
 import gaia.cu9.ari.gaiaorbit.event.Events;
 import gaia.cu9.ari.gaiaorbit.event.IObserver;
@@ -27,33 +54,6 @@ import gaia.cu9.ari.gaiaorbit.util.ds.Multilist;
 import gaia.cu9.ari.gaiaorbit.util.math.MathUtilsd;
 import gaia.cu9.ari.gaiaorbit.util.override.AtmosphereGroundShaderProvider;
 import gaia.cu9.ari.gaiaorbit.util.override.AtmosphereShaderProvider;
-
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
-import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.assets.AssetManager;
-import com.badlogic.gdx.graphics.Camera;
-import com.badlogic.gdx.graphics.GL20;
-import com.badlogic.gdx.graphics.PerspectiveCamera;
-import com.badlogic.gdx.graphics.g2d.SpriteBatch;
-import com.badlogic.gdx.graphics.g3d.ModelBatch;
-import com.badlogic.gdx.graphics.g3d.Renderable;
-import com.badlogic.gdx.graphics.g3d.utils.DefaultShaderProvider;
-import com.badlogic.gdx.graphics.g3d.utils.RenderableSorter;
-import com.badlogic.gdx.graphics.g3d.utils.ShaderProvider;
-import com.badlogic.gdx.graphics.glutils.FrameBuffer;
-import com.badlogic.gdx.graphics.glutils.ShaderProgram;
-import com.badlogic.gdx.math.Vector3;
-import com.badlogic.gdx.utils.Array;
-import com.badlogic.gdx.utils.Pool;
-import com.badlogic.gdx.utils.viewport.ExtendViewport;
-import com.badlogic.gdx.utils.viewport.StretchViewport;
-import com.badlogic.gdx.utils.viewport.Viewport;
-import com.bitfire.utils.ShaderLoader;
 
 /**
  * Renders a scenegraph.
@@ -214,6 +214,10 @@ public class SceneGraphRenderer extends AbstractRenderer implements IProcessRend
         // LINES
         AbstractRenderSystem lineProc = getLineRenderSystem();
 
+        // SHADER SSO
+        AbstractRenderSystem shaderFrontProc = new QuadRenderSystem(RenderGroup.SHADER_F, priority++, alphas, starShader, false);
+        shaderFrontProc.setPreRunnable(blendNoDepthRunnable);
+
         // MODEL FRONT
         AbstractRenderSystem modelFrontProc = new ModelBatchRenderSystem(RenderGroup.MODEL_F, priority++, alphas, modelBatchF, false);
         modelFrontProc.setPreRunnable(blendDepthRunnable);
@@ -240,21 +244,17 @@ public class SceneGraphRenderer extends AbstractRenderer implements IProcessRend
         };
         modelAtmProc.setPreRunnable(blendDepthRunnable);
 
-        // SHADER SSO
-        AbstractRenderSystem shaderFrontProc = new QuadRenderSystem(RenderGroup.SHADER_F, priority++, alphas, starShader, false);
-        shaderFrontProc.setPreRunnable(blendDepthRunnable);
-
         // Add components to set
         renderProcesses.add(pixelProc);
         renderProcesses.add(modelBackProc);
         renderProcesses.add(annotationsProc);
+        renderProcesses.add(shaderFrontProc);
         renderProcesses.add(shaderBackProc);
         renderProcesses.add(modelFrontProc);
         renderProcesses.add(modelStarsProc);
         renderProcesses.add(lineProc);
         renderProcesses.add(modelAtmProc);
         renderProcesses.add(labelsProc);
-        renderProcesses.add(shaderFrontProc);
 
         // INIT VIEWPORTS
         stretchViewport = new StretchViewport(Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
@@ -478,7 +478,7 @@ public class SceneGraphRenderer extends AbstractRenderer implements IProcessRend
         if (GlobalConf.scene.isNormalLineRenderer()) {
             // Normal
             sys = new LineRenderSystem(RenderGroup.LINE, 0, alphas);
-            sys.setPreRunnable(blendNoDepthRunnable);
+            sys.setPreRunnable(blendDepthRunnable);
         } else {
             // Quad
             sys = new LineQuadRenderSystem(RenderGroup.LINE, 0, alphas);
