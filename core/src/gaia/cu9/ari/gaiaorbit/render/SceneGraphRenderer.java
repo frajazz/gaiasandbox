@@ -253,8 +253,8 @@ public class SceneGraphRenderer extends AbstractRenderer implements IProcessRend
         renderProcesses.add(modelFrontProc);
         renderProcesses.add(modelStarsProc);
         renderProcesses.add(lineProc);
-        renderProcesses.add(modelAtmProc);
         renderProcesses.add(labelsProc);
+        renderProcesses.add(modelAtmProc);
 
         // INIT VIEWPORTS
         stretchViewport = new StretchViewport(Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
