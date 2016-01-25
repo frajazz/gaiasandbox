@@ -1,6 +1,14 @@
 package gaia.cu9.ari.gaiaorbit.desktop.util;
 
-import gaia.cu9.ari.gaiaorbit.GaiaSandbox;
+import java.io.BufferedReader;
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileReader;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.util.Date;
+
 import gaia.cu9.ari.gaiaorbit.event.EventManager;
 import gaia.cu9.ari.gaiaorbit.event.Events;
 import gaia.cu9.ari.gaiaorbit.event.IObserver;
@@ -10,14 +18,7 @@ import gaia.cu9.ari.gaiaorbit.util.format.DateFormatFactory;
 import gaia.cu9.ari.gaiaorbit.util.format.IDateFormat;
 import gaia.cu9.ari.gaiaorbit.util.math.Vector3d;
 import gaia.cu9.ari.gaiaorbit.util.parse.Parser;
-
-import java.io.BufferedReader;
-import java.io.BufferedWriter;
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.FileReader;
-import java.io.FileWriter;
-import java.io.IOException;
+import gaia.cu9.ari.gaiaorbit.util.time.ITimeFrameProvider;
 
 /** 
  * Contains the logic to record the camera state at each frame. The format is as follows:
@@ -55,13 +56,12 @@ public class CamRecorder implements IObserver {
         EventManager.instance.subscribe(this, Events.RECORD_CAMERA_CMD, Events.PLAY_CAMERA_CMD, Events.UPDATE_CAM_RECORDER);
     }
 
-    public void update(float dt, Vector3d position, Vector3d direction, Vector3d up) {
+    public void update(ITimeFrameProvider time, Vector3d position, Vector3d direction, Vector3d up) {
         switch (mode) {
         case RECORDING:
             if (os != null) {
                 try {
-                    time += dt;
-                    os.append(Float.toString(time)).append(sep);
+                    os.append(Long.toString(time.getTime().getTime())).append(sep);
                     os.append(Double.toString(position.x)).append(sep).append(Double.toString(position.y)).append(sep).append(Double.toString(position.z));
                     os.append(sep).append(Double.toString(direction.x)).append(sep).append(Double.toString(direction.y)).append(sep).append(Double.toString(direction.z));
                     os.append(sep).append(Double.toString(up.x)).append(sep).append(Double.toString(up.y)).append(sep).append(Double.toString(up.z));
@@ -77,16 +77,11 @@ public class CamRecorder implements IObserver {
                     String line;
                     if ((line = is.readLine()) != null) {
                         String[] tokens = line.split("\\s+");
-                        if (tokens.length != 0 && tokens[0].equals("settime")) {
-                            EventManager.instance.post(Events.TIME_CHANGE_CMD, df.parse(tokens[1]));
+                        EventManager.instance.post(Events.TIME_CHANGE_CMD, new Date(Parser.parseLong(tokens[0])));
+                        position.set(Parser.parseDouble(tokens[1]), Parser.parseDouble(tokens[2]), Parser.parseDouble(tokens[3]));
+                        direction.set(Parser.parseDouble(tokens[4]), Parser.parseDouble(tokens[5]), Parser.parseDouble(tokens[6]));
+                        up.set(Parser.parseDouble(tokens[7]), Parser.parseDouble(tokens[8]), Parser.parseDouble(tokens[9]));
 
-                        } else {
-                            // TODO use time to adapt FPS
-                            float time = Parser.parseFloat(tokens[0]);
-                            position.set(Parser.parseDouble(tokens[1]), Parser.parseDouble(tokens[2]), Parser.parseDouble(tokens[3]));
-                            direction.set(Parser.parseDouble(tokens[4]), Parser.parseDouble(tokens[5]), Parser.parseDouble(tokens[6]));
-                            up.set(Parser.parseDouble(tokens[7]), Parser.parseDouble(tokens[8]), Parser.parseDouble(tokens[9]));
-                        }
                     } else {
                         // Finish off
                         is.close();
@@ -138,12 +133,6 @@ public class CamRecorder implements IObserver {
                     Logger.error(e);
                     return;
                 }
-                try {
-                    // Write time command
-                    os.append("settime").append(sep).append(df.format(GaiaSandbox.instance.current.getTime())).append("\n");
-                } catch (Exception e) {
-                    Logger.error(e);
-                }
                 Logger.info(I18n.bundle.get("notif.camerarecord.start"));
                 startMs = System.currentTimeMillis();
                 time = 0;
@@ -171,7 +160,7 @@ public class CamRecorder implements IObserver {
             break;
         case PLAY_CAMERA_CMD:
             if (is != null) {
-                throw new RuntimeException("Hey, we are already playing another movie!");
+                Logger.warn("Hey, we are already playing another movie!");
             }
             if (mode != RecorderMode.IDLE) {
                 throw new RuntimeException("The recorder is busy! The current mode is " + mode);
@@ -189,7 +178,7 @@ public class CamRecorder implements IObserver {
 
             break;
         case UPDATE_CAM_RECORDER:
-            float dt = (Float) data[0];
+            ITimeFrameProvider dt = (ITimeFrameProvider) data[0];
             Vector3d pos = (Vector3d) data[1];
             Vector3d dir = (Vector3d) data[2];
             Vector3d up = (Vector3d) data[3];

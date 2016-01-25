@@ -996,6 +996,14 @@
 		"parent" : "Earth",
 		"impl" : "gaia.cu9.ari.gaiaorbit.scenegraph.Loc",
 		"ct" : "Others",
+		"name" : "Leiden",
+		"location" : [4.4833, 52.1667],
+		"size" : 4.5
+	},
+	{
+		"parent" : "Earth",
+		"impl" : "gaia.cu9.ari.gaiaorbit.scenegraph.Loc",
+		"ct" : "Others",
 		"name" : "Libreville",
 		"location" : [9.45, 0.38],
 		"size" : 4.5
