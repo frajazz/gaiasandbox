@@ -1,21 +1,5 @@
 package gaia.cu9.ari.gaiaorbit.desktop.util;
 
-import gaia.cu9.ari.gaiaorbit.data.stars.HYGBinaryLoader;
-import gaia.cu9.ari.gaiaorbit.data.stars.STILCatalogLoader;
-import gaia.cu9.ari.gaiaorbit.desktop.format.DesktopDateFormatFactory;
-import gaia.cu9.ari.gaiaorbit.scenegraph.CelestialBody;
-import gaia.cu9.ari.gaiaorbit.scenegraph.Star;
-import gaia.cu9.ari.gaiaorbit.util.GlobalConf;
-import gaia.cu9.ari.gaiaorbit.util.I18n;
-import gaia.cu9.ari.gaiaorbit.util.Pair;
-import gaia.cu9.ari.gaiaorbit.util.format.DateFormatFactory;
-import gaia.cu9.ari.gaiaorbit.util.gaia.GaiaAttitudeServer;
-import gaia.cu9.ari.gaiaorbit.util.gaia.Satellite;
-import gaia.cu9.ari.gaiaorbit.util.math.MathUtilsd;
-import gaia.cu9.ari.gaiaorbit.util.math.Matrix4d;
-import gaia.cu9.ari.gaiaorbit.util.math.Quaterniond;
-import gaia.cu9.ari.gaiaorbit.util.math.Vector3d;
-
 import java.io.DataOutputStream;
 import java.io.File;
 import java.io.FileOutputStream;
@@ -31,6 +15,22 @@ import java.util.Set;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.backends.lwjgl.LwjglFiles;
+
+import gaia.cu9.ari.gaiaorbit.data.stars.HYGBinaryLoader;
+import gaia.cu9.ari.gaiaorbit.data.stars.STILCatalogLoader;
+import gaia.cu9.ari.gaiaorbit.desktop.format.DesktopDateFormatFactory;
+import gaia.cu9.ari.gaiaorbit.scenegraph.CelestialBody;
+import gaia.cu9.ari.gaiaorbit.scenegraph.Star;
+import gaia.cu9.ari.gaiaorbit.util.GlobalConf;
+import gaia.cu9.ari.gaiaorbit.util.I18n;
+import gaia.cu9.ari.gaiaorbit.util.Pair;
+import gaia.cu9.ari.gaiaorbit.util.format.DateFormatFactory;
+import gaia.cu9.ari.gaiaorbit.util.gaia.GaiaAttitudeServer;
+import gaia.cu9.ari.gaiaorbit.util.gaia.Satellite;
+import gaia.cu9.ari.gaiaorbit.util.math.MathUtilsd;
+import gaia.cu9.ari.gaiaorbit.util.math.Matrix4d;
+import gaia.cu9.ari.gaiaorbit.util.math.Quaterniond;
+import gaia.cu9.ari.gaiaorbit.util.math.Vector3d;
 
 /**
  * Loads a catalog and selects the stars that are observed during a certain period of time.
@@ -214,6 +214,6 @@ public class GaiaCatalogFilter {
     public static void main(String[] args) throws Exception {
         GaiaCatalogFilter gcf = new GaiaCatalogFilter();
         gcf.initialize();
-        gcf.filterCatalog(2015, 11, 11, 2016, 12, 31);
+        gcf.filterCatalog(2016, 8, 25, 2017, 1, 1);
     }
 }
