@@ -34,19 +34,25 @@ public class GalaxyGenerator implements IObserver {
     private static final boolean writeFile = true;
 
     /** Number of spiral arms **/
-    private static final int Narms = 5;
+    private static int Narms = 4;
+
+    /** Does the galaxy have a bar? **/
+    private static boolean bar = false;
+
+    /** The length of the bar, if it has one **/
+    private static float barLength = 3f;
 
     /** Radius of the galaxy **/
-    private static final float radius = 10f;
+    private static float radius = 10f;
 
     /** Number of particles **/
-    private static final int N = 5000;
+    private static int N = 5000;
 
     /** Ratio radius/armWidth **/
-    private static final float armWidthRatio = 1f / 20f;
+    private static float armWidthRatio = 1f / 20f;
 
     /** Maximum spiral rotation (end of arm) in degrees **/
-    private static final float maxRotation = 190f;
+    private static float maxRotation = 220f;
 
     public static void main(String[] args) {
         try {
@@ -85,27 +91,57 @@ public class GalaxyGenerator implements IObserver {
      * The galactic plane is XZ and Y points to the galactic north pole.
      * @throws IOException
      */
-    private static List<Vector3> generateGalaxy() throws IOException {
+    private static List<Vector3> generateGalaxy() throws IOException, RuntimeException {
         Random rand = new Random();
 
-        int NperArm = N / Narms;
+        if (bar && Narms % 2 == 1) {
+            throw new RuntimeException("Galaxies with bars can only have an even number of arms");
+        }
+
+        float totalLength = Narms * radius + (bar ? barLength : 0f);
+        float armOverTotal = radius / totalLength;
+        float barOverTotal = (bar ? barLength / totalLength : 0f);
+
+        int NperArm = Math.round(N * armOverTotal);
+        int Nbar = Math.round(N * barOverTotal);
+
         float armWidth = radius * armWidthRatio;
 
         List<Vector3> particles = new ArrayList<Vector3>(N);
 
-        float stepAngle = 360f / Narms;
-        float angle = 0;
+        float stepAngle = bar ? 60f / Math.max(1f, ((Narms / 2f) - 1)) : 360f / Narms;
+        float angle = bar ? 10f : 0;
 
-        Vector3 center = new Vector3(0, 0, 0);
-        Vector3 end = new Vector3();
         Vector3 rotAxis = new Vector3(0, 1, 0);
+
+        // Generate bar
+        for (int j = 0; j < Nbar; j++) {
+            float z = rand.nextFloat() * barLength - barLength / 2f;
+            float x = (float) (rand.nextGaussian() * armWidth);
+            float y = (float) (rand.nextGaussian() * armWidth);
+
+            Vector3 particle = new Vector3(x, y, z);
+            particles.add(particle);
+        }
+
+        // Generate arms
         for (int i = 0; i < Narms; i++) {
             Logger.info("Generating arm " + (i + 1));
-            end.set(0, 0, radius);
+            float zplus = bar ? barLength / 2f * (i < Narms / 2 ? 1f : -1f) : 0f;
+
+            angle = bar && i == Narms / 2 ? 190f : angle;
+
             for (int j = 0; j < NperArm; j++) {
-                float z = rand.nextFloat() * radius;
-                float x = (float) (rand.nextGaussian() * armWidth);
-                float y = (float) (rand.nextGaussian() * armWidth);
+                float x, y, z;
+                if (bar) {
+                    z = rand.nextFloat() * radius;
+                    x = (float) (rand.nextGaussian() * armWidth);
+                    y = (float) (rand.nextGaussian() * armWidth);
+                } else {
+                    z = rand.nextFloat() * radius;
+                    x = (float) (rand.nextGaussian() * armWidth);
+                    y = (float) (rand.nextGaussian() * armWidth);
+                }
 
                 Vector3 particle = new Vector3(x, y, z);
                 particle.rotate(rotAxis, angle);
@@ -113,16 +149,18 @@ public class GalaxyGenerator implements IObserver {
                 // Rotate according to distance
                 particle.rotate(rotAxis, maxRotation * particle.len() / radius);
 
+                particle.add(0f, 0f, zplus);
+
                 particles.add(particle);
-                angle += stepAngle;
             }
+            angle += stepAngle;
         }
 
         return particles;
     }
 
     private static void writeToDisk(List<Vector3> gal, String dir) throws IOException {
-        String filePath = dir + "galaxy_" + Narms + "_" + N + "_" + radius + "_" + armWidthRatio + "_" + maxRotation + ".txt";
+        String filePath = dir + "galaxy_" + (bar ? "bar" + barLength + "_" : "nobar_") + Narms + "arms_" + N + "particles_" + radius + "radius_" + armWidthRatio + "ratio_" + maxRotation + "deg.txt";
 
         FileHandle fh = new FileHandle(filePath);
         File f = fh.file();
@@ -146,6 +184,8 @@ public class GalaxyGenerator implements IObserver {
         }
 
         bw.close();
+
+        Logger.info("File written to " + filePath);
     }
 
     @Override
