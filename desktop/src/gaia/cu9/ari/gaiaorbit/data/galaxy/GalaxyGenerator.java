@@ -37,7 +37,7 @@ public class GalaxyGenerator implements IObserver {
     private static int Narms = 4;
 
     /** Does the galaxy have a bar? **/
-    private static boolean bar = false;
+    private static boolean bar = true;
 
     /** The length of the bar, if it has one **/
     private static float barLength = 3f;
