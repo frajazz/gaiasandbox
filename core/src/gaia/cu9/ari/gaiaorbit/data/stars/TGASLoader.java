@@ -109,7 +109,8 @@ public class TGASLoader extends AbstractCatalogLoader implements ISceneGraphLoad
             double pllxerr = Parser.parseDouble(st[7].trim());
 
             double dist = (1000d / pllx) * Constants.PC_TO_U;
-            if (pllx / pllxerr > 10 && dist >= 0) {
+            // Keep only stars with relevant parallaxes
+            if (dist >= 0 && pllx / pllxerr > 8 && pllxerr <= 1.5) {
 
                 Vector3d pos = Coordinates.sphericalToCartesian(Math.toRadians(ra), Math.toRadians(dec), dist, new Vector3d());
 

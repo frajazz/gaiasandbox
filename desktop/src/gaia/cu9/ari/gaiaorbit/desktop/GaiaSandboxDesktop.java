@@ -1,5 +1,25 @@
 package gaia.cu9.ari.gaiaorbit.desktop;
 
+import java.awt.Font;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.nio.channels.FileChannel;
+
+import javax.swing.JFileChooser;
+import javax.swing.JFrame;
+import javax.swing.UIManager;
+import javax.swing.filechooser.FileFilter;
+import javax.swing.filechooser.FileNameExtensionFilter;
+import javax.swing.plaf.FontUIResource;
+
+import com.badlogic.gdx.Files;
+import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.backends.lwjgl.LwjglApplication;
+import com.badlogic.gdx.backends.lwjgl.LwjglApplicationConfiguration;
+import com.badlogic.gdx.backends.lwjgl.LwjglFiles;
+
 import gaia.cu9.ari.gaiaorbit.GaiaSandbox;
 import gaia.cu9.ari.gaiaorbit.data.DesktopSceneGraphImplementationProvider;
 import gaia.cu9.ari.gaiaorbit.data.SceneGraphImplementationProvider;
@@ -33,26 +53,6 @@ import gaia.cu9.ari.gaiaorbit.util.concurrent.ThreadIndexer;
 import gaia.cu9.ari.gaiaorbit.util.format.DateFormatFactory;
 import gaia.cu9.ari.gaiaorbit.util.format.NumberFormatFactory;
 import gaia.cu9.ari.gaiaorbit.util.math.MathUtilsd;
-
-import java.awt.Font;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.nio.channels.FileChannel;
-
-import javax.swing.JFileChooser;
-import javax.swing.JFrame;
-import javax.swing.UIManager;
-import javax.swing.filechooser.FileFilter;
-import javax.swing.filechooser.FileNameExtensionFilter;
-import javax.swing.plaf.FontUIResource;
-
-import com.badlogic.gdx.Files;
-import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.backends.lwjgl.LwjglApplication;
-import com.badlogic.gdx.backends.lwjgl.LwjglApplicationConfiguration;
-import com.badlogic.gdx.backends.lwjgl.LwjglFiles;
 
 /**
  * Main class for the desktop launcher
@@ -206,7 +206,7 @@ public class GaiaSandboxDesktop implements IObserver {
                     chooser.setMultiSelectionEnabled(false);
                     chooser.setAcceptAllFileFilterUsed(false);
                     chooser.setFileSelectionMode(JFileChooser.FILES_ONLY);
-                    chooser.setCurrentDirectory(new File(System.getProperty("java.io.tmpdir")));
+                    chooser.setCurrentDirectory(SysUtils.getGSHomeDir());
 
                     // Filter
                     FileFilter filter = new FileNameExtensionFilter("Camera data files", new String[] { "dat", "txt", "csv" });

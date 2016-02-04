@@ -219,7 +219,7 @@ public class NaturalCamera extends AbstractCamera implements IObserver {
         }
 
         // Update camera recorder
-        EventManager.instance.post(Events.UPDATE_CAM_RECORDER, dt, pos, direction, up);
+        EventManager.instance.post(Events.UPDATE_CAM_RECORDER, time, pos, direction, up);
 
         // Update actual camera
         lastFwdTime += dt;

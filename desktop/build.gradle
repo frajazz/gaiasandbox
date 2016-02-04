@@ -77,6 +77,16 @@ task runOctreeGenerator(dependsOn: jar, type: JavaExec, description: "Runs the o
     ignoreExitValue = true
 }
 
+task runGalaxyGenerator(dependsOn: jar, type: JavaExec, description: "Runs the galaxy generator to procedurally generate a galaxy") {
+    main = 'gaia.cu9.ari.gaiaorbit.data.galaxy.GalaxyGenerator'
+    systemProperties['properties.file'] = '../android/assets/conf/global.properties'
+    classpath = sourceSets.main.runtimeClasspath
+    classpath += files(project.assetsDir)
+    standardInput = System.in
+    workingDir = project.workDir
+    ignoreExitValue = true
+}
+
 task createDistDir (dependsOn: ':versionFile', description: "Creates the releases/dist folder") << {
     File distDir = new File(project.distDir)
     // Prepare output directory
