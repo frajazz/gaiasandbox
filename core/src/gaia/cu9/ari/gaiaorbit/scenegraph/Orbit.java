@@ -1,5 +1,12 @@
 package gaia.cu9.ari.gaiaorbit.scenegraph;
 
+import java.util.Date;
+
+import com.badlogic.gdx.assets.AssetManager;
+import com.badlogic.gdx.utils.reflect.ClassReflection;
+import com.badlogic.gdx.utils.reflect.Method;
+import com.badlogic.gdx.utils.reflect.ReflectionException;
+
 import gaia.cu9.ari.gaiaorbit.data.orbit.IOrbitDataProvider;
 import gaia.cu9.ari.gaiaorbit.data.orbit.OrbitData;
 import gaia.cu9.ari.gaiaorbit.data.orbit.OrbitDataLoader;
@@ -12,14 +19,6 @@ import gaia.cu9.ari.gaiaorbit.util.math.MathUtilsd;
 import gaia.cu9.ari.gaiaorbit.util.math.Matrix4d;
 import gaia.cu9.ari.gaiaorbit.util.math.Vector3d;
 import gaia.cu9.ari.gaiaorbit.util.time.ITimeFrameProvider;
-
-import java.util.Date;
-
-import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.assets.AssetManager;
-import com.badlogic.gdx.utils.reflect.ClassReflection;
-import com.badlogic.gdx.utils.reflect.Method;
-import com.badlogic.gdx.utils.reflect.ReflectionException;
 
 public class Orbit extends LineObject {
 
@@ -56,10 +55,10 @@ public class Orbit extends LineObject {
                 provider.load(oc.source, new OrbitDataLoader.OrbitDataLoaderParameter(name, providerClass, oc));
                 orbitData = provider.getData();
             } catch (Exception e) {
-                Gdx.app.error(getClass().getSimpleName(), e.getMessage());
+                Logger.error(e, getClass().getSimpleName());
             }
         } catch (ReflectionException e) {
-            Gdx.app.error(getClass().getSimpleName(), e.getMessage());
+            Logger.error(e, getClass().getSimpleName());
         }
     }
 
@@ -105,16 +104,18 @@ public class Orbit extends LineObject {
 
     @Override
     protected void addToRenderLists(ICamera camera) {
-        float angleLimit = ANGLE_LIMIT * camera.getFovFactor();
-        if (viewAngle > angleLimit) {
-            if (viewAngle < angleLimit * SHADER_MODEL_OVERLAP_FACTOR) {
-                float alpha = MathUtilsd.lint(viewAngle, angleLimit, angleLimit * SHADER_MODEL_OVERLAP_FACTOR, 0, cc[3]);
-                this.alpha = alpha;
-            } else {
-                this.alpha = cc[3];
-            }
+        if (!name.equals("Gaia orbit")) {
+            float angleLimit = ANGLE_LIMIT * camera.getFovFactor();
+            if (viewAngle > angleLimit) {
+                if (viewAngle < angleLimit * SHADER_MODEL_OVERLAP_FACTOR) {
+                    float alpha = MathUtilsd.lint(viewAngle, angleLimit, angleLimit * SHADER_MODEL_OVERLAP_FACTOR, 0, cc[3]);
+                    this.alpha = alpha;
+                } else {
+                    this.alpha = cc[3];
+                }
 
-            addToRender(this, RenderGroup.LINE);
+                addToRender(this, RenderGroup.LINE);
+            }
         }
 
     }

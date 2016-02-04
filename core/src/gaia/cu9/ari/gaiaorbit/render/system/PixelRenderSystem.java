@@ -26,7 +26,7 @@ import gaia.cu9.ari.gaiaorbit.util.coord.AstroUtils;
 
 public class PixelRenderSystem extends ImmediateRenderSystem implements IObserver {
     private final float BRIGHTNESS_FACTOR;
-    private final float POINT_SIZE;
+    private float POINT_SIZE;
 
     boolean starColorTransit = false;
     Vector3 aux;
@@ -35,8 +35,8 @@ public class PixelRenderSystem extends ImmediateRenderSystem implements IObserve
     public PixelRenderSystem(RenderGroup rg, int priority, float[] alphas) {
         super(rg, priority, alphas);
         EventManager.instance.subscribe(this, Events.TRANSIT_COLOUR_CMD, Events.ONLY_OBSERVED_STARS_CMD);
-        BRIGHTNESS_FACTOR = Constants.webgl ? 15f : 2f;
-        POINT_SIZE = GlobalConf.runtime.STRIPPED_FOV_MODE ? 2 : 1;
+        BRIGHTNESS_FACTOR = Constants.webgl ? 15f : 2.7f;
+        POINT_SIZE = GlobalConf.runtime.STRIPPED_FOV_MODE ? 2 : 2;
     }
 
     @Override
@@ -111,6 +111,7 @@ public class PixelRenderSystem extends ImmediateRenderSystem implements IObserve
             // Put flag down
             POINT_UPDATE_FLAG = false;
         }
+        Gdx.graphics.getGL20().glEnable(0x8642);
         shaderProgram.begin();
         shaderProgram.setUniformMatrix("u_projModelView", camera.getCamera().combined);
         shaderProgram.setUniformf("u_camPos", camera.getCurrent().getPos().setVector3(aux));

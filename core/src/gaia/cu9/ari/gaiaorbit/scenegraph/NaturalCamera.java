@@ -49,6 +49,9 @@ public class NaturalCamera extends AbstractCamera implements IObserver {
     /** Info about whether the previous state is saved **/
     protected boolean stateSaved = false;
 
+    /** Whether the camera stops after a few seconds or keeps going **/
+    private boolean fullStop = true;
+
     /** Entities for the Gaia_Scene mode **/
     protected CelestialBody entity1 = null, entity2 = null, entity3 = null;
 
@@ -424,11 +427,16 @@ public class NaturalCamera extends AbstractCamera implements IObserver {
         double velocity = vel.len();
 
         // Half a second after we have stopped zooming, real friction kicks in
-        friction.set(force).nor().scl(-forceLen * dt * (lastFwdTime > 0.5 ? (lastFwdTime - 0.5) * 1000 : 1));
+        if (fullStop)
+            friction.set(force).nor().scl(-forceLen * dt * (lastFwdTime > 0.5 ? (lastFwdTime - 0.5) * 1000 : 1));
+        else
+            friction.set(force).nor().scl(-forceLen * dt);
+
         force.add(friction);
 
         if (lastFwdTime > 1.2 && velocityGamepad == 0) {
-            stopForwardMovement();
+            if (fullStop)
+                stopForwardMovement();
         }
 
         applyForce(force);

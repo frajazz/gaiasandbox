@@ -1,13 +1,14 @@
 package gaia.cu9.ari.gaiaorbit.data.orbit;
 
-import gaia.cu9.ari.gaiaorbit.util.Constants;
-import gaia.cu9.ari.gaiaorbit.util.math.Matrix4d;
-import gaia.cu9.ari.gaiaorbit.util.math.Vector3d;
-
 import java.io.BufferedReader;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.sql.Timestamp;
+
+import gaia.cu9.ari.gaiaorbit.util.Constants;
+import gaia.cu9.ari.gaiaorbit.util.math.Matrix4d;
+import gaia.cu9.ari.gaiaorbit.util.math.Vector3d;
+import gaia.cu9.ari.gaiaorbit.util.parse.Parser;
 
 public class FileDataLoader {
     int count = 0;
@@ -63,15 +64,15 @@ public class FileDataLoader {
     }
 
     protected float parsef(String str) {
-        return Float.valueOf(str);
+        return Parser.parseFloat(str);
     }
 
     protected double parsed(String str) {
-        return Double.valueOf(str);
+        return Parser.parseDouble(str);
     }
 
     protected int parsei(String str) {
-        return Integer.valueOf(str);
+        return Parser.parseInt(str);
     }
 
 }
