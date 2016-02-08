@@ -69,3 +69,4 @@ pickled_dict
 **/.gradle
 /.nb-gradle/
 /desktop/build.gradle
+/android/assets/conf/global.properties
