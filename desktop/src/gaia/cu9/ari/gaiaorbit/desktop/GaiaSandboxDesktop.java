@@ -192,9 +192,12 @@ public class GaiaSandboxDesktop implements IObserver {
 
         if( startScript != null )
         {
-            GlobalConf.program.DISPLAY_TUTORIAL = true;
-            GlobalConf.program.TUTORIAL_SCRIPT_LOCATION = startScript;
+            GlobalConf.program.DISPLAY_START_SCRIPT = true;
+            GlobalConf.program.START_SCRIPT_LOCATION = startScript;
         }
+        else
+            GlobalConf.program.DISPLAY_START_SCRIPT = false;
+        
         // Launch app
         new LwjglApplication( new GaiaSandbox(), cfg );
 

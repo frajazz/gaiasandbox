@@ -353,6 +353,10 @@ public class GlobalConf {
 
         public boolean DISPLAY_TUTORIAL;
         public String TUTORIAL_SCRIPT_LOCATION;
+        
+        public boolean DISPLAY_START_SCRIPT;
+        public String START_SCRIPT_LOCATION;
+                
         public boolean SHOW_CONFIG_DIALOG;
         public boolean SHOW_DEBUG_INFO;
         public Date LAST_CHECKED;
