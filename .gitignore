@@ -68,3 +68,4 @@ pickled_dict
 ################
 **/.gradle
 /.nb-gradle/
+/desktop/build.gradle
