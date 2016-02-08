@@ -62,8 +62,11 @@ import gaia.cu9.ari.gaiaorbit.util.math.MathUtilsd;
 public class GaiaSandboxDesktop implements IObserver {
     private static GaiaSandboxDesktop gsd;
     public static String ASSETS_LOC;
+    
+    private String startScript = null;
 
-    public static void main(String[] args) {
+    public static void main( String[] args ) 
+    {
 
         try {
             gsd = new GaiaSandboxDesktop();
@@ -121,7 +124,7 @@ public class GaiaSandboxDesktop implements IObserver {
             // Initialize screenshots manager
             ScreenshotsManager.initialize();
 
-            gsd.init();
+            gsd.init( args );
         } catch (Exception e) {
             e.printStackTrace(System.err);
         }
@@ -139,12 +142,18 @@ public class GaiaSandboxDesktop implements IObserver {
         }
     }
 
-    public GaiaSandboxDesktop() {
+    public GaiaSandboxDesktop() 
+    {
         super();
+        
         EventManager.instance.subscribe(this, Events.SHOW_PREFERENCES_ACTION, Events.SHOW_ABOUT_ACTION, Events.SHOW_RUNSCRIPT_ACTION, Events.JAVA_EXCEPTION, Events.SHOW_PLAYCAMERA_ACTION, Events.POST_NOTIFICATION);
     }
 
-    private void init() {
+    private void init( String[] args ) 
+    {
+        if( args != null && args.length > 0 )
+            startScript = args[ 0 ];
+        
         // Show configuration
         if (GlobalConf.program.SHOW_CONFIG_DIALOG) {
             new ConfigDialog(this, true);
@@ -181,8 +190,13 @@ public class GaiaSandboxDesktop implements IObserver {
             ThreadIndexer.initialize(new SingleThreadIndexer());
         }
 
+        if( startScript != null )
+        {
+            GlobalConf.program.DISPLAY_TUTORIAL = true;
+            GlobalConf.program.TUTORIAL_SCRIPT_LOCATION = startScript;
+        }
         // Launch app
-        new LwjglApplication(new GaiaSandbox(), cfg);
+        new LwjglApplication( new GaiaSandbox(), cfg );
 
         EventManager.instance.unsubscribe(this, Events.POST_NOTIFICATION, Events.JAVA_EXCEPTION);
     }

@@ -171,12 +171,12 @@ public class Particle extends CelestialBody implements IPointRenderable, ILineRe
                 visiblect = SceneGraphRenderer.visible[ct.ordinal()];
                 addToRender(this, RenderGroup.POINT);
 
-                if (camera.isVisible(time, this, GlobalConf.scene.COMPUTE_GAIA_SCAN) || camera.isFocus(this)) {
+//                if (camera.isVisible(time, this, GlobalConf.scene.COMPUTE_GAIA_SCAN) || camera.isFocus(this)) {
                     viewAngle = ((float) radius / distToCamera) / camera.getFovFactor();
                     viewAngleApparent = viewAngle * GlobalConf.scene.STAR_BRIGHTNESS;
 
                     addToRenderLists(camera);
-                }
+//                }
             }
 
             // Compute nested

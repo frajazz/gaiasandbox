@@ -314,11 +314,12 @@ public class GaiaSandbox implements ApplicationListener, IObserver, IMainRendere
         initialized = true;
 
         // Run tutorial
-        if (GlobalConf.program.DISPLAY_TUTORIAL) {
-            EventManager.instance.post(Events.RUN_SCRIPT_PATH, "scripts/tutorial/tutorial-pointer.py");
+        if( GlobalConf.program.DISPLAY_TUTORIAL ) 
+        {
+            //EventManager.instance.post(Events.RUN_SCRIPT_PATH, "scripts/tutorial/tutorial-pointer.py");
+            EventManager.instance.post( Events.RUN_SCRIPT_PATH, GlobalConf.program.TUTORIAL_SCRIPT_LOCATION );
             GlobalConf.program.DISPLAY_TUTORIAL = false;
         }
-
     }
 
     @Override

@@ -11,7 +11,7 @@
 		"provider" : "gaia.cu9.ari.gaiaorbit.data.orbit.OrbitFileDataProvider",
 			
 		"orbit" 		: {
-							"source" : "data/orb.MOON.dat",
+							"source" : "data/orb.MOON.dat"
 							}
 	},
 	

@@ -118,7 +118,7 @@ public class GalaxyGenerator implements IObserver {
         for (int j = 0; j < Nbar; j++) {
             float z = rand.nextFloat() * barLength - barLength / 2f;
             float x = (float) (rand.nextGaussian() * armWidth);
-            float y = (float) (rand.nextGaussian() * armWidth);
+            float y = (float) (rand.nextGaussian() * armWidth / 2f);
 
             Vector3 particle = new Vector3(x, y, z);
             particles.add(particle);

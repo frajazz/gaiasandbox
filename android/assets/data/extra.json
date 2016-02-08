@@ -65,6 +65,28 @@
 				}
 	},
 	
+	{
+	"name" : "Milky Way Real",
+	"color" : [1.0, 1.0, 1.0, 1.0],
+	"labelcolor" : [1.0, 0.4, 0.7, 1.0],
+	"size" : 1.04913038e+18,
+	"ct" : MilkyWay,
+	"transformName" : equatorialToGalactic,
+
+
+	"parent" : "Universe", 
+	"impl" : "gaia.cu9.ari.gaiaorbit.scenegraph.MilkyWayReal",
+	
+	"coordinates" : {
+				// This must implement gaia.cu9.ari.gaiaorbit.util.coord.IBodyCoordinates				
+				"impl" : "gaia.cu9.ari.gaiaorbit.util.coord.StaticCoordinates",
+				"position" : [-2.1696166830918058e+17, -1.2574136144478805e+17, -1.8981686396725044e+16]
+				},
+	
+	"pointdata" : {
+				"source" : "data/galaxy/galaxy_bar3.0_4arms_5000particles_10.0radius_0.05ratio_220.0deg.txt"
+				}
+	},
 	
 	{
 	"name" : "MW",
